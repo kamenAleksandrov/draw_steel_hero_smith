@@ -1,0 +1,17 @@
+{
+	"nodes":[
+		{"id":"7b20565c3e076835","type":"text","text":"this is the home page. it uses bottom navigation to switch between different creators:\n\nheroes:\n- heroes \n\npowers:\n- abilities \n- features\n\nstory:\n- perks \n- ancestries \n- cultures\n- careers\n- complications\n\ngear:\n- kits\n- gear\n- treasure\n- leveled items\n\nprojects:\n- projects","x":-200,"y":-1400,"width":407,"height":780},
+		{"id":"4eae9d5f1023264d","type":"text","text":"[[heroes_creator.canvas|heroes_creator]] is the first page and it displays the list of all heroes with short information of their name, class, subclass, level, kit (if any), ancestry, culture, career and complication ","x":-540,"y":-380,"width":260,"height":341},
+		{"id":"9c14237450b47ca5","type":"text","text":"powers creator displays a list of all abilities and features and can filter them by any of their characteristics, it also has the create function and allows for ability or feature creation. the big difference is that features are mostly text while abilities have a lot to consider.","x":-240,"y":-380,"width":260,"height":341},
+		{"id":"4fa8070fdc26522d","type":"text","text":"story creator is the page for most of the out of combat stuff. it has 5 tabs each opening a page for each of the categories, each one can display the full list of items or have it filtered and each page has a creator that creates an element of the given list.","x":60,"y":-380,"width":294,"height":341},
+		{"id":"81e73e4a69b9ac86","type":"text","text":"gear contains both the kits and actual gear which is the mundane objects that do not grant anything to the hero and can vary from armor to gadgets and other, then we have treasure and leveled items that need to display a list of all available and have it filtered","x":380,"y":-380,"width":260,"height":341},
+		{"id":"6b39b4e29295f278","type":"text","text":"finally we have the projects, this page is a list of all projects, can filter and lead to a creator where the user can create projects.","x":680,"y":-380,"width":300,"height":341}
+	],
+	"edges":[
+		{"id":"04655cc20980ea87","fromNode":"7b20565c3e076835","fromSide":"bottom","toNode":"4eae9d5f1023264d","toSide":"top"},
+		{"id":"e62ac84e1f4538f6","fromNode":"7b20565c3e076835","fromSide":"bottom","toNode":"9c14237450b47ca5","toSide":"top"},
+		{"id":"81bafb585e1c2876","fromNode":"7b20565c3e076835","fromSide":"bottom","toNode":"4fa8070fdc26522d","toSide":"top"},
+		{"id":"fb3cc2cb94cbdf8c","fromNode":"7b20565c3e076835","fromSide":"bottom","toNode":"81e73e4a69b9ac86","toSide":"top"},
+		{"id":"7a656d3f0d3998a8","fromNode":"7b20565c3e076835","fromSide":"bottom","toNode":"6b39b4e29295f278","toSide":"top"}
+	]
+}

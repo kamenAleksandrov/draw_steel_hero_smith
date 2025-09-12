@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"20464089cd1a1c8e","x":-240,"y":-600,"width":365,"height":630,"type":"text","text":"this selector is responsible for letting the user pick an item based on given limitations. it should:\n\n- take the type of items it is to display\n- take the category of items it searches for\n- take a limited number it any\n- take single options\n- make sure that the user cant choose more than possible\n\nthis will be used for names, skills, languages."}
+	],
+	"edges":[]
+}

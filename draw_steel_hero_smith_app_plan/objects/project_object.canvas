@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"ca5a0bf7e73b979f","type":"text","text":"projects have all or a combination of the following:\n\n- prerequisites\n- source\n- source language\n- guides\n- roll characteristics\n- project goal","x":-280,"y":-660,"width":320,"height":300}
+	],
+	"edges":[]
+}

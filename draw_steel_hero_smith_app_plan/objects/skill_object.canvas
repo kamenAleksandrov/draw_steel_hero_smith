@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"b267defe1c239be9","type":"text","text":"skills have the following:\n\n- name\n- category\n- use (description text)","x":-340,"y":-380,"width":220,"height":180}
+	],
+	"edges":[]
+}

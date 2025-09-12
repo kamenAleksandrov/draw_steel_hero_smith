@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"73a4f424175b2233","type":"text","text":"each culture has all of the following or a combination:\n\n- language of choice\n- environment\n- organization\n- upbringing\n- and this feature: You gain an edge on tests made to recall lore about your culture, and on tests made to influence and interact with people of your culture","x":-311,"y":-660,"width":371,"height":360},
+		{"id":"c082dd9a35ee208f","type":"text","text":"environment, organization and upbringing each have all of or combination:\n\n- choice of one skill from a given list\n- skills lists\n- skill groups\n- descriptive text\n\n","x":-264,"y":-240,"width":264,"height":280}
+	],
+	"edges":[
+		{"id":"bbbf599b983efe58","fromNode":"73a4f424175b2233","fromSide":"bottom","toNode":"c082dd9a35ee208f","toSide":"top"}
+	]
+}

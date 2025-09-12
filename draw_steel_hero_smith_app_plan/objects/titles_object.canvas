@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"5bb067134cea4319","type":"text","text":"titles have all or a combination of the following:\n\n- name\n- description text\n- echelon\n- prerequisite\n- 3-4 benefits to choose one from (could be bonuses to hero stats, features, abilities or any other hero characteristic)","x":-200,"y":-440,"width":300,"height":340}
+	],
+	"edges":[]
+}

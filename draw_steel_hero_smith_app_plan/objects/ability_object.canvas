@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"0755fd2e1fe133ce","x":-300,"y":-760,"width":360,"height":480,"type":"text","text":"abilities have all of or a combination of the following:\n\n- name\n- cost\n- keywords\n- type\n- distance\n- area\n- target\n- ability roll\n- damage\n- effect\n- special effect\n- descriptive text"}
+	],
+	"edges":[]
+}

@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"820f7a3d17e3141b","type":"text","text":"each ancestry has all of or combination of the following:\n\n- name\n- height\n- weight\n- life expectancy\n- size\n- speed\n- ancestry traits\n- ancestry points","x":-280,"y":-800,"width":400,"height":340},
+		{"id":"e5b483846d976583","type":"text","text":"ancestry traits\n\nthere is one signature trait for every ancestry\n\neach ancestry has points that can be spent on traits that can grant a bonus to ANY characteristic that the hero object has or add a new member of those lists.","x":-250,"y":-300,"width":330,"height":300}
+	],
+	"edges":[
+		{"id":"c527e0b74b0ea4de","fromNode":"820f7a3d17e3141b","fromSide":"bottom","toNode":"e5b483846d976583","toSide":"top"}
+	]
+}
