@@ -1,0 +1,1 @@
+finally we have the projects, this page is a list of all projects, can filter and lead to a creator where the user can create projects.

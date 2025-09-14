@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"a8f9332e13332ee4","x":-300,"y":-680,"width":460,"height":760,"type":"text","text":"power rolls are a 3 tiered system. they have the following static tiers: <11, 12-16, 17+. each tier has its own text and could include:\n\n- damage\n- hero characteristic score\n- condition\n- potency\n\nall of which should be calculated based on the hero stats and be updated dynamically as the hero changes"}
-	],
-	"edges":[]
-}

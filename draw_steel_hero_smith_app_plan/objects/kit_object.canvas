@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"0163412e08447473","x":-240,"y":-740,"width":360,"height":320,"type":"text","text":"each kits has all of or a combination of:\n\n- armor categories\n- weapon categories\n- kit bonuses (to any of the hero stats) per echelon\n- ability\n- descriptive text"}
-	],
-	"edges":[]
-}

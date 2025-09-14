@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"68f0f5a67c26d423","type":"text","text":"items have all or a combination of the following:\n\n- name\n- echelon\n- description\n- keywords\n- prerequisite\n- project source\n- project roll characteristic\n- project goal\n- effect text (could include power roll)\n- ability\n- bonus to hero stats (only the highest counts unless noted otherwise)\n- level\n- levels text and modifiers","x":-260,"y":-600,"width":300,"height":580}
-	],
-	"edges":[]
-}

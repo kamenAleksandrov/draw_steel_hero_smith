@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"a47e3982fd007f6c","type":"text","text":"heroes creator page creates a hero with all their characteristics.\n\nthe hero object must hold all characteristics and if needed be modifiable up to the users desire\n\nin hero creator the user is lead through the building of a hero.","x":-520,"y":-980,"width":360,"height":360}
-	],
-	"edges":[]
-}

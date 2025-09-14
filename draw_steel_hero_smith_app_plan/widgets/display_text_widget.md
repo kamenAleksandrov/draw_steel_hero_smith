@@ -1,0 +1,1 @@
+a simple display for text that shows up is any text is passed and stays hidden if there is no text

@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"024541d99a580340","x":-360,"y":-540,"width":520,"height":560,"type":"text","text":"each class has all or a combination of the following:\n\n- name\n- description\n- motto\n- starting characteristic stats (for one or more out of the 5)\n- starting arrays for the rest of the scores\n- starting stamina at first level\n- stamina gained at higher levels\n- total recoveries\n- starting skills\n- subclasses\n- heroic resource name\n- kit or other similar feature\n- features\n- abilities\n- level up bonuses"}
-	],
-	"edges":[]
-}

@@ -1,0 +1,1 @@
+story is the page for most of the out of combat stuff. it has 5 tabs each opening a page for each of the categories, each one can display the full list of items or have it filtered and each page has a creator that creates an element of the given list.

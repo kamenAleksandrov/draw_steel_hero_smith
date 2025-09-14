@@ -1,0 +1,1 @@
+this uses the hero potency characteristic score and shows a simple display of its value, its value - 1 and its value -2 as strong, average and weak respectively.

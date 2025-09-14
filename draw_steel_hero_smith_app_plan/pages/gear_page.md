@@ -1,0 +1,1 @@
+gear contains both the kits and actual gear which is the mundane objects that do not grant anything to the hero and can vary from armor to gadgets and other, then we have treasure and leveled items that need to display a list of all available and have it filtered

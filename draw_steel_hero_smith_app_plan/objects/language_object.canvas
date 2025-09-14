@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"86e4110a6ad563cb","x":-380,"y":-460,"width":420,"height":440,"type":"text","text":"each language has all or a combination of the following:\n\n- name\n- ancestry\n- notes\n- type\n- region (if of the human type languages)\n- related languages (if of the dead type languages)\n- common topics (if of the dead type languages)"}
-	],
-	"edges":[]
-}

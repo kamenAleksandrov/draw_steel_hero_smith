@@ -1,0 +1,1 @@
+heroes is the first page and it displays the list of all heroes with short information of their name, class, subclass, level, kit (if any), ancestry, culture, career and complication 

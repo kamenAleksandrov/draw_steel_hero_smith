@@ -8,20 +8,13 @@
         "type": "tabs",
         "children": [
           {
-            "id": "f673ac7da31875bd",
+            "id": "3ea995867d73e767",
             "type": "leaf",
             "state": {
-              "type": "canvas",
-              "state": {
-                "file": "objects/classes.canvas",
-                "viewState": {
-                  "x": 0,
-                  "y": -279,
-                  "zoom": 0
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "classes"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -81,7 +74,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 261.5
+    "width": 401.49999618530273
   },
   "right": {
     "id": "433d24cd314c73ae",
@@ -172,30 +165,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "f673ac7da31875bd",
+  "active": "3ea995867d73e767",
   "lastOpenFiles": [
-    "objects/hero_object.canvas",
-    "objects/classes.canvas",
-    "objects/complication_object.canvas",
-    "objects/culture_object.canvas",
-    "objects/career_object.canvas",
-    "objects/ancestries_object.canvas",
-    "objects/ability_object.canvas",
-    "objects/titles_object.canvas",
-    "objects/skill_object.canvas",
-    "objects/language_object.canvas",
-    "objects/project_object.canvas",
+    "pages/heroes_page.md",
+    "hero_page.md",
+    "widgets/stamina/stamina_widget.md",
+    "widgets/stamina/recoveries_widget.md",
+    "widgets/summaries/summaries_widget.md",
+    "widgets/summaries/perk_summary.md",
+    "widgets/summaries/hero_summary.md",
+    "widgets/summaries/ancestry_summary.md",
+    "widgets/summaries/ability_summary.md",
+    "widgets/tables/damage_immunites_weaknesses_widget.md",
+    "widgets/tables/conditions_widget.md",
+    "widgets/ability_display_widget.md",
+    "widgets/display_text_widget.md",
+    "widgets/feature_display_widget.md",
+    "widgets/float_box_display_widget.md",
+    "widgets/increase_decrease_counter_widget.md",
+    "widgets/potencies_widget.md",
+    "widgets/selector_widget.md",
+    "systems/power_rolls_system.md",
+    "systems/level_up_system.md",
+    "pages/story_page.md",
+    "pages/projects_page.md",
+    "pages/powers_page.md",
+    "pages/home_page.md",
+    "pages/gear_page.md",
+    "objects/titles_object.md",
+    "widgets/stamina",
+    "widgets/tables",
+    "classes_object.canvas",
+    "creators/projects_creator.canvas",
+    "creators/kits_creator.canvas",
+    "creators/heroes_creator.canvas",
+    "creators/powers/features_creator.canvas",
+    "creators/powers/abilities_creator.canvas",
+    "creators/story/ancestries_creator.canvas",
+    "creators/story/careers_creator.canvas",
+    "creators/story/complications_creator.canvas",
+    "creators/story/cultures_creator.canvas",
+    "widgets/summaries",
+    "pages/creator_pages",
     "widgets",
     "systems",
     "objects",
     "creators/items",
     "creators/story",
-    "creators/powers",
-    "creators/Untitled.md",
-    "pages",
-    "creators",
-    "home_page.md",
-    "Untitled.base",
-    "Welcome.md"
+    "creators/powers"
   ]
 }

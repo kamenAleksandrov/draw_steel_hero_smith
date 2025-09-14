@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"9d208b41f377595e","type":"text","text":"the hero object has all those characteristics:\n\nbasics:\n- name\n- class\n- subclass\n- level\n- ancestry\n- career\n\nvictories and exp:\n- victories\n- level\n- wealth\n- renown\n\nstats:\n- might\n- agility\n- reason\n- intuition\n- presence\n- size\n- speed\n- disengage\n- stability\n\nstamina and recoveries:\n- stamina_current\n- stamina_max\n- stamina_temp\n- winded value\n- dying value\n- recoveries_current\n- recoveries_value\n- recoveries_max\n\nheroic resource:\n- heroic resource\n- heroic resource current\n\nsurges:\n- surges current\n\ndamage immunities and weaknesses\n- immunities\n- weaknesses\n\npotencies:\n- potency_strong\n- potency_average\n- potency_weak\n\nconditions:\n- conditions\n\nfeatures:\n- class features\n- ancestry traits\n- languages\n- skills\n- perks\n- projects\n- project points\n- titles\n- abilities\n\nmodifications:\n- to any of the hero stats\n\nall of them need to be editable and viewable (gets and stets)","x":-1380,"y":-1000,"width":520,"height":1960}
-	],
-	"edges":[]
-}
