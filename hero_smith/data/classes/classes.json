@@ -1,0 +1,47 @@
+[
+  {
+    "id": "class_troubadour",
+    "type": "class",
+    "name": "Troubadour"
+  },
+  {
+    "id": "class_talent",
+    "type": "class",
+    "name": "Talent"
+  },
+  {
+    "id": "class_tactician",
+    "type": "class",
+    "name": "Tactician"
+  },
+  {
+    "id": "class_shadow",
+    "type": "class",
+    "name": "Shadow"
+  },
+  {
+    "id": "class_null",
+    "type": "class",
+    "name": "Null"
+  },
+  {
+    "id": "class_fury",
+    "type": "class",
+    "name": "Fury"
+  },
+  {
+    "id": "class_elementalist",
+    "type": "class",
+    "name": "Elementalist"
+  },
+  {
+    "id": "class_conduit",
+    "type": "class",
+    "name": "Conduit"
+  },
+  {
+    "id": "class_censor",
+    "type": "class",
+    "name": "Censor"
+  }
+]

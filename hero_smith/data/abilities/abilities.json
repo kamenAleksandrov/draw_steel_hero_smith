@@ -1,0 +1,2200 @@
+[
+  {
+    "id": "test_id",
+    "name": "test_name",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "test_story_text",
+    "keywords": [
+      "test_keyword_1",
+      "test_keyword_2",
+      "test_keyword_3",
+      "test_keyword_4"
+    ],
+    "type": "test_type",
+    "range": {
+      "distance": "test_distance",
+      "area": null
+    },
+    "targets": "test_target",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["test_characteristics_score"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_low"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_mid"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_high"
+        }
+      }
+    },
+    "effect": "test_effect",
+    "special_effect": "test_special_effect"
+  },
+  {
+    "id": "melee_weapon_free_strike",
+    "name": "Melee Weapon Free Strike",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A basic melee attack that every hero can perform.",
+    "keywords": ["Charge", "Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "ranged_weapon_free_strike",
+    "name": "Ranged Weapon Free Strike",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A basic ranged attack that every hero can perform.",
+    "keywords": ["Charge", "Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "friend_catapult",
+    "name": "Friend Catapult",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "As a maneuver, you grab a willing adjacent ally or object of your size or smaller, then vertical push that target up to a number of squares equal to twice your Might score.",
+    "keywords": [],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "One willing adjacent ally or object of your size or smaller",
+    "effect": "Vertical push target up to twice your Might score in squares. Reduce fall damage by twice your Might score. Can't use again until earning 1+ Victories.",
+    "special_effect": null
+  },
+  {
+    "id": "arcane_trick",
+    "name": "Arcane Trick",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You can perform various minor magical effects.",
+    "keywords": ["Magic"],
+    "type": "Main Action",
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "effect": "Choose one of the following effects:\n• You teleport a size 1S or smaller object adjacent to you into an unoccupied space adjacent to you.\n• Until the start of your next turn, a part of your body shoots a shower of harmless noisy sparks that light up each square adjacent to you.\n• You ignite or snuff out (your choice) every mundane light source of 1L or smaller adjacent to you.\n• You transform up to 1 pound of edible food you touch to make it taste delicious or disgusting.\n• Until the start of your next turn, you make your body exude a particular odor you've smelled before. This smell can be sensed by each creature within 5 squares of you, but can't impose any condition or other drawback on those creatures.\n• You place a small magical inscription on the surface of a mundane object you touch, or you can remove an inscription that was made by you or by another creature using Arcane Trick.\n• You touch a size 1T object to cover it with an illusion that makes it look like a different object. Any creature who handles the object becomes aware of the illusion. The illusion ends when you stop touching the object.",
+    "special_effect": null
+  },
+  {
+    "id": "creature_sense",
+    "name": "Creature Sense",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You can sense the nature of nearby creatures.",
+    "keywords": [],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "One creature within 10 squares",
+    "effect": "If that creature is your level or lower, you learn the keywords in their stat block (Demon, Humanoid, Undead, and so forth).",
+    "special_effect": null
+  },
+  {
+    "id": "invisible_force",
+    "name": "Invisible Force",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You can manipulate objects with your mind.",
+    "keywords": ["Psionic", "Ranged"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One size 1T object",
+    "effect": "You can grab or manipulate the target object with your mind, moving the object up to a number of squares equal to your Reason, Intuition, or Presence score (your choice). You can use this ability to turn doorknobs, pull levers, and so forth. You can manipulate any small movable piece of a larger object as long as the piece is unattended and size 1T. You can't use this ability to break a smaller piece off a larger object.",
+    "special_effect": null
+  },
+  {
+    "id": "psychic_whisper",
+    "name": "Psychic Whisper",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You can send telepathic messages to allies.",
+    "keywords": ["Psionic", "Ranged"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "effect": "As long as the target understands one or more languages, you send a telepathic message to them that takes 10 seconds or less to speak. The target knows who the message is from and can decide to ignore it and subsequent messages.",
+    "special_effect": null
+  },
+  {
+    "id": "exploding_arrow",
+    "name": "Exploding Arrow",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your ammunition explodes with magical energy.",
+    "keywords": ["Magic", "Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 15",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Agility", "Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + A, R, I, or P fire damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Agility", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + A, R, I, or P fire damage"
+        },
+        "mid": {
+          "damage_expression": "7 + A, R, I, or P fire damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Agility", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + A, R, I, or P fire damage"
+        },
+        "high": {
+          "damage_expression": "10 + A, R, I, or P fire damage",
+          "base_damage_value": 10,
+          "characteristic_damage_options": ["Agility", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A, R, I, or P fire damage"
+        }
+      }
+    },
+    "effect": "One creature or object of your choice within 2 squares of the target takes fire damage equal to the characteristic score used for this ability’s power roll",
+    "special_effect": null
+  },
+  {
+    "id": "unmooring",
+    "name": "Unmooring",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your weapon unleashes psionic energy that reduces your target’s weight.",
+    "keywords": ["Melee", "Psionic", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + M, R, I, or P damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M, R, I, or P damage"
+        },
+        "mid": {
+          "damage_expression": "8 + M, R, I, or P damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M, R, I, or P damage"
+        },
+        "high": {
+          "damage_expression": "11 + M, R, I, or P damage",
+          "base_damage_value": 11,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M, R, I, or P damage"
+        }
+      }
+    },
+    "effect": "Until the end of the target’s next turn, any forced movement that affects the target has its distance increased by 2.",
+    "special_effect": null
+  },
+  {
+    "id": "fade",
+    "name": "Fade",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A stab, and a few quick, careful steps back.",
+    "keywords": ["Melee", "Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": ["Melee 1", "ranged 10"],
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "you can shift 1 square",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage; you can shift 1 square"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "you can shift up to 2 squares",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage; you can shift up to 2 squares"
+        },
+        "high": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "you can shift up to 3 squares",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M or A damage; you can shift up to 3 squares"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "double_strike",
+    "name": "Double Strike",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Why strike once when you could do it twice?",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "Two creatures or objects",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage"
+        }
+      }
+    },
+    "effect": "If you use this ability on your turn, you can use it against one target, then use your maneuver and your move action for that turn before using the ability against a second target. You still use the same power roll for both targets.",
+    "special_effect": null
+  },
+  {
+    "id": "forward_thrust_backward_smash",
+    "name": "Forward Thrust, Backward Smash",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "In your hands, the haft is as good as the head.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 2",
+      "area": null
+    },
+    "targets": "Two creatures or objects",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "battle_grace",
+    "name": "Battle Grace",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You feint to move your enemies into perfect position.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "you can swap places with the target",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M or A damage; you can swap places with the target"
+        },
+        "high": {
+          "damage_expression": "11 + M or A damage",
+          "base_damage_value": 11,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "you can swap places with the target",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M or A damage; you can swap places with the target"
+        }
+      }
+    },
+    "effect": "If you obtain a tier 2 or tier 3 outcome and can’t swap places with the target because one or both of you is too big to fit into the swapped space, you both remain in your original spaces and the target takes 1 extra damage",
+    "special_effect": null
+  },
+  {
+    "id": "pain_for_pain",
+    "name": "Pain for Pain",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "An enemy who tagged you will pay for that.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "13 + M or A damage",
+          "base_damage_value": 13,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M or A damage"
+        }
+      }
+    },
+    "effect": "If the target dealt damage to you since the end of your last turn, this strike deals additional damage equal to your Might or Agility score (your choice)",
+    "special_effect": null
+  },
+  {
+    "id": "devastating_rush",
+    "name": "Devastating Rush",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "The faster you move, the harder you hit.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "13 + M or A damage",
+          "base_damage_value": 13,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M or A damage"
+        }
+      }
+    },
+    "effect": "You can move up to 3 squares straight toward the target before this strike, which deals extra damage equal to the number of squares you move this way",
+    "special_effect": null
+  },
+  {
+    "id": "lets_dance",
+    "name": "Lets Dance",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Keeping your enemies stumbling around the battlefield is second nature to you.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage; slide 2"
+        },
+        "high": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M or A damage; slide 2"
+        }
+      }
+    },
+    "effect": "You can shift into any square the target leaves after you slide them",
+    "special_effect": null
+  },
+  {
+    "id": "shock_and_awe",
+    "name": "Shock and Awe",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You execute a brutal strike that leaves your foe reeling.",
+    "keywords": ["Melee", "Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": ["Melee 1", "ranged 10"],
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M or A damage"
+        }
+      }
+    },
+    "effect": "The target takes a bane on their next power roll made before the end of their next turn",
+    "special_effect": null
+  },
+  {
+    "id": "hamstring_shot",
+    "name": "Hamstring Shot",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A well-placed shot leaves your enemy struggling to move.",
+    "keywords": ["Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<w, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "3 + M or A damage; A<w, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<v, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "5 + M or A damage; A<v, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<s, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "7 + M or A damage; A<s, slowed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "two_shot",
+    "name": "Two Shot",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "When you fire two arrows back-to-back, both hit their mark.",
+    "keywords": ["Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 12",
+      "area": null
+    },
+    "targets": "Two creatures or objects",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "net_and_stab",
+    "name": "Net and Stab",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "The well-thrown net that follows your main attack leaves your foes right where you want them.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 2",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<w, slowed (EoT)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "4 + M or A damage; A<w, slowed (EoT)"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<v, slowed (EoT)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "6 + M or A damage; A<v, slowed (EoT)"
+        },
+        "high": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "A<s, restrained (EoT)",
+          "potencies": [],
+          "conditions": ["restrained"],
+          "all_text": "8 + M or A damage; A<s, restrained (EoT)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "protective_attack",
+    "name": "Protective Attack",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "The strength of your assault makes it impossible for your foe to ignore you.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "8 + M or A damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "11 + M or A damage",
+          "base_damage_value": 11,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M or A damage"
+        }
+      }
+    },
+    "effect": "The target is taunted until the end of their next turn.",
+    "special_effect": null
+  },
+  {
+    "id": "patient_shot",
+    "name": "Patient Shot",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Breathe … aim … wait … then strike!",
+    "keywords": ["Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 15",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "13 + M or A damage",
+          "base_damage_value": 13,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M or A damage"
+        }
+      }
+    },
+    "effect": "If you don’t take a move action this turn, this strike deals extra damage equal to your Might or Agility score (your choice).",
+    "special_effect": null
+  },
+  {
+    "id": "leaping_lightning",
+    "name": "Leaping Lightning",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Lightning jumps from your weapon as you strike to harm a nearby foe.",
+    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + M, R, I, or P lightning damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M, R, I, or P lightning damage"
+        },
+        "mid": {
+          "damage_expression": "8 + M, R, I, or P lightning damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M, R, I, or P lightning damage"
+        },
+        "high": {
+          "damage_expression": "11 + M, R, I, or P lightning damage",
+          "base_damage_value": 11,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M, R, I, or P lightning damage"
+        }
+      }
+    },
+    "effect": "A creature or object of your choice within 2 squares of the target takes lightning damage equal to the characteristic score used for this ability’s power roll",
+    "special_effect": null
+  },
+  {
+    "id": "where_i_want_you",
+    "name": "Where I Want You",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "When your stick speaks, your enemy moves.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 2",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage; slide 1"
+        },
+        "high": {
+          "damage_expression": "10 + M or A damage",
+          "base_damage_value": 10,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M or A damage; slide 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "fancy_footwork",
+    "name": "Fancy Footwork",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "All combat is a dance—and you’ll be the one leading.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage; push 1"
+        },
+        "high": {
+          "damage_expression": "10 + M or A damage",
+          "base_damage_value": 10,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M or A damage; push 2"
+        }
+      }
+    },
+    "effect": "You can shift into any square the target leaves after you push them",
+    "special_effect": null
+  },
+  {
+    "id": "shield_bash",
+    "name": "Shield Bash",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "In your hands, a shield isn’t just for protection.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + M or A damage; push 1"
+        },
+        "mid": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage; push 2"
+        },
+        "high": {
+          "damage_expression": "9 + M or A damage",
+          "base_damage_value": 9,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 3; M<s, prone",
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "9 + M or A damage; push 3; M<s, prone"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "weakening_brand",
+    "name": "Weakening Brand",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "The impact of your weapon brands your target for destruction.",
+    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + M, R, I, or P holy damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M, R, I, or P holy damage"
+        },
+        "mid": {
+          "damage_expression": "5 + M, R, I, or P holy damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M, R, I, or P holy damage"
+        },
+        "high": {
+          "damage_expression": "8 + M, R, I, or P holy damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": ["Might", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M, R, I, or P holy damage"
+        }
+      }
+    },
+    "effect": "Until the end of the target’s next turn, they have damage weakness equal to the characteristic score used for this ability’s power roll.",
+    "special_effect": null
+  },
+  {
+    "id": "extension_of_my_arm",
+    "name": "Extension of My Arm",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "When you draw your whip back after an attack, your enemy is drawn ever closer.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 3",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "vertical pull 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + M or A damage; vertical pull 1"
+        },
+        "mid": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "vertical pull 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage; vertical pull 2"
+        },
+        "high": {
+          "damage_expression": "10 + M or A damage",
+          "base_damage_value": 10,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "vertical pull 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M or A damage; vertical pull 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "draconian_pride",
+    "name": "Draconian Pride",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You let loose a mighty roar to shake your foes’ spirits.",
+    "keywords": ["Area", "Magic"],
+    "type": "Main action",
+    "range": {
+      "distance": null,
+      "area": "1 burst"
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage; push 1"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage; push 2"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "dragon_breath",
+    "name": "Dragon Breath",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A furious exhalation of energy washes over your foes.",
+    "keywords": ["Area", "Magic"],
+    "type": "Main action",
+    "range": {
+      "distance": "within 1",
+      "area": "3 cube"
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        }
+      }
+    },
+    "effect": "You choose the ability’s damage type from acid, cold, corruption, fire, lightning, or poison.",
+    "special_effect": null
+  },
+  {
+    "id": "the_wode_defends",
+    "name": "The Wode Defends",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Thorny vines erupt from every surface and attempt to bind your foe.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<w, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "2 + M or A damage; a<w, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<v, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "3 + M or A damage; a<v, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<s, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "5 + M or A damage; a<s, slowed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "shadowmeld",
+    "name": "Shadowmeld",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You become an actual shadow.",
+    "keywords": ["Magic"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "effect": "You flatten yourself into a shadow against a wall or floor you are touching, and become hidden from any creature you have cover or concealment from or who isn’t observing you. While in shadow form, you have full awareness of your surroundings, and strikes made against you and tests made to search for you take a bane. You can’t move or be force moved, and you can’t take main actions or maneuvers except to exit this form or to direct creatures under your control, such as one you summon using an ability. Any ability or effect that targets more than 1 square affects you in this form only if it explicitly affects the surface you are flattened against. You can exit this form as a maneuver. If the surface you are flattened against is destroyed, this ability ends and you take 1d6 damage that can’t be reduced in any way.",
+    "special_effect": null
+  },
+  {
+    "id": "detonate_sigil",
+    "name": "Detonate Sigil",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A magic sigil you placed on a creature explodes with energy.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature bearing your sigil",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + R, I, or P damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + R, I, or P damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P damage; slide 2"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + R, I, or P damage; slide 3"
+        }
+      }
+    },
+    "effect": "The sigil disappears from the creature.",
+    "special_effect": null
+  },
+  {
+    "id": "concussive_slam",
+    "name": "Concussive Slam",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You slam an invisible force down upon the target.",
+    "keywords": ["Psionic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + R, I, or P damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + R, I, or P damage"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P damage; push 1"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 2; m<s, prone",
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "7 + R, I, or P damage; push 2; m<s, prone"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "psionic_bolt",
+    "name": "Psionic Bolt",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You shoot forth a purple beam of psychic force that moves your target.",
+    "keywords": ["Psionic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + R, I, or P psychic damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + R, I, or P psychic damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P psychic damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P psychic damage; slide 2"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P psychic damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + R, I, or P psychic damage; slide 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "minor_acceleration",
+    "name": "Minor Acceleration",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You fill yourself or an ally with a burst of speed.",
+    "keywords": ["Psionic", "Melee"],
+    "type": "Main action / Maneuver",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "Self or one ally; One creature or object",
+    "effect": "The target gains a bonus to speed equal to your Reason, Intuition, or Presence score (your choice) until the start of your next turn.",
+    "special_effect": null
+  },
+  {
+    "id": "corrupt_spirit",
+    "name": "Corrupt Spirit",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You unlock the sinister secrets of pain.",
+    "keywords": ["Magic"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "effect": "Until the end of your turn, whenever you use a damage-dealing heroic ability against a single target, you can weaken that target’s life force. The ability deals extra corruption damage equal to your highest characteristic score.",
+    "special_effect": null
+  },
+  {
+    "id": "share_head",
+    "name": "Share Head",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You don’t have a head, but you can psionically borrow another.",
+    "keywords": ["Psionic", "Ranged"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One willing creature",
+    "effect": "You can see, hear, and smell as if you were in the target’s space. Additionally, you can borrow their mouth to speak when you wish to do so, speaking in your own voice. This effect ends when you use Share Head on a different target, when the target moves more than 10 squares away from you, or when the target is no longer willing to share their head with you.",
+    "special_effect": null
+  },
+  {
+    "id": "stone_eyes",
+    "name": "Stone Eyes",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your looks don’t kill—they petrify.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "2 damage; M<w, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "4 damage; M<v, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "6 damage; M<s, slowed (save ends)"
+        }
+      }
+    },
+    "effect": "This ability has no effect on a creature who can’t see you or who purposefully avoids looking at your eyes. A creature reduced to 0 Stamina by this ability is turned to inanimate stone.",
+    "special_effect": null
+  },
+  {
+    "id": "contact_spirits",
+    "name": "Contact Spirits",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "The restless dead speak to you.",
+    "keywords": ["Magic"],
+    "type": "Main action",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You take corruption damage equal to 5 + your level."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The spirit of anyone you know of who has died speaks to you, provided they are on the same world as you. You learn how they died and can ask them one question, which they can answer truthfully or untruthfully."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "As tier 2, but you can ask three questions."
+        }
+      }
+    },
+    "effect": "If any sapient creatures have died nearby within the last 24 hours, you have a double bane on the power roll for this ability if any of those creatures were hostile to you, or a double edge if any of them were friendly to you. When you use this ability, you can’t do so again until you earn 1 or more Victories.",
+    "special_effect": null
+  },
+  {
+    "id": "psychic_blast",
+    "name": "Psychic Blast (Special Heroic Resource Cost)",
+    "costs": {
+      "resource": "heroic_resource",
+      "amount": "all"
+    },
+    "story_text": "Psionic energy bursts from your body in an iridescent shimmer.",
+    "keywords": ["Area", "Psionic"],
+    "type": "Main action",
+    "range": {
+      "distance": null,
+      "area": "3 burst"
+    },
+    "targets": "Each creature in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Your highest characteristic score"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "1 psychic damage for each Heroic Resource you spend, to a maximum equal to your level"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "1 psychic damage for each Heroic Resource you spend, to a maximum equal to your level + your highest characteristic"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "1 psychic damage for each Heroic Resource you spend"
+        }
+      }
+    },
+    "effect": "Whenever you become bleeding, frightened, or weakened, you must use Psychic Blast as a free triggered action.",
+    "special_effect": null
+  },
+  {
+    "id": "telekinetic_grasp",
+    "name": "Telekinetic Grasp",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You reach out with your mind to move a creature or object.",
+    "keywords": ["Psionic", "Ranged", "Strike"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Push or pull 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Push or pull 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Push or pull 3"
+        }
+      }
+    },
+    "effect": "Drawback: You have psychic weakness 5",
+    "special_effect": null
+  },
+  {
+    "id": "issue_order",
+    "name": "Issue Order",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "“Move or die, folks.”",
+    "keywords": ["Ranged"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "effect": "The target can use a triggered action to take a main action, a maneuver, or a move action. If you have the Strike Now tactician ability, the target can use a free triggered action instead of a triggered action to gain the benefit of this ability.",
+    "special_effect": null
+  },
+  {
+    "id": "posthumous_retirement",
+    "name": "Posthumous Retirement",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You make your modified collar explode.",
+    "keywords": ["Area", "Magic"],
+    "type": "Maneuver",
+    "range": {
+      "distance": null,
+      "area": "1 burst"
+    },
+    "targets": "Each enemy in the area",
+    "effect": "Your loyalty collar detonates, dealing fire damage equal to 5 plus your level to each target. Once you use this ability, you can’t use it again until you spend 1 uninterrupted minute out of combat resetting the collar.",
+    "special_effect": null
+  },
+  {
+    "id": "rogue_wave",
+    "name": "Rogue Wave",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You summon a wave of water to batter your foe.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Your highest characteristic score"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage; push or pull 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage; push or pull 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage; push or pull 3"
+        }
+      }
+    },
+    "effect": "You can forgo dealing damage with this ability.",
+    "special_effect": null
+  }
+]

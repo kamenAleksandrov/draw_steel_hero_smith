@@ -1,0 +1,6 @@
+{
+  "id": "feat_test_user_001",
+  "name": "Test Feature: Courageous Shout",
+  "text": "Once per scene, shout to grant allies +1 power die on their next attack.",
+  "abilityIds": ["test_id"]
+}

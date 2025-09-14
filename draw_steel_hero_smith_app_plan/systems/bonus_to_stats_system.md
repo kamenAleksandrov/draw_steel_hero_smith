@@ -1,0 +1,1 @@
+i need to be able to give a bonus to any stat that a hero possesses 

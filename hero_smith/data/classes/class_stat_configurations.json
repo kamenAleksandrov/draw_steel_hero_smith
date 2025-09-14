@@ -1,0 +1,248 @@
+{
+  "class_censor": {
+    "classId": "class_censor",
+    "name": "Censor",
+    "description": "Divine warriors who serve as champions of their faith",
+    "fixedStats": {
+      "might": 2,
+      "presence": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate", 
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  },
+  "class_conduit": {
+    "classId": "class_conduit",
+    "name": "Conduit",
+    "description": "Magical practitioners who channel elemental forces",
+    "fixedStats": {
+      "intuition": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Focused",
+        "values": [2, 2, -1, -1],
+        "description": "Two high stats, two weaknesses"
+      },
+      {
+        "name": "Specialized",
+        "values": [2, 1, 1, -1],
+        "description": "One high, two moderate, one weakness"
+      },
+      {
+        "name": "Balanced",
+        "values": [2, 1, 0, 0],
+        "description": "One high, one moderate, others neutral"
+      },
+      {
+        "name": "Well-rounded",
+        "values": [1, 1, 1, 0],
+        "description": "Three moderate strengths, one neutral"
+      }
+    ]
+  },
+  "class_elementalist": {
+    "classId": "class_elementalist",
+    "name": "Elementalist",
+    "description": "Scholars of magic who master elemental manipulation",
+    "fixedStats": {
+      "reason": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Focused",
+        "values": [2, 2, -1, -1],
+        "description": "Two high stats, two weaknesses"
+      },
+      {
+        "name": "Specialized",
+        "values": [2, 1, 1, -1],
+        "description": "One high, two moderate, one weakness"
+      },
+      {
+        "name": "Balanced",
+        "values": [2, 1, 0, 0],
+        "description": "One high, one moderate, others neutral"
+      },
+      {
+        "name": "Well-rounded",
+        "values": [1, 1, 1, 0],
+        "description": "Three moderate strengths, one neutral"
+      }
+    ]
+  },
+  "class_fury": {
+    "classId": "class_fury",
+    "name": "Fury",
+    "description": "Berserkers who channel rage into devastating combat",
+    "fixedStats": {
+      "might": 2,
+      "agility": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate",
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  },
+  "class_null": {
+    "classId": "class_null",
+    "name": "Null",
+    "description": "Anti-magic specialists who resist and dispel magical effects",
+    "fixedStats": {
+      "agility": 2,
+      "intuition": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate",
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  },
+  "class_shadow": {
+    "classId": "class_shadow",
+    "name": "Shadow",
+    "description": "Stealthy operatives who strike from darkness",
+    "fixedStats": {
+      "agility": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Focused",
+        "values": [2, 2, -1, -1],
+        "description": "Two high stats, two weaknesses"
+      },
+      {
+        "name": "Specialized",
+        "values": [2, 1, 1, -1],
+        "description": "One high, two moderate, one weakness"
+      },
+      {
+        "name": "Balanced",
+        "values": [2, 1, 0, 0],
+        "description": "One high, one moderate, others neutral"
+      },
+      {
+        "name": "Well-rounded",
+        "values": [1, 1, 1, 0],
+        "description": "Three moderate strengths, one neutral"
+      }
+    ]
+  },
+  "class_tactician": {
+    "classId": "class_tactician",
+    "name": "Tactician",
+    "description": "Strategic leaders who coordinate battlefield tactics",
+    "fixedStats": {
+      "might": 2,
+      "reason": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate",
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  },
+  "class_talent": {
+    "classId": "class_talent",
+    "name": "Talent",
+    "description": "Versatile individuals with innate supernatural abilities",
+    "fixedStats": {
+      "reason": 2,
+      "presence": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate",
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  },
+  "class_troubadour": {
+    "classId": "class_troubadour",
+    "name": "Troubadour",
+    "description": "Charismatic performers who weave magic through art",
+    "fixedStats": {
+      "agility": 2,
+      "presence": 2
+    },
+    "availableArrays": [
+      {
+        "name": "Balanced",
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "name": "Moderate",
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "name": "Even",
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ]
+  }
+}

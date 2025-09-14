@@ -18,7 +18,7 @@ gear:
 - kits
 - gear
 - treasure
-- leveled items
+- leveled treasures
 
-projects:
-- projects
+downtime projects:
+- downtime projects

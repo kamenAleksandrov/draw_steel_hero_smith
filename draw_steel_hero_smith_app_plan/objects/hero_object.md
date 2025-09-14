@@ -62,12 +62,12 @@ features:
 - [[float_box_display_widget|languages]] 
 - [[float_box_display_widget|skills]] 
 - [[perk_summary|perks]]
-- [[project_summary|projects]] 
+- [[downtime_project_summary|projects]] 
 - [[increase_decrease_counter_widget|project points]]
 - [[titles_summary|titles]]
 - [[ability_summary|abilities]] 
 
-modifications:
+modifications (this could be included as a separate widget or directly onto any bonus):
 - to any of the hero stats
 
 all of them need to be editable and viewable (gets and stets)

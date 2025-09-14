@@ -6,4 +6,4 @@ complications have all of or a combination of the following:
 - feature
 - ability
 - bonus to hero stats
-- granted item/s
+- granted treasure/s

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "test_project",
+    "name": "Test Project",
+    "project_source": [
+      {
+        "id": "test source id 1",
+        "name": "test source name 1",
+        "language": "test source language 1"
+      },
+      {
+        "id": "test source id 2",
+        "name": "test source name 2",
+        "language": "test source language 2"
+      }
+    ],
+    "project_events": [
+      {
+        "id": "test event id 1",
+        "name": "test event name 1",
+        "description": "test event description 1"
+      },
+      {
+        "id": "test event id 2",
+        "name": "test event name 2",
+        "description": "test event description 2"
+      }
+    ],
+    "project_roll_characteristic": [
+      {
+        "id": "char1",
+        "name": "Characteristic 1"
+      },
+      {
+        "id": "char2",
+        "name": "Characteristic 2"
+      }
+    ],
+    "item_prerequisite": [
+      {
+        "id": "item1",
+        "name": "Item 1"
+      },
+      {
+        "id": "item2",
+        "name": "Item 2"
+      }
+    ],
+    "project_goal": 100,
+    "description": "Test project description",
+    "project_bonuses": [
+      {
+        "id": "bonus1",
+        "name": "Bonus 1"
+      },
+      {
+        "id": "bonus2",
+        "name": "Bonus 2"
+      }
+    ]
+  }
+]

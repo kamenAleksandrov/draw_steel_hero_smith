@@ -1,0 +1,152 @@
+[
+  {
+    "id": "subclass_troubadour_virtuoso",
+    "type": "subclass",
+    "name": "Virtuoso",
+    "parent_class": "troubadour"
+  },
+  {
+    "id": "subclass_tactician_vanguard",
+    "type": "subclass",
+    "name": "Vanguard",
+    "parent_class": "tactician"
+  },
+  {
+    "id": "subclass_elementalist_void",
+    "type": "subclass",
+    "name": "Void",
+    "parent_class": "elementalist"
+  },
+  {
+    "id": "subclass_talent_telepathy",
+    "type": "subclass",
+    "name": "Telepathy",
+    "parent_class": "talent"
+  },
+  {
+    "id": "subclass_talent_telekinesis",
+    "type": "subclass",
+    "name": "Telekinesis",
+    "parent_class": "talent"
+  },
+  {
+    "id": "subclass_fury_stromwright",
+    "type": "subclass",
+    "name": "Stromwright",
+    "parent_class": "fury"
+  },
+  {
+    "id": "subclass_fury_reaver",
+    "type": "subclass",
+    "name": "Reaver",
+    "parent_class": "fury"
+  },
+  {
+    "id": "subclass_censor_paragon",
+    "type": "subclass",
+    "name": "Paragon",
+    "parent_class": "censor"
+  },
+  {
+    "id": "subclass_censor_oracle",
+    "type": "subclass",
+    "name": "Oracle",
+    "parent_class": "censor"
+  },
+  {
+    "id": "subclass_null_metakinetic",
+    "type": "subclass",
+    "name": "Metakinetic",
+    "parent_class": "null"
+  },
+  {
+    "id": "subclass_tactician_mastermind",
+    "type": "subclass",
+    "name": "Mastermind",
+    "parent_class": "tactician"
+  },
+  {
+    "id": "subclass_tactician_insurgent",
+    "type": "subclass",
+    "name": "Insurgent",
+    "parent_class": "tactician"
+  },
+  {
+    "id": "subclass_elementalist_green",
+    "type": "subclass",
+    "name": "Green",
+    "parent_class": "elementalist"
+  },
+  {
+    "id": "subclass_elementalist_fire",
+    "type": "subclass",
+    "name": "Fire",
+    "parent_class": "elementalist"
+  },
+  {
+    "id": "subclass_censor_exorcist",
+    "type": "subclass",
+    "name": "Exorcist",
+    "parent_class": "censor"
+  },
+  {
+    "id": "subclass_elementalist_earth",
+    "type": "subclass",
+    "name": "Earth",
+    "parent_class": "elementalist"
+  },
+  {
+    "id": "subclass_troubadour_duelist",
+    "type": "subclass",
+    "name": "Duelist",
+    "parent_class": "troubadour"
+  },
+  {
+    "id": "subclass_null_cryokinetic",
+    "type": "subclass",
+    "name": "Cryokinetic",
+    "parent_class": "null"
+  },
+  {
+    "id": "subclass_null_chronokinetic",
+    "type": "subclass",
+    "name": "Chronokinetic",
+    "parent_class": "null"
+  },
+  {
+    "id": "subclass_talent_chronopathy",
+    "type": "subclass",
+    "name": "Chronopathy",
+    "parent_class": "talent"
+  },
+  {
+    "id": "subclass_shadow_college_of_the_harlequin_mask",
+    "type": "subclass",
+    "name": "College of the Harlequin Mask",
+    "parent_class": "shadow"
+  },
+  {
+    "id": "subclass_shadow_college_of_caustic_alchemy",
+    "type": "subclass",
+    "name": "College of Caustic Alchemy",
+    "parent_class": "shadow"
+  },
+  {
+    "id": "subclass_shadow_college_of_black_ash",
+    "type": "subclass",
+    "name": "College of Black Ash",
+    "parent_class": "shadow"
+  },
+  {
+    "id": "subclass_fury_berserker",
+    "type": "subclass",
+    "name": "Berserker",
+    "parent_class": "fury"
+  },
+  {
+    "id": "subclass_troubadour_auteur",
+    "type": "subclass",
+    "name": "Auteur",
+    "parent_class": "troubadour"
+  }
+]

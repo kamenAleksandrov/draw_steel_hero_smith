@@ -1,0 +1,205 @@
+[
+  {
+    "ancestry_id": "ancestry_devil",
+    "points": 3,
+    "signature": {
+      "name": "Silver Tongue",
+      "ability_name": null,
+      "description": "Gain one interpersonal skill; edge to discover motivations and pitfalls during negotiation."
+    },
+    "traits": [
+      {"id": "devil_barbed_tail", "name": "Barbed Tail", "cost": 1, "ability_name": null, "description": "Once per round on a melee strike, deal extra damage equal to your highest characteristic."},
+      {"id": "devil_beast_legs", "name": "Beast Legs", "cost": 1, "ability_name": null, "description": "Speed 6."},
+      {"id": "devil_glowing_eyes", "name": "Glowing Eyes", "cost": 1, "ability_name": null, "description": "When you take damage from a creature, use a triggered action to deal that creature 1d10 + level psychic damage."},
+      {"id": "devil_hellsight", "name": "Hellsight", "cost": 1, "ability_name": null, "description": "Ignore bane from concealment on strikes against concealed creatures."},
+      {"id": "devil_impressive_horns", "name": "Impressive Horns", "cost": 2, "ability_name": null, "description": "You succeed on saving throws on a 5+."},
+      {"id": "devil_prehensile_tail", "name": "Prehensile Tail", "cost": 2, "ability_name": null, "description": "You can’t be flanked."},
+      {"id": "devil_wings", "name": "Wings", "cost": 2, "ability_name": null, "description": "Limited flight for rounds equal to Might; weakness 5 while flying at ≤3rd level."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_dragon_knight",
+    "points": 3,
+    "signature": {
+      "name": "Wyrmplate",
+      "ability_name": null,
+      "description": "Damage immunity equal to your level to chosen type; can change on respite."
+    },
+    "traits": [
+      {"id": "dk_draconian_guard", "name": "Draconian Guard", "cost": 1, "ability_name": null, "description": "Triggered: reduce strike damage to you or adjacent ally by your level."},
+      {"id": "dk_draconian_pride", "name": "Draconian Pride", "cost": 2, "ability_name": "draconian_pride", "description": "Signature ability (see abilities)."},
+      {"id": "dk_dragon_breath", "name": "Dragon Breath", "cost": 2, "ability_name": "dragon_breath", "description": "Signature ability (see abilities)."},
+      {"id": "dk_prismatic_scales", "name": "Prismatic Scales", "cost": 1, "ability_name": null, "description": "Choose one Wyrmplate immunity to always have in addition to Wyrmplate."},
+      {"id": "dk_remember_your_oath", "name": "Remember Your Oath", "cost": 1, "ability_name": null, "description": "As a maneuver, recite oath; until start of next turn, saves succeed on 4+."},
+      {"id": "dk_wings", "name": "Wings", "cost": 2, "ability_name": null, "description": "Limited flight for rounds equal to Might; weakness 5 while flying at ≤3rd level."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_dwarf",
+    "points": 3,
+    "signature": {
+      "name": "Runic Carving",
+      "ability_name": null,
+      "description": "Carve a rune (Detection, Light, or Voice) with 10 minutes; one active at a time."
+    },
+    "traits": [
+      {"id": "dwarf_great_fortitude", "name": "Great Fortitude", "cost": 2, "ability_name": null, "description": "You can’t be made weakened."},
+      {"id": "dwarf_grounded", "name": "Grounded", "cost": 1, "ability_name": null, "description": "+1 stability."},
+      {"id": "dwarf_spark_off_your_skin", "name": "Spark Off Your Skin", "cost": 2, "ability_name": null, "description": "+6 Stamina; increases by 6 at 4th, 7th, and 10th levels."},
+      {"id": "dwarf_stand_tough", "name": "Stand Tough", "cost": 1, "ability_name": null, "description": "Might +1 for resisting potencies; edge on Might tests vs effects/environment."},
+      {"id": "dwarf_stone_singer", "name": "Stone Singer", "cost": 1, "ability_name": null, "description": "After 1 hour singing, reshape unworked stone within 3 squares (not destroy)."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_wode_elf",
+    "points": 3,
+    "signature": {
+      "name": "Wode Elf Glamor",
+      "ability_name": null,
+      "description": "Edge to hide/sneak; foes take a bane to search for you while hidden."
+    },
+    "traits": [
+      {"id": "wode_forest_walk", "name": "Forest Walk", "cost": 1, "ability_name": null, "description": "Shift into and within difficult terrain."},
+      {"id": "wode_quick_and_brutal", "name": "Quick and Brutal", "cost": 1, "ability_name": null, "description": "On critical hit, gain an additional main and move action (instead of just main)."},
+      {"id": "wode_otherworldly_grace", "name": "Otherworldly Grace", "cost": 2, "ability_name": null, "description": "Saves succeed on 5+."},
+      {"id": "wode_revisit_memory", "name": "Revisit Memory", "cost": 1, "ability_name": null, "description": "Edge on tests to recall lore."},
+      {"id": "wode_swift", "name": "Swift", "cost": 1, "ability_name": null, "description": "Speed 6."},
+      {"id": "wode_the_wode_defends", "name": "The Wode Defends", "cost": 2, "ability_name": "the_wode_defends", "description": "Signature ability (see abilities)."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_high_elf",
+    "points": 3,
+    "signature": {
+      "name": "High Elf Glamor",
+      "ability_name": null,
+      "description": "Edge on Presence tests using Flirt or Persuade; engaging glamor." 
+    },
+    "traits": [
+      {"id": "high_elf_glamor_of_terror", "name": "Glamor of Terror", "cost": 2, "ability_name": null, "description": "On taking damage, triggered action to frighten the creature until end of next turn."},
+      {"id": "high_elf_graceful_retreat", "name": "Graceful Retreat", "cost": 1, "ability_name": null, "description": "+1 shift distance on Disengage."},
+      {"id": "high_elf_high_senses", "name": "High Senses", "cost": 1, "ability_name": null, "description": "Edge on noticing threats."},
+      {"id": "high_elf_otherworldly_grace", "name": "Otherworldly Grace", "cost": 2, "ability_name": null, "description": "Saves succeed on 5+."},
+      {"id": "high_elf_revisit_memory", "name": "Revisit Memory", "cost": 1, "ability_name": null, "description": "Edge on tests to recall lore."},
+      {"id": "high_elf_unstoppable_mind", "name": "Unstoppable Mind", "cost": 2, "ability_name": null, "description": "You can’t be made dazed."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_hakaan",
+    "points": 3,
+    "signature": {
+      "name": "Big!",
+      "ability_name": null,
+      "description": "Size 1L."
+    },
+    "traits": [
+      {"id": "hakaan_all_is_a_feather", "name": "All Is a Feather", "cost": 1, "ability_name": null, "description": "Edge on lifting/hauling tests."},
+      {"id": "hakaan_doomsight", "name": "Doomsight", "cost": 2, "ability_name": null, "description": "Predetermine doomed encounter; while doomed, auto tier 3 outcomes; die end of encounter."},
+      {"id": "hakaan_forceful", "name": "Forceful", "cost": 1, "ability_name": null, "description": "+1 to forced movement distance."},
+      {"id": "hakaan_great_fortitude", "name": "Great Fortitude", "cost": 2, "ability_name": null, "description": "You can’t be made weakened."},
+      {"id": "hakaan_stand_tough", "name": "Stand Tough", "cost": 1, "ability_name": null, "description": "Might +1 for resisting potencies; edge on Might tests vs effects/environment."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_human",
+    "points": 3,
+    "signature": {
+      "name": "Detect the Supernatural",
+      "ability_name": null,
+      "description": "Maneuver: sense nearby supernatural objects and extraplanar/undead/constructs within 5 squares."
+    },
+    "traits": [
+      {"id": "human_cant_take_hold", "name": "Can’t Take Hold", "cost": 1, "ability_name": null, "description": "Ignore temporary difficult terrain from magic/psionics; reduce forced movement from those by 1."},
+      {"id": "human_determination", "name": "Determination", "cost": 2, "ability_name": null, "description": "If frightened, slowed, or weakened, maneuver to end one."},
+      {"id": "human_perseverance", "name": "Perseverance", "cost": 1, "ability_name": null, "description": "Edge on Endurance; slowed speed 3 instead of 2."},
+      {"id": "human_resist_the_unnatural", "name": "Resist the Unnatural", "cost": 1, "ability_name": null, "description": "Triggered: when taking typed damage, take half."},
+      {"id": "human_staying_power", "name": "Staying Power", "cost": 2, "ability_name": null, "description": "+2 Recoveries."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_memonek",
+    "points": 4,
+    "signature": {
+      "name": "Fall Lightly & Lightweight",
+      "ability_name": null,
+      "description": "Reduce fall distance by 2; treat size as one smaller vs forced movement."
+    },
+    "traits": [
+      {"id": "memonek_i_am_law", "name": "I Am Law", "cost": 1, "ability_name": null, "description": "Enemies can’t move through your space unless you allow."},
+      {"id": "memonek_keeper_of_order", "name": "Keeper of Order", "cost": 2, "ability_name": null, "description": "Once/round change edge/bane on a power roll within reach (self/adjacent)."},
+      {"id": "memonek_lightning_nimbleness", "name": "Lightning Nimbleness", "cost": 2, "ability_name": null, "description": "Speed 7."},
+      {"id": "memonek_nonstop", "name": "Nonstop", "cost": 2, "ability_name": null, "description": "You can’t be made slowed."},
+      {"id": "memonek_systematic_mind", "name": "Systematic Mind", "cost": 1, "ability_name": null, "description": "Edge parsing non-chaotic schematics; treat unknown language as related language."},
+      {"id": "memonek_unphased", "name": "Unphased", "cost": 1, "ability_name": null, "description": "You can’t be made surprised."},
+      {"id": "memonek_useful_emotion", "name": "Useful Emotion", "cost": 1, "ability_name": null, "description": "At start of any combat, gain 1 surge."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_orc",
+    "points": 3,
+    "signature": {
+      "name": "Relentless",
+      "ability_name": null,
+      "description": "When damage leaves you dying, make a free strike; if it reduces target to 0 Stamina, spend a Recovery."
+    },
+    "traits": [
+      {"id": "orc_bloodfire_rush", "name": "Bloodfire Rush", "cost": 1, "ability_name": null, "description": "+2 speed for the round the first time you take damage in a round."},
+      {"id": "orc_glowing_recovery", "name": "Glowing Recovery", "cost": 2, "ability_name": null, "description": "On Catch Breath, you can spend any number of Recoveries."},
+      {"id": "orc_grounded", "name": "Grounded", "cost": 1, "ability_name": null, "description": "+1 stability."},
+      {"id": "orc_nonstop", "name": "Nonstop", "cost": 2, "ability_name": null, "description": "You can’t be made slowed."},
+      {"id": "orc_passionate_artisan", "name": "Passionate Artisan", "cost": 1, "ability_name": null, "description": "+2 to crafting project rolls with two chosen crafting skills; choose two crafting skills when gaining initial skills."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_polder",
+    "points": 4,
+    "signature": {
+      "name": "Shadowmeld & Small!",
+      "ability_name": "shadowmeld",
+      "description": "You have the Shadowmeld ability; size 1S."
+    },
+    "traits": [
+      {"id": "polder_corruption_immunity", "name": "Corruption Immunity", "cost": 1, "ability_name": null, "description": "Corruption immunity equal to level + 2."},
+      {"id": "polder_fearless", "name": "Fearless", "cost": 2, "ability_name": null, "description": "You can’t be made frightened."},
+      {"id": "polder_graceful_retreat", "name": "Graceful Retreat", "cost": 1, "ability_name": null, "description": "+1 shift distance on Disengage."},
+      {"id": "polder_nimblestep", "name": "Nimblestep", "cost": 2, "ability_name": null, "description": "Ignore difficult terrain; move full speed while sneaking."},
+      {"id": "polder_polder_geist", "name": "Polder Geist", "cost": 1, "ability_name": null, "description": "+3 speed at start of your turn if no enemy has LoE to you or you’re hidden/concealed."},
+      {"id": "polder_reactive_tumble", "name": "Reactive Tumble", "cost": 1, "ability_name": null, "description": "After being force moved, free triggered shift 1."}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_revenant",
+    "points": 3,
+    "signature": {
+      "name": "Former Life & Tough But Withered",
+      "ability_name": null,
+      "description": "Former Life: keep size/speed of previous ancestry. Tough But Withered: multiple immunities equal to level; fire weakness 5; inert at −winded until recovered or destroyed by fire."
+    },
+    "traits": [
+      {"id": "revenant_bloodless", "name": "Bloodless", "cost": 2, "ability_name": null, "description": "You can’t be made bleeding even while dying."},
+      {"id": "revenant_previous_life_1", "name": "Previous Life: 1 Point", "cost": 1, "ability_name": null, "description": "Select a 1-point trait from your previous ancestry."},
+      {"id": "revenant_previous_life_2", "name": "Previous Life: 2 Points", "cost": 2, "ability_name": null, "description": "Select a 2-point trait from your previous ancestry."},
+      {"id": "revenant_undead_influence", "name": "Undead Influence", "cost": 1, "ability_name": null, "description": "Edge on R/I/P tests to interact with undead."},
+      {"id": "revenant_vengeance_mark", "name": "Vengeance Mark", "cost": 2, "ability_name": null, "description": "Place a sigil on a creature; track them; up to level sigils; also unlocks the Detonate Sigil ability.", "grants_ability_name": "detonate_sigil"}
+    ]
+  },
+  {
+    "ancestry_id": "ancestry_time_raider",
+    "points": 3,
+    "signature": {
+      "name": "Psychic Scar",
+      "ability_name": null,
+      "description": "Psychic immunity equal to your level."
+    },
+    "traits": [
+      {"id": "tr_beyondsight", "name": "Beyondsight", "cost": 1, "ability_name": null, "description": "Adjust vision to see through thin obstructions; can’t see within 1 square; no LoE there; toggle as maneuver."},
+      {"id": "tr_foresight", "name": "Foresight", "cost": 1, "ability_name": null, "description": "Know location of non-hidden concealed creatures within 20; negate usual bane; impose bane on strike targeting you as a trigger."},
+      {"id": "tr_four_armed_athletics", "name": "Four-Armed Athletics", "cost": 1, "ability_name": null, "description": "Edge on Climb/Gymnastics/Swim when using all arms."},
+      {"id": "tr_four_armed_martial_arts", "name": "Four-Armed Martial Arts", "cost": 2, "ability_name": null, "description": "Grab/Knockback can target +1 adjacent; up to two creatures grabbed."},
+      {"id": "tr_psionic_gift_concussive_slam", "name": "Psionic Gift: Concussive Slam", "cost": 2, "ability_name": "concussive_slam", "description": "Signature ability (see abilities)."},
+      {"id": "tr_psionic_gift_psionic_bolt", "name": "Psionic Gift: Psionic Bolt", "cost": 2, "ability_name": "psionic_bolt", "description": "Signature ability (see abilities)."},
+      {"id": "tr_psionic_gift_minor_acceleration", "name": "Psionic Gift: Minor Acceleration", "cost": 2, "ability_name": "minor_acceleration", "description": "Signature ability (see abilities)."},
+      {"id": "tr_unstoppable_mind", "name": "Unstoppable Mind", "cost": 2, "ability_name": null, "description": "You can’t be made dazed."}
+    ]
+  }
+]
