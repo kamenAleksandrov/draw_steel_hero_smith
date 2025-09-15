@@ -12,7 +12,6 @@
     "type": "culture_upbringing",
     "name": "Martial",
     "description": "A hero with a martial upbringing was raised by warriors.",
-    "skillGroups": ["crafting", "exploration", "interpersonal", "intrigue", "lore"],
     "specificSkills": ["Blacksmithing", "Fletching", "Climb", "Endurance", "Ride", "Intimidate", "Alertness", "Track", "Monsters", "Strategy"],
     "skillDescription": "Blacksmithing or Fletching from crafting; Climb, Endurance, or Ride from exploration; Intimidate from interpersonal; Alertness or Track from intrigue; or Monsters or Strategy from lore"
   },
@@ -29,7 +28,7 @@
     "type": "culture_upbringing",
     "name": "Labor",
     "description": "Your hero came of age in a culture where people labored for a living.",
-    "skillGroups": ["crafting", "interpersonal", "exploration"],
+    "skillGroups": ["exploration"],
     "specificSkills": ["Blacksmithing", "Handle Animals"],
     "skillDescription": "The Blacksmithing skill (from the crafting skill group), the Handle Animals skill (from the interpersonal group), or a skill from the exploration group"
   },
@@ -38,7 +37,7 @@
     "type": "culture_upbringing",
     "name": "Creative",
     "description": "A hero with a creative upbringing was raised among folk who create art or other works valuable enough to trade.",
-    "skillGroups": ["interpersonal", "crafting"],
+    "skillGroups": ["crafting"],
     "specificSkills": ["Music", "Perform"],
     "skillDescription": "The Music or Perform skill (from the interpersonal skill group), or one skill from the crafting group"
   },

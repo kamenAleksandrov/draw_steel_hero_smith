@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/complications_object.md",
+                "file": "objects/titles_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "complications_object"
+              "title": "titles_object"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 401.49999618530273
+    "width": 303.5
   },
   "right": {
     "id": "433d24cd314c73ae",
@@ -171,32 +171,32 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
-    "objects/career_object.md",
-    "objects/ancestries_traits_object.md",
-    "objects/ancestries_object.md",
-    "objects/ability_object.md",
-    "pages/home_page.md",
+    "objects/treasure_object.md",
     "objects/titles_object.md",
-    "objects/subclasses_object.md",
     "objects/skills_object.md",
     "objects/perks_object.md",
     "objects/languages_object.md",
     "objects/kits_object.md",
     "objects/downtime_projects_object.md",
-    "objects/treasure_object.md",
+    "creators/story/downtime_projects_creator.md",
+    "creators/story/perks_creator.md",
+    "objects/culture_subelement_object.md",
+    "objects/culture_object.md",
+    "objects/complications_object.md",
+    "objects/career_object.md",
+    "objects/ancestries_traits_object.md",
+    "objects/ancestries_object.md",
+    "objects/ability_object.md",
+    "pages/home_page.md",
+    "objects/subclasses_object.md",
     "widgets/summaries/summaries_widget.md",
     "widgets/summaries/downtime_project_summary.md",
     "objects/hero_object.md",
     "pages/downtime_projects_page.md",
-    "creators/story/downtime_projects_creator.md",
-    "objects/culture_subelement_object.md",
-    "objects/culture_object.md",
-    "objects/complications_object.md",
     "pages/story_page.md",
     "widgets/selector_widget.md",
     "creators/items/treasures_creator.md",
     "pages/gear_page.md",
-    "systems/power_rolls_system.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",
