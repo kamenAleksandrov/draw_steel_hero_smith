@@ -13,6 +13,9 @@ story:
 - cultures
 - careers
 - complications
+- languages
+- skills
+- titles
 
 gear:
 - kits
