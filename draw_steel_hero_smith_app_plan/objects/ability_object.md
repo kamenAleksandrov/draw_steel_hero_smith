@@ -14,5 +14,6 @@ abilities have all of or a combination of the following:
 - potencies
 - conditions
 - ability roll
+- trigger
 - effect
 - special effect

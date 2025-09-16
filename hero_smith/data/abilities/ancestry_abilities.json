@@ -1,0 +1,380 @@
+[
+  {
+    "id": "draconian_pride",
+    "name": "Draconian Pride",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You let loose a mighty roar to shake your foes’ spirits.",
+    "keywords": ["Area", "Magic"],
+    "type": "Main action",
+    "range": {
+      "distance": null,
+      "area": "1 burst"
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage; push 1"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage; push 2"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "dragon_breath",
+    "name": "Dragon Breath",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A furious exhalation of energy washes over your foes.",
+    "keywords": ["Area", "Magic"],
+    "type": "Main action",
+    "range": {
+      "distance": "within 1",
+      "area": "3 cube"
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        }
+      }
+    },
+    "effect": "You choose the ability’s damage type from acid, cold, corruption, fire, lightning, or poison.",
+    "special_effect": null
+  },
+  {
+    "id": "the_wode_defends",
+    "name": "The Wode Defends",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Thorny vines erupt from every surface and attempt to bind your foe.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<w, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "2 + M or A damage; a<w, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": "3 + M or A damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<v, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "3 + M or A damage; a<v, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "a<s, slowed (save ends)",
+          "potencies": [],
+          "conditions": ["slowed"],
+          "all_text": "5 + M or A damage; a<s, slowed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "shadowmeld",
+    "name": "Shadowmeld",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You become an actual shadow.",
+    "keywords": ["Magic"],
+    "type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "effect": "You flatten yourself into a shadow against a wall or floor you are touching, and become hidden from any creature you have cover or concealment from or who isn’t observing you. While in shadow form, you have full awareness of your surroundings, and strikes made against you and tests made to search for you take a bane. You can’t move or be force moved, and you can’t take main actions or maneuvers except to exit this form or to direct creatures under your control, such as one you summon using an ability. Any ability or effect that targets more than 1 square affects you in this form only if it explicitly affects the surface you are flattened against. You can exit this form as a maneuver. If the surface you are flattened against is destroyed, this ability ends and you take 1d6 damage that can’t be reduced in any way.",
+    "special_effect": null
+  },
+  {
+    "id": "detonate_sigil",
+    "name": "Detonate Sigil",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A magic sigil you placed on a creature explodes with energy.",
+    "keywords": ["Magic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature bearing your sigil",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 + R, I, or P damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + R, I, or P damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P damage; slide 2"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + R, I, or P damage; slide 3"
+        }
+      }
+    },
+    "effect": "The sigil disappears from the creature.",
+    "special_effect": null
+  },
+  {
+    "id": "concussive_slam",
+    "name": "Concussive Slam",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You slam an invisible force down upon the target.",
+    "keywords": ["Psionic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + R, I, or P damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + R, I, or P damage"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P damage; push 1"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 2; m<s, prone",
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "7 + R, I, or P damage; push 2; m<s, prone"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "psionic_bolt",
+    "name": "Psionic Bolt",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You shoot forth a purple beam of psychic force that moves your target.",
+    "keywords": ["Psionic", "Ranged", "Strike"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Reason", "Intuition", "Presence"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + R, I, or P psychic damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + R, I, or P psychic damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": "5 + R, I, or P psychic damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R, I, or P psychic damage; slide 2"
+        },
+        "high": {
+          "damage_expression": "7 + R, I, or P psychic damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "slide 3",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + R, I, or P psychic damage; slide 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "minor_acceleration",
+    "name": "Minor Acceleration",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You fill yourself or an ally with a burst of speed.",
+    "keywords": ["Psionic", "Melee"],
+    "type": "Main action / Maneuver",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "Self or one ally; One creature or object",
+    "effect": "The target gains a bonus to speed equal to your Reason, Intuition, or Presence score (your choice) until the start of your next turn.",
+    "special_effect": null
+  }
+]
