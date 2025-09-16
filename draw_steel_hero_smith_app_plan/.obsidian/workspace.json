@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/classes_object.md",
+                "file": "pages/home_page.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "classes_object"
+              "title": "home_page"
             }
           }
         ]
@@ -171,6 +171,7 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "objects/classes_object.md",
     "objects/hero_object.md",
     "systems/level_up_system.md",
     "objects/ability_object.md",
@@ -196,7 +197,6 @@
     "pages/downtime_projects_page.md",
     "pages/story_page.md",
     "widgets/selector_widget.md",
-    "creators/items/treasures_creator.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",
