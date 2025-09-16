@@ -1,0 +1,155 @@
+{
+  "starting_characteristics": {
+    "classId": "class_shadow",
+    "name": "Shadow",
+    "motto": "“Whenever there is doubt, there is no doubt.” — Motto of the College of Black Ash",
+    "heroicResourceName": "Insight",
+    "baseStamina": 18,
+    "stamina_per_level": 6,
+    "baseRecoveries": 8,
+    "baseSpeed": 6,
+    "baseStability": 0,
+    "baseDisengage": 0,
+
+    "potency_progression": {
+      "weak": "Agility - 2",
+      "average": "Agility - 1",
+      "strong": "Agility"
+    },
+
+    "starting_skills": {
+      "granted_skills": ["Hide", "Sneak"],
+      "skill_groups": [
+        "Criminal Underworld",
+        "Exploration",
+        "Interpersonal",
+        "Intrigue"
+      ],
+      "skill_count": 5,
+      "quick_build": [
+        "Criminal Underworld",
+        "Hide",
+        "Lie",
+        "Pick Lock",
+        "Pick Pocket",
+        "Sabotage",
+        "Sneak"
+      ]
+    },
+
+    "levels": [
+      {
+        "level": 1,
+        "fixed_starting_characteristics": { "agility": 2 },
+        "starting_characteristics_arrays": [
+          {
+            "values": [2, 2, -1, -1],
+            "description": "Two strong, two weaknesses"
+          },
+          {
+            "values": [2, 1, 1, -1],
+            "description": "One strong, two moderate, one weakness"
+          },
+          {
+            "values": [2, 1, 0, 0],
+            "description": "One strong, others neutral to modest"
+          },
+          {
+            "values": [1, 1, 1, 0],
+            "description": "Balanced array with one neutral"
+          }
+        ],
+        "features": [
+          "Shadow College",
+          "Insight",
+          "College Features",
+          "College Triggered Action",
+          "Hesitation Is Weakness",
+          "Kit",
+          "Shadow Abilities"
+        ],
+        "subclass_features": [
+          {
+            "black_ash": ["Black Ash Teleport"],
+            "caustic_alchemy": ["Coat the Blade", "Smoke Bomb"],
+            "harlequin_mask": ["I'm No Threat"]
+          }
+        ],
+        "new_abilities": { "signature": 1, "3_cost": 1, "5_cost": 1 }
+      },
+      {
+        "level": 2,
+        "features": ["College Feature", "Perk", "College Ability"],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "5_cost": 1 }
+      },
+      {
+        "level": 3,
+        "features": ["Careful Observation", "7-Insight Ability"],
+        "new_abilities": { "7_cost": 1 }
+      },
+      {
+        "level": 4,
+        "features": [
+          "Characteristic Increase",
+          "Keep It Down",
+          "Night Watch",
+          "Perk",
+          "Skill",
+          "Surge of Insight"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 3 } }]
+      },
+      {
+        "level": 5,
+        "features": ["College Feature", "9-Insight Ability"],
+        "new_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 6,
+        "features": ["Perk", "Umbral Form", "College Ability"],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 7,
+        "features": [
+          "Characteristic Increase",
+          "Keen Insight",
+          "Skill",
+          "Careful Observation Improvement",
+          "Ventriloquist"
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
+      },
+      {
+        "level": 8,
+        "features": ["College Feature", "Perk", "11-Insight Ability"],
+        "perks": [{ "count": 1 }],
+        "new_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 9,
+        "features": ["Gloom Squad", "College Ability"],
+        "new_subclass_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 10,
+        "features": [
+          "Characteristic Increase",
+          "Death Pool",
+          "Perk",
+          "Skill",
+          "Careful Observation Improvement",
+          "Improved Umbral Form",
+          "Subterfuge"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }]
+      }
+    ]
+  }
+}

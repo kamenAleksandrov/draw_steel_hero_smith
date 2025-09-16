@@ -1,0 +1,204 @@
+{
+  "starting_characteristics": {
+    "classId": "class_null",
+    "name": "Null",
+    "motto": "“Any weapon can be turned against the hand that wields it.” — Ardashir",
+    "heroicResourceName": "Discipline",
+    "baseStamina": 21,
+    "stamina_per_level": 9,
+    "baseRecoveries": 8,
+    "baseSpeed": 5,
+    "baseStability": 0,
+    "baseDisengage": 0,
+
+    "potency_progression": {
+      "weak": "Intuition - 2",
+      "average": "Intuition - 1",
+      "strong": "Intuition"
+    },
+
+    "starting_skills": {
+      "granted_skills": ["Psionics"],
+      "skill_groups": ["interpersonal", "lore"],
+      "skill_count": 2,
+      "quick_build": ["Psionics", "Read Person", "Timescape"]
+    },
+
+    "levels": [
+      {
+        "level": 1,
+        "fixed_starting_characteristics": {
+          "agility": 2,
+          "intuition": 2
+        },
+        "starting_characteristics_arrays": [
+          {
+            "values": [2, -1, -1],
+            "description": "One strong, two weaknesses"
+          },
+          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+        ],
+        "features": [
+          "Null Tradition",
+          "Discipline",
+          "Null Field",
+          "Inertial Shield",
+          "Discipline Mastery",
+          "Chronokinetic Mastery",
+          "Cryokinetic Mastery",
+          "Metakinetic Mastery",
+          "Null Speed",
+          "Psionic Augmentation",
+          "Density Augmentation",
+          "Force Augmentation",
+          "Speed Augmentation",
+          "Psionic Martial Arts",
+          "Signature Abilities",
+          "Heroic Abilities"
+        ],
+        "subclass_features": [
+          { "chronokinetic": ["Tradition: Chronokinetic"] },
+          { "cryokinetic": ["Tradition: Cryokinetic"] },
+          { "metakinetic": ["Tradition: Metakinetic"] }
+        ],
+        "new_abilities": {
+          "signature": 1,
+          "3_cost": 1,
+          "5_cost": 1
+        }
+      },
+      {
+        "level": 2,
+        "features": [
+          "Perk",
+          "2nd-Level Tradition Feature",
+          "Entropic Adaptability",
+          "Inertial Sink",
+          "Rapid Processing",
+          "2nd-Level Tradition Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "subclass_features": [
+          { "chronokinetic": ["2nd-Level Chronokinetic Ability"] },
+          { "cryokinetic": ["2nd-Level Cryokinetic Ability"] },
+          { "metakinetic": ["2nd-Level Metakinetic Ability"] }
+        ],
+        "new_subclass_abilities": { "5_cost": 1 }
+      },
+      {
+        "level": 3,
+        "features": ["Psionic Leap", "Reorder", "7-Discipline Ability"],
+        "new_abilities": { "7_cost": 1 }
+      },
+      {
+        "level": 4,
+        "features": [
+          "Characteristic Increase",
+          "Discipline Mastery Improvement",
+          "Enhanced Null Field",
+          "Perk",
+          "Regenerative Field",
+          "Skill"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Agility": { "setTo": 3 } },
+          { "Intuition": { "setTo": 3 } }
+        ]
+      },
+      {
+        "level": 5,
+        "features": [
+          "5th-Level Tradition Feature",
+          "Chilling Readiness",
+          "Inertial Fulcrum",
+          "Instant Action",
+          "9-Discipline Ability"
+        ],
+        "subclass_features": [
+          { "chronokinetic": ["5th-Level Tradition Feature"] },
+          { "cryokinetic": ["5th-Level Tradition Feature"] },
+          { "metakinetic": ["5th-Level Tradition Feature"] }
+        ],
+        "new_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 6,
+        "features": [
+          "Elemental Absorption",
+          "Elemental Buffer",
+          "Perk",
+          "6th-Level Tradition Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "subclass_features": [
+          { "chronokinetic": ["6th-Level Chronokinetic Ability"] },
+          { "cryokinetic": ["6th-Level Cryokinetic Ability"] },
+          { "metakinetic": ["6th-Level Metakinetic Ability"] }
+        ],
+        "new_subclass_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 7,
+        "features": [
+          "Characteristic Increase",
+          "Discipline Mastery Improvement",
+          "Psi Boost",
+          "Dynamic Power (1 Discipline)",
+          "Expanded Power (3 Discipline)",
+          "Extended Power (1 Discipline)",
+          "Heightened Power (1 Discipline)",
+          "Magnified Power (5 Discipline)",
+          "Shared Power (5 Discipline)",
+          "Sharpened Power (1 Discipline)",
+          "Improved Body",
+          "Skill"
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
+      },
+      {
+        "level": 8,
+        "features": [
+          "Perk",
+          "8th-Level Tradition Feature",
+          "Inertial Dampener",
+          "Shared Momentum",
+          "Synaptic Triage",
+          "11-Discipline Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "new_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 9,
+        "features": [
+          "I Am the Weapon",
+          "9th-Level Tradition Ability",
+          "9th-Level Chronokinetic Abilities",
+          "9th-Level Cryokinetic Abilities",
+          "9th-Level Metakinetic Abilities"
+        ],
+        "new_subclass_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 10,
+        "features": [
+          "Manifold Body",
+          "Manifold Resonance",
+          "Order",
+          "Perk",
+          "Skill"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Agility": { "setTo": 5 } },
+          { "Intuition": { "setTo": 5 } }
+        ]
+      }
+    ]
+  }
+}

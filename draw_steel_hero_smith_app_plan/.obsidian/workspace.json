@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/hero_object.md",
+                "file": "objects/classes_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hero_object"
+              "title": "classes_object"
             }
           }
         ]
@@ -171,6 +171,7 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "objects/hero_object.md",
     "systems/level_up_system.md",
     "objects/ability_object.md",
     "objects/titles_object.md",
@@ -192,7 +193,6 @@
     "objects/subclasses_object.md",
     "widgets/summaries/summaries_widget.md",
     "widgets/summaries/downtime_project_summary.md",
-    "objects/hero_object.md",
     "pages/downtime_projects_page.md",
     "pages/story_page.md",
     "widgets/selector_widget.md",

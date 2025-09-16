@@ -138,10 +138,10 @@
           "characteristic_damage_options": ["Might", "Agility"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "a<w, slowed (save ends)",
-          "potencies": [],
+          "descriptive_text": "A<w, slowed (save ends)",
+          "potencies": ["A<w"],
           "conditions": ["slowed"],
-          "all_text": "2 + M or A damage; a<w, slowed (save ends)"
+          "all_text": "2 + M or A damage; A<w, slowed (save ends)"
         },
         "mid": {
           "damage_expression": "3 + M or A damage",
@@ -149,10 +149,10 @@
           "characteristic_damage_options": ["Might", "Agility"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "a<v, slowed (save ends)",
-          "potencies": [],
+          "descriptive_text": "A<a, slowed (save ends)",
+          "potencies": ["A<a"],
           "conditions": ["slowed"],
-          "all_text": "3 + M or A damage; a<v, slowed (save ends)"
+          "all_text": "3 + M or A damage; A<a, slowed (save ends)"
         },
         "high": {
           "damage_expression": "5 + M or A damage",
@@ -160,10 +160,10 @@
           "characteristic_damage_options": ["Might", "Agility"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "a<s, slowed (save ends)",
-          "potencies": [],
+          "descriptive_text": "A<a, slowed (save ends)",
+          "potencies": ["A<a"],
           "conditions": ["slowed"],
-          "all_text": "5 + M or A damage; a<s, slowed (save ends)"
+          "all_text": "5 + M or A damage; A<a, slowed (save ends)"
         }
       }
     },
@@ -292,10 +292,10 @@
           "characteristic_damage_options": ["Reason", "Intuition", "Presence"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "push 2; m<s, prone",
-          "potencies": [],
+          "descriptive_text": "push 2; M<s, prone",
+          "potencies": ["M<s"],
           "conditions": ["prone"],
-          "all_text": "7 + R, I, or P damage; push 2; m<s, prone"
+          "all_text": "7 + R, I, or P damage; push 2; M<s, prone"
         }
       }
     },

@@ -1,0 +1,193 @@
+{
+  "starting_characteristics": {
+    "classId": "class_talent",
+    "name": "Talent",
+    "motto": null,
+    "heroicResourceName": "Clarity",
+    "baseStamina": 18,
+    "stamina_per_level": 6,
+    "baseRecoveries": 8,
+    "baseSpeed": 5,
+    "baseStability": 0,
+    "baseDisengage": 0,
+
+    "potency_progression": {
+      "weak": "Reason - 2",
+      "average": "Reason - 1",
+      "strong": "Reason"
+    },
+
+    "starting_skills": {
+      "granted_skills": ["Psionics", "Read Person"],
+      "skill_groups": ["interpersonal", "lore"],
+      "skill_count": 2,
+      "quick_build": ["Empathize", "Psionics", "Read Person", "Timescape"]
+    },
+
+    "levels": [
+      {
+        "level": 1,
+        "fixed_starting_characteristics": {
+          "reason": 2,
+          "presence": 2
+        },
+        "starting_characteristics_arrays": [
+          {
+            "values": [2, -1, -1],
+            "description": "One strong, two weaknesses"
+          },
+          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+        ],
+        "features": [
+          "Talent Tradition",
+          "Clarity and Strain",
+          "Clarity in Combat",
+          "Clarity Outside of Combat",
+          "Mind Spike",
+          "Psionic Augmentation",
+          "Battle Augmentation",
+          "Density Augmentation",
+          "Distance Augmentation",
+          "Force Augmentation",
+          "Speed Augmentation",
+          "Talent Ward",
+          "Entropy Ward",
+          "Repulsive Ward",
+          "Steel Ward",
+          "Vanishing Ward",
+          "Telepathic Speech",
+          "Tradition Features",
+          "Talent Abilities"
+        ],
+        "subclass_features": [
+          { "chronopathy": ["Accelerate", "Again"] },
+          { "telekinesis": ["Minor Telekinesis", "Repel"] },
+          { "telepathy": ["Remote Assistance", "Feedback Loop"] }
+        ],
+        "new_abilities": {
+          "signature": 2,
+          "3_cost": 1,
+          "5_cost": 1
+        }
+      },
+      {
+        "level": 2,
+        "features": [
+          "Perk",
+          "Tradition Feature",
+          "Ease the Hours",
+          "Ease the Mind",
+          "Ease Their Fall",
+          "Tradition Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "5_cost": 1 }
+      },
+      {
+        "level": 3,
+        "features": ["Scan", "7-Clarity Ability"],
+        "new_abilities": { "7_cost": 1 }
+      },
+      {
+        "level": 4,
+        "features": [
+          "Characteristic Increase",
+          "Mind Projection",
+          "Mind Recovery",
+          "Perk",
+          "Skill",
+          "Suspensor Field"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }]
+      },
+      {
+        "level": 5,
+        "features": [
+          "Tradition Feature",
+          "Compulsion",
+          "Distortion Temporal",
+          "Kinetic Amplifier",
+          "Remote Amplification",
+          "Speed of Thought",
+          "Triangulate",
+          "9-Clarity Ability"
+        ],
+        "new_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 6,
+        "features": [
+          "Perk",
+          "Psi Boost",
+          "Dynamic Power (1 Clarity)",
+          "Expanded Power (3 Clarity)",
+          "Extended Power (1 Clarity)",
+          "Heightened Power (1 Clarity)",
+          "Magnified Power (5 Clarity)",
+          "Shared Power (5 Clarity)",
+          "Sharpened Power (1 Clarity)",
+          "Tradition Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 7,
+        "features": [
+          "Ancestral Memory",
+          "Cascading Strain",
+          "Characteristic Increase",
+          "Lucid Mind",
+          "Skill"
+        ],
+        "skills": [{ "count": 1 }]
+      },
+      {
+        "level": 8,
+        "features": [
+          "Perk",
+          "Tradition Features",
+          "Doubling the Hours",
+          "Levitation Field",
+          "Low Gravity",
+          "Mindlink",
+          "Stasis Shield",
+          "Universal Connection",
+          "11-Clarity Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "new_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 9,
+        "features": ["Fortress of Perfect Thought", "Tradition Ability"],
+        "new_subclass_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 10,
+        "features": [
+          "Characteristic Increase",
+          "Clear Mind",
+          "Omnisensory",
+          "Perk",
+          "Psion",
+          "Skill",
+          "Vision"
+        ],
+        "perks": [
+          {
+            "count": 1,
+            "restrictions": ["interpersonal", "lore", "supernatural"]
+          }
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Reason": { "setTo": 5 } },
+          { "Presence": { "setTo": 5 } }
+        ]
+      }
+    ]
+  }
+}

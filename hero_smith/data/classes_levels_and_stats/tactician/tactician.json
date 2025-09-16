@@ -1,0 +1,147 @@
+{
+  "starting_characteristics": {
+    "classId": "class_tactician",
+    "name": "Tactician",
+    "motto": "“Your line is broken, Varrox! Your wizard is dead. Hahah! You should have negotiated!” — Sir John of Tor",
+    "heroicResourceName": "Focus",
+    "baseStamina": 21,
+    "stamina_per_level": 9,
+    "baseRecoveries": 10,
+    "baseSpeed": 5,
+    "baseStability": 0,
+    "baseDisengage": 0,
+
+    "potency_progression": {
+      "weak": "Reason - 2",
+      "average": "Reason - 1",
+      "strong": "Reason"
+    },
+
+    "starting_skills": {
+      "granted_skills": ["Lead"],
+      "skill_groups": [
+        "(choose 2 from) Alertness, Architecture, Blacksmithing, Brag, Culture, Empathize, Fletching, Mechanics, Monsters, Search, Strategy, or any Exploration skill"
+      ],
+      "skill_count": 2,
+      "quick_build": ["Lead", "Monsters", "Strategy"]
+    },
+
+    "levels": [
+      {
+        "level": 1,
+        "fixed_starting_characteristics": { "might": 2, "reason": 2 },
+        "starting_characteristics_arrays": [
+          {
+            "values": [2, -1, -1],
+            "description": "One strong, two weaknesses"
+          },
+          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+        ],
+        "features": [
+          "Tactical Doctrine",
+          "Focus",
+          "Doctrine Feature",
+          "Doctrine Triggered Action",
+          "Field Arsenal",
+          "Mark",
+          "Strike Now",
+          "Tactician Abilities",
+          "Kit"
+        ],
+        "subclass_features": [
+          { "insurgent": ["Covert Operations"] },
+          { "mastermind": ["Studied Commander"] },
+          { "vanguard": ["Commanding Presence"] }
+        ],
+        "new_abilities": { "3_cost": 1, "5_cost": 1 }
+      },
+      {
+        "level": 2,
+        "features": ["Perk", "Doctrine Feature", "Doctrine Ability"],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "5_cost": 1 }
+      },
+      {
+        "level": 3,
+        "features": ["Out of Position", "7-Focus Ability"],
+        "new_abilities": { "7_cost": 1 }
+      },
+      {
+        "level": 4,
+        "features": [
+          "Characteristic Increase",
+          "Focus on Their Weakness",
+          "Improved Field Arsenal",
+          "Perk",
+          "Skill"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Might": { "setTo": 3 } },
+          { "Reason": { "setTo": 3 } }
+        ]
+      },
+      {
+        "level": 5,
+        "features": [
+          "Doctrine Feature",
+          "Anticipation / Distracted / I Predicted That / Leave No Trace / Shake It Off / Tactical Offensive",
+          "9-Focus Ability"
+        ],
+        "new_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 6,
+        "features": ["Master of Arms", "Perk", "Doctrine Ability"],
+        "perks": [{ "count": 1 }],
+        "new_subclass_abilities": { "9_cost": 1 }
+      },
+      {
+        "level": 7,
+        "features": [
+          "Characteristic Increase",
+          "Heightened Focus",
+          "Seize the Initiative",
+          "Skill",
+          "Doctrine Feature (e.g., Asymmetric Warfare / Grand Strategy / Shock and Awe)"
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
+      },
+      {
+        "level": 8,
+        "features": [
+          "Perk",
+          "Doctrine Feature (e.g., Bait and Ambush / Pincer Movement / See Your Enemies Driven Before You)",
+          "11-Focus Ability"
+        ],
+        "perks": [{ "count": 1 }],
+        "new_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 9,
+        "features": ["Grandmaster of Arms", "Doctrine Ability"],
+        "new_subclass_abilities": { "11_cost": 1 }
+      },
+      {
+        "level": 10,
+        "features": [
+          "Characteristic Increase",
+          "Command",
+          "Perk",
+          "Skill",
+          "True Focus",
+          "Warmaster"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Might": { "setTo": 5 } },
+          { "Reason": { "setTo": 5 } }
+        ]
+      }
+    ]
+  }
+}

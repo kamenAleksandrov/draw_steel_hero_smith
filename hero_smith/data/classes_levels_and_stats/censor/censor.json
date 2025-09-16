@@ -1,0 +1,180 @@
+{
+  "starting_characteristics": {
+    "classId": "class_censor",
+    "name": "Censor",
+    "motto": "We FIGHT! \nUntil HELL! \nIs EMPTY! -  Sir Vaantikalisax",
+    "heroicResourceName": "Wrath",
+    "baseStamina": 21,
+    "stamina_per_level": 9,
+    "baseRecoveries": 12,
+    "baseSpeed": 5,
+    "baseStability": 0,
+    "baseDisengage": 0,
+
+    "potency_progression": {
+      "weak": "Presence - 2",
+      "average": "Presence - 1",
+      "strong": "Presence"
+    },
+
+    "starting_skills": {
+      "skill_groups": ["Interpersonal", "Lore"],
+      "skill_count": 2,
+      "quick_build": ["Intimidate", "Religion"]
+    },
+
+    "levels": [
+      {
+        "level": 1,
+        "fixed_starting_characteristics": {
+          "might": 2,
+          "presence": 2
+        },
+        "starting_characteristics_arrays": [
+          {
+            "values": [2, -1, -1],
+            "description": "High focus with some weaknesses"
+          },
+          {
+            "values": [1, 1, -1],
+            "description": "Two moderate strengths with one weakness"
+          },
+          {
+            "values": [1, 0, 0],
+            "description": "One strength, others neutral"
+          }
+        ],
+        "features": [
+          "Censor Order",
+          "Deity and Domains",
+          "Wrath",
+          "Judgment",
+          "Kit",
+          "My Life for Yours",
+          "Domain Feature"
+        ],
+        "new_abilities": {
+          "signature": 1,
+          "3_cost": 1,
+          "5_cost": 1
+        }
+      },
+      {
+        "level": 2,
+        "perks": {
+          "count": 1,
+          "perk_groups": ["interpersonal", "lore", "supernatural"]
+        },
+        "subclass_features": [
+          { "exorcist": ["Saint's Vigilance", "A Sense for Truth"] },
+          { "oracle": ["It Was Foretold", "Judge of Character"] },
+          { "paragon": ["Lead by Example", "Stalwart Icon"] }
+        ],
+        "new_subclass_abilities": {
+          "5_cost": 1
+        }
+      },
+      {
+        "level": 3,
+        "features": ["Look On My Work and Despair", "7-Wrath Ability"],
+        "new_abilities": {
+          "7_cost": 1
+        }
+      },
+      {
+        "level": 4,
+        "features": [
+          "Characteristic Increase",
+          "Perk",
+          "Skill",
+          "Wrath Beyond Wrath",
+          "Domain Feature"
+        ],
+        "perks": [{ "count": 1 }],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Might": { "setTo": 3 } },
+          { "Presence": { "setTo": 3 } }
+        ]
+      },
+      {
+        "level": 5,
+        "features": ["Order Feature", "9-Wrath Ability"],
+        "new_abilities": {
+          "9_cost": 1
+        },
+        "subclass_features": [
+          { "exorcist": ["Evil Revealed"] },
+          { "oracle": ["Prophecy"] },
+          { "paragon": ["Stand Fast!"] }
+        ]
+      },
+      {
+        "level": 6,
+        "features": ["Implement of Wrath", "Perk", "Order Ability"],
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "lore", "supernatural"]
+          }
+        ],
+        "new_subclass_abilities": {
+          "9_cost": 1
+        }
+      },
+      {
+        "level": 7,
+        "features": [
+          "Characteristic Increase",
+          "Domain Feature",
+          "Focused Wrath",
+          "Skill"
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
+      },
+      {
+        "level": 8,
+        "features": ["Perk", "Order Feature", "11-Wrath Ability"],
+        "perks": [{ "count": 1 }],
+        "new_abilities": {
+          "11_cost": 1
+        },
+        "subclass_features": [
+          { "exorcist": ["Demonologist"] },
+          { "oracle": ["Their Past Revealed"] },
+          { "paragon": ["Vow"] }
+        ]
+      },
+      {
+        "level": 9,
+        "features": ["Improved Implement of Wrath", "Order Ability"],
+        "new_subclass_abilities": {
+          "11_cost": 1
+        }
+      },
+      {
+        "level": 10,
+        "features": [
+          "Characteristic Increase",
+          "Perk",
+          "Skill",
+          "Templar",
+          "Virtue",
+          "Wrath of the Gods"
+        ],
+        "perks": [
+          {
+            "count": 1,
+            "restrictions": ["crafting", "lore", "supernatural"]
+          }
+        ],
+        "skills": [{ "count": 1 }],
+        "characteristics": [
+          { "Might": { "setTo": 5 } },
+          { "Presence": { "setTo": 5 } }
+        ]
+      }
+    ]
+  }
+}

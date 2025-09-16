@@ -61,7 +61,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
-          "potencies": [],
+          "potencies": ["M<w"],
           "conditions": ["slowed"],
           "all_text": "2 damage; M<w, slowed (save ends)"
         },
@@ -72,9 +72,9 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
-          "potencies": [],
+          "potencies": ["M<a"],
           "conditions": ["slowed"],
-          "all_text": "4 damage; M<v, slowed (save ends)"
+          "all_text": "4 damage; M<a, slowed (save ends)"
         },
         "high": {
           "damage_expression": null,
@@ -83,7 +83,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
-          "potencies": [],
+          "potencies": ["M<s"],
           "conditions": ["slowed"],
           "all_text": "6 damage; M<s, slowed (save ends)"
         }

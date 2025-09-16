@@ -21,7 +21,12 @@
         "low": {
           "damage_expression": "5 + A, R, I, or P fire damage",
           "base_damage_value": 5,
-          "characteristic_damage_options": ["Agility", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Agility",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -32,7 +37,12 @@
         "mid": {
           "damage_expression": "7 + A, R, I, or P fire damage",
           "base_damage_value": 7,
-          "characteristic_damage_options": ["Agility", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Agility",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -43,7 +53,12 @@
         "high": {
           "damage_expression": "10 + A, R, I, or P fire damage",
           "base_damage_value": 10,
-          "characteristic_damage_options": ["Agility", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Agility",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -78,7 +93,12 @@
         "low": {
           "damage_expression": "5 + M, R, I, or P damage",
           "base_damage_value": 5,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -89,7 +109,12 @@
         "mid": {
           "damage_expression": "8 + M, R, I, or P damage",
           "base_damage_value": 8,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -100,7 +125,12 @@
         "high": {
           "damage_expression": "11 + M, R, I, or P damage",
           "base_damage_value": 11,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -595,7 +625,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": "A<w, slowed (save ends)",
-          "potencies": [],
+          "potencies": ["A<w"],
           "conditions": ["slowed"],
           "all_text": "3 + M or A damage; A<w, slowed (save ends)"
         },
@@ -605,10 +635,10 @@
           "characteristic_damage_options": ["Might", "Agility"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "A<v, slowed (save ends)",
-          "potencies": [],
+          "descriptive_text": "A<a, slowed (save ends)",
+          "potencies": ["A<a"],
           "conditions": ["slowed"],
-          "all_text": "5 + M or A damage; A<v, slowed (save ends)"
+          "all_text": "5 + M or A damage; A<a, slowed (save ends)"
         },
         "high": {
           "damage_expression": "7 + M or A damage",
@@ -617,7 +647,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": "A<s, slowed (save ends)",
-          "potencies": [],
+          "potencies": ["A<s"],
           "conditions": ["slowed"],
           "all_text": "7 + M or A damage; A<s, slowed (save ends)"
         }
@@ -709,7 +739,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": "A<w, slowed (EoT)",
-          "potencies": [],
+          "potencies": ["A<w"],
           "conditions": ["slowed"],
           "all_text": "4 + M or A damage; A<w, slowed (EoT)"
         },
@@ -719,10 +749,10 @@
           "characteristic_damage_options": ["Might", "Agility"],
           "damage_types": null,
           "secondary_damage_expression": null,
-          "descriptive_text": "A<v, slowed (EoT)",
-          "potencies": [],
+          "descriptive_text": "A<a, slowed (EoT)",
+          "potencies": ["A<a"],
           "conditions": ["slowed"],
-          "all_text": "6 + M or A damage; A<v, slowed (EoT)"
+          "all_text": "6 + M or A damage; A<a, slowed (EoT)"
         },
         "high": {
           "damage_expression": "8 + M or A damage",
@@ -731,7 +761,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": "A<s, restrained (EoT)",
-          "potencies": [],
+          "potencies": ["A<s"],
           "conditions": ["restrained"],
           "all_text": "8 + M or A damage; A<s, restrained (EoT)"
         }
@@ -876,7 +906,12 @@
         "low": {
           "damage_expression": "5 + M, R, I, or P lightning damage",
           "base_damage_value": 5,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -887,7 +922,12 @@
         "mid": {
           "damage_expression": "8 + M, R, I, or P lightning damage",
           "base_damage_value": 8,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -898,7 +938,12 @@
         "high": {
           "damage_expression": "11 + M, R, I, or P lightning damage",
           "base_damage_value": 11,
-          "characteristic_damage_options": ["Might", "Reason", "Intuition", "Presence"],
+          "characteristic_damage_options": [
+            "Might",
+            "Reason",
+            "Intuition",
+            "Presence"
+          ],
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": null,
@@ -1073,7 +1118,7 @@
           "damage_types": null,
           "secondary_damage_expression": null,
           "descriptive_text": "push 3; M<s, prone",
-          "potencies": [],
+          "potencies": ["M<s"],
           "conditions": ["prone"],
           "all_text": "9 + M or A damage; push 3; M<s, prone"
         }
