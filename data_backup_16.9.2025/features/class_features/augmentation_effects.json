@@ -1,0 +1,40 @@
+{
+  "battle_augmentation": {
+    "armor_bonus": 3,
+    "armor_bonus_scaling": [3, 3, 3],
+    "weapon_damage_bonus": 1,
+    "requires_light_equipment": true,
+    "incompatible_with_kit": true,
+    "description": "Enhances combat capabilities with armor and weapon bonuses",
+    "level_requirements": [4, 7, 10]
+  },
+  "density_augmentation": {
+    "stamina_bonus": 6,
+    "stamina_bonus_scaling": [6, 6, 6],
+    "stability_bonus": 1,
+    "description": "Increases character durability and stability",
+    "level_requirements": [4, 7, 10]
+  },
+  "speed_augmentation": {
+    "speed_bonus": 1,
+    "disengage_distance_bonus": 1,
+    "description": "Improves movement and tactical positioning",
+    "level_requirements": [1]
+  },
+  "force_augmentation": {
+    "magic_damage_bonus": 1,
+    "damage_type": "varies_by_class",
+    "class_damage_types": {
+      "null": "psionic",
+      "talent": "psionic", 
+      "elementalist": "magic"
+    },
+    "description": "Enhances supernatural damage output",
+    "level_requirements": [1]
+  },
+  "distance_augmentation": {
+    "ranged_distance_bonus": 2,
+    "description": "Extends ranged attack capabilities",
+    "level_requirements": [1]
+  }
+}

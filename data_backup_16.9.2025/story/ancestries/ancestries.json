@@ -1,0 +1,488 @@
+[
+  {
+    "id": "ancestry_wode_elf",
+    "type": "ancestry",
+    "name": "Wode Elf",
+    "exampleNames": {
+      "notes": "Elves often change names with fashion or mood; gender is fluid.",
+      "feminine": [
+        "Elvyr",
+        "Eviarwyc",
+        "Illwyv",
+        "Iorwyth",
+        "Lliarwyn",
+        "Meithennyn",
+        "Nimuë",
+        "Rhegyth",
+        "Viarwyn",
+        "Ysallwyth"
+      ],
+      "genderNeutral": [
+        "Arriswyth",
+        "Gogellwyc",
+        "Hygglwyc",
+        "Lliarion",
+        "Tywso"
+      ],
+      "masculine": [
+        "Calliarwyc",
+        "Cillyv",
+        "Eidior",
+        "Ffyllwyc",
+        "Gwyllmach",
+        "Llyandros",
+        "Ogllvar",
+        "Radiarwyn",
+        "Ryll",
+        "Tafirdwyn"
+      ]
+    },
+    "height": {
+      "min": "5’6”",
+      "max": "6’6”"
+    },
+    "weight": {
+      "min": 100,
+      "max": 150
+    },
+    "life_expectancy": {
+      "min": 1200,
+      "max": 3000
+    },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_time_raider",
+    "type": "ancestry",
+    "name": "Time Raider",
+    "exampleNames": {
+      "feminine": [
+        "Ak’karatar",
+        "Ip’pritt",
+        "Ner’radmok",
+        "Orov’vika",
+        "Phe’kala",
+        "Quix’x",
+        "Thes’srika",
+        "Thos’sivik",
+        "Um’manri",
+        "Vir’rikin"
+      ],
+      "genderNeutral": [
+        "Jorut’or",
+        "Morp’phan",
+        "Mot’tira",
+        "Sonit’ir",
+        "Thir’rip"
+      ],
+      "masculine": [
+        "Astro’ogor",
+        "Dak’kara",
+        "Ik’koq",
+        "Jel’lek",
+        "Kes’slik",
+        "Laz’zir",
+        "Mav’vikek",
+        "Thork’kar",
+        "Uv’vik",
+        "Va’antak"
+      ],
+      "epithets": [
+        "The Acerbic",
+        "The Cynic",
+        "The Heretic",
+        "The Impious",
+        "The Irritant",
+        "The Skeptical",
+        "The Sneering",
+        "The Surly",
+        "The Unbeliever",
+        "The Unruly"
+      ]
+    },
+    "height": { "min": "5’0’’", "max": "6’0’’" },
+    "weight": { "min": 120, "max": 250 },
+    "life_expectancy": { "min": 50, "max": 90 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_revenant",
+    "type": "ancestry",
+    "name": "Revenant",
+    "exampleNames": {
+      "notes": "Revenants often keep their names from life; new names reflect their reasons or culture."
+    },
+    "height": { "min": "5’0’’", "max": "6’0’’" },
+    "weight": { "min": 100, "max": 300 },
+    "life_expectancy": { "min": 70, "max": 120 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_polder",
+    "type": "ancestry",
+    "name": "Polder",
+    "exampleNames": {
+      "feminine": [
+        "Agatha",
+        "Amaryllis",
+        "Beverly",
+        "Esmerelda",
+        "Marceline",
+        "Modesty",
+        "Penelope",
+        "Rosemarie",
+        "Ursula",
+        "Weatherly"
+      ],
+      "genderNeutral": [
+        "Bellamy",
+        "Bethell",
+        "Carrington",
+        "Madison",
+        "Mallory"
+      ],
+      "masculine": [
+        "Aimsley",
+        "Alderson",
+        "Bancroft",
+        "Beechwood",
+        "Billingsworth",
+        "Broderick",
+        "Langston",
+        "Owlswick",
+        "Patterson",
+        "Willoughby"
+      ],
+      "surnames": [
+        "Bottlebrush",
+        "Bracegirdle",
+        "Cheesewright",
+        "Cobblestone",
+        "Cordwainer",
+        "Lamplighter",
+        "Pinwhistle",
+        "Thistlethrush",
+        "Twobuckle",
+        "Underhill"
+      ],
+      "notes": "Polders use surnames; first names imply sophistication; surnames are common compound words."
+    },
+    "height": { "min": "3’3’’", "max": "3’9’’" },
+    "weight": { "min": 20, "max": 50 },
+    "life_expectancy": { "min": 50, "max": 90 },
+    "size": "1S",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_orc",
+    "type": "ancestry",
+    "name": "Orc",
+    "exampleNames": {
+      "feminine": [
+        "Askilli",
+        "Dorviath",
+        "Jeddoar",
+        "Karoskha",
+        "Khorisa",
+        "Khorva",
+        "Moraska",
+        "Vakarra",
+        "Vhorovi",
+        "Zhorva"
+      ],
+      "genderNeutral": ["Dorokor", "Gorovik", "Khettovek", "Meadior", "Orosk"],
+      "masculine": [
+        "Dezovor",
+        "Dhorovek",
+        "Djorvok",
+        "Korjok",
+        "Medozoar",
+        "Pakadrask",
+        "Rojak",
+        "Rokore",
+        "Uvarsk",
+        "Vordokov"
+      ]
+    },
+    "height": { "min": "5’6’’", "max": "6’6’’" },
+    "weight": { "min": 150, "max": 300 },
+    "life_expectancy": { "min": 50, "max": 90 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_memonek",
+    "type": "ancestry",
+    "name": "Memonek",
+    "exampleNames": {
+      "feminine": [
+        "Abandhaska",
+        "Ashariyaa",
+        "Devidayya",
+        "Gandahraji",
+        "Kunismyya",
+        "Priyaptaa",
+        "Ruthudeva",
+        "Urivashii",
+        "Vanarishka",
+        "Yashovalla"
+      ],
+      "genderNeutral": [
+        "Jamiattra",
+        "Lotarhixa",
+        "Mitterirtra",
+        "Sattayarit",
+        "Talyana"
+      ],
+      "masculine": [
+        "Ayabaskha",
+        "Dhamayana",
+        "Divarsotto",
+        "Duruvatta",
+        "Ghaurdamatta",
+        "Harakshathra",
+        "Khasimandru",
+        "Khavettra",
+        "Virabanu",
+        "Vittarkoya"
+      ]
+    },
+    "height": { "min": "5’0’’", "max": "6’0’’" },
+    "weight": { "min": 50, "max": 100 },
+    "life_expectancy": { "min": 70, "max": 120 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_human",
+    "type": "ancestry",
+    "name": "Human",
+    "exampleNames": {
+      "notes": "Examples from Western Vasloria.",
+      "feminine": [
+        "Brenwyn",
+        "Demelza",
+        "Elzbeth",
+        "Gwynhyvyr",
+        "Maerwyn",
+        "Margaret",
+        "Meliora",
+        "Rowenna",
+        "Tamara",
+        "Wenna"
+      ],
+      "genderNeutral": ["Ashley", "Bryn", "Jennet", "Morgan", "Taran"],
+      "masculine": [
+        "Brys",
+        "Cadwyr",
+        "Dyfan",
+        "Edmund",
+        "Geoffrey",
+        "Gwiddon",
+        "Heden",
+        "Richard",
+        "Taegan",
+        "Taethan"
+      ]
+    },
+    "height": { "min": "5’0’’", "max": "6’0’’" },
+    "weight": { "min": 100, "max": 300 },
+    "life_expectancy": { "min": 70, "max": 120 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_high_elf",
+    "type": "ancestry",
+    "name": "High Elf",
+    "exampleNames": {
+      "notes": "Poetic names capturing fleeting impulses; not literal.",
+      "examples": [
+        "The Anticipation of a Sigh Upon His Lips",
+        "A Crown of Starlight on Winter Snow",
+        "The Earth Cries the Skies Divide",
+        "Echoes of Autumn Heat",
+        "Edges of a Leaf Torn by the Wind",
+        "Every Flake of Snow a Memory",
+        "A Heart That Will Not Yield the Stars",
+        "The Last Star Fading With Morning",
+        "A Rain of Glass Over a Sea of Dreams",
+        "The Sun Reflected in a Lover’s Tear"
+      ]
+    },
+    "height": { "min": "5’6’’", "max": "6’6’’" },
+    "weight": { "min": 100, "max": 150 },
+    "life_expectancy": { "min": 1200, "max": 3000 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_hakaan",
+    "type": "ancestry",
+    "name": "Hakaan",
+    "exampleNames": {
+      "feminine": [
+        "Adrina",
+        "Arawanni",
+        "Barsina",
+        "Irdabava",
+        "Kiandot",
+        "Mavané",
+        "Osorabi",
+        "Sitarey",
+        "Tyriti",
+        "Ulivesh"
+      ],
+      "genderNeutral": ["Adaska", "Kirashev", "Oriamos", "Sandauka", "Ulion"],
+      "masculine": [
+        "Adusiya",
+        "Artabānu",
+        "Dahyu",
+        "Farnaspa",
+        "Fravartiš",
+        "Jamaspa",
+        "Khosrau",
+        "Kithara",
+        "Sarames",
+        "Utana"
+      ]
+    },
+    "height": { "min": "9’0’’", "max": "10’0’’" },
+    "weight": { "min": 1000, "max": 2000 },
+    "life_expectancy": { "min": 300, "max": 500 },
+    "size": "2L",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_dwarf",
+    "type": "ancestry",
+    "name": "Dwarf",
+    "exampleNames": {
+      "feminine": [
+        "Dazria",
+        "Dekka",
+        "Djorva",
+        "Giria",
+        "Kirza",
+        "Kuroth",
+        "Lurza",
+        "Uur",
+        "Zareth",
+        "Ziir"
+      ],
+      "genderNeutral": ["Arzak", "Keth", "Orikk", "Q’ir", "Qoroth"],
+      "masculine": [
+        "Darzok",
+        "Dazran",
+        "Djorek",
+        "Durok",
+        "Duur",
+        "Gavok",
+        "Kaaz",
+        "Kazaan",
+        "Zaar",
+        "Zarek"
+      ]
+    },
+    "height": { "min": "4’0’’", "max": "4’6’’" },
+    "weight": { "min": 500, "max": 1000 },
+    "life_expectancy": { "min": 700, "max": 1500 },
+    "size": "1S",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_dragon_knight",
+    "type": "ancestry",
+    "name": "Dragon Knight",
+    "exampleNames": {
+      "feminine": [
+        "Ahrijiinad",
+        "Cyrrijox",
+        "Kaikorrivar",
+        "Kalliarx",
+        "Korazajaan",
+        "Korovaamijax",
+        "Orrizarviox",
+        "Uriquexicaar",
+        "Ythirix",
+        "Zoronivaam"
+      ],
+      "genderNeutral": [
+        "Baiqadrazaar",
+        "Ciniceziar",
+        "Lorikorivox",
+        "Vinkarijaan",
+        "Zaikorojax"
+      ],
+      "masculine": [
+        "Aarkizovar",
+        "Dannorax",
+        "Denoxavinaax",
+        "Killexiriax",
+        "Koraavinam",
+        "Raijorozaan",
+        "Vanazor",
+        "Vorokazinaar",
+        "Zakaarior",
+        "Zexijorovox"
+      ]
+    },
+    "height": { "min": "6’0’’", "max": "7’0’’" },
+    "weight": { "min": 200, "max": 350 },
+    "life_expectancy": { "min": 50, "max": 90 },
+    "size": "1L",
+    "speed": 5,
+    "stability": 0
+  },
+  {
+    "id": "ancestry_devil",
+    "type": "ancestry",
+    "name": "Devil",
+    "exampleNames": {
+      "feminine": [
+        "Ampeth",
+        "Arrian",
+        "Cyrrik",
+        "Frissia",
+        "Illya",
+        "Oreth",
+        "Quallo",
+        "Uryalia",
+        "Yllioth",
+        "Zorri"
+      ],
+      "genderNeutral": ["Halciar", "Illion", "Karya", "Moriel", "Orliath"],
+      "masculine": [
+        "Bulliarvik",
+        "Cenoph",
+        "Dhult",
+        "Jjaro",
+        "Kuryalkin",
+        "Radiarsk",
+        "Tessiar",
+        "Turayvik",
+        "Ullian",
+        "Villyroth"
+      ]
+    },
+    "height": { "min": "5’0’’", "max": "6’0’’" },
+    "weight": { "min": 120, "max": 250 },
+    "life_expectancy": { "min": 70, "max": 120 },
+    "size": "1M",
+    "speed": 5,
+    "stability": 0
+  }
+]

@@ -1,0 +1,179 @@
+[
+  {
+    "id": "test_id",
+    "name": "test_name",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "test_story_text",
+    "keywords": [
+      "test_keyword_1",
+      "test_keyword_2",
+      "test_keyword_3",
+      "test_keyword_4"
+    ],
+    "type": "test_type",
+    "trigger_text": "test_trigger_text",
+    "range": {
+      "distance": "test_distance",
+      "area": null
+    },
+    "targets": "test_target",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["test_characteristics_score"],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_low"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_mid"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "test_descriptive_text_high"
+        }
+      }
+    },
+    "effect": "test_effect",
+    "special_effect": "test_special_effect"
+  },
+  {
+    "id": "melee_weapon_free_strike",
+    "name": "Melee Weapon Free Strike",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A basic melee attack that every hero can perform.",
+    "keywords": ["Charge", "Melee", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "5 + M or A damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "7 + M or A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M or A damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "id": "ranged_weapon_free_strike",
+    "name": "Ranged Weapon Free Strike",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A basic ranged attack that every hero can perform.",
+    "keywords": ["Charge", "Ranged", "Strike", "Weapon"],
+    "type": "Main action",
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might", "Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M or A damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M or A damage"
+        },
+        "mid": {
+          "damage_expression": "4 + M or A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + M or A damage"
+        },
+        "high": {
+          "damage_expression": "6 + M or A damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": ["Might", "Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M or A damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  }
+]

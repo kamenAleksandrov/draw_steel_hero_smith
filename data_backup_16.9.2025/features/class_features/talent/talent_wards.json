@@ -1,0 +1,53 @@
+[
+  {
+    "id": "talent_entropy_ward",
+    "name": "Entropy Ward",
+    "description": "Your ward slows time for your enemies. Whenever a creature deals damage to you, their speed is reduced by an amount equal to your Reason score and they can't use triggered actions until the end of their next turn.",
+    "class_type": "talent",
+    "category": "ward",
+    "effects": {
+      "ward_type": "entropy",
+      "trigger": "creature_deals_damage",
+      "effect": "reduce_speed_reason_score",
+      "additional_effect": "no_triggered_actions_until_end_next_turn"
+    }
+  },
+  {
+    "id": "talent_repulsive_ward",
+    "name": "Repulsive Ward",
+    "description": "You surround yourself with an invisible ward of telekinetic energy. Whenever an adjacent creature deals damage to you, you can use a free triggered action to push them up to a number of squares equal to your Reason score.",
+    "class_type": "talent",
+    "category": "ward",
+    "effects": {
+      "ward_type": "repulsive",
+      "trigger": "adjacent_creature_deals_damage",
+      "action": "free_triggered",
+      "effect": "push_reason_squares"
+    }
+  },
+  {
+    "id": "talent_steel_ward",
+    "name": "Steel Ward",
+    "description": "Your ward reacts to danger, protecting you from future harm. Whenever you take damage, after the damage resolves, you gain damage immunity equal to your Reason score until the end of your next turn.",
+    "class_type": "talent",
+    "category": "ward",
+    "effects": {
+      "ward_type": "steel",
+      "trigger": "take_damage",
+      "timing": "after_damage_resolves",
+      "effect": "damage_immunity_reason_score_until_end_next_turn"
+    }
+  },
+  {
+    "id": "talent_vanishing_ward",
+    "name": "Vanishing Ward",
+    "description": "Your ward allows you to slip away from threats. Whenever you take damage, you become invisible until the end of your next turn.",
+    "class_type": "talent",
+    "category": "ward",
+    "effects": {
+      "ward_type": "vanishing",
+      "trigger": "take_damage",
+      "effect": "invisible_until_end_next_turn"
+    }
+  }
+]
