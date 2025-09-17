@@ -29,3 +29,7 @@ flutter:
   assets:
     - data/
     - data/abilities/
+    - data/abilities/class_abilities/
+    - data/abilities/subclass_abilities/
+    - data/classes_levels_and_stats/
+
