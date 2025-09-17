@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/ability_object.md",
+                "file": "pages/home_page.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ability_object"
+              "title": "home_page"
             }
           }
         ],
@@ -96,7 +96,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "project",
+                "query": "damage",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -214,15 +214,18 @@
   },
   "active": "841e148e5cac1f2a",
   "lastOpenFiles": [
+    "widgets/stamina/stamina_widget.md",
+    "systems/power_rolls_system.md",
+    "objects/hero_object.md",
+    "widgets/tables/damage_immunites_weaknesses_widget.md",
+    "objects/ability_object.md",
     "widgets/summaries/ability_summary.md",
     "pages/strife_page.md",
     "widgets/ability_display_widget.md",
     "pages/home_page.md",
     "pages/downtime_projects_page.md",
-    "objects/hero_object.md",
     "objects/classes_object.md",
     "systems/level_up_system.md",
-    "objects/ability_object.md",
     "objects/titles_object.md",
     "objects/kits_object.md",
     "objects/treasure_object.md",
@@ -237,9 +240,6 @@
     "objects/complications_object.md",
     "objects/career_object.md",
     "objects/ancestries_traits_object.md",
-    "objects/ancestries_object.md",
-    "objects/subclasses_object.md",
-    "widgets/summaries/summaries_widget.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",

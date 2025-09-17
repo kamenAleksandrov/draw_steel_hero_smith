@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart';
+import '../../core/theme/app_colors.dart';
 import 'abilities_shared.dart';
 
 class AbilityFullView extends StatelessWidget {
@@ -30,8 +31,29 @@ class AbilityFullView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title + flavor
-              Text(a.name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+              // Title + cost + flavor
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(a.name, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                  ),
+                  if (a.costString != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: scheme.primaryContainer,
+                      ),
+                      child: Text(
+                        a.costString!,
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               if (a.flavor != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
@@ -44,7 +66,7 @@ class AbilityFullView extends StatelessWidget {
                   ),
                 ),
 
-              // Keywords / Cost / Action
+              // Keywords / Action
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Row(
@@ -52,34 +74,49 @@ class AbilityFullView extends StatelessWidget {
                     Expanded(
                       child: Wrap(
                         spacing: 8,
-                        runSpacing: -6,
+                        runSpacing: 4,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           if (a.keywords.isNotEmpty)
-                            Text(
-                              a.keywords.join(', '),
-                              style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                          if (a.costString != null)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: scheme.primaryContainer,
-                              ),
-                              child: Text(
-                                a.costString!,
-                                style: theme.textTheme.labelSmall?.copyWith(color: scheme.onPrimaryContainer),
-                              ),
-                            ),
+                            ...a.keywords.map((keyword) {
+                              final keywordColor = AppColors.getKeywordColor(keyword);
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: keywordColor.withValues(alpha: 0.2),
+                                  border: Border.all(color: keywordColor.withValues(alpha: 0.5)),
+                                ),
+                                child: Text(
+                                  keyword,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: keywordColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              );
+                            }),
                         ],
                       ),
                     ),
-                    if (a.actionType != null)
-                      Text(
-                        a.actionType!,
-                        style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-                      ),
+                    if (a.actionType != null) () {
+                      final actionColor = AppColors.getActionTypeColor(a.actionType!);
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: actionColor.withValues(alpha: 0.2),
+                          border: Border.all(color: actionColor.withValues(alpha: 0.5)),
+                        ),
+                        child: Text(
+                          a.actionType!,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: actionColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    }(),
                   ],
                 ),
               ),
@@ -89,16 +126,42 @@ class AbilityFullView extends StatelessWidget {
                 Padding(padding: const EdgeInsets.only(top: 8), child: chips()),
 
               // Power Roll section
-              if (a.characteristicSummary != null || a.tiers.isNotEmpty)
+              if (a.characteristics.isNotEmpty || a.tiers.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (a.characteristicSummary != null)
-                        Text(
-                          'Power Roll + ${a.characteristicSummary}:',
-                          style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                      if (a.characteristics.isNotEmpty)
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              'Power Roll + ',
+                              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                            ...a.characteristics.map((char) => Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: AppColors.getCharacteristicColor(char).withValues(alpha: 0.2),
+                                border: Border.all(color: AppColors.getCharacteristicColor(char).withValues(alpha: 0.6)),
+                              ),
+                              child: Text(
+                                char,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: AppColors.getCharacteristicColor(char),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            )),
+                            Text(
+                              ':',
+                              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         ),
                       if (a.tiers.isNotEmpty)
                         Padding(
@@ -118,7 +181,7 @@ class AbilityFullView extends StatelessWidget {
                                         style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant),
                                       ),
                                     ),
-                                    Expanded(child: Text(t.text)),
+                                    Expanded(child: AbilityTextHighlighter.highlightGameMechanics(t.text, context)),
                                   ],
                                 ),
                               );
@@ -138,7 +201,7 @@ class AbilityFullView extends StatelessWidget {
                     children: [
                       Text('Effect:', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
-                      Text(a.effect!),
+                      AbilityTextHighlighter.highlightGameMechanics(a.effect!, context),
                     ],
                   ),
                 ),
@@ -152,7 +215,7 @@ class AbilityFullView extends StatelessWidget {
                     children: [
                       Text('Special:', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
-                      Text(a.specialEffect!),
+                      AbilityTextHighlighter.highlightGameMechanics(a.specialEffect!, context),
                     ],
                   ),
                 ),
