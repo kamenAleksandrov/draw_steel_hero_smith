@@ -1,7 +1,8 @@
 {
+  "classId": "class_elementalist",
+  "name": "Elementalist",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_elementalist",
-    "name": "Elementalist",
     "motto": "“Understanding the mystery, requires ignorance of the mystery.”",
     "heroicResourceName": "Essence",
     "baseStamina": 18,

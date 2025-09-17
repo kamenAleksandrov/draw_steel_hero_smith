@@ -1,7 +1,8 @@
 {
+  "classId": "class_censor",
+  "name": "Censor",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_censor",
-    "name": "Censor",
     "motto": "We FIGHT! \nUntil HELL! \nIs EMPTY! -  Sir Vaantikalisax",
     "heroicResourceName": "Wrath",
     "baseStamina": 21,

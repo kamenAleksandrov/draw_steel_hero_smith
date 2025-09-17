@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:path_provider/path_provider.dart';
 
@@ -166,160 +165,15 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  // Seeding from assets when empty
-  Future<void> seedComponentsIfEmpty(List<String> assetJsonPaths) async {
-    final count = await customSelect('SELECT COUNT(id) as c FROM components', readsFrom: {components})
-        .map((row) => row.data['c'] as int)
-        .getSingle();
-    print('DEBUG: Database has $count existing components');
-    if (count > 0) {
-      print('DEBUG: Skipping seed - database not empty');
-      return;
-    }
-    print('DEBUG: Starting seed with ${assetJsonPaths.length} assets');
+  // Note: seeding logic has been extracted to core/seed/asset_seeder.dart
 
-    final batchOps = <ComponentsCompanion>[];
-    for (final path in assetJsonPaths) {
-      final raw = await rootBundle.loadString(path);
-      final decoded = jsonDecode(raw);
-      Iterable<Map<String, dynamic>> items;
-      if (decoded is List) {
-        items = decoded.cast<Map>().map((e) => Map<String, dynamic>.from(e));
-      } else if (decoded is Map<String, dynamic>) {
-        items = [decoded];
-      } else {
-        continue;
-      }
-      for (final map in items) {
-        final work = Map<String, dynamic>.from(map);
-        final id = work.remove('id') as String? ?? '';
-        if (id.isEmpty) continue;
-        String type;
-        // For abilities assets, we store component type as 'ability'.
-        if (path.contains('/abilities/') || path.startsWith('data/abilities/')) {
-          // If the source data used a generic 'type' field for action label, preserve it under 'action_type'.
-          final maybeAction = work.remove('type');
-          if (maybeAction != null && work['action_type'] == null) {
-            work['action_type'] = maybeAction;
-          }
-          type = 'ability';
-        } else {
-          type = work.remove('type') as String? ?? 'unknown';
-        }
-        final name = work.remove('name') as String? ?? '';
-        final dataJson = jsonEncode(work);
-        final now = DateTime.now();
-        batchOps.add(ComponentsCompanion.insert(
-          id: id,
-          type: type,
-          name: name,
-          dataJson: Value(dataJson),
-          source: const Value('seed'),
-          parentId: const Value(null),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ));
-      }
-    }
-
-    await batch((b) {
-      for (final op in batchOps) {
-        b.insert(components, op, mode: InsertMode.insertOrReplace);
-      }
-    });
-  }
-
-  // Discover all JSON assets under data/ via AssetManifest
-  static Future<List<String>> discoverDataJsonAssets() async {
-    final manifest = await rootBundle.loadString('AssetManifest.json');
-    final Map<String, dynamic> assets = jsonDecode(manifest);
-    return assets.keys
-        .where((k) => k.startsWith('data/') && k.endsWith('.json'))
-        .toList();
-  }
-
-  Future<void> seedFromManifestIfEmpty() async {
-    try {
-      final assets = await AppDatabase.discoverDataJsonAssets();
-      print('DEBUG: Found ${assets.length} assets: $assets');
-      await seedComponentsIfEmpty(assets);
-      print('DEBUG: seedFromManifestIfEmpty completed successfully');
-    } catch (e, stackTrace) {
-      print('DEBUG: Error in seedFromManifestIfEmpty: $e');
-      print('DEBUG: Stack trace: $stackTrace');
-      rethrow;
-    }
-  }
-
-  // Upsert components from a set of asset JSON files (no emptiness check).
-  Future<void> upsertComponentsFromAssets(List<String> assetJsonPaths) async {
-    print('DEBUG: upsertComponentsFromAssets called with ${assetJsonPaths.length} paths');
-    final batchOps = <ComponentsCompanion>[];
-    for (final path in assetJsonPaths) {
-      print('DEBUG: Processing asset: $path');
-      try {
-        final raw = await rootBundle.loadString(path);
-        final decoded = jsonDecode(raw);
-        Iterable<Map<String, dynamic>> items;
-        if (decoded is List) {
-          items = decoded.cast<Map>().map((e) => Map<String, dynamic>.from(e));
-        } else if (decoded is Map<String, dynamic>) {
-          items = [decoded];
-        } else {
-          continue;
-        }
-        for (final map in items) {
-          final work = Map<String, dynamic>.from(map);
-          final id = work.remove('id') as String? ?? '';
-          if (id.isEmpty) continue;
-          String type;
-          if (path.contains('/abilities/') || path.startsWith('data/abilities/')) {
-            // For abilities, ignore the "type" field since it's just "ability" now
-            work.remove('type');
-            type = 'ability';
-          } else {
-            type = work.remove('type') as String? ?? 'unknown';
-          }
-          final name = work.remove('name') as String? ?? '';
-          final dataJson = jsonEncode(work);
-          final now = DateTime.now();
-          batchOps.add(ComponentsCompanion.insert(
-            id: id,
-            type: type,
-            name: name,
-            dataJson: Value(dataJson),
-            source: const Value('seed'),
-            parentId: const Value(null),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ));
-        }
-      } catch (e) {
-        print('DEBUG: Error processing asset $path: $e');
-        continue;
-      }
-    }
-
-    if (batchOps.isEmpty) {
-      print('DEBUG: No batch operations to execute');
-      return;
-    }
-    print('DEBUG: Executing ${batchOps.length} batch operations');
-    await batch((b) {
-      for (final op in batchOps) {
-        b.insert(components, op, mode: InsertMode.insertOrReplace);
-      }
-    });
-    print('DEBUG: Batch operations completed');
-  }
-
-  // Ensure abilities are present even if the DB already has other components.
-  Future<void> seedAbilitiesIncremental() async {
-    final all = await AppDatabase.discoverDataJsonAssets();
-    final abilityAssets = all.where((p) => p.startsWith('data/abilities/')).toList();
-    if (abilityAssets.isEmpty) return;
-    await upsertComponentsFromAssets(abilityAssets);
-  }
+  // // Ensure abilities are present even if the DB already has other components.
+  // Future<void> seedAbilitiesIncremental() async {
+  //   final all = await AppDatabase.discoverDataJsonAssets();
+  //   final abilityAssets = all.where((p) => p.startsWith('data/abilities/')).toList();
+  //   if (abilityAssets.isEmpty) return;
+  //   await upsertComponentsFromAssets(abilityAssets);
+  // }
 
   // Expose the full path to the database file for diagnostics.
   static Future<String> databasePath() async {

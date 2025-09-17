@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/home_page.md",
+                "file": "objects/languages_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "home_page"
+              "title": "languages_object"
             }
           }
         ],
@@ -214,6 +214,7 @@
   },
   "active": "841e148e5cac1f2a",
   "lastOpenFiles": [
+    "pages/home_page.md",
     "widgets/stamina/stamina_widget.md",
     "systems/power_rolls_system.md",
     "objects/hero_object.md",
@@ -222,7 +223,6 @@
     "widgets/summaries/ability_summary.md",
     "pages/strife_page.md",
     "widgets/ability_display_widget.md",
-    "pages/home_page.md",
     "pages/downtime_projects_page.md",
     "objects/classes_object.md",
     "systems/level_up_system.md",

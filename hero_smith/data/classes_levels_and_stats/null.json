@@ -1,7 +1,8 @@
 {
+  "classId": "class_null",
+  "name": "Null",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_null",
-    "name": "Null",
     "motto": "“Any weapon can be turned against the hand that wields it.” — Ardashir",
     "heroicResourceName": "Discipline",
     "baseStamina": 21,

@@ -1,6 +1,7 @@
 [
   {
     "id": "test_id",
+    "type": "title",
     "name": "test_name",
     "description_text": "test_description_text",
     "echelon": 1,
@@ -29,6 +30,7 @@
   },
   {
     "id": "ancient_loremaster",
+    "type": "title",
     "name": "Ancient Loremaster",
     "description_text": "It’s astonishing what you find in old books. Look at this—nearly complete schematics for a war automaton, gathering dust because nobody here reads Zaliac.",
     "echelon": 1,
@@ -57,6 +59,7 @@
   },
   {
     "id": "battleaxe_diplomat",
+    "type": "title",
     "name": "Battleaxe Diplomat",
     "description_text": "We seem to be equals in might and combat prowess. Perhaps we should bandy words awhile instead.",
     "echelon": 1,
@@ -85,6 +88,7 @@
   },
   {
     "id": "brawler",
+    "type": "title",
     "name": "Brawler",
     "description_text": "We won’t kill you. But you might wish we had.",
     "echelon": 1,
@@ -119,6 +123,7 @@
   },
   {
     "id": "city_rat",
+    "type": "title",
     "name": "City Rat",
     "description_text": "Stay out all night, visit the dives. Get in a fight, run from the cops. That’s the real city.",
     "echelon": 1,
@@ -147,6 +152,7 @@
   },
   {
     "id": "doomed",
+    "type": "title",
     "name": "Doomed",
     "description_text": "A haunting vision of your own death shapes your fate.",
     "echelon": 1,
@@ -163,6 +169,7 @@
   },
   {
     "id": "dwarven_legionnaire",
+    "type": "title",
     "name": "Dwarven Legionnaire",
     "description_text": "Stand fast and do not yield.",
     "echelon": 1,
@@ -191,6 +198,7 @@
   },
   {
     "id": "elemental_dabbler",
+    "type": "title",
     "name": "Elemental Dabbler",
     "description_text": "You harness a fragment of elemental power.",
     "echelon": 1,
@@ -219,6 +227,7 @@
   },
   {
     "id": "faction_member",
+    "type": "title",
     "name": "Faction Member",
     "description_text": "Promising recruit in an organization.",
     "echelon": 1,
@@ -253,6 +262,7 @@
   },
   {
     "id": "local_hero",
+    "type": "title",
     "name": "Local Hero",
     "description_text": "The community owes you everything.",
     "echelon": 1,
@@ -282,6 +292,7 @@
   },
   {
     "id": "mage_hunter",
+    "type": "title",
     "name": "Mage Hunter",
     "description_text": "Vigilant against dangerous magic.",
     "echelon": 1,
@@ -310,6 +321,7 @@
   },
   {
     "id": "marshal",
+    "type": "title",
     "name": "Marshal",
     "description_text": "Relentless enforcer of the law.",
     "echelon": 1,
@@ -344,6 +356,7 @@
   },
   {
     "id": "monster_bane",
+    "type": "title",
     "name": "Monster Bane",
     "description_text": "Feared by beasts and monsters alike.",
     "echelon": 1,
@@ -372,6 +385,7 @@
   },
   {
     "id": "owed_a_favor",
+    "type": "title",
     "name": "Owed a Favor",
     "description_text": "A powerful faction stands ready to repay you (within limits).",
     "echelon": 1,
@@ -394,6 +408,7 @@
   },
   {
     "id": "presumed_dead",
+    "type": "title",
     "name": "Presumed Dead",
     "description_text": "You return from an apparent death.",
     "echelon": 1,
@@ -410,6 +425,7 @@
   },
   {
     "id": "ratcatcher",
+    "type": "title",
     "name": "Ratcatcher",
     "description_text": "You specialize in bringing down the small and troublesome.",
     "echelon": 1,
@@ -438,6 +454,7 @@
   },
   {
     "id": "saved_for_a_worse_fate",
+    "type": "title",
     "name": "Saved for a Worse Fate",
     "description_text": "Captured instead of slain; a darker fate looms.",
     "echelon": 1,
@@ -472,6 +489,7 @@
   },
   {
     "id": "ship_captain",
+    "type": "title",
     "name": "Ship Captain",
     "description_text": "Leader of a crew in pursuit of glory.",
     "echelon": 1,
@@ -506,6 +524,7 @@
   },
   {
     "id": "troupe_leading_player",
+    "type": "title",
     "name": "Troupe Leading Player",
     "description_text": "Leader and star of a performing troupe.",
     "echelon": 1,
@@ -540,6 +559,7 @@
   },
   {
     "id": "wanted_dead_or_alive",
+    "type": "title",
     "name": "Wanted Dead or Alive",
     "description_text": "Outlaw with a price on your head.",
     "echelon": 1,
@@ -568,6 +588,7 @@
   },
   {
     "id": "zombie_slayer",
+    "type": "title",
     "name": "Zombie Slayer",
     "description_text": "Vanquisher of the undead.",
     "echelon": 1,
@@ -596,6 +617,7 @@
   },
   {
     "id": "arena_fighter",
+    "type": "title",
     "name": "Arena Fighter",
     "description_text": "Brutal combat entertainer with a signature move.",
     "echelon": 2,
@@ -631,6 +653,7 @@
   },
   {
     "id": "awakened",
+    "type": "title",
     "name": "Awakened",
     "description_text": "Psionic potential released by a foe’s death.",
     "echelon": 2,
@@ -659,6 +682,7 @@
   },
   {
     "id": "battlefield_commander",
+    "type": "title",
     "name": "Battlefield Commander",
     "description_text": "Field leader forging victory.",
     "echelon": 2,
@@ -688,6 +712,7 @@
   },
   {
     "id": "blood_magic",
+    "type": "title",
     "name": "Blood Magic",
     "description_text": "Forbidden sanguine arts empower your spells.",
     "echelon": 2,
@@ -716,6 +741,7 @@
   },
   {
     "id": "corsair",
+    "type": "title",
     "name": "Corsair",
     "description_text": "Dread pirate of the high seas.",
     "echelon": 2,
@@ -751,6 +777,7 @@
   },
   {
     "id": "faction_officer",
+    "type": "title",
     "name": "Faction Officer",
     "description_text": "Authority figure within your faction.",
     "echelon": 2,
@@ -773,6 +800,7 @@
   },
   {
     "id": "fey_friend",
+    "type": "title",
     "name": "Fey Friend",
     "description_text": "Blessed by an immortal revel.",
     "echelon": 2,
@@ -805,6 +833,7 @@
   },
   {
     "id": "giant_slayer",
+    "type": "title",
     "name": "Giant Slayer",
     "description_text": "Foe of towering giants.",
     "echelon": 2,
@@ -841,6 +870,7 @@
   },
   {
     "id": "godsworn",
+    "type": "title",
     "name": "Godsworn",
     "description_text": "Marked by divine favor.",
     "echelon": 2,
@@ -869,6 +899,7 @@
   },
   {
     "id": "heist_hero",
+    "type": "title",
     "name": "Heist Hero",
     "description_text": "Master planner of daring thefts.",
     "echelon": 2,
@@ -905,6 +936,7 @@
   },
   {
     "id": "knight",
+    "type": "title",
     "name": "Knight",
     "description_text": "Sworn blade of a noble power.",
     "echelon": 2,
@@ -934,6 +966,7 @@
   },
   {
     "id": "master_librarian",
+    "type": "title",
     "name": "Master Librarian",
     "description_text": "Keeper of deep and arcane knowledge.",
     "echelon": 2,
@@ -970,6 +1003,7 @@
   },
   {
     "id": "special_agent",
+    "type": "title",
     "name": "Special Agent",
     "description_text": "Entrusted with a critical secret mission.",
     "echelon": 2,
@@ -998,6 +1032,7 @@
   },
   {
     "id": "sworn_hunter",
+    "type": "title",
     "name": "Sworn Hunter",
     "description_text": "Pursuer of criminal organizations to the bitter end.",
     "echelon": 2,
@@ -1026,6 +1061,7 @@
   },
   {
     "id": "undead_slain",
+    "type": "title",
     "name": "Undead Slain",
     "description_text": "Returned from death by undead hands.",
     "echelon": 2,
@@ -1054,6 +1090,7 @@
   },
   {
     "id": "unstoppable",
+    "type": "title",
     "name": "Unstoppable",
     "description_text": "You refuse to fall even when mortally wounded.",
     "echelon": 2,
@@ -1098,6 +1135,7 @@
   },
   {
     "id": "back_from_the_grave",
+    "type": "title",
     "name": "Back From the Grave",
     "description_text": "Returned from death to settle unfinished business.",
     "echelon": 3,
@@ -1114,6 +1152,7 @@
   },
   {
     "id": "demon_slayer",
+    "type": "title",
     "name": "Demon Slayer",
     "description_text": "Scourge of demonic entities.",
     "echelon": 3,
@@ -1148,6 +1187,7 @@
   },
   {
     "id": "diabolist",
+    "type": "title",
     "name": "Diabolist",
     "description_text": "Power bargained from infernal forces.",
     "echelon": 3,
@@ -1185,6 +1225,7 @@
   },
   {
     "id": "dragon_blooded",
+    "type": "title",
     "name": "Dragon Blooded",
     "description_text": "Infused with dragon’s heartblood.",
     "echelon": 3,
@@ -1210,6 +1251,7 @@
   },
   {
     "id": "fleet_admiral",
+    "type": "title",
     "name": "Fleet Admiral",
     "description_text": "Commander of a feared fleet.",
     "echelon": 3,
@@ -1245,6 +1287,7 @@
   },
   {
     "id": "maestro",
+    "type": "title",
     "name": "Maestro",
     "description_text": "You have heard the Music of Creation.",
     "echelon": 3,
@@ -1273,6 +1316,7 @@
   },
   {
     "id": "master_crafter",
+    "type": "title",
     "name": "Master Crafter",
     "description_text": "Artisan of legendary creations.",
     "echelon": 3,
@@ -1315,6 +1359,7 @@
   },
   {
     "id": "noble",
+    "type": "title",
     "name": "Noble",
     "description_text": "Bearer of an honored title and its obligations.",
     "echelon": 3,
@@ -1348,6 +1393,7 @@
   },
   {
     "id": "planar_voyager",
+    "type": "title",
     "name": "Planar Voyager",
     "description_text": "Traveler of bizarre worlds and vehicles.",
     "echelon": 3,
@@ -1393,6 +1439,7 @@
   },
   {
     "id": "scarred",
+    "type": "title",
     "name": "Scarred",
     "description_text": "Battle scars that empower resilience.",
     "echelon": 3,
@@ -1409,6 +1456,7 @@
   },
   {
     "id": "siege_breaker",
+    "type": "title",
     "name": "Siege Breaker",
     "description_text": "Defender and breaker of fortifications.",
     "echelon": 3,
@@ -1437,6 +1485,7 @@
   },
   {
     "id": "teacher",
+    "type": "title",
     "name": "Teacher",
     "description_text": "Mentor to the next generation.",
     "echelon": 3,
@@ -1453,6 +1502,7 @@
   },
   {
     "id": "champion_competitor",
+    "type": "title",
     "name": "Champion Competitor",
     "description_text": "World-class victor in contest of skill.",
     "echelon": 4,
@@ -1494,6 +1544,7 @@
   },
   {
     "id": "demigod",
+    "type": "title",
     "name": "Demigod",
     "description_text": "Ascended to near-divine status.",
     "echelon": 4,
@@ -1550,6 +1601,7 @@
   },
   {
     "id": "enlightened",
+    "type": "title",
     "name": "Enlightened",
     "description_text": "Mind expanded by cosmic truth.",
     "echelon": 4,
@@ -1586,6 +1638,7 @@
   },
   {
     "id": "forsaken",
+    "type": "title",
     "name": "Forsaken",
     "description_text": "You continue after losing an artifact of power.",
     "echelon": 4,
@@ -1622,6 +1675,7 @@
   },
   {
     "id": "monarch",
+    "type": "title",
     "name": "Monarch",
     "description_text": "Ruler of a nation with sweeping authority.",
     "echelon": 4,
@@ -1679,6 +1733,7 @@
   },
   {
     "id": "peace_bringer",
+    "type": "title",
     "name": "Peace Bringer",
     "description_text": "Broker of high-stakes peace.",
     "echelon": 4,
@@ -1721,6 +1776,7 @@
   },
   {
     "id": "reborn",
+    "type": "title",
     "name": "Reborn",
     "description_text": "Returned by higher powers to finish your task.",
     "echelon": 4,
@@ -1758,6 +1814,7 @@
   },
   {
     "id": "theoretical_warrior",
+    "type": "title",
     "name": "Theoretical Warrior",
     "description_text": "Scholar of battle turned practitioner.",
     "echelon": 4,
@@ -1783,6 +1840,7 @@
   },
   {
     "id": "tireless",
+    "type": "title",
     "name": "Tireless",
     "description_text": "Ever-moving and unyielding endurance.",
     "echelon": 4,
@@ -1819,6 +1877,7 @@
   },
   {
     "id": "unchained",
+    "type": "title",
     "name": "Unchained",
     "description_text": "Escape artist beyond compare.",
     "echelon": 4,

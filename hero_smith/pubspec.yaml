@@ -32,4 +32,12 @@ flutter:
     - data/abilities/class_abilities/
     - data/abilities/subclass_abilities/
     - data/classes_levels_and_stats/
+    # Story data (languages, titles, etc.)
+    - data/story/
+    - data/story/ancestries/
+    - data/story/culture/
+    # Features data
+    - data/features/
+    - data/features/class_features/
+    - data/features/subclass_features/
 

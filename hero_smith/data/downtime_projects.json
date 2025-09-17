@@ -1,6 +1,7 @@
 [
   {
     "id": "test_project",
+    "type": "downtime_project",
     "name": "Test Project",
     "prerequisites": {
       "item_prerequisite": [

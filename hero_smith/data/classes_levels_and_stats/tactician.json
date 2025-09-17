@@ -1,7 +1,8 @@
 {
+  "classId": "class_tactician",
+  "name": "Tactician",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_tactician",
-    "name": "Tactician",
     "motto": "“Your line is broken, Varrox! Your wizard is dead. Hahah! You should have negotiated!” — Sir John of Tor",
     "heroicResourceName": "Focus",
     "baseStamina": 21,

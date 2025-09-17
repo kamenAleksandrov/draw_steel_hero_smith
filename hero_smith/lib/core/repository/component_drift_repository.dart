@@ -10,9 +10,8 @@ class ComponentDriftRepository {
 
   final db.AppDatabase _db;
 
-  Future<void> seedIfNeeded(List<String> assetPaths) async {
-    await _db.seedComponentsIfEmpty(assetPaths);
-  }
+  // Seeding is handled by AssetSeeder at app startup.
+  Future<void> seedIfNeeded(List<String> assetPaths) async {}
 
   Stream<List<model.Component>> watchAll() => _db
     .watchAllComponents()

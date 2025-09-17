@@ -1,7 +1,8 @@
 {
+  "classId": "class_fury",
+  "name": "Fury",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_fury",
-    "name": "Fury",
     "motto": "“DEATH!” — Khorva",
     "heroicResourceName": "Ferocity",
     "baseStamina": 21,

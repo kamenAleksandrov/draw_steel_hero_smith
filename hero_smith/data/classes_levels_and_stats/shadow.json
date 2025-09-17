@@ -1,7 +1,8 @@
 {
+  "classId": "class_shadow",
+  "name": "Shadow",
+  "type": "class",
   "starting_characteristics": {
-    "classId": "class_shadow",
-    "name": "Shadow",
     "motto": "“Whenever there is doubt, there is no doubt.” — Motto of the College of Black Ash",
     "heroicResourceName": "Insight",
     "baseStamina": 18,

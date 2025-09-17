@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'db/app_database.dart';
+import 'seed/asset_seeder.dart';
 import '../core/repository/component_drift_repository.dart';
 import '../core/models/component.dart' as model;
 
@@ -19,9 +20,7 @@ final seedOnStartupProvider = FutureProvider<void>((ref) async {
   final enabled = ref.read(autoSeedEnabledProvider);
   if (!enabled) return;
   final db = ref.read(appDatabaseProvider);
-  await db.seedFromManifestIfEmpty();
-  // Ensure abilities are present even if DB already had other components.
-  await db.seedAbilitiesIncremental();
+  await AssetSeeder.seedFromManifestIfEmpty(db);
 });
 
 // Data streams

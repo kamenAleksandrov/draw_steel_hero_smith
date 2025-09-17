@@ -1,4 +1,7 @@
 {
+  "classId": "class_troubadour",
+  "name": "Troubadour",
+  "type": "class",
   "starting_characteristics": {
     "classId": "class_troubadour",
     "name": "Troubadour",
