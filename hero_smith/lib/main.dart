@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/navigation/pages.dart';
+import 'features/heroes/heroes_page.dart';
+import 'features/strife/strife_page.dart';
+import 'features/story/story_page.dart';
+import 'features/gear/gear_page.dart';
+import 'features/downtime/downtime_projects_page.dart';
 import 'core/providers.dart';
+import 'core/db/app_database.dart';
 
 void main() {
   runApp(const ProviderScope(child: HeroSmithApp()));
@@ -18,6 +23,12 @@ class HeroSmithApp extends StatelessWidget {
         colorSchemeSeed: Colors.indigo,
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: Colors.indigo,
+        brightness: Brightness.dark,
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.dark,
       home: const RootNavPage(),
     );
   }
@@ -40,6 +51,23 @@ class _RootNavPageState extends ConsumerState<RootNavPage> {
     GearPage(),
     DowntimeProjectsPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Print database path once (skipped in tests where auto-seed is disabled).
+    final shouldShow = ref.read(autoSeedEnabledProvider);
+    if (shouldShow) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final path = await AppDatabase.databasePath();
+        debugPrint('Hero Smith DB path: $path');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('DB path: $path'), duration: const Duration(seconds: 5)),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

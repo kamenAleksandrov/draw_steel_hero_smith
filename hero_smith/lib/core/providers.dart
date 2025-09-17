@@ -20,6 +20,8 @@ final seedOnStartupProvider = FutureProvider<void>((ref) async {
   if (!enabled) return;
   final db = ref.read(appDatabaseProvider);
   await db.seedFromManifestIfEmpty();
+  // Ensure abilities are present even if DB already had other components.
+  await db.seedAbilitiesIncremental();
 });
 
 // Data streams

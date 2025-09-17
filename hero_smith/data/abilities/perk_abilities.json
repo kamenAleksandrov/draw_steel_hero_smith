@@ -1,5 +1,6 @@
 [
   {
+    "type": "ability",
     "id": "friend_catapult",
     "name": "Friend Catapult",
     "costs": {
@@ -8,7 +9,7 @@
     },
     "story_text": "As a maneuver, you grab a willing adjacent ally or object of your size or smaller, then vertical push that target up to a number of squares equal to twice your Might score.",
     "keywords": [],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Self",
       "area": null
@@ -18,6 +19,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "arcane_trick",
     "name": "Arcane Trick",
     "costs": {
@@ -26,7 +28,7 @@
     },
     "story_text": "You can perform various minor magical effects.",
     "keywords": ["Magic"],
-    "type": "Main Action",
+    "action_type": "Main Action",
     "range": {
       "distance": "Self; see below",
       "area": null
@@ -36,6 +38,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "creature_sense",
     "name": "Creature Sense",
     "costs": {
@@ -44,7 +47,7 @@
     },
     "story_text": "You can sense the nature of nearby creatures.",
     "keywords": [],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Self",
       "area": null
@@ -54,6 +57,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "invisible_force",
     "name": "Invisible Force",
     "costs": {
@@ -62,7 +66,7 @@
     },
     "story_text": "You can manipulate objects with your mind.",
     "keywords": ["Psionic", "Ranged"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -72,6 +76,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "psychic_whisper",
     "name": "Psychic Whisper",
     "costs": {
@@ -80,7 +85,7 @@
     },
     "story_text": "You can send telepathic messages to allies.",
     "keywords": ["Psionic", "Ranged"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Ranged 10",
       "area": null

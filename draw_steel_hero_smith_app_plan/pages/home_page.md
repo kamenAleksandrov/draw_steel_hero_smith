@@ -3,7 +3,7 @@ this is the home page. it uses bottom navigation to switch between different cre
 heroes:
 - heroes 
 
-powers:
+strife:
 - abilities 
 - features
 

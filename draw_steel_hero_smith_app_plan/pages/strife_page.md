@@ -1,0 +1,1 @@
+strife displays a list of all abilities and features and can filter them by any of their characteristics, it also has the create function and allows for ability or feature creation. the big difference is that features are mostly text while abilities have a lot to consider.

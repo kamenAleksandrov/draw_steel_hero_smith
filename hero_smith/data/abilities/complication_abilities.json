@@ -1,5 +1,6 @@
 [
   {
+    "type": "ability",
     "id": "corrupt_spirit",
     "name": "Corrupt Spirit",
     "costs": {
@@ -8,7 +9,7 @@
     },
     "story_text": "You unlock the sinister secrets of pain.",
     "keywords": ["Magic"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Self",
       "area": null
@@ -18,6 +19,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "share_head",
     "name": "Share Head",
     "costs": {
@@ -26,7 +28,7 @@
     },
     "story_text": "You don’t have a head, but you can psionically borrow another.",
     "keywords": ["Psionic", "Ranged"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -36,6 +38,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "stone_eyes",
     "name": "Stone Eyes",
     "costs": {
@@ -44,7 +47,7 @@
     },
     "story_text": "Your looks don’t kill—they petrify.",
     "keywords": ["Magic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -93,6 +96,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "contact_spirits",
     "name": "Contact Spirits",
     "costs": {
@@ -101,7 +105,7 @@
     },
     "story_text": "The restless dead speak to you.",
     "keywords": ["Magic"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Self",
       "area": null
@@ -150,6 +154,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "psychic_blast",
     "name": "Psychic Blast (Special Heroic Resource Cost)",
     "costs": {
@@ -158,7 +163,7 @@
     },
     "story_text": "Psionic energy bursts from your body in an iridescent shimmer.",
     "keywords": ["Area", "Psionic"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": null,
       "area": "3 burst"
@@ -207,6 +212,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "telekinetic_grasp",
     "name": "Telekinetic Grasp",
     "costs": {
@@ -215,7 +221,7 @@
     },
     "story_text": "You reach out with your mind to move a creature or object.",
     "keywords": ["Psionic", "Ranged", "Strike"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -264,6 +270,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "issue_order",
     "name": "Issue Order",
     "costs": {
@@ -272,7 +279,7 @@
     },
     "story_text": "“Move or die, folks.”",
     "keywords": ["Ranged"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -282,6 +289,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "posthumous_retirement",
     "name": "Posthumous Retirement",
     "costs": {
@@ -290,7 +298,7 @@
     },
     "story_text": "You make your modified collar explode.",
     "keywords": ["Area", "Magic"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": null,
       "area": "1 burst"
@@ -300,6 +308,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "rogue_wave",
     "name": "Rogue Wave",
     "costs": {
@@ -308,7 +317,7 @@
     },
     "story_text": "You summon a wave of water to batter your foe.",
     "keywords": ["Magic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null

@@ -13,15 +13,58 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/hero_object.md",
+                "file": "widgets/ability_display_widget.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hero_object"
+              "title": "ability_display_widget"
+            }
+          },
+          {
+            "id": "93c5747b13561805",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "widgets/summaries/ability_summary.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ability_summary"
+            }
+          },
+          {
+            "id": "52695c78da48334b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "pages/strife_page.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "strife_page"
+            }
+          },
+          {
+            "id": "841e148e5cac1f2a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "objects/ability_object.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ability_object"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -169,11 +212,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "3ea995867d73e767",
+  "active": "841e148e5cac1f2a",
   "lastOpenFiles": [
+    "widgets/summaries/ability_summary.md",
+    "pages/strife_page.md",
+    "widgets/ability_display_widget.md",
     "pages/home_page.md",
-    "objects/classes_object.md",
+    "pages/downtime_projects_page.md",
     "objects/hero_object.md",
+    "objects/classes_object.md",
     "systems/level_up_system.md",
     "objects/ability_object.md",
     "objects/titles_object.md",
@@ -193,10 +240,6 @@
     "objects/ancestries_object.md",
     "objects/subclasses_object.md",
     "widgets/summaries/summaries_widget.md",
-    "widgets/summaries/downtime_project_summary.md",
-    "pages/downtime_projects_page.md",
-    "pages/story_page.md",
-    "widgets/selector_widget.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",

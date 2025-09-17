@@ -28,3 +28,4 @@ flutter:
   # Include every JSON file under data/ for seeding.
   assets:
     - data/
+    - data/abilities/

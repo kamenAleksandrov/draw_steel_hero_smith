@@ -1,5 +1,6 @@
 [
   {
+    "type": "ability",
     "id": "come_out_to_play",
     "name": "Come Out to Play",
     "costs": {
@@ -8,7 +9,7 @@
     },
     "story_text": "Come out to play-yay!",
     "keywords": ["Area", "Magic"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": null,
       "area": "5 burst"
@@ -17,6 +18,7 @@
     "effect": "Each target who has P<average is taunted by you until the end of their next turn, and you know the location of each creature taunted in this way."
   },
   {
+    "type": "ability",
     "id": "holy_terror",
     "name": "Holy Terror",
     "costs": {
@@ -25,7 +27,7 @@
     },
     "story_text": "Return to your grave!",
     "keywords": ["Area", "Magic"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": null,
       "area": "3 burst"
@@ -34,12 +36,13 @@
     "effect": "Each target takes holy damage equal to your Reason, Intuition, or Presence score (your choice). Additionally, each target who has P<strong is frightened (save ends)."
   },
   {
+    "type": "ability",
     "id": "showstopper",
     "name": "Showstopper",
     "costs": { "resource": "heroic_resource", "amount": 5 },
     "story_text": "Show’s over, kids!",
     "keywords": ["Melee", "Strike", "Weapon"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": { "distance": "Melee 1", "area": null },
     "targets": "One creature",
     "power_roll": {
@@ -85,24 +88,26 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "charge",
     "name": "Charge!",
     "costs": { "resource": "heroic_resource", "amount": 9 },
     "story_text": "Follow me!",
     "keywords": ["Area"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": { "distance": null, "area": "3 burst" },
     "targets": "Self and each ally in the area",
     "effect": "Each target can use the Charge main action.",
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "the_harder_they_fall",
     "name": "The Harder They Fall",
     "costs": { "resource": "heroic_resource", "amount": 7 },
     "story_text": "Timber!",
     "keywords": ["Melee", "Strike", "Weapon"],
-    "type": "Action",
+    "action_type": "Action",
     "range": { "distance": "Melee 1", "area": null },
     "targets": "One creature",
     "power_roll": {
@@ -148,12 +153,13 @@
     "special_effect": "If the target is size 2 or larger, you gain an edge on this ability."
   },
   {
+    "type": "ability",
     "id": "timely_distraction",
     "name": "Timely Distraction",
     "costs": { "resource": null, "amount": null },
     "story_text": "Coming through with hot soup! I better watch out for that banana peel!",
     "keywords": ["Ranged"],
-    "type": "Triggered",
+    "action_type": "Triggered",
     "range": { "distance": "Ranged 10", "area": null },
     "targets": "One creature",
     "trigger_text": "Trigger: An ally makes a test to lie to, pick the pocket of, hide from, or sneak by the target and doesn’t like the outcome.",
@@ -161,12 +167,13 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "knightly_challenge",
     "name": "Knightly Challenge",
     "costs": { "resource": "heroic_resource", "amount": 5 },
     "story_text": "Have at thee!",
     "keywords": ["Melee", "Strike", "Weapon"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": { "distance": "Melee 1", "area": null },
     "targets": "One creature",
     "power_roll": {
@@ -212,12 +219,13 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "the_devils_chord",
     "name": "The Devil’s Chord",
     "costs": { "resource": "heroic_resource", "amount": 9 },
     "story_text": "Helloooo Orden!",
     "keywords": ["Area", "Magic"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": { "distance": null, "area": "5 burst" },
     "targets": "Each creature in the area",
     "power_roll": {

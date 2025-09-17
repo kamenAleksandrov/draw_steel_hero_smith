@@ -1,5 +1,6 @@
 [
   {
+    "type": "ability",
     "id": "draconian_pride",
     "name": "Draconian Pride",
     "costs": {
@@ -8,7 +9,7 @@
     },
     "story_text": "You let loose a mighty roar to shake your foes’ spirits.",
     "keywords": ["Area", "Magic"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": null,
       "area": "1 burst"
@@ -57,6 +58,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "dragon_breath",
     "name": "Dragon Breath",
     "costs": {
@@ -65,7 +67,7 @@
     },
     "story_text": "A furious exhalation of energy washes over your foes.",
     "keywords": ["Area", "Magic"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "within 1",
       "area": "3 cube"
@@ -114,6 +116,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "the_wode_defends",
     "name": "The Wode Defends",
     "costs": {
@@ -122,7 +125,7 @@
     },
     "story_text": "Thorny vines erupt from every surface and attempt to bind your foe.",
     "keywords": ["Magic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -171,6 +174,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "shadowmeld",
     "name": "Shadowmeld",
     "costs": {
@@ -179,7 +183,7 @@
     },
     "story_text": "You become an actual shadow.",
     "keywords": ["Magic"],
-    "type": "Maneuver",
+    "action_type": "Maneuver",
     "range": {
       "distance": "Self",
       "area": null
@@ -189,6 +193,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "detonate_sigil",
     "name": "Detonate Sigil",
     "costs": {
@@ -197,7 +202,7 @@
     },
     "story_text": "A magic sigil you placed on a creature explodes with energy.",
     "keywords": ["Magic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -246,6 +251,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "concussive_slam",
     "name": "Concussive Slam",
     "costs": {
@@ -254,7 +260,7 @@
     },
     "story_text": "You slam an invisible force down upon the target.",
     "keywords": ["Psionic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -303,6 +309,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "psionic_bolt",
     "name": "Psionic Bolt",
     "costs": {
@@ -311,7 +318,7 @@
     },
     "story_text": "You shoot forth a purple beam of psychic force that moves your target.",
     "keywords": ["Psionic", "Ranged", "Strike"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 10",
       "area": null
@@ -360,6 +367,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "minor_acceleration",
     "name": "Minor Acceleration",
     "costs": {
@@ -368,7 +376,7 @@
     },
     "story_text": "You fill yourself or an ally with a burst of speed.",
     "keywords": ["Psionic", "Melee"],
-    "type": "Main action / Maneuver",
+    "action_type": "Main action / Maneuver",
     "range": {
       "distance": "Melee 1",
       "area": null

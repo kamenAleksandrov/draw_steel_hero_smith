@@ -1,5 +1,6 @@
 [
   {
+    "type": "ability",
     "id": "test_id",
     "name": "test_name",
     "costs": {
@@ -13,7 +14,7 @@
       "test_keyword_3",
       "test_keyword_4"
     ],
-    "type": "test_type",
+    "action_type": "test_action_type",
     "trigger_text": "test_trigger_text",
     "range": {
       "distance": "test_distance",
@@ -63,6 +64,7 @@
     "special_effect": "test_special_effect"
   },
   {
+    "type": "ability",
     "id": "melee_weapon_free_strike",
     "name": "Melee Weapon Free Strike",
     "costs": {
@@ -71,7 +73,7 @@
     },
     "story_text": "A basic melee attack that every hero can perform.",
     "keywords": ["Charge", "Melee", "Strike", "Weapon"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Melee 1",
       "area": null
@@ -120,6 +122,7 @@
     "special_effect": null
   },
   {
+    "type": "ability",
     "id": "ranged_weapon_free_strike",
     "name": "Ranged Weapon Free Strike",
     "costs": {
@@ -128,7 +131,7 @@
     },
     "story_text": "A basic ranged attack that every hero can perform.",
     "keywords": ["Charge", "Ranged", "Strike", "Weapon"],
-    "type": "Main action",
+    "action_type": "Main action",
     "range": {
       "distance": "Ranged 5",
       "area": null
