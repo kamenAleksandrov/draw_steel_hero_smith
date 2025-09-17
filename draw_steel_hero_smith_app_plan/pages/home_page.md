@@ -6,6 +6,7 @@ heroes:
 strife:
 - abilities 
 - features
+- conditions
 
 story:
 - perks 
@@ -16,6 +17,7 @@ story:
 - languages
 - skills
 - titles
+- deities
 
 gear:
 - kits
