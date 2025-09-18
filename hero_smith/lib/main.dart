@@ -5,6 +5,7 @@ import 'features/strife/strife_page.dart';
 import 'features/story/story_page.dart';
 import 'features/gear/gear_page.dart';
 import 'features/downtime/downtime_projects_page.dart';
+import 'core/theme/ds_theme.dart';
 import 'core/providers.dart';
 import 'core/db/app_database.dart';
 
@@ -19,15 +20,29 @@ class HeroSmithApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hero Smith',
-      theme: ThemeData(
-        colorSchemeSeed: Colors.indigo,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.indigo,
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: (() {
+        final base = ThemeData(
+          colorSchemeSeed: Colors.indigo,
+          useMaterial3: true,
+        );
+        return base.copyWith(
+          extensions: <ThemeExtension<dynamic>>[
+            DsTheme.defaults(base.colorScheme),
+          ],
+        );
+      })(),
+      darkTheme: (() {
+        final base = ThemeData(
+          colorSchemeSeed: Colors.indigo,
+          brightness: Brightness.dark,
+          useMaterial3: true,
+        );
+        return base.copyWith(
+          extensions: <ThemeExtension<dynamic>>[
+            DsTheme.defaults(base.colorScheme),
+          ],
+        );
+      })(),
       themeMode: ThemeMode.dark,
       home: const RootNavPage(),
     );

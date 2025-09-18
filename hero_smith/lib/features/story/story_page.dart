@@ -17,7 +17,7 @@ class StoryPage extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       children: [
         Text(
-          'Story',
+          'Story Page',
           style: Theme.of(context).textTheme.headlineSmall,
           textAlign: TextAlign.left,
         ),
