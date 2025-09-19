@@ -1,5 +1,8 @@
 [
   {
+    "id": "ancestry_devil_traits",
+    "type": "ancestry_trait",
+    "name": "Devil Traits",
     "ancestry_id": "ancestry_devil",
     "points": 3,
     "signature": {
@@ -18,6 +21,9 @@
     ]
   },
   {
+    "id": "ancestry_dragon_knight_traits",
+    "type": "ancestry_trait",
+    "name": "Dragon Knight Traits",
     "ancestry_id": "ancestry_dragon_knight",
     "points": 3,
     "signature": {
@@ -35,6 +41,9 @@
     ]
   },
   {
+    "id": "ancestry_dwarf_traits",
+    "type": "ancestry_trait",
+    "name": "Dwarf Traits",
     "ancestry_id": "ancestry_dwarf",
     "points": 3,
     "signature": {
@@ -51,6 +60,9 @@
     ]
   },
   {
+    "id": "ancestry_wode_elf_traits",
+    "type": "ancestry_trait",
+    "name": "Wode Elf Traits",
     "ancestry_id": "ancestry_wode_elf",
     "points": 3,
     "signature": {
@@ -68,6 +80,9 @@
     ]
   },
   {
+    "id": "ancestry_high_elf_traits",
+    "type": "ancestry_trait",
+    "name": "High Elf Traits",
     "ancestry_id": "ancestry_high_elf",
     "points": 3,
     "signature": {
@@ -85,6 +100,9 @@
     ]
   },
   {
+    "id": "ancestry_hakaan_traits",
+    "type": "ancestry_trait",
+    "name": "Hakaan Traits",
     "ancestry_id": "ancestry_hakaan",
     "points": 3,
     "signature": {
@@ -101,6 +119,9 @@
     ]
   },
   {
+    "id": "ancestry_human_traits",
+    "type": "ancestry_trait",
+    "name": "Human Traits",
     "ancestry_id": "ancestry_human",
     "points": 3,
     "signature": {
@@ -117,6 +138,9 @@
     ]
   },
   {
+    "id": "ancestry_memonek_traits",
+    "type": "ancestry_trait",
+    "name": "Memonek Traits",
     "ancestry_id": "ancestry_memonek",
     "points": 4,
     "signature": {
@@ -135,6 +159,9 @@
     ]
   },
   {
+    "id": "ancestry_orc_traits",
+    "type": "ancestry_trait",
+    "name": "Orc Traits",
     "ancestry_id": "ancestry_orc",
     "points": 3,
     "signature": {
@@ -151,6 +178,9 @@
     ]
   },
   {
+    "id": "ancestry_polder_traits",
+    "type": "ancestry_trait",
+    "name": "Polder Traits",
     "ancestry_id": "ancestry_polder",
     "points": 4,
     "signature": {
@@ -168,6 +198,9 @@
     ]
   },
   {
+    "id": "ancestry_revenant_traits",
+    "type": "ancestry_trait",
+    "name": "Revenant Traits",
     "ancestry_id": "ancestry_revenant",
     "points": 3,
     "signature": {
@@ -184,6 +217,9 @@
     ]
   },
   {
+    "id": "ancestry_time_raider_traits",
+    "type": "ancestry_trait",
+    "name": "Time Raider Traits",
     "ancestry_id": "ancestry_time_raider",
     "points": 3,
     "signature": {
