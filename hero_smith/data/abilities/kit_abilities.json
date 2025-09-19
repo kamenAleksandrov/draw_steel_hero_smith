@@ -1261,5 +1261,295 @@
     },
     "effect": null,
     "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "aspect_of_the_wild",
+    "name": "Aspect of the Wild",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You assume the form of the animal who channels your ferocity.",
+    "keywords": ["Magic"],
+    "action_type": "Maneuver",
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can shapeshift into the animal defined by your stormwight kit, into a hybrid form, or back into your true form. While in animal form or hybrid form, you can speak as you usually do, and you can also speak to animals who share your form. If you are in a negotiation with an animal while in animal form, you treat your Renown as 2 higher than usual.",
+    "special_effect": " Spend 1 Ferocity: As a free maneuver, you can shapeshift a second time, either into another animal form, into your hybrid form, or back into your true form"
+  },
+  {
+    "type": "ability",
+    "id": "bear_claws",
+    "name": "Bear Claws",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Attacks with your sharp and deadly claws grab the weak.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "action_type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might"],
+      "tiers": {
+        "low": {
+          "damage_expression": "2 + M damage",
+          "base_damage_value": 2,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": ["M<w"],
+          "conditions": ["grabbed"],
+          "all_text": "2 + M damage; M < WEAK, grabbed"
+        },
+        "mid": {
+          "damage_expression": "5 + M damage",
+          "base_damage_value": 5,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": ["M<a"],
+          "conditions": ["grabbed"],
+          "all_text": "5 + M damage; M < AVERAGE, grabbed"
+        },
+        "high": {
+          "damage_expression": "11 + M damage",
+          "base_damage_value": 11,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": ["M<s"],
+          "conditions": ["grabbed"],
+          "all_text": "11 + M damage; M < STRONG, grabbed"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "wing_buffet",
+    "name": "Wing Buffet",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Foes who try to close in around you do so at their peril.",
+    "keywords": ["Area", "Melee", "Weapon"],
+    "action_type": "Main action",
+    "range": {
+      "distance": "Burst 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "3 damage",
+          "base_damage_value": 3,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 damage"
+        },
+        "mid": {
+          "damage_expression": "6 damage",
+          "base_damage_value": 6,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        },
+        "high": {
+          "damage_expression": "8 damage",
+          "base_damage_value": 8,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage"
+        }
+      }
+    },
+    "effect": "You can shift up to 2 squares before or after making the power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "driving_pounce",
+    "name": "Driving Pounce",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your enemies try in vain to fall back from your pouncing attack.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "action_type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Agility"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + A damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + A damage; push 1"
+        },
+        "mid": {
+          "damage_expression": "7 + A damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 1",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + A damage; push 1"
+        },
+        "high": {
+          "damage_expression": "9 + A damage",
+          "base_damage_value": 9,
+          "characteristic_damage_options": ["Agility"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": "push 2",
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + A damage; push 2"
+        }
+      }
+    },
+    "effect": "You can shift up to the same number of squares that you pushed the target.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "unbalancing_attack",
+    "name": "Unbalancing Attack",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A wild assault forces your foe onto their back.",
+    "keywords": ["Melee", "Strike", "Weapon"],
+    "action_type": "Main action",
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": ["Might"],
+      "tiers": {
+        "low": {
+          "damage_expression": "4 + M damage",
+          "base_damage_value": 4,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "4 + M damage; A < WEAK, prone"
+        },
+        "mid": {
+          "damage_expression": "7 + M damage",
+          "base_damage_value": 7,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "7 + M damage; A < AVERAGE, prone"
+        },
+        "high": {
+          "damage_expression": "9 + M damage",
+          "base_damage_value": 9,
+          "characteristic_damage_options": ["Might"],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": ["prone"],
+          "all_text": "9 + M damage; A < STRONG, prone"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
   }
 ]

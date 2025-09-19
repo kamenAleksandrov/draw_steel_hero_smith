@@ -69,6 +69,10 @@ class MetaEntries extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
   static final AppDatabase instance = AppDatabase._internal();
+  // Indicates whether the database file existed before this process opened it.
+  // This is set during database path resolution and read by the seeder to
+  // avoid reseeding when the DB file already exists (even if it's empty).
+  static bool databasePreexisted = false;
 
   @override
   int get schemaVersion => 1;
@@ -204,6 +208,7 @@ Future<File> _getDatabaseFile() async {
       if (await dbDir.exists()) {
         final file = File('${dbDir.path}/hero_smith.db');
         await dbDir.create(recursive: true);
+        AppDatabase.databasePreexisted = await file.exists();
         return file;
       }
     }
@@ -212,7 +217,10 @@ Future<File> _getDatabaseFile() async {
   // Default: Use application support dir to keep files inside the app container.
   final supportDir = await getApplicationSupportDirectory();
   await supportDir.create(recursive: true);
-  return File('${supportDir.path}/hero_smith.db');
+  final file = File('${supportDir.path}/hero_smith.db');
+  // Set the preexistence flag before the database is created/opened.
+  AppDatabase.databasePreexisted = await file.exists();
+  return file;
 }
 
 // Attempt to locate the Flutter project root by walking upward from the

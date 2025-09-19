@@ -6,6 +6,7 @@ class ExpandableCard extends StatefulWidget {
   final Widget? badge;
   final Widget expandedContent;
   final Color borderColor;
+  final Widget? preview;
 
   const ExpandableCard({
     super.key,
@@ -13,6 +14,7 @@ class ExpandableCard extends StatefulWidget {
     this.badge,
     required this.expandedContent,
     required this.borderColor,
+    this.preview,
   });
 
   @override
@@ -101,6 +103,10 @@ class _ExpandableCardState extends State<ExpandableCard>
                   ),
                 ],
               ),
+              if (widget.preview != null) ...[
+                const SizedBox(height: 8),
+                widget.preview!,
+              ],
               // Expandable content
               SizeTransition(
                 sizeFactor: _expandAnimation,

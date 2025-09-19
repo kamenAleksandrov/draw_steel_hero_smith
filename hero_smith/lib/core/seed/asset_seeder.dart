@@ -18,13 +18,9 @@ class AssetSeeder {
   /// Seed once from assets if the database is empty. No incremental seeding.
   static Future<void> seedFromManifestIfEmpty(AppDatabase db) async {
     try {
-      final count = await db
-          .customSelect('SELECT COUNT(id) as c FROM components', readsFrom: {db.components})
-          .map((row) => row.data['c'] as int)
-          .getSingle();
-      // Already seeded
-      if (count > 0) {
-        // print('DEBUG: Skipping seed - database not empty');
+      // Only seed when DB file is newly created (did not pre-exist).
+      // This avoids reseeding on every startup even if tables are empty due to manual wipes.
+      if (AppDatabase.databasePreexisted) {
         return;
       }
 

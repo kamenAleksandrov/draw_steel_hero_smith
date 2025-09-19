@@ -483,12 +483,7 @@
         "whip": false
       }
     },
-    "stamina_bonus": {
-      "1st_echelon": 6,
-      "2nd_echelon": 12,
-      "3rd_echelon": 18,
-      "4th_echelon": 24
-    },
+    "stamina_bonus": 6,
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
@@ -539,12 +534,7 @@
         "whip": false
       }
     },
-    "stamina_bonus": {
-      "1st_echelon": 6,
-      "2nd_echelon": 12,
-      "3rd_echelon": 18,
-      "4th_echelon": 24
-    },
+    "stamina_bonus": 6,
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'gear_items_page.dart';
+import 'items_page.dart';
 import 'kits_page.dart';
 import 'treasure_page.dart';
 
@@ -29,8 +29,8 @@ class GearPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _NavCard(
-          title: 'Gear',
-          subtitle: 'All gear (coming soon)',
+          title: 'Items',
+          subtitle: 'All items (coming soon)',
           icon: Icons.handyman,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const GearItemsPage()),
@@ -100,7 +100,11 @@ class _NavCard extends StatelessWidget {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8),
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withOpacity(0.8),
                       ),
                     ),
                   ],

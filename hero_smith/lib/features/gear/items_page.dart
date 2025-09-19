@@ -6,9 +6,9 @@ class GearItemsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gear')),
+      appBar: AppBar(title: const Text('Items')),
       body: const Center(
-        child: Text('Gear list coming soon'),
+        child: Text('Items list coming soon'),
       ),
     );
   }

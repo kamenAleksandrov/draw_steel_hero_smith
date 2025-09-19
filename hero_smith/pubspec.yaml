@@ -40,4 +40,5 @@ flutter:
     - data/features/
     - data/features/class_features/
     - data/features/subclass_features/
-
+    # Kits data
+    - data/kits/
