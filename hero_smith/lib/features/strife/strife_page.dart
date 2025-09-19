@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'abilities_page.dart';
 import 'strife_features_page.dart';
+import 'conditions_page.dart';
 
 class StrifePage extends StatelessWidget {
   const StrifePage({super.key});
@@ -33,6 +34,15 @@ class StrifePage extends StatelessWidget {
             subtitle: 'Browse and search all features',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const StrifeFeaturesPage()),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _NavCard(
+            icon: Icons.warning,
+            title: 'Conditions',
+            subtitle: 'Status effects and their rules',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ConditionsPage()),
             ),
           ),
         ],

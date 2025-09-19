@@ -361,7 +361,7 @@
     "height": { "min": "9’0’’", "max": "10’0’’" },
     "weight": { "min": 1000, "max": 2000 },
     "life_expectancy": { "min": 300, "max": 500 },
-    "size": "2L",
+    "size": "1L",
     "speed": 5,
     "stability": 0
   },

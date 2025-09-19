@@ -312,7 +312,7 @@ class AncestryCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
+            color: Colors.grey.shade700,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -320,6 +320,7 @@ class AncestryCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
         ),
