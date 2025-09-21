@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/semantic/semantic_tokens.dart';
 
 class AbilityTierLine {
   final String label; // e.g., 'Low', 'Mid', 'High'
@@ -44,14 +44,14 @@ class AbilityTextHighlighter {
         spans.add(TextSpan(
           text: potencyChar,
           style: baseStyle.copyWith(
-            color: AppColors.getCharacteristicColor(potencyChar),
+            color: CharacteristicTokens.color(potencyChar),
             fontWeight: FontWeight.bold,
           ),
         ));
         spans.add(TextSpan(
           text: '<$potencyStrength',
           style: baseStyle.copyWith(
-            color: AppColors.getPotencyColor(potencyStrength),
+            color: PotencyTokens.color(potencyStrength),
             fontWeight: FontWeight.bold,
           ),
         ));
@@ -60,14 +60,14 @@ class AbilityTextHighlighter {
         spans.add(TextSpan(
           text: characteristic,
           style: baseStyle.copyWith(
-            color: AppColors.getCharacteristicColor(characteristic),
+            color: CharacteristicTokens.color(characteristic),
             fontWeight: FontWeight.bold,
           ),
         ));
       } else if (damageType != null) {
         // Damage type highlighting with emoji and color
-        final emoji = AppColors.getDamageTypeEmoji(damageType);
-        final color = AppColors.getElementalColor(damageType);
+  final emoji = DamageTokens.emoji(damageType);
+  final color = DamageTokens.color(damageType);
 
         spans.add(TextSpan(
           text: emoji.isNotEmpty ? '$emoji $damageType' : damageType,

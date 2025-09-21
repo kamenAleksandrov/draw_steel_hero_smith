@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_text_styles.dart';
 
 /// Kit-specific theming constants for colors, emojis, and component styling
 class KitTheme {
@@ -55,35 +56,35 @@ class KitTheme {
     ),
   };
 
-  // Text styles for kit components
-  static const TextStyle badgeTextStyle = TextStyle(
+  // Text styles for kit components (derived from AppTextStyles)
+  static final TextStyle badgeTextStyle = AppTextStyles.caption.copyWith(
     color: Colors.white,
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
 
-  static const TextStyle chipTextStyle = TextStyle(
+  static final TextStyle chipTextStyle = AppTextStyles.caption.copyWith(
     fontSize: 11,
     fontWeight: FontWeight.w500,
   );
 
-  static const TextStyle chipBoldTextStyle = TextStyle(
+  static final TextStyle chipBoldTextStyle = AppTextStyles.caption.copyWith(
     fontSize: 11,
     fontWeight: FontWeight.w600,
   );
 
-  static const TextStyle sectionHeaderStyle = TextStyle(
+  static final TextStyle sectionHeaderStyle = AppTextStyles.caption.copyWith(
     fontWeight: FontWeight.w600,
     fontSize: 11,
     letterSpacing: 0.5,
   );
 
-  static const TextStyle echelonLabelStyle = TextStyle(
+  static final TextStyle echelonLabelStyle = AppTextStyles.caption.copyWith(
     fontSize: 12,
     fontWeight: FontWeight.w500,
   );
 
-  static const TextStyle echelonValueStyle = TextStyle(
+  static final TextStyle echelonValueStyle = AppTextStyles.caption.copyWith(
     fontWeight: FontWeight.w600,
     fontSize: 12,
   );

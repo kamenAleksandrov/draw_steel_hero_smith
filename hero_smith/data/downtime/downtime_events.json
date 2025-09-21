@@ -256,7 +256,7 @@
   {
     "id": "home_career_skills",
     "type": "downtime_event",
-    "name": "Home Career Skills Events",
+    "name": "Hone Career Skills Events",
     "events": [
       {
         "dice_value": "1",

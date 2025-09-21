@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 /// Central color definitions for the Draw Steel Hero Smith app
 class AppColors {
+  AppColors._();
+
+  // Brand / Palette
+  static const Color primary = Color(0xFF2C6E49);
+  static const Color secondary = Color(0xFF4C956C);
+  static const Color surface = Colors.white;
+  static const Color background = Color(0xFFF7F7F7);
+  static const Color textPrimary = Color(0xFF1F2937);
+  static const Color textSecondary = Color(0xFF4B5563);
+  static const Color accent = Color(0xFFFFA500);
+
   // Characteristic colors - used throughout the app for character stats
   static const Color mightColor = Color(0xFFD32F2F); // Red
   static const Color agilityColor = Color(0xFF388E3C); // Green
@@ -61,6 +72,7 @@ class AppColors {
   static const Color dramaColor = Color(0xFFE91E63); // Pink - theatrical drama
 
   /// Get color for a characteristic score (M, A, R, I, P)
+  // TODO(deprecate): Prefer CharacteristicTokens.color from semantic_tokens.dart
   static Color getCharacteristicColor(String characteristic) {
     switch (characteristic.toLowerCase()) {
       case 'might':
@@ -84,6 +96,7 @@ class AppColors {
   }
 
   /// Get color for elemental damage types
+  // TODO(deprecate): Prefer DamageTokens.color from semantic_tokens.dart
   static Color getElementalColor(String element) {
     switch (element.toLowerCase()) {
       case 'acid':
@@ -110,6 +123,7 @@ class AppColors {
   }
 
   /// Get emoji for damage types to make them more visually distinctive
+  // TODO(deprecate): Move to DamageTokens.emoji in semantic_tokens.dart
   static String getDamageTypeEmoji(String damageType) {
     switch (damageType.toLowerCase()) {
       case 'acid':
@@ -136,6 +150,7 @@ class AppColors {
   }
 
   /// Get color for potency strength (w=weak, a=average, s=strong)
+  // TODO(deprecate): Prefer PotencyTokens.color from semantic_tokens.dart
   static Color getPotencyColor(String strength) {
     switch (strength.toLowerCase()) {
       case 'w':
@@ -153,6 +168,7 @@ class AppColors {
   }
 
   /// Get color for specific ability keywords
+  // TODO(deprecate): Prefer KeywordTokens.color from semantic_tokens.dart
   static Color getKeywordColor(String keyword) {
     switch (keyword.toLowerCase()) {
       case 'area':
@@ -177,6 +193,7 @@ class AppColors {
   }
 
   /// Get color for specific action types
+  // TODO(deprecate): Prefer ActionTokens.color from semantic_tokens.dart
   static Color getActionTypeColor(String actionType) {
     switch (actionType.toLowerCase()) {
       case 'main action':
@@ -197,6 +214,7 @@ class AppColors {
   }
 
   /// Get color for class heroic resources
+  // TODO(deprecate): Prefer HeroicResourceTokens.color from semantic_tokens.dart
   static Color getHeroicResourceColor(String resource) {
     switch (resource.toLowerCase()) {
       case 'wrath':

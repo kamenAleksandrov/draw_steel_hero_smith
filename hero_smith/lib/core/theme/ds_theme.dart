@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_text_styles.dart';
 
 class DsTheme extends ThemeExtension<DsTheme> {
   // Border color maps
@@ -188,17 +189,17 @@ class DsTheme extends ThemeExtension<DsTheme> {
         'traits': '🧬',
       },
       specialSectionColor: Colors.amber.shade300,
-      cardTitleStyle: TextStyle(
+      cardTitleStyle: AppTextStyles.title.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 14,
         color: scheme.onSurface.withOpacity(0.95),
       ),
-      sectionLabelStyle: TextStyle(
+      sectionLabelStyle: AppTextStyles.caption.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 12,
         color: scheme.onSurface.withOpacity(0.85),
       ),
-      badgeTextStyle: TextStyle(
+      badgeTextStyle: AppTextStyles.caption.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 11,
         color: scheme.onSurface.withOpacity(0.85),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_text_styles.dart';
 
 /// Treasure-specific theming constants for colors, emojis, and component styling
 class TreasureTheme {
@@ -73,39 +74,39 @@ class TreasureTheme {
   };
 
   // Text styles
-  static const TextStyle treasureNameStyle = TextStyle(
+  static final TextStyle treasureNameStyle = AppTextStyles.title.copyWith(
     fontWeight: FontWeight.w600,
     fontSize: 16,
   );
 
-  static const TextStyle treasureDescriptionStyle = TextStyle(
+  static final TextStyle treasureDescriptionStyle = AppTextStyles.body.copyWith(
     fontSize: 14,
     height: 1.4,
   );
 
-  static const TextStyle sectionTitleStyle = TextStyle(
+  static final TextStyle sectionTitleStyle = AppTextStyles.subtitle.copyWith(
     fontWeight: FontWeight.w600,
     fontSize: 14,
     letterSpacing: 0.5,
   );
 
-  static const TextStyle effectTextStyle = TextStyle(
+  static final TextStyle effectTextStyle = AppTextStyles.body.copyWith(
     fontSize: 13,
     height: 1.5,
   );
 
-  static const TextStyle levelHeaderStyle = TextStyle(
+  static final TextStyle levelHeaderStyle = AppTextStyles.caption.copyWith(
     fontWeight: FontWeight.w600,
     fontSize: 13,
     color: Colors.white,
   );
 
-  static const TextStyle prerequisiteStyle = TextStyle(
+  static final TextStyle prerequisiteStyle = AppTextStyles.caption.copyWith(
     fontSize: 12,
     fontStyle: FontStyle.italic,
   );
 
-  static const TextStyle keywordChipStyle = TextStyle(
+  static final TextStyle keywordChipStyle = AppTextStyles.caption.copyWith(
     fontSize: 11,
     fontWeight: FontWeight.w500,
   );

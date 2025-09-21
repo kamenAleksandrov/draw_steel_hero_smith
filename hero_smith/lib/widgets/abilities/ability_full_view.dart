@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart';
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/semantic/semantic_tokens.dart';
 import 'abilities_shared.dart';
 
 class AbilityFullView extends StatelessWidget {
@@ -79,7 +79,7 @@ class AbilityFullView extends StatelessWidget {
                         children: [
                           if (a.keywords.isNotEmpty)
                             ...a.keywords.map((keyword) {
-                              final keywordColor = AppColors.getKeywordColor(keyword);
+                              final keywordColor = KeywordTokens.color(keyword);
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
@@ -100,7 +100,7 @@ class AbilityFullView extends StatelessWidget {
                       ),
                     ),
                     if (a.actionType != null) () {
-                      final actionColor = AppColors.getActionTypeColor(a.actionType!);
+                      final actionColor = ActionTokens.color(a.actionType!);
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
@@ -146,13 +146,13 @@ class AbilityFullView extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: AppColors.getCharacteristicColor(char).withValues(alpha: 0.2),
-                                border: Border.all(color: AppColors.getCharacteristicColor(char).withValues(alpha: 0.6)),
+                                color: CharacteristicTokens.color(char).withValues(alpha: 0.2),
+                                border: Border.all(color: CharacteristicTokens.color(char).withValues(alpha: 0.6)),
                               ),
                               child: Text(
                                 char,
                                 style: theme.textTheme.labelSmall?.copyWith(
-                                  color: AppColors.getCharacteristicColor(char),
+                                  color: CharacteristicTokens.color(char),
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
