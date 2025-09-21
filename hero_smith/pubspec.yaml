@@ -44,3 +44,5 @@ flutter:
     - data/kits/
     # Treasure data
     - data/treasures/
+    # Downtime projects data
+    - data/downtime
