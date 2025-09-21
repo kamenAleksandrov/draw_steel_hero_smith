@@ -1,4 +1,4 @@
-export 'treasure_theme.dart';
+export '../../core/theme/treasure_theme.dart';
 export 'base_treasure_card.dart';
 export 'consumable_treasure_card.dart';
 export 'trinket_treasure_card.dart';

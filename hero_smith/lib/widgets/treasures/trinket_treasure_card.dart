@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart' as model;
 import 'base_treasure_card.dart';
-import 'treasure_theme.dart';
+import '../../core/theme/treasure_theme.dart';
 
 /// Widget for displaying trinket treasures
 class TrinketTreasureCard extends StatelessWidget {

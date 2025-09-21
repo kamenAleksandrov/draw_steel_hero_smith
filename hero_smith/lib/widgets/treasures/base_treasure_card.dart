@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart' as model;
-import 'treasure_theme.dart';
+import '../../core/theme/treasure_theme.dart';
 
 /// Base treasure card widget with common styling and layout
-class BaseTreasureCard extends StatelessWidget {
+class BaseTreasureCard extends StatefulWidget {
   final model.Component component;
   final List<Widget> children;
   final VoidCallback? onTap;
@@ -16,8 +16,48 @@ class BaseTreasureCard extends StatelessWidget {
   });
 
   @override
+  State<BaseTreasureCard> createState() => _BaseTreasureCardState();
+}
+
+class _BaseTreasureCardState extends State<BaseTreasureCard> 
+    with SingleTickerProviderStateMixin {
+  bool _isExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _expandAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      if (_isExpanded) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final colorScheme = TreasureTheme.getColorScheme(component.type);
+    final colorScheme = TreasureTheme.getColorScheme(widget.component.type);
     
     return Card(
       margin: EdgeInsets.zero,
@@ -30,18 +70,34 @@ class BaseTreasureCard extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap ?? _toggleExpanded,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(context, colorScheme),
+              Row(
+                children: [
+                  Expanded(child: _buildHeader(context, colorScheme)),
+                  Icon(
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: TreasureTheme.getSecondaryTextColor(context),
+                  ),
+                ],
+              ),
               const SizedBox(height: 12),
               _buildDescription(context),
-              const SizedBox(height: 16),
-              ...children,
+              SizeTransition(
+                sizeFactor: _expandAnimation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    ...widget.children,
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -61,7 +117,7 @@ class BaseTreasureCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            TreasureTheme.getTreasureTypeEmoji(component.type),
+            TreasureTheme.getTreasureTypeEmoji(widget.component.type),
             style: const TextStyle(fontSize: 16),
           ),
         ),
@@ -72,7 +128,7 @@ class BaseTreasureCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                component.name,
+                widget.component.name,
                 style: TreasureTheme.treasureNameStyle.copyWith(
                   color: TreasureTheme.getTextColor(context),
                 ),
@@ -93,11 +149,11 @@ class BaseTreasureCard extends StatelessWidget {
     chips.add(_buildChip(
       context,
       colorScheme,
-      component.type.replaceAll('_', ' ').toUpperCase(),
+      widget.component.type.replaceAll('_', ' ').toUpperCase(),
     ));
 
     // Echelon chip (if available)
-    final echelon = component.data['echelon'];
+    final echelon = widget.component.data['echelon'];
     if (echelon != null) {
       chips.add(_buildChip(
         context,
@@ -108,7 +164,7 @@ class BaseTreasureCard extends StatelessWidget {
     }
 
     // Leveled chip (if it's a leveled treasure)
-    if (component.data['leveled'] == true) {
+    if (widget.component.data['leveled'] == true) {
       chips.add(_buildChip(
         context,
         colorScheme,
@@ -154,7 +210,7 @@ class BaseTreasureCard extends StatelessWidget {
   }
 
   Widget _buildDescription(BuildContext context) {
-    final description = component.data['description'] as String?;
+    final description = widget.component.data['description'] as String?;
     if (description == null || description.isEmpty) return const SizedBox.shrink();
     
     return Text(

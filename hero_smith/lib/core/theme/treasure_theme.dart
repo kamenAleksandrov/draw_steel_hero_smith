@@ -113,7 +113,7 @@ class TreasureTheme {
   // Helper methods for theme-aware colors
   static Color getCardBackgroundColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
-        ? Colors.grey.shade800
+        ? const Color.fromARGB(255, 37, 36, 36)
         : Colors.white;
   }
 

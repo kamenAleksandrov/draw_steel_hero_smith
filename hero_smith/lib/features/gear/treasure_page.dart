@@ -36,10 +36,9 @@ class TreasurePage extends ConsumerWidget {
               stream: ref.watch(componentsByTypeProvider('trinket')),
               itemBuilder: (c) => TrinketTreasureCard(component: c),
             ),
-            // Leveled (filter on data["leveled"] == true)
+            // Leveled
             _TreasureList(
-              stream: ref.watch(componentsByTypeProvider('treasure')),
-              filter: (c) => (c.data['leveled'] == true),
+              stream: ref.watch(componentsByTypeProvider('leveled_treasure')),
               itemBuilder: (c) => LeveledTreasureCard(component: c),
             ),
             // Artifacts
