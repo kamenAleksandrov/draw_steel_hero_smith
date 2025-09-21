@@ -52,18 +52,6 @@
         "knowledge_value": 10
       }
     ],
-    "description": "Test project description",
-    "project_events": [
-      {
-        "id": "test event id 1",
-        "name": "test event name 1",
-        "description": "test event description 1"
-      },
-      {
-        "id": "test event id 2",
-        "name": "test event name 2",
-        "description": "test event description 2"
-      }
-    ]
+    "description": "Test project description"
   }
 ]
