@@ -337,6 +337,12 @@ class KitComponents {
   static String formatBonusWithEmoji(String bonusType, dynamic value) {
     final emoji = KitTheme.getBonusEmoji(bonusType);
     final label = _getBonusLabel(bonusType);
+    
+    // For characteristics, don't add a plus sign since it's a score, not a bonus
+    if (bonusType.toLowerCase() == 'characteristic_score' || bonusType.toLowerCase() == 'characteristic') {
+      return '$emoji $label $value';
+    }
+    
     return '$emoji $label +$value';
   }
 

@@ -111,71 +111,51 @@ class CulturesPage extends ConsumerWidget {
     final sortedCultures = [...cultures];
     sortedCultures.sort((a, b) => a.name.compareTo(b.name));
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Calculate responsive column count
-        int crossAxisCount = 2;
-        if (constraints.maxWidth > 1200) {
-          crossAxisCount = 4;
-        } else if (constraints.maxWidth > 800) {
-          crossAxisCount = 3;
-        }
-
-        // Calculate card width accounting for padding and spacing
-        final totalPadding = 0.0; // No additional padding in this layout
-        final totalSpacing = (crossAxisCount - 1) * 16.0; // 16px between cards
-        final availableWidth = constraints.maxWidth - totalPadding - totalSpacing;
-        final cardWidth = availableWidth / crossAxisCount;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Group header
+        Row(
           children: [
-            // Group header
-            Row(
-              children: [
-                Text(
-                  '$emoji $title',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Chip(
-                  label: Text(
-                    '${sortedCultures.length}',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                  backgroundColor: const Color.fromARGB(255, 52, 51, 51),
-                  side: BorderSide.none,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
             Text(
-              description,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              '$emoji $title',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
-            
-            // Culture cards
-            Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: sortedCultures.map((culture) {
-                return SizedBox(
-                  width: cardWidth,
-                  child: CultureCard(culture: culture),
-                );
-              }).toList(),
+            const SizedBox(width: 12),
+            Chip(
+              label: Text(
+                '${sortedCultures.length}',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              backgroundColor: const Color.fromARGB(255, 52, 51, 51),
+              side: BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ],
-        );
-      },
+        ),
+        const SizedBox(height: 8),
+        Text(
+          description,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Culture cards - now in vertical layout
+        Column(
+          children: sortedCultures.map((culture) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: CultureCard(culture: culture),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

@@ -72,65 +72,45 @@ class ComplicationsPage extends ConsumerWidget {
           final sortedComplications = [...complications];
           sortedComplications.sort((a, b) => a.name.compareTo(b.name));
 
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              // Calculate responsive column count
-              int crossAxisCount = 2;
-              if (constraints.maxWidth > 1200) {
-                crossAxisCount = 4;
-              } else if (constraints.maxWidth > 800) {
-                crossAxisCount = 3;
-              }
-
-              // Calculate card width accounting for padding and spacing
-              final totalPadding = 32.0; // 16px on each side
-              final totalSpacing = (crossAxisCount - 1) * 16.0; // 16px between cards
-              final availableWidth = constraints.maxWidth - totalPadding - totalSpacing;
-              final cardWidth = availableWidth / crossAxisCount;
-
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Complications',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${sortedComplications.length} complications available',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Complications',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    
-                    // Complications grid
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: sortedComplications.map((complication) {
-                        return SizedBox(
-                          width: cardWidth,
-                          child: ComplicationCard(complication: complication),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        '${sortedComplications.length} complications available',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
+                
+                // Complication cards - now in vertical layout
+                Column(
+                  children: sortedComplications.map((complication) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: ComplicationCard(complication: complication),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           );
         },
       ),

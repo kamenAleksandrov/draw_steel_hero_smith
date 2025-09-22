@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hero_smith/core/models/component.dart';
 import 'package:hero_smith/widgets/shared/expandable_card.dart';
 import 'package:hero_smith/core/theme/kit_theme.dart';
-import 'package:hero_smith/widgets/shared/kit_components.dart';
+import 'package:hero_smith/widgets/kits/kit_components.dart';
 
 class KitCard extends StatelessWidget {
   final Component component;
@@ -23,15 +23,15 @@ class KitCard extends StatelessWidget {
       title: component.name,
       borderColor: colorScheme.borderColor,
       badge: KitComponents.kitBadge(kitType: 'kit', displayName: 'Kit'),
-      preview: KitComponents.previewChips(
-        context: context,
-        items: [
-          if (stamina != null && stamina > 0) KitComponents.formatBonusWithEmoji('stamina', stamina),
-          if (speed != null && speed > 0) KitComponents.formatBonusWithEmoji('speed', speed),
-          if (disengageBonus != null && disengageBonus > 0) KitComponents.formatBonusWithEmoji('disengage', disengageBonus),
-        ],
-        primaryColor: colorScheme.primary,
-      ),
+      // preview: KitComponents.previewChips(
+      //   context: context,
+      //   items: [
+      //     if (stamina != null && stamina > 0) KitComponents.formatBonusWithEmoji('stamina', stamina),
+      //     if (speed != null && speed > 0) KitComponents.formatBonusWithEmoji('speed', speed),
+      //     if (disengageBonus != null && disengageBonus > 0) KitComponents.formatBonusWithEmoji('disengage', disengageBonus),
+      //   ],
+      //   primaryColor: colorScheme.primary,
+      // ),
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -56,22 +56,14 @@ class KitCard extends StatelessWidget {
               child: _EquipmentGrid(equipment: equipment, primaryColor: colorScheme.primary),
               primaryColor: colorScheme.primary,
             ),
-          if (stamina != null)
+          if (stamina != null || speed != null || (disengageBonus != null && disengageBonus > 0))
             KitComponents.chipRow(
               context: context,
-              items: ['Stamina +$stamina'],
-              primaryColor: colorScheme.primary,
-            ),
-          if (speed != null)
-            KitComponents.chipRow(
-              context: context,
-              items: ['Speed +$speed'],
-              primaryColor: colorScheme.primary,
-            ),
-          if (disengageBonus != null && disengageBonus > 0)
-            KitComponents.chipRow(
-              context: context,
-              items: ['Disengage +$disengageBonus'],
+              items: [
+                if (stamina != null && stamina > 0) KitComponents.formatBonusWithEmoji('stamina', stamina),
+                if (speed != null && speed > 0) KitComponents.formatBonusWithEmoji('speed', speed),
+                if (disengageBonus != null && disengageBonus > 0) KitComponents.formatBonusWithEmoji('disengage', disengageBonus),
+              ],
               primaryColor: colorScheme.primary,
             ),
           if (meleeDamage != null && _hasNonNullValues(meleeDamage))

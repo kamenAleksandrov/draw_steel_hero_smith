@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hero_smith/core/models/component.dart';
 import 'package:hero_smith/core/theme/kit_theme.dart';
 import 'package:hero_smith/widgets/shared/expandable_card.dart';
-import 'package:hero_smith/widgets/shared/kit_components.dart';
+import 'package:hero_smith/widgets/kits/kit_components.dart';
 
 class StormwightKitCard extends StatelessWidget {
   final Component component;
@@ -22,7 +22,6 @@ class StormwightKitCard extends StatelessWidget {
         primaryColor: primaryColor,
         isBold: true,
       ),
-      preview: _buildPreviewChips(context, d),
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -36,10 +35,18 @@ class StormwightKitCard extends StatelessWidget {
             KitComponents.section(context: context, label: 'Equipment', child: Text(d['equipment_description'] as String), primaryColor: primaryColor),
           if (d['equipment'] != null)
             KitComponents.section(context: context, label: 'Equipment Types', child: _equip(context, d['equipment'] as Map<String, dynamic>), primaryColor: primaryColor),
-          if (d['stamina_bonus'] != null)
-            KitComponents.section(context: context, label: 'Stamina Bonus', child: Text('+${d['stamina_bonus']}'), primaryColor: primaryColor),
-          if (d['speed_bonus'] != null)
-            KitComponents.section(context: context, label: 'Speed Bonus', child: Text('+${d['speed_bonus']}'), primaryColor: primaryColor),
+          if ((d['stamina_bonus'] != null && d['stamina_bonus'] > 0) || 
+              (d['speed_bonus'] != null && d['speed_bonus'] > 0) || 
+              (d['disengage_bonus'] != null && d['disengage_bonus'] > 0))
+            KitComponents.chipRow(
+              context: context,
+              items: [
+                if (d['stamina_bonus'] != null && d['stamina_bonus'] > 0) KitComponents.formatBonusWithEmoji('stamina', d['stamina_bonus']),
+                if (d['speed_bonus'] != null && d['speed_bonus'] > 0) KitComponents.formatBonusWithEmoji('speed', d['speed_bonus']),
+                if (d['disengage_bonus'] != null && d['disengage_bonus'] > 0) KitComponents.formatBonusWithEmoji('disengage', d['disengage_bonus']),
+              ],
+              primaryColor: primaryColor,
+            ),
           if (d['melee_damage_bonus'] != null && _hasNonNullValues(d['melee_damage_bonus'] as Map<String, dynamic>))
             KitComponents.echelonBonusBox(
               context: context,
@@ -54,8 +61,6 @@ class StormwightKitCard extends StatelessWidget {
               data: d['ranged_damage_bonus'] as Map<String, dynamic>,
               primaryColor: primaryColor,
             ),
-          if (d['disengage_bonus'] != null && d['disengage_bonus'] > 0)
-            KitComponents.section(context: context, label: 'Disengage Bonus', child: Text('+${d['disengage_bonus']}'), primaryColor: primaryColor),
           if (d['signature_ability'] != null)
             KitComponents.section(context: context, label: 'Signature Ability', child: Text(d['signature_ability'] as String), primaryColor: primaryColor),
           if (d['feature'] != null)
@@ -114,49 +119,5 @@ class StormwightKitCard extends StatelessWidget {
 
   bool _hasNonNullValues(Map<String, dynamic> map) {
     return map.values.any((v) => v != null);
-  }
-
-  Widget _buildPreviewChips(BuildContext context, Map<String, dynamic> d) {
-    List<String> items = [];
-    
-    if (d['stamina_bonus'] != null && d['stamina_bonus'] > 0) {
-      items.add('${KitTheme.bonusEmojis['stamina']} Stamina +${d['stamina_bonus']}');
-    }
-    if (d['speed_bonus'] != null && d['speed_bonus'] > 0) {
-      items.add('${KitTheme.bonusEmojis['speed']} Speed +${d['speed_bonus']}');
-    }
-    if (d['disengage_bonus'] != null && d['disengage_bonus'] > 0) {
-      items.add('${KitTheme.bonusEmojis['disengage']} Disengage +${d['disengage_bonus']}');
-    }
-    
-    // Add storm info with cleaned formatting
-    if (d['primordial_storm'] != null) {
-      final storm = d['primordial_storm'] as List;
-      for (final entry in storm.whereType<Map>()) {
-        for (final mapEntry in entry.entries) {
-          if (mapEntry.key == 'storm_type') {
-            items.add('${KitTheme.bonusEmojis['storm']} ${_formatType(mapEntry.value.toString())}');
-          } else if (mapEntry.key == 'damage_type') {
-            items.add('${KitTheme.bonusEmojis['lightning']} ${_formatType(mapEntry.value.toString())}');
-          }
-        }
-      }
-    }
-    
-    return items.isEmpty 
-      ? const SizedBox.shrink()
-      : Wrap(
-          spacing: 8,
-          runSpacing: 6,
-          children: items.map((item) => KitComponents.themedChip(
-            context: context,
-            text: item,
-            primaryColor: Colors.indigo,
-          )).toList(),
-        );
-  }
-
-  String _formatType(String type) {
-    return type.replaceAll('_', ' ');
   }
 }

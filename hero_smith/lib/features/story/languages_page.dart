@@ -99,12 +99,10 @@ class LanguagesPage extends ConsumerWidget {
             ],
           ),
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+        Column(
           children: languages.map((language) {
-            return SizedBox(
-              width: _getCardWidth(context),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
               child: LanguageCard(language: language),
             );
           }).toList(),
@@ -112,19 +110,5 @@ class LanguagesPage extends ConsumerWidget {
         const SizedBox(height: 8),
       ],
     );
-  }
-  
-  double _getCardWidth(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final availableWidth = screenWidth - 32; // Account for padding
-    
-    // Responsive card width based on screen size
-    if (screenWidth > 1200) {
-      return (availableWidth - 24) / 4; // 4 columns on large screens
-    } else if (screenWidth > 800) {
-      return (availableWidth - 16) / 3; // 3 columns on medium screens
-    } else {
-      return (availableWidth - 8) / 2; // 2 columns on small screens
-    }
   }
 }

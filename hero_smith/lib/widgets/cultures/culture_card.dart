@@ -112,14 +112,14 @@ class CultureCard extends StatelessWidget {
   }
 
   Widget _buildSkillGroupsContent(BuildContext context, List<dynamic> skillGroups) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: skillGroups.map((group) {
         final groupName = group.toString();
         final capitalizedName = _capitalize(groupName);
         
         return Container(
+          margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.blue.shade50,
@@ -140,13 +140,13 @@ class CultureCard extends StatelessWidget {
   }
 
   Widget _buildSpecificSkillsContent(BuildContext context, List<dynamic> specificSkills) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: specificSkills.map((skill) {
         final skillName = skill.toString();
         
         return Container(
+          margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.green.shade50,

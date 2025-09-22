@@ -87,25 +87,16 @@ class SkillsPage extends ConsumerWidget {
             ],
           ),
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: skills.map((s) => SizedBox(width: _getCardWidth(context), child: SkillCard(skill: s))).toList(),
+        Column(
+          children: skills.map((s) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: SkillCard(skill: s),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 8),
       ],
     );
-  }
-
-  double _getCardWidth(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final availableWidth = screenWidth - 32; // padding
-    if (screenWidth > 1200) {
-      return (availableWidth - 24) / 4; // 4 columns
-    } else if (screenWidth > 800) {
-      return (availableWidth - 16) / 3; // 3 columns
-    } else {
-      return (availableWidth - 8) / 2; // 2 columns
-    }
   }
 }

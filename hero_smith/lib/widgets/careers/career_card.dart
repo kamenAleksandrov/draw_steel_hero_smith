@@ -146,11 +146,11 @@ class CareerCard extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: grantedSkills.map((skill) {
               return Container(
+                margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.green.shade50,
@@ -173,19 +173,19 @@ class CareerCard extends StatelessWidget {
         
         // Skill groups
         if (skillGroups.isNotEmpty) ...[
-          Text(
+          const Text(
             'Available Skill Groups:',
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: skillGroups.map((group) {
               final groupName = group.toString();
               final capitalizedName = _capitalize(groupName);
               
               return Container(
+                margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.purple.shade50,

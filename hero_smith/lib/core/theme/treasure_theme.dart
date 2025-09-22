@@ -7,7 +7,7 @@ class TreasureTheme {
   // Treasure type emojis
   static const Map<String, String> treasureTypeEmojis = {
     'consumable': '🧪',
-    'trinket': '💍',
+    'trinket': '💎',
     'leveled_treasure': '⚔️',
     'artifact': '✨',
     'treasure': '💎',

@@ -87,10 +87,13 @@ class PerksPage extends ConsumerWidget {
             ],
           ),
         ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: perks.map((p) => SizedBox(width: _getCardWidth(context), child: PerkCard(perk: p))).toList(),
+        Column(
+          children: perks.map((p) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: PerkCard(perk: p),
+            );
+          }).toList(),
         ),
         const SizedBox(height: 8),
       ],
@@ -100,17 +103,5 @@ class PerksPage extends ConsumerWidget {
   String _capitalize(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
-  }
-
-  double _getCardWidth(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final availableWidth = screenWidth - 32; // padding
-    if (screenWidth > 1200) {
-      return (availableWidth - 24) / 4; // 4 columns
-    } else if (screenWidth > 800) {
-      return (availableWidth - 16) / 3; // 3 columns
-    } else {
-      return (availableWidth - 8) / 2; // 2 columns
-    }
   }
 }
