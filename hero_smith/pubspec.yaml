@@ -30,7 +30,6 @@ flutter:
     - data/
     - data/abilities/
     - data/abilities/class_abilities/
-    - data/abilities/subclass_abilities/
     - data/classes_levels_and_stats/
     # Story data (languages, titles, etc.)
     - data/story/
@@ -39,7 +38,6 @@ flutter:
     # Features data
     - data/features/
     - data/features/class_features/
-    - data/features/subclass_features/
     # Kits data
     - data/kits/
     # Treasure data

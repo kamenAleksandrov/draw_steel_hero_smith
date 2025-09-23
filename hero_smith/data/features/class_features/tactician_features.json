@@ -1,1 +1,515 @@
-[]
+[
+  {
+    "id": "feature_tactician_commanding_presence",
+    "type": "feature",
+    "name": "Commanding Presence",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 1,
+    "description": "You command any room you walk into. While you are present during a negotiation, each hero with you treats their Renown as 2 higher than usual. Additionally, each hero with you during a combat encounter has a double edge on tests made to stop combat and start a negotiation."
+  },
+  {
+    "id": "feature_tactician_covert_operations",
+    "type": "feature",
+    "name": "Covert Operations",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 1,
+    "description": "While in your presence or working according to your plans, each of your allies gains an edge on tests using any skill from the intrigue skill group. Additionally, you can use the Lead skill to assist another creature with any test made using a skill from the intrigue group.\n\nAt the Director's discretion, you and your allies can use skills from the intrigue skill group to attempt research or reconnaissance during a negotiation instead of outside of a negotiation."
+  },
+  {
+    "id": "feature_tactician_field_arsenal",
+    "type": "feature",
+    "name": "Field Arsenal",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You have drilled with a broad array of arms and armor, and have developed techniques to optimize their use. You can use and gain the benefits of two kits, including both their signature abilities. Whenever you would choose or change one kit, you can choose or change your second kit as well. See Chapter 6: Kits for more information. (*Quick Build:* Shining Armor, Sniper.)\n\nIf both kits grant you the same benefit, you take one or the other and can't change your choice until you finish a respite. (This usually means taking the higher of two bonuses.)\nFor example, if you take the Shining Armor and Sniper kits, you gain the following benefits overall:\n- Stamina Bonus: +12 per echelon\n- Stability Bonus: +1\n- Melee Damage Bonus: +2/+2/+2\n- Ranged Damage Bonus: +0/+0/+4\n- Speed Bonus: +1\n- Ranged Distance Bonus: +10\n- Disengage Bonus: +1\n- You can use the Patient Shot and Protective Attack signature abilities.\nKit signature abilities have their kit's bonuses already applied, which might require you to adjust the bonuses of the signature abilities you gain from a kit. For example, you might take the Martial Artist kit, which gives a melee weapon damage bonus of +2/+2/+2, and the Mountain kit, which gives a melee weapon damage bonus of +0/+0/+4. If you choose to use the Mountain kit's damage bonus, then the Battle Grace signature ability from the Martial Artist kit loses the +2/+2/+2 bonus from that kit, reducing its usual 5/8/11 damage for its tier 1, tier 2, and tier 3 outcomes to 3/6/9. It then gains the +0/+0/+4 of the Mountain kit to deal 3/6/13 damage."
+  },
+  {
+    "id": "feature_tactician_focus_outside_of_combat",
+    "type": "feature",
+    "name": "Focus Outside of Combat",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Though you can't gain focus outside of combat, you can use your heroic abilities and effects that cost focus without spending it. Whenever you use an ability or effect outside of combat that costs focus, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited focus on its effect, you can use it as if you had spent an amount of focus equal to your Victories. (Such abilities aren't part of the core rules for the tactician, but they might appear in future products.)"
+  },
+  {
+    "id": "feature_tactician_focus_in_combat",
+    "type": "feature",
+    "name": "Focus in Combat",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain focus equal to your Victories. At the start of each of your turns during combat, you gain 2 focus.\n\nAdditionally, the first time each combat round that you or any ally damages a creature marked by you (see Mark below), you gain 1 focus. The first time in a combat round that any ally within 10 squares of you uses a heroic ability, you gain 1 focus.\nYou lose any remaining focus at the end of the encounter."
+  },
+  {
+    "id": "feature_tactician_kit_signature_ability",
+    "type": "feature",
+    "name": "Kit Signature Ability",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Each kit from your Field Arsenal feature grants you a signature ability. Signature abilities can be used at will."
+  },
+  {
+    "id": "feature_tactician_mark",
+    "type": "feature",
+    "name": "Mark",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You know how to focus the attention of your allies as you push them toward victory. You have the following ability."
+  },
+  {
+    "id": "feature_tactician_strike_now",
+    "type": "feature",
+    "name": "Strike Now",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You have the following ability."
+  },
+  {
+    "id": "feature_tactician_studied_commander",
+    "type": "feature",
+    "name": "Studied Commander",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 1,
+    "description": "Your encyclopedic knowledge of the history of battle lets you apply that knowledge to current challenges. While you are present, each hero with you treats the Discover Lore project related to a war or battle as one category cheaper. This makes projects seeking common lore free, but such projects still require a respite activity to complete. (See Chapter 12: Downtime Projects for more information.)\n\nAdditionally, if you have 24 hours or more before a combat encounter or negotiation, and you have one or more clues or rumors regarding the encounter or negotiation, you can make a Reason test as a respite activity. The following test outcomes apply to a combat encounter:\n\nThe following test outcomes apply to a negotiation:\n\nYou can make this test only once for any encounter or negotiation."
+  },
+  {
+    "id": "feature_tactician_tactical_doctrine",
+    "type": "feature",
+    "name": "Tactical Doctrine",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Warfare is as old as civilization—and perhaps even older. As battle became ever more complex, military leaders invented tactical doctrine, outlining how combatants should be structured, used, and deployed. Doctrine can be learned at war colleges passing on ancient martial traditions, or directly through blood and sweat on the battlefield. Whatever path brought you to your mastery of historically proven tactics, you choose a tactical doctrine from the following options, each of which grants you a skill. (*Quick Build:* Vanguard and the Intimidate skill.)\n\nYour tactical doctrine is your subclass, and your choice of doctrine determines many of the features you'll gain as you gain new levels."
+  },
+  {
+    "id": "feature_tactician_2nd_level_insurgent_ability",
+    "type": "feature",
+    "name": "2nd-Level Insurgent Ability",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_2nd_level_mastermind_ability",
+    "type": "feature",
+    "name": "2nd-Level Mastermind Ability",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_2nd_level_vanguard_ability",
+    "type": "feature",
+    "name": "2nd-Level Vanguard Ability",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_goaded",
+    "type": "feature",
+    "name": "Goaded",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 2,
+    "description": "You have learned to leverage your marked foes' psychology and goad them into acting before they're tactically ready. Whenever a creature marked by you uses a strike that targets you or any ally within your line of effect, you can use a free triggered action to change one target of the strike to you or another ally within your line of effect. The new target must be within distance of the ability and within line of effect of the creature using it."
+  },
+  {
+    "id": "feature_tactician_infiltration_tactics",
+    "type": "feature",
+    "name": "Infiltration Tactics",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 2,
+    "description": "You have trained your squad to work together, stay silent, and wait for the opportune time to strike. Whenever you or any ally within 10 squares of you becomes hidden, that creature gains 1 surge."
+  },
+  {
+    "id": "feature_tactician_melee_superiority",
+    "type": "feature",
+    "name": "Melee Superiority",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 2,
+    "description": "After constant drills, you can more accurately anticipate an enemy's plan and thwart their attempts to move across the battlefield. Whenever you make an opportunity attack, the target's speed is reduced to 0 until the end of the current turn.\n\nWhen a creature marked by you attempts to move or shift within distance of your melee free strike, you can use a free triggered action and spend 2 focus to make a melee free strike against that creature."
+  },
+  {
+    "id": "feature_tactician_perk_2",
+    "type": "feature",
+    "name": "Perk",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice. See Chapter 7: Perks."
+  },
+  {
+    "id": "feature_tactician_out_of_position",
+    "type": "feature",
+    "name": "Out of Position",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 3,
+    "description": "Even before battle begins, your enemies struggle to keep up with your tactics. At the start of an encounter, you can use a free triggered action to use your Mark ability against one enemy you have line of effect to, even if you are surprised. You can then slide the marked target up to 3 squares, ignoring stability. The target can't be moved in a way that would harm them (such as over a cliff), leave them dying, or result in them suffering a condition or other negative effect."
+  },
+  {
+    "id": "feature_tactician_characteristic_increase_2",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "Your Might and Reason scores each increase to 3."
+  },
+  {
+    "id": "feature_tactician_focus_on_their_weaknesses",
+    "type": "feature",
+    "name": "Focus on Their Weaknesses",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "The first time each combat round that you or any ally damages a target marked by you, you gain 2 focus instead of 1."
+  },
+  {
+    "id": "feature_tactician_improved_field_arsenal",
+    "type": "feature",
+    "name": "Improved Field Arsenal",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "Your expertise with weapons has grown. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you gain an edge."
+  },
+  {
+    "id": "feature_tactician_perk_3",
+    "type": "feature",
+    "name": "Perk",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You gain one perk of your choice."
+  },
+  {
+    "id": "feature_tactician_skill_2",
+    "type": "feature",
+    "name": "Skill",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
+  },
+  {
+    "id": "feature_tactician_anticipation",
+    "type": "feature",
+    "name": "Anticipation",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 5,
+    "description": "You have learned to be more preemptive on the battlefield, thinking more steps ahead than your opponents. You can target two creatures with your Mark ability."
+  },
+  {
+    "id": "feature_tactician_distracted",
+    "type": "feature",
+    "name": "Distracted",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 5,
+    "description": "You have mastered the ability to distract your foes, allowing you and your allies to take advantage of their gaps in attention. Whenever you or any ally attempts to hide, any creature marked by you doesn't count as an observer. Additionally, you and your allies can use other allies as cover for the purpose of hiding."
+  },
+  {
+    "id": "feature_tactician_i_predicted_that",
+    "type": "feature",
+    "name": "I Predicted That",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 5,
+    "description": "Your expertise in history and lore allows you and your allies to outthink rivals in the present day. You and any ally within 10 squares of you gain an edge on Reason tests."
+  },
+  {
+    "id": "feature_tactician_leave_no_trace",
+    "type": "feature",
+    "name": "Leave No Trace",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 5,
+    "description": "You and any ally within 10 squares of you can move at full speed while sneaking. Additionally, enemies within 10 squares of you take a bane on tests made to search for you or your allies while any of you are hidden."
+  },
+  {
+    "id": "feature_tactician_shake_it_off",
+    "type": "feature",
+    "name": "Shake It Off",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 5,
+    "description": "As a free maneuver, you can spend 1d6 Stamina to ignore a consequence from a test, or to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally adjacent to you can also spend Stamina as a free maneuver to gain this benefit."
+  },
+  {
+    "id": "feature_tactician_tactical_offensive",
+    "type": "feature",
+    "name": "Tactical Offensive",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 5,
+    "description": "When you use the Charge main action to attack a creature marked by you, you can use a signature or heroic ability with the Melee and Strike keywords instead of a melee free strike."
+  },
+  {
+    "id": "feature_tactician_6th_level_insurgent_abilities",
+    "type": "feature",
+    "name": "6th-Level Insurgent Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_6th_level_mastermind_abilities",
+    "type": "feature",
+    "name": "6th-Level Mastermind Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_6th_level_vanguard_abilities",
+    "type": "feature",
+    "name": "6th-Level Vanguard Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_master_of_arms",
+    "type": "feature",
+    "name": "Master of Arms",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Your expertise with weapons has grown to true mastery. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you can negate a bane on the power roll or reduce a double bane to a bane."
+  },
+  {
+    "id": "feature_tactician_perk_4",
+    "type": "feature",
+    "name": "Perk",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
+  },
+  {
+    "id": "feature_tactician_asymmetric_warfare",
+    "type": "feature",
+    "name": "Asymmetric Warfare",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 7,
+    "description": "You have advanced your skills in subterfuge, now directing full battlefield strategy and logistics. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the intrigue skill group. Additionally, you can use skills from the intrigue skill group to conceal large groups of people, such as escaping civilians and groups of guerilla warriors."
+  },
+  {
+    "id": "feature_tactician_characteristic_increase_3",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
+  },
+  {
+    "id": "feature_tactician_grand_strategy",
+    "type": "feature",
+    "name": "Grand Strategy",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 7,
+    "description": "You have grown your skills in strategy, wielding intricate battlefield tactics and plans. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the lore skill group. Additionally, when you take a respite, you can make a project roll for a research project in addition to undertaking another respite activity."
+  },
+  {
+    "id": "feature_tactician_heightened_focus",
+    "type": "feature",
+    "name": "Heightened Focus",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "When you gain focus at the start of each of your turns during combat, you gain 3 focus instead of 2."
+  },
+  {
+    "id": "feature_tactician_seize_the_initiative",
+    "type": "feature",
+    "name": "Seize the Initiative",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "If you are not surprised when combat begins, your side gets to go first. If an enemy has an ability that allows their side to go first, you roll as usual to determine who goes first."
+  },
+  {
+    "id": "feature_tactician_shock_and_awe",
+    "type": "feature",
+    "name": "Shock and Awe",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 7,
+    "description": "You have expanded your leadership skills, strengthening your followers' morale and providing logistical support. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the interpersonal skill group. Additionally, you can convince a group of people to help you with a crafting project during a respite. If these people are available when you take a respite, you can make a project roll for a crafting project in addition to undertaking another respite activity."
+  },
+  {
+    "id": "feature_tactician_skill_3",
+    "type": "feature",
+    "name": "Skill",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "You gain one skill of your choice."
+  },
+  {
+    "id": "feature_tactician_bait_and_ambush",
+    "type": "feature",
+    "name": "Bait and Ambush",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Insurgent",
+    "level": 8,
+    "description": "You have trained your squad to be silent ambushers.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to let the character making the strike shift up to a number of squares equal to your Reason score and use the Hide maneuver as a free maneuver once during the shift. The creature can shift before or after the strike is resolved."
+  },
+  {
+    "id": "feature_tactician_perk_5",
+    "type": "feature",
+    "name": "Perk",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 8,
+    "description": "You gain one perk of your choice."
+  },
+  {
+    "id": "feature_tactician_pincer_movement",
+    "type": "feature",
+    "name": "Pincer Movement",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Mastermind",
+    "level": 8,
+    "description": "You have trained your squad to coordinate their movements to maximize combat impact.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to have the character making the strike shift up to a number of squares equal to your Reason score before the strike is resolved. If you didn't make the strike, you can make this shift as well. If you did make the strike, one ally within 10 squares of you can make this shift as well."
+  },
+  {
+    "id": "feature_tactician_see_your_enemies_driven_before_you",
+    "type": "feature",
+    "name": "See Your Enemies Driven Before You",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "subclass_name": "Vanguard",
+    "level": 8,
+    "description": "You have trained your squad to maximize impact and break enemy lines when they attack.\n\nWhen you or any ally makes a melee strike against a creature marked by you, you can spend 2 focus to have the character making the strike push the target up to a number of squares equal to your Reason score. That character can then shift up to a number of squares equal to your Reason score, ending this shift adjacent to the target."
+  },
+  {
+    "id": "feature_tactician_9th_level_insurgent_abilities",
+    "type": "feature",
+    "name": "9th-Level Insurgent Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_9th_level_mastermind_abilities",
+    "type": "feature",
+    "name": "9th-Level Mastermind Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_9th_level_vanguard_abilities",
+    "type": "feature",
+    "name": "9th-Level Vanguard Abilities",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_tactician_grandmaster_of_arms",
+    "type": "feature",
+    "name": "Grandmaster of Arms",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Your expertise with weapons has grown to true mastery. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you automatically obtain a tier 3 outcome on the power roll. You can still roll to determine if you score a critical hit."
+  },
+  {
+    "id": "feature_tactician_characteristic_increase",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "Your Might and Reason scores each increase to 5."
+  },
+  {
+    "id": "feature_tactician_command",
+    "type": "feature",
+    "name": "Command",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You have an epic resource called command. Each time you finish a respite, you gain command equal to the XP you gain. You can spend command on your abilities as if it were focus.\n\nAdditionally, whenever you or any ally uses an ability to deal rolled damage to a creature marked by you, you can spend 1 command as a free triggered action to increase the power roll outcome for that target by one tier. Whenever an enemy marked by you makes an ability roll, you can spend 1 command as a free triggered action to decrease the power roll outcome by one tier.\nCommand remains until you spend it."
+  },
+  {
+    "id": "feature_tactician_perk",
+    "type": "feature",
+    "name": "Perk",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
+  },
+  {
+    "id": "feature_tactician_skill",
+    "type": "feature",
+    "name": "Skill",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You gain one skill of your choice."
+  },
+  {
+    "id": "feature_tactician_true_focus",
+    "type": "feature",
+    "name": "True Focus",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "When you gain focus at the start of each of your turns during combat, you gain 4 focus instead of 3."
+  },
+  {
+    "id": "feature_tactician_warmaster",
+    "type": "feature",
+    "name": "Warmaster",
+    "class": "tactician",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You have mastered the entirety of possible strategies and tactics. Whenever you or any ally makes an ability roll against a target marked by you, the character making the roll can roll three dice and choose which two to use.\n\nAdditionally, whenever an ally uses a heroic ability that targets one or more creatures marked by you, they spend 2 fewer of their Heroic Resource on that ability (minimum 1)."
+  }
+]

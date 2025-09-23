@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/models/component.dart';
+import '../../core/theme/semantic/semantic_tokens.dart';
 import 'abilities_shared.dart';
 
 class AbilitySummary extends StatelessWidget {
@@ -30,24 +31,45 @@ class AbilitySummary extends StatelessWidget {
                 ),
               ),
               if (a.costString != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: scheme.primaryContainer.withOpacity(0.8),
-                    border: Border.all(
-                      color: scheme.primary.withOpacity(0.3),
-                      width: 1,
+                () {
+                  final resourceColor = a.resourceType != null 
+                    ? HeroicResourceTokens.color(a.resourceType!)
+                    : scheme.primary;
+                  
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [
+                          resourceColor.withValues(alpha: 0.3),
+                          resourceColor.withValues(alpha: 0.2),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border.all(
+                        color: resourceColor.withValues(alpha: 0.8),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: resourceColor.withValues(alpha: 0.15),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: Text(
-                    a.costString!,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: scheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
+                    child: Text(
+                      a.costString!,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }(),
             ],
           ),
           
@@ -60,11 +82,11 @@ class AbilitySummary extends StatelessWidget {
                 runSpacing: 4,
                 children: [
                   if (a.actionType != null)
-                    _buildInfoChip(context, a.actionType!, scheme.tertiary),
+                    _buildActionTypeChip(context, a.actionType!),
                   if (a.characteristicSummary != null)
                     _buildInfoChip(context, a.characteristicSummary!, scheme.secondary),
                   ...a.keywords.take(2).map((keyword) => 
-                    _buildInfoChip(context, keyword, scheme.outline)),
+                    _buildKeywordChip(context, keyword)),
                   if (a.keywords.length > 2)
                     _buildInfoChip(context, '+${a.keywords.length - 2} more', scheme.outline),
                 ],
@@ -93,6 +115,70 @@ class AbilitySummary extends StatelessWidget {
           color: color,
           fontWeight: FontWeight.w500,
           fontSize: 11,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionTypeChip(BuildContext context, String actionType) {
+    final theme = Theme.of(context);
+    final actionColor = ActionTokens.color(actionType);
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+          colors: [
+            actionColor.withValues(alpha: 0.35),
+            actionColor.withValues(alpha: 0.22),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: actionColor.withValues(alpha: 0.8),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: actionColor.withValues(alpha: 0.15),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Text(
+        actionType,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.normal,
+          fontSize: 11,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKeywordChip(BuildContext context, String keyword) {
+    final theme = Theme.of(context);
+    final keywordColor = KeywordTokens.color(keyword);
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        color: keywordColor.withOpacity(0.12),
+        border: Border.all(
+          color: keywordColor.withOpacity(0.5),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        keyword,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: keywordColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 10,
         ),
       ),
     );

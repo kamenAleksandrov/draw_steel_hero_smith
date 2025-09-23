@@ -60,8 +60,8 @@ class AbilityFullView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
+                      spacing: 6,
+                      runSpacing: 6,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         if (a.keywords.isNotEmpty)
@@ -69,18 +69,20 @@ class AbilityFullView extends StatelessWidget {
                             final keywordColor = KeywordTokens.color(keyword);
                             return Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                                  horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: keywordColor.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                color: keywordColor.withValues(alpha: 0.15),
                                 border: Border.all(
-                                    color: keywordColor.withValues(alpha: 0.5)),
+                                    color: keywordColor.withValues(alpha: 0.6),
+                                    width: 1.5),
                               ),
                               child: Text(
                                 keyword,
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: keywordColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11,
                                 ),
                               ),
                             );
@@ -93,18 +95,34 @@ class AbilityFullView extends StatelessWidget {
                       final actionColor = ActionTokens.color(a.actionType!);
                       return Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                            horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: actionColor.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          gradient: LinearGradient(
+                            colors: [
+                              actionColor.withValues(alpha: 0.4),
+                              actionColor.withValues(alpha: 0.25),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
                           border: Border.all(
-                              color: actionColor.withValues(alpha: 0.5)),
+                              color: actionColor.withValues(alpha: 0.8),
+                              width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: actionColor.withValues(alpha: 0.15),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Text(
                           a.actionType!,
                           style: theme.textTheme.labelMedium?.copyWith(
-                            color: actionColor,
-                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 13,
                           ),
                         ),
                       );

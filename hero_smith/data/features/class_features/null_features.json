@@ -1,1 +1,488 @@
-[]
+[
+  {
+    "id": "feature_null_density_augmentation",
+    "type": "feature",
+    "name": "Density Augmentation",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
+  },
+  {
+    "id": "feature_null_discipline_outside_of_combat",
+    "type": "feature",
+    "name": "Discipline Outside of Combat",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Though you can't gain discipline outside of combat, you can use your heroic abilities and effects that cost discipline without spending it. Whenever you use an ability or effect outside of combat that costs discipline, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited discipline on its effect, you can use it as if you had spent an amount of discipline equal to your Victories. (Such abilities aren't part of the core rules for the null, but they might appear in future products.)"
+  },
+  {
+    "id": "feature_null_force_augmentation",
+    "type": "feature",
+    "name": "Force Augmentation",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage."
+  },
+  {
+    "id": "feature_null_inertial_shield",
+    "type": "feature",
+    "name": "Inertial Shield",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Your instincts for danger let you predict attacks before they happen."
+  },
+  {
+    "id": "feature_null_null_field",
+    "type": "feature",
+    "name": "Null Field",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You project a psionic field of order around your body, dampening the effects of supernatural abilities harmful to you and your allies."
+  },
+  {
+    "id": "feature_null_null_speed",
+    "type": "feature",
+    "name": "Null Speed",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score."
+  },
+  {
+    "id": "feature_null_null_tradition",
+    "type": "feature",
+    "name": "Null Tradition",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Through extensive physical and psionic training, you have learned to unlock the full potential of your body. As you shape the growth of your power, you choose a null tradition from the following options, each of which grants you a skill. (*Quick Build:* Chronokinetic and the Monsters skill.)\n\nYour null tradition is your subclass, and your choice of tradition determines many of the features you'll gain as you gain new levels."
+  },
+  {
+    "id": "feature_null_psionic_martial_arts",
+    "type": "feature",
+    "name": "Psionic Martial Arts",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Whenever you use the Knockback or Grab maneuver, you use Intuition instead of Might for the power roll and for determining if you can target creatures larger than you. Additionally, whenever you use the Knockback maneuver, you can choose to slide the target instead of pushing them."
+  },
+  {
+    "id": "feature_null_signature_abilities",
+    "type": "feature",
+    "name": "Signature Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Faster Than the Eye, Inertial Step.)"
+  },
+  {
+    "id": "feature_null_speed_augmentation",
+    "type": "feature",
+    "name": "Speed Augmentation",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
+  },
+  {
+    "id": "feature_null_2nd_level_chronokinetic_ability",
+    "type": "feature",
+    "name": "2nd-Level Chronokinetic Ability",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_2nd_level_cryokinetic_ability",
+    "type": "feature",
+    "name": "2nd-Level Cryokinetic Ability",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following heroic abilities."
+  },
+  {
+    "id": "feature_null_2nd_level_metakinetic_ability",
+    "type": "feature",
+    "name": "2nd-Level Metakinetic Ability",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_entropic_adaptability",
+    "type": "feature",
+    "name": "Entropic Adaptability",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Cryokinetic",
+    "level": 2,
+    "description": "You have cold immunity equal to twice your Intuition score. Additionally, you ignore difficult terrain related to cold and ice, and you can automatically climb at full speed while moving."
+  },
+  {
+    "id": "feature_null_inertial_sink",
+    "type": "feature",
+    "name": "Inertial Sink",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Metakinetic",
+    "level": 2,
+    "description": "You add your Intuition score to your effective size for the purpose of interacting with creatures and objects, such as for determining whether you can lift an object, whether you are affected by forced movement, and so forth. This has no effect on whether you can be grabbed.\n\nAdditionally, when you fall, you reduce the effective height of the fall by 5 squares in addition to any other reductions. Whenever you take damage from being force moved, you reduce that damage by an amount equal to your level."
+  },
+  {
+    "id": "feature_null_perk_2",
+    "type": "feature",
+    "name": "Perk",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice. See Chapter 7: Perks."
+  },
+  {
+    "id": "feature_null_rapid_processing",
+    "type": "feature",
+    "name": "Rapid Processing",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Chronokinetic",
+    "level": 2,
+    "description": "As a maneuver, you can read an entire book or process a similar amount of information. Additionally, during any respite, you can take an additional respite activity."
+  },
+  {
+    "id": "feature_null_psionic_leap",
+    "type": "feature",
+    "name": "Psionic Leap",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 3,
+    "description": "You can long jump and high jump a distance equal to twice your Agility score without needing to make a test."
+  },
+  {
+    "id": "feature_null_reorder",
+    "type": "feature",
+    "name": "Reorder",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 3,
+    "description": "At the start of each of your turns, you can use a free triggered action to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Alternatively, you can grant this benefit to one creature in the area of your Null Field ability."
+  },
+  {
+    "id": "feature_null_characteristic_increase_2",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "Your Agility and Intuition scores each increase to 3."
+  },
+  {
+    "id": "feature_null_discipline_mastery_improvement_2",
+    "type": "feature",
+    "name": "Discipline Mastery Improvement",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "Your Discipline Mastery feature provides additional benefits when you have 8 or more discipline."
+  },
+  {
+    "id": "feature_null_enhanced_null_field",
+    "type": "feature",
+    "name": "Enhanced Null Field",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "While using your Null Field ability, you disrupt magic and psionic power suffusing the area around you. During combat, any temporary supernatural terrain effects of your level or lower are removed when your aura partially or fully overlaps with their location. Permanent supernatural terrain effects of your level or lower are temporarily negated while your aura overlaps with their location, but return when the aura no longer overlaps with them."
+  },
+  {
+    "id": "feature_null_perk_3",
+    "type": "feature",
+    "name": "Perk",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You gain one perk of your choice."
+  },
+  {
+    "id": "feature_null_regenerative_field",
+    "type": "feature",
+    "name": "Regenerative Field",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "The first time each combat round that an enemy in the area of your Null Field ability uses a main action, you gain 2 discipline instead of 1."
+  },
+  {
+    "id": "feature_null_skill_2",
+    "type": "feature",
+    "name": "Skill",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
+  },
+  {
+    "id": "feature_null_chilling_readiness",
+    "type": "feature",
+    "name": "Chilling Readiness",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Cryokinetic",
+    "level": 5,
+    "description": "You steel yourself for imminent danger by tapping into your body's cold energy. At the start of any combat, you gain a number of surges equal to your Victories."
+  },
+  {
+    "id": "feature_null_inertial_fulcrum",
+    "type": "feature",
+    "name": "Inertial Fulcrum",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Metakinetic",
+    "level": 5,
+    "description": "Whenever you use an ability to reduce damage dealt to you or to reduce the distance of forced movement imposed upon you, you can deal damage to one enemy in the area of your Null Field ability equal to your Intuition score."
+  },
+  {
+    "id": "feature_null_instant_action",
+    "type": "feature",
+    "name": "Instant Action",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Chronokinetic",
+    "level": 5,
+    "description": "If you're not surprised at the start of your first turn in combat, you gain an edge on ability rolls and gain 2 surges. If you are surprised, you can spend 3 discipline to no longer be surprised and gain the benefits of this feature."
+  },
+  {
+    "id": "feature_null_6th_level_chronokinetic_abilities",
+    "type": "feature",
+    "name": "6th-Level Chronokinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_6th_level_cryokinetic_abilities",
+    "type": "feature",
+    "name": "6th-Level Cryokinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_6th_level_metakinetic_abilities",
+    "type": "feature",
+    "name": "6th-Level Metakinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_elemental_absorption",
+    "type": "feature",
+    "name": "Elemental Absorption",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Whenever you use your Inertial Shield triggered action, you gain immunity to acid, cold, corruption, fire, lightning, poison, and sonic damage equal to your Intuition score against the triggering damage."
+  },
+  {
+    "id": "feature_null_elemental_buffer",
+    "type": "feature",
+    "name": "Elemental Buffer",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Whenever you reduce acid, cold, corruption, fire, lightning, poison, or sonic damage with damage immunity, you gain 2 surges that can be used only to increase the damage of your next strike."
+  },
+  {
+    "id": "feature_null_perk_4",
+    "type": "feature",
+    "name": "Perk",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
+  },
+  {
+    "id": "feature_null_characteristic_increase_3",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
+  },
+  {
+    "id": "feature_null_discipline_mastery_improvement_3",
+    "type": "feature",
+    "name": "Discipline Mastery Improvement",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "Your Discipline Mastery feature provides additional benefits when you have 10 or more discipline."
+  },
+  {
+    "id": "feature_null_improved_body",
+    "type": "feature",
+    "name": "Improved Body",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "When you gain discipline at the start of each of your turns during combat, you gain 3 discipline instead of 2."
+  },
+  {
+    "id": "feature_null_skill_3",
+    "type": "feature",
+    "name": "Skill",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "You gain one skill of your choice."
+  },
+  {
+    "id": "feature_null_inertial_dampener",
+    "type": "feature",
+    "name": "Inertial Dampener",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Metakinetic",
+    "level": 8,
+    "description": "You and each creature or object of your choice in the area of your Null Field ability gain a bonus to stability equal to your Intuition score. A creature who attempts to force move a target with this bonus takes psychic damage equal to your Intuition score."
+  },
+  {
+    "id": "feature_null_perk_5",
+    "type": "feature",
+    "name": "Perk",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 8,
+    "description": "You gain one perk of your choice."
+  },
+  {
+    "id": "feature_null_shared_momentum",
+    "type": "feature",
+    "name": "Shared Momentum",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Chronokinetic",
+    "level": 8,
+    "description": "When you take the Disengage move action, one ally in the area of your Null Field ability can also take the Disengage move action as a free triggered action, using your distance for that move action."
+  },
+  {
+    "id": "feature_null_synaptic_triage",
+    "type": "feature",
+    "name": "Synaptic Triage",
+    "class": "null",
+    "is_subclass_feature": true,
+    "subclass_name": "Cryokinetic",
+    "level": 8,
+    "description": "As a free maneuver, you can spend 1d6 Stamina to remove one effect on you. Each creature of your choice in the area of your Null Field ability also gains this benefit."
+  },
+  {
+    "id": "feature_null_9th_level_chronokinetic_abilities",
+    "type": "feature",
+    "name": "9th-Level Chronokinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_9th_level_cryokinetic_abilities",
+    "type": "feature",
+    "name": "9th-Level Cryokinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_9th_level_metakinetic_abilities",
+    "type": "feature",
+    "name": "9th-Level Metakinetic Abilities",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one of the following abilities."
+  },
+  {
+    "id": "feature_null_i_am_the_weapon",
+    "type": "feature",
+    "name": "I Am the Weapon",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Your Stamina increases by 21 and you can't be made bleeding even while dying. You no longer age or have need of food. Additionally, you can use Intuition instead of another characteristic when resisting potencies."
+  },
+  {
+    "id": "feature_null_characteristic_increase",
+    "type": "feature",
+    "name": "Characteristic Increase",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "Your Agility and Intuition scores each increase to 5."
+  },
+  {
+    "id": "feature_null_discipline_mastery_improvement",
+    "type": "feature",
+    "name": "Discipline Mastery Improvement",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "Your Discipline Mastery feature provides additional benefits when you have 12 or more discipline."
+  },
+  {
+    "id": "feature_null_manifold_body",
+    "type": "feature",
+    "name": "Manifold Body",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "When you gain discipline at the start of each of your turns during combat, you gain 4 discipline instead of 3."
+  },
+  {
+    "id": "feature_null_manifold_resonance",
+    "type": "feature",
+    "name": "Manifold Resonance",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "Your body becomes perfected matter, beyond the whims and chaos of the timescape and the restrictions of the manifolds. Each time you finish a respite, you can shift yourself and any creatures in the area of your Null Field ability to any location in the timescape known to you, known to any other creature in the area, or where any supernatural treasure in the area has been before.\n\nWhenever you use an ability, you gain 1 discipline that can be used only to apply a benefit from your Psi Boost feature to that ability. Additionally, you and allies in the area of your Null Field ability ignore banes and double banes on your power rolls."
+  },
+  {
+    "id": "feature_null_order",
+    "type": "feature",
+    "name": "Order",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You have an epic resource called order. Each time you finish a respite, you gain order equal to the XP you gain. You can spend order on your abilities as if it were discipline.\n\nAt the start of a combat encounter, you can spend 1 order to increase the size of your Null Field by 1 until the end of the encounter.\nOrder remains until you spend it."
+  },
+  {
+    "id": "feature_null_perk",
+    "type": "feature",
+    "name": "Perk",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
+  },
+  {
+    "id": "feature_null_skill",
+    "type": "feature",
+    "name": "Skill",
+    "class": "null",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You gain one skill of your choice."
+  }
+]

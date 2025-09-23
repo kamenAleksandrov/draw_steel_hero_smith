@@ -117,6 +117,18 @@ class AbilityData {
     }
     return null;
   }
+  
+  // Get raw resource type for color mapping
+  String? get resourceType {
+    final costs = c.data['costs'];
+    if (costs is Map) {
+      final amount = costs['amount'];
+      if (amount == null) return null; // free to use
+      final resourceRaw = costs['resource'];
+      return resourceRaw?.toString().trim().toLowerCase();
+    }
+    return null;
+  }
 
   // Keywords
   List<String> get keywords {

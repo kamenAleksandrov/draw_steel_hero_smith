@@ -1,0 +1,5195 @@
+[
+  {
+    "type": "ability",
+    "id": "ability_conduit_alacrity_of_the_heart",
+    "name": "Alacrity of the Heart",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You speak inspiring words to a friend and spur them to incredible feats.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target has an additional main action they can use on their next turn, and gains 3 of their Heroic Resource.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_arise_2",
+    "name": "Arise!",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "Your deity rewards you or an ally on the verge of defeat with a miracle burst of strength and resolve.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target can spend any number of Recoveries, can end any effects on them that are ended by a saving throw or that end at the end of their turn, and can stand up if they are prone. Additionally, at the start of each of their turns until the end of the encounter or until they are dying, the target gains 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_arise",
+    "name": "Arise!",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "Your deity rewards you or an ally on the verge of defeat with a miracle burst of strength and resolve.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target can spend any number of Recoveries, can end any effects on them that are ended by a saving throw or that end at the end of their turn, and can stand up if they are prone. Additionally, at the start of each of their turns until the end of the encounter or until they are dying, the target gains 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_aura_of_souls",
+    "name": "Aura of Souls",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "A whirlwind of souls of the dead flies around you at your command.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 aura",
+      "area": null
+    },
+    "targets": "Each creature in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, at the end of each of your turns, you can slide each creature in the area up to a number of squares equal to your Intuition score. This forced movement ignores stability for your allies.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_beacon_of_grace_2",
+    "name": "Beacon of Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You ignite a foe with holy radiance, rewarding allies who attack them.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + I holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "17 + I holy damage"
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, whenever you or any ally damages the target using an ability, that creature can spend a Recovery. If the target is reduced to 0 Stamina before the end of the encounter, you can use a free triggered action to move this effect to another creature within distance.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_beacon_of_grace",
+    "name": "Beacon of Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You ignite a foe with holy radiance, rewarding allies who attack them.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + I holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "17 + I holy damage"
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, whenever you or any ally damages the target using an ability, that creature can spend a Recovery. If the target is reduced to 0 Stamina before the end of the encounter, you can use a free triggered action to move this effect to another creature within distance.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_bend_fate",
+    "name": "Bend Fate",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "The gods know you must prevail, and they bless your fate.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, each of the target's power rolls has its outcome improved by one tier.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blade_of_the_heavens",
+    "name": "Blade of the Heavens",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "A greatsword streams down from the sky, threatening to pin your foe.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I damage; A < WEAK, prone and restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + I damage; A < AVERAGE, prone and restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + I damage; A < STRONG, prone and restrained (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessed_light",
+    "name": "Blessed Light",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Burning radiance falls upon your foe, transferring some of their energy to a nearby ally.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + I holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I holy damage"
+        }
+      }
+    },
+    "effect": "One ally within distance gains a number of surges equal to the tier outcome of your power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_fate_and_destiny",
+    "name": "Blessing of Fate and Destiny",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "Your enemies suffer their fate; your allies embrace their destiny!",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can target yourself instead of one creature with this ability. Choose one of the following effects, which lasts until the end of the encounter or until you are dying:\n- Whenever a target makes a power roll, they can roll three dice and choose which two rolls to use.\n- Whenever a target makes a power roll, they must roll three dice and use the lowest two rolls.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_insight",
+    "name": "Blessing of Insight",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "The gods grant insight revealing where best to strike your enemies.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and each ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, each target gains 1 surge at the end of each of your turns.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_secrets",
+    "name": "Blessing of Secrets",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You project an illusory aura that makes you and allies harder to notice.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 aura",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each creature in the area has a double edge on tests made to hide or sneak. The aura lasts until you end it (no action required) or until a target harms or deals damage to a creature or object.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_steel_2",
+    "name": "Blessing of Steel",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "A protective aura defends your allies from harm.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 aura",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, any ability roll made against a target takes a bane and each target has damage immunity 5.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_steel",
+    "name": "Blessing of Steel",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "A protective aura defends your allies from harm.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 aura",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, any ability roll made against a target takes a bane and each target has damage immunity 5.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_the_blade_2",
+    "name": "Blessing of the Blade",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "\"The power of the gods is within you, friends. Allow me to unleash it.\"",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 aura",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "At the end of each of your turns until the end of the encounter or until you are dying, each target gains 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_the_blade",
+    "name": "Blessing of the Blade",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "\"The power of the gods is within you, friends. Allow me to unleash it.\"",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 aura",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "At the end of each of your turns until the end of the encounter or until you are dying, each target gains 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_the_fortress",
+    "name": "Blessing of the Fortress",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "A magic circle extends out from you, barring foes from getting close.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, no enemy can approach within 5 squares of you by moving or by being force moved by any enemy. Targets can be force moved closer to you by you or your allies, or can move closer because of your movement.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_blessing_of_the_midday_sun",
+    "name": "Blessing of the Midday Sun",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "Your body emits a heat that bakes your enemies and inspires your allies.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 aura",
+      "area": null
+    },
+    "targets": "Self and each creature in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, each enemy in the area takes a bane on power rolls, and you and each ally in the area gain 1 surge at the end of each of your turns.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_call_the_thunder_down",
+    "name": "Call the Thunder Down",
+    "costs": {
+      "resource": "Piety",
+      "amount": 3
+    },
+    "story_text": "You ask your saint for thunder and your prayer is answered.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 sonic damage; push 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 sonic damage; push 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 sonic damage; push 3"
+        }
+      }
+    },
+    "effect": "You can push each willing ally in the area the same distance, ignoring stability.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_corruption_s_curse",
+    "name": "Corruption's Curse",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "Cursed by you, your enemy takes more damage from your allies.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I corruption damage; M < WEAK, damage weakness 5 (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I corruption damage; M < AVERAGE, damage weakness 5 (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I corruption damage; M < STRONG, damage weakness 5 (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_cuirass_of_the_gods",
+    "name": "Cuirass of the Gods",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "Your allies are covered in spiritual armor.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can target yourself instead of one creature with this ability. Each target has damage immunity 5 until the start of your next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_curse_of_terror",
+    "name": "Curse of Terror",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "Fear of divine judgment overwhelms your foe.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I holy damage; I < WEAK, frightened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I holy damage; I < AVERAGE, frightened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + I holy damage; I < STRONG, frightened (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_divine_comedy",
+    "name": "Divine Comedy",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "You and your allies swap places to confound your foes.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can choose another creature in the area, then swap places with that creature. The creature they choose must be able to fit into the space they leave and vice versa.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_divine_dragon",
+    "name": "Divine Dragon",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "From nothing but divine will, you create a powerful ally.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 fire damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 fire damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 fire damage"
+        }
+      }
+    },
+    "effect": "You conjure a size 4 dragon that appears in an unoccupied space within distance. The dragon has speed 6 and can fly, stability 4, 100 Stamina, immunity all to fire damage, and uses your characteristics. The dragon disappears at the end of the encounter, if their Stamina drops to 0, or if you are dying.\nOn subsequent turns, you can use a main action to command the dragon to breathe magic fire in a 3 cube within 1 square of them. Make the following power roll targeting each enemy in the area.\n\nAdditionally, you can use a maneuver to move the dragon up to their speed, or to make a melee weapon strike with their claw against an adjacent creature or object. The dragon can also make this strike as a free strike.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_drag_the_unworthy_2",
+    "name": "Drag the Unworthy",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You conjure an angel who moves a foe and heals your allies.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I holy damage; slide 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + I holy damage; slide 4"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + I holy damage; slide 6"
+        }
+      }
+    },
+    "effect": "Each ally the target comes adjacent to during the forced movement can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_drag_the_unworthy",
+    "name": "Drag the Unworthy",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You conjure an angel who moves a foe and heals your allies.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I holy damage; slide 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + I holy damage; slide 4"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + I holy damage; slide 6"
+        }
+      }
+    },
+    "effect": "Each ally the target comes adjacent to during the forced movement can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_drain",
+    "name": "Drain",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You drain the energy from your target to revitalize yourself or an ally.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + I corruption damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + I corruption damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + I corruption damage"
+        }
+      }
+    },
+    "effect": "You or one ally within distance can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_faith_is_our_armor",
+    "name": "Faith Is Our Armor",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "The heroes' armor glows with golden light, granting divine protection.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Four allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The target gains 5 temporary Stamina."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The target gains 10 temporary Stamina."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The target gains 15 temporary Stamina."
+        }
+      }
+    },
+    "effect": "You can target yourself instead of one ally with this ability.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_faithful_friend",
+    "name": "Faithful Friend",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "An animal spirit is drawn to you, sharing their senses with you and serving you faithfully.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You conjure a spirit that takes the form of any animal you have seen. The incorporeal animal has speed 5 and can fly, but can't physically interact with the world. While you are within 10 squares of the spirit, you automatically sense everything that type of animal would sense, in addition to sensing your own surroundings. You can dismiss the spirit at any time (no action required). If the spirit takes any damage, they are dismissed and you take 1d10 psychic damage that can't be reduced in any way.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_fear_of_the_gods",
+    "name": "Fear of the Gods",
+    "costs": {
+      "resource": "Piety",
+      "amount": 7
+    },
+    "story_text": "Your divine magic makes a creature appear as what your enemies fear most.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 psychic damage; I < WEAK, frightened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 psychic damage; I < AVERAGE, frightened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 psychic damage; I < STRONG, frightened (save ends)"
+        }
+      }
+    },
+    "effect": "Each target is frightened of you or a creature you choose within distance.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_font_of_wrath",
+    "name": "Font of Wrath",
+    "costs": {
+      "resource": "Piety",
+      "amount": 3
+    },
+    "story_text": "A brilliant column of holy light appears on the battlefield, striking out at nearby enemies.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You summon a spirit of size 2 who can't be harmed, and who appears in an unoccupied space within distance. The spirit lasts until the end of your next turn. You and your allies can move through the spirit's space, but enemies can't. Any enemy who moves within 2 squares of the spirit for the first time in a combat round or starts their turn there takes holy damage equal to your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_gods_machine",
+    "name": "Gods' Machine",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You conjure a whirring tank made of blades and metal.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage"
+        }
+      }
+    },
+    "effect": "You conjure a size 2 rolling machine that appears in an unoccupied space within distance. The machine has 50 Stamina and immunity all to poison and psychic damage. It disappears at the end of the encounter, if its Stamina drops to 0, or if you are dying. When the machine first appears, make the following power roll once, targeting each enemy adjacent to it.\n\nOnce on each subsequent turn, you can use a free maneuver to move the machine a number of squares up to your Intuition score then repeat the power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_godstorm",
+    "name": "Godstorm",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You summon a divine storm that remains under your control.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 cube within 5",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 lightning damage, 2 sonic damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 lightning damage, 3 sonic damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 lightning damage, 5 sonic damage"
+        }
+      }
+    },
+    "effect": "A raging storm fills the area until the end of the encounter or until you are dying. At the start of each of your turns, you can move the storm up to 5 squares (no action required). On subsequent turns while the storm is active, you can use a maneuver to make its power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_grave_speech",
+    "name": "Grave Speech",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You commune with the lingering soul of the recently dead.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One dead creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can speak to the target if they are a creature who has died within the last 24 hours and who can speak a language you know, even if they are just a head. The target regards you as they would have in life, and you might need to make tests to influence them and convince them to speak with you. The trauma of dying can make a creature's memory of that event hazy, but the target otherwise knows all they knew in life. After 1 minute, the effect ends. You can't use this ability on the same creature twice.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_guided_to_your_side",
+    "name": "Guided to Your Side",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You concentrate on a friend and teleport to them.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and each ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is teleported to unoccupied spaces within 5 squares of a willing creature who you are bonded to with your Invocation of the Heart feature. You don't need line of effect to the bonded creature but you must be on the same world.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_hands_of_the_maker",
+    "name": "Hands of the Maker",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You craft objects with the power of your mind.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You create a mundane object of size 1S or smaller. You can maintain a number of objects created this way equal to your Intuition score. You can destroy an object created this way with a thought, no matter how far you are from it (no action required).",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_healing_grace",
+    "name": "Healing Grace",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your divine energy restores the righteous.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target can spend a Recovery.\n\nFor each piety spent, choose one of the following enhancements:\n- You can target one additional ally within distance.\n- You can end one effect on a target that is ended by a saving throw or that ends at the end of their turn.\n- A prone target can stand up.\n- A target can spend 1 additional Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_holy_lash",
+    "name": "Holy Lash",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A tendril of divine energy shoots forth to draw in your foe.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I holy damage; vertical pull 2"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + I holy damage; vertical pull 3"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I holy damage; vertical pull 4"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_invocation_of_mystery",
+    "name": "Invocation of Mystery",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "\"Now you see us...\"",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is invisible until the start of your next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_invocation_of_undoing",
+    "name": "Invocation of Undoing",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You utter a secret word of destruction known only to deities.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 sonic damage; push 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 sonic damage; push 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 sonic damage; push 7"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": "You can choose to have this ability deal damage to and push objects, and to deal damage to buildings."
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_judgment_s_hammer",
+    "name": "Judgment's Hammer",
+    "costs": {
+      "resource": "Piety",
+      "amount": 3
+    },
+    "story_text": "Your divine fury is a hammer that crashes down upon the unrighteous.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I holy damage; A < WEAK, prone"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I holy damage; A < AVERAGE, prone"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I holy damage; A < STRONG, prone and can't stand (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_lauded_by_god",
+    "name": "Lauded by God",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You beseech the gods to give your allies what they need to win the day, and the gods answer.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Two allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target gains 3 of their Heroic Resource.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_lightfall",
+    "name": "Lightfall",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A rain of holy light scours your enemies and repositions your allies.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "2 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 holy damage"
+        }
+      }
+    },
+    "effect": "You can teleport yourself and each ally in the area to unoccupied spaces in the area.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_lightning_lord",
+    "name": "Lightning Lord",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "Lightning bursts forth from your body in several directions.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Three 10 x 1 lines within 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 lightning damage; push 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 lightning damage; push 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 lightning damage; push 3"
+        }
+      }
+    },
+    "effect": "The targets are force moved one at a time, starting with the target nearest to you, and can be pushed into other targets in the same line.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_morning_light",
+    "name": "Morning Light",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "Light shines at your command, burning your foes and blessing your allies.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 fire damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 fire damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 fire damage"
+        }
+      }
+    },
+    "effect": "Each ally in the area deals fire damage equal to your Intuition score with their next strike made before the end of their next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_nature_judges_thee",
+    "name": "Nature Judges Thee",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "Mystical thorned vines appear at your bidding and bind your foes.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage; A < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 damage; A < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage; A < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_night_falls",
+    "name": "Night Falls",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You summon darkness that thwarts only your foes.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 cube within 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, the area is filled with magic darkness that your enemies can't see through, but you and your allies can.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_our_hearts_your_strength",
+    "name": "Our Hearts Your Strength",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "An ally gains strength from their friends.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until the target is dying, at the start of each of the target's turns, they gain a bonus to speed and a bonus to rolled damage equal to the number of allies within 10 squares of them. This bonus lasts until the start of their next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_penance_2",
+    "name": "Penance",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "\"If you won't kneel, the gods will make you.\"",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 corruption damage; I < WEAK, prone and can't stand (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 corruption damage; I < AVERAGE, prone and can't stand (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 corruption damage; I < STRONG, prone and can't stand (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_penance",
+    "name": "Penance",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "\"If you won't kneel, the gods will make you.\"",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 corruption damage; I < WEAK, prone and can't stand (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 corruption damage; I < AVERAGE, prone and can't stand (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 corruption damage; I < STRONG, prone and can't stand (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_radiance_of_grace",
+    "name": "Radiance of Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "Intense light is emitted from your body, healing your allies.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Four allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can target yourself instead of one ally with this ability. Each target can spend any number of Recoveries, can end any effects on them that are ended by a saving throw or that end at the end of their turn, and can stand up if they are prone.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_ray_of_wrath",
+    "name": "Ray of Wrath",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You unleash a blast of holy light upon your foe.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + I damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + I damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I damage"
+        }
+      }
+    },
+    "effect": "You can have this ability deal holy damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_reap",
+    "name": "Reap",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "The gods reward those who smite their foes.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Each ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the start of your next turn, each time a target kills an enemy, they regain Stamina equal to 5 + your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_revitalizing_grace",
+    "name": "Revitalizing Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "With a gesture, you restore your health and that of your allies.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can spend any number of Recoveries. Additionally, each target can end one effect on themself that is ended by a saving throw or that ends at the end of their turn, or they can stand up if prone.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_righteous_phalanx",
+    "name": "Righteous Phalanx",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "A wall of spinning swords and knives appears where you wish.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "15 wall within 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The wall lasts until the end of the encounter or until you are dying, and can be placed in occupied squares. Creatures can enter and pass through the wall. Each enemy who enters the area for the first time in a combat round or starts their turn there takes 15 damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_sacred_bond",
+    "name": "Sacred Bond",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "You forge a divine connection between two creatures.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, whenever one target takes damage, the other target can use a free triggered action to take the damage instead. The original target suffers any effects associated with the damage. Additionally, whenever one target spends a Recovery, the other target can use a free triggered action to spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_sacrificial_offer",
+    "name": "Sacrificial Offer",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Divine magic tears at your foe and defends a nearby friend.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + I corruption damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + I corruption damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I corruption damage"
+        }
+      }
+    },
+    "effect": "Choose yourself or one ally within distance. That character can impose a bane on one power roll made against them before the end of their next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_saint_s_raiment",
+    "name": "Saint's Raiment",
+    "costs": {
+      "resource": "Piety",
+      "amount": 7
+    },
+    "story_text": "An ally becomes the wearer of an empowered golden cloak.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target gains 20 temporary Stamina and 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_saint_s_tempest",
+    "name": "Saint's Tempest",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "A raging storm appears, striking your foes with lightning and throwing them around with wind.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 lightning damage; vertical slide 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 lightning damage; vertical slide 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 lightning damage; vertical slide 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_sanctuary_2",
+    "name": "Sanctuary",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You send yourself or an ally to a divine manifold to instantaneously regain health.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target is removed from the encounter map until the start of their next turn and can spend any number of Recoveries. At the start of their turn, the target reappears in the space they left or the nearest unoccupied space of their choice.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_sanctuary",
+    "name": "Sanctuary",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You send yourself or an ally to a divine manifold to instantaneously regain health.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target is removed from the encounter map until the start of their next turn and can spend any number of Recoveries. At the start of their turn, the target reappears in the space they left or the nearest unoccupied space of their choice.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_sermon_of_grace",
+    "name": "Sermon of Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "You inspire your allies with tales of your saint's great deeds.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 burst",
+      "area": null
+    },
+    "targets": "Each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can spend a Recovery. Additionally, each target can use a free triggered action to end one effect on them that is ended by a saving throw or that ends at the end of their turn, or to stand up if prone.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_solar_flare",
+    "name": "Solar Flare",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You call down a sphere of fire that burns your foes to ash.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 cube within 10",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 fire damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 fire damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "19 fire damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_soul_siphon",
+    "name": "Soul Siphon",
+    "costs": {
+      "resource": "Piety",
+      "amount": 7
+    },
+    "story_text": "A beam of energy connects a foe to a friend, draining life from one to heal the other.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One enemy",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + I corruption damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + I corruption damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + I corruption damage"
+        }
+      }
+    },
+    "effect": "One ally within distance can spend any number of Recoveries.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_spirit_stampede",
+    "name": "Spirit Stampede",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "Animal spirits run through the battlefield, trampling your foes.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "10 x 2 line within 5",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage; M < WEAK, prone and can't stand (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage; M < AVERAGE, prone and can't stand (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 damage; M < STRONG, prone and can't stand (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_staggering_curse",
+    "name": "Staggering Curse",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A blast of judgment disorients your foe.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I holy damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + I holy damage; slide 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I holy damage; slide 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_statue_of_power",
+    "name": "Statue of Power",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "A marble statue of your deity rises from the earth.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "A size 2 statue rises out of the ground in an unoccupied space within distance and lasts until the end of the encounter. While within 3 squares of the statue, you gain 1 surge at the start of each of your turns. Each ally within 3 squares of the statue gains this same benefit. The statue is destroyed if it takes 20 or more damage. It has immunity all to poison and psychic damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_the_gods_command_you_obey",
+    "name": "The Gods Command You Obey",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "You speak with the voice of your saint, commanding your enemies.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + I holy damage; P < WEAK, before taking damage, the target makes a free strike against a target you choose"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + I holy damage; P < AVERAGE, before taking damage, the target uses an ability of your choice and you choose any targets for that ability"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + I holy damage; P < STRONG, before taking damage, the target shifts up to their speed to a location you choose, uses an ability of your choice, and you choose any targets for that ability"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_thorn_cage",
+    "name": "Thorn Cage",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "Vines burst forth from the ground and bind your foe, slowly closing around them.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + I damage; A < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + I damage; A < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + I damage; A < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": "While restrained this way, the target takes 10 damage at the start of each of your turns.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_trinity_of_trickery",
+    "name": "Trinity of Trickery",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "Hey! I'm over here. No, here, numbskull.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You create two illusory duplicates of the target, which appear anywhere within distance. These duplicates last until the end of the encounter. On each of their turns, the target can move each duplicate up to their speed. If the target is targeted by an ability, they can use a free triggered action to switch places with a duplicate within their line of effect, making the duplicate the target of the ability instead. When either duplicate takes damage, it is destroyed.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_vessel_of_retribution",
+    "name": "Vessel of Retribution",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You infuse yourself or an ally with the retributive energy of the gods, waiting to be unleashed.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The first time the target is dying or winded before the end of the encounter, each enemy within 5 squares of them takes 15 holy damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_vessel_of_retribution_2",
+    "name": "Vessel of Retribution",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You infuse yourself or an ally with the retributive energy of the gods, waiting to be unleashed.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The first time the target is dying or winded before the end of the encounter, each enemy within 5 squares of them takes 15 holy damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_violence_will_not_aid_thee",
+    "name": "Violence Will Not Aid Thee",
+    "costs": {
+      "resource": "Piety",
+      "amount": 3
+    },
+    "story_text": "After some holy lightning, your enemy will think twice about their next attack.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I lightning damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I lightning damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I lightning damage"
+        }
+      }
+    },
+    "effect": "The first time on a turn that the target deals damage to another creature, the target of this ability takes 1d10 lightning damage (save ends).",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_warrior_s_prayer",
+    "name": "Warrior's Prayer",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your quickly uttered prayer lends aggressive divine energy to a friend engaged in melee.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + I holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I holy damage"
+        }
+      }
+    },
+    "effect": "You or one ally within distance gains temporary Stamina equal to your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_wellspring_of_grace",
+    "name": "Wellspring of Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 5
+    },
+    "story_text": "A holy light is emitted from your body, healing your allies.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 aura",
+      "area": null
+    },
+    "targets": "Each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, whenever a target starts their turn in the area, they can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_wither",
+    "name": "Wither",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "A bolt of holy energy saps the life from a foe.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + I corruption damage; P < WEAK, the target takes a bane on their next power roll"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + I corruption damage; P < AVERAGE, the target takes a bane on their next power roll"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I corruption damage; P < STRONG, the target takes a bane on their next power roll"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_word_of_final_redemption",
+    "name": "Word of Final Redemption",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "Your death will fuel our victory.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Before the target dies, you can look at their stat block and force them to use one ability that is a main action or a maneuver. If the ability costs a Heroic Resource or Malice, the creature can use it without any cost. For the purpose of using this ability, your allies and enemies are the target's allies and enemies, and you decide who the ability targets.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_word_of_guidance",
+    "name": "Word of Guidance",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You invigorate an attacking ally with divine energy.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The power roll gains an edge.\n\nThe power roll has a double edge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_word_of_judgment",
+    "name": "Word of Judgment",
+    "costs": {
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "Your holy word saps an attacking enemy's strength.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The power roll takes a bane against the target.\n\nThe power roll has a double bane against the target.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_word_of_weakening",
+    "name": "Word of Weakening",
+    "costs": {
+      "resource": "Piety",
+      "amount": 11
+    },
+    "story_text": "You utter a divine word that makes a foe brittle.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + I corruption damage; A < WEAK, weakened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + I corruption damage; A < AVERAGE, weakened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + I corruption damage; A < STRONG, weakened (save ends)"
+        }
+      }
+    },
+    "effect": "While weakened this way, the target has damage weakness 10.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_words_of_wrath_and_grace",
+    "name": "Words of Wrath and Grace",
+    "costs": {
+      "resource": "Piety",
+      "amount": 7
+    },
+    "story_text": "Your saint grants your enemies a vision of pain and fills your allies with healing energy.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 holy damage"
+        }
+      }
+    },
+    "effect": "Each ally in the area can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_conduit_your_story_ends_here",
+    "name": "Your Story Ends Here",
+    "costs": {
+      "resource": "Piety",
+      "amount": 9
+    },
+    "story_text": "You bend the fate of a foe, willing them to die.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + I corruption damage; R < WEAK, weakened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + I corruption damage; R < AVERAGE, weakened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "19 + I corruption damage; R < STRONG, weakened (save ends)"
+        }
+      }
+    },
+    "effect": "If this damage kills the target, you and each ally within distance can spend a Recovery.",
+    "special_effect": null
+  }
+]

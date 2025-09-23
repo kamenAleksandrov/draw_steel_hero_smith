@@ -59,10 +59,10 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
             if (_expanded)
               Container(
                 decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest.withOpacity(0.3),
+                  color: scheme.surfaceContainerHighest.withOpacity(0.4),
                   border: Border(
                     top: BorderSide(
-                      color: scheme.outline.withOpacity(0.2),
+                      color: scheme.primary.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
