@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hero_smith/core/models/component.dart';
-import 'package:hero_smith/core/providers.dart';
+import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/widgets/cultures/culture_card.dart';
 
 class CulturesPage extends ConsumerWidget {

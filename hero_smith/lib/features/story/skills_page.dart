@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/providers.dart';
+import '../../core/db/providers.dart';
 import '../../core/models/component.dart';
 import '../../widgets/skills/skill_card.dart';
 

@@ -113,19 +113,78 @@ class AppDatabase extends _$AppDatabase {
     return count > 0;
   }
 
+  // --- Meta helpers (simple key-value store) ---
+  Future<String?> getMeta(String key) async {
+    final row = await (select(metaEntries)..where((t) => t.key.equals(key))).getSingleOrNull();
+    return row?.value;
+  }
+
+  Future<void> setMeta(String key, String value) async {
+    final existing = await (select(metaEntries)..where((t) => t.key.equals(key))).getSingleOrNull();
+    if (existing == null) {
+      await into(metaEntries).insert(MetaEntriesCompanion.insert(key: key, value: value));
+    } else {
+      await (update(metaEntries)..where((t) => t.key.equals(key))).write(MetaEntriesCompanion(value: Value(value)));
+    }
+  }
+
+  /// Atomically increment a numeric meta counter and return the new value.
+  Future<int> nextSequence(String seqKey) async {
+    return transaction(() async {
+      final currentStr = await getMeta(seqKey);
+      final current = int.tryParse(currentStr ?? '') ?? 0;
+      final next = current + 1;
+      await setMeta(seqKey, next.toString());
+      return next;
+    });
+  }
+
+  // --- Heroes CRUD helpers ---
+  /// Create a hero with an incremental id. The id format is H0001, H0002, ...
+  Future<String> createHero({required String name}) async {
+    final n = await nextSequence('hero_id_seq');
+    final id = 'H${n.toString().padLeft(4, '0')}';
+    final now = DateTime.now();
+    await into(heroes).insert(
+      HeroesCompanion.insert(
+        id: id,
+        name: name,
+        classComponentId: const Value(null),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ),
+      mode: InsertMode.insertOrAbort,
+    );
+    return id;
+  }
+
+  Future<void> renameHero(String heroId, String newName) async {
+    await (update(heroes)..where((t) => t.id.equals(heroId))).write(
+      HeroesCompanion(
+        name: Value(newName),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<List<Heroe>> getAllHeroes() => select(heroes).get();
+  Stream<List<Heroe>> watchAllHeroes() => select(heroes).watch();
+
   Future<void> addHeroComponent({
     required String heroId,
     required String componentId,
     required String category,
   }) async {
-    await into(heroComponents).insert(
-      HeroComponentsCompanion.insert(
-        heroId: heroId,
-        componentId: componentId,
-        category: Value(category),
-      ),
-      mode: InsertMode.insertOrIgnore,
-    );
+    // Avoid duplicate rows for the same hero+component+category
+    final exists = await (select(heroComponents)
+          ..where((t) => t.heroId.equals(heroId) & t.componentId.equals(componentId) & t.category.equals(category)))
+        .getSingleOrNull();
+    if (exists != null) return;
+    await into(heroComponents).insert(HeroComponentsCompanion.insert(
+      heroId: heroId,
+      componentId: componentId,
+      category: Value(category),
+    ));
   }
 
   Future<void> upsertHeroValue({
@@ -167,6 +226,51 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
     }
+  }
+
+  Future<List<HeroValue>> getHeroValues(String heroId) {
+    return (select(heroValues)..where((t) => t.heroId.equals(heroId))).get();
+  }
+
+  Future<List<HeroComponent>> getHeroComponents(String heroId) {
+    return (select(heroComponents)..where((t) => t.heroId.equals(heroId))).get();
+  }
+
+  /// Replace all components for a hero in a given category with the provided component IDs.
+  Future<void> setHeroComponents({
+    required String heroId,
+    required String category,
+    required List<String> componentIds,
+  }) async {
+    await transaction(() async {
+      final existing = await (select(heroComponents)
+            ..where((t) => t.heroId.equals(heroId) & t.category.equals(category)))
+          .get();
+      final existingIds = existing.map((e) => e.componentId).toSet();
+      final desired = componentIds.toSet();
+      final toAdd = desired.difference(existingIds);
+      final toRemove = existingIds.difference(desired);
+      if (toRemove.isNotEmpty) {
+        await (delete(heroComponents)
+              ..where((t) => t.heroId.equals(heroId) & t.category.equals(category) & t.componentId.isIn(toRemove.toList())))
+            .go();
+      }
+      for (final compId in toAdd) {
+        await into(heroComponents).insert(HeroComponentsCompanion.insert(
+          heroId: heroId,
+          componentId: compId,
+          category: Value(category),
+        ));
+      }
+    });
+  }
+
+  Future<void> deleteHero(String heroId) async {
+    await transaction(() async {
+      await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroComponents)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroes)..where((t) => t.id.equals(heroId))).go();
+    });
   }
 
   // Note: seeding logic has been extracted to core/seed/asset_seeder.dart

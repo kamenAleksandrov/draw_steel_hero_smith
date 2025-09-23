@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hero_smith/core/providers.dart';
+import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/widgets/careers/career_card.dart';
 
 class CareersPage extends ConsumerWidget {

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "widgets/summaries/ability_summary.md",
+                "file": "objects/hero_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ability_summary"
+              "title": "hero_object"
             }
           },
           {
@@ -214,6 +214,7 @@
   },
   "active": "93c5747b13561805",
   "lastOpenFiles": [
+    "widgets/summaries/ability_summary.md",
     "widgets/ability_display_widget.md",
     "objects/downtime_projects_object.md",
     "objects/ability_object.md",
@@ -226,7 +227,6 @@
     "systems/power_rolls_system.md",
     "objects/hero_object.md",
     "widgets/tables/damage_immunites_weaknesses_widget.md",
-    "widgets/summaries/ability_summary.md",
     "pages/strife_page.md",
     "objects/classes_object.md",
     "systems/level_up_system.md",

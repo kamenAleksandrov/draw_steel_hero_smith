@@ -1,15 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'db/app_database.dart';
-import 'seed/asset_seeder.dart';
-import '../core/repository/component_drift_repository.dart';
-import '../core/models/component.dart' as model;
+import 'app_database.dart';
+import '../seed/asset_seeder.dart';
+import '../repository/component_drift_repository.dart';
+import '../repository/hero_repository.dart';
+import '../models/component.dart' as model;
 
 // Core singletons
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
 final componentRepositoryProvider = Provider<ComponentDriftRepository>((ref) {
   final db = ref.read(appDatabaseProvider);
   return ComponentDriftRepository(db);
+});
+
+final heroRepositoryProvider = Provider<HeroRepository>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return HeroRepository(db);
 });
 
 // Toggle for auto-seeding on startup. Tests can override this to false.
@@ -32,4 +38,10 @@ final allComponentsProvider = StreamProvider<List<model.Component>>((ref) {
 final componentsByTypeProvider = StreamProvider.family<List<model.Component>, String>((ref, type) {
   final repo = ref.read(componentRepositoryProvider);
   return repo.watchByType(type);
+});
+
+// Heroes data streams
+final allHeroesProvider = StreamProvider((ref) {
+  final repo = ref.read(heroRepositoryProvider);
+  return repo.watchAllHeroes();
 });

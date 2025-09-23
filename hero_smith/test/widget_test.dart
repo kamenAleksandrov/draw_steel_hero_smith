@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:hero_smith/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hero_smith/core/providers.dart';
+import 'package:hero_smith/core/db/providers.dart';
 
 void main() {
   testWidgets('Bottom navigation has 5 destinations and switches pages', (tester) async {

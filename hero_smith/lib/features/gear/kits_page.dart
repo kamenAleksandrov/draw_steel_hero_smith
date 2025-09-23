@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/providers.dart';
+import '../../core/db/providers.dart';
 import '../../core/models/component.dart' as model;
 import '../../widgets/kits/kit_card.dart';
 import '../../widgets/kits/stormwight_kit_card.dart';
