@@ -29,11 +29,11 @@ class TreasurePage extends ConsumerWidget {
         body: TabBarView(
           children: [
             // Consumables - Echelon Groups
-            _EchelonGroupsTab(treasureType: 'consumable', displayName: 'Consumables'),
+            const _EchelonGroupsTab(treasureType: 'consumable', displayName: 'Consumables'),
             // Trinkets - Echelon Groups
-            _EchelonGroupsTab(treasureType: 'trinket', displayName: 'Trinkets'),
+            const _EchelonGroupsTab(treasureType: 'trinket', displayName: 'Trinkets'),
             // Leveled - Equipment Type Groups
-            _LeveledTreasureTypesTab(),
+            const _LeveledTreasureTypesTab(),
             // Artifacts
             _TreasureList(
               stream: ref.watch(componentsByTypeProvider('artifact')),
@@ -62,9 +62,9 @@ class _EchelonGroupsTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Choose an echelon:',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -116,19 +116,19 @@ class _LeveledTreasureTypesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Choose equipment type:',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Column(
             children: [
               _LeveledTypeCard(
@@ -137,14 +137,14 @@ class _LeveledTreasureTypesTab extends StatelessWidget {
                 description: 'Protective equipment and defensive gear',
                 icon: Icons.shield,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _LeveledTypeCard(
                 leveledType: 'implement',
                 title: 'Implements',
                 description: 'Magical focuses and casting tools',
                 icon: Icons.auto_fix_high,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _LeveledTypeCard(
                 leveledType: 'weapon',
                 title: 'Weapons',
@@ -290,7 +290,7 @@ class _LeveledTypeCard extends StatelessWidget {
             // For armor type, we need to show both armor and shield
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => _ArmorShieldPage(),
+                builder: (context) => const _ArmorShieldPage(),
               ),
             );
             return;

@@ -4,7 +4,7 @@ import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/widgets/complications/complication_card.dart';
 
 class ComplicationsPage extends ConsumerWidget {
-  const ComplicationsPage({Key? key}) : super(key: key);
+  const ComplicationsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

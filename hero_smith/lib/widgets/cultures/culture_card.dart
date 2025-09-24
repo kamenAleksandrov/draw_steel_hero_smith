@@ -7,9 +7,9 @@ class CultureCard extends StatelessWidget {
   final Component culture;
 
   const CultureCard({
-    Key? key,
+    super.key,
     required this.culture,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

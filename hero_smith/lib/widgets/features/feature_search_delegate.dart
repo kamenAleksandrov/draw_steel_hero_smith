@@ -9,7 +9,7 @@ class FeatureSearchDelegate extends SearchDelegate<Feature?> {
     required this.features,
     required this.className,
   }) : super(
-    searchFieldLabel: 'Search ${className} features...',
+    searchFieldLabel: 'Search $className features...',
     searchFieldStyle: const TextStyle(fontSize: 16),
   );
 

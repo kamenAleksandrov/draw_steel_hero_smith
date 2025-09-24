@@ -4,7 +4,7 @@ import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/widgets/careers/career_card.dart';
 
 class CareersPage extends ConsumerWidget {
-  const CareersPage({Key? key}) : super(key: key);
+  const CareersPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

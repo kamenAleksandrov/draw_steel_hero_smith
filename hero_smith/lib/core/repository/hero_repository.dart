@@ -24,18 +24,18 @@ class HeroRepository {
     final values = await _db.getHeroValues(heroId);
     final comps = await _db.getHeroComponents(heroId);
 
-    int _getInt(String key, int def) {
+    int getInt(String key, int def) {
       final v = values.firstWhereOrNull((e) => e.key == key);
       if (v == null) return def;
       return v.value ?? int.tryParse(v.textValue ?? '') ?? def;
     }
 
-    String? _getString(String key) {
+    String? getString(String key) {
       final v = values.firstWhereOrNull((e) => e.key == key);
       return v?.textValue;
     }
 
-    List<String> _jsonList(String key) {
+    List<String> jsonList(String key) {
       final v = values.firstWhereOrNull((e) => e.key == key);
       if (v?.jsonValue == null && v?.textValue == null) return <String>[];
       try {
@@ -53,7 +53,7 @@ class HeroRepository {
       }
     }
 
-    Map<String, int> _jsonMapInt(String key) {
+    Map<String, int> jsonMapInt(String key) {
       final v = values.firstWhereOrNull((e) => e.key == key);
       if (v?.jsonValue == null) return <String, int>{};
       try {
@@ -71,51 +71,51 @@ class HeroRepository {
     return HeroModel(
       id: row.id,
       name: row.name,
-  className: _getString(_k.className),
-  subclass: _getString(_k.subclass),
-  level: _getInt(_k.level, 1),
-  ancestry: _getString(_k.ancestry),
-  career: _getString(_k.career),
-  victories: _getInt(_k.victories, 0),
-  exp: _getInt(_k.exp, 0),
-  wealth: _getInt(_k.wealth, 0),
-  renown: _getInt(_k.renown, 0),
-  might: _getInt(_k.might, 0),
-  agility: _getInt(_k.agility, 0),
-  reason: _getInt(_k.reason, 0),
-  intuition: _getInt(_k.intuition, 0),
-  presence: _getInt(_k.presence, 0),
-  size: _getInt(_k.size, 0),
-  speed: _getInt(_k.speed, 0),
-  disengage: _getInt(_k.disengage, 0),
-  stability: _getInt(_k.stability, 0),
-  staminaCurrent: _getInt(_k.staminaCurrent, 0),
-  staminaMax: _getInt(_k.staminaMax, 0),
-  staminaTemp: _getInt(_k.staminaTemp, 0),
-  windedValue: _getInt(_k.windedValue, 0),
-  dyingValue: _getInt(_k.dyingValue, 0),
-  recoveriesCurrent: _getInt(_k.recoveriesCurrent, 0),
-  recoveriesValue: _getInt(_k.recoveriesValue, 0),
-  recoveriesMax: _getInt(_k.recoveriesMax, 0),
-  heroicResource: _getString(_k.heroicResource),
-  heroicResourceCurrent: _getInt(_k.heroicResourceCurrent, 0),
-  surgesCurrent: _getInt(_k.surgesCurrent, 0),
-      immunities: _jsonList(_k.immunities),
-      weaknesses: _jsonList(_k.weaknesses),
-  potencyStrong: _getString(_k.potencyStrong),
-  potencyAverage: _getString(_k.potencyAverage),
-  potencyWeak: _getString(_k.potencyWeak),
-      conditions: _jsonList(_k.conditions),
+  className: getString(_k.className),
+  subclass: getString(_k.subclass),
+  level: getInt(_k.level, 1),
+  ancestry: getString(_k.ancestry),
+  career: getString(_k.career),
+  victories: getInt(_k.victories, 0),
+  exp: getInt(_k.exp, 0),
+  wealth: getInt(_k.wealth, 0),
+  renown: getInt(_k.renown, 0),
+  might: getInt(_k.might, 0),
+  agility: getInt(_k.agility, 0),
+  reason: getInt(_k.reason, 0),
+  intuition: getInt(_k.intuition, 0),
+  presence: getInt(_k.presence, 0),
+  size: getInt(_k.size, 0),
+  speed: getInt(_k.speed, 0),
+  disengage: getInt(_k.disengage, 0),
+  stability: getInt(_k.stability, 0),
+  staminaCurrent: getInt(_k.staminaCurrent, 0),
+  staminaMax: getInt(_k.staminaMax, 0),
+  staminaTemp: getInt(_k.staminaTemp, 0),
+  windedValue: getInt(_k.windedValue, 0),
+  dyingValue: getInt(_k.dyingValue, 0),
+  recoveriesCurrent: getInt(_k.recoveriesCurrent, 0),
+  recoveriesValue: getInt(_k.recoveriesValue, 0),
+  recoveriesMax: getInt(_k.recoveriesMax, 0),
+  heroicResource: getString(_k.heroicResource),
+  heroicResourceCurrent: getInt(_k.heroicResourceCurrent, 0),
+  surgesCurrent: getInt(_k.surgesCurrent, 0),
+      immunities: jsonList(_k.immunities),
+      weaknesses: jsonList(_k.weaknesses),
+  potencyStrong: getString(_k.potencyStrong),
+  potencyAverage: getString(_k.potencyAverage),
+  potencyWeak: getString(_k.potencyWeak),
+      conditions: jsonList(_k.conditions),
       classFeatures: compsBy('class_feature'),
       ancestryTraits: compsBy('ancestry_trait'),
       languages: compsBy('language'),
       skills: compsBy('skill'),
       perks: compsBy('perk'),
       projects: compsBy('project'),
-  projectPoints: _getInt(_k.projectPoints, 0),
+  projectPoints: getInt(_k.projectPoints, 0),
       titles: compsBy('title'),
       abilities: compsBy('ability'),
-      modifications: _jsonMapInt(_k.modifications),
+      modifications: jsonMapInt(_k.modifications),
     );
   }
 
@@ -124,61 +124,61 @@ class HeroRepository {
     await _db.renameHero(hero.id, hero.name);
 
     // Values (simple keys)
-    Future<void> _setInt(String key, int value) =>
+    Future<void> setInt(String key, int value) =>
         _db.upsertHeroValue(heroId: hero.id, key: key, value: value);
-    Future<void> _setText(String key, String? value) =>
+    Future<void> setText(String key, String? value) =>
         _db.upsertHeroValue(heroId: hero.id, key: key, textValue: value);
-  Future<void> _setJsonMap(String key, Map<String, dynamic>? map) =>
+  Future<void> setJsonMap(String key, Map<String, dynamic>? map) =>
     _db.upsertHeroValue(heroId: hero.id, key: key, jsonMap: map);
 
     await Future.wait([
       // basics
-      _setText(_k.className, hero.className),
-      _setText(_k.subclass, hero.subclass),
-      _setInt(_k.level, hero.level),
-      _setText(_k.ancestry, hero.ancestry),
-      _setText(_k.career, hero.career),
+      setText(_k.className, hero.className),
+      setText(_k.subclass, hero.subclass),
+      setInt(_k.level, hero.level),
+      setText(_k.ancestry, hero.ancestry),
+      setText(_k.career, hero.career),
       // victories & exp
-      _setInt(_k.victories, hero.victories),
-      _setInt(_k.exp, hero.exp),
-      _setInt(_k.wealth, hero.wealth),
-      _setInt(_k.renown, hero.renown),
+      setInt(_k.victories, hero.victories),
+      setInt(_k.exp, hero.exp),
+      setInt(_k.wealth, hero.wealth),
+      setInt(_k.renown, hero.renown),
       // stats
-      _setInt(_k.might, hero.might),
-      _setInt(_k.agility, hero.agility),
-      _setInt(_k.reason, hero.reason),
-      _setInt(_k.intuition, hero.intuition),
-      _setInt(_k.presence, hero.presence),
-      _setInt(_k.size, hero.size),
-      _setInt(_k.speed, hero.speed),
-      _setInt(_k.disengage, hero.disengage),
-      _setInt(_k.stability, hero.stability),
+      setInt(_k.might, hero.might),
+      setInt(_k.agility, hero.agility),
+      setInt(_k.reason, hero.reason),
+      setInt(_k.intuition, hero.intuition),
+      setInt(_k.presence, hero.presence),
+      setInt(_k.size, hero.size),
+      setInt(_k.speed, hero.speed),
+      setInt(_k.disengage, hero.disengage),
+      setInt(_k.stability, hero.stability),
       // stamina
-      _setInt(_k.staminaCurrent, hero.staminaCurrent),
-      _setInt(_k.staminaMax, hero.staminaMax),
-      _setInt(_k.staminaTemp, hero.staminaTemp),
-      _setInt(_k.windedValue, hero.windedValue),
-      _setInt(_k.dyingValue, hero.dyingValue),
-      _setInt(_k.recoveriesCurrent, hero.recoveriesCurrent),
-      _setInt(_k.recoveriesValue, hero.recoveriesValue),
-      _setInt(_k.recoveriesMax, hero.recoveriesMax),
+      setInt(_k.staminaCurrent, hero.staminaCurrent),
+      setInt(_k.staminaMax, hero.staminaMax),
+      setInt(_k.staminaTemp, hero.staminaTemp),
+      setInt(_k.windedValue, hero.windedValue),
+      setInt(_k.dyingValue, hero.dyingValue),
+      setInt(_k.recoveriesCurrent, hero.recoveriesCurrent),
+      setInt(_k.recoveriesValue, hero.recoveriesValue),
+      setInt(_k.recoveriesMax, hero.recoveriesMax),
       // hero resource
-      _setText(_k.heroicResource, hero.heroicResource),
-      _setInt(_k.heroicResourceCurrent, hero.heroicResourceCurrent),
+      setText(_k.heroicResource, hero.heroicResource),
+      setInt(_k.heroicResourceCurrent, hero.heroicResourceCurrent),
       // surges
-      _setInt(_k.surgesCurrent, hero.surgesCurrent),
+      setInt(_k.surgesCurrent, hero.surgesCurrent),
       // arrays
-  _setJsonMap(_k.immunities, {'list': hero.immunities}),
-  _setJsonMap(_k.weaknesses, {'list': hero.weaknesses}),
-  _setJsonMap(_k.conditions, {'list': hero.conditions}),
+  setJsonMap(_k.immunities, {'list': hero.immunities}),
+  setJsonMap(_k.weaknesses, {'list': hero.weaknesses}),
+  setJsonMap(_k.conditions, {'list': hero.conditions}),
       // potencies
-      _setText(_k.potencyStrong, hero.potencyStrong),
-      _setText(_k.potencyAverage, hero.potencyAverage),
-      _setText(_k.potencyWeak, hero.potencyWeak),
+      setText(_k.potencyStrong, hero.potencyStrong),
+      setText(_k.potencyAverage, hero.potencyAverage),
+      setText(_k.potencyWeak, hero.potencyWeak),
       // projects meta
-      _setInt(_k.projectPoints, hero.projectPoints),
+      setInt(_k.projectPoints, hero.projectPoints),
       // modifications map
-  _setJsonMap(_k.modifications, hero.modifications.map((k, v) => MapEntry(k, v))),
+  setJsonMap(_k.modifications, hero.modifications.map((k, v) => MapEntry(k, v))),
     ]);
 
     // Components by category

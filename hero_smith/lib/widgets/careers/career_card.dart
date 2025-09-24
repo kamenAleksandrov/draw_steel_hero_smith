@@ -7,9 +7,9 @@ class CareerCard extends StatelessWidget {
   final Component career;
 
   const CareerCard({
-    Key? key,
+    super.key,
     required this.career,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -141,9 +141,9 @@ class CareerCard extends StatelessWidget {
         
         // Granted skills
         if (grantedSkills.isNotEmpty) ...[
-          Text(
+          const Text(
             'Granted Skills:',
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Column(

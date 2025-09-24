@@ -684,22 +684,22 @@ class _SuggestedMilestonesCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            _MilestoneRow(
+            const _MilestoneRow(
               color: Colors.teal,
               range: '30 or fewer points',
               suggestion: 'None',
             ),
-            _MilestoneRow(
+            const _MilestoneRow(
               color: Colors.blue,
               range: '31–200 points',
               suggestion: 'One at halfway',
             ),
-            _MilestoneRow(
+            const _MilestoneRow(
               color: Colors.indigo,
               range: '201–999 points',
               suggestion: 'Two at 1/3 and 2/3',
             ),
-            _MilestoneRow(
+            const _MilestoneRow(
               color: Colors.deepPurple,
               range: '1,000+ points',
               suggestion: 'Three at 1/4, 1/2, 3/4',

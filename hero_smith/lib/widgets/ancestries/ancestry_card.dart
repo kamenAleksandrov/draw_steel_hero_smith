@@ -8,10 +8,10 @@ class AncestryCard extends StatelessWidget {
   final Component? ancestryTraits;
 
   const AncestryCard({
-    Key? key,
+    super.key,
     required this.ancestry,
     this.ancestryTraits,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +332,7 @@ class AncestryCard extends StatelessWidget {
             description: traitMap['description'] as String? ?? '',
             cost: traitMap['cost'] as int? ?? 0,
           );
-        }).toList(),
+        }),
       ],
     );
   }

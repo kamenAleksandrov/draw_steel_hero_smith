@@ -6,9 +6,9 @@ class ConditionCard extends StatelessWidget {
   final Component condition;
 
   const ConditionCard({
-    Key? key,
+    super.key,
     required this.condition,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

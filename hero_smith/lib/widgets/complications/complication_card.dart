@@ -7,9 +7,9 @@ class ComplicationCard extends StatelessWidget {
   final Component complication;
 
   const ComplicationCard({
-    Key? key,
+    super.key,
     required this.complication,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

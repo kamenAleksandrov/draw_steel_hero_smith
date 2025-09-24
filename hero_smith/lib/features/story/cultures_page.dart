@@ -5,7 +5,7 @@ import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/widgets/cultures/culture_card.dart';
 
 class CulturesPage extends ConsumerWidget {
-  const CulturesPage({Key? key}) : super(key: key);
+  const CulturesPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
