@@ -41,43 +41,236 @@ class HeroRepository {
 
   // Lightweight projection for list screens
   Stream<List<HeroSummary>> watchSummaries() async* {
-    // Recompute summaries whenever heroes, values, or components change.
-    // For simplicity, tie to heroes table stream and refetch details.
     await for (final heroes in _db.watchAllHeroes()) {
       final summaries = <HeroSummary>[];
       for (final h in heroes) {
         final values = await _db.getHeroValues(h.id);
         final comps = await _db.getHeroComponents(h.id);
-        String? getText(String key) =>
-            values.firstWhereOrNull((v) => v.key == key)?.textValue;
+        String? getText(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
         int? getInt(String key) => values.firstWhereOrNull((v) => v.key == key)?.value;
-        // Attempt to enrich names by looking up components in memory
-        String? ancestryName;
-        String? careerName;
-        String? complicationName;
-        // Fetch all components once (room for optimization: cache)
         final allComps = await _db.getAllComponents();
+        String? nameForId(String? compId) =>
+            compId == null ? null : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
         String? nameForCategory(String category) {
           final compId = comps.firstWhereOrNull((c) => c.category == category)?.componentId;
-          if (compId == null) return null;
-          return allComps.firstWhereOrNull((c) => c.id == compId)?.name;
+          return nameForId(compId);
         }
-        ancestryName = nameForCategory('ancestry');
-        careerName = nameForCategory('career');
-        complicationName = nameForCategory('complication');
+
+        final classId = getText(_k.className);
+        final ancestryId = getText(_k.ancestry);
+        final careerId = getText(_k.career);
 
         summaries.add(HeroSummary(
           id: h.id,
           name: h.name,
-          className: getText(_k.className),
+          className: nameForId(classId),
           level: getInt(_k.level) ?? 1,
-          ancestryName: ancestryName,
-          careerName: careerName,
-          complicationName: complicationName,
+          ancestryName: nameForId(ancestryId),
+          careerName: nameForId(careerId),
+          complicationName: nameForCategory('complication'),
         ));
       }
       yield summaries;
     }
+  }
+
+  // --- Ancestry selections (traits) ---
+  Future<void> saveAncestryTraits({
+    required String heroId,
+    required String? ancestryId,
+    required List<String> selectedTraitIds,
+  }) async {
+    // Persist ancestry id
+    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestry, textValue: ancestryId);
+    // Persist selected trait ids as a json list
+    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestrySelectedTraits, jsonMap: {
+      'list': selectedTraitIds,
+    });
+    // Persist signature trait name for convenience (redundant but requested)
+    String? signatureName;
+    if (ancestryId != null) {
+      final all = await _db.getAllComponents();
+      final traitsComp = all.firstWhereOrNull((c) {
+        if (c.type != 'ancestry_trait') return false;
+        try {
+          final map = jsonDecode(c.dataJson) as Map<String, dynamic>;
+          return map['ancestry_id'] == ancestryId;
+        } catch (_) {
+          return false;
+        }
+      });
+      if (traitsComp != null) {
+        try {
+          final map = jsonDecode(traitsComp.dataJson) as Map<String, dynamic>;
+          final sig = map['signature'];
+          if (sig is Map && sig['name'] is String) signatureName = sig['name'] as String;
+        } catch (_) {}
+      }
+    }
+    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestrySignature, textValue: signatureName);
+  }
+
+  Future<List<String>> getSelectedAncestryTraits(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final v = values.firstWhereOrNull((e) => e.key == _k.ancestrySelectedTraits);
+    if (v == null) return <String>[];
+    try {
+      final raw = v.jsonValue ?? v.textValue;
+      if (raw == null) return <String>[];
+      final decoded = jsonDecode(raw);
+      if (decoded is Map && decoded['list'] is List) {
+        return (decoded['list'] as List).map((e) => e.toString()).toList();
+      }
+      if (decoded is List) return decoded.map((e) => e.toString()).toList();
+    } catch (_) {}
+    return <String>[];
+  }
+
+  // --- Culture selections (environment, organisation, upbringing, languages) ---
+  Future<void> saveCultureSelection({
+    required String heroId,
+    String? environmentId,
+    String? organisationId,
+    String? upbringingId,
+    List<String> languageIds = const <String>[],
+    String? environmentSkillId,
+    String? organisationSkillId,
+    String? upbringingSkillId,
+  }) async {
+    if (environmentId != null) {
+      await _db.setHeroComponents(heroId: heroId, category: 'culture_environment', componentIds: [environmentId]);
+    }
+    if (organisationId != null) {
+      await _db.setHeroComponents(heroId: heroId, category: 'culture_organisation', componentIds: [organisationId]);
+    }
+    if (upbringingId != null) {
+      await _db.setHeroComponents(heroId: heroId, category: 'culture_upbringing', componentIds: [upbringingId]);
+    }
+  // Union provided language ids with existing to avoid removing languages granted elsewhere
+  final currentComps = await _db.getHeroComponents(heroId);
+  final existingLangs = currentComps.where((c) => c.category == 'language').map((c) => c.componentId).toSet();
+  final langUnion = existingLangs.union(languageIds.toSet()).toList();
+  await _db.setHeroComponents(heroId: heroId, category: 'language', componentIds: langUnion);
+
+    // Persist chosen skill ids as HeroValues for traceability
+    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureEnvironmentSkill, textValue: environmentSkillId);
+    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureOrganisationSkill, textValue: organisationSkillId);
+    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureUpbringingSkill, textValue: upbringingSkillId);
+
+    // Ensure selected skills are present among HeroComponents('skill') without removing others
+    final currentSkillComps = await _db.getHeroComponents(heroId);
+    final existingSkillIds = currentSkillComps.where((c) => c.category == 'skill').map((c) => c.componentId).toSet();
+    final toAdd = <String>{};
+    if (environmentSkillId != null && environmentSkillId.isNotEmpty) toAdd.add(environmentSkillId);
+    if (organisationSkillId != null && organisationSkillId.isNotEmpty) toAdd.add(organisationSkillId);
+    if (upbringingSkillId != null && upbringingSkillId.isNotEmpty) toAdd.add(upbringingSkillId);
+    if (toAdd.isNotEmpty) {
+      final union = [...existingSkillIds.union(toAdd)];
+      await _db.setHeroComponents(heroId: heroId, category: 'skill', componentIds: union);
+    }
+  }
+
+  Future<CultureSelection> loadCultureSelection(String heroId) async {
+    final comps = await _db.getHeroComponents(heroId);
+    String? idFor(String category) => comps.firstWhereOrNull((c) => c.category == category)?.componentId;
+    final values = await _db.getHeroValues(heroId);
+    String? val(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
+    return CultureSelection(
+      environmentId: idFor('culture_environment'),
+      organisationId: idFor('culture_organisation'),
+      upbringingId: idFor('culture_upbringing'),
+      environmentSkillId: val(_k.cultureEnvironmentSkill),
+      organisationSkillId: val(_k.cultureOrganisationSkill),
+      upbringingSkillId: val(_k.cultureUpbringingSkill),
+    );
+  }
+
+  // --- Career selections (career id, chosen skills/perks, incident) ---
+  Future<void> saveCareerSelection({
+    required String heroId,
+    required String? careerId,
+    List<String> chosenSkillIds = const <String>[],
+    List<String> chosenPerkIds = const <String>[],
+    String? incitingIncidentName,
+  }) async {
+    // Detect previous career to apply numeric grants only on change
+    final values = await _db.getHeroValues(heroId);
+    final previousCareerId = values.firstWhereOrNull((v) => v.key == _k.career)?.textValue;
+
+    await _db.upsertHeroValue(heroId: heroId, key: _k.career, textValue: careerId);
+
+    final allComps = await _db.getAllComponents();
+    // Resolve granted skills from career definition by name
+    final careerComp = allComps.firstWhereOrNull((c) => c.id == careerId);
+    final grantedSkillNames = <String>{};
+    int renownGrant = 0, wealthGrant = 0, ppGrant = 0;
+    if (careerComp != null) {
+      try {
+        final data = jsonDecode(careerComp.dataJson) as Map<String, dynamic>;
+        for (final s in (data['granted_skills'] as List?) ?? const <dynamic>[]) {
+          grantedSkillNames.add(s.toString());
+        }
+        renownGrant = (data['renown'] as int?) ?? 0;
+        wealthGrant = (data['wealth'] as int?) ?? 0;
+        ppGrant = (data['project_points'] as int?) ?? 0;
+      } catch (_) {}
+    }
+    final grantedSkillIds = allComps
+        .where((c) => c.type == 'skill' && (grantedSkillNames.contains(c.name) || grantedSkillNames.contains(c.id)))
+        .map((c) => c.id)
+        .toSet();
+
+    // Merge skills and perks into HeroComponents, preserving existing
+    final currentComps = await _db.getHeroComponents(heroId);
+    final existingSkillIds = currentComps.where((c) => c.category == 'skill').map((c) => c.componentId).toSet();
+    final existingPerkIds = currentComps.where((c) => c.category == 'perk').map((c) => c.componentId).toSet();
+    final newSkillSet = existingSkillIds.union(chosenSkillIds.toSet()).union(grantedSkillIds);
+    final newPerkSet = existingPerkIds.union(chosenPerkIds.toSet());
+    await _db.setHeroComponents(heroId: heroId, category: 'skill', componentIds: newSkillSet.toList());
+    await _db.setHeroComponents(heroId: heroId, category: 'perk', componentIds: newPerkSet.toList());
+
+    // Persist chosen lists for preloading UI
+    await _db.upsertHeroValue(heroId: heroId, key: _k.careerChosenSkills, jsonMap: {'list': chosenSkillIds});
+    await _db.upsertHeroValue(heroId: heroId, key: _k.careerChosenPerks, jsonMap: {'list': chosenPerkIds});
+    await _db.upsertHeroValue(heroId: heroId, key: _k.careerIncitingIncident, textValue: incitingIncidentName);
+
+    // Apply numeric grants only when career changed
+    if (careerId != null && careerId.isNotEmpty && previousCareerId != careerId) {
+      int getInt(String key) => values.firstWhereOrNull((v) => v.key == key)?.value ?? 0;
+      final newRenown = getInt(_k.renown) + renownGrant;
+      final newWealth = getInt(_k.wealth) + wealthGrant;
+      final newPP = getInt(_k.projectPoints) + ppGrant;
+      await _db.upsertHeroValue(heroId: heroId, key: _k.renown, value: newRenown);
+      await _db.upsertHeroValue(heroId: heroId, key: _k.wealth, value: newWealth);
+      await _db.upsertHeroValue(heroId: heroId, key: _k.projectPoints, value: newPP);
+    }
+  }
+
+  Future<CareerSelection> loadCareerSelection(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final comps = await _db.getHeroComponents(heroId);
+    String? getText(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
+    List<String> getList(String key) {
+      final v = values.firstWhereOrNull((e) => e.key == key);
+      if (v?.jsonValue == null && v?.textValue == null) return <String>[];
+      try {
+        final raw = v!.jsonValue ?? v.textValue!;
+        final decoded = jsonDecode(raw);
+        if (decoded is List) return decoded.map((e) => e.toString()).toList();
+        if (decoded is Map && decoded['list'] is List) {
+          return (decoded['list'] as List).map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+      return <String>[];
+    }
+    String? idForCategory(String category) => comps.firstWhereOrNull((e) => e.category == category)?.componentId;
+
+    return CareerSelection(
+      careerId: getText(_k.career) ?? idForCategory('career'),
+      chosenSkillIds: getList(_k.careerChosenSkills),
+      chosenPerkIds: getList(_k.careerChosenPerks),
+      incitingIncidentName: getText(_k.careerIncitingIncident),
+    );
   }
 
   /// Load a HeroModel by id from DB aggregating values and components.
@@ -323,6 +516,36 @@ class HeroRepository {
   }
 }
 
+class CultureSelection {
+  final String? environmentId;
+  final String? organisationId;
+  final String? upbringingId;
+  final String? environmentSkillId;
+  final String? organisationSkillId;
+  final String? upbringingSkillId;
+  const CultureSelection({
+    this.environmentId,
+    this.organisationId,
+    this.upbringingId,
+    this.environmentSkillId,
+    this.organisationSkillId,
+    this.upbringingSkillId,
+  });
+}
+
+class CareerSelection {
+  final String? careerId;
+  final List<String> chosenSkillIds;
+  final List<String> chosenPerkIds;
+  final String? incitingIncidentName;
+  const CareerSelection({
+    this.careerId,
+    this.chosenSkillIds = const <String>[],
+    this.chosenPerkIds = const <String>[],
+    this.incitingIncidentName,
+  });
+}
+
 /// Centralized list of keys used in HeroValues
 class _HeroKeys {
   const _HeroKeys._();
@@ -331,6 +554,9 @@ class _HeroKeys {
   final String level = 'basics.level';
   final String ancestry = 'basics.ancestry';
   final String career = 'basics.career';
+  // ancestry extras
+  final String ancestrySelectedTraits = 'ancestry.selected_traits';
+  final String ancestrySignature = 'ancestry.signature_name';
 
   final String victories = 'score.victories';
   final String exp = 'score.exp';
@@ -373,4 +599,14 @@ class _HeroKeys {
   final String projectPoints = 'projects.points';
 
   final String modifications = 'mods.map';
+
+  // culture-chosen skill keys
+  final String cultureEnvironmentSkill = 'culture.environment.skill';
+  final String cultureOrganisationSkill = 'culture.organisation.skill';
+  final String cultureUpbringingSkill = 'culture.upbringing.skill';
+
+  // career selections
+  final String careerChosenSkills = 'career.chosen_skills';
+  final String careerChosenPerks = 'career.chosen_perks';
+  final String careerIncitingIncident = 'career.inciting_incident';
 }

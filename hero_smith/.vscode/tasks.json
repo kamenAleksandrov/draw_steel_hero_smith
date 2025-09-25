@@ -12,6 +12,33 @@
 				"$dart"
 			],
 			"group": "test"
+		},
+		{
+			"label": "Run Flutter Tests",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"test"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Run Flutter Tests",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"test"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Run Flutter Tests",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"test"
+			],
+			"group": "test"
 		}
 	]
 }

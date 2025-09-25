@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app_database.dart';
 import '../seed/asset_seeder.dart';
-import '../repository/component_drift_repository.dart';
-import '../repository/hero_repository.dart';
+import '../repositories/component_drift_repository.dart';
+import '../repositories/hero_repository.dart';
 import '../models/component.dart' as model;
 
 // Core singletons
@@ -44,4 +44,10 @@ final componentsByTypeProvider = StreamProvider.family<List<model.Component>, St
 final allHeroesProvider = StreamProvider((ref) {
   final repo = ref.read(heroRepositoryProvider);
   return repo.watchAllHeroes();
+});
+
+// Enriched hero summaries for the list page
+final heroSummariesProvider = StreamProvider<List<HeroSummary>>((ref) {
+  final repo = ref.read(heroRepositoryProvider);
+  return repo.watchSummaries();
 });
