@@ -4,9 +4,12 @@
     "id": "ability_fury_avalanche_impact",
     "name": "Avalanche Impact",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Berserker",
     "story_text": "You leap and crash down, causing a shockwave that devastates foes.",
     "keywords": [
       "Magic"
@@ -67,9 +70,12 @@
     "id": "ability_fury_back",
     "name": "Back!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You hew about you with your mighty weapon, hurling enemies backward.",
     "keywords": [
       "Area",
@@ -132,9 +138,12 @@
     "id": "ability_fury_blood_for_blood",
     "name": "Blood for Blood!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "See how well they fight after you've bled them dry.",
     "keywords": [
       "Melee",
@@ -197,9 +206,12 @@
     "id": "ability_fury_brutal_slam",
     "name": "Brutal Slam",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The heavy impact of your weapon attacks drives your foes ever back.",
     "keywords": [
       "Melee",
@@ -262,9 +274,12 @@
     "id": "ability_fury_death_comes_for_you_all",
     "name": "Death Comes for You All!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Berserker",
     "story_text": "You use your weapon to create a destructive shockwave.",
     "keywords": [
       "Area",
@@ -328,9 +343,12 @@
     "id": "ability_fury_death_rattle",
     "name": "Death Rattle",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Stormwight",
     "story_text": "You unleash an otherworldly cry that rips through your enemies, killing the weakest of them.",
     "keywords": [
       "Area",
@@ -392,9 +410,12 @@
     "id": "ability_fury_death_strike",
     "name": "Death Strike",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Reaver",
     "story_text": "Once you taste your foe's blood, you become more efficient and turn every killing blow into an opportunity.",
     "keywords": [
       "Melee",
@@ -455,9 +476,12 @@
     "id": "ability_fury_debilitating_strike",
     "name": "Debilitating Strike",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You need just one blow to sabotage your target.",
     "keywords": [
       "Melee",
@@ -520,9 +544,12 @@
     "id": "ability_fury_deluge",
     "name": "Deluge",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Stormwight",
     "story_text": "You summon your primordial storm.",
     "keywords": [
       "Area",
@@ -585,9 +612,12 @@
     "id": "ability_fury_demon_unleashed",
     "name": "Demon Unleashed",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Foes tremble at the sight of you.",
     "keywords": [
       "Magic"
@@ -646,9 +676,12 @@
     "id": "ability_fury_elemental_ferocity",
     "name": "Elemental Ferocity",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "Your primordial energy makes for instant retribution.",
     "keywords": [
       "Magic"
@@ -707,9 +740,12 @@
     "id": "ability_fury_face_the_storm",
     "name": "Face the Storm!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Shocked in the face of your naked brutality, your enemy's instincts take over.",
     "keywords": [
       "Magic"
@@ -768,9 +804,12 @@
     "id": "ability_fury_force_of_storms",
     "name": "Force of Storms",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Berserker",
     "story_text": "You strike an enemy hard enough to be a projectile that knocks a crowd of creatures around.",
     "keywords": [
       "Melee",
@@ -833,9 +872,12 @@
     "id": "ability_fury_furious_change",
     "name": "Furious Change",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 2,
+    "subclass": "Stormwight",
     "story_text": "In your anger, you revert to a more bestial form.",
     "keywords": [
       "-"
@@ -894,9 +936,12 @@
     "id": "ability_fury_hit_and_run",
     "name": "Hit and Run",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Staying in constant motion helps you slip out of reach after a brutal assault.",
     "keywords": [
       "Melee",
@@ -959,9 +1004,12 @@
     "id": "ability_fury_impaled",
     "name": "Impaled!",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You skewer your enemy like a boar upon a spit.",
     "keywords": [
       "Melee",
@@ -1024,9 +1072,12 @@
     "id": "ability_fury_lines_of_force",
     "name": "Lines of Force",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 2,
+    "subclass": "Berserker",
     "story_text": "You redirect the energy of motion.",
     "keywords": [
       "Magic",
@@ -1086,9 +1137,12 @@
     "id": "ability_fury_make_peace_with_your_god",
     "name": "Make Peace With Your God!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Anger is your energy.",
     "keywords": [
       "-"
@@ -1147,9 +1201,12 @@
     "id": "ability_fury_my_turn",
     "name": "My Turn!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You quickly strike back at a foe.",
     "keywords": [
       "Melee",
@@ -1212,9 +1269,12 @@
     "id": "ability_fury_out_of_the_way",
     "name": "Out of the Way!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your enemies will clear your path—whether they want to or not.",
     "keywords": [
       "Melee",
@@ -1277,9 +1337,12 @@
     "id": "ability_fury_overkill",
     "name": "Overkill",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You strike so no damage is wasted.",
     "keywords": [
       "Magic",
@@ -1343,9 +1406,12 @@
     "id": "ability_fury_pounce",
     "name": "Pounce",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Stormwight",
     "story_text": "You strike at the target like the ultimate predator you are.",
     "keywords": [
       "Magic",
@@ -1409,9 +1475,12 @@
     "id": "ability_fury_primordial_bane",
     "name": "Primordial Bane",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Reaver",
     "story_text": "You attune the target to be weaker to a specific element.",
     "keywords": [
       "Magic",
@@ -1475,9 +1544,12 @@
     "id": "ability_fury_primordial_rage",
     "name": "Primordial Rage",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "Your ferocity manifests into primordial power.",
     "keywords": [
       "Magic"
@@ -1536,9 +1608,12 @@
     "id": "ability_fury_primordial_vortex",
     "name": "Primordial Vortex",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Berserker",
     "story_text": "You channel the power of the Primordial Chaos to pull foes to you.",
     "keywords": [
       "Area",
@@ -1602,9 +1677,12 @@
     "id": "ability_fury_rebounding_storm",
     "name": "Rebounding Storm",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You knock around enemies like playthings.",
     "keywords": [
       "Melee",
@@ -1667,9 +1745,12 @@
     "id": "ability_fury_relentless_death",
     "name": "Relentless Death",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You won't escape your fate.",
     "keywords": [
       "Magic",
@@ -1733,9 +1814,12 @@
     "id": "ability_fury_riders_on_the_storm",
     "name": "Riders on the Storm",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Stormwight",
     "story_text": "You focus your connection to the Primordial Chaos into a seething storm.",
     "keywords": [
       "Area",
@@ -1795,9 +1879,12 @@
     "id": "ability_fury_seek_and_destroy",
     "name": "Seek and Destroy",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Reaver",
     "story_text": "You break through the enemy lines to make an example.",
     "keywords": [
       "Melee",
@@ -1860,9 +1947,12 @@
     "id": "ability_fury_shower_of_blood",
     "name": "Shower of Blood",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Reaver",
     "story_text": "You shock your foes with the brutality of your strike, resetting the balance of combat.",
     "keywords": [
       "Melee",
@@ -1925,9 +2015,12 @@
     "id": "ability_fury_steelbreaker",
     "name": "Steelbreaker",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "See how useless their weapons are!",
     "keywords": [
       "Magic"
@@ -1986,9 +2079,12 @@
     "id": "ability_fury_thunder_roar",
     "name": "Thunder Roar",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You unleash a howl that hurls your enemies back.",
     "keywords": [
       "Area",
@@ -2051,9 +2147,12 @@
     "id": "ability_fury_tide_of_death",
     "name": "Tide of Death",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Teach them the folly of lining up for you.",
     "keywords": [
       "Melee",
@@ -2115,9 +2214,12 @@
     "id": "ability_fury_to_stone",
     "name": "To Stone!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You channel the Primordial Chaos into blows that petrify your foe... literally.",
     "keywords": [
       "Magic",
@@ -2181,9 +2283,12 @@
     "id": "ability_fury_to_the_death",
     "name": "To the Death!",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your reckless assault leaves you tactically vulnerable.",
     "keywords": [
       "Melee",
@@ -2246,9 +2351,12 @@
     "id": "ability_fury_to_the_uttermost_end",
     "name": "To the Uttermost End",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You gut your life force to ensure a foe's demise.",
     "keywords": [
       "Melee",
@@ -2311,9 +2419,12 @@
     "id": "ability_fury_unearthly_reflexes",
     "name": "Unearthly Reflexes",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 2,
+    "subclass": "Reaver",
     "story_text": "You are as elusive as a hummingbird.",
     "keywords": [
       "-"
@@ -2372,9 +2483,12 @@
     "id": "ability_fury_you_are_already_dead",
     "name": "You Are Already Dead",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Slash. Walk away.",
     "keywords": [
       "Melee",
@@ -2435,9 +2549,12 @@
     "id": "ability_fury_your_entrails_are_your_extrails",
     "name": "Your Entrails Are Your Extrails!",
     "costs": {
+      "signature": false,
       "resource": "Ferocity",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Hard for them to fight when they're busy holding in their giblets.",
     "keywords": [
       "Melee",

@@ -4,9 +4,12 @@
     "id": "ability_shadow_assassinate",
     "name": "Assassinate",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "A practiced attack will instantly kill an already weakened foe.",
     "keywords": [
       "Melee",
@@ -69,9 +72,12 @@
     "id": "ability_shadow_black_ash_eruption",
     "name": "Black Ash Eruption",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Black Ash",
     "story_text": "Your attack produces a cloud of black ash that launches an enemy into the air.",
     "keywords": [
       "Magic",
@@ -135,9 +141,12 @@
     "id": "ability_shadow_black_ash_teleport",
     "name": "Black Ash Teleport",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": "Black Ash",
     "story_text": "In a swirl of black ash, you step from one place to another.",
     "keywords": [
       "Magic"
@@ -196,9 +205,12 @@
     "id": "ability_shadow_blackout",
     "name": "Blackout",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You cause a plume of shadow to erupt from your eyes and create a cloud of darkness.",
     "keywords": [
       "Area",
@@ -258,9 +270,12 @@
     "id": "ability_shadow_cacophony_of_cinders",
     "name": "Cacophony of Cinders",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Black Ash",
     "story_text": "You tumble through the battle, stabbing foes and teleporting allies.",
     "keywords": [
       "Magic",
@@ -323,9 +338,12 @@
     "id": "ability_shadow_careful_observation",
     "name": "Careful Observation",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "A moment of focus leaves a foe firmly in your sights.",
     "keywords": [
       "Ranged"
@@ -384,9 +402,12 @@
     "id": "ability_shadow_chain_reaction",
     "name": "Chain Reaction",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Caustic Alchemy",
     "story_text": "One explosion, an offense. Three explosions, an assault. Nine explosions, a celebration.",
     "keywords": [
       "Ranged"
@@ -447,9 +468,12 @@
     "id": "ability_shadow_cinderstorm",
     "name": "Cinderstorm",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Black Ash",
     "story_text": "You teleport your friends in a burst of ash and fire.",
     "keywords": [
       "Magic"
@@ -508,9 +532,12 @@
     "id": "ability_shadow_clever_trick",
     "name": "Clever Trick",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 1
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You sow a moment of confusion in combat, to your enemy's peril.",
     "keywords": [
       "Magic"
@@ -569,9 +596,12 @@
     "id": "ability_shadow_coat_the_blade",
     "name": "Coat the Blade",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": "Caustic Alchemy",
     "story_text": "A little poison goes a long way.",
     "keywords": [
       "-"
@@ -630,9 +660,12 @@
     "id": "ability_shadow_coup_de_grace",
     "name": "Coup de Grace",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your blade might be the last thing they see.",
     "keywords": [
       "Melee",
@@ -696,9 +729,12 @@
     "id": "ability_shadow_dancer",
     "name": "Dancer",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "You enter a flow state that makes you nearly impossible to pin down.",
     "keywords": [
       "-"
@@ -757,9 +793,12 @@
     "id": "ability_shadow_defensive_roll",
     "name": "Defensive Roll",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "When an enemy attacks, you roll with the impact to reduce the harm.",
     "keywords": [
       "-"
@@ -818,9 +857,12 @@
     "id": "ability_shadow_demon_door",
     "name": "Demon Door",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Black Ash",
     "story_text": "You create a temporary portal to allow a massive demonic hand to reach through.",
     "keywords": [
       "Magic",
@@ -884,9 +926,12 @@
     "id": "ability_shadow_disorienting_strike",
     "name": "Disorienting Strike",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your attack leaves them reeling, allowing you to follow up.",
     "keywords": [
       "Melee",
@@ -949,9 +994,12 @@
     "id": "ability_shadow_eviscerate",
     "name": "Eviscerate",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You leave your foe bleeding out after a devastating attack.",
     "keywords": [
       "Melee",
@@ -1015,9 +1063,12 @@
     "id": "ability_shadow_gasping_in_pain",
     "name": "Gasping in Pain",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your precise strikes let your allies take advantage of a target's agony.",
     "keywords": [
       "Melee",
@@ -1080,9 +1131,12 @@
     "id": "ability_shadow_get_in_get_out",
     "name": "Get In Get Out",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Move unexpectedly, strike fast, and be gone!",
     "keywords": [
       "Melee",
@@ -1145,9 +1199,12 @@
     "id": "ability_shadow_hesitation_is_weakness",
     "name": "Hesitation Is Weakness",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 1
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Keep up the attack. Never give them a moment's grace.",
     "keywords": [
       "-"
@@ -1206,9 +1263,12 @@
     "id": "ability_shadow_i_am_you",
     "name": "I Am You",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Harlequin Mask",
     "story_text": "Your mask reflects your foe's face. Surely they won't need it much longer.",
     "keywords": [
       "Magic",
@@ -1268,9 +1328,12 @@
     "id": "ability_shadow_i_work_better_alone",
     "name": "I Work Better Alone",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "\"It's better, just you and me. Isn't it?\"",
     "keywords": [
       "Melee",
@@ -1334,9 +1397,12 @@
     "id": "ability_shadow_i_m_no_threat",
     "name": "I'm No Threat",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": "Harlequin Mask",
     "story_text": "Taking on an illusory countenance gives you an advantage on subterfuge.",
     "keywords": [
       "Magic"
@@ -1395,9 +1461,12 @@
     "id": "ability_shadow_in_all_this_confusion",
     "name": "In All This Confusion",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You vanish in a plume of black smoke to avoid danger.",
     "keywords": [
       "Magic"
@@ -1456,9 +1525,12 @@
     "id": "ability_shadow_in_a_puff_of_ash",
     "name": "In a Puff of Ash",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Black Ash",
     "story_text": "You enchant a strike with your teleportation magic.",
     "keywords": [
       "Magic",
@@ -1523,9 +1595,12 @@
     "id": "ability_shadow_into_the_shadows",
     "name": "Into the Shadows",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You sweep your foe off their feet and plunge them into absolute darkness.",
     "keywords": [
       "Magic",
@@ -1589,9 +1664,12 @@
     "id": "ability_shadow_it_was_me_all_along",
     "name": "It Was Me All Along",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Harlequin Mask",
     "story_text": "After everything you've been through together, you twist the blade and make the pain extra personal.",
     "keywords": [
       "Melee",
@@ -1654,9 +1732,12 @@
     "id": "ability_shadow_look",
     "name": "Look!",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Harlequin Mask",
     "story_text": "You distract your foes, allowing your allies to take advantage of that distraction.",
     "keywords": [
       "Area",
@@ -1716,9 +1797,12 @@
     "id": "ability_shadow_machinations_of_sound",
     "name": "Machinations of Sound",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Harlequin Mask",
     "story_text": "Illusory sounds make your foes reposition themselves as they cower or investigate the disturbance.",
     "keywords": [
       "Area",
@@ -1781,9 +1865,12 @@
     "id": "ability_shadow_misdirecting_strike",
     "name": "Misdirecting Strike",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "\"Why are you looking at ME?!\"",
     "keywords": [
       "Melee",
@@ -1847,9 +1934,12 @@
     "id": "ability_shadow_night_watch",
     "name": "Night Watch",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 4,
+    "subclass": null,
     "story_text": "A steely dagger from out of the blue knocks another weapon off course.",
     "keywords": [
       "Ranged",
@@ -1909,9 +1999,12 @@
     "id": "ability_shadow_one_hundred_throats",
     "name": "One Hundred Throats",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "As you move across the battlefield, every foe within reach feels your wrath.",
     "keywords": [
       "Melee",
@@ -1973,9 +2066,12 @@
     "id": "ability_shadow_one_vial_makes_you_better",
     "name": "One Vial Makes You Better",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Caustic Alchemy",
     "story_text": "A well-timed throw of a potion will keep your allies in the fight.",
     "keywords": [
       "Ranged"
@@ -2034,9 +2130,12 @@
     "id": "ability_shadow_one_vial_makes_you_faster",
     "name": "One Vial Makes You Faster",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Caustic Alchemy",
     "story_text": "Each ally who catches a potion you throw can take the battle to the next level.",
     "keywords": [
       "Ranged"
@@ -2097,9 +2196,12 @@
     "id": "ability_shadow_pinning_shot",
     "name": "Pinning Shot",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "One missile—placed well and placed hard.",
     "keywords": [
       "Ranged",
@@ -2162,9 +2264,12 @@
     "id": "ability_shadow_puppet_strings",
     "name": "Puppet Strings",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Harlequin Mask",
     "story_text": "You prick little needles on the tips of your fingers into the nerves of your enemies and cause them to lose control.",
     "keywords": [
       "Magic",
@@ -2228,9 +2333,12 @@
     "id": "ability_shadow_setup",
     "name": "Setup",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your friends will thank you.",
     "keywords": [
       "Ranged",
@@ -2293,9 +2401,12 @@
     "id": "ability_shadow_shadowfall",
     "name": "Shadowfall",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You vanish. They fall. You reappear.",
     "keywords": [
       "Area",
@@ -2358,9 +2469,12 @@
     "id": "ability_shadow_shadowgrasp",
     "name": "Shadowgrasp",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "The shadows around you give way, allowing the shadow creature within you to grasp at your foes.",
     "keywords": [
       "Area",
@@ -2422,9 +2536,12 @@
     "id": "ability_shadow_shadowstrike",
     "name": "Shadowstrike",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "They have no idea what the college taught you.",
     "keywords": [
       "Magic",
@@ -2485,9 +2602,12 @@
     "id": "ability_shadow_so_gullible",
     "name": "So Gullible",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Harlequin Mask",
     "story_text": "When your enemy strikes, you reveal you were in a different place all along.",
     "keywords": [
       "Magic"
@@ -2546,9 +2666,12 @@
     "id": "ability_shadow_speed_of_shadows",
     "name": "Speed of Shadows",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You make multiple strikes against a foe before they even notice they're dead.",
     "keywords": [
       "Magic"
@@ -2607,9 +2730,12 @@
     "id": "ability_shadow_staggering_blow",
     "name": "Staggering Blow",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "There's no recovering from this.",
     "keywords": [
       "Melee",
@@ -2673,9 +2799,12 @@
     "id": "ability_shadow_sticky_bomb",
     "name": "Sticky Bomb",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Caustic Alchemy",
     "story_text": "Explosives are best when they're attached to an enemy.",
     "keywords": [
       "Ranged"
@@ -2736,9 +2865,12 @@
     "id": "ability_shadow_stink_bomb",
     "name": "Stink Bomb",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Caustic Alchemy",
     "story_text": "Putrid yellow gas explodes from a bomb you toss.",
     "keywords": [
       "Area",
@@ -2800,9 +2932,12 @@
     "id": "ability_shadow_teamwork_has_its_place",
     "name": "Teamwork Has Its Place",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You attack an enemy as an ally exposes their weakness.",
     "keywords": [
       "Melee",
@@ -2866,9 +3001,12 @@
     "id": "ability_shadow_they_always_line_up",
     "name": "They Always Line Up",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You fire a projectile so fast that it passes through a line of foes, hamstringing them.",
     "keywords": [
       "Area",
@@ -2931,9 +3069,12 @@
     "id": "ability_shadow_time_bomb",
     "name": "Time Bomb",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "The longer it cooks, the bigger the boom.",
     "keywords": [
       "Area",
@@ -2993,9 +3134,12 @@
     "id": "ability_shadow_to_the_stars",
     "name": "To the Stars",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Caustic Alchemy",
     "story_text": "You attach your most potent explosive to your foe. Under less pressing circumstances, you're sure you could launch them into orbit.",
     "keywords": [
       "Melee",
@@ -3058,9 +3202,12 @@
     "id": "ability_shadow_too_slow",
     "name": "Too Slow",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Black Ash",
     "story_text": "Your foe made a big mistake.",
     "keywords": [
       "-"
@@ -3119,9 +3266,12 @@
     "id": "ability_shadow_two_throats_at_once",
     "name": "Two Throats at Once",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A bargain.",
     "keywords": [
       "Melee",
@@ -3185,9 +3335,12 @@
     "id": "ability_shadow_you_talk_too_much",
     "name": "You Talk Too Much",
     "costs": {
+      "signature": false,
       "resource": "Insight",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Silence is a virtue. A knife pinning their mouth shut is the next best thing.",
     "keywords": [
       "Melee",
@@ -3251,9 +3404,12 @@
     "id": "ability_shadow_you_were_watching_the_wrong_one",
     "name": "You Were Watching the Wrong One",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "They can't watch both of you at once.",
     "keywords": [
       "Melee",

@@ -4,6 +4,7 @@
     "id": "ability_tactician_strike_now",
     "name": "\"Strike Now!\"",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
@@ -58,13 +59,16 @@
       }
     },
     "effect": "The target can use a signature ability as a free triggered action.\n\nYou target two allies instead of one.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_advanced_tactics",
     "name": "Advanced Tactics",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -119,13 +123,16 @@
       }
     },
     "effect": "The target gains 2 surges, which they can use on the triggering damage.\n\nIf the damage has any potency effect associated with it, the potency is increased by 1.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_battle_cry",
     "name": "Battle Cry",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 3
     },
@@ -182,13 +189,16 @@
       }
     },
     "effect": null,
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_battle_plan",
     "name": "Battle Plan",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -243,13 +253,16 @@
       }
     },
     "effect": "Each target is marked by you. Immediately and until the end of the encounter, the Director tells you if any creatures marked by you have damage immunity or weakness and the value of that immunity or weakness. Additionally, you and each ally within 3 squares of you gains 2 surges.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_blot_out_the_sun",
     "name": "Blot Out the Sun!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -304,13 +317,16 @@
       }
     },
     "effect": "Each target can make a ranged free strike that gains an edge against any enemy marked by you within distance of their ranged free strike. A target ignores banes and double banes when making this strike.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_concussive_strike",
     "name": "Concussive Strike",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 3
     },
@@ -370,13 +386,16 @@
       }
     },
     "effect": null,
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_coordinated_execution",
     "name": "Coordinated Execution",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -431,13 +450,16 @@
       }
     },
     "effect": "If the target of the triggering ability is not a leader or solo creature, they are reduced to 0 Stamina. If the target of the triggering ability is a minion, the entire squad is killed. If the target of the triggering ability is a leader or solo creature, the triggering ability's power roll automatically obtains a tier 3 outcome.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_counterstrategy",
     "name": "Counterstrategy",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -492,13 +514,16 @@
       }
     },
     "effect": "You gain 6 surges. Until the end of the encounter or until you are dying, whenever the Director spends Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*), choose yourself or one ally within 10 squares. The chosen character gains 2 of their Heroic Resource.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_finish_them",
     "name": "Finish Them!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -553,13 +578,16 @@
       }
     },
     "effect": "The target is killed. Additionally, the creature who caused the target to be winded can spend a Recovery.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_floodgates_open",
     "name": "Floodgates Open",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -614,13 +642,16 @@
       }
     },
     "effect": "Each target gains 1 surge and can use a signature ability as a free triggered action. That ability gains an edge on the power roll and increases the potency of any potency effects by 1.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_fog_of_war",
     "name": "Fog of War",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -675,13 +706,16 @@
       }
     },
     "effect": "Each target is marked by you, and must immediately make a free strike against a creature of your choice within 5 squares of them.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_frontal_assault",
     "name": "Frontal Assault",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 7
     },
@@ -736,13 +770,16 @@
       }
     },
     "effect": "Until the end of the encounter or until you are dying, the first time on a turn that you or any ally deals damage to a target marked by you, the creature who dealt the damage can push the target up to 2 squares and then shift up to 2 squares. Additionally, any ally using the Charge main action to target a creature marked by you can use a melee strike signature ability or a melee strike heroic ability instead of a melee free strike.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 3,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_go_now_and_speed_well",
     "name": "Go Now and Speed Well",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -797,13 +834,16 @@
       }
     },
     "effect": "The target gains 2 surges and can use a signature or heroic ability as a free triggered action. The ability has a double edge on the power roll, ignores damage immunity, and increases the potency of any potency effects by 1.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_hammer_and_anvil",
     "name": "Hammer and Anvil",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -863,13 +903,16 @@
       }
     },
     "effect": "If the target is reduced to 0 Stamina before one or both chosen allies has made their strike, the ally or allies can pick a different target.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_hit_em_hard",
     "name": "Hit 'Em Hard!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 7
     },
@@ -924,13 +967,16 @@
       }
     },
     "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, that creature gains 2 surges, which they can use immediately.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 3,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_hustle",
     "name": "Hustle!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -985,13 +1031,16 @@
       }
     },
     "effect": "You mark two enemies within 10 squares of you. Each target can shift up to their speed. You and each target gain 2 surges.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_i_ll_open_and_you_ll_close",
     "name": "I'll Open and You'll Close",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -1051,13 +1100,16 @@
       }
     },
     "effect": "One ally within 10 squares of you can use a heroic ability against the target as a free triggered action without spending any of their Heroic Resource, as long as they have enough Heroic Resource to pay for the ability. If the target is reduced to 0 Stamina before the chosen ally has used their ability, the ally can pick a different target.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_i_ve_got_your_back",
     "name": "I've Got Your Back",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -1116,13 +1168,16 @@
       }
     },
     "effect": "One ally adjacent to the target can spend a Recovery.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_inspiring_strike",
     "name": "Inspiring Strike",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 3
     },
@@ -1182,13 +1237,16 @@
       }
     },
     "effect": null,
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_instant_retaliation",
     "name": "Instant Retaliation",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -1246,13 +1304,16 @@
       }
     },
     "effect": "The target takes half the damage. You then make a power roll against the triggering creature.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_mark",
     "name": "Mark",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1307,13 +1368,16 @@
       }
     },
     "effect": "The target is marked by you until the end of the encounter, until you are dying, or until you use this ability again. You can willingly end your mark on a creature (no action required), and if another tactician marks a creature, your mark on that creature ends. When a creature marked by you is reduced to 0 Stamina, you can use a free triggered action to mark a new target within distance.\nYou can initially mark only one creature using this ability, though other tactician abilities allow you to mark additional creatures at the same time. The mastermind tactical doctrine's Anticipation feature allows you to target additional creatures with this ability starting at 5th level.\nWhile a creature marked by you is within your line of effect, you and allies within your line of effect gain an edge on power rolls made against that creature. Additionally, whenever you or any ally uses an ability to deal rolled damage to a creature marked by you, you can spend 1 focus to gain one of the following benefits as a free triggered action:\n- The ability deals extra damage equal to twice your Reason score.\n- The creature dealing the damage can spend a Recovery.\n- The creature dealing the damage can shift up to a number of squares equal to your Reason score.\n- If you damage a creature marked by you with a melee ability, the creature is taunted by you until the end of their next turn.\nYou can't gain more than one benefit from the same trigger.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_mind_game",
     "name": "Mind Game",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -1373,13 +1437,16 @@
       }
     },
     "effect": "You mark the target.\n\nBefore the start of your next turn, the first time any ally deals damage to any target marked by you, that ally can spend a Recovery.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_no_dying_on_my_watch",
     "name": "No Dying on My Watch",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -1438,13 +1505,16 @@
       }
     },
     "effect": "You move up to your speed toward the triggering ally, ending this movement adjacent to them or in the nearest square if you can't reach an adjacent square. The triggering ally can spend a Recovery and gains 5 temporary Stamina for each enemy you came adjacent to during the move. You then make a power roll against the target.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_no_escape",
     "name": "No Escape",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -1504,13 +1574,16 @@
       }
     },
     "effect": "You mark the target.\n\nIf you use this ability as part of the Charge main action, enemies' spaces don't count as difficult terrain for your movement. Additionally, if you move through any creature's space, you can slide that creature 1 square out of the path of your charge.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_now",
     "name": "Now!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -1565,13 +1638,16 @@
       }
     },
     "effect": "Each target can make a free strike.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_overwatch",
     "name": "Overwatch",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1626,13 +1702,16 @@
       }
     },
     "effect": "At any time during the target's movement, one ally can make a free strike against them.\n\nIf the target has R < AVERAGE, they are slowed (EoT).",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_panic_in_their_lines",
     "name": "Panic in Their Lines",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -1692,13 +1771,16 @@
       }
     },
     "effect": "If a target is force moved into another creature, they must make a free strike against that creature.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_parry",
     "name": "Parry",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1754,13 +1836,16 @@
       }
     },
     "effect": "You can shift 1 square. If the target is you, or if you end this shift adjacent to the target, the target takes half the damage. If the damage has any potency effect associated with it, the potency is decreased by 1.\n\nThis ability's distance becomes Melee 1 + your Reason score, and you can shift up to a number of squares equal to your Reason score instead of 1 square.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_rout",
     "name": "Rout",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 7
     },
@@ -1815,13 +1900,16 @@
       }
     },
     "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you who has R < AVERAGE, the target is frightened of the creature who dealt the damage (save ends).",
-    "special_effect": null
+    "special_effect": null,
+    "level": 3,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_squad_forward",
     "name": "Squad! Forward!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 3
     },
@@ -1876,13 +1964,16 @@
       }
     },
     "effect": "Each target can move up to their speed.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_squad_gear_check",
     "name": "Squad! Gear Check!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -1941,13 +2032,16 @@
       }
     },
     "effect": "You and each ally adjacent to the target gain 10 temporary Stamina.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_squad_hit_and_run",
     "name": "Squad! Hit and Run!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -2002,13 +2096,16 @@
       }
     },
     "effect": "Each target gains 2 surges, and can use a free triggered action to use a signature ability that gains an edge. After resolving their ability, each target can shift up to 2 squares and become hidden even if they have no cover or concealment, or if they are observed.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_squad_on_me",
     "name": "Squad! On Me!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -2063,13 +2160,16 @@
       }
     },
     "effect": "Until the start of your next turn, each target has a bonus to stability equal to your Might score. Additionally, each target gains 2 surges.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_squad_remember_your_training",
     "name": "Squad! Remember Your Training!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -2124,13 +2224,16 @@
       }
     },
     "effect": "Each target gains 1 surge and can use a signature ability that has a double edge.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_stay_strong_and_focus",
     "name": "Stay Strong and Focus!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 7
     },
@@ -2185,13 +2288,16 @@
       }
     },
     "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, the creature who dealt the damage can spend a Recovery.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 3,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_targets_of_opportunity",
     "name": "Targets of Opportunity",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -2246,13 +2352,16 @@
       }
     },
     "effect": "Each target is marked by you, and you gain two surges.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
     "id": "ability_tactician_that_one_is_mine",
     "name": "That One Is Mine!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -2312,13 +2421,16 @@
       }
     },
     "effect": "The target is marked by you.\n\nUntil the end of the encounter or until you are dying, you can use a signature or heroic ability instead of a free strike against any target marked by you.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_their_lack_of_focus_is_their_undoing",
     "name": "Their Lack of Focus Is Their Undoing",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 11
     },
@@ -2377,13 +2489,16 @@
       }
     },
     "effect": "Each target uses a signature ability against one or more targets of your choosing, with each ability automatically obtaining a tier 3 outcome on the power roll. After resolving the targets' abilities, you make a power roll against each original target.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_this_is_what_we_planned_for",
     "name": "This Is What We Planned For",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -2438,13 +2553,16 @@
       }
     },
     "effect": "Each target who hasn't acted yet this combat round can take their turn in any order immediately after yours.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_to_me_squad",
     "name": "To Me Squad!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -2504,13 +2622,16 @@
       }
     },
     "effect": "If the target is hit with two or more strikes as part of this ability and they have R < STRONG, they are dazed (save ends). If the target is reduced to 0 Stamina before one or both allies has made their strike, the ally or allies can pick a different target.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Vanguard"
   },
   {
     "type": "ability",
     "id": "ability_tactician_try_me_instead",
     "name": "Try Me Instead",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 5
     },
@@ -2569,13 +2690,16 @@
       }
     },
     "effect": "You shift up to your speed directly toward an ally, ending adjacent to them, then swapping locations with that ally as long as you can fit into each other's spaces. The ally can spend a Recovery, and you can make the following weapon strike with a distance of melee 1 against a creature.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
     "id": "ability_tactician_win_this_day",
     "name": "Win This Day!",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -2630,13 +2754,16 @@
       }
     },
     "effect": "Each target gains 2 surges. Additionally, they can spend a Recovery, remove any conditions or effects on them, and stand up if they are prone.",
-    "special_effect": null
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
   },
   {
     "type": "ability",
     "id": "ability_tactician_you_ve_still_got_something_left",
     "name": "You've Still Got Something Left",
     "costs": {
+      "signature": false,
       "resource": "Focus",
       "amount": 9
     },
@@ -2691,6 +2818,8 @@
       }
     },
     "effect": "The target uses a heroic ability with the Strike keyword as a free triggered action, and deals extra damage with that ability equal to your Reason score. The ability has its Heroic Resource cost reduced by 1 + your Reason score (minimum cost 0).",
-    "special_effect": null
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
   }
 ]

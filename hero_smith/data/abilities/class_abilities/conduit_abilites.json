@@ -4,9 +4,12 @@
     "id": "ability_conduit_alacrity_of_the_heart",
     "name": "Alacrity of the Heart",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Love",
     "story_text": "You speak inspiring words to a friend and spur them to incredible feats.",
     "keywords": [
       "Magic",
@@ -66,9 +69,12 @@
     "id": "ability_conduit_arise_2",
     "name": "Arise!",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "Your deity rewards you or an ally on the verge of defeat with a miracle burst of strength and resolve.",
     "keywords": [
       "Magic",
@@ -128,9 +134,12 @@
     "id": "ability_conduit_arise",
     "name": "Arise!",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "Your deity rewards you or an ally on the verge of defeat with a miracle burst of strength and resolve.",
     "keywords": [
       "Magic",
@@ -190,9 +199,12 @@
     "id": "ability_conduit_aura_of_souls",
     "name": "Aura of Souls",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Death",
     "story_text": "A whirlwind of souls of the dead flies around you at your command.",
     "keywords": [
       "Area",
@@ -252,9 +264,12 @@
     "id": "ability_conduit_beacon_of_grace_2",
     "name": "Beacon of Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You ignite a foe with holy radiance, rewarding allies who attack them.",
     "keywords": [
       "Magic",
@@ -317,9 +332,12 @@
     "id": "ability_conduit_beacon_of_grace",
     "name": "Beacon of Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You ignite a foe with holy radiance, rewarding allies who attack them.",
     "keywords": [
       "Magic",
@@ -382,9 +400,12 @@
     "id": "ability_conduit_bend_fate",
     "name": "Bend Fate",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Fate",
     "story_text": "The gods know you must prevail, and they bless your fate.",
     "keywords": [
       "Magic",
@@ -444,9 +465,12 @@
     "id": "ability_conduit_blade_of_the_heavens",
     "name": "Blade of the Heavens",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "War",
     "story_text": "A greatsword streams down from the sky, threatening to pin your foe.",
     "keywords": [
       "Magic",
@@ -509,9 +533,12 @@
     "id": "ability_conduit_blessed_light",
     "name": "Blessed Light",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Burning radiance falls upon your foe, transferring some of their energy to a nearby ally.",
     "keywords": [
       "Magic",
@@ -574,9 +601,12 @@
     "id": "ability_conduit_blessing_of_fate_and_destiny",
     "name": "Blessing of Fate and Destiny",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Fate",
     "story_text": "Your enemies suffer their fate; your allies embrace their destiny!",
     "keywords": [
       "Magic",
@@ -636,9 +666,12 @@
     "id": "ability_conduit_blessing_of_insight",
     "name": "Blessing of Insight",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Knowledge",
     "story_text": "The gods grant insight revealing where best to strike your enemies.",
     "keywords": [
       "Magic",
@@ -698,9 +731,12 @@
     "id": "ability_conduit_blessing_of_secrets",
     "name": "Blessing of Secrets",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You project an illusory aura that makes you and allies harder to notice.",
     "keywords": [
       "Area",
@@ -760,9 +796,12 @@
     "id": "ability_conduit_blessing_of_steel_2",
     "name": "Blessing of Steel",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "A protective aura defends your allies from harm.",
     "keywords": [
       "Area",
@@ -822,9 +861,12 @@
     "id": "ability_conduit_blessing_of_steel",
     "name": "Blessing of Steel",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "A protective aura defends your allies from harm.",
     "keywords": [
       "Area",
@@ -884,9 +926,12 @@
     "id": "ability_conduit_blessing_of_the_blade_2",
     "name": "Blessing of the Blade",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "\"The power of the gods is within you, friends. Allow me to unleash it.\"",
     "keywords": [
       "Area",
@@ -946,9 +991,12 @@
     "id": "ability_conduit_blessing_of_the_blade",
     "name": "Blessing of the Blade",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "\"The power of the gods is within you, friends. Allow me to unleash it.\"",
     "keywords": [
       "Area",
@@ -1008,9 +1056,12 @@
     "id": "ability_conduit_blessing_of_the_fortress",
     "name": "Blessing of the Fortress",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Protection",
     "story_text": "A magic circle extends out from you, barring foes from getting close.",
     "keywords": [
       "Area",
@@ -1070,9 +1121,12 @@
     "id": "ability_conduit_blessing_of_the_midday_sun",
     "name": "Blessing of the Midday Sun",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Sun",
     "story_text": "Your body emits a heat that bakes your enemies and inspires your allies.",
     "keywords": [
       "Area",
@@ -1132,9 +1186,12 @@
     "id": "ability_conduit_call_the_thunder_down",
     "name": "Call the Thunder Down",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You ask your saint for thunder and your prayer is answered.",
     "keywords": [
       "Area",
@@ -1197,9 +1254,12 @@
     "id": "ability_conduit_corruption_s_curse",
     "name": "Corruption's Curse",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Cursed by you, your enemy takes more damage from your allies.",
     "keywords": [
       "Magic",
@@ -1262,9 +1322,12 @@
     "id": "ability_conduit_cuirass_of_the_gods",
     "name": "Cuirass of the Gods",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Protection",
     "story_text": "Your allies are covered in spiritual armor.",
     "keywords": [
       "Area",
@@ -1325,9 +1388,12 @@
     "id": "ability_conduit_curse_of_terror",
     "name": "Curse of Terror",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Fear of divine judgment overwhelms your foe.",
     "keywords": [
       "Magic",
@@ -1390,9 +1456,12 @@
     "id": "ability_conduit_divine_comedy",
     "name": "Divine Comedy",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Trickery",
     "story_text": "You and your allies swap places to confound your foes.",
     "keywords": [
       "Area",
@@ -1452,9 +1521,12 @@
     "id": "ability_conduit_divine_dragon",
     "name": "Divine Dragon",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Creation",
     "story_text": "From nothing but divine will, you create a powerful ally.",
     "keywords": [
       "Magic",
@@ -1516,9 +1588,12 @@
     "id": "ability_conduit_drag_the_unworthy_2",
     "name": "Drag the Unworthy",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You conjure an angel who moves a foe and heals your allies.",
     "keywords": [
       "Magic",
@@ -1581,9 +1656,12 @@
     "id": "ability_conduit_drag_the_unworthy",
     "name": "Drag the Unworthy",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You conjure an angel who moves a foe and heals your allies.",
     "keywords": [
       "Magic",
@@ -1646,9 +1724,12 @@
     "id": "ability_conduit_drain",
     "name": "Drain",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You drain the energy from your target to revitalize yourself or an ally.",
     "keywords": [
       "Magic",
@@ -1711,9 +1792,12 @@
     "id": "ability_conduit_faith_is_our_armor",
     "name": "Faith Is Our Armor",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The heroes' armor glows with golden light, granting divine protection.",
     "keywords": [
       "Magic",
@@ -1775,9 +1859,12 @@
     "id": "ability_conduit_faithful_friend",
     "name": "Faithful Friend",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "An animal spirit is drawn to you, sharing their senses with you and serving you faithfully.",
     "keywords": [
       "Magic"
@@ -1836,9 +1923,12 @@
     "id": "ability_conduit_fear_of_the_gods",
     "name": "Fear of the Gods",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Your divine magic makes a creature appear as what your enemies fear most.",
     "keywords": [
       "Area",
@@ -1901,9 +1991,12 @@
     "id": "ability_conduit_font_of_wrath",
     "name": "Font of Wrath",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A brilliant column of holy light appears on the battlefield, striking out at nearby enemies.",
     "keywords": [
       "Magic",
@@ -1963,9 +2056,12 @@
     "id": "ability_conduit_gods_machine",
     "name": "Gods' Machine",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Creation",
     "story_text": "You conjure a whirring tank made of blades and metal.",
     "keywords": [
       "Magic",
@@ -2027,9 +2123,12 @@
     "id": "ability_conduit_godstorm",
     "name": "Godstorm",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Storm",
     "story_text": "You summon a divine storm that remains under your control.",
     "keywords": [
       "Area",
@@ -2092,9 +2191,12 @@
     "id": "ability_conduit_grave_speech",
     "name": "Grave Speech",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You commune with the lingering soul of the recently dead.",
     "keywords": [
       "Magic"
@@ -2153,9 +2255,12 @@
     "id": "ability_conduit_guided_to_your_side",
     "name": "Guided to Your Side",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You concentrate on a friend and teleport to them.",
     "keywords": [
       "Magic",
@@ -2215,9 +2320,12 @@
     "id": "ability_conduit_hands_of_the_maker",
     "name": "Hands of the Maker",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You craft objects with the power of your mind.",
     "keywords": [
       "Magic"
@@ -2276,9 +2384,12 @@
     "id": "ability_conduit_healing_grace",
     "name": "Healing Grace",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your divine energy restores the righteous.",
     "keywords": [
       "Magic",
@@ -2338,9 +2449,12 @@
     "id": "ability_conduit_holy_lash",
     "name": "Holy Lash",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A tendril of divine energy shoots forth to draw in your foe.",
     "keywords": [
       "Magic",
@@ -2403,9 +2517,12 @@
     "id": "ability_conduit_invocation_of_mystery",
     "name": "Invocation of Mystery",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Trickery",
     "story_text": "\"Now you see us...\"",
     "keywords": [
       "Area",
@@ -2465,9 +2582,12 @@
     "id": "ability_conduit_invocation_of_undoing",
     "name": "Invocation of Undoing",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Knowledge",
     "story_text": "You utter a secret word of destruction known only to deities.",
     "keywords": [
       "Area",
@@ -2529,9 +2649,12 @@
     "id": "ability_conduit_judgment_s_hammer",
     "name": "Judgment's Hammer",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your divine fury is a hammer that crashes down upon the unrighteous.",
     "keywords": [
       "Magic",
@@ -2594,9 +2717,12 @@
     "id": "ability_conduit_lauded_by_god",
     "name": "Lauded by God",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Love",
     "story_text": "You beseech the gods to give your allies what they need to win the day, and the gods answer.",
     "keywords": [
       "Magic",
@@ -2656,9 +2782,12 @@
     "id": "ability_conduit_lightfall",
     "name": "Lightfall",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A rain of holy light scours your enemies and repositions your allies.",
     "keywords": [
       "Area",
@@ -2720,9 +2849,12 @@
     "id": "ability_conduit_lightning_lord",
     "name": "Lightning Lord",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Storm",
     "story_text": "Lightning bursts forth from your body in several directions.",
     "keywords": [
       "Area",
@@ -2784,9 +2916,12 @@
     "id": "ability_conduit_morning_light",
     "name": "Morning Light",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Sun",
     "story_text": "Light shines at your command, burning your foes and blessing your allies.",
     "keywords": [
       "Area",
@@ -2848,9 +2983,12 @@
     "id": "ability_conduit_nature_judges_thee",
     "name": "Nature Judges Thee",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Nature",
     "story_text": "Mystical thorned vines appear at your bidding and bind your foes.",
     "keywords": [
       "Area",
@@ -2913,9 +3051,12 @@
     "id": "ability_conduit_night_falls",
     "name": "Night Falls",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Trickery",
     "story_text": "You summon darkness that thwarts only your foes.",
     "keywords": [
       "Area",
@@ -2976,9 +3117,12 @@
     "id": "ability_conduit_our_hearts_your_strength",
     "name": "Our Hearts Your Strength",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Love",
     "story_text": "An ally gains strength from their friends.",
     "keywords": [
       "Magic",
@@ -3038,9 +3182,12 @@
     "id": "ability_conduit_penance_2",
     "name": "Penance",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "\"If you won't kneel, the gods will make you.\"",
     "keywords": [
       "Area",
@@ -3103,9 +3250,12 @@
     "id": "ability_conduit_penance",
     "name": "Penance",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "\"If you won't kneel, the gods will make you.\"",
     "keywords": [
       "Area",
@@ -3168,9 +3318,12 @@
     "id": "ability_conduit_radiance_of_grace",
     "name": "Radiance of Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Life",
     "story_text": "Intense light is emitted from your body, healing your allies.",
     "keywords": [
       "Magic",
@@ -3230,9 +3383,12 @@
     "id": "ability_conduit_ray_of_wrath",
     "name": "Ray of Wrath",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You unleash a blast of holy light upon your foe.",
     "keywords": [
       "Magic",
@@ -3295,9 +3451,12 @@
     "id": "ability_conduit_reap",
     "name": "Reap",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Death",
     "story_text": "The gods reward those who smite their foes.",
     "keywords": [
       "Magic",
@@ -3357,9 +3516,12 @@
     "id": "ability_conduit_revitalizing_grace",
     "name": "Revitalizing Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Life",
     "story_text": "With a gesture, you restore your health and that of your allies.",
     "keywords": [
       "Area",
@@ -3419,9 +3581,12 @@
     "id": "ability_conduit_righteous_phalanx",
     "name": "Righteous Phalanx",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "War",
     "story_text": "A wall of spinning swords and knives appears where you wish.",
     "keywords": [
       "Area",
@@ -3482,9 +3647,12 @@
     "id": "ability_conduit_sacred_bond",
     "name": "Sacred Bond",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Protection",
     "story_text": "You forge a divine connection between two creatures.",
     "keywords": [
       "Magic",
@@ -3544,9 +3712,12 @@
     "id": "ability_conduit_sacrificial_offer",
     "name": "Sacrificial Offer",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Divine magic tears at your foe and defends a nearby friend.",
     "keywords": [
       "Magic",
@@ -3609,9 +3780,12 @@
     "id": "ability_conduit_saint_s_raiment",
     "name": "Saint's Raiment",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "An ally becomes the wearer of an empowered golden cloak.",
     "keywords": [
       "Magic",
@@ -3671,9 +3845,12 @@
     "id": "ability_conduit_saint_s_tempest",
     "name": "Saint's Tempest",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Storm",
     "story_text": "A raging storm appears, striking your foes with lightning and throwing them around with wind.",
     "keywords": [
       "Area",
@@ -3736,9 +3913,12 @@
     "id": "ability_conduit_sanctuary_2",
     "name": "Sanctuary",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You send yourself or an ally to a divine manifold to instantaneously regain health.",
     "keywords": [
       "Magic",
@@ -3798,9 +3978,12 @@
     "id": "ability_conduit_sanctuary",
     "name": "Sanctuary",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You send yourself or an ally to a divine manifold to instantaneously regain health.",
     "keywords": [
       "Magic",
@@ -3860,9 +4043,12 @@
     "id": "ability_conduit_sermon_of_grace",
     "name": "Sermon of Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You inspire your allies with tales of your saint's great deeds.",
     "keywords": [
       "Area",
@@ -3922,9 +4108,12 @@
     "id": "ability_conduit_solar_flare",
     "name": "Solar Flare",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Sun",
     "story_text": "You call down a sphere of fire that burns your foes to ash.",
     "keywords": [
       "Area",
@@ -3987,9 +4176,12 @@
     "id": "ability_conduit_soul_siphon",
     "name": "Soul Siphon",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "A beam of energy connects a foe to a friend, draining life from one to heal the other.",
     "keywords": [
       "Magic",
@@ -4052,9 +4244,12 @@
     "id": "ability_conduit_spirit_stampede",
     "name": "Spirit Stampede",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Nature",
     "story_text": "Animal spirits run through the battlefield, trampling your foes.",
     "keywords": [
       "Area",
@@ -4117,9 +4312,12 @@
     "id": "ability_conduit_staggering_curse",
     "name": "Staggering Curse",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A blast of judgment disorients your foe.",
     "keywords": [
       "Magic",
@@ -4182,9 +4380,12 @@
     "id": "ability_conduit_statue_of_power",
     "name": "Statue of Power",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Creation",
     "story_text": "A marble statue of your deity rises from the earth.",
     "keywords": [
       "Magic",
@@ -4244,9 +4445,12 @@
     "id": "ability_conduit_the_gods_command_you_obey",
     "name": "The Gods Command You Obey",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "War",
     "story_text": "You speak with the voice of your saint, commanding your enemies.",
     "keywords": [
       "Magic",
@@ -4309,9 +4513,12 @@
     "id": "ability_conduit_thorn_cage",
     "name": "Thorn Cage",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Nature",
     "story_text": "Vines burst forth from the ground and bind your foe, slowly closing around them.",
     "keywords": [
       "Magic",
@@ -4374,9 +4581,12 @@
     "id": "ability_conduit_trinity_of_trickery",
     "name": "Trinity of Trickery",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Hey! I'm over here. No, here, numbskull.",
     "keywords": [
       "Magic",
@@ -4436,9 +4646,12 @@
     "id": "ability_conduit_vessel_of_retribution",
     "name": "Vessel of Retribution",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You infuse yourself or an ally with the retributive energy of the gods, waiting to be unleashed.",
     "keywords": [
       "Magic",
@@ -4498,9 +4711,12 @@
     "id": "ability_conduit_vessel_of_retribution_2",
     "name": "Vessel of Retribution",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You infuse yourself or an ally with the retributive energy of the gods, waiting to be unleashed.",
     "keywords": [
       "Magic",
@@ -4560,9 +4776,12 @@
     "id": "ability_conduit_violence_will_not_aid_thee",
     "name": "Violence Will Not Aid Thee",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "After some holy lightning, your enemy will think twice about their next attack.",
     "keywords": [
       "Magic",
@@ -4625,9 +4844,12 @@
     "id": "ability_conduit_warrior_s_prayer",
     "name": "Warrior's Prayer",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your quickly uttered prayer lends aggressive divine energy to a friend engaged in melee.",
     "keywords": [
       "Magic",
@@ -4690,9 +4912,12 @@
     "id": "ability_conduit_wellspring_of_grace",
     "name": "Wellspring of Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Life",
     "story_text": "A holy light is emitted from your body, healing your allies.",
     "keywords": [
       "Area",
@@ -4752,9 +4977,12 @@
     "id": "ability_conduit_wither",
     "name": "Wither",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A bolt of holy energy saps the life from a foe.",
     "keywords": [
       "Magic",
@@ -4817,9 +5045,12 @@
     "id": "ability_conduit_word_of_final_redemption",
     "name": "Word of Final Redemption",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Knowledge",
     "story_text": "Your death will fuel our victory.",
     "keywords": [
       "Magic",
@@ -4879,9 +5110,12 @@
     "id": "ability_conduit_word_of_guidance",
     "name": "Word of Guidance",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You invigorate an attacking ally with divine energy.",
     "keywords": [
       "Magic",
@@ -4941,9 +5175,12 @@
     "id": "ability_conduit_word_of_judgment",
     "name": "Word of Judgment",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your holy word saps an attacking enemy's strength.",
     "keywords": [
       "Magic",
@@ -5003,9 +5240,12 @@
     "id": "ability_conduit_word_of_weakening",
     "name": "Word of Weakening",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Death",
     "story_text": "You utter a divine word that makes a foe brittle.",
     "keywords": [
       "Magic",
@@ -5068,9 +5308,12 @@
     "id": "ability_conduit_words_of_wrath_and_grace",
     "name": "Words of Wrath and Grace",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Your saint grants your enemies a vision of pain and fills your allies with healing energy.",
     "keywords": [
       "Area",
@@ -5132,9 +5375,12 @@
     "id": "ability_conduit_your_story_ends_here",
     "name": "Your Story Ends Here",
     "costs": {
+      "signature": false,
       "resource": "Piety",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Fate",
     "story_text": "You bend the fate of a foe, willing them to die.",
     "keywords": [
       "Magic",

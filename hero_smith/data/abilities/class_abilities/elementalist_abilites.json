@@ -4,9 +4,12 @@
     "id": "ability_elementalist_afflict_a_bountiful_decay",
     "name": "Afflict a Bountiful Decay",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your curse causes your foe's flesh to rot off as spores that aid your allies.",
     "keywords": [
       "Green",
@@ -71,9 +74,12 @@
     "id": "ability_elementalist_behold_the_mystery",
     "name": "Behold the Mystery",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You open a rift into the void to harry your foes.",
     "keywords": [
       "Area",
@@ -137,9 +143,12 @@
     "id": "ability_elementalist_bifurcated_incineration",
     "name": "Bifurcated Incineration",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Two jets of flame lance out at your command.",
     "keywords": [
       "Fire",
@@ -203,9 +212,12 @@
     "id": "ability_elementalist_breath_of_dawn_remembered",
     "name": "Breath of Dawn Remembered",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The power you channel grants the ability to get back in the fight.",
     "keywords": [
       "Green",
@@ -266,9 +278,12 @@
     "id": "ability_elementalist_combustion_deferred",
     "name": "Combustion Deferred",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Your flames dance from kindling to kindling to kindling.",
     "keywords": [
       "Fire",
@@ -332,9 +347,12 @@
     "id": "ability_elementalist_conflagration",
     "name": "Conflagration",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A storm of fire descends upon your enemies.",
     "keywords": [
       "Area",
@@ -398,9 +416,12 @@
     "id": "ability_elementalist_earth_accepts_me",
     "name": "Earth Accepts Me",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 3,
+    "subclass": "Earth",
     "story_text": "You can slip into the stone.",
     "keywords": [
       "Earth",
@@ -460,9 +481,12 @@
     "id": "ability_elementalist_earth_rejects_you",
     "name": "Earth Rejects You",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "Everyone and everything gets blown away in an eruption of rocks and debris.",
     "keywords": [
       "Area",
@@ -526,9 +550,12 @@
     "id": "ability_elementalist_earth_rejects_you_2",
     "name": "Earth Rejects You",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Earth",
     "story_text": "Everyone and everything gets blown away in an eruption of rocks and debris.",
     "keywords": [
       "Area",
@@ -592,9 +619,12 @@
     "id": "ability_elementalist_erase",
     "name": "Erase",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "With a flick of the wrist, you phase creatures out of existence.",
     "keywords": [
       "Magic",
@@ -658,9 +688,12 @@
     "id": "ability_elementalist_explosive_assistance",
     "name": "Explosive Assistance",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You add a little magic to an ally's aggression at just the right time.",
     "keywords": [
       "Fire",
@@ -721,9 +754,12 @@
     "id": "ability_elementalist_grasp_of_beyond",
     "name": "Grasp of Beyond",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You absorb the life energy of another creature and use it to teleport.",
     "keywords": [
       "Magic",
@@ -787,9 +823,12 @@
     "id": "ability_elementalist_heart_of_the_wode_3",
     "name": "Heart of the Wode",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Green",
     "story_text": "You call forth one of the Great Tree's many splinters to provide for your every need.",
     "keywords": [
       "Green",
@@ -850,9 +889,12 @@
     "id": "ability_elementalist_heart_of_the_wode",
     "name": "Heart of the Wode",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You call forth one of the Great Tree's many splinters to provide for your every need.",
     "keywords": [
       "Green",
@@ -913,9 +955,12 @@
     "id": "ability_elementalist_heart_of_the_wode_2",
     "name": "Heart of the Wode",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Green",
     "story_text": "You call forth one of the Great Tree's many splinters to provide for your every need.",
     "keywords": [
       "Green",
@@ -976,9 +1021,12 @@
     "id": "ability_elementalist_hurl_element",
     "name": "Hurl Element",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You cast a ball of elemental energy at a foe.",
     "keywords": [
       "Magic",
@@ -1041,9 +1089,12 @@
     "id": "ability_elementalist_instantaneous_excavation",
     "name": "Instantaneous Excavation",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The surface of the world around you opens up to swallow foes.",
     "keywords": [
       "Earth",
@@ -1106,9 +1157,12 @@
     "id": "ability_elementalist_invigorating_growth",
     "name": "Invigorating Growth",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Mushrooms erupt from a foe, sapping their vitality to spread strengthening spores.",
     "keywords": [
       "Green",
@@ -1172,9 +1226,12 @@
     "id": "ability_elementalist_luminous_champion_aloft",
     "name": "Luminous Champion Aloft",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "They shine vibrantly, a beautiful diamond in the night sky.",
     "keywords": [
       "Fire",
@@ -1237,9 +1294,12 @@
     "id": "ability_elementalist_luminous_champion_aloft_2",
     "name": "Luminous Champion Aloft",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Void",
     "story_text": "They shine vibrantly, a beautiful diamond in the night sky.",
     "keywords": [
       "Fire",
@@ -1302,9 +1362,12 @@
     "id": "ability_elementalist_magma_titan",
     "name": "Magma Titan",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Their body swells with lava, mud, and might, towering over their enemies.",
     "keywords": [
       "Earth",
@@ -1367,9 +1430,12 @@
     "id": "ability_elementalist_magma_titan_2",
     "name": "Magma Titan",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Earth",
     "story_text": "Their body swells with lava, mud, and might, towering over their enemies.",
     "keywords": [
       "Earth",
@@ -1432,9 +1498,12 @@
     "id": "ability_elementalist_maw_of_earth",
     "name": "Maw of Earth",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "You open up the ground, spewing out shrapnel of stone and debris.",
     "keywords": [
       "Area",
@@ -1498,9 +1567,12 @@
     "id": "ability_elementalist_meteor",
     "name": "Meteor",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You teleport the target into the air and let the ground and the elemental force of fire do the rest.",
     "keywords": [
       "Earth",
@@ -1565,9 +1637,12 @@
     "id": "ability_elementalist_meteor_2",
     "name": "Meteor",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Fire",
     "story_text": "You teleport the target into the air and let the ground and the elemental force of fire do the rest.",
     "keywords": [
       "Earth",
@@ -1632,9 +1707,12 @@
     "id": "ability_elementalist_meteoric_introduction",
     "name": "Meteoric Introduction",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You give your enemy a gentle tap-like an asteroid impact.",
     "keywords": [
       "Earth",
@@ -1698,9 +1776,12 @@
     "id": "ability_elementalist_motivate_earth",
     "name": "Motivate Earth",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": "Green",
     "story_text": "The earth rises, falls, or opens up at your command.",
     "keywords": [
       "Earth",
@@ -1761,9 +1842,12 @@
     "id": "ability_elementalist_muse_of_fire_2",
     "name": "Muse of Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Fire",
     "story_text": "The fire burns hot enough to sear the face of any god watching.",
     "keywords": [
       "Area",
@@ -1827,9 +1911,12 @@
     "id": "ability_elementalist_muse_of_fire",
     "name": "Muse of Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "The fire burns hot enough to sear the face of any god watching.",
     "keywords": [
       "Area",
@@ -1893,9 +1980,12 @@
     "id": "ability_elementalist_muse_of_fire_3",
     "name": "Muse of Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Fire",
     "story_text": "The fire burns hot enough to sear the face of any god watching.",
     "keywords": [
       "Area",
@@ -1959,9 +2049,12 @@
     "id": "ability_elementalist_no_more_than_a_breeze",
     "name": "No More Than a Breeze",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The material substance of a creature shreds away at your command.",
     "keywords": [
       "Magic",
@@ -2022,9 +2115,12 @@
     "id": "ability_elementalist_o_flower_aid_o_earth_defend",
     "name": "O Flower Aid, O Earth Defend",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Revitalizing plants and jagged stones grow, helping allies and hindering foes.",
     "keywords": [
       "Area",
@@ -2087,9 +2183,12 @@
     "id": "ability_elementalist_practical_magic",
     "name": "Practical Magic",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your mastery of elemental power lets you customize your conjurations.",
     "keywords": [
       "Magic"
@@ -2148,9 +2247,12 @@
     "id": "ability_elementalist_prism",
     "name": "Prism",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You split your essence, allowing you to cast multiple effects at once.",
     "keywords": [
       "Magic",
@@ -2210,9 +2312,12 @@
     "id": "ability_elementalist_prism_2",
     "name": "Prism",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Void",
     "story_text": "You split your essence, allowing you to cast multiple effects at once.",
     "keywords": [
       "Magic",
@@ -2272,9 +2377,12 @@
     "id": "ability_elementalist_ray_of_agonizing_self_reflection",
     "name": "Ray of Agonizing Self-Reflection",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You inflict pain and doubt in equal measure.",
     "keywords": [
       "Magic",
@@ -2338,9 +2446,12 @@
     "id": "ability_elementalist_remember_growth_and_sun_and_rain",
     "name": "Remember Growth and Sun and Rain",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 3,
+    "subclass": "Green",
     "story_text": "You stir any wood's memory and learn what it has seen.",
     "keywords": [
       "Green",
@@ -2401,9 +2512,12 @@
     "id": "ability_elementalist_return_to_formlessness",
     "name": "Return to Formlessness",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": "Void",
     "story_text": "With the merest touch, you cause an object to turn to slag or ash.",
     "keywords": [
       "Fire",
@@ -2464,9 +2578,12 @@
     "id": "ability_elementalist_return_to_oblivion_3",
     "name": "Return to Oblivion",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Void",
     "story_text": "You create a tear in reality that could consume everything.",
     "keywords": [
       "Area",
@@ -2528,9 +2645,12 @@
     "id": "ability_elementalist_return_to_oblivion",
     "name": "Return to Oblivion",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You create a tear in reality that could consume everything.",
     "keywords": [
       "Area",
@@ -2592,9 +2712,12 @@
     "id": "ability_elementalist_return_to_oblivion_2",
     "name": "Return to Oblivion",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Void",
     "story_text": "You create a tear in reality that could consume everything.",
     "keywords": [
       "Area",
@@ -2656,9 +2779,12 @@
     "id": "ability_elementalist_ripples_in_the_earth",
     "name": "Ripples in the Earth",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Like a stone was dropped into a pond, waves in the earth radiate from you.",
     "keywords": [
       "Area",
@@ -2721,9 +2847,12 @@
     "id": "ability_elementalist_shared_void_sense",
     "name": "Shared Void Sense",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You grant allies a taste of your unearthly vision.",
     "keywords": [
       "Magic",
@@ -2784,9 +2913,12 @@
     "id": "ability_elementalist_skin_like_castle_walls",
     "name": "Skin Like Castle Walls",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You cover yourself or an ally in protective stone.",
     "keywords": [
       "Earth",
@@ -2847,9 +2979,12 @@
     "id": "ability_elementalist_storm_of_sands",
     "name": "Storm of Sands",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Dirt and debris swirl into a dark, pulsing hurricane.",
     "keywords": [
       "Area",
@@ -2913,9 +3048,12 @@
     "id": "ability_elementalist_subtle_relocation",
     "name": "Subtle Relocation",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You call on the void to swallow and spit out an ally.",
     "keywords": [
       "Magic",
@@ -2976,9 +3114,12 @@
     "id": "ability_elementalist_subvert_the_green_within",
     "name": "Subvert the Green Within",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Fungal spores sprout inside your enemy's brain, allowing you to control their actions.",
     "keywords": [
       "Green",
@@ -3043,9 +3184,12 @@
     "id": "ability_elementalist_subverted_perception_of_space",
     "name": "Subverted Perception of Space",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You rip an enemy's world in twain.",
     "keywords": [
       "Magic",
@@ -3109,9 +3253,12 @@
     "id": "ability_elementalist_summon_source_of_earth",
     "name": "Summon Source of Earth",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 8,
+    "subclass": "Earth",
     "story_text": "The ground rumbles as an elemental bursts forth, ready to serve.",
     "keywords": [
       "Earth",
@@ -3172,9 +3319,12 @@
     "id": "ability_elementalist_summon_source_of_earth_2",
     "name": "Summon Source of Earth",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 8,
+    "subclass": "Earth",
     "story_text": "The ground rumbles as an elemental bursts forth, ready to serve.",
     "keywords": [
       "Earth",
@@ -3235,9 +3385,12 @@
     "id": "ability_elementalist_summon_source_of_earth_3",
     "name": "Summon Source of Earth",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 8,
+    "subclass": "Earth",
     "story_text": "The ground rumbles as an elemental bursts forth, ready to serve.",
     "keywords": [
       "Earth",
@@ -3298,9 +3451,12 @@
     "id": "ability_elementalist_swarm_of_spirits",
     "name": "Swarm of Spirits",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Guardian animal spirits surround you to harry your foes and bolster your allies.",
     "keywords": [
       "Area",
@@ -3363,9 +3519,12 @@
     "id": "ability_elementalist_test_of_rain",
     "name": "Test of Rain",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You call down a rain that burns your enemies and restores your allies.",
     "keywords": [
       "Area",
@@ -3429,9 +3588,12 @@
     "id": "ability_elementalist_the_flesh_a_crucible",
     "name": "The Flesh, a Crucible",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Fire engulfs your target and continues to churn.",
     "keywords": [
       "Fire",
@@ -3495,9 +3657,12 @@
     "id": "ability_elementalist_the_green_defends_its_servants",
     "name": "The Green Defends Its Servants",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "A luminous green shield shows its true beauty the more it cracks.",
     "keywords": [
       "Green",
@@ -3558,9 +3723,12 @@
     "id": "ability_elementalist_the_green_defends_its_servants_2",
     "name": "The Green Defends Its Servants",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Green",
     "story_text": "A luminous green shield shows its true beauty the more it cracks.",
     "keywords": [
       "Green",
@@ -3621,9 +3789,12 @@
     "id": "ability_elementalist_the_green_within_the_green_without",
     "name": "The Green Within, the Green Without",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Whipping vines erupt from a foe's body to grasp at another close by.",
     "keywords": [
       "Green",
@@ -3687,9 +3858,12 @@
     "id": "ability_elementalist_the_wode_remembers_and_returns_2",
     "name": "The Wode Remembers and Returns",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Green",
     "story_text": "You create a terrarium that spans from canopy above to underbrush below.",
     "keywords": [
       "Area",
@@ -3752,9 +3926,12 @@
     "id": "ability_elementalist_the_wode_remembers_and_returns",
     "name": "The Wode Remembers and Returns",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You create a terrarium that spans from canopy above to underbrush below.",
     "keywords": [
       "Area",
@@ -3817,9 +3994,12 @@
     "id": "ability_elementalist_there_is_no_space_between",
     "name": "There Is No Space Between",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 2,
+    "subclass": "Void",
     "story_text": "Knowledge of the mystery reveals that two spaces are the same space.",
     "keywords": [
       "Magic",
@@ -3880,9 +4060,12 @@
     "id": "ability_elementalist_translated_through_flame",
     "name": "Translated Through Flame",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your ally disappears, then reappears in a burst of fire.",
     "keywords": [
       "Fire",
@@ -3946,9 +4129,12 @@
     "id": "ability_elementalist_unquenchable_fire",
     "name": "Unquenchable Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You let fly a fiery missile braided with pure primal energy.",
     "keywords": [
       "Fire",
@@ -4012,9 +4198,12 @@
     "id": "ability_elementalist_unquenchable_fire_2",
     "name": "Unquenchable Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Fire",
     "story_text": "You let fly a fiery missile braided with pure primal energy.",
     "keywords": [
       "Fire",
@@ -4078,9 +4267,12 @@
     "id": "ability_elementalist_unquiet_ground",
     "name": "Unquiet Ground",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A sudden storm of detritus assaults your foes and leaves them struggling to move.",
     "keywords": [
       "Area",
@@ -4144,9 +4336,12 @@
     "id": "ability_elementalist_viscous_fire",
     "name": "Viscous Fire",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A jet of heavy fire erupts where you strike.",
     "keywords": [
       "Fire",
@@ -4210,9 +4405,12 @@
     "id": "ability_elementalist_volcano_s_embrace",
     "name": "Volcano's Embrace",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Wrap them up in fire and melting stone.",
     "keywords": [
       "Earth",
@@ -4277,9 +4475,12 @@
     "id": "ability_elementalist_wall_of_fire",
     "name": "Wall of Fire",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "A blazing, beautifully organized inferno erupts at your command.",
     "keywords": [
       "Area",
@@ -4341,9 +4542,12 @@
     "id": "ability_elementalist_web_of_all_that_s_come_before",
     "name": "Web of All That's Come Before",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "Threads you've been weaving through your adventures create a vibrant, pearlescent web.",
     "keywords": [
       "Area",
@@ -4407,9 +4611,12 @@
     "id": "ability_elementalist_world_torn_asunder_2",
     "name": "World Torn Asunder",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Earth",
     "story_text": "You stomp your foot and quake the whole world over.",
     "keywords": [
       "Area",
@@ -4472,9 +4679,12 @@
     "id": "ability_elementalist_world_torn_asunder_3",
     "name": "World Torn Asunder",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Earth",
     "story_text": "You stomp your foot and quake the whole world over.",
     "keywords": [
       "Area",
@@ -4537,9 +4747,12 @@
     "id": "ability_elementalist_world_torn_asunder",
     "name": "World Torn Asunder",
     "costs": {
+      "signature": false,
       "resource": "Essence",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You stomp your foot and quake the whole world over.",
     "keywords": [
       "Area",

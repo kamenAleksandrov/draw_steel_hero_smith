@@ -7,6 +7,8 @@ import '../../core/db/providers.dart';
 import '../../core/models/hero_model.dart';
 import '../../core/models/component.dart' as model;
 import '../../core/theme/hero_theme.dart';
+import '../../core/theme/strife_theme.dart';
+import 'strife_creator_page.dart';
 
 class HeroCreatorPage extends ConsumerStatefulWidget {
   const HeroCreatorPage({super.key, required this.heroId});
@@ -16,7 +18,8 @@ class HeroCreatorPage extends ConsumerStatefulWidget {
   ConsumerState<HeroCreatorPage> createState() => _HeroCreatorPageState();
 }
 
-class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
+class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
+    with SingleTickerProviderStateMixin {
   String? _selectedLanguageId; // Single language selection
   // Core state
   final TextEditingController _nameCtrl = TextEditingController();
@@ -37,9 +40,18 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
   Future<Map<String, String>?>? _suggestionFuture;
   String? _lastAncestryNameForSuggestion;
 
+  late final TabController _tabController;
+  final GlobalKey<StrifeCreatorTabState> _strifeTabKey = GlobalKey();
+  bool _strifeDirty = false;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (!mounted) return;
+      setState(() {});
+    });
     _load();
     _loadCultureSuggestionsOnce();
   }
@@ -124,7 +136,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
     return _ancestryCultureSuggestions[ancestryName.toLowerCase()];
   }
 
-  Future<void> _save() async {
+  Future<void> _saveStory() async {
     if (_model == null) return;
     final repo = ref.read(heroRepositoryProvider);
     _model!.name = _nameCtrl.text.trim();
@@ -166,11 +178,57 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Saved')));
     }
-    _dirty = false;
+    setState(() {
+      _dirty = false;
+    });
+  }
+
+  Future<void> _saveAll() async {
+    if (_dirty) {
+      await _saveStory();
+    }
+    final strifeState = _strifeTabKey.currentState;
+    if (strifeState != null && strifeState.isDirty) {
+      await strifeState.save();
+    }
+  }
+
+  Future<void> _saveStrife() async {
+    final strifeState = _strifeTabKey.currentState;
+    if (strifeState == null) return;
+    await strifeState.save();
+  }
+
+  void _handleStrifeDirty(bool dirty) {
+    if (_strifeDirty == dirty) return;
+    setState(() {
+      _strifeDirty = dirty;
+    });
+  }
+
+  Widget? _buildFloatingActionButton() {
+    if (_loading) return null;
+    if (_tabController.index == 0) {
+      if (!_dirty) return null;
+      return FloatingActionButton.extended(
+        onPressed: _saveStory,
+        icon: const Icon(Icons.save),
+        label: const Text('Save'),
+        backgroundColor: HeroTheme.primarySection,
+      );
+    }
+    if (!_strifeDirty) return null;
+    return FloatingActionButton.extended(
+      onPressed: _saveStrife,
+      icon: const Icon(Icons.save),
+      label: const Text('Save Strife'),
+      backgroundColor: StrifeTheme.levelAccent,
+    );
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _nameCtrl.dispose();
     super.dispose();
   }
@@ -179,9 +237,9 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return PopScope(
-      canPop: !_dirty,
+      canPop: !(_dirty || _strifeDirty),
       onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop && _dirty) {
+        if (!didPop && (_dirty || _strifeDirty)) {
           final shouldPop = await _onWillPop();
           if (shouldPop && context.mounted) {
             Navigator.of(context).pop();
@@ -200,23 +258,42 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
-            if (!_loading && _dirty)
-              IconButton(
-                onPressed: _save,
-                icon: const Icon(Icons.save),
-                tooltip: 'Save Hero',
-              ),
+            if (!_loading)
+              if (_tabController.index == 0 && _dirty)
+                IconButton(
+                  onPressed: _saveStory,
+                  icon: const Icon(Icons.save),
+                  tooltip: 'Save Hero',
+                )
+              else if (_tabController.index == 1 && _strifeDirty)
+                IconButton(
+                  onPressed: _saveStrife,
+                  icon: const Icon(Icons.save),
+                  tooltip: 'Save Strife',
+                ),
           ],
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'Story'),
+              Tab(text: 'Strife'),
+            ],
+          ),
         ),
-        body: _loading ? _buildLoadingState(context) : _buildContent(context),
-        floatingActionButton: _loading || !_dirty
-            ? null
-            : FloatingActionButton.extended(
-                onPressed: _save,
-                icon: const Icon(Icons.save),
-                label: const Text('Save'),
-                backgroundColor: HeroTheme.primarySection,
+        body: _loading
+            ? _buildLoadingState(context)
+            : TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildStoryTab(context),
+                  StrifeCreatorTab(
+                    key: _strifeTabKey,
+                    heroId: widget.heroId,
+                    onDirtyChanged: _handleStrifeDirty,
+                  ),
+                ],
               ),
+        floatingActionButton: _buildFloatingActionButton(),
       ),
     );
   }
@@ -243,7 +320,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
   }
 
   Future<bool> _onWillPop() async {
-    if (!_dirty) return true;
+    if (!(_dirty || _strifeDirty)) return true;
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -264,7 +341,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
       ),
     );
     if (result == 'save') {
-      await _save();
+      await _saveAll();
       return true;
     }
     if (result == 'discard') {
@@ -273,7 +350,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage> {
     return false;
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildStoryTab(BuildContext context) {
     final ancestriesAsync = ref.watch(componentsByTypeProvider('ancestry'));
     final ancestryTraitsAsync =
         ref.watch(componentsByTypeProvider('ancestry_trait'));

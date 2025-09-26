@@ -42,90 +42,139 @@
     }
   },
   {
-    "id": "feature_censor_blessing_of_compassion",
-    "type": "feature",
-    "name": "Blessing of Compassion",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Love",
-    "level": 1,
-    "description": "You exude a magic presence that can soothe those willing to socially engage with you. You gain an edge on any test made to assist another creature with a test.\n\nAdditionally, when you are present at the start of a negotiation, one NPC of your choice has their patience increased by 1 (to a maximum of 5), and the first test made to influence them gains an edge."
-  },
-  {
-    "id": "feature_censor_blessing_of_comprehension",
-    "type": "feature",
-    "name": "Blessing of Comprehension",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Knowledge",
-    "level": 1,
-    "description": "You can interpret diagrams and charts even if you don't understand the language associated with them. You are considered fluent in all languages for the purpose of understanding the project source for any crafting or research project (see [Chapter 12: Downtime Projects](#page-307-2))."
-  },
-  {
-    "id": "feature_censor_blessing_of_fortunate_weather",
-    "type": "feature",
-    "name": "Blessing of Fortunate Weather",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Storm",
-    "level": 1,
-    "description": "Each time you finish a respite, you can decide the weather conditions within 100 squares. Until you finish another respite, the weather conditions you establish follow you through any mundane outdoor locations. Choose one of the following types of weather, each of which grants a benefit to you and your allies:\n\nYou and your allies gain an edge on tests that use the Search or Navigate skills.\n\nYou and your allies gain an edge on tests that use the Hide skill.\n\nYou and your allies gain an edge on tests that use the Endurance skill.\n\nWhen the ground is muddy or snowy, you and your allies gain an edge on tests that use the Track skill.\nIf you are in the same area as a creature using this or a similar feature who has chosen a different weather effect, the features negate each other where their areas overlap."
-  },
-  {
     "id": "feature_censor_censor_order",
     "type": "feature",
     "name": "Censor Order",
     "class": "censor",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Censors are the will of their god made physically manifest, and you act as your god's agent in the world. As you shoulder that responsibility, you choose a censor order from the following options, each of which grants you a skill. (*Quick Build:* Paragon.)\n\nYour censor order is your subclass, and your choice of order determines many of the features you'll gain as you gain new levels."
+    "description": "Censors are the will of their god made physically manifest, and you act as your god's agent in the world. As you shoulder that responsibility, you choose a censor order from the following options, each of which grants you a skill. (*Quick Build:* Paragon.)\n\nYour censor order is your subclass, and your choice of order determines many of the features you'll gain as you gain new levels.",
+    "orders": [
+      {
+        "name": "Exorcist",
+        "skill": "Read Person",
+        "description": "You specialize in hunting your order’s hidden enemies, knowing that an open mind is an unguarded fortress. You have the Read Person skill."
+      },
+      {
+        "name": "Oracle",
+        "skill": "Magic",
+        "description": "Corruption has deep tendrils that can be missed, leading you to specialize in uncovering clandestine threats to your order. You have the Magic skill."
+      },
+      {
+        "name": "Paragon",
+        "skill": "Lead",
+        "description": "Without a strong example and a firm hand, the weak will be corrupted. You specialize in setting an example for your order. You have the Lead skill."
+      }
+    ]
   },
   {
-    "id": "feature_censor_faithful_friend",
+    "id": "feature_censor_wrath",
     "type": "feature",
-    "name": "Faithful Friend",
+    "name": "Wrath",
     "class": "censor",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "The power you serve grants you a Heroic Resource called wrath, fueling your abilities as you censor those your church deems to be heretics.",
+    "in_combat": {
+      "name": "Wrath in Combat",
+      "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain wrath equal to your Victories. At the start of each of your turns during combat, you gain 2 wrath.\n\nAdditionally, the first time each combat round that a creature judged by you (see [Judgment](#page-94-0) below) deals damage to you, you gain 1 wrath. The first time each combat round that you deal damage to a creature judged by you, you gain 1 wrath.\nYou lose any remaining wrath at the end of the encounter."
+    },
+    "out_of_combat": {
+      "name": "Wrath Outside of Combat",
+      "description": "Though you can't gain wrath outside of combat, you can use your heroic abilities and effects that cost wrath without spending it. Whenever you use an ability or effect outside of combat that costs wrath, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited wrath on its effect, you can use it as if you had spent an amount of wrath equal to your Victories. (Such abilities aren't part of the core rules for the censor, but they might appear in future products.)"
+    }
   },
   {
-    "id": "feature_censor_grave_speech",
+    "id": "censor_1_level_domain_feature",
     "type": "feature",
-    "name": "Grave Speech",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_censor_hands_of_the_maker",
-    "type": "feature",
-    "name": "Hands of the Maker",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_censor_inner_light",
-    "type": "feature",
-    "name": "Inner Light",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Sun",
-    "level": 1,
-    "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. You place a ray of morning light into the chosen character's soul, granting them a +1 bonus to saving throws that lasts until you finish another respite."
-  },
-  {
-    "id": "feature_censor_inspired_deception",
-    "type": "feature",
-    "name": "Inspired Deception",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Trickery",
-    "level": 1,
-    "description": "The gods favor your thievery with magic. Whenever you make a test that uses a skill you have from the intrigue skill group, you can use Presence on the test instead of another characteristic."
+    "name": "1st level Domain Feature",
+    "description": " You gain a domain feature from your domain, as shown on the 1st-Level Censor Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
+    "features": [
+      {
+        "domain": "Creation",
+        "name": "Hands of the Maker",
+        "skill_group": "Crafting",
+        "description": "You have the following ability.",
+        "ability": "Hands of the Maker"
+      },
+      {
+        "domain": "Death",
+        "name": "Grave Speech",
+        "skill_group": "Lore",
+        "description": "You have the following ability.",
+        "ability": "Grave Speech"
+      },
+      {
+        "domain": "Fate",
+        "name": "Oracular Visions",
+        "skill_group": "Lore",
+        "description": "Your deity rewards you with hazy visions of things to come. Each time you earn 1 or more Victories, you earn an equal number of fate points. Whenever you or a creature within 10 squares makes a test, you can spend 1 fate point to tap into a vision of the outcome, granting that creature an edge on the test. You lose any remaining fate points when you finish a respite.",
+        "ability": null
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Blessing of Comprehension",
+        "skill_group": "Lore",
+        "description": "You can interpret diagrams and charts even if you don't understand the language associated with them. You are considered fluent in all languages for the purpose of understanding the project source for any crafting or research project (see [Chapter 12: Downtime Projects](#page-307-2)).",
+        "ability": null
+      },
+      {
+        "domain": "Life",
+        "name": "Revitalizing Ritual",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. The chosen character gains a bonus to their recovery value equal to your level that lasts until you finish another respite.",
+        "ability": null
+      },
+      {
+        "domain": "Love",
+        "name": "Blessing of Compassion",
+        "skill_group": "Interpersonal",
+        "description": "You exude a magic presence that can soothe those willing to socially engage with you. You gain an edge on any test made to assist another creature with a test.\n\nAdditionally, when you are present at the start of a negotiation, one NPC of your choice has their patience increased by 1 (to a maximum of 5), and the first test made to influence them gains an edge.",
+        "ability": null
+      },
+      {
+        "domain": "Nature",
+        "name": "Faithful Friend",
+        "skill_group": "Exploration",
+        "description": "You have the following ability.",
+        "ability": "Faithful Friend"
+      },
+      {
+        "domain": "Protection",
+        "name": "Protective Circle",
+        "skill_group": "Exploration",
+        "description": "You can spend 10 uninterrupted minutes to create a protective circle on the ground large enough to hold one size 1 creature. The circle lasts for 24 hours, until you create another, or until you dismiss it (no action required). Only creatures you designate at the time of drawing the circle can enter and exit the area. While in the protective circle, a creature can't be targeted by strikes.",
+        "ability": null
+      },
+      {
+        "domain": "Storm",
+        "name": "Blessing of Fortunate Weather",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can decide the weather conditions within 100 squares. Until you finish another respite, the weather conditions you establish follow you through any mundane outdoor locations. Choose one of the following types of weather, each of which grants a benefit to you and your allies:\n\nYou and your allies gain an edge on tests that use the Search or Navigate skills.\n\nYou and your allies gain an edge on tests that use the Hide skill.\n\nYou and your allies gain an edge on tests that use the Endurance skill.\n\nWhen the ground is muddy or snowy, you and your allies gain an edge on tests that use the Track skill.\nIf you are in the same area as a creature using this or a similar feature who has chosen a different weather effect, the features negate each other where their areas overlap.",
+        "ability": null
+      },
+      {
+        "domain": "Sun",
+        "name": "Inner Light",
+        "skill_group": "Lore",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. You place a ray of morning light into the chosen character's soul, granting them a +1 bonus to saving throws that lasts until you finish another respite.",
+        "ability": null
+      },
+      {
+        "domain": "Trickery",
+        "name": "Inspired Deception",
+        "skill_group": "Intrigue",
+        "description": "The gods favor your thievery with magic. Whenever you make a test that uses a skill you have from the intrigue skill group, you can use Presence on the test instead of another characteristic.",
+        "ability": null
+      },
+      {
+        "domain": "War",
+        "name": "Sanctified Weapon",
+        "skill_group": "Exploration",
+        "description": "As a respite activity, you can bless a weapon. Any creature who wields the weapon gains a +1 bonus to rolled damage with abilities that use the weapon. This benefit lasts until you finish another respite.",
+        "ability": null
+      }
+    ]
   },
   {
     "id": "feature_censor_judgment_order_benefit",
@@ -134,16 +183,21 @@
     "class": "censor",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "The first time on a turn that you use your Judgment ability to judge a creature, you gain the following benefit based on your order:"
-  },
-  {
-    "id": "feature_censor_kit",
-    "type": "feature",
-    "name": "Kit",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You can use and gain the benefits of a kit. See [Chapter 6: Kits](#page-231-0) for more information. (*Quick Build:* Warrior Priest.)"
+    "description": "The first time on a turn that you use your Judgment ability to judge a creature, you gain the following benefit based on your order:",
+    "benefits": [
+      {
+        "order": "Exorcist",
+        "benefit": " You can teleport up to a number of squares equal to twice your Presence score. This movement must take you closer to the judged creature. You do not need line of effect to your destination."
+      },
+      {
+        "order": "Oracle",
+        "benefit": " You can deal holy damage equal to twice your Presence score to the judged creature."
+      },
+      {
+        "order": "Paragon",
+        "benefit": "You can vertical pull the judged creature up to a number of squares equal to twice your Presence score."
+      }
+    ]
   },
   {
     "id": "feature_censor_my_life_for_yours",
@@ -152,100 +206,8 @@
     "class": "censor",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You channel your will to mend your wounds or the wounds of your allies. You have the following ability."
-  },
-  {
-    "id": "feature_censor_oracular_visions",
-    "type": "feature",
-    "name": "Oracular Visions",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Fate",
-    "level": 1,
-    "description": "Your deity rewards you with hazy visions of things to come. Each time you earn 1 or more Victories, you earn an equal number of fate points. Whenever you or a creature within 10 squares makes a test, you can spend 1 fate point to tap into a vision of the outcome, granting that creature an edge on the test. You lose any remaining fate points when you finish a respite."
-  },
-  {
-    "id": "feature_censor_protective_circle",
-    "type": "feature",
-    "name": "Protective Circle",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Protection",
-    "level": 1,
-    "description": "You can spend 10 uninterrupted minutes to create a protective circle on the ground large enough to hold one size 1 creature. The circle lasts for 24 hours, until you create another, or until you dismiss it (no action required). Only creatures you designate at the time of drawing the circle can enter and exit the area. While in the protective circle, a creature can't be targeted by strikes."
-  },
-  {
-    "id": "feature_censor_revitalizing_ritual",
-    "type": "feature",
-    "name": "Revitalizing Ritual",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. The chosen character gains a bonus to their recovery value equal to your level that lasts until you finish another respite."
-  },
-  {
-    "id": "feature_censor_sanctified_weapon",
-    "type": "feature",
-    "name": "Sanctified Weapon",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "War",
-    "level": 1,
-    "description": "As a respite activity, you can bless a weapon. Any creature who wields the weapon gains a +1 bonus to rolled damage with abilities that use the weapon. This benefit lasts until you finish another respite."
-  },
-  {
-    "id": "feature_censor_signature_ability",
-    "type": "feature",
-    "name": "Signature Ability",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose one signature ability from the following options. Signature abilities can be used at will. (*Quick Build:* Your Allies Cannot Save You!)"
-  },
-  {
-    "id": "feature_censor_wrath_outside_of_combat",
-    "type": "feature",
-    "name": "Wrath Outside of Combat",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Though you can't gain wrath outside of combat, you can use your heroic abilities and effects that cost wrath without spending it. Whenever you use an ability or effect outside of combat that costs wrath, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited wrath on its effect, you can use it as if you had spent an amount of wrath equal to your Victories. (Such abilities aren't part of the core rules for the censor, but they might appear in future products.)"
-  },
-  {
-    "id": "feature_censor_wrath_in_combat",
-    "type": "feature",
-    "name": "Wrath in Combat",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain wrath equal to your Victories. At the start of each of your turns during combat, you gain 2 wrath.\n\nAdditionally, the first time each combat round that a creature judged by you (see [Judgment](#page-94-0) below) deals damage to you, you gain 1 wrath. The first time each combat round that you deal damage to a creature judged by you, you gain 1 wrath.\nYou lose any remaining wrath at the end of the encounter."
-  },
-  {
-    "id": "feature_censor_2nd_level_exorcist_ability",
-    "type": "feature",
-    "name": "2nd-Level Exorcist Ability",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_2nd_level_oracle_ability",
-    "type": "feature",
-    "name": "2nd-Level Oracle Ability",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_2nd_level_paragon_ability",
-    "type": "feature",
-    "name": "2nd-Level Paragon Ability",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
+    "description": "You channel your will to mend your wounds or the wounds of your allies. You have the following ability.",
+    "ability": "My Life for Yours"
   },
   {
     "id": "feature_censor_a_sense_for_truth",
@@ -326,150 +288,84 @@
     "description": "Your judgment has grown in divine power, instilling fear in those you condemn. Whenever you use your Judgment ability, you can spend 1 wrath, and if the target has P < AVERAGE, they are frightened of you (save ends). Additionally, whenever a creature judged by you is reduced to 0 Stamina and you use Judgment as a free triggered action, if the new target has P < STRONG, they are frightened of you (save ends). If the target is already frightened of you, they instead take holy damage equal to twice your Presence score."
   },
   {
-    "id": "feature_censor_blessing_of_life",
+    "id": "censor_4_level_domain_feature",
     "type": "feature",
-    "name": "Blessing of Life",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Life",
-    "level": 4,
-    "description": "Your divine presence causes those you deem worthy to recover quickly from a fight. Whenever an ally within distance of your My Life for Yours ability regains Stamina, they regain additional Stamina equal to your Presence score."
-  },
-  {
-    "id": "feature_censor_blessing_of_secrets",
-    "type": "feature",
-    "name": "Blessing of Secrets",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_censor_characteristic_increase_2",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "Your Might and Presence scores each increase to 3."
-  },
-  {
-    "id": "feature_censor_impervious_touch",
-    "type": "feature",
-    "name": "Impervious Touch",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Protection",
-    "level": 4,
-    "description": "As a maneuver, you can touch an object with a size equal to your Presence score or smaller and place a protective spell on it. The object has immunity all to untyped damage. You can maintain this spell on a number of objects equal to your Presence score, and you can end the spell on any object at any time (no action required).\n\nAdditionally, you can place this spell on a building or vehicle (or a similar structure with the Director's approval) that is of a size larger than your Presence score. You can place the spell on only one such target at a time, and you can maintain the spell on a larger target and a number of objects equal to your Presence score simultaneously."
-  },
-  {
-    "id": "feature_censor_improved_hands_of_the_maker",
-    "type": "feature",
-    "name": "Improved Hands of the Maker",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Creation",
-    "level": 4,
-    "description": "When you use your Hands of the Maker ability, you can create a mundane object that is size 2 or smaller."
-  },
-  {
-    "id": "feature_censor_improved_sanctified_weapon",
-    "type": "feature",
-    "name": "Improved Sanctified Weapon",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "War",
-    "level": 4,
-    "description": "The weapon improved by your Sanctified Weapon feature grants a +3 bonus to rolled damage instead of +1."
-  },
-  {
-    "id": "feature_censor_invocation_of_the_heart",
-    "type": "feature",
-    "name": "Invocation of the Heart",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Love",
-    "level": 4,
-    "description": "As a main action, you forge a bond of love and friendship with one willing creature you touch. While this bond is active, you can telepathically speak with the creature over any distance, including across different worlds. Additionally, while this bond is active, you can attempt to assist the creature with any test they make regardless of their proximity to you. You can maintain only one bond at a time, and you can end a bond at any time (no action required)."
-  },
-  {
-    "id": "feature_censor_light_of_revelation",
-    "type": "feature",
-    "name": "Light of Revelation",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Sun",
-    "level": 4,
-    "description": "As a maneuver, you make your body shine brightly, illuminating your space and each square within 5 squares until you dismiss the light (no action required). This light shines through any darkness. Hidden creatures in the area are automatically revealed, and creatures in the light, including you, can't hide. While this feature is active, you gain an edge on tests made to notice hidden objects and entrances and to detect supernatural illusions."
-  },
-  {
-    "id": "feature_censor_oracular_warning",
-    "type": "feature",
-    "name": "Oracular Warning",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Fate",
-    "level": 4,
-    "description": "Each time you finish a respite, you can share the vague dreams of the future granted to you by the gods with allies who finished the respite with you. These premonitions help you and your allies stay alive, granting each of you temporary Stamina equal to 10 + your level that lasts until you finish another respite."
-  },
-  {
-    "id": "feature_censor_perk_3",
-    "type": "feature",
-    "name": "Perk",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_censor_saint_s_epiphany",
-    "type": "feature",
-    "name": "Saint's Epiphany",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Knowledge",
-    "level": 4,
-    "description": "At the start of a respite, you can inspire yourself or another creature taking the same respite with divine knowledge. If the target makes a project roll during this respite, they can add 1d10 plus your Presence score to the roll."
-  },
-  {
-    "id": "feature_censor_seance",
-    "type": "feature",
-    "name": "Seance",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Death",
-    "level": 4,
-    "description": "You can commune with a network of spirits. As a respite activity, you speak the name of a creature who died and isn't undead. If the creature's spirit is free and willing to speak with you, they appear and you can have a conversation with them. During this time, the creature responds to you as they would have in life. If the creature isn't free or willing to appear, you can speak another name or choose another respite activity."
-  },
-  {
-    "id": "feature_censor_skill_2",
-    "type": "feature",
-    "name": "Skill",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one skill of your choice. See [Skills](#page-268-0) in Chapter 9: Tests."
-  },
-  {
-    "id": "feature_censor_windwalk",
-    "type": "feature",
-    "name": "Windwalk",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Storm",
-    "level": 4,
-    "description": "While you have 5 or more Victories, you can fly. If you can already fly, you have a +2 bonus to speed while flying instead."
-  },
-  {
-    "id": "feature_censor_wode_road",
-    "type": "feature",
-    "name": "Wode Road",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Nature",
-    "level": 4,
-    "description": "As a main action, you touch a living tree and make it part of a divine transportation network. You can maintain a number of trees in your network equal to your Presence score. Whenever you touch any tree in your network, you can use a main action to teleport yourself and any willing creatures within 10 squares of you to a tree in your network on the same world. If a tree in your network dies, it is no longer part of the network. You can remove a tree from your network no matter your distance from it, including across different worlds (no action required)."
+    "name": "4th level Domain Feature",
+    "description": " You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
+    "features": [
+      {
+        "domain": "Creation",
+        "name": "Improved Hands of the Maker",
+        "description": "When you use your Hands of the Maker ability, you can create a mundane object that is size 2 or smaller.",
+        "ability": null
+      },
+      {
+        "domain": "Death",
+        "name": "Seance",
+        "description": "You can commune with a network of spirits. As a respite activity, you speak the name of a creature who died and isn't undead. If the creature's spirit is free and willing to speak with you, they appear and you can have a conversation with them. During this time, the creature responds to you as they would have in life. If the creature isn't free or willing to appear, you can speak another name or choose another respite activity.",
+        "ability": null
+      },
+      {
+        "domain": "Fate",
+        "name": "Oracular Warning",
+        "description": "Each time you finish a respite, you can share the vague dreams of the future granted to you by the gods with allies who finished the respite with you. These premonitions help you and your allies stay alive, granting each of you temporary Stamina equal to 10 + your level that lasts until you finish another respite.",
+        "ability": null
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Saint’s Epiphany",
+        "description": "At the start of a respite, you can inspire yourself or another creature taking the same respite with divine knowledge. If the target makes a project roll during this respite, they can add 1d10 plus your Presence score to the roll.",
+        "ability": null
+      },
+      {
+        "domain": "Life",
+        "name": "Blessing of Life",
+        "description": "Your divine presence causes those you deem worthy to recover quickly from a fight. Whenever an ally within distance of your My Life for Yours ability regains Stamina, they regain additional Stamina equal to your Presence score.",
+        "ability": null
+      },
+      {
+        "domain": "Love",
+        "name": "Invocation of the Heart",
+        "description": "As a main action, you forge a bond of love and friendship with one willing creature you touch. While this bond is active, you can telepathically speak with the creature over any distance, including across different worlds. Additionally, while this bond is active, you can attempt to assist the creature with any test they make regardless of their proximity to you. You can maintain only one bond at a time, and you can end a bond at any time (no action required).",
+        "ability": null
+      },
+      {
+        "domain": "Nature",
+        "name": "Wode Road",
+        "description": "As a main action, you touch a living tree and make it part of a divine transportation network. You can maintain a number of trees in your network equal to your Presence score. Whenever you touch any tree in your network, you can use a main action to teleport yourself and any willing creatures within 10 squares of you to a tree in your network on the same world. If a tree in your network dies, it is no longer part of the network. You can remove a tree from your network no matter your distance from it, including across different worlds (no action required).",
+        "ability": null
+      },
+      {
+        "domain": "Protection",
+        "name": "Impervious Touch",
+        "description": "As a maneuver, you can touch an object with a size equal to your Presence score or smaller and place a protective spell on it. The object has immunity all to untyped damage. You can maintain this spell on a number of objects equal to your Presence score, and you can end the spell on any object at any time (no action required).\n\nAdditionally, you can place this spell on a building or vehicle (or a similar structure with the Director's approval) that is of a size larger than your Presence score. You can place the spell on only one such target at a time, and you can maintain the spell on a larger target and a number of objects equal to your Presence score simultaneously.",
+        "ability": null
+      },
+      {
+        "domain": "Storm",
+        "name": "Windwalk",
+        "description": "While you have 5 or more Victories, you can fly. If you can already fly, you have a +2 bonus to speed while flying instead.",
+        "ability": null
+      },
+      {
+        "domain": "Sun",
+        "name": "Light of Revelation",
+        "description": "As a maneuver, you make your body shine brightly, illuminating your space and each square within 5 squares until you dismiss the light (no action required). This light shines through any darkness. Hidden creatures in the area are automatically revealed, and creatures in the light, including you, can't hide. While this feature is active, you gain an edge on tests made to notice hidden objects and entrances and to detect supernatural illusions.",
+        "ability": null
+      },
+      {
+        "domain": "Trickery",
+        "name": "Blessing of Secrets",
+        "description": "You have the following ability.",
+        "ability": "Blessing of Secrets"
+      },
+      {
+        "domain": "War",
+        "name": "Improved Sanctified Weapon",
+        "description": "The weapon improved by your Sanctified Weapon feature grants a +3 bonus to rolled damage instead of +1.",
+        "ability": null
+      }
+    ]
   },
   {
     "id": "feature_censor_wrath_beyond_wrath",
@@ -511,33 +407,6 @@
     "description": "Your divine spark grows in power, allowing you and your allies to focus and endure. At the start of each of your turns, you can spend 1d6 Stamina to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally who starts their turn within 5 squares of you can also spend Stamina to gain this benefit."
   },
   {
-    "id": "feature_censor_6th_level_exorcist_abilities",
-    "type": "feature",
-    "name": "6th-Level Exorcist Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_6th_level_oracle_abilities",
-    "type": "feature",
-    "name": "6th-Level Oracle Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_6th_level_paragon_abilities",
-    "type": "feature",
-    "name": "6th-Level Paragon Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
     "id": "feature_censor_implement_of_wrath",
     "type": "feature",
     "name": "Implement of Wrath",
@@ -547,49 +416,84 @@
     "description": "Each time you finish a respite, you can choose one hero's weapon, including your own, to channel supernatural power as an implement of your god's wrath. The weapon becomes magic and gains the following benefits until your next respite:\n\n- Strikes with the weapon deal extra holy damage equal to the wielder's highest characteristic score.\n- Any creature struck by the weapon who has holy weakness and has P < STRONG is frightened and weakened (save ends).\n- Any minion targeted by a strike using the weapon dies. That minion's Stamina maximum is removed from the minion Stamina pool before any damage is applied to the rest of the squad.\n- The weapon's wielder can't be made frightened."
   },
   {
-    "id": "feature_censor_perk_4",
+    "id": "censor_4_level_domain_feature",
     "type": "feature",
-    "name": "Perk",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "You gain one interpersonal, lore, or supernatural perk of your choice."
-  },
-  {
-    "id": "feature_censor_blessing_of_iron",
-    "type": "feature",
-    "name": "Blessing of Iron",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "The gods send divine favor to you and your allies. While you are not dying, enemies take a bane on strikes against you or any ally within 3 squares of you."
-  },
-  {
-    "id": "feature_censor_characteristic_increase_3",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
-  },
-  {
-    "id": "feature_censor_covenant_of_the_heart",
-    "type": "feature",
-    "name": "Covenant of the Heart",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You can maintain bonds with up to three willing creatures using your Invocation of the Heart feature. Additionally, you have the following ability."
-  },
-  {
-    "id": "feature_censor_divine_quartermaster",
-    "type": "feature",
-    "name": "Divine Quartermaster",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each time you finish a respite, you can choose a treasure with a project goal equal to 50 times your level or less. You gain a divine version of this treasure that lasts until you finish another respite or it is consumed."
+    "name": "4th level Domain Feature",
+    "description": "You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
+    "features": [
+      {
+        "domain": "Creation",
+        "name": "Divine Quartermaster",
+        "description": "Each time you finish a respite, you can choose a treasure with a project goal equal to 50 times your level or less. You gain a divine version of this treasure that lasts until you finish another respite or it is consumed.",
+        "ability": null
+      },
+      {
+        "domain": "Death",
+        "name": "Word of Death Deferred",
+        "description": "You can stop death from taking your allies. When an ally within distance of your My Life for Yours ability dies and you are not dying, you can use a free triggered action to instead have that ally fall unconscious until they regain Stamina. Additionally, your abilities deal an extra 5 damage to winded creatures",
+        "ability": null
+      },
+      {
+        "domain": "Fate",
+        "name": "Word of Fate Denied",
+        "description": "When an ally within 10 squares takes damage that would leave them dying, you can use a free triggered action to make yourself or another willing creature within 10 squares of you the target of the triggering damage instead. The creature you choose takes the damage and suffers any effects associated with it, and that damage can’t be reduced in any way.",
+        "ability": null
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Gods’ Library",
+        "description": "You can gain access to information you need through prayer, so that you no longer require research materials for crafting and research projects (see [Chapter 12: Downtime Projects](#page-307-2)). Additionally, you add your level to project rolls you make for crafting and research projects. You also have any skills in the lore skill group you don't already have, and you gain a number of skills from any other skill groups equal to the number of skills you had in the lore skill group before you gained this feature.",
+        "ability": null
+      },
+      {
+        "domain": "Life",
+        "name": "Font of Grace",
+        "description": "Each time you use your My Life for Yours ability, you gain 1 wrath that can be spent only on that ability during the same turn. If you don't use this wrath, it is lost. Additionally, the target of My Life for Yours gains 10 temporary Stamina.",
+        "ability": null
+      },
+      {
+        "domain": "Love",
+        "name": "Covenant of the Heart",
+        "description": "You can maintain bonds with up to three willing creatures using your Invocation of the Heart feature. Additionally, you have the following ability.",
+        "ability": "Guided to Your Side"
+      },
+      {
+        "domain": "Nature",
+        "name": "Nature’s Bounty",
+        "description": "When you finish a respite, you can prepare a magic meal using local flora for any companions who rested with you. Choose two of the following benefits for creatures who consume the meal:\n\n- Each creature gains immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your level. You can choose this benefit twice, choosing a different damage immunity each time.\n- Each creature gains 20 temporary Stamina.\n- Each creature gains a +1 bonus to speed.\n- Each creature gains a +1 bonus to saving throws.\n- Each creature gains an edge on tests made to influence other creatures.\nEach benefit lasts until the creature who gains it finishes another respite.",
+        "ability": null
+      },
+      {
+        "domain": "Protection",
+        "name": "Blessing of Iron",
+        "description": "The gods send divine favor to you and your allies. While you are not dying, enemies take a bane on strikes against you or any ally within 3 squares of you.",
+        "ability": null
+      },
+      {
+        "domain": "Storm",
+        "name": "Ride the Lightning",
+        "description": "Lightning and thunder infuse your body. Whenever you use an ability to deal rolled damage to another creature, the ability deals extra lightning damage equal to your Presence score. Additionally, if you use an ability that force moves a creature, the forced movement distance gains a bonus equal to your Presence score. While you are under the effect of your Windwalk feature, lightning enhances your locomotion to grant you a bonus to speed equal to your Might score. If Windwalk already grants you a bonus to speed, this bonus adds to that",
+        "ability": null
+      },
+      {
+        "domain": "Sun",
+        "name": "Light of the Burning Sun",
+        "description": "Sun infuses your body. Whenever you use an ability to deal rolled damage to another creature, that ability deals an extra 5 fire damage, or an extra 15 fire damage if the creature is undead. Additionally, you have fire immunity equal to your level, which is added to any other fire immunity you have.",
+        "ability": null
+      },
+      {
+        "domain": "Trickery",
+        "name": "Trinity of Trickery",
+        "description": "You have the following ability.",
+        "ability": "Trinity of Trickery"
+      },
+      {
+        "domain": "War",
+        "name": "Your Triumphs Are Remembered",
+        "description": "The gods allow you and your companions to bask in the glory of past successes. Whenever you finish a respite, you and any other heroes who rested with you regain 1 Victory after your Victories are converted to XP. This Victory isn’t converted into XP at the end of a subsequent respite.",
+        "ability": null
+      }
+    ]
   },
   {
     "id": "feature_censor_focused_wrath",
@@ -599,100 +503,6 @@
     "is_subclass_feature": false,
     "level": 7,
     "description": "When you gain wrath at the start of each of your turns during combat, you gain 3 wrath instead of 2."
-  },
-  {
-    "id": "feature_censor_font_of_grace",
-    "type": "feature",
-    "name": "Font of Grace",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Life",
-    "level": 7,
-    "description": "Each time you use your My Life for Yours ability, you gain 1 wrath that can be spent only on that ability during the same turn. If you don't use this wrath, it is lost. Additionally, the target of My Life for Yours gains 10 temporary Stamina."
-  },
-  {
-    "id": "feature_censor_gods_library",
-    "type": "feature",
-    "name": "Gods' Library",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Knowledge",
-    "level": 7,
-    "description": "You can gain access to information you need through prayer, so that you no longer require research materials for crafting and research projects (see [Chapter 12: Downtime Projects](#page-307-2)). Additionally, you add your level to project rolls you make for crafting and research projects. You also have any skills in the lore skill group you don't already have, and you gain a number of skills from any other skill groups equal to the number of skills you had in the lore skill group before you gained this feature."
-  },
-  {
-    "id": "feature_censor_light_of_the_burning_sun",
-    "type": "feature",
-    "name": "Light of the Burning Sun",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Sun infuses your body. Whenever you use an ability to deal rolled damage to another creature, that ability deals an extra 5 fire damage, or an extra 15 fire damage if the creature is undead. Additionally, you have fire immunity equal to your level, which is added to any other fire immunity you have."
-  },
-  {
-    "id": "feature_censor_nature_s_bounty",
-    "type": "feature",
-    "name": "Nature's Bounty",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Nature",
-    "level": 7,
-    "description": "When you finish a respite, you can prepare a magic meal using local flora for any companions who rested with you. Choose two of the following benefits for creatures who consume the meal:\n\n- Each creature gains immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your level. You can choose this benefit twice, choosing a different damage immunity each time.\n- Each creature gains 20 temporary Stamina.\n- Each creature gains a +1 bonus to speed.\n- Each creature gains a +1 bonus to saving throws.\n- Each creature gains an edge on tests made to influence other creatures.\nEach benefit lasts until the creature who gains it finishes another respite."
-  },
-  {
-    "id": "feature_censor_ride_the_lightning",
-    "type": "feature",
-    "name": "Ride the Lightning",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Lightning and thunder infuse your body. Whenever you use an ability to deal rolled damage to another creature, the ability deals extra lightning damage equal to your Presence score. Additionally, if you use an ability that force moves a creature, the forced movement distance gains a bonus equal to your Presence score. While you are under the effect of your Windwalk feature, lightning enhances your locomotion to grant you a bonus to speed equal to your Might score. If Windwalk already grants you a bonus to speed, this bonus adds to that."
-  },
-  {
-    "id": "feature_censor_skill_3",
-    "type": "feature",
-    "name": "Skill",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You gain one skill of your choice."
-  },
-  {
-    "id": "feature_censor_trinity_of_trickery",
-    "type": "feature",
-    "name": "Trinity of Trickery",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_censor_word_of_death_deferred",
-    "type": "feature",
-    "name": "Word of Death Deferred",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Death",
-    "level": 7,
-    "description": "You can stop death from taking your allies. When an ally within distance of your My Life for Yours ability dies and you are not dying, you can use a free triggered action to instead have that ally fall unconscious until they regain Stamina.\n\nAdditionally, your abilities deal an extra 5 damage to winded creatures."
-  },
-  {
-    "id": "feature_censor_word_of_fate_denied",
-    "type": "feature",
-    "name": "Word of Fate Denied",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "When an ally within 10 squares takes damage that would leave them dying, you can use a free triggered action to make yourself or another willing creature within 10 squares of you the target of the triggering damage instead. The creature you choose takes the damage and suffers any effects associated with it, and that damage can't be reduced in any way."
-  },
-  {
-    "id": "feature_censor_your_triumphs_are_remembered",
-    "type": "feature",
-    "name": "Your Triumphs Are Remembered",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "The gods allow you and your companions to bask in the glory of past successes. Whenever you finish a respite, you and any other heroes who rested with you regain 1 Victory after your Victories are converted to XP. This Victory isn't converted into XP at the end of a subsequent respite."
   },
   {
     "id": "feature_censor_demonologist",
@@ -734,33 +544,6 @@
     "description": "Your words take on the power of your deity, with all the authority that entails. If you convince a creature to take an oath, they can't break it for 7 days. If you take an oath, you can't break it for 7 days."
   },
   {
-    "id": "feature_censor_9th_level_exorcist_abilities",
-    "type": "feature",
-    "name": "9th-Level Exorcist Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_9th_level_oracle_abilities",
-    "type": "feature",
-    "name": "9th-Level Oracle Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_censor_9th_level_paragon_abilities",
-    "type": "feature",
-    "name": "9th-Level Paragon Abilities",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
     "id": "feature_censor_improved_implement_of_wrath",
     "type": "feature",
     "name": "Improved Implement of Wrath",
@@ -768,33 +551,6 @@
     "is_subclass_feature": false,
     "level": 9,
     "description": "The weapon you target with your Implement of Wrath feature gains the following additional benefits:\n\n- The weapon's wielder and each ally adjacent to them gain a +2 bonus to saving throws.\n- At the end of each of the weapon wielder's turns, each ally adjacent to the wielder makes a saving throw against each effect on them that is ended by a saving throw.\n- The weapon's wielder has corruption immunity 10."
-  },
-  {
-    "id": "feature_censor_characteristic_increase",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "Your Might and Presence scores each increase to 5."
-  },
-  {
-    "id": "feature_censor_perk",
-    "type": "feature",
-    "name": "Perk",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one crafting, lore, or supernatural perk of your choice."
-  },
-  {
-    "id": "feature_censor_skill",
-    "type": "feature",
-    "name": "Skill",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one skill of your choice."
   },
   {
     "id": "feature_censor_templar",

@@ -4,9 +4,12 @@
     "id": "ability_null_a_squad_unto_myself",
     "name": "A Squad Unto Myself",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You move so quickly, it seems as though an army assaulted your foes.",
     "keywords": [
       "Area",
@@ -69,9 +72,12 @@
     "id": "ability_null_absolute_zero",
     "name": "Absolute Zero",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Cryokinetic",
     "story_text": "You become the coldest thing in the timescape.",
     "keywords": [
       "Psionic"
@@ -132,9 +138,12 @@
     "id": "ability_null_absorption_field",
     "name": "Absorption Field",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Your null field absorbs kinetic energy.",
     "keywords": [
       "Psionic"
@@ -193,9 +202,12 @@
     "id": "ability_null_anticipating_strike",
     "name": "Anticipating Strike",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You suddenly strike an enemy, then grab them in a psionically enhanced grip.",
     "keywords": [
       "Melee",
@@ -259,9 +271,12 @@
     "id": "ability_null_arcane_disruptor",
     "name": "Arcane Disruptor",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your blow reorders a foe's body, causing pain if they attempt to channel sorcery.",
     "keywords": [
       "Melee",
@@ -325,9 +340,12 @@
     "id": "ability_null_arcane_purge",
     "name": "Arcane Purge",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You focus your null field into a pressure point strike that prevents your foe from channeling sorcery.",
     "keywords": [
       "Melee",
@@ -391,9 +409,12 @@
     "id": "ability_null_arrestor_cycle",
     "name": "Arrestor Cycle",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Chronokinetic",
     "story_text": "You trap your foe in a looping cycle of time, where they relive the last few seconds over and over again.",
     "keywords": [
       "Psionic",
@@ -455,9 +476,12 @@
     "id": "ability_null_blur",
     "name": "Blur",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Chronokinetic",
     "story_text": "You release stored time, allowing you to act twice.",
     "keywords": [
       "Psionic"
@@ -516,9 +540,12 @@
     "id": "ability_null_chronal_spike",
     "name": "Chronal Spike",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You foresee the best moment to strike, then exploit it.",
     "keywords": [
       "Melee",
@@ -582,9 +609,12 @@
     "id": "ability_null_dance_of_blows",
     "name": "Dance of Blows",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You strike everywhere at once, tricking an enemy into moving out of position.",
     "keywords": [
       "Area",
@@ -647,9 +677,12 @@
     "id": "ability_null_entropic_field",
     "name": "Entropic Field",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Cryokinetic",
     "story_text": "You drastically increase the local entropy.",
     "keywords": [
       "Area",
@@ -712,9 +745,12 @@
     "id": "ability_null_faster_than_the_eye",
     "name": "Faster Than the Eye",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You strike so quickly that your hands become a blur.",
     "keywords": [
       "Melee",
@@ -778,9 +814,12 @@
     "id": "ability_null_force_redirected",
     "name": "Force Redirected",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Chronokinetic",
     "story_text": "The force of your strike moves your target in a surprising direction.",
     "keywords": [
       "Melee",
@@ -844,9 +883,12 @@
     "id": "ability_null_gravitic_charge",
     "name": "Gravitic Charge",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Metakinetic",
     "story_text": "You channel your discipline into momentum that defies gravity.",
     "keywords": [
       "Psionic"
@@ -907,9 +949,12 @@
     "id": "ability_null_gravitic_strike",
     "name": "Gravitic Strike",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Metakinetic",
     "story_text": "Your fist emanates gravitic force that pulls a distant enemy closer.",
     "keywords": [
       "Melee",
@@ -973,9 +1018,12 @@
     "id": "ability_null_heat_drain",
     "name": "Heat Drain",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Cryokinetic",
     "story_text": "You drain all the heat from the target.",
     "keywords": [
       "Melee",
@@ -1038,9 +1086,12 @@
     "id": "ability_null_heat_sink",
     "name": "Heat Sink",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Cryokinetic",
     "story_text": "You absorb ambient heat, coating the ground in frost and precipitating snow from the air.",
     "keywords": [
       "Psionic"
@@ -1099,9 +1150,12 @@
     "id": "ability_null_ice_pillars",
     "name": "Ice Pillars",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Cryokinetic",
     "story_text": "Pillars of ice erupt from the ground and launch your foes into the air.",
     "keywords": [
       "Psionic",
@@ -1163,9 +1217,12 @@
     "id": "ability_null_impart_force",
     "name": "Impart Force",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A single touch from you, and your enemy flies backward.",
     "keywords": [
       "Melee",
@@ -1229,9 +1286,12 @@
     "id": "ability_null_inertial_absorption",
     "name": "Inertial Absorption",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Metakinetic",
     "story_text": "You absorb an attack to empower your body.",
     "keywords": [
       "Psionic"
@@ -1290,9 +1350,12 @@
     "id": "ability_null_inertial_shield",
     "name": "Inertial Shield",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You intuit the course of an incoming attack, reducing its effects.",
     "keywords": [
       "Psionic"
@@ -1351,9 +1414,12 @@
     "id": "ability_null_inertial_step",
     "name": "Inertial Step",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You flit about the battlefield and take an opportunistic strike.",
     "keywords": [
       "Melee",
@@ -1417,9 +1483,12 @@
     "id": "ability_null_interphase",
     "name": "Interphase",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Chronokinetic",
     "story_text": "You slip into a faster timestream to act more quickly.",
     "keywords": [
       "Psionic"
@@ -1478,9 +1547,12 @@
     "id": "ability_null_iron_body",
     "name": "Iron Body",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Metakinetic",
     "story_text": "You focus until your body becomes as hard as iron.",
     "keywords": [
       "Psionic"
@@ -1539,9 +1611,12 @@
     "id": "ability_null_iron_grip",
     "name": "Iron Grip",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You grab the target with supernatural force.",
     "keywords": [
       "Melee",
@@ -1605,9 +1680,12 @@
     "id": "ability_null_joint_lock",
     "name": "Joint Lock",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You contort your enemy's body into a stance they struggle to escape from.",
     "keywords": [
       "Melee",
@@ -1671,9 +1749,12 @@
     "id": "ability_null_kinetic_shield",
     "name": "Kinetic Shield",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 2,
+    "subclass": "Metakinetic",
     "story_text": "You manifest a force barrier that absorbs incoming kinetic energy.",
     "keywords": [
       "Psionic"
@@ -1734,9 +1815,12 @@
     "id": "ability_null_kinetic_strike",
     "name": "Kinetic Strike",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "Your opponent staggers. They cannot ignore you.",
     "keywords": [
       "Melee",
@@ -1800,9 +1884,12 @@
     "id": "ability_null_magnetic_strike",
     "name": "Magnetic Strike",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "The force of your blow extends past the limits of your body, pulling your enemy closer.",
     "keywords": [
       "Melee",
@@ -1866,9 +1953,12 @@
     "id": "ability_null_molecular_rearrangement_field",
     "name": "Molecular Rearrangement Field",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Your enemies' wounds open, your allies' wounds close.",
     "keywords": [
       "Psionic"
@@ -1927,9 +2017,12 @@
     "id": "ability_null_null_field",
     "name": "Null Field",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You project an aura that dampens the power of your foes.",
     "keywords": [
       "Area",
@@ -1989,9 +2082,12 @@
     "id": "ability_null_phase_hurl",
     "name": "Phase Hurl",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You throw your foe out of phase with this manifold, causing them to harm other enemies as they return.",
     "keywords": [
       "Melee",
@@ -2055,9 +2151,12 @@
     "id": "ability_null_phase_inversion_strike",
     "name": "Phase Inversion Strike",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You step momentarily out of phase as you pull an enemy through you.",
     "keywords": [
       "Melee",
@@ -2121,9 +2220,12 @@
     "id": "ability_null_phase_leap",
     "name": "Phase Leap",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You leap beyond reality, leaving an afterimage of yourself.",
     "keywords": [
       "Psionic"
@@ -2182,9 +2284,12 @@
     "id": "ability_null_phase_step",
     "name": "Phase Step",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Chronokinetic",
     "story_text": "You weaken your connection to this manifold, allowing you to move through and damage enemies.",
     "keywords": [
       "Melee",
@@ -2247,9 +2352,12 @@
     "id": "ability_null_phase_strike",
     "name": "Phase Strike",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 5
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "For a moment, your foe slips out of phase with this manifold.",
     "keywords": [
       "Melee",
@@ -2313,9 +2421,12 @@
     "id": "ability_null_pressure_points",
     "name": "Pressure Points",
     "costs": {
+      "signature": true,
       "resource": null,
       "amount": null
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You strike at key nerve clusters to leave your foe staggered.",
     "keywords": [
       "Melee",
@@ -2379,9 +2490,12 @@
     "id": "ability_null_psi_boost",
     "name": "Psi Boost",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
+    "level": 7,
+    "subclass": null,
     "story_text": null,
     "keywords": [],
     "action_type": null,
@@ -2438,9 +2552,12 @@
     "id": "ability_null_psychic_pulse",
     "name": "Psychic Pulse",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "A burst of psionic energy interferes with your enemy's synapses.",
     "keywords": [
       "Area",
@@ -2500,9 +2617,12 @@
     "id": "ability_null_realitas",
     "name": "Realitas",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Metakinetic",
     "story_text": "Your essential hyperreality disrupts your enemy's connection to existence.",
     "keywords": [
       "Melee",
@@ -2566,9 +2686,12 @@
     "id": "ability_null_relentless_nemesis",
     "name": "Relentless Nemesis",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You strike, and for the next few moments, your enemy can't escape you.",
     "keywords": [
       "Melee",
@@ -2632,9 +2755,12 @@
     "id": "ability_null_scalar_assault",
     "name": "Scalar Assault",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You warp reality to grow a limb for just a moment and make a single devastating attack.",
     "keywords": [
       "Area",
@@ -2696,9 +2822,12 @@
     "id": "ability_null_stabilizing_field",
     "name": "Stabilizing Field",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "You project order, making it harder for your enemies to interfere with you and your allies.",
     "keywords": [
       "Psionic"
@@ -2757,9 +2886,12 @@
     "id": "ability_null_stunning_blow",
     "name": "Stunning Blow",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 3
     },
+    "level": 1,
+    "subclass": null,
     "story_text": "You focus your psionic technique into a concussive punch.",
     "keywords": [
       "Melee",
@@ -2823,9 +2955,12 @@
     "id": "ability_null_synapse_field",
     "name": "Synapse Field",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 7
     },
+    "level": 3,
+    "subclass": null,
     "story_text": "Attacks made by allies in your null field disrupt your enemies' thoughts, causing psychic pain.",
     "keywords": [
       "Psionic"
@@ -2884,9 +3019,12 @@
     "id": "ability_null_synaptic_anchor",
     "name": "Synaptic Anchor",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 8,
+    "subclass": null,
     "story_text": "You disrupt an enemy's strike and create a feedback loop in their mind, preventing them from focusing on future attacks.",
     "keywords": [
       "Psionic"
@@ -2945,9 +3083,12 @@
     "id": "ability_null_synaptic_reset",
     "name": "Synaptic Reset",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 5,
+    "subclass": null,
     "story_text": "You expand your nullifying power to mitigate harmful effects.",
     "keywords": [
       "Area",
@@ -3007,9 +3148,12 @@
     "id": "ability_null_time_loop",
     "name": "Time Loop",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 11
     },
+    "level": 9,
+    "subclass": "Chronokinetic",
     "story_text": "You show shadows what true speed is.",
     "keywords": [
       "Psionic"
@@ -3068,9 +3212,12 @@
     "id": "ability_null_wall_of_ice",
     "name": "Wall of Ice",
     "costs": {
+      "signature": false,
       "resource": "Discipline",
       "amount": 9
     },
+    "level": 6,
+    "subclass": "Cryokinetic",
     "story_text": "You create a wall of ice.",
     "keywords": [
       "Area",

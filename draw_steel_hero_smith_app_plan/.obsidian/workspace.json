@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/home_page.md",
+                "file": "features/tactician.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "home_page"
+              "title": "tactician"
             }
           },
           {
@@ -214,13 +214,23 @@
   },
   "active": "93c5747b13561805",
   "lastOpenFiles": [
+    "features/troubadour.md",
+    "features/talent.md",
+    "features/shadow.md",
+    "features/tactician.md",
+    "features/null.md",
+    "features/fury.md",
+    "features/elementalist.md",
+    "features/conduit.md",
+    "features/censor features.md",
+    "objects/ability_object.md",
+    "pages/home_page.md",
+    "features",
     "objects/hero_object.md",
     "widgets/summaries/ability_summary.md",
     "widgets/ability_display_widget.md",
     "objects/downtime_projects_object.md",
-    "objects/ability_object.md",
     "pages/downtime_projects_page.md",
-    "pages/home_page.md",
     "pages/gear_page.md",
     "objects/item_enchantments.md",
     "objects/languages_object.md",
@@ -231,15 +241,6 @@
     "objects/classes_object.md",
     "systems/level_up_system.md",
     "objects/titles_object.md",
-    "objects/kits_object.md",
-    "objects/treasure_object.md",
-    "objects/skills_object.md",
-    "objects/perks_object.md",
-    "creators/story/downtime_projects_creator.md",
-    "creators/story/perks_creator.md",
-    "objects/culture_subelement_object.md",
-    "objects/culture_object.md",
-    "objects/complications_object.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",
@@ -258,7 +259,6 @@
     "systems",
     "objects",
     "creators/items",
-    "creators/story",
-    "creators/powers"
+    "creators/story"
   ]
 }
