@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "features/tactician.md",
+                "file": "abilities and features plan/conduit.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "tactician"
+              "title": "conduit"
             }
           },
           {
@@ -214,18 +214,18 @@
   },
   "active": "93c5747b13561805",
   "lastOpenFiles": [
-    "features/troubadour.md",
-    "features/talent.md",
-    "features/shadow.md",
-    "features/tactician.md",
-    "features/null.md",
-    "features/fury.md",
-    "features/elementalist.md",
-    "features/conduit.md",
-    "features/censor features.md",
+    "abilities and features plan/elementalist.md",
+    "abilities and features plan/conduit.md",
+    "abilities and features plan/censor.md",
+    "abilities and features plan/troubadour.md",
+    "abilities and features plan/talent.md",
+    "abilities and features plan/tactician.md",
+    "abilities and features plan/shadow.md",
+    "abilities and features plan/null.md",
+    "abilities and features plan/fury.md",
     "objects/ability_object.md",
     "pages/home_page.md",
-    "features",
+    "abilities and features plan",
     "objects/hero_object.md",
     "widgets/summaries/ability_summary.md",
     "widgets/ability_display_widget.md",

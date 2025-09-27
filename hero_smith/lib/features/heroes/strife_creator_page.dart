@@ -9,9 +9,10 @@ import '../../core/models/component.dart';
 import '../../core/models/feature.dart';
 import '../../core/models/hero_model.dart';
 import '../../core/repositories/feature_repository.dart';
-import '../../core/theme/feature_tokens.dart';
 import '../../core/theme/strife_theme.dart';
-import '../../widgets/abilities/ability_expandable_item.dart';
+import '../../widgets/abilities/ability_full_view.dart';
+
+const Set<String> _subclassStopWords = {'the', 'of'};
 
 class StrifeCreatorTab extends ConsumerStatefulWidget {
   const StrifeCreatorTab({
@@ -35,10 +36,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   int _level = 1;
   String? _classComponentId;
   String? _classSlug;
+  String? _subclassComponentId;
 
   Map<String, dynamic>? _classData;
   List<Feature> _classFeatures = const [];
-  List<Map<String, dynamic>> _classAbilities = const [];
 
   // Class skill selection state
   int _classSkillPickCount = 0;
@@ -80,6 +81,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       _level = initialLevel;
       _classComponentId = classId;
       _classSlug = _slugForClass(classId);
+      _subclassComponentId = hero?.subclass;
     });
     _setDirty(false);
     await _refreshClassData();
@@ -91,7 +93,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       setState(() {
         _classData = null;
         _classFeatures = const [];
-        _classAbilities = const [];
         _loading = false;
         _resetClassDependentState();
       });
@@ -108,7 +109,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     setState(() {
       _classData = metadata;
       _classFeatures = features;
-      _classAbilities = abilities;
       _loading = false;
     });
   }
@@ -128,6 +128,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       final features = await FeatureRepository.loadClassFeatures(slug);
       final filtered = features
           .where((feature) => feature.level <= _level)
+          .where((feature) =>
+              !feature.isSubclassFeature ||
+              _matchesSelectedSubclass(feature.subclassName))
           .toList()
         ..sort((a, b) => a.level.compareTo(b.level));
       return filtered;
@@ -142,13 +145,32 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       final raw = await rootBundle.loadString(path);
       final decoded = jsonDecode(raw);
       if (decoded is List) {
-        return decoded
+        final abilities = decoded
             .whereType<Map>()
             .map((entry) => entry.cast<String, dynamic>())
-            .toList()
-          ..sort((a, b) => (a['name'] ?? '')
-              .toString()
-              .compareTo((b['name'] ?? '').toString()));
+            .where((ability) {
+          final level = (ability['level'] as num?)?.toInt();
+          if (level != null && level > _level) {
+            return false;
+          }
+          final subclassRequirement = ability['subclass'];
+          if (subclassRequirement == null ||
+              subclassRequirement.toString().trim().isEmpty) {
+            return true;
+          }
+          return _matchesSelectedSubclass(subclassRequirement.toString());
+        }).toList()
+          ..sort((a, b) {
+            final levelA = (a['level'] as num?)?.toInt() ?? 0;
+            final levelB = (b['level'] as num?)?.toInt() ?? 0;
+            if (levelA != levelB) {
+              return levelA.compareTo(levelB);
+            }
+            return (a['name'] ?? '')
+                .toString()
+                .compareTo((b['name'] ?? '').toString());
+          });
+        return abilities;
       }
     } catch (_) {}
     return const [];
@@ -175,6 +197,75 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return normalized;
   }
 
+  String _slugify(String value) {
+    final normalized = value
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
+    return collapsed.replaceAll(RegExp(r'^_|_$'), '');
+  }
+
+  String? get _selectedSubclassSlug {
+    final id = _subclassComponentId?.trim().toLowerCase();
+    if (id == null || id.isEmpty) return null;
+    var slug = id;
+    if (slug.startsWith('subclass_')) {
+      slug = slug.substring('subclass_'.length);
+    }
+    final parts = slug.split('_').where((part) => part.isNotEmpty).toList();
+    if (parts.length <= 1) {
+      return slug;
+    }
+    return parts.sublist(1).join('_');
+  }
+
+  Set<String> _slugVariants(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return const <String>{};
+    }
+    final base = _slugify(value);
+    if (base.isEmpty) return const <String>{};
+    final tokens =
+        base.split('_').where((token) => token.isNotEmpty).toList(growable: false);
+    if (tokens.isEmpty) return {base};
+    final variants = <String>{base};
+
+    final trimmedAll =
+        tokens.where((token) => !_subclassStopWords.contains(token)).join('_');
+    if (trimmedAll.isNotEmpty) variants.add(trimmedAll);
+
+    for (var i = 1; i < tokens.length; i++) {
+      final suffix = tokens.sublist(i).join('_');
+      if (suffix.isNotEmpty) variants.add(suffix);
+
+      final trimmedSuffix = tokens
+          .sublist(i)
+          .where((token) => !_subclassStopWords.contains(token))
+          .join('_');
+      if (trimmedSuffix.isNotEmpty) variants.add(trimmedSuffix);
+    }
+
+    return variants;
+  }
+
+  Set<String> get _activeSubclassSlugs {
+    final slug = _selectedSubclassSlug;
+    if (slug == null) return const <String>{};
+    return _slugVariants(slug);
+  }
+
+  bool _matchesSelectedSubclass(String? value) {
+    if (value == null || value.toString().trim().isEmpty) {
+      return true;
+    }
+    final active = _activeSubclassSlugs;
+    if (active.isEmpty) return false;
+    final required = _slugVariants(value);
+    if (required.isEmpty) return true;
+    return required.intersection(active).isNotEmpty;
+  }
+
   Map<String, dynamic>? get _startingCharacteristics {
     final start = _classData?['starting_characteristics'];
     if (start is Map<String, dynamic>) {
@@ -184,8 +275,15 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   List<Map<String, dynamic>> _levelsUpToCurrent() {
+    return _levelsUpToCurrentFromMetadata(_classData);
+  }
+
+  List<Map<String, dynamic>> _levelsUpToCurrentFromMetadata(
+    Map<String, dynamic>? metadata,
+  ) {
     final result = <Map<String, dynamic>>[];
-    final levels = _startingCharacteristics?['levels'];
+    final start = metadata?['starting_characteristics'];
+    final levels = start is Map<String, dynamic> ? start['levels'] : null;
     if (levels is! List) return result;
     for (final entry in levels) {
       if (entry is! Map) continue;
@@ -236,6 +334,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final existingSkillIds = (_model?.skills ?? const <String>[]).toSet();
     final existingAbilityIds = (_model?.abilities ?? const <String>[]).toSet();
 
+    _subclassComponentId = null;
     _classSkillPickCount = 0;
     _classSkillGroups = const [];
     _classSkillComponents = const [];
@@ -314,6 +413,53 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .map((e) => e.toString())
         .where((e) => e.trim().isNotEmpty)
         .toSet();
+
+    final subclassSlugSet = _activeSubclassSlugs;
+    final subclassSkillNames = <String>{};
+
+    void collectSubclassSkills(dynamic source) {
+      if (source is Map) {
+        for (final entry in source.entries) {
+          final key = entry.key?.toString() ?? '';
+          if (key.trim().isEmpty) continue;
+          final variants = _slugVariants(key);
+          if (variants.isEmpty ||
+              variants.intersection(subclassSlugSet).isEmpty) {
+            continue;
+          }
+          final value = entry.value;
+          if (value is List) {
+            for (final item in value) {
+              final name = item?.toString().trim();
+              if (name != null && name.isNotEmpty) {
+                subclassSkillNames.add(name);
+              }
+            }
+          } else {
+            final name = value?.toString().trim();
+            if (name != null && name.isNotEmpty) {
+              subclassSkillNames.add(name);
+            }
+          }
+        }
+      }
+    }
+
+    if (subclassSlugSet.isNotEmpty) {
+      final levels = _levelsUpToCurrentFromMetadata(metadata);
+      for (final level in levels) {
+        final subclassEntries = level['subclass_features'];
+        if (subclassEntries is List) {
+          for (final entry in subclassEntries) {
+            collectSubclassSkills(entry);
+          }
+        } else {
+          collectSubclassSkills(subclassEntries);
+        }
+      }
+    }
+
+    grantedNames.addAll(subclassSkillNames);
 
     final pickCount =
         (skillsInfo['skill_count'] as num?)?.toInt() ?? groupNames.length;
@@ -499,11 +645,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       }
 
       final newSubclassAbilities = entry['new_subclass_abilities'];
-      if (newSubclassAbilities is Map) {
-        _accumulateAbilityAllowances(
-          allowances,
-          newSubclassAbilities.cast<String, dynamic>(),
-        );
+      if (newSubclassAbilities != null) {
+        _accumulateSubclassAbilityAllowances(allowances, newSubclassAbilities);
       }
     }
 
@@ -527,6 +670,52 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       final cost = int.tryParse(match.group(1)!);
       if (cost == null) continue;
       allowances[cost] = (allowances[cost] ?? 0) + amount;
+    }
+  }
+
+  void _accumulateSubclassAbilityAllowances(
+    Map<int?, int> allowances,
+    dynamic data,
+  ) {
+    if (data == null) return;
+    final active = _activeSubclassSlugs;
+    if (active.isEmpty) return;
+
+    if (data is Map) {
+      final entries = data.entries.toList();
+      final isDirectAllowance = entries.every((entry) {
+        final value = entry.value;
+        if (value is num) return true;
+        if (value is String) {
+          return int.tryParse(value) != null;
+        }
+        return false;
+      });
+
+      if (isDirectAllowance) {
+        _accumulateAbilityAllowances(
+          allowances,
+          data.cast<String, dynamic>(),
+        );
+        return;
+      }
+
+      for (final entry in entries) {
+        final key = entry.key?.toString() ?? '';
+        if (key.trim().isEmpty) continue;
+        final variants = _slugVariants(key);
+        if (variants.isEmpty || variants.intersection(active).isEmpty) {
+          continue;
+        }
+        _accumulateSubclassAbilityAllowances(allowances, entry.value);
+      }
+      return;
+    }
+
+    if (data is List) {
+      for (final item in data) {
+        _accumulateSubclassAbilityAllowances(allowances, item);
+      }
     }
   }
 
@@ -847,10 +1036,18 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
   String? _abilitySummary(Map<String, dynamic> ability) {
     final parts = <String>[];
+    final level = _toIntOrNull(ability['level']);
+    if (level != null && level > 0) {
+      parts.add('Level $level');
+    }
     final action = ability['action_type']?.toString();
     if (action != null && action.isNotEmpty) parts.add(action);
     final cost = _abilityCost(ability);
     if (cost != null && cost > 0) parts.add('Cost: $cost');
+    final subclassName = ability['subclass']?.toString();
+    if (subclassName != null && subclassName.trim().isNotEmpty) {
+      parts.add('Subclass: ${subclassName.trim()}');
+    }
     final keywords =
         (ability['keywords'] as List?)?.whereType<String>().toList() ??
             const [];
@@ -912,6 +1109,16 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     setState(() {
       _classComponentId = componentId;
       _classSlug = _slugForClass(componentId);
+      _subclassComponentId = null;
+    });
+    _setDirty(true);
+    await _refreshClassData();
+  }
+
+  Future<void> _updateSubclass(String? componentId) async {
+    if (componentId == _subclassComponentId) return;
+    setState(() {
+      _subclassComponentId = componentId;
     });
     _setDirty(true);
     await _refreshClassData();
@@ -924,7 +1131,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final repo = ref.read(heroRepositoryProvider);
     _model!
       ..level = _level
-      ..className = _classComponentId;
+      ..className = _classComponentId
+      ..subclass = _subclassComponentId;
     _applySelectionsToModel();
     await repo.save(_model!);
     if (!mounted) return;
@@ -949,6 +1157,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       slivers: [
         SliverToBoxAdapter(child: _buildLevelCard(theme)),
         SliverToBoxAdapter(child: _buildClassCard(theme)),
+        SliverToBoxAdapter(child: _buildSubclassCard(theme)),
         if (_classSlug == null)
           SliverToBoxAdapter(child: _buildSelectClassNotice(theme))
         else if (_classData == null)
@@ -1097,6 +1306,99 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
+  Widget _buildSubclassCard(ThemeData theme) {
+    final classSlug = _classSlug;
+    if (classSlug == null || classSlug.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final subclassesAsync = ref.watch(componentsByTypeProvider('subclass'));
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        shape:
+            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+        elevation: StrifeTheme.cardElevation,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            StrifeTheme.sectionHeader(
+              context,
+              title: 'Subclass',
+              subtitle:
+                  'Choose a specialization to unlock extra skills, features, and abilities.',
+              icon: Icons.auto_awesome,
+              accent: StrifeTheme.featuresAccent,
+            ),
+            subclassesAsync.when(
+              loading: () => const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, st) => Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text('Failed to load subclasses: $e'),
+              ),
+              data: (subclasses) {
+                final filtered = subclasses
+                    .where((component) {
+                      final parent = component.data['parent_class']
+                          ?.toString()
+                          .toLowerCase();
+                      return parent == classSlug;
+                    })
+                    .toList()
+                  ..sort((a, b) => a.name.compareTo(b.name));
+
+                if (filtered.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final hasSelection = filtered
+                    .any((component) => component.id == _subclassComponentId);
+                final dropdownValue = hasSelection ? _subclassComponentId : null;
+
+                return Padding(
+                  padding: StrifeTheme.cardPadding,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButtonFormField<String?>(
+                        value: dropdownValue,
+                        items: [
+                          const DropdownMenuItem<String?>(
+                            value: null,
+                            child: Text('— Choose subclass —'),
+                          ),
+                          ...filtered.map(
+                            (component) => DropdownMenuItem<String?>(
+                              value: component.id,
+                              child: Text(component.name),
+                            ),
+                          ),
+                        ],
+                        onChanged: _updateSubclass,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.category_outlined),
+                          labelText: 'Subclass',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Subclass choices add unique granted skills and unlock extra ability picks as you level up.',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSelectClassNotice(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -1194,57 +1496,134 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final id = data.remove('id')?.toString() ??
         ability['name']?.toString() ??
         'ability_${data.hashCode}';
-    final name = ability['name']?.toString() ?? id;
-    data.remove('name');
+    final name = data.remove('name')?.toString() ?? id;
+    final type = data.remove('type')?.toString() ?? 'ability';
     return Component(
       id: id,
-      type: 'ability',
+      type: type,
       name: name,
       data: data,
       source: 'seed',
     );
   }
 
-  Widget _buildStaticAbilitiesCard(ThemeData theme) {
-    if (_classAbilities.isEmpty) return const SizedBox.shrink();
+  void _showAbilityDetails(Map<String, dynamic> ability) {
+    final component = _abilityAsComponent(ability);
+    final abilityName = component.name;
+    final level = _toIntOrNull(ability['level']);
+    final subclassName = ability['subclass']?.toString().trim();
+    final cost = _abilityCost(ability);
+    final isSignature = cost == null || cost <= 0;
 
-    const limit = 20;
-    final visible = _classAbilities.take(limit).toList();
-    final remaining = _classAbilities.length - visible.length;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Class Abilities',
-              subtitle: remaining > 0
-                  ? 'Showing $limit of ${_classAbilities.length} abilities. See the compendium for the full list.'
-                  : 'Abilities available for this class.',
-              icon: Icons.bolt,
-              accent: StrifeTheme.abilitiesAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                children: visible
-                    .map((ability) => AbilityExpandableItem(
-                          component: _abilityAsComponent(ability),
-                        ))
-                    .toList(),
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        final accent = StrifeTheme.abilitiesAccent;
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          maxChildSize: 0.95,
+          minChildSize: 0.5,
+          builder: (context, controller) {
+            return Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.colorScheme.shadow.withValues(alpha: 0.18),
+                    blurRadius: 24,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 18, 8, 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  abilityName,
+                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 6,
+                                  children: [
+                                    if (level != null)
+                                      _buildAbilityMetaChip(
+                                        theme,
+                                        label: 'Level $level',
+                                        color: accent,
+                                        icon: Icons.trending_up,
+                                      ),
+                                    if (subclassName != null &&
+                                        subclassName.isNotEmpty)
+                                      _buildAbilityMetaChip(
+                                        theme,
+                                        label: subclassName,
+                                        color: theme.colorScheme.tertiary,
+                                        icon: Icons.auto_awesome,
+                                      ),
+                                    _buildAbilityMetaChip(
+                                      theme,
+                                      label: isSignature
+                                          ? 'Signature'
+                                          : 'Cost $cost',
+                                      color: isSignature
+                                          ? theme.colorScheme.primary
+                                          : accent,
+                                      icon: isSignature
+                                          ? Icons.auto_fix_high
+                                          : Icons.flash_on,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: 'Close',
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: controller,
+                        padding: EdgeInsets.zero,
+                        child: AbilityFullView(component: component),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
+  // }
 
   Widget _buildAbilitySection(
     String title,
@@ -1348,6 +1727,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final summary = _abilitySummary(ability);
     final selected = _selectedClassAbilityIds.contains(id);
     final cost = _abilityCostIndex[id] ?? _abilityCost(ability);
+    final level = _toIntOrNull(ability['level']);
+    final subclassName = ability['subclass']?.toString().trim();
     final enabled = _isAbilityToggleEnabled(id, cost, selected);
     final theme = Theme.of(context);
     final accent = StrifeTheme.abilitiesAccent;
@@ -1384,6 +1765,22 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         color: theme.colorScheme.outline,
       ));
     }
+    if (level != null && level > 0) {
+      metaChips.add(_buildAbilityMetaChip(
+        theme,
+        label: 'Level $level',
+        color: accent,
+        icon: Icons.trending_up,
+      ));
+    }
+    if (subclassName != null && subclassName.isNotEmpty) {
+      metaChips.add(_buildAbilityMetaChip(
+        theme,
+        label: subclassName,
+        color: theme.colorScheme.tertiary,
+        icon: Icons.auto_awesome,
+      ));
+    }
 
     final limitReachedNotice = !enabled && !selected
         ? Text(
@@ -1404,6 +1801,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: enabled ? () => _toggleAbilitySelection(id) : null,
+            onLongPress: () => _showAbilityDetails(ability),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -1457,6 +1855,13 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                             ),
                             const SizedBox(width: 8),
                             _buildAbilityCostBadge(theme, cost),
+                            IconButton(
+                              tooltip: 'View details',
+                              icon: const Icon(Icons.info_outline),
+                              onPressed: () => _showAbilityDetails(ability),
+                              splashRadius: 18,
+                              visualDensity: VisualDensity.compact,
+                            ),
                           ],
                         ),
                         if (metaChips.isNotEmpty) ...[

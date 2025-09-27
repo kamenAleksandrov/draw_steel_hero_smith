@@ -29,6 +29,15 @@ const CONDITIONS = ['bleeding','dazed','frightened','grabbed','prone','restraine
 const POTENCY_RE = /([MARIP])<([WAS])/g; // e.g. A<w
 const DAMAGE_LINE_RE = /^\s*(\d+)\s*\+\s*([^;]+?)\s*damage\b/i; // captures base and the characteristic segment
 
+function normalizeName(name){
+  if(typeof name !== 'string') return name;
+  const trimmed = name.trim();
+  if(trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')){
+    return trimmed.slice(1, -1);
+  }
+  return name;
+}
+
 function normalizeCost(cost){
   if(!cost) return { resource: null, amount: null };
   const c = cost.trim().toLowerCase();
@@ -150,7 +159,7 @@ function rewriteAbility(entry, isFirst){
   const power_roll = buildPowerRoll(entry);
   const out = {
     id: entry.id,
-    name: entry.name,
+    name: normalizeName(entry.name),
     costs,
     story_text: entry.story_text || entry.description || null,
     keywords: entry.keywords || [],

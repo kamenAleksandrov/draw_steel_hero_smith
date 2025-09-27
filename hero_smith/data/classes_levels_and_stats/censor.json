@@ -23,28 +23,27 @@
       "skill_count": 2,
       "quick_build": ["Intimidate", "Religion"]
     },
-
+    "fixed_starting_characteristics": {
+      "might": 2,
+      "presence": 2
+    },
+    "starting_characteristics_arrays": [
+      {
+        "values": [2, -1, -1],
+        "description": "High focus with some weaknesses"
+      },
+      {
+        "values": [1, 1, -1],
+        "description": "Two moderate strengths with one weakness"
+      },
+      {
+        "values": [1, 0, 0],
+        "description": "One strength, others neutral"
+      }
+    ],
     "levels": [
       {
         "level": 1,
-        "fixed_starting_characteristics": {
-          "might": 2,
-          "presence": 2
-        },
-        "starting_characteristics_arrays": [
-          {
-            "values": [2, -1, -1],
-            "description": "High focus with some weaknesses"
-          },
-          {
-            "values": [1, 1, -1],
-            "description": "Two moderate strengths with one weakness"
-          },
-          {
-            "values": [1, 0, 0],
-            "description": "One strength, others neutral"
-          }
-        ],
         "features": [
           "Censor Order",
           "Deity and Domains",

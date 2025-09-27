@@ -1,47 +1,5 @@
 [
   {
-    "id": "test_id",
-    "type": "feature",
-    "name": "Test Feature",
-    "class": "test_class",
-    "subclass_name": "test_subclass",
-    "level": 1,
-    "upgrades_feature": false,
-    "upgraded_feature_name": null,
-    "description": "This is a test feature.",
-    "features": ["Test Subfeature 1", "Test Subfeature 2"],
-    "abilities": {
-      "ability_name": "ability_name",
-      "ability_name_2": "ability_name_2"
-    }
-  },
-  {
-    "id": "test_id",
-    "type": "feature",
-    "name": "Test Feature",
-    "class": "test_class",
-    "is_subclass_feature": true,
-    "subclass_name": "test_subclass",
-    "level": 1,
-    "upgrades_feature": false,
-    "upgraded_feature_name": null,
-    "description": "This is a test feature.",
-    "features": [
-      {
-        "name": "Test Subfeature 1",
-        "description": "This is a description for Test Subfeature 1."
-      },
-      {
-        "name": "Test Subfeature 2",
-        "description": "This is a description for Test Subfeature 2."
-      }
-    ],
-    "abilities": {
-      "ability_name": "ability_name",
-      "ability_name_2": "ability_name_2"
-    }
-  },
-  {
     "id": "feature_censor_censor_order",
     "type": "feature",
     "name": "Censor Order",

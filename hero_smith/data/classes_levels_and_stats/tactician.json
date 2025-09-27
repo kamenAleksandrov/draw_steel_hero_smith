@@ -26,19 +26,18 @@
       "skill_count": 2,
       "quick_build": ["Lead", "Monsters", "Strategy"]
     },
-
+    "fixed_starting_characteristics": { "might": 2, "reason": 2 },
+    "starting_characteristics_arrays": [
+      {
+        "values": [2, -1, -1],
+        "description": "One strong, two weaknesses"
+      },
+      { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+      { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+    ],
     "levels": [
       {
         "level": 1,
-        "fixed_starting_characteristics": { "might": 2, "reason": 2 },
-        "starting_characteristics_arrays": [
-          {
-            "values": [2, -1, -1],
-            "description": "One strong, two weaknesses"
-          },
-          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
-          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
-        ],
         "features": [
           "Tactical Doctrine",
           "Focus",

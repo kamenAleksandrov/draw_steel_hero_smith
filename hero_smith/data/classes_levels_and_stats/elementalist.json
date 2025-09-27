@@ -24,31 +24,30 @@
       "granted": ["Magic"],
       "quick_build": ["Alchemy", "Blacksmithing", "History", "Magic"]
     },
-
+    "fixed_starting_characteristics": {
+      "reason": 2
+    },
+    "starting_characteristics_arrays": [
+      {
+        "values": [2, 2, -1, -1],
+        "description": "Two strong scores, two weaknesses"
+      },
+      {
+        "values": [2, 1, 1, -1],
+        "description": "One strong, two moderate, one weakness"
+      },
+      {
+        "values": [2, 1, 0, 0],
+        "description": "One strong, others neutral to modest"
+      },
+      {
+        "values": [1, 1, 1, 0],
+        "description": "Balanced array with one neutral"
+      }
+    ],
     "levels": [
       {
         "level": 1,
-        "fixed_starting_characteristics": {
-          "reason": 2
-        },
-        "starting_characteristics_arrays": [
-          {
-            "values": [2, 2, -1, -1],
-            "description": "Two strong scores, two weaknesses"
-          },
-          {
-            "values": [2, 1, 1, -1],
-            "description": "One strong, two moderate, one weakness"
-          },
-          {
-            "values": [2, 1, 0, 0],
-            "description": "One strong, others neutral to modest"
-          },
-          {
-            "values": [1, 1, 1, 0],
-            "description": "Balanced array with one neutral"
-          }
-        ],
         "features": [
           "Elemental Specialization",
           "Essence",

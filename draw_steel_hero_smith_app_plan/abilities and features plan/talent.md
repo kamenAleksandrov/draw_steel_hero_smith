@@ -59,6 +59,3 @@ Steel
 Chronopathy - Acceleration Field, Borrow From the Future
 Telekinesis - Fulcrum, Gravitic Nova
 Telepathy - Resonant Mind Spike, Synaptic Terror
-
-
-

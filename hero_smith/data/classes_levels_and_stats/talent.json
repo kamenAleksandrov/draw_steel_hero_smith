@@ -24,22 +24,21 @@
       "skill_count": 2,
       "quick_build": ["Empathize", "Psionics", "Read Person", "Timescape"]
     },
-
+    "fixed_starting_characteristics": {
+      "reason": 2,
+      "presence": 2
+    },
+    "starting_characteristics_arrays": [
+      {
+        "values": [2, -1, -1],
+        "description": "One strong, two weaknesses"
+      },
+      { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+      { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+    ],
     "levels": [
       {
         "level": 1,
-        "fixed_starting_characteristics": {
-          "reason": 2,
-          "presence": 2
-        },
-        "starting_characteristics_arrays": [
-          {
-            "values": [2, -1, -1],
-            "description": "One strong, two weaknesses"
-          },
-          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
-          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
-        ],
         "features": [
           "Talent Tradition",
           "Clarity and Strain",

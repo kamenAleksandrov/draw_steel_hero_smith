@@ -26,19 +26,18 @@
       "skill_count": 3,
       "quick_build": ["Brag", "Read Person", "Rumors", "Society"]
     },
-
+    "fixed_starting_characteristics": { "agility": 2, "presence": 2 },
+    "starting_characteristics_arrays": [
+      {
+        "values": [2, -1, -1],
+        "description": "One strong, two weaknesses"
+      },
+      { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
+      { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+    ],
     "levels": [
       {
         "level": 1,
-        "fixed_starting_characteristics": { "agility": 2, "presence": 2 },
-        "starting_characteristics_arrays": [
-          {
-            "values": [2, -1, -1],
-            "description": "One strong, two weaknesses"
-          },
-          { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
-          { "values": [1, 0, 0], "description": "One moderate, others neutral" }
-        ],
         "features": [
           "Troubadour Class Act",
           "Drama",
