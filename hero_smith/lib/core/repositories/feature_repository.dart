@@ -61,6 +61,24 @@ class FeatureRepository {
     }
   }
 
+  static Future<List<Map<String, dynamic>>> loadClassFeatureMaps(
+    String className,
+  ) async {
+    try {
+      final jsonString = await rootBundle.loadString(
+        'data/features/class_features/${className}_features.json',
+      );
+      final decoded = json.decode(jsonString);
+      if (decoded is! List) return const [];
+      return decoded
+          .whereType<Map>()
+          .map((entry) => entry.cast<String, dynamic>())
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to load feature maps for class $className: $e');
+    }
+  }
+
   static Map<int, List<Feature>> groupFeaturesByLevel(List<Feature> features) {
     final Map<int, List<Feature>> grouped = {};
     

@@ -7,7 +7,7 @@
     "is_subclass_feature": false,
     "level": 1,
     "description": "Censors are the will of their god made physically manifest, and you act as your god's agent in the world. As you shoulder that responsibility, you choose a censor order from the following options, each of which grants you a skill. (*Quick Build:* Paragon.)\n\nYour censor order is your subclass, and your choice of order determines many of the features you'll gain as you gain new levels.",
-    "orders": [
+    "options": [
       {
         "name": "Exorcist",
         "skill": "Read Person",
@@ -45,9 +45,10 @@
   {
     "id": "censor_1_level_domain_feature",
     "type": "feature",
-    "name": "1st level Domain Feature",
+    "name": "Domain Feature",
+    "level": 1,
     "description": " You gain a domain feature from your domain, as shown on the 1st-Level Censor Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
-    "features": [
+    "options": [
       {
         "domain": "Creation",
         "name": "Hands of the Maker",
@@ -135,6 +136,16 @@
     ]
   },
   {
+    "id": "feature_censor_judgement",
+    "type": "feature",
+    "name": "Judgment",
+    "class": "censor",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You pick out the enemies most worthy of your wrath and place a divine judgment upon them, censoring them with the power of your god. You have the following ability.",
+    "ability": "Judgment"
+  },
+  {
     "id": "feature_censor_judgment_order_benefit",
     "type": "feature",
     "name": "Judgment Order Benefit",
@@ -142,7 +153,7 @@
     "is_subclass_feature": false,
     "level": 1,
     "description": "The first time on a turn that you use your Judgment ability to judge a creature, you gain the following benefit based on your order:",
-    "benefits": [
+    "options": [
       {
         "order": "Exorcist",
         "benefit": " You can teleport up to a number of squares equal to twice your Presence score. This movement must take you closer to the judged creature. You do not need line of effect to your destination."
@@ -248,9 +259,10 @@
   {
     "id": "censor_4_level_domain_feature",
     "type": "feature",
-    "name": "4th level Domain Feature",
-    "description": " You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
-    "features": [
+    "name": "Domain Feature",
+    "level": 4,
+    "description": "You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
+    "options": [
       {
         "domain": "Creation",
         "name": "Improved Hands of the Maker",
@@ -374,11 +386,12 @@
     "description": "Each time you finish a respite, you can choose one hero's weapon, including your own, to channel supernatural power as an implement of your god's wrath. The weapon becomes magic and gains the following benefits until your next respite:\n\n- Strikes with the weapon deal extra holy damage equal to the wielder's highest characteristic score.\n- Any creature struck by the weapon who has holy weakness and has P < STRONG is frightened and weakened (save ends).\n- Any minion targeted by a strike using the weapon dies. That minion's Stamina maximum is removed from the minion Stamina pool before any damage is applied to the rest of the squad.\n- The weapon's wielder can't be made frightened."
   },
   {
-    "id": "censor_4_level_domain_feature",
+    "id": "censor_7_level_domain_feature",
     "type": "feature",
-    "name": "4th level Domain Feature",
-    "description": "You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
-    "features": [
+    "name": "Domain Feature",
+    "level": 7,
+    "description": "You gain a domain feature from your domain, as shown on the 7th-Level Censor Domain Features table.",
+    "options": [
       {
         "domain": "Creation",
         "name": "Divine Quartermaster",

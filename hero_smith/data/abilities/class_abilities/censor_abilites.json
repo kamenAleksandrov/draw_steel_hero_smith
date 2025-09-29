@@ -937,7 +937,7 @@
       "amount": 9
     },
     "level": 6,
-    "subclass": "Oracle",
+    "subclass": "Paragon",
     "story_text": "You focus your allies' wrath on a chosen foe.",
     "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
@@ -1123,7 +1123,7 @@
       "amount": 9
     },
     "level": 6,
-    "subclass": "Exorcist",
+    "subclass": "Oracle",
     "story_text": "You anticipate your foes' moves and deny them.",
     "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
@@ -1674,6 +1674,7 @@
     "id": "ability_censor_grave_speech",
     "name": "Grave Speech",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1733,6 +1734,7 @@
     "id": "ability_censor_guided_to_your_side",
     "name": "Guided to Your Side",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1854,6 +1856,7 @@
     "id": "ability_censor_hands_of_the_maker",
     "name": "Hands of the Maker",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -1917,8 +1920,8 @@
       "resource": "Wrath",
       "amount": 9
     },
-    "level": 5,
-    "subclass": null,
+    "level": 6,
+    "subclass": "Paragon",
     "story_text": "You take your ally's place.",
     "keywords": ["Magic", "Ranged"],
     "action_type": "Free triggered",
@@ -2037,6 +2040,7 @@
     "id": "ability_censor_judgment",
     "name": "Judgment",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -2096,6 +2100,7 @@
     "id": "ability_censor_my_life_for_yours",
     "name": "My Life for Yours",
     "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
@@ -2221,8 +2226,8 @@
       "resource": "Wrath",
       "amount": 9
     },
-    "level": 5,
-    "subclass": null,
+    "level": 6,
+    "subclass": "Exorcist",
     "story_text": "You reverse the effects from an evildoer.",
     "keywords": ["Magic", "Ranged"],
     "action_type": "Free triggered",
@@ -2897,6 +2902,7 @@
     "id": "ability_censor_trinity_of_trickery",
     "name": "Trinity of Trickery",
     "costs": {
+      "signature": false,
       "resource": "Wrath",
       "amount": 9
     },

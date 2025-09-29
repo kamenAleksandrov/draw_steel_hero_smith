@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +12,29 @@ import '../../core/models/hero_model.dart';
 import '../../core/repositories/feature_repository.dart';
 import '../../core/theme/strife_theme.dart';
 import '../../widgets/abilities/ability_full_view.dart';
+import '../../widgets/creators/class_abilities_widget.dart';
+import '../../widgets/creators/class_features_widget.dart';
+import '../../widgets/pickers/language_picker.dart';
+import '../../widgets/pickers/perk_picker.dart';
 
 const Set<String> _subclassStopWords = {'the', 'of'};
+
+const List<String> _characteristicKeys = <String>[
+  'might',
+  'agility',
+  'reason',
+  'intuition',
+  'presence',
+];
+
+const Map<String, String> _characteristicKeyAliases = <String, String>{
+  'might': 'might',
+  'agility': 'agility',
+  'reason': 'reason',
+  'intuition': 'intuition',
+  'intuitition': 'intuition',
+  'presence': 'presence',
+};
 
 class StrifeCreatorTab extends ConsumerStatefulWidget {
   const StrifeCreatorTab({
@@ -40,6 +62,14 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
   Map<String, dynamic>? _classData;
   List<Feature> _classFeatures = const [];
+  Map<String, Map<String, dynamic>> _classFeatureDetailsById =
+      <String, Map<String, dynamic>>{};
+
+  Map<String, int> _fixedStartingCharacteristics = <String, int>{};
+  List<Map<String, dynamic>> _availableCharacteristicArrays = const [];
+  int? _selectedCharacteristicArrayIndex;
+  Map<String, int?> _characteristicArrayAssignments =
+      <String, int?>{};
 
   // Class skill selection state
   int _classSkillPickCount = 0;
@@ -51,17 +81,26 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   List<Component> _classSkillComponents = const [];
 
   // Class ability selection state
-  final Set<String> _classAbilityIds = <String>{};
-  final Set<String> _selectedClassAbilityIds = <String>{};
-  final Set<String> _baselineAbilityIds = <String>{};
-  final Map<int, List<Map<String, dynamic>>> _abilitiesByCost =
-      <int, List<Map<String, dynamic>>>{};
-  List<Map<String, dynamic>> _signatureAbilities = const [];
-  final Map<String, int?> _abilityCostIndex = <String, int?>{};
+  List<Map<String, dynamic>> _classAbilityData = const [];
   final Map<String, Map<String, dynamic>> _abilityDetailsById =
-    <String, Map<String, dynamic>>{};
-  final Map<int, int> _abilityAllowancesByCost = <int, int>{};
-  int _signatureAbilityAllowance = 0;
+      <String, Map<String, dynamic>>{};
+  final Map<String, String> _abilityIdByName = <String, String>{};
+  final Set<String> _selectedAbilityIds = <String>{};
+  final Set<String> _autoGrantedAbilityIds = <String>{};
+  final Set<String> _baselineAbilityIds = <String>{};
+
+  List<Component> _perkComponents = const [];
+  List<PerkAllowance> _perkAllowances = const [];
+  final Map<int, List<String?>> _perkSelections = <int, List<String?>>{};
+  final Set<String> _selectedPerkIds = <String>{};
+  final Set<String> _baselinePerkIds = <String>{};
+  List<Component> _languageComponents = const [];
+  List<LanguageAllowance> _languageAllowances = const [];
+  final Map<int, List<String?>> _languageSelections = <int, List<String?>>{};
+  final Set<String> _selectedLanguageIds = <String>{};
+  final Set<String> _baselineLanguageIds = <String>{};
+  final Map<String, Set<String>> _featureOptionSelections =
+      <String, Set<String>>{};
 
   @override
   void initState() {
@@ -102,13 +141,42 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     setState(() => _loading = true);
     final metadata = await _loadClassMetadata(slug);
     final features = await _loadClassFeatures(slug);
+    List<Map<String, dynamic>> featureMaps = const [];
+    try {
+      featureMaps = await FeatureRepository.loadClassFeatureMaps(slug);
+    } catch (_) {
+      featureMaps = const [];
+    }
     final abilities = await _loadClassAbilities(slug);
     await _prepareSkillState(metadata);
-    _prepareAbilityState(abilities, metadata);
+    _prepareCharacteristicState(metadata);
+    _prepareAbilityData(abilities);
+    await _preparePerkState(metadata);
+    await _prepareLanguageState(metadata);
     if (!mounted) return;
+    final featureDetailsById = <String, Map<String, dynamic>>{};
+    for (final entry in featureMaps) {
+      final id = entry['id']?.toString();
+      if (id == null || id.isEmpty) continue;
+      featureDetailsById[id] = entry;
+    }
+    final filteredFeatureSelections = <String, Set<String>>{};
+    for (final feature in features) {
+      final existing = _featureOptionSelections[feature.id];
+      if (existing != null && existing.isNotEmpty) {
+        filteredFeatureSelections[feature.id] = existing.toSet();
+      }
+    }
+
     setState(() {
       _classData = metadata;
       _classFeatures = features;
+      _classFeatureDetailsById
+        ..clear()
+        ..addAll(featureDetailsById);
+      _featureOptionSelections
+        ..clear()
+        ..addAll(filteredFeatureSelections);
       _loading = false;
     });
   }
@@ -144,36 +212,23 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     try {
       final raw = await rootBundle.loadString(path);
       final decoded = jsonDecode(raw);
-      if (decoded is List) {
-        final abilities = decoded
-            .whereType<Map>()
-            .map((entry) => entry.cast<String, dynamic>())
-            .where((ability) {
-          final level = (ability['level'] as num?)?.toInt();
-          if (level != null && level > _level) {
-            return false;
-          }
-          final subclassRequirement = ability['subclass'];
-          if (subclassRequirement == null ||
-              subclassRequirement.toString().trim().isEmpty) {
-            return true;
-          }
-          return _matchesSelectedSubclass(subclassRequirement.toString());
-        }).toList()
-          ..sort((a, b) {
-            final levelA = (a['level'] as num?)?.toInt() ?? 0;
-            final levelB = (b['level'] as num?)?.toInt() ?? 0;
-            if (levelA != levelB) {
-              return levelA.compareTo(levelB);
-            }
-            return (a['name'] ?? '')
-                .toString()
-                .compareTo((b['name'] ?? '').toString());
-          });
-        return abilities;
-      }
-    } catch (_) {}
-    return const [];
+      if (decoded is! List) return const [];
+      final abilities = decoded
+          .whereType<Map>()
+          .map((entry) => entry.cast<String, dynamic>())
+          .toList(growable: false);
+      abilities.sort((a, b) {
+        final levelA = (a['level'] as num?)?.toInt() ?? 0;
+        final levelB = (b['level'] as num?)?.toInt() ?? 0;
+        if (levelA != levelB) {
+          return levelA.compareTo(levelB);
+        }
+        return (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString());
+      });
+      return abilities;
+    } catch (_) {
+      return const [];
+    }
   }
 
   void _setDirty(bool value) {
@@ -218,6 +273,18 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       return slug;
     }
     return parts.sublist(1).join('_');
+  }
+
+  String? get _selectedSubclassDisplayName {
+    final slug = _selectedSubclassSlug;
+    if (slug == null || slug.isEmpty) return null;
+    final parts = slug.split('_').where((part) => part.isNotEmpty).toList();
+    if (parts.isEmpty) return null;
+    return parts
+        .map((part) => part.isEmpty
+            ? part
+            : '${part[0].toUpperCase()}${part.length > 1 ? part.substring(1) : ''}')
+        .join(' ');
   }
 
   Set<String> _slugVariants(String? value) {
@@ -274,10 +341,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return null;
   }
 
-  List<Map<String, dynamic>> _levelsUpToCurrent() {
-    return _levelsUpToCurrentFromMetadata(_classData);
-  }
-
   List<Map<String, dynamic>> _levelsUpToCurrentFromMetadata(
     Map<String, dynamic>? metadata,
   ) {
@@ -300,39 +363,600 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return result;
   }
 
-  Map<String, int> _fixedCharacteristicBoosts() {
-    final boosts = <String, int>{};
-    for (final level in _levelsUpToCurrent()) {
-      final fixed = level['fixed_starting_characteristics'];
-      if (fixed is! Map) continue;
-      fixed.forEach((key, value) {
-        final amount = (value as num?)?.toInt();
-        if (amount == null) return;
-        final label = key.toString();
-        boosts[label] = (boosts[label] ?? 0) + amount;
-      });
+  String? _normalizeCharacteristicKey(String? key) {
+    if (key == null) return null;
+    final normalized = key.trim().toLowerCase();
+    if (normalized.isEmpty) return null;
+    if (_characteristicKeyAliases.containsKey(normalized)) {
+      return _characteristicKeyAliases[normalized];
     }
-    return boosts;
+    return normalized;
   }
 
-  List<Map<String, dynamic>> _currentCharacteristicArrays() {
-    final levels = _levelsUpToCurrent().reversed;
+  String _characteristicDisplayName(String key) {
+    final normalized = _normalizeCharacteristicKey(key) ?? key;
+    return normalized.capitalize();
+  }
+
+  Map<String, int> _extractFixedStartingCharacteristics(
+    Map<String, dynamic>? metadata,
+  ) {
+    final result = <String, int>{};
+    final start = metadata?['starting_characteristics'];
+    if (start is Map<String, dynamic>) {
+      final fixed = start['fixed_starting_characteristics'];
+      if (fixed is Map) {
+        fixed.forEach((key, value) {
+          final normalized = _normalizeCharacteristicKey(key?.toString());
+          final amount = _toIntOrNull(value);
+          if (normalized != null && amount != null) {
+            result[normalized] = (result[normalized] ?? 0) + amount;
+          }
+        });
+      }
+    }
+
+    for (final level in _levelsUpToCurrentFromMetadata(metadata)) {
+      final fixed = level['fixed_starting_characteristics'];
+      if (fixed is Map) {
+        fixed.forEach((key, value) {
+          final normalized = _normalizeCharacteristicKey(key?.toString());
+          final amount = _toIntOrNull(value);
+          if (normalized != null && amount != null) {
+            result[normalized] = (result[normalized] ?? 0) + amount;
+          }
+        });
+      }
+    }
+
+    return result;
+  }
+
+  List<Map<String, dynamic>> _extractCharacteristicArraysFromMetadata(
+    Map<String, dynamic>? metadata,
+  ) {
+    final collected = <Map<String, dynamic>>[];
+    final start = metadata?['starting_characteristics'];
+    final primary = start is Map<String, dynamic>
+        ? start['starting_characteristics_arrays']
+        : null;
+    if (primary is List) {
+      for (final entry in primary) {
+        if (entry is Map) {
+          collected.add(entry.cast<String, dynamic>());
+        }
+      }
+    }
+    if (collected.isNotEmpty) return collected;
+
+    final levels = _levelsUpToCurrentFromMetadata(metadata).reversed;
     for (final level in levels) {
       final arrays = level['starting_characteristics_arrays'];
-      if (arrays is! List || arrays.isEmpty) continue;
-      final result = <Map<String, dynamic>>[];
-      for (final entry in arrays) {
-        if (entry is! Map) continue;
-        result.add(entry.cast<String, dynamic>());
+      if (arrays is List && arrays.isNotEmpty) {
+        for (final entry in arrays) {
+          if (entry is Map) {
+            collected.add(entry.cast<String, dynamic>());
+          }
+        }
+        if (collected.isNotEmpty) break;
       }
-      if (result.isNotEmpty) return result;
     }
-    return const [];
+    return collected;
+  }
+
+  List<int> _characteristicArrayValues(Map<String, dynamic> arrayEntry) {
+    final raw = arrayEntry['values'];
+    if (raw is List) {
+      return raw
+          .whereType<num>()
+          .map((value) => value.toInt())
+          .toList(growable: false);
+    }
+    return const <int>[];
+  }
+
+  ({int arrayIndex, Map<String, int?> assignments})?
+      _inferCharacteristicAssignmentsFromHero(
+    HeroModel hero,
+    Map<String, int> fixed,
+    List<Map<String, dynamic>> arrays,
+  ) {
+    if (arrays.isEmpty) return null;
+    final freeKeys =
+        _characteristicKeys.where((key) => !fixed.containsKey(key)).toList();
+    if (freeKeys.isEmpty) return null;
+
+    final heroStats = <String, int>{
+      'might': hero.might,
+      'agility': hero.agility,
+      'reason': hero.reason,
+      'intuition': hero.intuition,
+      'presence': hero.presence,
+    };
+
+    for (var index = 0; index < arrays.length; index++) {
+      final values = _characteristicArrayValues(arrays[index]);
+      if (values.length < freeKeys.length) continue;
+
+      final available = <int, int>{};
+      for (final value in values) {
+        available[value] = (available[value] ?? 0) + 1;
+      }
+
+      final assignments = <String, int?>{};
+      var matches = true;
+      final remaining = Map<int, int>.from(available);
+
+      for (final key in freeKeys) {
+        final statValue = heroStats[key];
+        if (statValue == null) {
+          matches = false;
+          break;
+        }
+        final diff = statValue - (fixed[key] ?? 0);
+        final count = remaining[diff] ?? 0;
+        if (count <= 0) {
+          matches = false;
+          break;
+        }
+        remaining[diff] = count - 1;
+        assignments[key] = diff;
+      }
+
+      if (matches) {
+        for (final key in _characteristicKeys) {
+          assignments.putIfAbsent(key, () => null);
+        }
+        return (arrayIndex: index, assignments: assignments);
+      }
+    }
+
+    return null;
+  }
+
+  Map<String, int?> _defaultCharacteristicAssignmentsForArray(
+    List<int> values,
+    Map<String, int> fixed,
+  ) {
+    final assignments = <String, int?>{
+      for (final key in _characteristicKeys) key: null,
+    };
+
+    final freeKeys =
+        _characteristicKeys.where((key) => !fixed.containsKey(key)).toList();
+    for (var i = 0; i < freeKeys.length && i < values.length; i++) {
+      assignments[freeKeys[i]] = values[i];
+    }
+    return assignments;
+  }
+
+  void _prepareCharacteristicState(Map<String, dynamic>? metadata) {
+    final fixed = _extractFixedStartingCharacteristics(metadata);
+    final arrays = _extractCharacteristicArraysFromMetadata(metadata);
+    final assignments = <String, int?>{
+      for (final key in _characteristicKeys) key: null,
+    };
+
+    int? selectedIndex;
+    if (_model != null) {
+      final inferred = _inferCharacteristicAssignmentsFromHero(
+        _model!,
+        fixed,
+        arrays,
+      );
+      if (inferred != null) {
+        selectedIndex = inferred.arrayIndex;
+        assignments.addAll(inferred.assignments);
+      }
+    }
+
+    if (selectedIndex == null && arrays.length == 1) {
+      selectedIndex = 0;
+      assignments.addAll(_defaultCharacteristicAssignmentsForArray(
+        _characteristicArrayValues(arrays.first),
+        fixed,
+      ));
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _fixedStartingCharacteristics = fixed;
+      _availableCharacteristicArrays = arrays;
+      _selectedCharacteristicArrayIndex = selectedIndex;
+      _characteristicArrayAssignments = assignments;
+    });
+  }
+
+  void _selectCharacteristicArray(int index) {
+    if (index < 0 || index >= _availableCharacteristicArrays.length) return;
+    final fixed = Map<String, int>.from(_fixedStartingCharacteristics);
+    final values = _characteristicArrayValues(
+      _availableCharacteristicArrays[index],
+    );
+    final assignments = _defaultCharacteristicAssignmentsForArray(values, fixed);
+    setState(() {
+      _selectedCharacteristicArrayIndex = index;
+      _characteristicArrayAssignments = assignments;
+    });
+    _setDirty(true);
+  }
+
+  List<int> _availableValuesForCharacteristic(String key) {
+    if (_selectedCharacteristicArrayIndex == null) {
+      return const <int>[];
+    }
+    final array =
+        _availableCharacteristicArrays[_selectedCharacteristicArrayIndex!];
+    final values = _characteristicArrayValues(array);
+    if (values.isEmpty) return const <int>[];
+
+    final counts = <int, int>{};
+    for (final value in values) {
+      counts[value] = (counts[value] ?? 0) + 1;
+    }
+
+    final normalizedKey = _normalizeCharacteristicKey(key) ?? key;
+    final currentValue = _characteristicArrayAssignments[normalizedKey];
+
+    for (final entry in _characteristicArrayAssignments.entries) {
+      if (entry.key == normalizedKey) continue;
+      final assignedValue = entry.value;
+      if (assignedValue == null) continue;
+      final remaining = (counts[assignedValue] ?? 0) - 1;
+      counts[assignedValue] = remaining;
+    }
+
+    if (currentValue != null) {
+      counts[currentValue] = (counts[currentValue] ?? 0) + 1;
+    }
+
+    final available = counts.entries
+        .where((entry) => entry.value > 0)
+        .map((entry) => entry.key)
+        .toList();
+    available.sort((a, b) => b.compareTo(a));
+    return available;
+  }
+
+  void _updateCharacteristicAssignment(String key, int? value) {
+    final normalizedKey = _normalizeCharacteristicKey(key) ?? key;
+    if (!_characteristicArrayAssignments.containsKey(normalizedKey)) return;
+    final updated = Map<String, int?>.from(_characteristicArrayAssignments);
+    updated[normalizedKey] = value;
+    setState(() {
+      _characteristicArrayAssignments = updated;
+    });
+    _setDirty(true);
+  }
+
+  bool _hasCompleteCharacteristicAssignments() {
+    if (_selectedCharacteristicArrayIndex == null) return false;
+    final fixedKeys = _fixedStartingCharacteristics.keys.toSet();
+    for (final key in _characteristicKeys) {
+      if (fixedKeys.contains(key)) continue;
+      if (_characteristicArrayAssignments[key] == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Map<String, int> _finalCharacteristicScores() {
+    final result = <String, int>{};
+    for (final key in _characteristicKeys) {
+      final base = _fixedStartingCharacteristics[key] ?? 0;
+      final bonus = _characteristicArrayAssignments[key] ?? 0;
+      result[key] = base + bonus;
+    }
+    return result;
+  }
+
+  List<Component> _eligiblePerksForAllowance(int allowanceIndex) {
+    if (allowanceIndex < 0 || allowanceIndex >= _perkAllowances.length) {
+      return const [];
+    }
+    final allowance = _perkAllowances[allowanceIndex];
+    return _perkComponents
+        .where((component) {
+          final group =
+              component.data['group']?.toString().trim().toLowerCase();
+          return allowance.allowsGroup(group);
+        })
+        .toList();
+  }
+
+  Set<String> _currentSelectedPerkIds() {
+    final selected = <String>{};
+    for (final entry in _perkSelections.values) {
+      for (final id in entry) {
+        if (id != null) selected.add(id);
+      }
+    }
+    return selected;
+  }
+
+  void _updatePerkSelection(
+    int allowanceIndex,
+    int slotIndex,
+    String? perkId,
+  ) {
+    final existingSlots = _perkSelections[allowanceIndex];
+    if (existingSlots == null ||
+        slotIndex < 0 ||
+        slotIndex >= existingSlots.length) {
+      return;
+    }
+
+    final eligibleIds = _eligiblePerksForAllowance(allowanceIndex)
+        .map((component) => component.id)
+        .toSet();
+    final normalizedId = perkId?.trim();
+    final resolvedId = normalizedId != null && eligibleIds.contains(normalizedId)
+        ? normalizedId
+        : null;
+
+    final currentId = existingSlots[slotIndex];
+    if (currentId == resolvedId) return;
+
+    final updatedSelections = <int, List<String?>>{};
+    for (final entry in _perkSelections.entries) {
+      updatedSelections[entry.key] = List<String?>.from(entry.value);
+    }
+
+    if (currentId != null) {
+      updatedSelections[allowanceIndex]![slotIndex] = null;
+    }
+
+    if (resolvedId != null) {
+      for (final entry in updatedSelections.entries) {
+        final list = entry.value;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i] == resolvedId) list[i] = null;
+        }
+      }
+      updatedSelections[allowanceIndex]![slotIndex] = resolvedId;
+    }
+
+    final newSelected = <String>{};
+    for (final list in updatedSelections.values) {
+      for (final id in list) {
+        if (id != null) newSelected.add(id);
+      }
+    }
+
+    setState(() {
+      _perkSelections
+        ..clear()
+        ..addAll(updatedSelections);
+      _selectedPerkIds
+        ..clear()
+        ..addAll(newSelected);
+    });
+    _setDirty(true);
+  }
+
+  Set<String> _currentSelectedLanguageIds() {
+    final selected = <String>{};
+    for (final entry in _languageSelections.values) {
+      for (final id in entry) {
+        if (id != null) selected.add(id);
+      }
+    }
+    return selected;
+  }
+
+  void _updateLanguageSelection(
+    int allowanceIndex,
+    int slotIndex,
+    String? languageId,
+  ) {
+    final existingSlots = _languageSelections[allowanceIndex];
+    if (existingSlots == null ||
+        slotIndex < 0 ||
+        slotIndex >= existingSlots.length) {
+      return;
+    }
+
+    final allowance =
+        allowanceIndex >= 0 && allowanceIndex < _languageAllowances.length
+            ? _languageAllowances[allowanceIndex]
+            : null;
+    if (allowance == null) return;
+
+    final eligibleIds = _languageComponents
+        .where((component) {
+          final type =
+              component.data['language_type']?.toString().trim().toLowerCase();
+          return allowance.allowsType(type);
+        })
+        .map((component) => component.id)
+        .toSet();
+
+    final normalizedId = languageId?.trim();
+    final resolvedId = normalizedId != null && eligibleIds.contains(normalizedId)
+        ? normalizedId
+        : null;
+
+    final currentId = existingSlots[slotIndex];
+    if (currentId == resolvedId) return;
+
+    final updatedSelections = <int, List<String?>>{};
+    for (final entry in _languageSelections.entries) {
+      updatedSelections[entry.key] = List<String?>.from(entry.value);
+    }
+
+    if (currentId != null) {
+      updatedSelections[allowanceIndex]![slotIndex] = null;
+    }
+
+    if (resolvedId != null) {
+      for (final entry in updatedSelections.entries) {
+        final list = entry.value;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i] == resolvedId) list[i] = null;
+        }
+      }
+      updatedSelections[allowanceIndex]![slotIndex] = resolvedId;
+    }
+
+    final newSelected = <String>{};
+    for (final list in updatedSelections.values) {
+      for (final id in list) {
+        if (id != null) newSelected.add(id);
+      }
+    }
+
+    setState(() {
+      _languageSelections
+        ..clear()
+        ..addAll(updatedSelections);
+      _selectedLanguageIds
+        ..clear()
+        ..addAll(newSelected);
+    });
+    _setDirty(true);
+  }
+
+  List<PerkAllowance> _extractPerkAllowances(
+    Map<String, dynamic>? metadata,
+  ) {
+    final allowances = <PerkAllowance>[];
+    final levels = _levelsUpToCurrentFromMetadata(metadata);
+    for (final levelData in levels) {
+      final levelNumber = (levelData['level'] as num?)?.toInt() ?? _level;
+      final rawPerks = levelData['perks'];
+      if (rawPerks == null) continue;
+
+      void addAllowance(Map<dynamic, dynamic> source) {
+        final count = (source['count'] as num?)?.toInt() ?? 0;
+        if (count <= 0) return;
+        final groupsRaw =
+            source['perk_groups'] ?? source['groups'] ?? source['group'];
+        final groups = <String>{};
+        if (groupsRaw is Iterable) {
+          for (final entry in groupsRaw) {
+            final normalized = entry?.toString().trim().toLowerCase();
+            if (normalized != null && normalized.isNotEmpty) {
+              groups.add(normalized);
+            }
+          }
+        } else if (groupsRaw is String) {
+          final normalized = groupsRaw.trim().toLowerCase();
+          if (normalized.isNotEmpty) groups.add(normalized);
+        }
+
+        final labelGroups = groups.isEmpty
+            ? 'any group'
+            : groups.map((g) => g.capitalize()).join(', ');
+        allowances.add(PerkAllowance(
+          level: levelNumber,
+          count: count,
+          groups: groups,
+          label: 'Level $levelNumber · $labelGroups',
+        ));
+      }
+
+      if (rawPerks is Map) {
+        addAllowance(rawPerks);
+      } else if (rawPerks is Iterable) {
+        for (final entry in rawPerks) {
+          if (entry is Map) addAllowance(entry);
+        }
+      } else if (rawPerks is num) {
+        final count = rawPerks.toInt();
+        if (count > 0) {
+          allowances.add(PerkAllowance(
+            level: levelNumber,
+            count: count,
+            groups: const <String>{},
+            label: 'Level $levelNumber · any group',
+          ));
+        }
+      }
+    }
+    return allowances;
+  }
+
+  List<LanguageAllowance> _extractLanguageAllowances(
+    Map<String, dynamic>? metadata,
+  ) {
+    final allowances = <LanguageAllowance>[];
+    final levels = _levelsUpToCurrentFromMetadata(metadata);
+    for (final levelData in levels) {
+      final levelNumber = (levelData['level'] as num?)?.toInt() ?? _level;
+      final rawLanguages = levelData['languages'];
+      if (rawLanguages == null) continue;
+
+      void addAllowance(Map<dynamic, dynamic> source) {
+        final count = (source['count'] as num?)?.toInt() ?? 0;
+        if (count <= 0) return;
+        final typesRaw =
+            source['language_types'] ?? source['types'] ?? source['type'];
+        final types = <String>{};
+        if (typesRaw is Iterable) {
+          for (final entry in typesRaw) {
+            final normalized = entry?.toString().trim().toLowerCase();
+            if (normalized != null && normalized.isNotEmpty) {
+              if (normalized == 'any') {
+                types.clear();
+                break;
+              }
+              types.add(normalized);
+            }
+          }
+        } else if (typesRaw is String) {
+          final normalized = typesRaw.trim().toLowerCase();
+          if (normalized.isNotEmpty && normalized != 'any') {
+            types.add(normalized);
+          }
+        }
+
+        final labelTypes = types.isEmpty
+            ? 'any type'
+            : types.map((t) => t.capitalize()).join(', ');
+        allowances.add(LanguageAllowance(
+          level: levelNumber,
+          count: count,
+          types: types,
+          label: 'Level $levelNumber · $labelTypes',
+        ));
+      }
+
+      if (rawLanguages is Map) {
+        addAllowance(rawLanguages);
+      } else if (rawLanguages is Iterable) {
+        for (final entry in rawLanguages) {
+          if (entry is Map) addAllowance(entry);
+        }
+      } else if (rawLanguages is num) {
+        final count = rawLanguages.toInt();
+        if (count > 0) {
+          allowances.add(LanguageAllowance(
+            level: levelNumber,
+            count: count,
+            types: const <String>{},
+            label: 'Level $levelNumber · any type',
+          ));
+        }
+      }
+    }
+    return allowances;
+  }
+
+  Map<String, int> _fixedCharacteristicBoosts() {
+    return Map<String, int>.from(_fixedStartingCharacteristics);
   }
 
   void _resetClassDependentState() {
     final existingSkillIds = (_model?.skills ?? const <String>[]).toSet();
     final existingAbilityIds = (_model?.abilities ?? const <String>[]).toSet();
+
+    _fixedStartingCharacteristics = <String, int>{};
+    _availableCharacteristicArrays = const [];
+    _selectedCharacteristicArrayIndex = null;
+    _characteristicArrayAssignments = {
+      for (final key in _characteristicKeys) key: null,
+    };
 
     _subclassComponentId = null;
     _classSkillPickCount = 0;
@@ -345,17 +969,30 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ..clear()
       ..addAll(existingSkillIds);
 
-    _classAbilityIds.clear();
-    _selectedClassAbilityIds.clear();
+    _classAbilityData = const [];
+    _abilityDetailsById.clear();
+    _abilityIdByName.clear();
+    _selectedAbilityIds.clear();
+    _autoGrantedAbilityIds.clear();
     _baselineAbilityIds
       ..clear()
       ..addAll(existingAbilityIds);
-    _abilitiesByCost.clear();
-    _signatureAbilities = const [];
-    _abilityCostIndex.clear();
-    _abilityDetailsById.clear();
-    _abilityAllowancesByCost.clear();
-    _signatureAbilityAllowance = 0;
+    _featureOptionSelections.clear();
+
+    _perkComponents = const [];
+    _perkAllowances = const [];
+    _perkSelections.clear();
+    _selectedPerkIds.clear();
+    _baselinePerkIds
+      ..clear()
+      ..addAll((_model?.perks ?? const <String>[]));
+    _languageComponents = const [];
+    _languageAllowances = const [];
+    _languageSelections.clear();
+    _selectedLanguageIds.clear();
+    _baselineLanguageIds
+      ..clear()
+      ..addAll((_model?.languages ?? const <String>[]));
   }
 
   Future<void> _prepareSkillState(Map<String, dynamic>? metadata) async {
@@ -401,7 +1038,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     }
     if (!mounted) return;
 
-    final groupNames = ((skillsInfo['skill_groups'] as List?) ?? const [])
+  final groupNames = ((skillsInfo['skill_groups'] as List?) ?? const [])
         .map((e) => e.toString().trim().toLowerCase())
         .where((e) => e.isNotEmpty)
         .toSet();
@@ -473,14 +1110,19 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .whereType<String>()
         .toSet();
 
-    final groupCandidateIds = allSkillComponents
-        .where((component) {
-          final group =
-              component.data['group']?.toString().trim().toLowerCase();
-          return group != null && groupNames.contains(group);
-        })
-        .map((component) => component.id)
-        .toSet();
+    final allowAllGroups =
+        groupNames.isEmpty && ((skillsInfo['skill_count'] as num?)?.toInt() ?? 0) > 0;
+
+    final groupCandidateIds = allowAllGroups
+        ? allSkillComponents.map((component) => component.id).toSet()
+        : allSkillComponents
+            .where((component) {
+              final group =
+                  component.data['group']?.toString().trim().toLowerCase();
+              return group != null && groupNames.contains(group);
+            })
+            .map((component) => component.id)
+            .toSet();
 
     final candidateIds = <String>{
       ...grantedIds,
@@ -510,7 +1152,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
     setState(() {
       _classSkillPickCount = pickCount;
-      _classSkillGroups = groupNames.toList()..sort();
+      _classSkillGroups = allowAllGroups
+          ? const ['Any']
+          : (groupNames.toList()..sort());
       _classSkillComponents = eligibleComponents;
       _grantedClassSkillIds
         ..clear()
@@ -539,265 +1183,290 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return null;
   }
 
-  void _prepareAbilityState(
-    List<Map<String, dynamic>> abilities,
-    Map<String, dynamic>? metadata,
-  ) {
-    final allowances = _extractAbilityAllowances(metadata);
-    var signatureAllowance = allowances[null] ?? 0;
-    final costAllowances = <int, int>{}
-      ..addEntries(allowances.entries
-          .where((entry) => entry.key != null)
-          .map((entry) => MapEntry(entry.key!, entry.value)));
+  void _prepareAbilityData(List<Map<String, dynamic>> abilities) {
+    final previousSelections = _selectedAbilityIds.toSet();
+    final previousAuto = _autoGrantedAbilityIds.toSet();
 
-    final abilityIds = <String>{};
-    final costMap = <int, List<Map<String, dynamic>>>{};
-    final signatureList = <Map<String, dynamic>>[];
-    final abilityCostIndex = <String, int?>{};
     final abilityDetails = <String, Map<String, dynamic>>{};
+    final abilityNameIndex = <String, String>{};
+    final processedAbilities = <Map<String, dynamic>>[];
 
     for (final ability in abilities) {
-      final id = ability['id']?.toString() ?? ability['name']?.toString() ?? '';
-      if (id.isEmpty) continue;
-      abilityIds.add(id);
-      final cost = _abilityCost(ability);
-      abilityCostIndex[id] = cost;
-      abilityDetails[id] = ability;
-      if (cost != null && cost > 0) {
-        final list = costMap.putIfAbsent(cost, () => <Map<String, dynamic>>[]);
-        list.add(ability);
-      } else {
-        signatureList.add(ability);
+      final rawId = ability['id']?.toString() ?? '';
+      final rawName = ability['name']?.toString() ?? '';
+      if (rawId.trim().isEmpty && rawName.trim().isEmpty) {
+        continue;
       }
+      final resolvedId = rawId.trim().isNotEmpty
+          ? rawId.trim()
+          : _slugify(rawName.trim());
+      final abilityCopy = Map<String, dynamic>.from(ability)
+        ..['resolved_id'] = resolvedId;
+      processedAbilities.add(abilityCopy);
+      abilityDetails[resolvedId] = abilityCopy;
+      if (rawName.trim().isNotEmpty) {
+        abilityNameIndex[_normalizeAbilityName(rawName)] = resolvedId;
+      }
+      abilityNameIndex[_normalizeAbilityName(resolvedId)] = resolvedId;
     }
 
-    costMap.forEach((_, list) => list.sort((a, b) =>
-        (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString())));
-    signatureList.sort((a, b) =>
-        (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString()));
+    final recognizedIds = abilityDetails.keys.toSet();
+    final heroAbilityIds = (_model?.abilities ?? const <String>[]) 
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .toSet();
 
-    if (allowances.isEmpty) {
-      signatureAllowance = signatureList.length;
-      for (final entry in costMap.entries) {
-        costAllowances[entry.key] = entry.value.length;
-      }
-    }
-
-    final existingAbilities = (_model?.abilities ?? const <String>[]).toList();
-    final baseline =
-        existingAbilities.where((id) => !abilityIds.contains(id)).toSet();
-    final selectedOrdered =
-        existingAbilities.where((id) => abilityIds.contains(id)).toList();
-    final trimmedSelected = _enforceAbilityAllowances(
-      selectedOrdered,
-      abilityCostIndex,
-      signatureAllowance,
-      costAllowances,
-    );
+    final baselineIds = heroAbilityIds.difference(recognizedIds);
+    final restoredSelections = <String>{
+      ...previousSelections.intersection(recognizedIds),
+      ...heroAbilityIds.intersection(recognizedIds),
+    };
 
     if (!mounted) return;
     setState(() {
-      _classAbilityIds
-        ..clear()
-        ..addAll(abilityIds);
-      _baselineAbilityIds
-        ..clear()
-        ..addAll(baseline);
-      _selectedClassAbilityIds
-        ..clear()
-        ..addAll(trimmedSelected);
-      _abilitiesByCost
-        ..clear()
-        ..addAll(costMap.map((key, value) =>
-            MapEntry(key, List<Map<String, dynamic>>.from(value))));
-      _signatureAbilities = List<Map<String, dynamic>>.from(signatureList);
-      _abilityCostIndex
-        ..clear()
-        ..addAll(abilityCostIndex);
+      _classAbilityData = processedAbilities;
       _abilityDetailsById
         ..clear()
         ..addAll(abilityDetails);
-      _abilityAllowancesByCost
+      _abilityIdByName
         ..clear()
-        ..addAll(costAllowances);
-      _signatureAbilityAllowance = signatureAllowance;
+        ..addAll(abilityNameIndex);
+      _baselineAbilityIds
+        ..clear()
+        ..addAll(baselineIds);
+      _selectedAbilityIds
+        ..clear()
+        ..addAll(restoredSelections.difference(previousAuto));
+      _autoGrantedAbilityIds
+        ..clear()
+        ..addAll(previousAuto.intersection(recognizedIds));
     });
   }
 
-  Map<int?, int> _extractAbilityAllowances(Map<String, dynamic>? metadata) {
-    final allowances = <int?, int>{};
-    final start = metadata?['starting_characteristics'];
-    if (start is! Map<String, dynamic>) return allowances;
-    final levels = start['levels'];
-    if (levels is! List) return allowances;
-
-    for (final entry in levels) {
-      if (entry is! Map<String, dynamic>) continue;
-      final levelNumber = (entry['level'] as num?)?.toInt();
-      if (levelNumber == null || levelNumber > _level) continue;
-
-      final newAbilities = entry['new_abilities'];
-      if (newAbilities is Map) {
-        _accumulateAbilityAllowances(
-          allowances,
-          newAbilities.cast<String, dynamic>(),
-        );
-      }
-
-      final newSubclassAbilities = entry['new_subclass_abilities'];
-      if (newSubclassAbilities != null) {
-        _accumulateSubclassAbilityAllowances(allowances, newSubclassAbilities);
-      }
-    }
-
-    return allowances;
+  void _updateAbilitySelections(Set<String> selections) {
+    final normalized = selections
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .toSet();
+    if (setEquals(normalized, _selectedAbilityIds)) return;
+    setState(() {
+      _selectedAbilityIds
+        ..clear()
+        ..addAll(normalized);
+    });
+    _setDirty(true);
   }
 
-  void _accumulateAbilityAllowances(
-    Map<int?, int> allowances,
-    Map<String, dynamic> data,
-  ) {
-    for (final entry in data.entries) {
-      final amount = (entry.value as num?)?.toInt() ?? 0;
-      if (amount <= 0) continue;
-      final key = entry.key.toLowerCase();
-      if (key == 'signature') {
-        allowances[null] = (allowances[null] ?? 0) + amount;
-        continue;
-      }
-      final match = RegExp(r'(\d+)').firstMatch(key);
-      if (match == null) continue;
-      final cost = int.tryParse(match.group(1)!);
-      if (cost == null) continue;
-      allowances[cost] = (allowances[cost] ?? 0) + amount;
-    }
+  void _updateFeatureSelection(String featureId, Set<String> selections) {
+    final normalizedId = featureId.trim();
+    if (normalizedId.isEmpty) return;
+    final normalizedSelections = selections
+        .map((option) => option.trim())
+        .where((option) => option.isNotEmpty)
+        .toSet();
+    final current = _featureOptionSelections[normalizedId] ?? const <String>{};
+    if (setEquals(current, normalizedSelections)) return;
+    setState(() {
+      _featureOptionSelections[normalizedId] = normalizedSelections;
+    });
+    _setDirty(true);
   }
 
-  void _accumulateSubclassAbilityAllowances(
-    Map<int?, int> allowances,
-    dynamic data,
-  ) {
-    if (data == null) return;
-    final active = _activeSubclassSlugs;
-    if (active.isEmpty) return;
-
-    if (data is Map) {
-      final entries = data.entries.toList();
-      final isDirectAllowance = entries.every((entry) {
-        final value = entry.value;
-        if (value is num) return true;
-        if (value is String) {
-          return int.tryParse(value) != null;
-        }
-        return false;
+  Future<void> _preparePerkState(Map<String, dynamic>? metadata) async {
+    final allowances = _extractPerkAllowances(metadata);
+    if (allowances.isEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _perkComponents = const [];
+        _perkAllowances = const [];
+        _perkSelections.clear();
+        _selectedPerkIds.clear();
+        _baselinePerkIds
+          ..clear()
+          ..addAll((_model?.perks ?? const <String>[]));
       });
-
-      if (isDirectAllowance) {
-        _accumulateAbilityAllowances(
-          allowances,
-          data.cast<String, dynamic>(),
-        );
-        return;
-      }
-
-      for (final entry in entries) {
-        final key = entry.key?.toString() ?? '';
-        if (key.trim().isEmpty) continue;
-        final variants = _slugVariants(key);
-        if (variants.isEmpty || variants.intersection(active).isEmpty) {
-          continue;
-        }
-        _accumulateSubclassAbilityAllowances(allowances, entry.value);
-      }
       return;
     }
 
-    if (data is List) {
-      for (final item in data) {
-        _accumulateSubclassAbilityAllowances(allowances, item);
+    List<Component> allPerks = const [];
+    try {
+      allPerks = await ref.read(componentsByTypeProvider('perk').future);
+    } catch (_) {
+      allPerks = const [];
+    }
+
+    if (!mounted) return;
+
+    final sortedPerks = allPerks.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    final componentById = {
+      for (final perk in sortedPerks) perk.id.toLowerCase(): perk,
+    };
+
+    final candidateIds = <String>{};
+    for (final perk in sortedPerks) {
+      final group = perk.data['group']?.toString().trim().toLowerCase();
+      final matches = allowances.any((allowance) => allowance.allowsGroup(group));
+      if (matches) candidateIds.add(perk.id);
+    }
+
+    final existingPerks = (_model?.perks ?? const <String>[]).toList();
+    final baseline = existingPerks
+        .where((id) => !candidateIds.contains(id))
+        .toSet();
+    final selectable = existingPerks
+        .where((id) => candidateIds.contains(id))
+        .toList();
+
+    final selections = <int, List<String?>>{};
+    for (var index = 0; index < allowances.length; index++) {
+      selections[index] = List<String?>.filled(allowances[index].count, null);
+    }
+
+    final applied = <String>{};
+
+    for (final perkId in selectable) {
+      final component = componentById[perkId.toLowerCase()];
+      if (component == null) continue;
+      final group = component.data['group']?.toString().trim().toLowerCase();
+
+      for (var index = 0; index < allowances.length; index++) {
+        final allowance = allowances[index];
+        if (!allowance.allowsGroup(group)) continue;
+        final slots = selections[index]!;
+        final slotIndex = slots.indexWhere((value) => value == null);
+        if (slotIndex == -1) continue;
+        slots[slotIndex] = perkId;
+        applied.add(perkId);
+        break;
       }
     }
+
+    setState(() {
+      _perkComponents = sortedPerks;
+      _perkAllowances = allowances;
+      _perkSelections
+        ..clear()
+        ..addAll(selections);
+      _selectedPerkIds
+        ..clear()
+        ..addAll(applied);
+      _baselinePerkIds
+        ..clear()
+        ..addAll(baseline);
+    });
   }
 
-  Set<String> _enforceAbilityAllowances(
-    List<String> orderedIds,
-    Map<String, int?> costIndex,
-    int signatureAllowance,
-    Map<int, int> costAllowances,
-  ) {
-    var signatureRemaining = signatureAllowance;
-    final remainingByCost = Map<int, int>.from(costAllowances);
-    final selected = <String>{};
+  Future<void> _prepareLanguageState(Map<String, dynamic>? metadata) async {
+    final allowances = _extractLanguageAllowances(metadata);
+    if (allowances.isEmpty) {
+      if (!mounted) return;
+      setState(() {
+        _languageComponents = const [];
+        _languageAllowances = const [];
+        _languageSelections.clear();
+        _selectedLanguageIds.clear();
+        _baselineLanguageIds
+          ..clear()
+          ..addAll((_model?.languages ?? const <String>[]));
+      });
+      return;
+    }
 
-    for (final id in orderedIds) {
-      final cost = costIndex[id];
-      if (cost == null || cost <= 0) {
-        if (signatureRemaining > 0) {
-          selected.add(id);
-          signatureRemaining -= 1;
-        }
-        continue;
+    List<Component> allLanguages = const [];
+    try {
+      allLanguages = await ref.read(componentsByTypeProvider('language').future);
+    } catch (_) {
+      allLanguages = const [];
+    }
+
+    if (!mounted) return;
+
+    final sortedLanguages = allLanguages.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    final candidateIdsByAllowance = <int, Set<String>>{};
+    final globalCandidateIds = <String>{};
+    for (var index = 0; index < allowances.length; index++) {
+      final allowance = allowances[index];
+      final candidates = sortedLanguages
+          .where((language) {
+            final type =
+                language.data['language_type']?.toString().trim().toLowerCase();
+            return allowance.allowsType(type);
+          })
+          .map((language) => language.id)
+          .toSet();
+      candidateIdsByAllowance[index] = candidates;
+      globalCandidateIds.addAll(candidates);
+    }
+
+    final existingLanguages = (_model?.languages ?? const <String>[]).toList();
+    final baseline = existingLanguages
+        .where((id) => !globalCandidateIds.contains(id))
+        .toSet();
+    final selectable = existingLanguages
+        .where((id) => globalCandidateIds.contains(id))
+        .toList();
+
+    final selections = <int, List<String?>>{};
+    for (var index = 0; index < allowances.length; index++) {
+      selections[index] = List<String?>.filled(allowances[index].count, null);
+    }
+
+    final applied = <String>{};
+    final componentById = {
+      for (final language in sortedLanguages) language.id: language,
+    };
+
+    for (final languageId in selectable) {
+      final component = componentById[languageId];
+      final type =
+          component?.data['language_type']?.toString().trim().toLowerCase();
+      for (var index = 0; index < allowances.length; index++) {
+        final allowance = allowances[index];
+        if (!allowance.allowsType(type)) continue;
+        final slots = selections[index]!;
+        final slotIndex = slots.indexWhere((value) => value == null);
+        if (slotIndex == -1) continue;
+        slots[slotIndex] = languageId;
+        applied.add(languageId);
+        break;
       }
+    }
 
-      final remaining = remainingByCost[cost] ?? 0;
-      if (remaining > 0) {
-        selected.add(id);
-        remainingByCost[cost] = remaining - 1;
+    setState(() {
+      _languageComponents = sortedLanguages;
+      _languageAllowances = allowances;
+      _languageSelections
+        ..clear()
+        ..addAll(selections);
+      _selectedLanguageIds
+        ..clear()
+        ..addAll(applied);
+      _baselineLanguageIds
+        ..clear()
+        ..addAll(baseline);
+    });
+  }
+
+  String _normalizeAbilityName(String value) => _slugify(value.trim());
+
+  bool _isSignatureAbility(Map<String, dynamic>? ability) {
+    if (ability == null) return false;
+    final costs = ability['costs'];
+    if (costs is Map<String, dynamic>) {
+      final signature = costs['signature'];
+      if (signature is bool) return signature;
+      if (signature is num) return signature != 0;
+      if (signature is String) {
+        final normalized = signature.trim().toLowerCase();
+        if (normalized == 'true') return true;
+        if (normalized == 'false') return false;
+        return normalized == '1';
       }
     }
-
-    return selected;
-  }
-
-  int _abilityAllowanceForCost(int? cost) {
-    if (cost == null || cost <= 0) {
-      return _signatureAbilityAllowance;
-    }
-    return _abilityAllowancesByCost[cost] ?? 0;
-  }
-
-  int _selectedAbilityCountForCost(int cost) {
-    return _selectedClassAbilityIds.where((id) {
-      final abilityCost = _abilityCostIndex[id];
-      return abilityCost != null && abilityCost == cost;
-    }).length;
-  }
-
-  int _selectedSignatureAbilityCount() {
-    return _selectedClassAbilityIds.where((id) {
-      final cost = _abilityCostIndex[id];
-      return cost == null || cost <= 0;
-    }).length;
-  }
-
-  String _abilityTypeLabel(int? cost) {
-    if (cost == null || cost <= 0) {
-      return 'signature';
-    }
-    return '$cost-cost';
-  }
-
-  String _abilityDisplayName(String abilityId) {
-    final raw = _abilityDetailsById[abilityId]?['name']?.toString();
-    if (raw == null || raw.trim().isEmpty) return 'This ability';
-    return raw;
-  }
-
-  bool _isAbilityToggleEnabled(String abilityId, int? cost, bool isSelected) {
-    if (isSelected) {
-      // Always allow deselection, even if the allowance has since dropped.
-      return true;
-    }
-
-    final allowance = _abilityAllowanceForCost(cost);
-    if (allowance <= 0) {
-      return false;
-    }
-
-    final current = cost == null || cost <= 0
-        ? _selectedSignatureAbilityCount()
-        : _selectedAbilityCountForCost(cost);
-    return current < allowance;
+    return false;
   }
 
   int? _abilityCost(Map<String, dynamic> ability) {
@@ -994,45 +1663,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
-  void _toggleAbilitySelection(String abilityId) {
-    if (!_classAbilityIds.contains(abilityId)) return;
-    final isSelected = _selectedClassAbilityIds.contains(abilityId);
-
-    if (!isSelected) {
-      final cost = _abilityCostIndex[abilityId];
-      final allowance = _abilityAllowanceForCost(cost);
-      if (allowance <= 0) {
-        final label = _abilityTypeLabel(cost);
-        final abilityName = _abilityDisplayName(abilityId);
-        _showLimitSnack(
-          '$abilityName can’t be added because no $label abilities are available at level $_level.',
-        );
-        return;
-      }
-
-      final current = cost == null || cost <= 0
-          ? _selectedSignatureAbilityCount()
-          : _selectedAbilityCountForCost(cost);
-      if (current >= allowance) {
-        final label = _abilityTypeLabel(cost);
-        final plural = allowance == 1 ? '' : 's';
-        final abilityName = _abilityDisplayName(abilityId);
-        _showLimitSnack(
-          '$abilityName can’t be added. You can select up to $allowance $label ability$plural at level $_level.',
-        );
-        return;
-      }
-    }
-
-    setState(() {
-      if (isSelected) {
-        _selectedClassAbilityIds.remove(abilityId);
-      } else {
-        _selectedClassAbilityIds.add(abilityId);
-      }
-    });
-    _setDirty(true);
-  }
 
   String? _abilitySummary(Map<String, dynamic> ability) {
     final parts = <String>[];
@@ -1065,10 +1695,38 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final mergedSkills = _mergeSelections(
         _model!.skills, _baselineSkillIds, _selectedClassSkillIds);
     final mergedAbilities = _mergeSelections(
-        _model!.abilities, _baselineAbilityIds, _selectedClassAbilityIds);
+      _model!.abilities,
+      _baselineAbilityIds.union(_autoGrantedAbilityIds),
+      _selectedAbilityIds.union(_autoGrantedAbilityIds),
+    );
+    final mergedPerks = _mergeSelections(
+        _model!.perks, _baselinePerkIds, _currentSelectedPerkIds());
+    final mergedLanguages = _mergeSelections(
+        _model!.languages, _baselineLanguageIds, _currentSelectedLanguageIds());
     _model!
       ..skills = mergedSkills
-      ..abilities = mergedAbilities;
+      ..abilities = mergedAbilities
+      ..perks = mergedPerks
+      ..languages = mergedLanguages;
+
+    Map<String, int>? finalCharacteristics;
+    if (_availableCharacteristicArrays.isEmpty &&
+        _fixedStartingCharacteristics.isNotEmpty) {
+      finalCharacteristics = Map<String, int>.from(
+        _fixedStartingCharacteristics,
+      );
+    } else if (_hasCompleteCharacteristicAssignments()) {
+      finalCharacteristics = _finalCharacteristicScores();
+    }
+
+    if (finalCharacteristics != null) {
+      _model!
+        ..might = finalCharacteristics['might'] ?? _model!.might
+        ..agility = finalCharacteristics['agility'] ?? _model!.agility
+        ..reason = finalCharacteristics['reason'] ?? _model!.reason
+        ..intuition = finalCharacteristics['intuition'] ?? _model!.intuition
+        ..presence = finalCharacteristics['presence'] ?? _model!.presence;
+    }
   }
 
   List<String> _mergeSelections(
@@ -1178,6 +1836,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
           SliverToBoxAdapter(child: _buildPotencyCard(theme)),
           SliverToBoxAdapter(child: _buildSkillsCard(theme)),
           SliverToBoxAdapter(child: _buildAbilitiesCard(theme)),
+          SliverToBoxAdapter(child: _buildPerksCard()),
+          SliverToBoxAdapter(child: _buildLanguagesCard()),
           SliverToBoxAdapter(child: _buildFeaturesCard(theme)),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
@@ -1513,7 +2173,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final level = _toIntOrNull(ability['level']);
     final subclassName = ability['subclass']?.toString().trim();
     final cost = _abilityCost(ability);
-    final isSignature = cost == null || cost <= 0;
+    final isSignature = _isSignatureAbility(ability);
 
     showModalBottomSheet<void>(
       context: context,
@@ -1623,312 +2283,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       },
     );
   }
-  // }
-
-  Widget _buildAbilitySection(
-    String title,
-    List<Map<String, dynamic>> abilities, {
-    int? cost,
-  }) {
-    final tiles = abilities
-        .map((ability) => _buildAbilityTile(ability))
-        .whereType<Widget>()
-        .toList();
-    if (tiles.isEmpty) return const SizedBox.shrink();
-
-    final theme = Theme.of(context);
-    final limit = _abilityAllowanceForCost(cost);
-    final selectedCount = cost == null || cost <= 0
-        ? _selectedSignatureAbilityCount()
-        : _selectedAbilityCountForCost(cost);
-    var displayTitle = title;
-    String? helperText;
-
-    if (limit > 0) {
-      displayTitle = '$title ($selectedCount of $limit)';
-      final remaining = limit - selectedCount;
-      helperText = remaining > 0
-          ? '$remaining pick${remaining == 1 ? '' : 's'} remaining.'
-          : 'All picks used.';
-    } else if (limit == 0) {
-      helperText = 'Unlocks at a higher level.';
-    }
-
-    final selectedNames = abilities
-        .where((ability) {
-          final id = ability['id']?.toString() ?? ability['name']?.toString();
-          return id != null && _selectedClassAbilityIds.contains(id);
-        })
-        .map((ability) => ability['name']?.toString())
-        .whereType<String>()
-        .where((name) => name.trim().isNotEmpty)
-        .toList();
-
-    String selectionSummary;
-    if (selectedNames.isEmpty) {
-      selectionSummary = 'No abilities selected yet.';
-    } else if (selectedNames.length <= 3) {
-      selectionSummary = selectedNames.join(', ');
-    } else {
-      final remaining = selectedNames.length - 3;
-      selectionSummary = '${selectedNames.take(3).join(', ')} +$remaining more';
-    }
-
-    final subtitleWidgets = <Widget>[];
-    if (helperText != null) {
-      subtitleWidgets.add(Text(
-        helperText,
-        style: theme.textTheme.bodySmall,
-      ));
-    }
-    subtitleWidgets.add(Text(
-      'Selected: $selectionSummary',
-      style: theme.textTheme.bodySmall,
-    ));
-
-    final children = tiles.isEmpty
-        ? [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                'No abilities available yet.',
-                style: theme.textTheme.bodySmall,
-              ),
-            ),
-          ]
-        : [
-            const SizedBox(height: 8),
-            ...tiles,
-            const SizedBox(height: 4),
-          ];
-
-    return ExpansionTile(
-      key: ValueKey('${title}_$cost'),
-      title: Text(
-        displayTitle,
-        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: subtitleWidgets,
-      ),
-      tilePadding: EdgeInsets.zero,
-      childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-      maintainState: true,
-      children: children,
-    );
-  }
-
-  Widget? _buildAbilityTile(Map<String, dynamic> ability) {
-    final id = ability['id']?.toString() ?? ability['name']?.toString() ?? '';
-    if (id.isEmpty) return null;
-    final name = ability['name']?.toString() ?? 'Ability';
-    final summary = _abilitySummary(ability);
-    final selected = _selectedClassAbilityIds.contains(id);
-    final cost = _abilityCostIndex[id] ?? _abilityCost(ability);
-    final level = _toIntOrNull(ability['level']);
-    final subclassName = ability['subclass']?.toString().trim();
-    final enabled = _isAbilityToggleEnabled(id, cost, selected);
-    final theme = Theme.of(context);
-    final accent = StrifeTheme.abilitiesAccent;
-
-    final actionType = ability['action_type']?.toString();
-    final keywords = (ability['keywords'] as List?)
-            ?.whereType<String>()
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList() ??
-        const [];
-
-    final metaChips = <Widget>[];
-    if (actionType != null && actionType.isNotEmpty) {
-      metaChips.add(_buildAbilityMetaChip(
-        theme,
-        label: actionType,
-        color: accent,
-        icon: Icons.bolt,
-      ));
-    }
-    for (final keyword in keywords.take(2)) {
-      metaChips.add(_buildAbilityMetaChip(
-        theme,
-        label: keyword,
-        color: theme.colorScheme.secondary,
-        icon: Icons.local_offer,
-      ));
-    }
-    if (keywords.length > 2) {
-      metaChips.add(_buildAbilityMetaChip(
-        theme,
-        label: '+${keywords.length - 2} more',
-        color: theme.colorScheme.outline,
-      ));
-    }
-    if (level != null && level > 0) {
-      metaChips.add(_buildAbilityMetaChip(
-        theme,
-        label: 'Level $level',
-        color: accent,
-        icon: Icons.trending_up,
-      ));
-    }
-    if (subclassName != null && subclassName.isNotEmpty) {
-      metaChips.add(_buildAbilityMetaChip(
-        theme,
-        label: subclassName,
-        color: theme.colorScheme.tertiary,
-        icon: Icons.auto_awesome,
-      ));
-    }
-
-    final limitReachedNotice = !enabled && !selected
-        ? Text(
-            'Limit reached for this cost.',
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.error,
-              fontWeight: FontWeight.w600,
-            ),
-          )
-        : null;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Opacity(
-        opacity: enabled || selected ? 1 : 0.6,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: enabled ? () => _toggleAbilitySelection(id) : null,
-            onLongPress: () => _showAbilityDetails(ability),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: selected
-                    ? accent.withValues(alpha: 0.14)
-                    : theme.colorScheme.surface,
-                border: Border.all(
-                  color: selected
-                      ? accent.withValues(alpha: 0.65)
-                      : theme.colorScheme.outlineVariant,
-                  width: selected ? 1.6 : 1.0,
-                ),
-                boxShadow: selected
-                    ? [
-                        BoxShadow(
-                          color: accent.withValues(alpha: 0.18),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Checkbox(
-                      value: selected,
-                      onChanged:
-                          enabled ? (_) => _toggleAbilitySelection(id) : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                name,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            _buildAbilityCostBadge(theme, cost),
-                            IconButton(
-                              tooltip: 'View details',
-                              icon: const Icon(Icons.info_outline),
-                              onPressed: () => _showAbilityDetails(ability),
-                              splashRadius: 18,
-                              visualDensity: VisualDensity.compact,
-                            ),
-                          ],
-                        ),
-                        if (metaChips.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: metaChips,
-                          ),
-                        ],
-                        if (summary != null) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            summary,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                        if (limitReachedNotice != null) ...[
-                          const SizedBox(height: 8),
-                          limitReachedNotice,
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAbilityCostBadge(ThemeData theme, int? cost) {
-    final isSignature = cost == null || cost <= 0;
-    final accent = StrifeTheme.abilitiesAccent;
-    final color = isSignature
-        ? theme.colorScheme.primary
-        : accent;
-    final label = isSignature ? 'Signature' : 'Cost $cost';
-    final icon = isSignature ? Icons.auto_awesome : Icons.flash_on;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: color.withValues(alpha: 0.18),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildStartingStatsCard(ThemeData theme) {
     final start = _startingCharacteristics;
@@ -2035,8 +2389,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                       children: boosts.entries
                           .map((entry) => _buildAbilityMetaChip(
                                 theme,
-                                label:
-                                    '${entry.key.capitalize()}: +${entry.value}',
+                label:
+                  '${_characteristicDisplayName(entry.key)}: +${entry.value}',
                                 color: StrifeTheme.resourceAccent,
                                 icon: Icons.trending_up,
                               ))
@@ -2053,8 +2407,152 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   Widget _buildCharacteristicArraysCard(ThemeData theme) {
-    final arrays = _currentCharacteristicArrays();
-    if (arrays.isEmpty) return const SizedBox.shrink();
+    final arrays = _availableCharacteristicArrays;
+    if (arrays.isEmpty && _fixedStartingCharacteristics.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final fixed = _fixedStartingCharacteristics;
+    final selectedIndex = _selectedCharacteristicArrayIndex;
+    final assignments = _characteristicArrayAssignments;
+    final accent = StrifeTheme.classAccent;
+
+    final arrayOptions = arrays.isEmpty
+        ? <Widget>[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: theme.colorScheme.surfaceVariant
+                    .withValues(alpha: 0.18),
+              ),
+              child: Text(
+                'This class does not define characteristic arrays.',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          ]
+        : arrays.asMap().entries.map((entry) {
+            final index = entry.key;
+            final array = entry.value;
+            final valueLabels = _characteristicArrayValues(array)
+                .map((value) => value >= 0 ? '+$value' : '$value')
+                .toList();
+            final description = array['description']?.toString();
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: RadioListTile<int>(
+                value: index,
+                groupValue: selectedIndex,
+                onChanged: (arrays.isEmpty)
+                    ? null
+                    : (value) {
+                        if (value != null) {
+                          _selectCharacteristicArray(value);
+                        }
+                      },
+                controlAffinity: ListTileControlAffinity.leading,
+                activeColor: accent,
+                title: Text(
+                  valueLabels.isEmpty
+                      ? 'Custom array ${index + 1}'
+                      : valueLabels.join(' · '),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: accent,
+                  ),
+                ),
+                subtitle: description == null || description.isEmpty
+                    ? null
+                    : Text(
+                        description,
+                        style: theme.textTheme.bodySmall,
+                      ),
+              ),
+            );
+          }).toList();
+
+    final characteristicRows = <Widget>[];
+    for (final key in _characteristicKeys) {
+      final displayName = _characteristicDisplayName(key);
+      final fixedValue = fixed[key];
+      final assignedValue = assignments[key];
+      final total = (fixedValue ?? 0) + (assignedValue ?? 0);
+      final isFixed = fixedValue != null;
+      final availableValues = _availableValuesForCharacteristic(key);
+
+      if (isFixed) {
+  final fixedLabel = fixedValue >= 0 ? '+$fixedValue' : '$fixedValue';
+        final totalLabel = total >= 0 ? '+$total' : '$total';
+        characteristicRows.add(
+          _buildFixedCharacteristicRow(
+            theme,
+            name: displayName,
+            valueLabel: 'Fixed bonus $fixedLabel',
+            totalLabel: 'Total: $totalLabel',
+            accent: accent,
+          ),
+        );
+        continue;
+      }
+
+      characteristicRows.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              displayName,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            DropdownButtonFormField<int?>(
+              value: assignedValue,
+              items: [
+                const DropdownMenuItem<int?>(
+                  value: null,
+                  child: Text('— Choose value —'),
+                ),
+                ...availableValues.map(
+                  (value) => DropdownMenuItem<int?>(
+                    value: value,
+                    child: Text(value >= 0 ? '+$value' : '$value'),
+                  ),
+                ),
+              ],
+              onChanged: (selectedIndex == null)
+                  ? null
+                  : (value) => _updateCharacteristicAssignment(key, value),
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.tune),
+                labelText: 'Assign value',
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Total: ${total >= 0 ? '+$total' : '$total'}',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+      );
+    }
+
+    final assignmentsComplete = _hasCompleteCharacteristicAssignments();
+    final summaryChips = assignmentsComplete
+        ? _finalCharacteristicScores().entries.map((entry) {
+            final total = entry.value;
+            return _buildAbilityMetaChip(
+              theme,
+              label:
+                  '${_characteristicDisplayName(entry.key)}: ${total >= 0 ? '+$total' : '$total'}',
+              color: accent,
+              icon: Icons.check_circle_outline,
+            );
+          }).toList()
+        : const <Widget>[];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -2068,60 +2566,63 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             StrifeTheme.sectionHeader(
               context,
               title: 'Characteristic arrays',
-              subtitle:
-                  'Pick one array per hero to assign their starting characteristics',
+              subtitle: arrays.isEmpty
+                  ? 'Fixed bonuses only for this class.'
+                  : 'Choose an array and assign each value to a free characteristic.',
               icon: Icons.view_module,
-              accent: StrifeTheme.classAccent,
+              accent: accent,
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
               child: Column(
-                children: arrays.map((entry) {
-                  final values = (entry['values'] as List?)
-                          ?.whereType<num>()
-                          .map((e) => e.toInt())
-                          .map((e) => e >= 0 ? '+$e' : '$e')
-                          .join(' · ') ??
-                      'Custom array';
-                  final description = entry['description']?.toString();
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        color: StrifeTheme.classAccent
-                            .withValues(alpha: 0.08),
-                        border: Border.all(
-                          color: StrifeTheme.classAccent
-                              .withValues(alpha: 0.24),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            values,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: StrifeTheme.classAccent,
-                            ),
-                          ),
-                          if (description != null && description.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 6),
-                              child: Text(
-                                description,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                        ],
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...arrayOptions,
+                  const SizedBox(height: 16),
+                  if (arrays.isNotEmpty)
+                    Text(
+                      'Assignments',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  );
-                }).toList(),
+                  if (arrays.isEmpty)
+                    Text(
+                      'All characteristics are fixed by this class.',
+                      style: theme.textTheme.bodyMedium,
+                    )
+                  else ...[
+                    const SizedBox(height: 12),
+                    if (selectedIndex == null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'Select an array above to start assigning values.',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    for (var i = 0; i < characteristicRows.length; i++) ...[
+                      characteristicRows[i],
+                      if (i < characteristicRows.length - 1)
+                        const SizedBox(height: 12),
+                    ],
+                    const SizedBox(height: 8),
+                    Text(
+                      assignmentsComplete
+                          ? 'All characteristic slots assigned.'
+                          : 'Assign each value to finish setting up starting characteristics.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                  if (summaryChips.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: summaryChips,
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
@@ -2278,23 +2779,34 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                   ),
                   if (groups.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Text('Eligible skill groups',
-                        style: theme.textTheme.titleSmall
-                            ?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: groups
-                          .map((group) => Chip(
-                                label: Text(group.capitalize()),
-                                avatar: const Icon(Icons.folder_shared,
-                                    size: 16),
-                                backgroundColor: StrifeTheme.skillsAccent
-                                    .withValues(alpha: 0.1),
-                              ))
-                          .toList(),
-                    ),
+                    if (groups.length == 1 &&
+                        groups.first.toLowerCase() == 'any')
+                      Text(
+                        'You can choose skills from any group.',
+                        style: theme.textTheme.bodyMedium,
+                      )
+                    else ...[
+                      Text(
+                        'Eligible skill groups',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: groups
+                            .map((group) => Chip(
+                                  label: Text(group.capitalize()),
+                                  avatar: const Icon(Icons.folder_shared,
+                                      size: 16),
+                                  backgroundColor: StrifeTheme.skillsAccent
+                                      .withValues(alpha: 0.1),
+                                ))
+                            .toList(),
+                      ),
+                    ],
                   ],
                   if (quickBuild.isNotEmpty) ...[
                     const SizedBox(height: 16),
@@ -2350,230 +2862,100 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   Widget _buildAbilitiesCard(ThemeData theme) {
-    final sections = <Widget>[];
-    if (_signatureAbilities.isNotEmpty) {
-      sections.add(
-        _buildAbilitySection('Signature abilities', _signatureAbilities),
-      );
-    }
-
-    final sortedCosts = _abilitiesByCost.keys.toList()..sort();
-    for (final cost in sortedCosts) {
-      final abilities = _abilitiesByCost[cost] ?? const [];
-      if (abilities.isEmpty) continue;
-      final label = cost == 1
-          ? '1-cost abilities'
-          : '$cost-cost abilities';
-      sections.add(_buildAbilitySection(label, abilities, cost: cost));
-    }
-
-    if (sections.isEmpty) {
+    final hasAbilityData = _classAbilityData.isNotEmpty ||
+        _autoGrantedAbilityIds.isNotEmpty ||
+        _baselineAbilityIds.isNotEmpty;
+    if (!hasAbilityData) {
       return const SizedBox.shrink();
     }
 
-    final allowanceChips = <Widget>[
-      _buildAbilityAllowancePill(
-        theme,
-        label: 'Signature',
-        allowance: _signatureAbilityAllowance,
-        selected: _selectedSignatureAbilityCount(),
-      ),
-      ...sortedCosts.map(
-        (cost) => _buildAbilityAllowancePill(
-          theme,
-          label: 'Cost $cost',
-          allowance: _abilityAllowanceForCost(cost),
-          selected: _selectedAbilityCountForCost(cost),
-        ),
-      ),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Class abilities',
-              subtitle:
-                  'Tap an ability card to toggle it on or off for this hero',
-              icon: Icons.bolt,
-              accent: StrifeTheme.abilitiesAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (allowanceChips.isNotEmpty) ...[
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: allowanceChips,
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  ...sections.expand((section) sync* {
-                    yield section;
-                    yield const SizedBox(height: 12);
-                  }).toList()
-                    ..removeLast(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ClassAbilitiesWidget(
+      level: _level,
+      classMetadata: _classData,
+      abilities: _classAbilityData,
+      abilityDetailsById: _abilityDetailsById,
+      selectedAbilityIds: _selectedAbilityIds,
+      autoGrantedAbilityIds: _autoGrantedAbilityIds,
+      baselineAbilityIds: _baselineAbilityIds,
+      activeSubclassSlugs: _activeSubclassSlugs,
+      subclassLabel: _selectedSubclassDisplayName,
+      onSelectionChanged: _updateAbilitySelections,
+      abilitySummaryBuilder: _abilitySummary,
+      onAbilityPreviewRequested: _showAbilityDetails,
     );
   }
 
   Widget _buildFeaturesCard(ThemeData theme) {
     if (_classFeatures.isEmpty) return const SizedBox.shrink();
 
-    final featuresByLevel = <int, List<Feature>>{};
-    for (final feature in _classFeatures) {
-      featuresByLevel.putIfAbsent(feature.level, () => <Feature>[]).add(feature);
-    }
-
-    final entries = featuresByLevel.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-
-    final tiles = entries.map((entry) {
-      final features = entry.value..sort((a, b) => a.name.compareTo(b.name));
-      return Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          key: ValueKey('feature_level_${entry.key}'),
-          title: Text('Level ${entry.key}'),
-          subtitle: Text(
-            '${features.length} feature${features.length == 1 ? '' : 's'}',
-          ),
-          tilePadding: EdgeInsets.zero,
-          childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-          maintainState: true,
-          children: features
-              .map((feature) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: _buildFeatureTile(feature, theme),
-                  ))
-              .toList(),
-        ),
-      );
-    }).toList();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Level features',
-              subtitle: 'What this hero gains at each level up to $_level',
-              icon: Icons.military_tech,
-              accent: StrifeTheme.featuresAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: tiles.isEmpty
-                  ? Text(
-                      'No class features available yet.',
-                      style: theme.textTheme.bodyMedium,
-                    )
-                  : Column(
-                      children: tiles,
-                    ),
-            ),
-          ],
-        ),
-      ),
+    return ClassFeaturesWidget(
+      level: _level,
+      classMetadata: _classData,
+      features: _classFeatures,
+      featureDetailsById: _classFeatureDetailsById,
+      selectedOptions: _featureOptionSelections,
+      onSelectionChanged: _updateFeatureSelection,
+      abilityDetailsById: _abilityDetailsById,
+      abilityIdByName: _abilityIdByName,
+      onAbilityPreviewRequested: _showAbilityDetails,
+      activeSubclassSlugs: _activeSubclassSlugs,
+      subclassLabel: _selectedSubclassDisplayName,
     );
   }
 
-  Widget _buildFeatureTile(Feature feature, ThemeData theme) {
-    final accent = feature.isSubclassFeature
-        ? theme.colorScheme.tertiary
-        : StrifeTheme.featuresAccent;
-    final subtitle = feature.isSubclassFeature && feature.subclassName != null
-        ? 'Subclass: ${feature.subclassName}'
-        : null;
+  Widget _buildPerksCard() {
+    if (_perkAllowances.isEmpty) return const SizedBox.shrink();
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: accent.withValues(alpha: 0.08),
-        border: Border.all(color: accent.withValues(alpha: 0.28)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Text(
-                  feature.name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: accent,
-                  ),
-                ),
-              ),
-              if (feature.isSubclassFeature)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: accent.withValues(alpha: 0.16),
-                    border: Border.all(color: accent.withValues(alpha: 0.32)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.auto_awesome, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Subclass',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: accent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          if (subtitle != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              subtitle,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontStyle: FontStyle.italic,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-          if (feature.description.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              feature.description,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ],
-      ),
+    final selections = <int, List<String?>>{};
+    for (var index = 0; index < _perkAllowances.length; index++) {
+      final allowance = _perkAllowances[index];
+      final existing = _perkSelections[index];
+      if (existing != null && existing.length == allowance.count) {
+        selections[index] = List<String?>.from(existing);
+      } else {
+        final slots = List<String?>.filled(allowance.count, null);
+        if (existing != null) {
+          for (var slot = 0; slot < allowance.count && slot < existing.length; slot++) {
+            slots[slot] = existing[slot];
+          }
+        }
+        selections[index] = slots;
+      }
+    }
+
+    return PerkPickerCard(
+      allowances: _perkAllowances,
+      perkComponents: _perkComponents,
+      selections: selections,
+      onSelectionChanged: _updatePerkSelection,
+    );
+  }
+
+  Widget _buildLanguagesCard() {
+    if (_languageAllowances.isEmpty) return const SizedBox.shrink();
+
+    final selections = <int, List<String?>>{};
+    for (var index = 0; index < _languageAllowances.length; index++) {
+      final allowance = _languageAllowances[index];
+      final existing = _languageSelections[index];
+      if (existing != null && existing.length == allowance.count) {
+        selections[index] = List<String?>.from(existing);
+      } else {
+        final slots = List<String?>.filled(allowance.count, null);
+        if (existing != null) {
+          for (var slot = 0; slot < allowance.count && slot < existing.length; slot++) {
+            slots[slot] = existing[slot];
+          }
+        }
+        selections[index] = slots;
+      }
+    }
+
+    return LanguagePickerCard(
+      allowances: _languageAllowances,
+      languageComponents: _languageComponents,
+      selections: selections,
+      onSelectionChanged: _updateLanguageSelection,
     );
   }
 
@@ -2613,58 +2995,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
-  Widget _buildAbilityAllowancePill(
-    ThemeData theme, {
-    required String label,
-    required int allowance,
-    required int selected,
-  }) {
-    final accent = StrifeTheme.abilitiesAccent;
-    final bool unlocksLater = allowance <= 0;
-    final remaining = allowance - selected;
-    final color = unlocksLater
-        ? theme.colorScheme.onSurfaceVariant
-        : remaining > 0
-            ? accent
-            : theme.colorScheme.primary;
-    final status = unlocksLater
-        ? 'Unlocks later'
-        : remaining > 0
-            ? '$selected of $allowance'
-            : '$selected of $allowance · Maxed';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: color.withValues(alpha: 0.12),
-        border: Border.all(color: color.withValues(alpha: 0.35)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            unlocksLater
-                ? Icons.lock_clock
-                : remaining > 0
-                    ? Icons.check_circle_outline
-                    : Icons.verified,
-            size: 16,
-            color: color,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            '$label: $status',
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAbilityMetaChip(
     ThemeData theme, {
     required String label,
@@ -2690,6 +3020,57 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             style: theme.textTheme.labelSmall?.copyWith(
               color: color,
               fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFixedCharacteristicRow(
+    ThemeData theme, {
+    required String name,
+    required String valueLabel,
+    required String totalLabel,
+    required Color accent,
+    IconData icon = Icons.lock,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: accent.withValues(alpha: 0.08),
+        border: Border.all(color: accent.withValues(alpha: 0.24)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: accent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: accent,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  valueLabel,
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  totalLabel,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
