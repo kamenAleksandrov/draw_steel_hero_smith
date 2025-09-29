@@ -195,134 +195,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_battle_plan",
-    "name": "Battle Plan",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "With new understanding of your foes, you create the perfect plan to win the battle.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three creatures",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target is marked by you. Immediately and until the end of the encounter, the Director tells you if any creatures marked by you have damage immunity or weakness and the value of that immunity or weakness. Additionally, you and each ally within 3 squares of you gains 2 surges.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Mastermind"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_blot_out_the_sun",
-    "name": "Blot Out the Sun!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "What makes a good soldier? The ability to fire four shots a minute in any weather.",
-    "keywords": [
-      "Area"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target can make a ranged free strike that gains an edge against any enemy marked by you within distance of their ranged free strike. A target ignores banes and double banes when making this strike.",
-    "special_effect": null,
-    "level": 9,
-    "subclass": "Mastermind"
-  },
-  {
-    "type": "ability",
     "id": "ability_tactician_concussive_strike",
     "name": "Concussive Strike",
     "costs": {
@@ -388,454 +260,6 @@
     "effect": null,
     "special_effect": null,
     "level": 1,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_coordinated_execution",
-    "name": "Coordinated Execution",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You direct your ally to make a killing blow.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "If the target of the triggering ability is not a leader or solo creature, they are reduced to 0 Stamina. If the target of the triggering ability is a minion, the entire squad is killed. If the target of the triggering ability is a leader or solo creature, the triggering ability's power roll automatically obtains a tier 3 outcome.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_counterstrategy",
-    "name": "Counterstrategy",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "I've identified a way to negate their strengths.",
-    "keywords": [
-      "-"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You gain 6 surges. Until the end of the encounter or until you are dying, whenever the Director spends Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*), choose yourself or one ally within 10 squares. The chosen character gains 2 of their Heroic Resource.",
-    "special_effect": null,
-    "level": 9,
-    "subclass": "Mastermind"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_finish_them",
-    "name": "Finish Them!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "You point out an opening to your ally so they can land a killing blow.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target is killed. Additionally, the creature who caused the target to be winded can spend a Recovery.",
-    "special_effect": null,
-    "level": 8,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_floodgates_open",
-    "name": "Floodgates Open",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "You direct your squad to strike in unison and with devastating effect.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three allies",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target gains 1 surge and can use a signature ability as a free triggered action. That ability gains an edge on the power roll and increases the potency of any potency effects by 1.",
-    "special_effect": null,
-    "level": 8,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_fog_of_war",
-    "name": "Fog of War",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "Your unorthodox strategy causes enemies to lash out in fear, heedless of who they might be attacking.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Two creatures",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target is marked by you, and must immediately make a free strike against a creature of your choice within 5 squares of them.",
-    "special_effect": null,
-    "level": 2,
-    "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_frontal_assault",
-    "name": "Frontal Assault",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 7
-    },
-    "story_text": "The purpose of a charge is to break their morale and force a retreat.",
-    "keywords": [
-      "-"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter or until you are dying, the first time on a turn that you or any ally deals damage to a target marked by you, the creature who dealt the damage can push the target up to 2 squares and then shift up to 2 squares. Additionally, any ally using the Charge main action to target a creature marked by you can use a melee strike signature ability or a melee strike heroic ability instead of a melee free strike.",
-    "special_effect": null,
-    "level": 3,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_go_now_and_speed_well",
-    "name": "Go Now and Speed Well",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "You direct an attack to strike true.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target gains 2 surges and can use a signature or heroic ability as a free triggered action. The ability has a double edge on the power roll, ignores damage immunity, and increases the potency of any potency effects by 1.",
-    "special_effect": null,
-    "level": 8,
     "subclass": null
   },
   {
@@ -909,271 +333,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_hit_em_hard",
-    "name": "Hit 'Em Hard!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 7
-    },
-    "story_text": "Your allies see the advantages in attacking the targets you select.",
-    "keywords": [
-      "-"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, that creature gains 2 surges, which they can use immediately.",
-    "special_effect": null,
-    "level": 3,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_hustle",
-    "name": "Hustle!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You and your allies coordinate to form a new battle line.",
-    "keywords": [
-      "Area"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "2 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You mark two enemies within 10 squares of you. Each target can shift up to their speed. You and each target gain 2 surges.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Mastermind"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_i_ll_open_and_you_ll_close",
-    "name": "I'll Open and You'll Close",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "You create an opening for an ally.",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + M damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 + M damage"
-        }
-      }
-    },
-    "effect": "One ally within 10 squares of you can use a heroic ability against the target as a free triggered action without spending any of their Heroic Resource, as long as they have enough Heroic Resource to pay for the ability. If the target is reduced to 0 Stamina before the chosen ally has used their ability, the ally can pick a different target.",
-    "special_effect": null,
-    "level": 8,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_i_ve_got_your_back",
-    "name": "I've Got Your Back",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "Your enemy will think twice about attacking your friend.",
-    "keywords": [
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Reason"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + R damage; taunted (EoT)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + R damage; taunted (EoT)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + R damage; taunted (EoT)"
-        }
-      }
-    },
-    "effect": "One ally adjacent to the target can spend a Recovery.",
-    "special_effect": null,
-    "level": 2,
-    "subclass": "Mastermind"
-  },
-  {
-    "type": "ability",
     "id": "ability_tactician_inspiring_strike",
     "name": "Inspiring Strike",
     "costs": {
@@ -1240,73 +399,6 @@
     "special_effect": null,
     "level": 1,
     "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_instant_retaliation",
-    "name": "Instant Retaliation",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You parry with almost supernatural speed.",
-    "keywords": [
-      "Melee",
-      "Weapon"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "A < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "A < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "A < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": "The target takes half the damage. You then make a power roll against the triggering creature.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Vanguard"
   },
   {
     "type": "ability",
@@ -1443,143 +535,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_no_dying_on_my_watch",
-    "name": "No Dying on My Watch",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "You prioritize saving an ally over your own safety.",
-    "keywords": [
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 5",
-      "area": null
-    },
-    "targets": "One enemy",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "R < WEAK, the target is frightened of the triggering ally (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "R < AVERAGE, the target is frightened of the triggering ally (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "R < STRONG, the target is frightened of the triggering ally (save ends)"
-        }
-      }
-    },
-    "effect": "You move up to your speed toward the triggering ally, ending this movement adjacent to them or in the nearest square if you can't reach an adjacent square. The triggering ally can spend a Recovery and gains 5 temporary Stamina for each enemy you came adjacent to during the move. You then make a power roll against the target.",
-    "special_effect": null,
-    "level": 2,
-    "subclass": "Vanguard"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_no_escape",
-    "name": "No Escape",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "Nothing will stop you from reaching your foe.",
-    "keywords": [
-      "Charge",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + M damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 + M damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "21 + M damage"
-        }
-      }
-    },
-    "effect": "You mark the target.\n\nIf you use this ability as part of the Charge main action, enemies' spaces don't count as difficult terrain for your movement. Additionally, if you move through any creature's space, you can slide that creature 1 square out of the path of your charge.",
-    "special_effect": null,
-    "level": 9,
-    "subclass": "Vanguard"
-  },
-  {
-    "type": "ability",
     "id": "ability_tactician_now",
     "name": "Now!",
     "costs": {
@@ -1708,75 +663,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_panic_in_their_lines",
-    "name": "Panic in Their Lines",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You confuse your foes, causing them to turn on each other.",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "Two creatures",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M damage; slide 1"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M damage; slide 3"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + M damage; slide 5"
-        }
-      }
-    },
-    "effect": "If a target is force moved into another creature, they must make a free strike against that creature.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
     "id": "ability_tactician_parry",
     "name": "Parry",
     "costs": {
@@ -1838,6 +724,658 @@
     "effect": "You can shift 1 square. If the target is you, or if you end this shift adjacent to the target, the target takes half the damage. If the damage has any potency effect associated with it, the potency is decreased by 1.\n\nThis ability's distance becomes Melee 1 + your Reason score, and you can shift up to a number of squares equal to your Reason score instead of 1 square.",
     "special_effect": null,
     "level": 1,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_squad_forward",
+    "name": "Squad! Forward!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 3
+    },
+    "story_text": "On your command, you and your allies force back the enemy line.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and two allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can move up to their speed.",
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_this_is_what_we_planned_for",
+    "name": "This Is What We Planned For",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "All those coordination drills you made them do finally pay off.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Two allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target who hasn't acted yet this combat round can take their turn in any order immediately after yours.",
+    "special_effect": null,
+    "level": 1,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_fog_of_war",
+    "name": "Fog of War",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "Your unorthodox strategy causes enemies to lash out in fear, heedless of who they might be attacking.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Two creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is marked by you, and must immediately make a free strike against a creature of your choice within 5 squares of them.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Insurgent"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_i_ve_got_your_back",
+    "name": "I've Got Your Back",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "Your enemy will think twice about attacking your friend.",
+    "keywords": [
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Reason"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + R damage; taunted (EoT)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + R damage; taunted (EoT)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + R damage; taunted (EoT)"
+        }
+      }
+    },
+    "effect": "One ally adjacent to the target can spend a Recovery.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Mastermind"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_no_dying_on_my_watch",
+    "name": "No Dying on My Watch",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "You prioritize saving an ally over your own safety.",
+    "keywords": [
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One enemy",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "R < WEAK, the target is frightened of the triggering ally (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "R < AVERAGE, the target is frightened of the triggering ally (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "R < STRONG, the target is frightened of the triggering ally (save ends)"
+        }
+      }
+    },
+    "effect": "You move up to your speed toward the triggering ally, ending this movement adjacent to them or in the nearest square if you can't reach an adjacent square. The triggering ally can spend a Recovery and gains 5 temporary Stamina for each enemy you came adjacent to during the move. You then make a power roll against the target.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Vanguard"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_squad_on_me",
+    "name": "Squad! On Me!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "Together we are invincible!",
+    "keywords": [
+      "Area"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "1 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the start of your next turn, each target has a bonus to stability equal to your Might score. Additionally, each target gains 2 surges.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Vanguard"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_targets_of_opportunity",
+    "name": "Targets of Opportunity",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "You point out easy targets to your friends, allowing them to include more enemies in their attacks.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "Two creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is marked by you, and you gain two surges.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Mastermind"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_try_me_instead",
+    "name": "Try Me Instead",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 5
+    },
+    "story_text": "\"Try picking on someone my size.\"",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Reason"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + R damage; R < WEAK, frightened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + R damage; R < AVERAGE, frightened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 + R damage; R < STRONG, frightened (save ends)"
+        }
+      }
+    },
+    "effect": "You shift up to your speed directly toward an ally, ending adjacent to them, then swapping locations with that ally as long as you can fit into each other's spaces. The ally can spend a Recovery, and you can make the following weapon strike with a distance of melee 1 against a creature.",
+    "special_effect": null,
+    "level": 2,
+    "subclass": "Insurgent"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_frontal_assault",
+    "name": "Frontal Assault",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 7
+    },
+    "story_text": "The purpose of a charge is to break their morale and force a retreat.",
+    "keywords": [
+      "-"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, the first time on a turn that you or any ally deals damage to a target marked by you, the creature who dealt the damage can push the target up to 2 squares and then shift up to 2 squares. Additionally, any ally using the Charge main action to target a creature marked by you can use a melee strike signature ability or a melee strike heroic ability instead of a melee free strike.",
+    "special_effect": null,
+    "level": 3,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_hit_em_hard",
+    "name": "Hit 'Em Hard!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 7
+    },
+    "story_text": "Your allies see the advantages in attacking the targets you select.",
+    "keywords": [
+      "-"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, that creature gains 2 surges, which they can use immediately.",
+    "special_effect": null,
+    "level": 3,
     "subclass": null
   },
   {
@@ -1906,24 +1444,24 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_squad_forward",
-    "name": "Squad! Forward!",
+    "id": "ability_tactician_stay_strong_and_focus",
+    "name": "Stay Strong and Focus!",
     "costs": {
       "signature": false,
       "resource": "Focus",
-      "amount": 3
+      "amount": 7
     },
-    "story_text": "On your command, you and your allies force back the enemy line.",
+    "story_text": "\"We can do this! Keep faith and hold fast!\"",
     "keywords": [
-      "Ranged"
+      "-"
     ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
-      "distance": "Ranged 10",
+      "distance": "Self",
       "area": null
     },
-    "targets": "Self and two allies",
+    "targets": "Self",
     "power_roll": {
       "label": "Power roll",
       "characteristics": [],
@@ -1963,9 +1501,9 @@
         }
       }
     },
-    "effect": "Each target can move up to their speed.",
+    "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, the creature who dealt the damage can spend a Recovery.",
     "special_effect": null,
-    "level": 1,
+    "level": 3,
     "subclass": null
   },
   {
@@ -2038,134 +1576,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_squad_hit_and_run",
-    "name": "Squad! Hit and Run!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 11
-    },
-    "story_text": "I had to pry this secret from the shadow colleges.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self and two allies",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target gains 2 surges, and can use a free triggered action to use a signature ability that gains an edge. After resolving their ability, each target can shift up to 2 squares and become hidden even if they have no cover or concealment, or if they are observed.",
-    "special_effect": null,
-    "level": 9,
-    "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_squad_on_me",
-    "name": "Squad! On Me!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "Together we are invincible!",
-    "keywords": [
-      "Area"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "1 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the start of your next turn, each target has a bonus to stability equal to your Might score. Additionally, each target gains 2 surges.",
-    "special_effect": null,
-    "level": 2,
-    "subclass": "Vanguard"
-  },
-  {
-    "type": "ability",
     "id": "ability_tactician_squad_remember_your_training",
     "name": "Squad! Remember Your Training!",
     "costs": {
@@ -2230,18 +1640,868 @@
   },
   {
     "type": "ability",
-    "id": "ability_tactician_stay_strong_and_focus",
-    "name": "Stay Strong and Focus!",
+    "id": "ability_tactician_win_this_day",
+    "name": "Win This Day!",
     "costs": {
       "signature": false,
       "resource": "Focus",
-      "amount": 7
+      "amount": 9
     },
-    "story_text": "\"We can do this! Keep faith and hold fast!\"",
+    "story_text": "You inspire your allies to recover and gather their strength.",
+    "keywords": [
+      "Area"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target gains 2 surges. Additionally, they can spend a Recovery, remove any conditions or effects on them, and stand up if they are prone.",
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_you_ve_still_got_something_left",
+    "name": "You've Still Got Something Left",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You push an ally to use a heroic ability sooner than they otherwise would.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target uses a heroic ability with the Strike keyword as a free triggered action, and deals extra damage with that ability equal to your Reason score. The ability has its Heroic Resource cost reduced by 1 + your Reason score (minimum cost 0).",
+    "special_effect": null,
+    "level": 5,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_battle_plan",
+    "name": "Battle Plan",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "With new understanding of your foes, you create the perfect plan to win the battle.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is marked by you. Immediately and until the end of the encounter, the Director tells you if any creatures marked by you have damage immunity or weakness and the value of that immunity or weakness. Additionally, you and each ally within 3 squares of you gains 2 surges.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Mastermind"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_coordinated_execution",
+    "name": "Coordinated Execution",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You direct your ally to make a killing blow.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "If the target of the triggering ability is not a leader or solo creature, they are reduced to 0 Stamina. If the target of the triggering ability is a minion, the entire squad is killed. If the target of the triggering ability is a leader or solo creature, the triggering ability's power roll automatically obtains a tier 3 outcome.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Insurgent"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_hustle",
+    "name": "Hustle!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You and your allies coordinate to form a new battle line.",
+    "keywords": [
+      "Area"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "2 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You mark two enemies within 10 squares of you. Each target can shift up to their speed. You and each target gain 2 surges.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Mastermind"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_instant_retaliation",
+    "name": "Instant Retaliation",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You parry with almost supernatural speed.",
+    "keywords": [
+      "Melee",
+      "Weapon"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "A < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "A < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "A < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": "The target takes half the damage. You then make a power roll against the triggering creature.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Vanguard"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_panic_in_their_lines",
+    "name": "Panic in Their Lines",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You confuse your foes, causing them to turn on each other.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "Two creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M damage; slide 3"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M damage; slide 5"
+        }
+      }
+    },
+    "effect": "If a target is force moved into another creature, they must make a free strike against that creature.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Insurgent"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_to_me_squad",
+    "name": "To Me Squad!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 9
+    },
+    "story_text": "You lead your allies in a charge.",
+    "keywords": [
+      "Charge",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M damage; one ally within 10 squares can use the Charge main action as a free triggered action, and can use a melee strike signature ability instead of a free strike for the charge"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M damage; one ally within 10 squares can use the Charge main action as a free triggered action, and can use a melee strike signature ability that gains an edge instead of a free strike for the charge"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M damage; two allies within 10 squares can use the Charge main action as a free triggered action, and can each use a melee strike signature ability that gains an edge instead of a free strike for the charge"
+        }
+      }
+    },
+    "effect": "If the target is hit with two or more strikes as part of this ability and they have R < STRONG, they are dazed (save ends). If the target is reduced to 0 Stamina before one or both allies has made their strike, the ally or allies can pick a different target.",
+    "special_effect": null,
+    "level": 6,
+    "subclass": "Vanguard"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_finish_them",
+    "name": "Finish Them!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "You point out an opening to your ally so they can land a killing blow.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target is killed. Additionally, the creature who caused the target to be winded can spend a Recovery.",
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_floodgates_open",
+    "name": "Floodgates Open",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "You direct your squad to strike in unison and with devastating effect.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three allies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target gains 1 surge and can use a signature ability as a free triggered action. That ability gains an edge on the power roll and increases the potency of any potency effects by 1.",
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_go_now_and_speed_well",
+    "name": "Go Now and Speed Well",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "You direct an attack to strike true.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target gains 2 surges and can use a signature or heroic ability as a free triggered action. The ability has a double edge on the power roll, ignores damage immunity, and increases the potency of any potency effects by 1.",
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_i_ll_open_and_you_ll_close",
+    "name": "I'll Open and You'll Close",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "You create an opening for an ally.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + M damage"
+        }
+      }
+    },
+    "effect": "One ally within 10 squares of you can use a heroic ability against the target as a free triggered action without spending any of their Heroic Resource, as long as they have enough Heroic Resource to pay for the ability. If the target is reduced to 0 Stamina before the chosen ally has used their ability, the ally can pick a different target.",
+    "special_effect": null,
+    "level": 8,
+    "subclass": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_blot_out_the_sun",
+    "name": "Blot Out the Sun!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "What makes a good soldier? The ability to fire four shots a minute in any weather.",
+    "keywords": [
+      "Area"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can make a ranged free strike that gains an edge against any enemy marked by you within distance of their ranged free strike. A target ignores banes and double banes when making this strike.",
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Mastermind"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_counterstrategy",
+    "name": "Counterstrategy",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "I've identified a way to negate their strengths.",
     "keywords": [
       "-"
     ],
-    "action_type": "Maneuver",
+    "action_type": "Main action",
     "trigger_text": null,
     "range": {
       "distance": "Self",
@@ -2287,31 +2547,100 @@
         }
       }
     },
-    "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, the creature who dealt the damage can spend a Recovery.",
+    "effect": "You gain 6 surges. Until the end of the encounter or until you are dying, whenever the Director spends Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*), choose yourself or one ally within 10 squares. The chosen character gains 2 of their Heroic Resource.",
     "special_effect": null,
-    "level": 3,
-    "subclass": null
+    "level": 9,
+    "subclass": "Mastermind"
   },
   {
     "type": "ability",
-    "id": "ability_tactician_targets_of_opportunity",
-    "name": "Targets of Opportunity",
+    "id": "ability_tactician_no_escape",
+    "name": "No Escape",
     "costs": {
       "signature": false,
       "resource": "Focus",
-      "amount": 5
+      "amount": 11
     },
-    "story_text": "You point out easy targets to your friends, allowing them to include more enemies in their attacks.",
+    "story_text": "Nothing will stop you from reaching your foe.",
+    "keywords": [
+      "Charge",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + M damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + M damage"
+        }
+      }
+    },
+    "effect": "You mark the target.\n\nIf you use this ability as part of the Charge main action, enemies' spaces don't count as difficult terrain for your movement. Additionally, if you move through any creature's space, you can slide that creature 1 square out of the path of your charge.",
+    "special_effect": null,
+    "level": 9,
+    "subclass": "Vanguard"
+  },
+  {
+    "type": "ability",
+    "id": "ability_tactician_squad_hit_and_run",
+    "name": "Squad! Hit and Run!",
+    "costs": {
+      "signature": false,
+      "resource": "Focus",
+      "amount": 11
+    },
+    "story_text": "I had to pry this secret from the shadow colleges.",
     "keywords": [
       "Ranged"
     ],
-    "action_type": "Maneuver",
+    "action_type": "Main action",
     "trigger_text": null,
     "range": {
-      "distance": "Ranged 5",
+      "distance": "Ranged 10",
       "area": null
     },
-    "targets": "Two creatures",
+    "targets": "Self and two allies",
     "power_roll": {
       "label": "Power roll",
       "characteristics": [],
@@ -2351,10 +2680,10 @@
         }
       }
     },
-    "effect": "Each target is marked by you, and you gain two surges.",
+    "effect": "Each target gains 2 surges, and can use a free triggered action to use a signature ability that gains an edge. After resolving their ability, each target can shift up to 2 squares and become hidden even if they have no cover or concealment, or if they are observed.",
     "special_effect": null,
-    "level": 2,
-    "subclass": "Mastermind"
+    "level": 9,
+    "subclass": "Insurgent"
   },
   {
     "type": "ability",
@@ -2492,334 +2821,5 @@
     "special_effect": null,
     "level": 9,
     "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_this_is_what_we_planned_for",
-    "name": "This Is What We Planned For",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "All those coordination drills you made them do finally pay off.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Two allies",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target who hasn't acted yet this combat round can take their turn in any order immediately after yours.",
-    "special_effect": null,
-    "level": 1,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_to_me_squad",
-    "name": "To Me Squad!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You lead your allies in a charge.",
-    "keywords": [
-      "Charge",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M damage; one ally within 10 squares can use the Charge main action as a free triggered action, and can use a melee strike signature ability instead of a free strike for the charge"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M damage; one ally within 10 squares can use the Charge main action as a free triggered action, and can use a melee strike signature ability that gains an edge instead of a free strike for the charge"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + M damage; two allies within 10 squares can use the Charge main action as a free triggered action, and can each use a melee strike signature ability that gains an edge instead of a free strike for the charge"
-        }
-      }
-    },
-    "effect": "If the target is hit with two or more strikes as part of this ability and they have R < STRONG, they are dazed (save ends). If the target is reduced to 0 Stamina before one or both allies has made their strike, the ally or allies can pick a different target.",
-    "special_effect": null,
-    "level": 6,
-    "subclass": "Vanguard"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_try_me_instead",
-    "name": "Try Me Instead",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 5
-    },
-    "story_text": "\"Try picking on someone my size.\"",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self; see below",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Reason"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "2 + R damage; R < WEAK, frightened (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + R damage; R < AVERAGE, frightened (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "4 + R damage; R < STRONG, frightened (save ends)"
-        }
-      }
-    },
-    "effect": "You shift up to your speed directly toward an ally, ending adjacent to them, then swapping locations with that ally as long as you can fit into each other's spaces. The ally can spend a Recovery, and you can make the following weapon strike with a distance of melee 1 against a creature.",
-    "special_effect": null,
-    "level": 2,
-    "subclass": "Insurgent"
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_win_this_day",
-    "name": "Win This Day!",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You inspire your allies to recover and gather their strength.",
-    "keywords": [
-      "Area"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target gains 2 surges. Additionally, they can spend a Recovery, remove any conditions or effects on them, and stand up if they are prone.",
-    "special_effect": null,
-    "level": 5,
-    "subclass": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_tactician_you_ve_still_got_something_left",
-    "name": "You've Still Got Something Left",
-    "costs": {
-      "signature": false,
-      "resource": "Focus",
-      "amount": 9
-    },
-    "story_text": "You push an ally to use a heroic ability sooner than they otherwise would.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target uses a heroic ability with the Strike keyword as a free triggered action, and deals extra damage with that ability equal to your Reason score. The ability has its Heroic Resource cost reduced by 1 + your Reason score (minimum cost 0).",
-    "special_effect": null,
-    "level": 5,
-    "subclass": null
   }
 ]

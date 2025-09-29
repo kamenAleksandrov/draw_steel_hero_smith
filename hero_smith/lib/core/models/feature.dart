@@ -23,15 +23,39 @@ class Feature {
   });
 
   factory Feature.fromJson(Map<String, dynamic> json) {
+    final id = json['id']?.toString();
+    if (id == null || id.isEmpty) {
+      throw ArgumentError('Feature JSON missing id field.');
+    }
+
+    final type = json['type']?.toString() ?? 'feature';
+    final name = json['name']?.toString() ?? 'Unnamed Feature';
+    final className = json['class']?.toString() ?? '';
+    final subclassName = json['subclass_name']?.toString();
+    final level = _tryParseInt(json['level']) ?? 0;
+    final description = json['description']?.toString() ?? '';
+
+    var isSubclassFeature = false;
+    final subclassRaw = json['is_subclass_feature'];
+    if (subclassRaw is bool) {
+      isSubclassFeature = subclassRaw;
+    } else if (subclassRaw is num) {
+      isSubclassFeature = subclassRaw != 0;
+    } else if (subclassRaw is String) {
+      final normalized = subclassRaw.trim().toLowerCase();
+      isSubclassFeature =
+          normalized == 'true' || normalized == '1' || normalized == 'yes';
+    }
+
     return Feature(
-      id: json['id'] as String,
-      type: json['type'] as String,
-      name: json['name'] as String,
-      className: json['class'] as String,
-      isSubclassFeature: json['is_subclass_feature'] as bool? ?? false,
-      subclassName: json['subclass_name'] as String?,
-      level: json['level'] as int,
-      description: (json['description'] ?? '') as String,
+      id: id,
+      type: type,
+      name: name,
+      className: className,
+      isSubclassFeature: isSubclassFeature,
+      subclassName: subclassName,
+      level: level,
+      description: description,
     );
   }
 
@@ -60,5 +84,17 @@ class Feature {
   @override
   String toString() {
     return 'Feature(id: $id, name: $name, class: $className, level: $level)';
+  }
+
+  static int? _tryParseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.round();
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) return null;
+      return int.tryParse(trimmed);
+    }
+    return null;
   }
 }

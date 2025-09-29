@@ -6,7 +6,7 @@ import '../models/feature.dart';
 class FeatureRepository {
   static const List<String> _classNames = [
     'censor',
-    'conduit', 
+    'conduit',
     'elementalist',
     'fury',
     'null',
@@ -18,7 +18,7 @@ class FeatureRepository {
 
   static Future<Map<String, List<Feature>>> loadAllClassFeatures() async {
     final Map<String, List<Feature>> classFeatures = {};
-    
+
     for (final className in _classNames) {
       try {
         final features = await loadClassFeatures(className);
@@ -30,15 +30,14 @@ class FeatureRepository {
         continue;
       }
     }
-    
+
     return classFeatures;
   }
 
   static Future<List<Feature>> loadClassFeatures(String className) async {
     try {
       final jsonString = await rootBundle.loadString(
-        'data/features/class_features/${className}_features.json'
-      );
+          'data/features/class_features/${className}_features.json');
       final List<dynamic> jsonList = json.decode(jsonString);
 
       // Parse features defensively: skip invalid entries instead of failing the whole class
@@ -46,11 +45,21 @@ class FeatureRepository {
       for (final item in jsonList) {
         if (item is Map<String, dynamic>) {
           try {
-            features.add(Feature.fromJson(item));
+            final normalized = Map<String, dynamic>.from(item);
+            final currentClass = normalized['class']?.toString().trim();
+            if (currentClass == null || currentClass.isEmpty) {
+              normalized['class'] = className;
+            }
+            final currentType = normalized['type']?.toString().trim();
+            if (currentType == null || currentType.isEmpty) {
+              normalized['type'] = 'feature';
+            }
+            features.add(Feature.fromJson(normalized));
           } catch (e) {
             final suspectedId = item['id'];
             final suspectedName = item['name'];
-            debugPrint('[FeatureRepository] Skipping invalid feature in "$className" (id: ${suspectedId ?? 'unknown'}, name: ${suspectedName ?? 'unknown'}): $e');
+            debugPrint(
+                '[FeatureRepository] Skipping invalid feature in "$className" (id: ${suspectedId ?? 'unknown'}, name: ${suspectedName ?? 'unknown'}): $e');
           }
         }
       }
@@ -81,16 +90,16 @@ class FeatureRepository {
 
   static Map<int, List<Feature>> groupFeaturesByLevel(List<Feature> features) {
     final Map<int, List<Feature>> grouped = {};
-    
+
     for (final feature in features) {
       grouped.putIfAbsent(feature.level, () => []).add(feature);
     }
-    
+
     // Sort features within each level by name
     for (final levelFeatures in grouped.values) {
       levelFeatures.sort((a, b) => a.name.compareTo(b.name));
     }
-    
+
     return grouped;
   }
 

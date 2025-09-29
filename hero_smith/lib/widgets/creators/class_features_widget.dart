@@ -12,6 +12,8 @@ class ClassFeaturesWidget extends StatelessWidget {
     required this.featureDetailsById,
     required this.selectedOptions,
     required this.onSelectionChanged,
+    this.domainLinkedFeatureIds = const {},
+    this.selectedDomainSlugs = const {},
     this.abilityDetailsById = const {},
     this.abilityIdByName = const {},
     this.onAbilityPreviewRequested,
@@ -26,6 +28,8 @@ class ClassFeaturesWidget extends StatelessWidget {
   final Map<String, Set<String>> selectedOptions;
   final void Function(String featureId, Set<String> selections)
       onSelectionChanged;
+  final Set<String> domainLinkedFeatureIds;
+  final Set<String> selectedDomainSlugs;
   final Map<String, Map<String, dynamic>> abilityDetailsById;
   final Map<String, String> abilityIdByName;
   final void Function(Map<String, dynamic> ability)?
@@ -280,14 +284,24 @@ class ClassFeaturesWidget extends StatelessWidget {
     }
 
     if (selectionInfo.options.isEmpty) {
+      final message = selectionInfo.restrictionMessage ??
+          (selectionInfo.domainRestricted
+              ? 'Select a domain above to view available options.'
+              : 'No choices required. This feature is granted automatically.');
       return Text(
-        'No choices required. This feature is granted automatically.',
+        message,
         style: theme.textTheme.bodySmall,
       );
     }
 
     final selected = selectionInfo.selected;
     final maxSelections = selectionInfo.count;
+    final domainNotice = selectionInfo.domainRestricted
+        ? Text(
+            'Options limited by your chosen domains.',
+            style: theme.textTheme.bodySmall,
+          )
+        : null;
 
     if (maxSelections <= 1) {
       final items = <DropdownMenuItem<String?>>[
@@ -308,6 +322,10 @@ class ClassFeaturesWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (domainNotice != null) ...[
+            domainNotice,
+            const SizedBox(height: 8),
+          ],
           DropdownButtonFormField<String?>(
             value: selectedKey,
             items: items,
@@ -337,6 +355,10 @@ class ClassFeaturesWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (domainNotice != null) ...[
+          domainNotice,
+          const SizedBox(height: 8),
+        ],
         Text(
           'Select up to $maxSelections option${maxSelections == 1 ? '' : 's'}.',
           style: theme.textTheme.bodySmall,
@@ -616,7 +638,39 @@ class ClassFeaturesWidget extends StatelessWidget {
   ) {
     final details = featureDetailsById[feature.id];
     final options = _extractOptions(details);
-    if (options.isEmpty) return null;
+    final isDomainLinked = domainLinkedFeatureIds.contains(feature.id);
+
+    List<_FeatureOption> filteredOptions = options;
+    bool domainRestricted = false;
+    String? restrictionMessage;
+
+    if (isDomainLinked) {
+      domainRestricted = true;
+      if (selectedDomainSlugs.isEmpty) {
+        filteredOptions = const <_FeatureOption>[];
+        restrictionMessage =
+            'Select at least one domain above to unlock this feature option.';
+      } else {
+        filteredOptions = options
+            .where((option) {
+              final domain = option.domain;
+              if (domain == null || domain.trim().isEmpty) return false;
+              final slug = _slugify(domain);
+              return selectedDomainSlugs.contains(slug);
+            })
+            .toList();
+        if (filteredOptions.isEmpty) {
+          restrictionMessage =
+              'Your current domains do not grant this feature option.';
+        }
+      }
+    }
+
+    if (filteredOptions.isEmpty) {
+      if (!domainRestricted) {
+        return null;
+      }
+    }
 
     final metadataEntry = metadataEntries.firstWhere(
       (entry) =>
@@ -642,13 +696,22 @@ class ClassFeaturesWidget extends StatelessWidget {
       subclassLocked = true;
     }
 
+    if (filteredOptions.isNotEmpty && count > filteredOptions.length) {
+      count = filteredOptions.length;
+    }
+
+    final optionKeys = filteredOptions.map((option) => option.key).toSet();
     final selected = selectedOptions[feature.id] ?? const <String>{};
+    final filteredSelected =
+        selected.where((key) => optionKeys.contains(key)).toSet();
 
     return _FeatureSelectionInfo(
       count: count,
-      options: options,
-      selected: selected,
+      options: filteredOptions,
+      selected: filteredSelected,
       subclassLocked: subclassLocked,
+      domainRestricted: domainRestricted,
+      restrictionMessage: restrictionMessage,
     );
   }
 
@@ -808,12 +871,16 @@ class _FeatureSelectionInfo {
     required this.options,
     required this.selected,
     required this.subclassLocked,
+    required this.domainRestricted,
+    this.restrictionMessage,
   });
 
   final int count;
   final List<_FeatureOption> options;
   final Set<String> selected;
   final bool subclassLocked;
+  final bool domainRestricted;
+  final String? restrictionMessage;
 }
 
 class _FeatureOption {

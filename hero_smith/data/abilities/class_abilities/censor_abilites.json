@@ -1,688 +1,6 @@
 [
   {
     "type": "ability",
-    "id": "ability_censor_back_blasphemer",
-    "name": "Back Blasphemer!",
-    "costs": {
-      "signature": true,
-      "resource": null,
-      "amount": null
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You channel power through your weapon to repel foes.",
-    "keywords": ["Area", "Magic", "Melee", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "2 cube within 1",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "2 holy damage; push 1"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "4 holy damage; push 2"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 holy damage; push 3"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_every_step_death",
-    "name": "Every Step... Death!",
-    "costs": {
-      "signature": true,
-      "resource": null,
-      "amount": null
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You show your foe a glimpse of their fate after death.",
-    "keywords": ["Magic", "Ranged", "Strike"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + P psychic damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + P psychic damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + P psychic damage"
-        }
-      }
-    },
-    "effect": "Each time the target willingly moves before the end of your next turn, they take 1 psychic damage for each square they move.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_halt_miscreant",
-    "name": "Halt Miscreant!",
-    "costs": {
-      "signature": true,
-      "resource": null,
-      "amount": null
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You infuse your weapon with holy magic that makes it difficult for your foe to get away.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "2 + M holy damage; P < WEAK, slowed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M holy damage; P < AVERAGE, slowed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + M holy damage; P < STRONG, slowed (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_your_allies_cannot_save_you",
-    "name": "Your Allies Cannot Save You!",
-    "costs": {
-      "signature": true,
-      "resource": null,
-      "amount": null
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "Your magic strike turns your foe's guilt into a burst of holy power.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + M holy damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M holy damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + M holy damage"
-        }
-      }
-    },
-    "effect": "Each enemy adjacent to the target is pushed away from the target up to a number of squares equal to your Presence score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_apostate",
-    "name": "Apostate",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Paragon",
-    "story_text": "You channel holy energy to seal an enemy's fate.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + M holy damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "19 + M holy damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "26 + M holy damage"
-        }
-      }
-    },
-    "effect": "Until the end of the encounter or until you are dying, the target has damage weakness 10.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_arrest",
-    "name": "Arrest",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "\"I got you, you son of a bitch.\"",
-    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M holy damage; grabbed"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M holy damage; grabbed"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + M holy damage; grabbed"
-        }
-      }
-    },
-    "effect": "If the target makes a strike against a creature while grabbed this way, you can spend 3 wrath to deal holy damage to them equal to your Presence score, then change the target of the strike to another target within the strike's distance.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_banish",
-    "name": "Banish",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Exorcist",
-    "story_text": "You sever the target's tenuous connection to the world.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M damage; P < WEAK, the target is banished (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + M damage; P < AVERAGE, the target is banished (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + M damage; P < STRONG, the target is banished (save ends)"
-        }
-      }
-    },
-    "effect": "This ability gains an edge against demons, devils, undead, and creatures not native to your current world. If you know the target's true name, this ability has a double edge. While banished, the target is sent to another manifold in the timescape and removed from the encounter map. A banished target can do nothing but make saving throws, and takes 10 holy damage each time they do so. If the target is reduced to 0 Stamina while banished, they are lost to the timescape.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_begone",
-    "name": "Begone!",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Exorcist",
-    "story_text": "You terrify your enemies into retreating, creating chaos in their ranks.",
-    "keywords": ["Area", "Magic"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 burst",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "4 psychic damage; slide 3"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 psychic damage; slide 5"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 psychic damage; slide 7"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_behold_a_shield_of_faith",
-    "name": "Behold a Shield of Faith!",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 3
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "A mighty blow turns your foe's vitality into a holy light that envelops you and an ally, discouraging enemies who might attack you.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + M holy damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M holy damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M holy damage"
-        }
-      }
-    },
-    "effect": "Until the start of your next turn, enemies take a bane on ability rolls made against you or any ally adjacent to you.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_behold_the_face_of_justice",
-    "name": "Behold the Face of Justice!",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You attack a foe and your enemies behold a vision of the true nature of your resolve.",
-    "keywords": ["Magic", "Melee", "Ranged", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + M holy damage; if the target has P < WEAK, each enemy within 2 squares of them is frightened of you (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M holy damage; if the target has P < AVERAGE, each enemy within 2 squares of them is frightened of you (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + M holy damage; if the target has P < STRONG, each enemy within 2 squares of them is frightened of you (save ends)"
-        }
-      }
-    },
-    "effect": "Each enemy frightened this way is pushed up to 2 squares away from the target and takes psychic damage equal to your Presence score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_blessing_and_a_curse",
-    "name": "Blessing and a Curse",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Oracle",
-    "story_text": "The gods bless and damn in equal measure.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target obtains a tier 1 or tier 3 outcome on their power roll (your choice). You can then choose another target within distance, who obtains the opposite outcome on their next power roll.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_censor_blessing_of_secrets",
     "name": "Blessing of Secrets",
     "costs": {
@@ -691,7 +9,10 @@
       "amount": null
     },
     "story_text": "You project an illusory aura that makes you and allies harder to notice.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -743,6 +64,1333 @@
   },
   {
     "type": "ability",
+    "id": "ability_censor_faithful_friend",
+    "name": "Faithful Friend",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "An animal spirit is drawn to you, sharing their senses with you and serving you faithfully.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You conjure a spirit that takes the form of any animal you have seen. The incorporeal animal has speed 5 and can fly, but can't physically interact with the world. While you are within 10 squares of the spirit, you automatically sense everything that type of animal would sense, in addition to sensing your own surroundings. You can dismiss the spirit at any time (no action required). If the spirit takes any damage, they are dismissed and you take 1d10 psychic damage that can't be reduced in any way.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_grave_speech",
+    "name": "Grave Speech",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You commune with the lingering soul of the recently dead.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One dead creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can speak to the target if they are a creature who has died within the last 24 hours and who can speak a language you know, even if they are just a head. The target regards you as they would have in life, and you might need to make tests to influence them and convince them to speak with you. The trauma of dying can make a creature's memory of that event hazy, but the target otherwise knows all they knew in life. After 1 minute, the effect ends. You can't use this ability on the same creature twice.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_guided_to_your_side",
+    "name": "Guided to Your Side",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You concentrate on a friend and teleport to them.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self and each ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target is teleported to unoccupied spaces within 5 squares of a willing creature who you are bonded to with your Invocation of the Heart feature. You don't need line of effect to the bonded creature but you must be on the same world.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_hands_of_the_maker",
+    "name": "Hands of the Maker",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You craft objects with the power of your mind.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You create a mundane object of size 1S or smaller. You can maintain a number of objects created this way equal to your Presence score. You can destroy an object created this way with a thought, no matter how far you are from it (no action required).",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_judgment",
+    "name": "Judgment",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You utter a prayer that outlines your foe in holy energy.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One enemy",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target is judged by you until the end of the encounter, you use this ability again, you willingly end this effect (no action required), or another censor judges the target.\nWhenever a creature judged by you uses a main action and is within your line of effect, you can use a free triggered action to deal holy damage equal to twice your Presence score to them.\nWhen a creature judged by you is reduced to 0 Stamina, you can use a free triggered action to use this ability against a new target.\nAdditionally, you can spend 1 wrath to take one of the following free triggered actions:\n- When an adjacent creature judged by you starts to shift, you make a melee free strike against them and their speed becomes 0 until the end of the current turn, preventing them from shifting.\n- When a creature judged by you within 10 squares makes a power roll, you cause them to take a bane on the roll.\n- When a creature judged by you within 10 squares uses an ability with a potency that targets only one creature, the potency is reduced by 1 for that creature.\n- If you damage a creature judged by you with a melee ability, the creature is taunted by you until the end of their next turn.\nYou can choose only one free triggered action option at a time, even if multiple options are triggered by the same effect.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_my_life_for_yours",
+    "name": "My Life for Yours",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "story_text": "You channel some of your vitality into more resilience for you or an ally.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You spend a Recovery and the target regains Stamina equal to your recovery value.\n\nYou can end one effect on the target that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_shield_of_the_righteous",
+    "name": "Shield of the Righteous",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "story_text": "You strike a foe and create a fleet of divine shields that protect your allies.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M damage; you and each ally adjacent to you gain 10 temporary Stamina"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + M damage; you and each ally adjacent to you gain 15 temporary Stamina"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "20 + M damage; you and each ally adjacent to you gain 20 temporary Stamina"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_trinity_of_trickery",
+    "name": "Trinity of Trickery",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "story_text": "Hey! I'm over here. No, here, numbskull.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You create two illusory duplicates of the target, which appear anywhere within distance. These duplicates last until the end of the encounter. On each of their turns, the target can move each duplicate up to their speed. If the target is targeted by an ability, they can use a free triggered action to switch places with a duplicate within their line of effect, making the duplicate the target of the ability instead. When either duplicate takes damage, it is destroyed.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_arrest",
+    "name": "Arrest",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "\"I got you, you son of a bitch.\"",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M holy damage; grabbed"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M holy damage; grabbed"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M holy damage; grabbed"
+        }
+      }
+    },
+    "effect": "If the target makes a strike against a creature while grabbed this way, you can spend 3 wrath to deal holy damage to them equal to your Presence score, then change the target of the strike to another target within the strike's distance.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_back_blasphemer",
+    "name": "Back Blasphemer!",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You channel power through your weapon to repel foes.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Melee",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "2 cube within 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 holy damage; push 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 holy damage; push 2"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 holy damage; push 3"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_behold_a_shield_of_faith",
+    "name": "Behold a Shield of Faith!",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 3
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "A mighty blow turns your foe's vitality into a holy light that envelops you and an ally, discouraging enemies who might attack you.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M holy damage"
+        }
+      }
+    },
+    "effect": "Until the start of your next turn, enemies take a bane on ability rolls made against you or any ally adjacent to you.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_behold_the_face_of_justice",
+    "name": "Behold the Face of Justice!",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You attack a foe and your enemies behold a vision of the true nature of your resolve.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M holy damage; if the target has P < WEAK, each enemy within 2 squares of them is frightened of you (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage; if the target has P < AVERAGE, each enemy within 2 squares of them is frightened of you (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M holy damage; if the target has P < STRONG, each enemy within 2 squares of them is frightened of you (save ends)"
+        }
+      }
+    },
+    "effect": "Each enemy frightened this way is pushed up to 2 squares away from the target and takes psychic damage equal to your Presence score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_censored",
+    "name": "Censored",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "Judged and sentenced.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage"
+        }
+      }
+    },
+    "effect": "When a target who is not a leader or solo creature is made winded by this ability, they are reduced to 0 Stamina.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_driving_assault",
+    "name": "Driving Assault",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 3
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "As you force your enemy back with your weapon, you use your faith to stay close.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M damage; push 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + M damage; push 3"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M damage; push 5"
+        }
+      }
+    },
+    "effect": "You can shift up to your speed in a straight line toward the target after pushing them.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_every_step_death",
+    "name": "Every Step... Death!",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You show your foe a glimpse of their fate after death.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + P psychic damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + P psychic damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + P psychic damage"
+        }
+      }
+    },
+    "effect": "Each time the target willingly moves before the end of your next turn, they take 1 psychic damage for each square they move.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_halt_miscreant",
+    "name": "Halt Miscreant!",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You infuse your weapon with holy magic that makes it difficult for your foe to get away.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 + M holy damage; P < WEAK, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage; P < AVERAGE, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + M holy damage; P < STRONG, slowed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_purifying_fire",
+    "name": "Purifying Fire",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "The gods judge, fire cleanses.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage; M < WEAK, the target has fire weakness 3 (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M holy damage; M < AVERAGE, the target has fire weakness 5 (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + M holy damage; M < STRONG, the target has fire weakness 7 (save ends)"
+        }
+      }
+    },
+    "effect": "While the target has fire weakness from this ability, you can choose to have your abilities deal fire damage to the target instead of holy damage.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_repent",
+    "name": "Repent!",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 3
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You conjure memories of their sins to harry your foes.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + P holy damage; I < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + P holy damage; I < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + P holy damage; I < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_the_gods_punish_and_defend",
+    "name": "The Gods Punish and Defend",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 3
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You channel holy energy to smite a foe and heal an ally.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M holy damage"
+        }
+      }
+    },
+    "effect": "You can spend a Recovery to allow yourself or one ally within 10 squares to regain Stamina equal to your recovery value.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_your_allies_cannot_save_you",
+    "name": "Your Allies Cannot Save You!",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "Your magic strike turns your foe's guilt into a burst of holy power.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + M holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M holy damage"
+        }
+      }
+    },
+    "effect": "Each enemy adjacent to the target is pushed away from the target up to a number of squares equal to your Presence score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
     "id": "ability_censor_blessing_of_the_faithful",
     "name": "Blessing of the Faithful",
     "costs": {
@@ -753,7 +1401,10 @@
     "level": 2,
     "subclass": "Paragon",
     "story_text": "The gods reward your faith.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -805,89 +1456,33 @@
   },
   {
     "type": "ability",
-    "id": "ability_censor_burden_of_evil",
-    "name": "Burden of Evil",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-  "level": 6,
-  "subclass": "Oracle",
-    "story_text": "You reveal a vision of your enemies' fate that causes them to scramble as it staggers them.",
-    "keywords": ["Magic", "Ranged", "Strike"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three enemies",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 3; I < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 5; I < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 7; I < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_censored",
-    "name": "Censored",
+    "id": "ability_censor_it_is_justice_you_fear",
+    "name": "It Is Justice You Fear",
     "costs": {
       "signature": false,
       "resource": "Wrath",
       "amount": 5
     },
-    "level": 1,
-    "subclass": null,
-    "story_text": "Judged and sentenced.",
-    "keywords": ["Melee", "Strike", "Weapon"],
+    "level": 2,
+    "subclass": "Exorcist",
+    "story_text": "I am but a vessel. Your own deeds weigh upon you.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
-      "distance": "Melee 1",
+      "distance": "Ranged 10",
       "area": null
     },
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": ["Might"],
+      "characteristics": [
+        "Might"
+      ],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -898,7 +1493,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "2 + M holy damage"
+          "all_text": "8 + M holy damage; P < WEAK, frightened (save ends)"
         },
         "mid": {
           "damage_expression": null,
@@ -909,7 +1504,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "3 + M holy damage"
+          "all_text": "12 + M holy damage; P < AVERAGE, frightened (save ends)"
         },
         "high": {
           "damage_expression": null,
@@ -920,36 +1515,238 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "5 + M holy damage"
+          "all_text": "15 + M holy damage; P < STRONG, frightened (save ends)"
         }
       }
     },
-    "effect": "When a target who is not a leader or solo creature is made winded by this ability, they are reduced to 0 Stamina.",
+    "effect": "If the target is already frightened of you or another creature and this ability would frighten them again, they instead take psychic damage equal to twice your Presence score.",
     "special_effect": null
   },
   {
     "type": "ability",
-    "id": "ability_censor_congregation",
-    "name": "Congregation",
+    "id": "ability_censor_prescient_grace",
+    "name": "Prescient Grace",
     "costs": {
       "signature": false,
       "resource": "Wrath",
-      "amount": 9
+      "amount": 5
     },
-    "level": 6,
+    "level": 2,
+    "subclass": "Oracle",
+    "story_text": "Gifted by a prescient vision, you warn an ally of an impending attack.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can spend a Recovery to allow the target to regain Stamina equal to your recovery value. The target can then take their turn immediately before the triggering enemy.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_revelator",
+    "name": "Revelator",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Oracle",
+    "story_text": "You channel holy energy to harm unbelievers and reveal those hidden from your judgment.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target takes holy damage equal to twice your Presence score. Additionally, each hidden target is automatically revealed and can't become hidden again until the start of your next turn. You can then use your Judgment ability against one target as a free triggered action.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_sentenced",
+    "name": "Sentenced",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Exorcist",
+    "story_text": "The shock of your condemnation freezes your enemy in their boots.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + P damage; P < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + P damage; P < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + P damage; P < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": "While the target is restrained this way, your abilities that impose forced movement can still move them.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_with_my_blessing",
+    "name": "With My Blessing",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 5
+    },
+    "level": 2,
     "subclass": "Paragon",
-    "story_text": "You focus your allies' wrath on a chosen foe.",
-    "keywords": ["Melee", "Strike", "Weapon"],
+    "story_text": "A word in prayer, and the gods show the way.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
-      "distance": "Melee 1",
+      "distance": "Ranged 10",
       "area": null
     },
-    "targets": "One creature",
+    "targets": "Self or one ally",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": ["Might"],
+      "characteristics": [],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -960,7 +1757,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "8 + M damage; as a free triggered action, one ally within 10 squares of the target can use a strike signature ability against the target"
+          "all_text": null
         },
         "mid": {
           "damage_expression": null,
@@ -971,7 +1768,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "12 + M damage; as a free triggered action, one ally within 10 squares of the target can use a strike signature ability that gains an edge against the target"
+          "all_text": null
         },
         "high": {
           "damage_expression": null,
@@ -982,73 +1779,11 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "16 + M damage; as a free triggered action, two allies within 10 squares of the target can each use a strike signature ability that gains an edge against the target"
+          "all_text": null
         }
       }
     },
-    "effect": "Each ally can shift up to 2 squares and gains 2 surges before making the strike.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_driving_assault",
-    "name": "Driving Assault",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 3
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "As you force your enemy back with your weapon, you use your faith to stay close.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + M damage; push 1"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + M damage; push 3"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M damage; push 5"
-        }
-      }
-    },
-    "effect": "You can shift up to your speed in a straight line toward the target after pushing them.",
+    "effect": "The target can use a free triggered action to use a strike signature ability or a strike heroic ability, and has a double edge on that ability. If a heroic ability is chosen, reduce its Heroic Resource cost by 3 (to a minimum cost of 0).",
     "special_effect": null
   },
   {
@@ -1063,7 +1798,10 @@
     "level": 3,
     "subclass": null,
     "story_text": "The evil within your foes detonates with holy fire that burns only the guilty.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1115,68 +1853,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_censor_edict_of_peace",
-    "name": "Edict of Peace",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Oracle",
-    "story_text": "You anticipate your foes' moves and deny them.",
-    "keywords": ["Area", "Magic"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 aura",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter or until you are dying, whenever any target takes a triggered action or a free triggered action, that action is negated and the target takes holy damage equal to your Presence score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_censor_edict_of_perfect_order",
     "name": "Edict of Perfect Order",
     "costs": {
@@ -1187,7 +1863,10 @@
     "level": 3,
     "subclass": null,
     "story_text": "Within the area of your divine presence, your enemies will regret using their fell abilities.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1249,7 +1928,10 @@
     "level": 3,
     "subclass": null,
     "story_text": "You shed a righteous energy that punishes enemies who would harm you or your allies.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1311,7 +1993,10 @@
     "level": 3,
     "subclass": null,
     "story_text": "The holy aura you project makes it painful for evil-doers to leave your reach.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1363,6 +2048,1072 @@
   },
   {
     "type": "ability",
+    "id": "ability_censor_orison_of_victory",
+    "name": "Orison of Victory",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You channel your god's will to overcome hardship and inflict pain.",
+    "keywords": [
+      "Area"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "1 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Each target gains 1 surge."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Each target gains 2 surges."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Each target gains 3 surges."
+        }
+      }
+    },
+    "effect": "A target can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_righteous_judgment",
+    "name": "Righteous Judgment",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You amplify the power of your judgment.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + M damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "20 + M damage"
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, whenever any ally deals damage to a target judged by you, that ally gains 1 surge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_begone",
+    "name": "Begone!",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Exorcist",
+    "story_text": "You terrify your enemies into retreating, creating chaos in their ranks.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 psychic damage; slide 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 psychic damage; slide 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 psychic damage; slide 7"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_burden_of_evil",
+    "name": "Burden of Evil",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Oracle",
+    "story_text": "You reveal a vision of your enemies' fate that causes them to scramble as it staggers them.",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three enemies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 3; I < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 5; I < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 7; I < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_congregation",
+    "name": "Congregation",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Paragon",
+    "story_text": "You focus your allies' wrath on a chosen foe.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M damage; as a free triggered action, one ally within 10 squares of the target can use a strike signature ability against the target"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + M damage; as a free triggered action, one ally within 10 squares of the target can use a strike signature ability that gains an edge against the target"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + M damage; as a free triggered action, two allies within 10 squares of the target can each use a strike signature ability that gains an edge against the target"
+        }
+      }
+    },
+    "effect": "Each ally can shift up to 2 squares and gains 2 surges before making the strike.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_edict_of_peace",
+    "name": "Edict of Peace",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Oracle",
+    "story_text": "You anticipate your foes' moves and deny them.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 aura",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, whenever any target takes a triggered action or a free triggered action, that action is negated and the target takes holy damage equal to your Presence score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_gods_grant_thee_strength",
+    "name": "Gods Grant Thee Strength",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Paragon",
+    "story_text": "You channel divine force for movement that cannot be stopped.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target ends any condition or effect on them that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up. The target then gains 2 surges, can shift up to their speed while ignoring difficult terrain, and can use a strike signature ability as a free triggered action.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_intercede",
+    "name": "Intercede",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Paragon",
+    "story_text": "You take your ally's place.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target is unaffected by the strike and you become the target instead, even if you aren't a valid target for it. You take half the damage from the strike, and the target gains 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_pain_of_your_own_making",
+    "name": "Pain of Your Own Making",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Exorcist",
+    "story_text": "You reverse the effects from an evildoer.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Self or one ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The effect ends on the target and is applied to the creature who imposed the effect on them. That creature also takes damage equal to three times your Presence score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_fulfill_your_destiny",
+    "name": "Fulfill Your Destiny",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You have looked at various futures, and only this one works.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target takes their turn after the triggering hero, and immediately removes all conditions and negative effects on themself. During their turn, the target has a double edge on power rolls.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_hand_of_the_gods",
+    "name": "Hand of the Gods",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You use your foe as a tool against your enemies.",
+    "keywords": [
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + M damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + M damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + M damage"
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, while the target is judged by you, you can choose to make them the source of any of your abilities. Additionally, the target counts as an ally for the purpose of flanking.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_pillar_of_holy_fire",
+    "name": "Pillar of Holy Fire",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "Your enemy's guilt fuels a holy flame that burns your foes.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + M damage; I < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M damage; I < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + M damage; I < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": "At the end of each of your turns, a target dazed this way deals holy damage equal to twice your Presence score to each enemy within 2 squares of them.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_terror_manifest",
+    "name": "Terror Manifest",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "\"I know what you fear.\"",
+    "keywords": [
+      "Magic",
+      "Ranged",
+      "Strike"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Presence"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + P psychic damage; P < WEAK, frightened (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + P psychic damage; P < AVERAGE, frightened (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + P psychic damage; P < STRONG, frightened (save ends)"
+        }
+      }
+    },
+    "effect": "While frightened this way, if a target who is a leader or solo creature is winded, they take an extra 25 psychic damage. If a target frightened this way is not a leader or solo creature and is winded, they are reduced to 0 Stamina.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_apostate",
+    "name": "Apostate",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Paragon",
+    "story_text": "You channel holy energy to seal an enemy's fate.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + M holy damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "19 + M holy damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "26 + M holy damage"
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dying, the target has damage weakness 10.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_banish",
+    "name": "Banish",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Exorcist",
+    "story_text": "You sever the target's tenuous connection to the world.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Might"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + M damage; P < WEAK, the target is banished (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + M damage; P < AVERAGE, the target is banished (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + M damage; P < STRONG, the target is banished (save ends)"
+        }
+      }
+    },
+    "effect": "This ability gains an edge against demons, devils, undead, and creatures not native to your current world. If you know the target's true name, this ability has a double edge. While banished, the target is sent to another manifold in the timescape and removed from the encounter map. A banished target can do nothing but make saving throws, and takes 10 holy damage each time they do so. If the target is reduced to 0 Stamina while banished, they are lost to the timescape.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_censor_blessing_and_a_curse",
+    "name": "Blessing and a Curse",
+    "costs": {
+      "signature": false,
+      "resource": "Wrath",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Oracle",
+    "story_text": "The gods bless and damn in equal measure.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target obtains a tier 1 or tier 3 outcome on their power roll (your choice). You can then choose another target within distance, who obtains the opposite outcome on their next power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
     "id": "ability_censor_edict_of_unyielding_resolve",
     "name": "Edict of Unyielding Resolve",
     "costs": {
@@ -1373,7 +3124,10 @@
     "level": 9,
     "subclass": "Paragon",
     "story_text": "You and your allies are clad in shimmering armor.",
-    "keywords": ["Area", "Magic"],
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1435,7 +3189,11 @@
     "level": 9,
     "subclass": "Exorcist",
     "story_text": "You curse your foe to become a bane to their allies.",
-    "keywords": ["Melee", "Strike", "Weapon"],
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1445,7 +3203,9 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": ["Might"],
+      "characteristics": [
+        "Might"
+      ],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1487,1540 +3247,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_censor_faithful_friend",
-    "name": "Faithful Friend",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "An animal spirit is drawn to you, sharing their senses with you and serving you faithfully.",
-    "keywords": ["Magic"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You conjure a spirit that takes the form of any animal you have seen. The incorporeal animal has speed 5 and can fly, but can't physically interact with the world. While you are within 10 squares of the spirit, you automatically sense everything that type of animal would sense, in addition to sensing your own surroundings. You can dismiss the spirit at any time (no action required). If the spirit takes any damage, they are dismissed and you take 1d10 psychic damage that can't be reduced in any way.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_fulfill_your_destiny",
-    "name": "Fulfill Your Destiny",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You have looked at various futures, and only this one works.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target takes their turn after the triggering hero, and immediately removes all conditions and negative effects on themself. During their turn, the target has a double edge on power rolls.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_gods_grant_thee_strength",
-    "name": "Gods Grant Thee Strength",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Paragon",
-    "story_text": "You channel divine force for movement that cannot be stopped.",
-    "keywords": ["Ranged"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target ends any condition or effect on them that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up. The target then gains 2 surges, can shift up to their speed while ignoring difficult terrain, and can use a strike signature ability as a free triggered action.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_grave_speech",
-    "name": "Grave Speech",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "You commune with the lingering soul of the recently dead.",
-    "keywords": ["Magic"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One dead creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You can speak to the target if they are a creature who has died within the last 24 hours and who can speak a language you know, even if they are just a head. The target regards you as they would have in life, and you might need to make tests to influence them and convince them to speak with you. The trauma of dying can make a creature's memory of that event hazy, but the target otherwise knows all they knew in life. After 1 minute, the effect ends. You can't use this ability on the same creature twice.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_guided_to_your_side",
-    "name": "Guided to Your Side",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "You concentrate on a friend and teleport to them.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self and each ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target is teleported to unoccupied spaces within 5 squares of a willing creature who you are bonded to with your Invocation of the Heart feature. You don't need line of effect to the bonded creature but you must be on the same world.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_hand_of_the_gods",
-    "name": "Hand of the Gods",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You use your foe as a tool against your enemies.",
-    "keywords": ["Ranged", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + M damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 + M damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "21 + M damage"
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, while the target is judged by you, you can choose to make them the source of any of your abilities. Additionally, the target counts as an ally for the purpose of flanking.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_hands_of_the_maker",
-    "name": "Hands of the Maker",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "You craft objects with the power of your mind.",
-    "keywords": ["Magic"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You create a mundane object of size 1S or smaller. You can maintain a number of objects created this way equal to your Presence score. You can destroy an object created this way with a thought, no matter how far you are from it (no action required).",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_intercede",
-    "name": "Intercede",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Paragon",
-    "story_text": "You take your ally's place.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target is unaffected by the strike and you become the target instead, even if you aren't a valid target for it. You take half the damage from the strike, and the target gains 3 surges.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_it_is_justice_you_fear",
-    "name": "It Is Justice You Fear",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Exorcist",
-    "story_text": "I am but a vessel. Your own deeds weigh upon you.",
-    "keywords": ["Magic", "Ranged", "Strike"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + M holy damage; P < WEAK, frightened (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + M holy damage; P < AVERAGE, frightened (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 + M holy damage; P < STRONG, frightened (save ends)"
-        }
-      }
-    },
-    "effect": "If the target is already frightened of you or another creature and this ability would frighten them again, they instead take psychic damage equal to twice your Presence score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_judgment",
-    "name": "Judgment",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "You utter a prayer that outlines your foe in holy energy.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One enemy",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target is judged by you until the end of the encounter, you use this ability again, you willingly end this effect (no action required), or another censor judges the target.\nWhenever a creature judged by you uses a main action and is within your line of effect, you can use a free triggered action to deal holy damage equal to twice your Presence score to them.\nWhen a creature judged by you is reduced to 0 Stamina, you can use a free triggered action to use this ability against a new target.\nAdditionally, you can spend 1 wrath to take one of the following free triggered actions:\n- When an adjacent creature judged by you starts to shift, you make a melee free strike against them and their speed becomes 0 until the end of the current turn, preventing them from shifting.\n- When a creature judged by you within 10 squares makes a power roll, you cause them to take a bane on the roll.\n- When a creature judged by you within 10 squares uses an ability with a potency that targets only one creature, the potency is reduced by 1 for that creature.\n- If you damage a creature judged by you with a melee ability, the creature is taunted by you until the end of their next turn.\nYou can choose only one free triggered action option at a time, even if multiple options are triggered by the same effect.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_my_life_for_yours",
-    "name": "My Life for Yours",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "story_text": "You channel some of your vitality into more resilience for you or an ally.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You spend a Recovery and the target regains Stamina equal to your recovery value.\n\nYou can end one effect on the target that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_orison_of_victory",
-    "name": "Orison of Victory",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You channel your god's will to overcome hardship and inflict pain.",
-    "keywords": ["Area"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "1 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Each target gains 1 surge."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Each target gains 2 surges."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Each target gains 3 surges."
-        }
-      }
-    },
-    "effect": "A target can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_pain_of_your_own_making",
-    "name": "Pain of Your Own Making",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Exorcist",
-    "story_text": "You reverse the effects from an evildoer.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The effect ends on the target and is applied to the creature who imposed the effect on them. That creature also takes damage equal to three times your Presence score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_pillar_of_holy_fire",
-    "name": "Pillar of Holy Fire",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "Your enemy's guilt fuels a holy flame that burns your foes.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M damage; I < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + M damage; I < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + M damage; I < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": "At the end of each of your turns, a target dazed this way deals holy damage equal to twice your Presence score to each enemy within 2 squares of them.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_prescient_grace",
-    "name": "Prescient Grace",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Oracle",
-    "story_text": "Gifted by a prescient vision, you warn an ally of an impending attack.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You can spend a Recovery to allow the target to regain Stamina equal to your recovery value. The target can then take their turn immediately before the triggering enemy.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_purifying_fire",
-    "name": "Purifying Fire",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "The gods judge, fire cleanses.",
-    "keywords": ["Magic", "Melee", "Ranged", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M holy damage; M < WEAK, the target has fire weakness 3 (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + M holy damage; M < AVERAGE, the target has fire weakness 5 (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + M holy damage; M < STRONG, the target has fire weakness 7 (save ends)"
-        }
-      }
-    },
-    "effect": "While the target has fire weakness from this ability, you can choose to have your abilities deal fire damage to the target instead of holy damage.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_repent",
-    "name": "Repent!",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 3
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You conjure memories of their sins to harry your foes.",
-    "keywords": ["Magic", "Ranged", "Strike"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + P holy damage; I < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + P holy damage; I < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + P holy damage; I < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_revelator",
-    "name": "Revelator",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Oracle",
-    "story_text": "You channel holy energy to harm unbelievers and reveal those hidden from your judgment.",
-    "keywords": ["Area", "Magic"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 burst",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target takes holy damage equal to twice your Presence score. Additionally, each hidden target is automatically revealed and can't become hidden again until the start of your next turn. You can then use your Judgment ability against one target as a free triggered action.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_righteous_judgment",
-    "name": "Righteous Judgment",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You amplify the power of your judgment.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + M damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 + M damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "20 + M damage"
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, whenever any ally deals damage to a target judged by you, that ally gains 1 surge.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_sentenced",
-    "name": "Sentenced",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Exorcist",
-    "story_text": "The shock of your condemnation freezes your enemy in their boots.",
-    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + P damage; P < WEAK, restrained (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + P damage; P < AVERAGE, restrained (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + P damage; P < STRONG, restrained (save ends)"
-        }
-      }
-    },
-    "effect": "While the target is restrained this way, your abilities that impose forced movement can still move them.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_shield_of_the_righteous",
-    "name": "Shield of the Righteous",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "story_text": "You strike a foe and create a fleet of divine shields that protect your allies.",
-    "keywords": ["Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + M damage; you and each ally adjacent to you gain 10 temporary Stamina"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 + M damage; you and each ally adjacent to you gain 15 temporary Stamina"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "20 + M damage; you and each ally adjacent to you gain 20 temporary Stamina"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_terror_manifest",
-    "name": "Terror Manifest",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "\"I know what you fear.\"",
-    "keywords": ["Magic", "Ranged", "Strike"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Presence"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + P psychic damage; P < WEAK, frightened (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + P psychic damage; P < AVERAGE, frightened (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + P psychic damage; P < STRONG, frightened (save ends)"
-        }
-      }
-    },
-    "effect": "While frightened this way, if a target who is a leader or solo creature is winded, they take an extra 25 psychic damage. If a target frightened this way is not a leader or solo creature and is winded, they are reduced to 0 Stamina.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_the_gods_punish_and_defend",
-    "name": "The Gods Punish and Defend",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 3
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "You channel holy energy to smite a foe and heal an ally.",
-    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": ["Might"],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + M holy damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + M holy damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + M holy damage"
-        }
-      }
-    },
-    "effect": "You can spend a Recovery to allow yourself or one ally within 10 squares to regain Stamina equal to your recovery value.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_trinity_of_trickery",
-    "name": "Trinity of Trickery",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 9
-    },
-    "story_text": "Hey! I'm over here. No, here, numbskull.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You create two illusory duplicates of the target, which appear anywhere within distance. These duplicates last until the end of the encounter. On each of their turns, the target can move each duplicate up to their speed. If the target is targeted by an ability, they can use a free triggered action to switch places with a duplicate within their line of effect, making the duplicate the target of the ability instead. When either duplicate takes damage, it is destroyed.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_censor_with_my_blessing",
-    "name": "With My Blessing",
-    "costs": {
-      "signature": false,
-      "resource": "Wrath",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Paragon",
-    "story_text": "A word in prayer, and the gods show the way.",
-    "keywords": ["Magic", "Ranged"],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Self or one ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target can use a free triggered action to use a strike signature ability or a strike heroic ability, and has a double edge on that ability. If a heroic ability is chosen, reduce its Heroic Resource cost by 3 (to a minimum cost of 0).",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_censor_your_allies_turn_on_you",
     "name": "Your Allies Turn on You!",
     "costs": {
@@ -3031,7 +3257,11 @@
     "level": 9,
     "subclass": "Oracle",
     "story_text": "You turn your enemies' ire to the target.",
-    "keywords": ["Ranged", "Strike", "Weapon"],
+    "keywords": [
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -3041,7 +3271,9 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": ["Presence"],
+      "characteristics": [
+        "Presence"
+      ],
       "tiers": {
         "low": {
           "damage_expression": null,

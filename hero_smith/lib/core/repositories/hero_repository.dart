@@ -32,7 +32,8 @@ class HeroRepository {
   // Keys mapping for HeroValues
   static const _k = _HeroKeys._();
 
-  Future<String> createHero({required String name}) => _db.createHero(name: name);
+  Future<String> createHero({required String name}) =>
+      _db.createHero(name: name);
 
   Stream<List<db.Heroe>> watchAllHeroes() => _db.watchAllHeroes();
   Future<List<db.Heroe>> getAllHeroes() => _db.getAllHeroes();
@@ -46,13 +47,18 @@ class HeroRepository {
       for (final h in heroes) {
         final values = await _db.getHeroValues(h.id);
         final comps = await _db.getHeroComponents(h.id);
-        String? getText(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
-        int? getInt(String key) => values.firstWhereOrNull((v) => v.key == key)?.value;
+        String? getText(String key) =>
+            values.firstWhereOrNull((v) => v.key == key)?.textValue;
+        int? getInt(String key) =>
+            values.firstWhereOrNull((v) => v.key == key)?.value;
         final allComps = await _db.getAllComponents();
-        String? nameForId(String? compId) =>
-            compId == null ? null : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
+        String? nameForId(String? compId) => compId == null
+            ? null
+            : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
         String? nameForCategory(String category) {
-          final compId = comps.firstWhereOrNull((c) => c.category == category)?.componentId;
+          final compId = comps
+              .firstWhereOrNull((c) => c.category == category)
+              ?.componentId;
           return nameForId(compId);
         }
 
@@ -81,11 +87,15 @@ class HeroRepository {
     required List<String> selectedTraitIds,
   }) async {
     // Persist ancestry id
-    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestry, textValue: ancestryId);
+    await _db.upsertHeroValue(
+        heroId: heroId, key: _k.ancestry, textValue: ancestryId);
     // Persist selected trait ids as a json list
-    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestrySelectedTraits, jsonMap: {
-      'list': selectedTraitIds,
-    });
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.ancestrySelectedTraits,
+        jsonMap: {
+          'list': selectedTraitIds,
+        });
     // Persist signature trait name for convenience (redundant but requested)
     String? signatureName;
     if (ancestryId != null) {
@@ -103,16 +113,19 @@ class HeroRepository {
         try {
           final map = jsonDecode(traitsComp.dataJson) as Map<String, dynamic>;
           final sig = map['signature'];
-          if (sig is Map && sig['name'] is String) signatureName = sig['name'] as String;
+          if (sig is Map && sig['name'] is String)
+            signatureName = sig['name'] as String;
         } catch (_) {}
       }
     }
-    await _db.upsertHeroValue(heroId: heroId, key: _k.ancestrySignature, textValue: signatureName);
+    await _db.upsertHeroValue(
+        heroId: heroId, key: _k.ancestrySignature, textValue: signatureName);
   }
 
   Future<List<String>> getSelectedAncestryTraits(String heroId) async {
     final values = await _db.getHeroValues(heroId);
-    final v = values.firstWhereOrNull((e) => e.key == _k.ancestrySelectedTraits);
+    final v =
+        values.firstWhereOrNull((e) => e.key == _k.ancestrySelectedTraits);
     if (v == null) return <String>[];
     try {
       final raw = v.jsonValue ?? v.textValue;
@@ -138,43 +151,74 @@ class HeroRepository {
     String? upbringingSkillId,
   }) async {
     if (environmentId != null) {
-      await _db.setHeroComponents(heroId: heroId, category: 'culture_environment', componentIds: [environmentId]);
+      await _db.setHeroComponents(
+          heroId: heroId,
+          category: 'culture_environment',
+          componentIds: [environmentId]);
     }
     if (organisationId != null) {
-      await _db.setHeroComponents(heroId: heroId, category: 'culture_organisation', componentIds: [organisationId]);
+      await _db.setHeroComponents(
+          heroId: heroId,
+          category: 'culture_organisation',
+          componentIds: [organisationId]);
     }
     if (upbringingId != null) {
-      await _db.setHeroComponents(heroId: heroId, category: 'culture_upbringing', componentIds: [upbringingId]);
+      await _db.setHeroComponents(
+          heroId: heroId,
+          category: 'culture_upbringing',
+          componentIds: [upbringingId]);
     }
-  // Union provided language ids with existing to avoid removing languages granted elsewhere
-  final currentComps = await _db.getHeroComponents(heroId);
-  final existingLangs = currentComps.where((c) => c.category == 'language').map((c) => c.componentId).toSet();
-  final langUnion = existingLangs.union(languageIds.toSet()).toList();
-  await _db.setHeroComponents(heroId: heroId, category: 'language', componentIds: langUnion);
+    // Union provided language ids with existing to avoid removing languages granted elsewhere
+    final currentComps = await _db.getHeroComponents(heroId);
+    final existingLangs = currentComps
+        .where((c) => c.category == 'language')
+        .map((c) => c.componentId)
+        .toSet();
+    final langUnion = existingLangs.union(languageIds.toSet()).toList();
+    await _db.setHeroComponents(
+        heroId: heroId, category: 'language', componentIds: langUnion);
 
     // Persist chosen skill ids as HeroValues for traceability
-    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureEnvironmentSkill, textValue: environmentSkillId);
-    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureOrganisationSkill, textValue: organisationSkillId);
-    await _db.upsertHeroValue(heroId: heroId, key: _k.cultureUpbringingSkill, textValue: upbringingSkillId);
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.cultureEnvironmentSkill,
+        textValue: environmentSkillId);
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.cultureOrganisationSkill,
+        textValue: organisationSkillId);
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.cultureUpbringingSkill,
+        textValue: upbringingSkillId);
 
     // Ensure selected skills are present among HeroComponents('skill') without removing others
     final currentSkillComps = await _db.getHeroComponents(heroId);
-    final existingSkillIds = currentSkillComps.where((c) => c.category == 'skill').map((c) => c.componentId).toSet();
+    final existingSkillIds = currentSkillComps
+        .where((c) => c.category == 'skill')
+        .map((c) => c.componentId)
+        .toSet();
     final toAdd = <String>{};
-    if (environmentSkillId != null && environmentSkillId.isNotEmpty) toAdd.add(environmentSkillId);
-    if (organisationSkillId != null && organisationSkillId.isNotEmpty) toAdd.add(organisationSkillId);
-    if (upbringingSkillId != null && upbringingSkillId.isNotEmpty) toAdd.add(upbringingSkillId);
+    if (environmentSkillId != null && environmentSkillId.isNotEmpty)
+      toAdd.add(environmentSkillId);
+    if (organisationSkillId != null && organisationSkillId.isNotEmpty)
+      toAdd.add(organisationSkillId);
+    if (upbringingSkillId != null && upbringingSkillId.isNotEmpty)
+      toAdd.add(upbringingSkillId);
     if (toAdd.isNotEmpty) {
       final union = [...existingSkillIds.union(toAdd)];
-      await _db.setHeroComponents(heroId: heroId, category: 'skill', componentIds: union);
+      await _db.setHeroComponents(
+          heroId: heroId, category: 'skill', componentIds: union);
     }
   }
 
   Future<CultureSelection> loadCultureSelection(String heroId) async {
     final comps = await _db.getHeroComponents(heroId);
-    String? idFor(String category) => comps.firstWhereOrNull((c) => c.category == category)?.componentId;
+    String? idFor(String category) =>
+        comps.firstWhereOrNull((c) => c.category == category)?.componentId;
     final values = await _db.getHeroValues(heroId);
-    String? val(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
+    String? val(String key) =>
+        values.firstWhereOrNull((v) => v.key == key)?.textValue;
     return CultureSelection(
       environmentId: idFor('culture_environment'),
       organisationId: idFor('culture_organisation'),
@@ -195,9 +239,11 @@ class HeroRepository {
   }) async {
     // Detect previous career to apply numeric grants only on change
     final values = await _db.getHeroValues(heroId);
-    final previousCareerId = values.firstWhereOrNull((v) => v.key == _k.career)?.textValue;
+    final previousCareerId =
+        values.firstWhereOrNull((v) => v.key == _k.career)?.textValue;
 
-    await _db.upsertHeroValue(heroId: heroId, key: _k.career, textValue: careerId);
+    await _db.upsertHeroValue(
+        heroId: heroId, key: _k.career, textValue: careerId);
 
     final allComps = await _db.getAllComponents();
     // Resolve granted skills from career definition by name
@@ -207,7 +253,8 @@ class HeroRepository {
     if (careerComp != null) {
       try {
         final data = jsonDecode(careerComp.dataJson) as Map<String, dynamic>;
-        for (final s in (data['granted_skills'] as List?) ?? const <dynamic>[]) {
+        for (final s
+            in (data['granted_skills'] as List?) ?? const <dynamic>[]) {
           grantedSkillNames.add(s.toString());
         }
         renownGrant = (data['renown'] as int?) ?? 0;
@@ -216,40 +263,68 @@ class HeroRepository {
       } catch (_) {}
     }
     final grantedSkillIds = allComps
-        .where((c) => c.type == 'skill' && (grantedSkillNames.contains(c.name) || grantedSkillNames.contains(c.id)))
+        .where((c) =>
+            c.type == 'skill' &&
+            (grantedSkillNames.contains(c.name) ||
+                grantedSkillNames.contains(c.id)))
         .map((c) => c.id)
         .toSet();
 
     // Merge skills and perks into HeroComponents, preserving existing
     final currentComps = await _db.getHeroComponents(heroId);
-    final existingSkillIds = currentComps.where((c) => c.category == 'skill').map((c) => c.componentId).toSet();
-    final existingPerkIds = currentComps.where((c) => c.category == 'perk').map((c) => c.componentId).toSet();
-    final newSkillSet = existingSkillIds.union(chosenSkillIds.toSet()).union(grantedSkillIds);
+    final existingSkillIds = currentComps
+        .where((c) => c.category == 'skill')
+        .map((c) => c.componentId)
+        .toSet();
+    final existingPerkIds = currentComps
+        .where((c) => c.category == 'perk')
+        .map((c) => c.componentId)
+        .toSet();
+    final newSkillSet =
+        existingSkillIds.union(chosenSkillIds.toSet()).union(grantedSkillIds);
     final newPerkSet = existingPerkIds.union(chosenPerkIds.toSet());
-    await _db.setHeroComponents(heroId: heroId, category: 'skill', componentIds: newSkillSet.toList());
-    await _db.setHeroComponents(heroId: heroId, category: 'perk', componentIds: newPerkSet.toList());
+    await _db.setHeroComponents(
+        heroId: heroId, category: 'skill', componentIds: newSkillSet.toList());
+    await _db.setHeroComponents(
+        heroId: heroId, category: 'perk', componentIds: newPerkSet.toList());
 
     // Persist chosen lists for preloading UI
-    await _db.upsertHeroValue(heroId: heroId, key: _k.careerChosenSkills, jsonMap: {'list': chosenSkillIds});
-    await _db.upsertHeroValue(heroId: heroId, key: _k.careerChosenPerks, jsonMap: {'list': chosenPerkIds});
-    await _db.upsertHeroValue(heroId: heroId, key: _k.careerIncitingIncident, textValue: incitingIncidentName);
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.careerChosenSkills,
+        jsonMap: {'list': chosenSkillIds});
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.careerChosenPerks,
+        jsonMap: {'list': chosenPerkIds});
+    await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.careerIncitingIncident,
+        textValue: incitingIncidentName);
 
     // Apply numeric grants only when career changed
-    if (careerId != null && careerId.isNotEmpty && previousCareerId != careerId) {
-      int getInt(String key) => values.firstWhereOrNull((v) => v.key == key)?.value ?? 0;
+    if (careerId != null &&
+        careerId.isNotEmpty &&
+        previousCareerId != careerId) {
+      int getInt(String key) =>
+          values.firstWhereOrNull((v) => v.key == key)?.value ?? 0;
       final newRenown = getInt(_k.renown) + renownGrant;
       final newWealth = getInt(_k.wealth) + wealthGrant;
       final newPP = getInt(_k.projectPoints) + ppGrant;
-      await _db.upsertHeroValue(heroId: heroId, key: _k.renown, value: newRenown);
-      await _db.upsertHeroValue(heroId: heroId, key: _k.wealth, value: newWealth);
-      await _db.upsertHeroValue(heroId: heroId, key: _k.projectPoints, value: newPP);
+      await _db.upsertHeroValue(
+          heroId: heroId, key: _k.renown, value: newRenown);
+      await _db.upsertHeroValue(
+          heroId: heroId, key: _k.wealth, value: newWealth);
+      await _db.upsertHeroValue(
+          heroId: heroId, key: _k.projectPoints, value: newPP);
     }
   }
 
   Future<CareerSelection> loadCareerSelection(String heroId) async {
     final values = await _db.getHeroValues(heroId);
     final comps = await _db.getHeroComponents(heroId);
-    String? getText(String key) => values.firstWhereOrNull((v) => v.key == key)?.textValue;
+    String? getText(String key) =>
+        values.firstWhereOrNull((v) => v.key == key)?.textValue;
     List<String> getList(String key) {
       final v = values.firstWhereOrNull((e) => e.key == key);
       if (v?.jsonValue == null && v?.textValue == null) return <String>[];
@@ -263,7 +338,9 @@ class HeroRepository {
       } catch (_) {}
       return <String>[];
     }
-    String? idForCategory(String category) => comps.firstWhereOrNull((e) => e.category == category)?.componentId;
+
+    String? idForCategory(String category) =>
+        comps.firstWhereOrNull((e) => e.category == category)?.componentId;
 
     return CareerSelection(
       careerId: getText(_k.career) ?? idForCategory('career'),
@@ -275,7 +352,9 @@ class HeroRepository {
 
   /// Load a HeroModel by id from DB aggregating values and components.
   Future<HeroModel?> load(String heroId) async {
-    final row = await (_db.select(_db.heroes)..where((t) => t.id.equals(heroId))).getSingleOrNull();
+    final row = await (_db.select(_db.heroes)
+          ..where((t) => t.id.equals(heroId)))
+        .getSingleOrNull();
     if (row == null) return null;
     final values = await _db.getHeroValues(heroId);
     final comps = await _db.getHeroComponents(heroId);
@@ -314,53 +393,58 @@ class HeroRepository {
       if (v?.jsonValue == null) return <String, int>{};
       try {
         final map = jsonDecode(v!.jsonValue!) as Map<String, dynamic>;
-        return map.map((k, v) => MapEntry(k, (v is int) ? v : int.tryParse(v.toString()) ?? 0));
+        return map.map((k, v) =>
+            MapEntry(k, (v is int) ? v : int.tryParse(v.toString()) ?? 0));
       } catch (_) {
         return <String, int>{};
       }
     }
 
     // Collect components by category
-    List<String> compsBy(String category) =>
-        comps.where((e) => e.category == category).map((e) => e.componentId).toList();
+    List<String> compsBy(String category) => comps
+        .where((e) => e.category == category)
+        .map((e) => e.componentId)
+        .toList();
 
     return HeroModel(
       id: row.id,
       name: row.name,
-  className: getString(_k.className),
-  subclass: getString(_k.subclass),
-  level: getInt(_k.level, 1),
-  ancestry: getString(_k.ancestry),
-  career: getString(_k.career),
-  victories: getInt(_k.victories, 0),
-  exp: getInt(_k.exp, 0),
-  wealth: getInt(_k.wealth, 0),
-  renown: getInt(_k.renown, 0),
-  might: getInt(_k.might, 0),
-  agility: getInt(_k.agility, 0),
-  reason: getInt(_k.reason, 0),
-  intuition: getInt(_k.intuition, 0),
-  presence: getInt(_k.presence, 0),
-  size: getInt(_k.size, 0),
-  speed: getInt(_k.speed, 0),
-  disengage: getInt(_k.disengage, 0),
-  stability: getInt(_k.stability, 0),
-  staminaCurrent: getInt(_k.staminaCurrent, 0),
-  staminaMax: getInt(_k.staminaMax, 0),
-  staminaTemp: getInt(_k.staminaTemp, 0),
-  windedValue: getInt(_k.windedValue, 0),
-  dyingValue: getInt(_k.dyingValue, 0),
-  recoveriesCurrent: getInt(_k.recoveriesCurrent, 0),
-  recoveriesValue: getInt(_k.recoveriesValue, 0),
-  recoveriesMax: getInt(_k.recoveriesMax, 0),
-  heroicResource: getString(_k.heroicResource),
-  heroicResourceCurrent: getInt(_k.heroicResourceCurrent, 0),
-  surgesCurrent: getInt(_k.surgesCurrent, 0),
+      className: getString(_k.className),
+      subclass: getString(_k.subclass),
+      level: getInt(_k.level, 1),
+      ancestry: getString(_k.ancestry),
+      career: getString(_k.career),
+      deityId: getString(_k.deity),
+      domain: getString(_k.domain),
+      victories: getInt(_k.victories, 0),
+      exp: getInt(_k.exp, 0),
+      wealth: getInt(_k.wealth, 0),
+      renown: getInt(_k.renown, 0),
+      might: getInt(_k.might, 0),
+      agility: getInt(_k.agility, 0),
+      reason: getInt(_k.reason, 0),
+      intuition: getInt(_k.intuition, 0),
+      presence: getInt(_k.presence, 0),
+      size: getInt(_k.size, 0),
+      speed: getInt(_k.speed, 0),
+      disengage: getInt(_k.disengage, 0),
+      stability: getInt(_k.stability, 0),
+      staminaCurrent: getInt(_k.staminaCurrent, 0),
+      staminaMax: getInt(_k.staminaMax, 0),
+      staminaTemp: getInt(_k.staminaTemp, 0),
+      windedValue: getInt(_k.windedValue, 0),
+      dyingValue: getInt(_k.dyingValue, 0),
+      recoveriesCurrent: getInt(_k.recoveriesCurrent, 0),
+      recoveriesValue: getInt(_k.recoveriesValue, 0),
+      recoveriesMax: getInt(_k.recoveriesMax, 0),
+      heroicResource: getString(_k.heroicResource),
+      heroicResourceCurrent: getInt(_k.heroicResourceCurrent, 0),
+      surgesCurrent: getInt(_k.surgesCurrent, 0),
       immunities: jsonList(_k.immunities),
       weaknesses: jsonList(_k.weaknesses),
-  potencyStrong: getString(_k.potencyStrong),
-  potencyAverage: getString(_k.potencyAverage),
-  potencyWeak: getString(_k.potencyWeak),
+      potencyStrong: getString(_k.potencyStrong),
+      potencyAverage: getString(_k.potencyAverage),
+      potencyWeak: getString(_k.potencyWeak),
       conditions: jsonList(_k.conditions),
       classFeatures: compsBy('class_feature'),
       ancestryTraits: compsBy('ancestry_trait'),
@@ -368,7 +452,7 @@ class HeroRepository {
       skills: compsBy('skill'),
       perks: compsBy('perk'),
       projects: compsBy('project'),
-  projectPoints: getInt(_k.projectPoints, 0),
+      projectPoints: getInt(_k.projectPoints, 0),
       titles: compsBy('title'),
       abilities: compsBy('ability'),
       modifications: jsonMapInt(_k.modifications),
@@ -384,8 +468,8 @@ class HeroRepository {
         _db.upsertHeroValue(heroId: hero.id, key: key, value: value);
     Future<void> setText(String key, String? value) =>
         _db.upsertHeroValue(heroId: hero.id, key: key, textValue: value);
-  Future<void> setJsonMap(String key, Map<String, dynamic>? map) =>
-    _db.upsertHeroValue(heroId: hero.id, key: key, jsonMap: map);
+    Future<void> setJsonMap(String key, Map<String, dynamic>? map) =>
+        _db.upsertHeroValue(heroId: hero.id, key: key, jsonMap: map);
 
     await Future.wait([
       // basics
@@ -394,6 +478,8 @@ class HeroRepository {
       setInt(_k.level, hero.level),
       setText(_k.ancestry, hero.ancestry),
       setText(_k.career, hero.career),
+      setText(_k.deity, hero.deityId),
+      setText(_k.domain, hero.domain),
       // victories & exp
       setInt(_k.victories, hero.victories),
       setInt(_k.exp, hero.exp),
@@ -424,9 +510,9 @@ class HeroRepository {
       // surges
       setInt(_k.surgesCurrent, hero.surgesCurrent),
       // arrays
-  setJsonMap(_k.immunities, {'list': hero.immunities}),
-  setJsonMap(_k.weaknesses, {'list': hero.weaknesses}),
-  setJsonMap(_k.conditions, {'list': hero.conditions}),
+      setJsonMap(_k.immunities, {'list': hero.immunities}),
+      setJsonMap(_k.weaknesses, {'list': hero.weaknesses}),
+      setJsonMap(_k.conditions, {'list': hero.conditions}),
       // potencies
       setText(_k.potencyStrong, hero.potencyStrong),
       setText(_k.potencyAverage, hero.potencyAverage),
@@ -434,18 +520,31 @@ class HeroRepository {
       // projects meta
       setInt(_k.projectPoints, hero.projectPoints),
       // modifications map
-  setJsonMap(_k.modifications, hero.modifications.map((k, v) => MapEntry(k, v))),
+      setJsonMap(
+          _k.modifications, hero.modifications.map((k, v) => MapEntry(k, v))),
     ]);
 
     // Components by category
-    await _db.setHeroComponents(heroId: hero.id, category: 'class_feature', componentIds: hero.classFeatures);
-    await _db.setHeroComponents(heroId: hero.id, category: 'ancestry_trait', componentIds: hero.ancestryTraits);
-    await _db.setHeroComponents(heroId: hero.id, category: 'language', componentIds: hero.languages);
-    await _db.setHeroComponents(heroId: hero.id, category: 'skill', componentIds: hero.skills);
-    await _db.setHeroComponents(heroId: hero.id, category: 'perk', componentIds: hero.perks);
-    await _db.setHeroComponents(heroId: hero.id, category: 'project', componentIds: hero.projects);
-    await _db.setHeroComponents(heroId: hero.id, category: 'title', componentIds: hero.titles);
-    await _db.setHeroComponents(heroId: hero.id, category: 'ability', componentIds: hero.abilities);
+    await _db.setHeroComponents(
+        heroId: hero.id,
+        category: 'class_feature',
+        componentIds: hero.classFeatures);
+    await _db.setHeroComponents(
+        heroId: hero.id,
+        category: 'ancestry_trait',
+        componentIds: hero.ancestryTraits);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'language', componentIds: hero.languages);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'skill', componentIds: hero.skills);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'perk', componentIds: hero.perks);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'project', componentIds: hero.projects);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'title', componentIds: hero.titles);
+    await _db.setHeroComponents(
+        heroId: hero.id, category: 'ability', componentIds: hero.abilities);
   }
 
   /// Export a hero aggregate to a portable JSON string.
@@ -459,7 +558,8 @@ class HeroRepository {
   Future<String> importHero(String exportJsonString) async {
     final map = jsonDecode(exportJsonString) as Map<String, dynamic>;
     final model = HeroModel.fromExportJson(map);
-    final newId = await createHero(name: model.name.isEmpty ? 'Imported Hero' : model.name);
+    final newId = await createHero(
+        name: model.name.isEmpty ? 'Imported Hero' : model.name);
     final toSave = model..name = model.name; // keep same name
     // rebind id
     final rebound = HeroModel(
@@ -470,6 +570,8 @@ class HeroRepository {
       level: toSave.level,
       ancestry: toSave.ancestry,
       career: toSave.career,
+      deityId: toSave.deityId,
+      domain: toSave.domain,
       victories: toSave.victories,
       exp: toSave.exp,
       wealth: toSave.wealth,
@@ -554,6 +656,8 @@ class _HeroKeys {
   final String level = 'basics.level';
   final String ancestry = 'basics.ancestry';
   final String career = 'basics.career';
+  final String deity = 'faith.deity';
+  final String domain = 'faith.domain';
   // ancestry extras
   final String ancestrySelectedTraits = 'ancestry.selected_traits';
   final String ancestrySignature = 'ancestry.signature_name';

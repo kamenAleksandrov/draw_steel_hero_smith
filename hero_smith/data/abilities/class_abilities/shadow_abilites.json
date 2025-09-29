@@ -1,143 +1,6 @@
 [
   {
     "type": "ability",
-    "id": "ability_shadow_assassinate",
-    "name": "Assassinate",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "A practiced attack will instantly kill an already weakened foe.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + A damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + A damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "24 + A damage"
-        }
-      }
-    },
-    "effect": "A target who is not a minion, leader, or solo creature and who is winded after taking this damage is reduced to 0 Stamina.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_black_ash_eruption",
-    "name": "Black Ash Eruption",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Black Ash",
-    "story_text": "Your attack produces a cloud of black ash that launches an enemy into the air.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + A damage; vertical push 5"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + A damage; vertical push 10"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + A damage; vertical push 15"
-        }
-      }
-    },
-    "effect": "A creature force moved by this ability must be moved straight upward.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_shadow_black_ash_teleport",
     "name": "Black Ash Teleport",
     "costs": {
@@ -198,333 +61,6 @@
       }
     },
     "effect": "You teleport up to 5 squares. If you have concealment or cover at your destination, you can use the Hide maneuver even if you are observed. If you successfully hide using this maneuver, you gain 1 surge.\n\nYou teleport 1 additional square for each insight spent.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_blackout",
-    "name": "Blackout",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You cause a plume of shadow to erupt from your eyes and create a cloud of darkness.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 burst",
-      "area": null
-    },
-    "targets": "Special",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "A black cloud fills the area until the end of your next turn, granting you and your allies concealment against enemies. While you are in the area, whenever an enemy ends their turn in the area, you can use a free triggered action to shift to a new location within the area and make a free strike against them.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_cacophony_of_cinders",
-    "name": "Cacophony of Cinders",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Black Ash",
-    "story_text": "You tumble through the battle, stabbing foes and teleporting allies.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self; see below",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "An enemy takes 6 damage; an ally can teleport up to 3 squares."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "An enemy takes 10 damage; an ally can teleport up to 5 squares."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "An enemy takes 14 damage; an ally can teleport up to 7 squares."
-        }
-      }
-    },
-    "effect": "You shift up to twice your speed, making one power roll that targets each creature you come adjacent to during the shift.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_careful_observation",
-    "name": "Careful Observation",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "A moment of focus leaves a foe firmly in your sights.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 20",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "As long as you remain within distance of the target, maintain line of effect to them, and strike no other creature first, you gain an edge on the next strike you make against the assessed creature, and gain 1 surge you can use only on that strike.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_chain_reaction",
-    "name": "Chain Reaction",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Caustic Alchemy",
-    "story_text": "One explosion, an offense. Three explosions, an assault. Nine explosions, a celebration.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 damage"
-        }
-      }
-    },
-    "effect": "Each enemy within 3 squares of the target who is not currently targeted by this ability also becomes targeted by this ability. This effect continues until there are no more available targets. The ability deals acid, fire, or poison damage (your choice).",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_cinderstorm",
-    "name": "Cinderstorm",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Black Ash",
-    "story_text": "You teleport your friends in a burst of ash and fire.",
-    "keywords": [
-      "Magic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "4 burst",
-      "area": null
-    },
-    "targets": "Self and each ally in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Each target can teleport up to 5 squares. For each target in addition to you who teleports away from or into a space adjacent to an enemy, that enemy takes fire damage equal to your Agility score. Additionally, a target who ends this movement in concealment or cover can use the Hide maneuver even if they are observed.",
     "special_effect": null
   },
   {
@@ -726,70 +262,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_shadow_dancer",
-    "name": "Dancer",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "You enter a flow state that makes you nearly impossible to pin down.",
-    "keywords": [
-      "-"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, whenever an enemy moves or is force moved adjacent to you or damages you, you can take the Disengage move action as a free triggered action.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_shadow_defensive_roll",
     "name": "Defensive Roll",
     "costs": {
@@ -850,75 +322,6 @@
       }
     },
     "effect": "You take half the triggering damage, then can shift up to 2 squares after the triggering effect resolves. If you end this shift with concealment or cover, you can use the Hide maneuver even if you are observed.\n\nThe potency of any effects associated with the damage are reduced by 1 for you.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_demon_door",
-    "name": "Demon Door",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Black Ash",
-    "story_text": "You create a temporary portal to allow a massive demonic hand to reach through.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 3",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A corruption damage; push 3"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + A corruption damage; push 5"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "25 + A corruption damage; push 7"
-        }
-      }
-    },
-    "effect": "On a critical hit, the target is grabbed by the demon and pulled through the portal before it closes, never to be seen again.",
     "special_effect": null
   },
   {
@@ -1260,71 +663,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_shadow_i_am_you",
-    "name": "I Am You",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Harlequin Mask",
-    "story_text": "Your mask reflects your foe's face. Surely they won't need it much longer.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, you gain the target's damage immunities and speed (if they are better than yours), and can use any types of movement they can use. You can also use the target's signature ability, using their bonus for the power roll.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_shadow_i_work_better_alone",
     "name": "I Work Better Alone",
     "costs": {
@@ -1522,480 +860,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_shadow_in_a_puff_of_ash",
-    "name": "In a Puff of Ash",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Black Ash",
-    "story_text": "You enchant a strike with your teleportation magic.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 + A damage; you can teleport the target 1 square"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + A damage; you can teleport the target up to 3 squares"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 + A damage; you can teleport the target up to 5 squares"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_into_the_shadows",
-    "name": "Into the Shadows",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You sweep your foe off their feet and plunge them into absolute darkness.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + A corruption damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A corruption damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "17 + A corruption damage"
-        }
-      }
-    },
-    "effect": "You and the target are removed from the encounter map until the start of your next turn. You reappear in the spaces you left or the nearest unoccupied spaces. Make a power roll upon your return.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_it_was_me_all_along",
-    "name": "It Was Me All Along",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Harlequin Mask",
-    "story_text": "After everything you've been through together, you twist the blade and make the pain extra personal.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature or object",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 + A damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "21 + A damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "28 + A damage"
-        }
-      }
-    },
-    "effect": "If you are disguised as a creature the target knew using your I'm No Threat ability, this ability deals extra damage equal to three times your Agility score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_look",
-    "name": "Look!",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Harlequin Mask",
-    "story_text": "You distract your foes, allowing your allies to take advantage of that distraction.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "5 burst",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the start of your next turn, any ability roll made against a target gains an edge.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_machinations_of_sound",
-    "name": "Machinations of Sound",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Harlequin Mask",
-    "story_text": "Illusory sounds make your foes reposition themselves as they cower or investigate the disturbance.",
-    "keywords": [
-      "Area",
-      "Magic",
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 cube within 10",
-      "area": null
-    },
-    "targets": "Each creature in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 4"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 5"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Slide 7"
-        }
-      }
-    },
-    "effect": "This forced movement ignores stability. Instead, the forced movement is reduced by a number equal to the target's Intuition score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_misdirecting_strike",
-    "name": "Misdirecting Strike",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "\"Why are you looking at ME?!\"",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + A damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + A damage"
-        }
-      }
-    },
-    "effect": "The target is taunted by a willing ally within 5 squares of you until the end of the target's next turn.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_night_watch",
-    "name": "Night Watch",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "level": 4,
-    "subclass": null,
-    "story_text": "A steely dagger from out of the blue knocks another weapon off course.",
-    "keywords": [
-      "Ranged",
-      "Weapon"
-    ],
-    "action_type": "Triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 5",
-      "area": null
-    },
-    "targets": "One ally",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "The target takes half the damage. You remain hidden.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_shadow_one_hundred_throats",
     "name": "One Hundred Throats",
     "costs": {
@@ -2063,273 +927,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_shadow_one_vial_makes_you_better",
-    "name": "One Vial Makes You Better",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Caustic Alchemy",
-    "story_text": "A well-timed throw of a potion will keep your allies in the fight.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three creatures",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion can spend up to 2 Recoveries, and has acid immunity, fire immunity, or poison immunity (their choice) equal to your level until the end of the encounter.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_one_vial_makes_you_faster",
-    "name": "One Vial Makes You Faster",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Caustic Alchemy",
-    "story_text": "Each ally who catches a potion you throw can take the battle to the next level.",
-    "keywords": [
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three creatures",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "The creature's speed is increased by 2 until the end of the encounter."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "The creature can fly until the end of the encounter."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "The creature turns invisible until the end of their next turn."
-        }
-      }
-    },
-    "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion receives benefits based on your power roll.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_pinning_shot",
-    "name": "Pinning Shot",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "One missile—placed well and placed hard.",
-    "keywords": [
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + A damage; A < WEAK, restrained (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + A damage; A < AVERAGE, restrained (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 + A damage; A < STRONG, restrained (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_puppet_strings",
-    "name": "Puppet Strings",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Harlequin Mask",
-    "story_text": "You prick little needles on the tips of your fingers into the nerves of your enemies and cause them to lose control.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "Two enemies",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "2 damage; if the target has R < WEAK, before the damage is resolved, they make a free strike."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 damage; if the target has R < AVERAGE, before the damage is resolved, they use a main action ability of your choice."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 damage; if the target has R < STRONG, before the damage is resolved, they can shift up to their speed and use a main action ability of your choice."
-        }
-      }
-    },
-    "effect": "You choose the new targets for the original target's free strike or ability. Additionally, if you are hidden or disguised, using this ability doesn't cause you to be revealed.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_shadow_setup",
     "name": "Setup",
     "costs": {
@@ -2390,141 +987,6 @@
           "potencies": [],
           "conditions": [],
           "all_text": "13 + A damage; R < STRONG, the target has damage weakness 5 (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_shadowfall",
-    "name": "Shadowfall",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You vanish. They fall. You reappear.",
-    "keywords": [
-      "Area",
-      "Melee",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "10 x 1 line within 1",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "20 damage"
-        }
-      }
-    },
-    "effect": "You disappear before making the power roll. After the power roll is resolved, you appear in the first unoccupied space at the far end of the line.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_shadowgrasp",
-    "name": "Shadowgrasp",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "The shadows around you give way, allowing the shadow creature within you to grasp at your foes.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "2 burst",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 corruption damage; A < WEAK, restrained (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 corruption damage; A < AVERAGE, restrained (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "21 corruption damage; A < STRONG, restrained (save ends)"
         }
       }
     },
@@ -2599,6 +1061,350 @@
   },
   {
     "type": "ability",
+    "id": "ability_shadow_teamwork_has_its_place",
+    "name": "Teamwork Has Its Place",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "You attack an enemy as an ally exposes their weakness.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + A damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + A damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + A damage"
+        }
+      }
+    },
+    "effect": "If any ally is adjacent to the target, you gain 1 surge before making the power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_two_throats_at_once",
+    "name": "Two Throats at Once",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 3
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "A bargain.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "Two creatures or objects",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "4 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 damage"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_you_were_watching_the_wrong_one",
+    "name": "You Were Watching the Wrong One",
+    "costs": {
+      "signature": true,
+      "resource": null,
+      "amount": null
+    },
+    "level": 1,
+    "subclass": null,
+    "story_text": "They can't watch both of you at once.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + A damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 + A damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + A damage"
+        }
+      }
+    },
+    "effect": "As long as you have one or more allies within 5 squares of the target, you gain 1 surge. If you are flanking the target when you use this ability, choose one ally who is flanking with you. That ally also gains 1 surge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_in_a_puff_of_ash",
+    "name": "In a Puff of Ash",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Black Ash",
+    "story_text": "You enchant a strike with your teleportation magic.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + A damage; you can teleport the target 1 square"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A damage; you can teleport the target up to 3 squares"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + A damage; you can teleport the target up to 5 squares"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_machinations_of_sound",
+    "name": "Machinations of Sound",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Harlequin Mask",
+    "story_text": "Illusory sounds make your foes reposition themselves as they cower or investigate the disturbance.",
+    "keywords": [
+      "Area",
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 10",
+      "area": null
+    },
+    "targets": "Each creature in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 4"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Slide 7"
+        }
+      }
+    },
+    "effect": "This forced movement ignores stability. Instead, the forced movement is reduced by a number equal to the target's Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
     "id": "ability_shadow_so_gullible",
     "name": "So Gullible",
     "costs": {
@@ -2659,139 +1465,6 @@
       }
     },
     "effect": "You use your Clever Trick ability with no insight cost against the triggering creature and strike. You can teleport to an unoccupied space within 3 squares of that creature and can make a free strike against them. You can then spend a Recovery.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_speed_of_shadows",
-    "name": "Speed of Shadows",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You make multiple strikes against a foe before they even notice they're dead.",
-    "keywords": [
-      "Magic"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You can use a strike signature ability four times, use a strike signature ability that gains an edge three times, or use a strike signature ability that has a double edge twice. You can shift up to 2 squares between each use.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_staggering_blow",
-    "name": "Staggering Blow",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "There's no recovering from this.",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + A damage; M < WEAK, slowed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + A damage; M < AVERAGE, prone and can't stand (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 + A damage; M < STRONG, prone and can't stand (save ends)"
-        }
-      }
-    },
-    "effect": null,
     "special_effect": null
   },
   {
@@ -2929,16 +1602,208 @@
   },
   {
     "type": "ability",
-    "id": "ability_shadow_teamwork_has_its_place",
-    "name": "Teamwork Has Its Place",
+    "id": "ability_shadow_too_slow",
+    "name": "Too Slow",
     "costs": {
-      "signature": true,
+      "signature": false,
+      "resource": "Insight",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Black Ash",
+    "story_text": "Your foe made a big mistake.",
+    "keywords": [
+      "-"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You ignore any effects associated with the damage that triggered your In All This Confusion ability. Before you teleport, you can make a free strike against a creature who damaged you to trigger In All This Confusion. After you teleport, you can spend a Recovery.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_careful_observation",
+    "name": "Careful Observation",
+    "costs": {
+      "signature": false,
       "resource": null,
       "amount": null
     },
-    "level": 1,
+    "level": 3,
     "subclass": null,
-    "story_text": "You attack an enemy as an ally exposes their weakness.",
+    "story_text": "A moment of focus leaves a foe firmly in your sights.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 20",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "As long as you remain within distance of the target, maintain line of effect to them, and strike no other creature first, you gain an edge on the next strike you make against the assessed creature, and gain 1 surge you can use only on that strike.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_dancer",
+    "name": "Dancer",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "You enter a flow state that makes you nearly impossible to pin down.",
+    "keywords": [
+      "-"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, whenever an enemy moves or is force moved adjacent to you or damages you, you can take the Disengage move action as a free triggered action.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_misdirecting_strike",
+    "name": "Misdirecting Strike",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "\"Why are you looking at ME?!\"",
     "keywords": [
       "Melee",
       "Ranged",
@@ -2949,6 +1814,342 @@
     "trigger_text": null,
     "range": {
       "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + A damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + A damage"
+        }
+      }
+    },
+    "effect": "The target is taunted by a willing ally within 5 squares of you until the end of the target's next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_pinning_shot",
+    "name": "Pinning Shot",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "One missile—placed well and placed hard.",
+    "keywords": [
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + A damage; A < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + A damage; A < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + A damage; A < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_staggering_blow",
+    "name": "Staggering Blow",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "There's no recovering from this.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + A damage; M < WEAK, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + A damage; M < AVERAGE, prone and can't stand (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + A damage; M < STRONG, prone and can't stand (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_night_watch",
+    "name": "Night Watch",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "level": 4,
+    "subclass": null,
+    "story_text": "A steely dagger from out of the blue knocks another weapon off course.",
+    "keywords": [
+      "Ranged",
+      "Weapon"
+    ],
+    "action_type": "Triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 5",
+      "area": null
+    },
+    "targets": "One ally",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target takes half the damage. You remain hidden.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_blackout",
+    "name": "Blackout",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You cause a plume of shadow to erupt from your eyes and create a cloud of darkness.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 burst",
+      "area": null
+    },
+    "targets": "Special",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "A black cloud fills the area until the end of your next turn, granting you and your allies concealment against enemies. While you are in the area, whenever an enemy ends their turn in the area, you can use a free triggered action to shift to a new location within the area and make a free strike against them.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_into_the_shadows",
+    "name": "Into the Shadows",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You sweep your foe off their feet and plunge them into absolute darkness.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
       "area": null
     },
     "targets": "One creature or object",
@@ -2967,7 +2168,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "3 + A damage"
+          "all_text": "8 + A corruption damage"
         },
         "mid": {
           "damage_expression": null,
@@ -2978,7 +2179,7 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "6 + A damage"
+          "all_text": "13 + A corruption damage"
         },
         "high": {
           "damage_expression": null,
@@ -2989,11 +2190,744 @@
           "descriptive_text": null,
           "potencies": [],
           "conditions": [],
-          "all_text": "9 + A damage"
+          "all_text": "17 + A corruption damage"
         }
       }
     },
-    "effect": "If any ally is adjacent to the target, you gain 1 surge before making the power roll.",
+    "effect": "You and the target are removed from the encounter map until the start of your next turn. You reappear in the spaces you left or the nearest unoccupied spaces. Make a power roll upon your return.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_shadowfall",
+    "name": "Shadowfall",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You vanish. They fall. You reappear.",
+    "keywords": [
+      "Area",
+      "Melee",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "10 x 1 line within 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "20 damage"
+        }
+      }
+    },
+    "effect": "You disappear before making the power roll. After the power roll is resolved, you appear in the first unoccupied space at the far end of the line.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_you_talk_too_much",
+    "name": "You Talk Too Much",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "Silence is a virtue. A knife pinning their mouth shut is the next best thing.",
+    "keywords": [
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1 or ranged 5",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A damage; P < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + A damage; P < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + A damage; P < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": "The target can't communicate with anyone until the end of the encounter.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_black_ash_eruption",
+    "name": "Black Ash Eruption",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Black Ash",
+    "story_text": "Your attack produces a cloud of black ash that launches an enemy into the air.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "3 + A damage; vertical push 5"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 + A damage; vertical push 10"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + A damage; vertical push 15"
+        }
+      }
+    },
+    "effect": "A creature force moved by this ability must be moved straight upward.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_cinderstorm",
+    "name": "Cinderstorm",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Black Ash",
+    "story_text": "You teleport your friends in a burst of ash and fire.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "4 burst",
+      "area": null
+    },
+    "targets": "Self and each ally in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Each target can teleport up to 5 squares. For each target in addition to you who teleports away from or into a space adjacent to an enemy, that enemy takes fire damage equal to your Agility score. Additionally, a target who ends this movement in concealment or cover can use the Hide maneuver even if they are observed.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_look",
+    "name": "Look!",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Harlequin Mask",
+    "story_text": "You distract your foes, allowing your allies to take advantage of that distraction.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "5 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the start of your next turn, any ability roll made against a target gains an edge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_one_vial_makes_you_better",
+    "name": "One Vial Makes You Better",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Caustic Alchemy",
+    "story_text": "A well-timed throw of a potion will keep your allies in the fight.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion can spend up to 2 Recoveries, and has acid immunity, fire immunity, or poison immunity (their choice) equal to your level until the end of the encounter.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_one_vial_makes_you_faster",
+    "name": "One Vial Makes You Faster",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Caustic Alchemy",
+    "story_text": "Each ally who catches a potion you throw can take the battle to the next level.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The creature's speed is increased by 2 until the end of the encounter."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The creature can fly until the end of the encounter."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "The creature turns invisible until the end of their next turn."
+        }
+      }
+    },
+    "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion receives benefits based on your power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_puppet_strings",
+    "name": "Puppet Strings",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Harlequin Mask",
+    "story_text": "You prick little needles on the tips of your fingers into the nerves of your enemies and cause them to lose control.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "Two enemies",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "2 damage; if the target has R < WEAK, before the damage is resolved, they make a free strike."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "5 damage; if the target has R < AVERAGE, before the damage is resolved, they use a main action ability of your choice."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage; if the target has R < STRONG, before the damage is resolved, they can shift up to their speed and use a main action ability of your choice."
+        }
+      }
+    },
+    "effect": "You choose the new targets for the original target's free strike or ability. Additionally, if you are hidden or disguised, using this ability doesn't cause you to be revealed.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_assassinate",
+    "name": "Assassinate",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "A practiced attack will instantly kill an already weakened foe.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + A damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + A damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "24 + A damage"
+        }
+      }
+    },
+    "effect": "A target who is not a minion, leader, or solo creature and who is winded after taking this damage is reduced to 0 Stamina.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_shadowgrasp",
+    "name": "Shadowgrasp",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "The shadows around you give way, allowing the shadow creature within you to grasp at your foes.",
+    "keywords": [
+      "Area",
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "2 burst",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 corruption damage; A < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 corruption damage; A < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 corruption damage; A < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_speed_of_shadows",
+    "name": "Speed of Shadows",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You make multiple strikes against a foe before they even notice they're dead.",
+    "keywords": [
+      "Magic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can use a strike signature ability four times, use a strike signature ability that gains an edge three times, or use a strike signature ability that has a double edge twice. You can shift up to 2 squares between each use.",
     "special_effect": null
   },
   {
@@ -3131,6 +3065,342 @@
   },
   {
     "type": "ability",
+    "id": "ability_shadow_cacophony_of_cinders",
+    "name": "Cacophony of Cinders",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Black Ash",
+    "story_text": "You tumble through the battle, stabbing foes and teleporting allies.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "An enemy takes 6 damage; an ally can teleport up to 3 squares."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "An enemy takes 10 damage; an ally can teleport up to 5 squares."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "An enemy takes 14 damage; an ally can teleport up to 7 squares."
+        }
+      }
+    },
+    "effect": "You shift up to twice your speed, making one power roll that targets each creature you come adjacent to during the shift.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_chain_reaction",
+    "name": "Chain Reaction",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Caustic Alchemy",
+    "story_text": "One explosion, an offense. Three explosions, an assault. Nine explosions, a celebration.",
+    "keywords": [
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 damage"
+        }
+      }
+    },
+    "effect": "Each enemy within 3 squares of the target who is not currently targeted by this ability also becomes targeted by this ability. This effect continues until there are no more available targets. The ability deals acid, fire, or poison damage (your choice).",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_demon_door",
+    "name": "Demon Door",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Black Ash",
+    "story_text": "You create a temporary portal to allow a massive demonic hand to reach through.",
+    "keywords": [
+      "Magic",
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 3",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A corruption damage; push 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + A corruption damage; push 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "25 + A corruption damage; push 7"
+        }
+      }
+    },
+    "effect": "On a critical hit, the target is grabbed by the demon and pulled through the portal before it closes, never to be seen again.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_i_am_you",
+    "name": "I Am You",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Harlequin Mask",
+    "story_text": "Your mask reflects your foe's face. Surely they won't need it much longer.",
+    "keywords": [
+      "Magic",
+      "Ranged"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, you gain the target's damage immunities and speed (if they are better than yours), and can use any types of movement they can use. You can also use the target's signature ability, using their bonus for the power roll.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_shadow_it_was_me_all_along",
+    "name": "It Was Me All Along",
+    "costs": {
+      "signature": false,
+      "resource": "Insight",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Harlequin Mask",
+    "story_text": "After everything you've been through together, you twist the blade and make the pain extra personal.",
+    "keywords": [
+      "Melee",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature or object",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + A damage"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "21 + A damage"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "28 + A damage"
+        }
+      }
+    },
+    "effect": "If you are disguised as a creature the target knew using your I'm No Threat ability, this ability deals extra damage equal to three times your Agility score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
     "id": "ability_shadow_to_the_stars",
     "name": "To the Stars",
     "costs": {
@@ -3195,276 +3465,6 @@
       }
     },
     "effect": "The ground beneath a 3-cube area around the target's starting position is difficult terrain.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_too_slow",
-    "name": "Too Slow",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Black Ash",
-    "story_text": "Your foe made a big mistake.",
-    "keywords": [
-      "-"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self; see below",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You ignore any effects associated with the damage that triggered your In All This Confusion ability. Before you teleport, you can make a free strike against a creature who damaged you to trigger In All This Confusion. After you teleport, you can spend a Recovery.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_two_throats_at_once",
-    "name": "Two Throats at Once",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 3
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "A bargain.",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "Two creatures or objects",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "4 damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 damage"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_you_talk_too_much",
-    "name": "You Talk Too Much",
-    "costs": {
-      "signature": false,
-      "resource": "Insight",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "Silence is a virtue. A knife pinning their mouth shut is the next best thing.",
-    "keywords": [
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1 or ranged 5",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + A damage; P < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 + A damage; P < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "21 + A damage; P < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": "The target can't communicate with anyone until the end of the encounter.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_shadow_you_were_watching_the_wrong_one",
-    "name": "You Were Watching the Wrong One",
-    "costs": {
-      "signature": true,
-      "resource": null,
-      "amount": null
-    },
-    "level": 1,
-    "subclass": null,
-    "story_text": "They can't watch both of you at once.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "3 + A damage"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "5 + A damage"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + A damage"
-        }
-      }
-    },
-    "effect": "As long as you have one or more allies within 5 squares of the target, you gain 1 surge. If you are flanking the target when you use this ability, choose one ally who is flanking with you. That ally also gains 1 surge.",
     "special_effect": null
   }
 ]

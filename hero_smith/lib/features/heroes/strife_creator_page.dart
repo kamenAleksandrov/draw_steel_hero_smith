@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -16,6 +17,7 @@ import '../../widgets/creators/class_abilities_widget.dart';
 import '../../widgets/creators/class_features_widget.dart';
 import '../../widgets/pickers/language_picker.dart';
 import '../../widgets/pickers/perk_picker.dart';
+import '../../widgets/pickers/deity_domain_picker.dart';
 
 const Set<String> _subclassStopWords = {'the', 'of'};
 
@@ -68,8 +70,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   Map<String, int> _fixedStartingCharacteristics = <String, int>{};
   List<Map<String, dynamic>> _availableCharacteristicArrays = const [];
   int? _selectedCharacteristicArrayIndex;
-  Map<String, int?> _characteristicArrayAssignments =
-      <String, int?>{};
+  Map<String, int?> _characteristicArrayAssignments = <String, int?>{};
 
   // Class skill selection state
   int _classSkillPickCount = 0;
@@ -101,6 +102,20 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   final Set<String> _baselineLanguageIds = <String>{};
   final Map<String, Set<String>> _featureOptionSelections =
       <String, Set<String>>{};
+  List<Component> _deityComponents = const [];
+  final Map<String, String> _domainNameBySlug = <String, String>{};
+  final Map<String, Set<String>> _domainSlugsByDeityId =
+      <String, Set<String>>{};
+  Set<String> _availableDomainSlugs = const <String>{};
+  final Set<String> _domainLinkedFeatureIds = <String>{};
+  int _requiredDeityCount = 0;
+  int _requiredDomainCount = 0;
+  String? _selectedDeityId;
+  Set<String> _selectedDomainSlugs = <String>{};
+  Map<String, String> _selectedDomainSkills = <String, String>{};
+  Map<String, List<String>> _skillsByGroup = <String, List<String>>{};
+  Map<String, Map<String, dynamic>> _domainFeatureData =
+      <String, Map<String, dynamic>>{};
 
   @override
   void initState() {
@@ -121,6 +136,14 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       _classComponentId = classId;
       _classSlug = _slugForClass(classId);
       _subclassComponentId = hero?.subclass;
+      final heroDeity = hero?.deityId?.trim();
+      _selectedDeityId =
+          (heroDeity == null || heroDeity.isEmpty) ? null : heroDeity;
+      final heroDomain = hero?.domain?.trim();
+      _selectedDomainSlugs = (heroDomain == null || heroDomain.isEmpty)
+          ? <String>{}
+          : {_slugify(heroDomain)};
+      // TODO: Load domain skills from hero data when persistence is updated
     });
     _setDirty(false);
     await _refreshClassData();
@@ -147,12 +170,15 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     } catch (_) {
       featureMaps = const [];
     }
+    final deityDomainState = await _loadDeityDomainState(metadata, featureMaps);
     final abilities = await _loadClassAbilities(slug);
     await _prepareSkillState(metadata);
     _prepareCharacteristicState(metadata);
     _prepareAbilityData(abilities);
     await _preparePerkState(metadata);
     await _prepareLanguageState(metadata);
+    await _prepareSkillsData();
+    await _prepareDomainFeatureData(features);
     if (!mounted) return;
     final featureDetailsById = <String, Map<String, dynamic>>{};
     for (final entry in featureMaps) {
@@ -160,6 +186,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       if (id == null || id.isEmpty) continue;
       featureDetailsById[id] = entry;
     }
+    final domainLinkedFeatureIds =
+        _identifyDomainLinkedFeatures(featureDetailsById);
     final filteredFeatureSelections = <String, Set<String>>{};
     for (final feature in features) {
       final existing = _featureOptionSelections[feature.id];
@@ -167,6 +195,25 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         filteredFeatureSelections[feature.id] = existing.toSet();
       }
     }
+
+    final validatedDeityId =
+        _validateDeityId(_selectedDeityId, deityDomainState.deities);
+    final validatedDomainSlugs = _validateDomainSlugs(
+      _selectedDomainSlugs,
+      validatedDeityId,
+      deityDomainState.availableDomainSlugs,
+      deityDomainState.domainSlugsByDeityId,
+      _requiredDomainCount,
+    );
+
+    final nextFeatureSelections =
+        Map<String, Set<String>>.from(filteredFeatureSelections);
+    _applyDomainSelectionToFeatures(
+      nextFeatureSelections,
+      featureDetailsById,
+      domainLinkedFeatureIds,
+      validatedDomainSlugs,
+    );
 
     setState(() {
       _classData = metadata;
@@ -176,7 +223,26 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         ..addAll(featureDetailsById);
       _featureOptionSelections
         ..clear()
-        ..addAll(filteredFeatureSelections);
+        ..addAll(nextFeatureSelections);
+      _domainLinkedFeatureIds
+        ..clear()
+        ..addAll(domainLinkedFeatureIds);
+      _deityComponents = deityDomainState.deities.toList(growable: false);
+      _domainNameBySlug
+        ..clear()
+        ..addAll(deityDomainState.domainNameBySlug);
+      _domainSlugsByDeityId
+        ..clear()
+        ..addAll({
+          for (final entry in deityDomainState.domainSlugsByDeityId.entries)
+            entry.key: entry.value.toSet(),
+        });
+      _availableDomainSlugs =
+          Set<String>.from(deityDomainState.availableDomainSlugs);
+      _requiredDeityCount = deityDomainState.deityPickCount;
+      _requiredDomainCount = deityDomainState.domainPickCount;
+      _selectedDeityId = validatedDeityId;
+      _selectedDomainSlugs = validatedDomainSlugs;
       _loading = false;
     });
   }
@@ -223,7 +289,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         if (levelA != levelB) {
           return levelA.compareTo(levelB);
         }
-        return (a['name'] ?? '').toString().compareTo((b['name'] ?? '').toString());
+        return (a['name'] ?? '')
+            .toString()
+            .compareTo((b['name'] ?? '').toString());
       });
       return abilities;
     } catch (_) {
@@ -253,10 +321,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   String _slugify(String value) {
-    final normalized = value
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final normalized =
+        value.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
     final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
     return collapsed.replaceAll(RegExp(r'^_|_$'), '');
   }
@@ -293,8 +359,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     }
     final base = _slugify(value);
     if (base.isEmpty) return const <String>{};
-    final tokens =
-        base.split('_').where((token) => token.isNotEmpty).toList(growable: false);
+    final tokens = base
+        .split('_')
+        .where((token) => token.isNotEmpty)
+        .toList(growable: false);
     if (tokens.isEmpty) return {base};
     final variants = <String>{base};
 
@@ -573,7 +641,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final values = _characteristicArrayValues(
       _availableCharacteristicArrays[index],
     );
-    final assignments = _defaultCharacteristicAssignmentsForArray(values, fixed);
+    final assignments =
+        _defaultCharacteristicAssignmentsForArray(values, fixed);
     setState(() {
       _selectedCharacteristicArrayIndex = index;
       _characteristicArrayAssignments = assignments;
@@ -656,13 +725,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       return const [];
     }
     final allowance = _perkAllowances[allowanceIndex];
-    return _perkComponents
-        .where((component) {
-          final group =
-              component.data['group']?.toString().trim().toLowerCase();
-          return allowance.allowsGroup(group);
-        })
-        .toList();
+    return _perkComponents.where((component) {
+      final group = component.data['group']?.toString().trim().toLowerCase();
+      return allowance.allowsGroup(group);
+    }).toList();
   }
 
   Set<String> _currentSelectedPerkIds() {
@@ -691,9 +757,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .map((component) => component.id)
         .toSet();
     final normalizedId = perkId?.trim();
-    final resolvedId = normalizedId != null && eligibleIds.contains(normalizedId)
-        ? normalizedId
-        : null;
+    final resolvedId =
+        normalizedId != null && eligibleIds.contains(normalizedId)
+            ? normalizedId
+            : null;
 
     final currentId = existingSlots[slotIndex];
     if (currentId == resolvedId) return;
@@ -773,9 +840,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .toSet();
 
     final normalizedId = languageId?.trim();
-    final resolvedId = normalizedId != null && eligibleIds.contains(normalizedId)
-        ? normalizedId
-        : null;
+    final resolvedId =
+        normalizedId != null && eligibleIds.contains(normalizedId)
+            ? normalizedId
+            : null;
 
     final currentId = existingSlots[slotIndex];
     if (currentId == resolvedId) return;
@@ -943,6 +1011,278 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return allowances;
   }
 
+  _FaithRequirements _countFaithRequirements(Map<String, dynamic>? metadata) {
+    var deityCount = 0;
+    var domainCount = 0;
+    for (final levelEntry in _levelsUpToCurrentFromMetadata(metadata)) {
+      final features = levelEntry['features'];
+      if (features is! List) continue;
+      for (final entry in features) {
+        if (entry is! Map<String, dynamic>) continue;
+        final deityValue = _toIntOrNull(entry['deity']);
+        if (deityValue != null && deityValue > 0) {
+          deityCount += deityValue;
+        }
+        final domainValue = _toIntOrNull(entry['domain']);
+        if (domainValue != null && domainValue > 0) {
+          domainCount += domainValue;
+        }
+      }
+    }
+    return _FaithRequirements(deityCount: deityCount, domainCount: domainCount);
+  }
+
+  Future<_DeityDomainState> _loadDeityDomainState(
+    Map<String, dynamic>? metadata,
+    List<Map<String, dynamic>> featureMaps,
+  ) async {
+    final requirements = _countFaithRequirements(metadata);
+    final domainNamesFromFeatures =
+        _extractDomainNamesFromFeatureMaps(featureMaps);
+    final needsFaith =
+        requirements.hasRequirements || domainNamesFromFeatures.isNotEmpty;
+
+    List<Component> deities = const [];
+    if (needsFaith) {
+      try {
+        deities = await ref.read(componentsByTypeProvider('deity').future);
+      } catch (_) {
+        deities = const [];
+      }
+    }
+
+    final sortedDeities = deities.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    final domainNameBySlug = <String, String>{}
+      ..addAll(domainNamesFromFeatures);
+    final domainSlugsByDeityId = <String, Set<String>>{};
+
+    for (final deity in sortedDeities) {
+      final domains = (deity.data['domains'] as List?)
+              ?.map((entry) => entry.toString())
+              .toList() ??
+          const <String>[];
+      final slugSet = <String>{};
+      for (final domain in domains) {
+        final trimmed = domain.trim();
+        if (trimmed.isEmpty) continue;
+        final slug = _slugify(trimmed);
+        slugSet.add(slug);
+        domainNameBySlug.putIfAbsent(slug, () => trimmed);
+      }
+      domainSlugsByDeityId[deity.id] = slugSet;
+      domainSlugsByDeityId[deity.id.toLowerCase()] = slugSet;
+    }
+
+    final allDeityDomainSlugs = domainSlugsByDeityId.values.fold<Set<String>>(
+      <String>{},
+      (acc, set) => acc..addAll(set),
+    );
+
+    Set<String> availableDomainSlugs;
+    if (domainNamesFromFeatures.isNotEmpty) {
+      availableDomainSlugs = allDeityDomainSlugs.isEmpty
+          ? domainNamesFromFeatures.keys.toSet()
+          : domainNamesFromFeatures.keys
+              .where(allDeityDomainSlugs.contains)
+              .toSet();
+    } else {
+      availableDomainSlugs = allDeityDomainSlugs;
+    }
+
+    return _DeityDomainState(
+      deities: sortedDeities,
+      domainNameBySlug: domainNameBySlug,
+      domainSlugsByDeityId: domainSlugsByDeityId,
+      availableDomainSlugs: availableDomainSlugs,
+      deityPickCount: requirements.deityCount,
+      domainPickCount: requirements.domainCount,
+    );
+  }
+
+  Map<String, String> _extractDomainNamesFromFeatureMaps(
+    List<Map<String, dynamic>> featureMaps,
+  ) {
+    final result = <String, String>{};
+    for (final feature in featureMaps) {
+      final options = feature['options'];
+      if (options is! List) continue;
+      for (final option in options) {
+        if (option is! Map<String, dynamic>) continue;
+        final domainName = option['domain']?.toString().trim();
+        if (domainName == null || domainName.isEmpty) continue;
+        final slug = _slugify(domainName);
+        result.putIfAbsent(slug, () => domainName);
+      }
+    }
+    return result;
+  }
+
+  Set<String> _identifyDomainLinkedFeatures(
+    Map<String, Map<String, dynamic>> featureDetailsById,
+  ) {
+    final ids = <String>{};
+    featureDetailsById.forEach((featureId, details) {
+      final options = details['options'];
+      if (options is! List) return;
+      final hasDomain = options.any((option) {
+        if (option is! Map<String, dynamic>) return false;
+        final domainName = option['domain']?.toString().trim();
+        return domainName != null && domainName.isNotEmpty;
+      });
+      if (hasDomain) ids.add(featureId);
+    });
+    return ids;
+  }
+
+  String? _validateDeityId(String? currentId, List<Component> deities) {
+    if (currentId == null || currentId.trim().isEmpty) return null;
+    if (deities.isEmpty) return currentId;
+    for (final deity in deities) {
+      if (deity.id == currentId) return deity.id;
+      if (deity.id.toLowerCase() == currentId.toLowerCase()) {
+        return deity.id;
+      }
+    }
+    return null;
+  }
+
+  Set<String> _validateDomainSlugs(
+    Set<String> currentSlugs,
+    String? deityId,
+    Set<String> availableSlugs,
+    Map<String, Set<String>> domainSlugsByDeity,
+    int requiredCount,
+  ) {
+    if (currentSlugs.isEmpty) return <String>{};
+
+    final validSlugs = <String>{};
+    for (final slug in currentSlugs) {
+      if (availableSlugs.isNotEmpty && !availableSlugs.contains(slug)) {
+        continue;
+      }
+      if (deityId != null) {
+        final allowed = domainSlugsByDeity[deityId] ??
+            domainSlugsByDeity[deityId.toLowerCase()];
+        if (allowed != null && allowed.isNotEmpty && !allowed.contains(slug)) {
+          continue;
+        }
+      }
+      validSlugs.add(slug);
+      if (validSlugs.length >= requiredCount && requiredCount > 0) {
+        break;
+      }
+    }
+    return validSlugs;
+  }
+
+  Set<String> _domainOptionKeysFor(
+    Map<String, Map<String, dynamic>> featureDetailsById,
+    String featureId,
+    Set<String> domainSlugs,
+  ) {
+    if (domainSlugs.isEmpty) return const <String>{};
+    final details = featureDetailsById[featureId];
+    if (details == null) return const <String>{};
+    final options = details['options'];
+    if (options is! List) return const <String>{};
+    final keys = <String>{};
+    for (final option in options) {
+      if (option is! Map<String, dynamic>) continue;
+      final domainName = option['domain']?.toString().trim();
+      if (domainName == null || domainName.isEmpty) continue;
+      final domainSlug = _slugify(domainName);
+      if (domainSlugs.contains(domainSlug)) {
+        keys.add(_featureOptionKey(option));
+      }
+    }
+    return keys;
+  }
+
+  void _applyDomainSelectionToFeatures(
+    Map<String, Set<String>> selections,
+    Map<String, Map<String, dynamic>> featureDetailsById,
+    Set<String> domainLinkedFeatureIds,
+    Set<String> domainSlugs,
+  ) {
+    for (final featureId in domainLinkedFeatureIds) {
+      if (domainSlugs.isEmpty) {
+        selections.remove(featureId);
+        continue;
+      }
+      final matchingKeys = _domainOptionKeysFor(
+        featureDetailsById,
+        featureId,
+        domainSlugs,
+      );
+
+      if (matchingKeys.isNotEmpty) {
+        // If only one domain selected, auto-select that domain's feature
+        // If multiple domains, allow user to choose
+        if (domainSlugs.length == 1) {
+          selections[featureId] = matchingKeys;
+        } else {
+          // Keep existing selection if valid, otherwise clear
+          final existing = selections[featureId] ?? <String>{};
+          final validExisting = existing.intersection(matchingKeys);
+          selections[featureId] =
+              validExisting.isNotEmpty ? validExisting : <String>{};
+        }
+      } else {
+        selections.remove(featureId);
+      }
+    }
+  }
+
+  String _featureOptionKey(Map<String, dynamic> option) =>
+      _slugify(_featureOptionLabel(option));
+
+  String _featureOptionLabel(Map<String, dynamic> option) {
+    for (final key in ['name', 'title', 'domain']) {
+      final value = option[key]?.toString();
+      if (value != null && value.trim().isNotEmpty) {
+        return value.trim();
+      }
+    }
+    if (option['skill'] != null) {
+      final value = option['skill'].toString();
+      if (value.trim().isNotEmpty) return value.trim();
+    }
+    if (option['benefit'] != null) {
+      final value = option['benefit'].toString();
+      if (value.trim().isNotEmpty) return value.trim();
+    }
+    return 'Option';
+  }
+
+  String _displayDomainName(String slug) {
+    final mapped = _domainNameBySlug[slug];
+    if (mapped != null && mapped.isNotEmpty) return mapped;
+    return _titleCaseFromSlug(slug);
+  }
+
+  String? get _selectedDomainName {
+    final slugs = _selectedDomainSlugs;
+    if (slugs.isEmpty) return null;
+    if (slugs.length == 1) {
+      return _displayDomainName(slugs.first);
+    }
+    // Multiple domains selected
+    final names = slugs.map(_displayDomainName).toList();
+    names.sort();
+    return names.join(', ');
+  }
+
+  String _titleCaseFromSlug(String slug) {
+    final parts = slug
+        .split('_')
+        .where((part) => part.isNotEmpty)
+        .toList(growable: false);
+    if (parts.isEmpty) return slug;
+    return parts.map((part) => part.capitalize()).join(' ');
+  }
+
   Map<String, int> _fixedCharacteristicBoosts() {
     return Map<String, int>.from(_fixedStartingCharacteristics);
   }
@@ -993,6 +1333,20 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     _baselineLanguageIds
       ..clear()
       ..addAll((_model?.languages ?? const <String>[]));
+    _deityComponents = const [];
+    _domainNameBySlug.clear();
+    _domainSlugsByDeityId.clear();
+    _availableDomainSlugs = const <String>{};
+    _domainLinkedFeatureIds.clear();
+    _requiredDeityCount = 0;
+    _requiredDomainCount = 0;
+    final heroDeity = _model?.deityId?.trim();
+    _selectedDeityId =
+        (heroDeity == null || heroDeity.isEmpty) ? null : heroDeity;
+    final heroDomain = _model?.domain?.trim();
+    _selectedDomainSlugs = (heroDomain == null || heroDomain.isEmpty)
+        ? <String>{}
+        : {_slugify(heroDomain)};
   }
 
   Future<void> _prepareSkillState(Map<String, dynamic>? metadata) async {
@@ -1038,7 +1392,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     }
     if (!mounted) return;
 
-  final groupNames = ((skillsInfo['skill_groups'] as List?) ?? const [])
+    final groupNames = ((skillsInfo['skill_groups'] as List?) ?? const [])
         .map((e) => e.toString().trim().toLowerCase())
         .where((e) => e.isNotEmpty)
         .toSet();
@@ -1110,8 +1464,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .whereType<String>()
         .toSet();
 
-    final allowAllGroups =
-        groupNames.isEmpty && ((skillsInfo['skill_count'] as num?)?.toInt() ?? 0) > 0;
+    final allowAllGroups = groupNames.isEmpty &&
+        ((skillsInfo['skill_count'] as num?)?.toInt() ?? 0) > 0;
 
     final groupCandidateIds = allowAllGroups
         ? allSkillComponents.map((component) => component.id).toSet()
@@ -1152,9 +1506,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
     setState(() {
       _classSkillPickCount = pickCount;
-      _classSkillGroups = allowAllGroups
-          ? const ['Any']
-          : (groupNames.toList()..sort());
+      _classSkillGroups =
+          allowAllGroups ? const ['Any'] : (groupNames.toList()..sort());
       _classSkillComponents = eligibleComponents;
       _grantedClassSkillIds
         ..clear()
@@ -1197,9 +1550,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       if (rawId.trim().isEmpty && rawName.trim().isEmpty) {
         continue;
       }
-      final resolvedId = rawId.trim().isNotEmpty
-          ? rawId.trim()
-          : _slugify(rawName.trim());
+      final resolvedId =
+          rawId.trim().isNotEmpty ? rawId.trim() : _slugify(rawName.trim());
       final abilityCopy = Map<String, dynamic>.from(ability)
         ..['resolved_id'] = resolvedId;
       processedAbilities.add(abilityCopy);
@@ -1211,7 +1563,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     }
 
     final recognizedIds = abilityDetails.keys.toSet();
-    final heroAbilityIds = (_model?.abilities ?? const <String>[]) 
+    final heroAbilityIds = (_model?.abilities ?? const <String>[])
         .map((id) => id.trim())
         .where((id) => id.isNotEmpty)
         .toSet();
@@ -1244,10 +1596,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   void _updateAbilitySelections(Set<String> selections) {
-    final normalized = selections
-        .map((id) => id.trim())
-        .where((id) => id.isNotEmpty)
-        .toSet();
+    final normalized =
+        selections.map((id) => id.trim()).where((id) => id.isNotEmpty).toSet();
     if (setEquals(normalized, _selectedAbilityIds)) return;
     setState(() {
       _selectedAbilityIds
@@ -1264,12 +1614,180 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .map((option) => option.trim())
         .where((option) => option.isNotEmpty)
         .toSet();
+    if (_domainLinkedFeatureIds.contains(normalizedId)) {
+      final current =
+          _featureOptionSelections[normalizedId] ?? const <String>{};
+      if (!setEquals(current, normalizedSelections)) {
+        _showLimitSnack(
+          'Domain feature choices are controlled by your selected domain. Update your domain selection above.',
+        );
+      }
+      return;
+    }
     final current = _featureOptionSelections[normalizedId] ?? const <String>{};
     if (setEquals(current, normalizedSelections)) return;
     setState(() {
       _featureOptionSelections[normalizedId] = normalizedSelections;
     });
     _setDirty(true);
+  }
+
+  void _updateDeitySelection(String? deityId) {
+    final normalized = deityId?.trim();
+    final resolved = (normalized == null || normalized.isEmpty)
+        ? null
+        : _validateDeityId(normalized, _deityComponents);
+
+    final allowedDomains = resolved == null
+        ? _availableDomainSlugs
+        : _domainSlugsByDeityId[resolved] ??
+            _domainSlugsByDeityId[resolved.toLowerCase()] ??
+            _availableDomainSlugs;
+
+    var nextDomains = Set<String>.from(_selectedDomainSlugs);
+    nextDomains = nextDomains.intersection(allowedDomains);
+
+    if (_selectedDeityId == resolved &&
+        const SetEquality().equals(_selectedDomainSlugs, nextDomains)) {
+      return;
+    }
+
+    setState(() {
+      _selectedDeityId = resolved;
+      _selectedDomainSlugs = nextDomains;
+      final updated = Map<String, Set<String>>.from(_featureOptionSelections);
+      _applyDomainSelectionToFeatures(
+        updated,
+        _classFeatureDetailsById,
+        _domainLinkedFeatureIds,
+        nextDomains,
+      );
+      _featureOptionSelections
+        ..clear()
+        ..addAll(updated);
+    });
+    _setDirty(true);
+  }
+
+  void _updateDomainSelection(Set<String> domainSlugs) {
+    final currentDeity = _selectedDeityId;
+    final maxAllowed = _requiredDomainCount > 0 ? _requiredDomainCount : 999;
+
+    // Validate domain count
+    if (domainSlugs.length > maxAllowed) {
+      _showLimitSnack(
+          'You can select at most $maxAllowed ${maxAllowed == 1 ? 'domain' : 'domains'}.');
+      return;
+    }
+
+    // Validate domains are allowed for selected deity
+    if (currentDeity != null) {
+      final allowed = _domainSlugsByDeityId[currentDeity] ??
+          _domainSlugsByDeityId[currentDeity.toLowerCase()];
+      if (allowed != null && allowed.isNotEmpty) {
+        final invalidDomains = domainSlugs.difference(allowed);
+        if (invalidDomains.isNotEmpty) {
+          _showLimitSnack(
+              'Selected domains are not available for the selected deity.');
+          return;
+        }
+      }
+    }
+
+    if (const SetEquality().equals(_selectedDomainSlugs, domainSlugs)) return;
+
+    setState(() {
+      _selectedDomainSlugs = domainSlugs;
+      final updated = Map<String, Set<String>>.from(_featureOptionSelections);
+      _applyDomainSelectionToFeatures(
+        updated,
+        _classFeatureDetailsById,
+        _domainLinkedFeatureIds,
+        domainSlugs,
+      );
+      _featureOptionSelections
+        ..clear()
+        ..addAll(updated);
+    });
+    _setDirty(true);
+  }
+
+  void _updateDomainSkill(String domainSlug, String skill) {
+    if (_selectedDomainSkills[domainSlug] == skill) return;
+
+    setState(() {
+      _selectedDomainSkills[domainSlug] = skill;
+    });
+    _setDirty(true);
+  }
+
+  Future<void> _prepareSkillsData() async {
+    try {
+      final raw = await rootBundle.loadString('data/story/skills.json');
+      final decoded = jsonDecode(raw) as List<dynamic>;
+      final skills = decoded.cast<Map<String, dynamic>>();
+
+      final skillsByGroup = <String, List<String>>{};
+      for (final skill in skills) {
+        final group = skill['group']?.toString();
+        final name = skill['name']?.toString();
+        if (group != null && name != null) {
+          skillsByGroup.putIfAbsent(group, () => <String>[]).add(name);
+        }
+      }
+
+      // Sort skill names within each group
+      for (final list in skillsByGroup.values) {
+        list.sort();
+      }
+
+      setState(() {
+        _skillsByGroup = skillsByGroup;
+      });
+    } catch (_) {
+      // If loading fails, use empty data
+      setState(() {
+        _skillsByGroup = <String, List<String>>{};
+      });
+    }
+  }
+
+  Future<void> _prepareDomainFeatureData(List<Feature> features) async {
+    final domainFeatureData = <String, Map<String, dynamic>>{};
+
+    for (final feature in features) {
+      if (feature.id == 'feature_censor_domain_feature') {
+        try {
+          final featureMaps =
+              await FeatureRepository.loadClassFeatureMaps(_classSlug ?? '');
+          for (final featureMap in featureMaps) {
+            if (featureMap['id'] == feature.id) {
+              final options = featureMap['options'] as List<dynamic>?;
+              if (options != null) {
+                for (final option in options) {
+                  if (option is Map<String, dynamic>) {
+                    final domain = option['domain']?.toString();
+                    if (domain != null) {
+                      final domainSlug = _slugify(domain);
+                      domainFeatureData[domainSlug] =
+                          Map<String, dynamic>.from(option);
+                    }
+                  }
+                }
+              }
+              break;
+            }
+          }
+        } catch (_) {
+          // If loading fails, continue without domain feature data
+        }
+        break;
+      }
+    }
+
+    setState(() {
+      _domainFeatureData = domainFeatureData;
+    });
   }
 
   Future<void> _preparePerkState(Map<String, dynamic>? metadata) async {
@@ -1306,17 +1824,16 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final candidateIds = <String>{};
     for (final perk in sortedPerks) {
       final group = perk.data['group']?.toString().trim().toLowerCase();
-      final matches = allowances.any((allowance) => allowance.allowsGroup(group));
+      final matches =
+          allowances.any((allowance) => allowance.allowsGroup(group));
       if (matches) candidateIds.add(perk.id);
     }
 
     final existingPerks = (_model?.perks ?? const <String>[]).toList();
-    final baseline = existingPerks
-        .where((id) => !candidateIds.contains(id))
-        .toSet();
-    final selectable = existingPerks
-        .where((id) => candidateIds.contains(id))
-        .toList();
+    final baseline =
+        existingPerks.where((id) => !candidateIds.contains(id)).toSet();
+    final selectable =
+        existingPerks.where((id) => candidateIds.contains(id)).toList();
 
     final selections = <int, List<String?>>{};
     for (var index = 0; index < allowances.length; index++) {
@@ -1375,7 +1892,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
     List<Component> allLanguages = const [];
     try {
-      allLanguages = await ref.read(componentsByTypeProvider('language').future);
+      allLanguages =
+          await ref.read(componentsByTypeProvider('language').future);
     } catch (_) {
       allLanguages = const [];
     }
@@ -1663,7 +2181,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
-
   String? _abilitySummary(Map<String, dynamic> ability) {
     final parts = <String>[];
     final level = _toIntOrNull(ability['level']);
@@ -1707,7 +2224,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ..skills = mergedSkills
       ..abilities = mergedAbilities
       ..perks = mergedPerks
-      ..languages = mergedLanguages;
+      ..languages = mergedLanguages
+      ..deityId = _selectedDeityId
+      ..domain = _selectedDomainSlugs.isNotEmpty ? _selectedDomainSlugs.first : null;
 
     Map<String, int>? finalCharacteristics;
     if (_availableCharacteristicArrays.isEmpty &&
@@ -1838,6 +2357,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
           SliverToBoxAdapter(child: _buildAbilitiesCard(theme)),
           SliverToBoxAdapter(child: _buildPerksCard()),
           SliverToBoxAdapter(child: _buildLanguagesCard()),
+          SliverToBoxAdapter(child: _buildDeityDomainCard(theme)),
           SliverToBoxAdapter(child: _buildFeaturesCard(theme)),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
@@ -2000,14 +2520,11 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                 child: Text('Failed to load subclasses: $e'),
               ),
               data: (subclasses) {
-                final filtered = subclasses
-                    .where((component) {
-                      final parent = component.data['parent_class']
-                          ?.toString()
-                          .toLowerCase();
-                      return parent == classSlug;
-                    })
-                    .toList()
+                final filtered = subclasses.where((component) {
+                  final parent =
+                      component.data['parent_class']?.toString().toLowerCase();
+                  return parent == classSlug;
+                }).toList()
                   ..sort((a, b) => a.name.compareTo(b.name));
 
                 if (filtered.isEmpty) {
@@ -2016,7 +2533,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
                 final hasSelection = filtered
                     .any((component) => component.id == _subclassComponentId);
-                final dropdownValue = hasSelection ? _subclassComponentId : null;
+                final dropdownValue =
+                    hasSelection ? _subclassComponentId : null;
 
                 return Padding(
                   padding: StrifeTheme.cardPadding,
@@ -2217,7 +2735,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                               children: [
                                 Text(
                                   abilityName,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                  style:
+                                      theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -2353,8 +2872,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                                 children: [
                                   Text(
                                     entry.$1,
-                                    style:
-                                        theme.textTheme.labelSmall?.copyWith(
+                                    style: theme.textTheme.labelSmall?.copyWith(
                                       color: StrifeTheme.resourceAccent,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -2389,8 +2907,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                       children: boosts.entries
                           .map((entry) => _buildAbilityMetaChip(
                                 theme,
-                label:
-                  '${_characteristicDisplayName(entry.key)}: +${entry.value}',
+                                label:
+                                    '${_characteristicDisplayName(entry.key)}: +${entry.value}',
                                 color: StrifeTheme.resourceAccent,
                                 icon: Icons.trending_up,
                               ))
@@ -2424,8 +2942,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: theme.colorScheme.surfaceVariant
-                    .withValues(alpha: 0.18),
+                color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.18),
               ),
               child: Text(
                 'This class does not define characteristic arrays.',
@@ -2483,7 +3000,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       final availableValues = _availableValuesForCharacteristic(key);
 
       if (isFixed) {
-  final fixedLabel = fixedValue >= 0 ? '+$fixedValue' : '$fixedValue';
+        final fixedLabel = fixedValue >= 0 ? '+$fixedValue' : '$fixedValue';
         final totalLabel = total >= 0 ? '+$total' : '$total';
         characteristicRows.add(
           _buildFixedCharacteristicRow(
@@ -2640,8 +3157,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
     final entries = progression.entries
         .where((entry) => entry.value != null)
-        .map((entry) => MapEntry(
-            entry.key.toString().capitalize(), entry.value.toString()))
+        .map((entry) =>
+            MapEntry(entry.key.toString().capitalize(), entry.value.toString()))
         .toList();
 
     return Padding(
@@ -2672,8 +3189,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
-                          color: StrifeTheme.potencyAccent
-                              .withValues(alpha: 0.08),
+                          color:
+                              StrifeTheme.potencyAccent.withValues(alpha: 0.08),
                           border: Border.all(
                             color: StrifeTheme.potencyAccent
                                 .withValues(alpha: 0.28),
@@ -2799,8 +3316,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                         children: groups
                             .map((group) => Chip(
                                   label: Text(group.capitalize()),
-                                  avatar: const Icon(Icons.folder_shared,
-                                      size: 16),
+                                  avatar:
+                                      const Icon(Icons.folder_shared, size: 16),
                                   backgroundColor: StrifeTheme.skillsAccent
                                       .withValues(alpha: 0.1),
                                 ))
@@ -2895,6 +3412,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       featureDetailsById: _classFeatureDetailsById,
       selectedOptions: _featureOptionSelections,
       onSelectionChanged: _updateFeatureSelection,
+      domainLinkedFeatureIds: _domainLinkedFeatureIds,
+      selectedDomainSlugs: _selectedDomainSlugs,
       abilityDetailsById: _abilityDetailsById,
       abilityIdByName: _abilityIdByName,
       onAbilityPreviewRequested: _showAbilityDetails,
@@ -2915,7 +3434,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       } else {
         final slots = List<String?>.filled(allowance.count, null);
         if (existing != null) {
-          for (var slot = 0; slot < allowance.count && slot < existing.length; slot++) {
+          for (var slot = 0;
+              slot < allowance.count && slot < existing.length;
+              slot++) {
             slots[slot] = existing[slot];
           }
         }
@@ -2943,7 +3464,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       } else {
         final slots = List<String?>.filled(allowance.count, null);
         if (existing != null) {
-          for (var slot = 0; slot < allowance.count && slot < existing.length; slot++) {
+          for (var slot = 0;
+              slot < allowance.count && slot < existing.length;
+              slot++) {
             slots[slot] = existing[slot];
           }
         }
@@ -2956,6 +3479,35 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       languageComponents: _languageComponents,
       selections: selections,
       onSelectionChanged: _updateLanguageSelection,
+    );
+  }
+
+  Widget _buildDeityDomainCard(ThemeData theme) {
+    final hasFaithContent = _requiredDeityCount > 0 ||
+        _requiredDomainCount > 0 ||
+        _deityComponents.isNotEmpty ||
+        _selectedDeityId != null ||
+        _selectedDomainSlugs.isNotEmpty;
+    if (!hasFaithContent) {
+      return const SizedBox.shrink();
+    }
+
+    return DeityDomainPickerCard(
+      deities: _deityComponents,
+      selectedDeityId: _selectedDeityId,
+      selectedDomainSlugs: _selectedDomainSlugs,
+      requiredDeityCount: _requiredDeityCount,
+      requiredDomainCount: _requiredDomainCount,
+      domainNameBySlug: _domainNameBySlug,
+      domainSlugsByDeityId: _domainSlugsByDeityId,
+      availableDomainSlugs: _availableDomainSlugs,
+      selectedDomainName: _selectedDomainName,
+      selectedDomainSkills: _selectedDomainSkills,
+      onDeityChanged: _updateDeitySelection,
+      onDomainChanged: _updateDomainSelection,
+      onDomainSkillChanged: _updateDomainSkill,
+      domainFeatureData: _domainFeatureData,
+      skillsByGroup: _skillsByGroup,
     );
   }
 
@@ -2986,8 +3538,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             : theme.colorScheme.onSurfaceVariant,
         fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
       ),
-      backgroundColor:
-          theme.colorScheme.surfaceVariant.withValues(alpha: 0.4),
+      backgroundColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.4),
       selectedColor: accent.withValues(alpha: 0.35),
       disabledColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.1),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -3077,6 +3628,36 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ),
     );
   }
+}
+
+class _FaithRequirements {
+  const _FaithRequirements({
+    required this.deityCount,
+    required this.domainCount,
+  });
+
+  final int deityCount;
+  final int domainCount;
+
+  bool get hasRequirements => deityCount > 0 || domainCount > 0;
+}
+
+class _DeityDomainState {
+  const _DeityDomainState({
+    required this.deities,
+    required this.domainNameBySlug,
+    required this.domainSlugsByDeityId,
+    required this.availableDomainSlugs,
+    required this.deityPickCount,
+    required this.domainPickCount,
+  });
+
+  final List<Component> deities;
+  final Map<String, String> domainNameBySlug;
+  final Map<String, Set<String>> domainSlugsByDeityId;
+  final Set<String> availableDomainSlugs;
+  final int deityPickCount;
+  final int domainPickCount;
 }
 
 extension _Capitalize on String {

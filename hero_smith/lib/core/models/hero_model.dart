@@ -13,6 +13,8 @@ class HeroModel {
   int level;
   String? ancestry; // ancestry component id
   String? career; // career component id
+  String? deityId; // chosen deity component id
+  String? domain; // primary domain name
 
   // Victories & exp
   int victories;
@@ -83,6 +85,8 @@ class HeroModel {
     this.level = 1,
     this.ancestry,
     this.career,
+    this.deityId,
+    this.domain,
     this.victories = 0,
     this.exp = 0,
     this.wealth = 0,
@@ -147,6 +151,10 @@ class HeroModel {
           'ancestry': ancestry,
           'career': career,
         },
+        'faith': {
+          'deity': deityId,
+          'domain': domain,
+        },
         'victories': victories,
         'exp': exp,
         'wealth': wealth,
@@ -203,6 +211,7 @@ class HeroModel {
 
   factory HeroModel.fromExportJson(Map<String, dynamic> j) {
     final basics = (j['basics'] as Map<String, dynamic>? ?? {});
+    final faith = (j['faith'] as Map<String, dynamic>? ?? {});
     final stats = (j['stats'] as Map<String, dynamic>? ?? {});
     final stamina = (j['stamina'] as Map<String, dynamic>? ?? {});
     final heroic = (j['heroic_resource'] as Map<String, dynamic>? ?? {});
@@ -216,6 +225,8 @@ class HeroModel {
       level: _toInt(basics['level']) ?? 1,
       ancestry: basics['ancestry'] as String?,
       career: basics['career'] as String?,
+      deityId: faith['deity'] as String?,
+      domain: faith['domain'] as String?,
       victories: _toInt(j['victories']) ?? 0,
       exp: _toInt(j['exp']) ?? 0,
       wealth: _toInt(j['wealth']) ?? 0,
@@ -240,21 +251,43 @@ class HeroModel {
       heroicResource: heroic['type'] as String?,
       heroicResourceCurrent: _toInt(heroic['current']) ?? 0,
       surgesCurrent: _toInt(j['surges_current']) ?? 0,
-      immunities: (j['immunities'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      weaknesses: (j['weaknesses'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      immunities: (j['immunities'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      weaknesses: (j['weaknesses'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
       potencyStrong: pots['strong'] as String?,
       potencyAverage: pots['average'] as String?,
       potencyWeak: pots['weak'] as String?,
-      conditions: (j['conditions'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      classFeatures: (feats['class_features'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      ancestryTraits: (feats['ancestry_traits'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      languages: (feats['languages'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      skills: (feats['skills'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      perks: (feats['perks'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      projects: (feats['projects'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      conditions: (j['conditions'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      classFeatures: (feats['class_features'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      ancestryTraits: (feats['ancestry_traits'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      languages: (feats['languages'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      skills: (feats['skills'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      perks: (feats['perks'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      projects: (feats['projects'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
       projectPoints: _toInt(feats['project_points']) ?? 0,
-      titles: (feats['titles'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
-      abilities: (feats['abilities'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      titles: (feats['titles'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      abilities: (feats['abilities'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
       modifications: (j['modifications'] as Map<String, dynamic>? ?? {})
           .map((k, v) => MapEntry(k, _toInt(v) ?? 0)),
     );

@@ -69,205 +69,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_absolute_zero",
-    "name": "Absolute Zero",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Cryokinetic",
-    "story_text": "You become the coldest thing in the timescape.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 20 temporary Stamina."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 30 temporary Stamina."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 40 temporary Stamina."
-        }
-      }
-    },
-    "effect": "Until the end of the encounter or until you are dead, you become an avatar of uttermost cold. You gain immunity to all damage equal to the cold damage immunity granted by your Entropic Adaptability trait, you ignore the negative effects of dying, and you have a +2 bonus to potencies.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_absorption_field",
-    "name": "Absorption Field",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "Your null field absorbs kinetic energy.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy in the area takes a bane on ability rolls.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_anticipating_strike",
-    "name": "Anticipating Strike",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You suddenly strike an enemy, then grab them in a psionically enhanced grip.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + A damage; I < WEAK, restrained (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + A damage; I < AVERAGE, restrained (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A damage; I < STRONG, restrained (save ends)"
-        }
-      }
-    },
-    "effect": "This strike resolves before the triggering movement or main action.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_arcane_disruptor",
     "name": "Arcane Disruptor",
     "costs": {
@@ -333,206 +134,6 @@
       }
     },
     "effect": "While weakened this way, the target takes damage equal to your Intuition score whenever they use a supernatural ability that costs Malice.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_arcane_purge",
-    "name": "Arcane Purge",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You focus your null field into a pressure point strike that prevents your foe from channeling sorcery.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A damage; M < WEAK, the target is suppressed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "19 + A damage; M < AVERAGE, the target is suppressed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "24 + A damage; M < STRONG, the target is suppressed (save ends)"
-        }
-      }
-    },
-    "effect": "While suppressed, a target takes psychic damage equal to twice your Intuition score at the start of their turns, whenever they use a supernatural ability, or whenever they use an ability that costs Malice.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_arrestor_cycle",
-    "name": "Arrestor Cycle",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Chronokinetic",
-    "story_text": "You trap your foe in a looping cycle of time, where they relive the last few seconds over and over again.",
-    "keywords": [
-      "Psionic",
-      "Ranged"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "I < WEAK, the target loses their turn"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "I < AVERAGE, the target loses their turn"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "I < STRONG, the target loses their turn"
-        }
-      }
-    },
-    "effect": "If the target loses their turn, the round continues as if they had acted. A target who doesn't lose their turn takes psychic damage equal to twice your Intuition score for each main action they take until the end of their next turn.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_blur",
-    "name": "Blur",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Chronokinetic",
-    "story_text": "You release stored time, allowing you to act twice.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You can use a signature or heroic ability. You gain an edge on that ability's power rolls.",
     "special_effect": null
   },
   {
@@ -674,74 +275,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_entropic_field",
-    "name": "Entropic Field",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Cryokinetic",
-    "story_text": "You drastically increase the local entropy.",
-    "keywords": [
-      "Area",
-      "Psionic",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 cube within 1",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 cold damage; A < WEAK, slowed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 cold damage; A < AVERAGE, slowed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 cold damage; A < STRONG, slowed (save ends)"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_faster_than_the_eye",
     "name": "Faster Than the Eye",
     "costs": {
@@ -811,409 +344,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_force_redirected",
-    "name": "Force Redirected",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Chronokinetic",
-    "story_text": "The force of your strike moves your target in a surprising direction.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 3",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + A damage; slide 1"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + A damage; slide 3"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 + A damage; slide 5"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_gravitic_charge",
-    "name": "Gravitic Charge",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Metakinetic",
-    "story_text": "You channel your discipline into momentum that defies gravity.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 5"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 7"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 9"
-        }
-      }
-    },
-    "effect": "This movement ignores stability. If you slide into another creature, you resolve damage to both of you as if your force movement had ended, but you keep moving through that creature's space.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_gravitic_strike",
-    "name": "Gravitic Strike",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Metakinetic",
-    "story_text": "Your fist emanates gravitic force that pulls a distant enemy closer.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 3",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + A psychic damage; vertical pull 3"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 + A psychic damage; vertical pull 5"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "16 + A psychic damage; vertical pull 7"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_heat_drain",
-    "name": "Heat Drain",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Cryokinetic",
-    "story_text": "You drain all the heat from the target.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 + I cold damage; M < WEAK, restrained (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "11 + I cold damage; M < AVERAGE, restrained (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "15 + I cold damage; M < STRONG, restrained (save ends)"
-        }
-      }
-    },
-    "effect": "While restrained this way, the target takes cold damage equal to your Intuition score at the start of each of your turns. Additionally, whenever the target damages another creature while restrained this way, any potency associated with the damage is reduced by 2.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_heat_sink",
-    "name": "Heat Sink",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Cryokinetic",
-    "story_text": "You absorb ambient heat, coating the ground in frost and precipitating snow from the air.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the start of your next turn, the size of your Null Field ability increases by 1, and you and any ally benefit from concealment while in the area. At the end of this turn, each enemy in the area takes cold damage equal to your Intuition score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_ice_pillars",
-    "name": "Ice Pillars",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Cryokinetic",
-    "story_text": "Pillars of ice erupt from the ground and launch your foes into the air.",
-    "keywords": [
-      "Psionic",
-      "Ranged"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Ranged 10",
-      "area": null
-    },
-    "targets": "Three creatures or objects",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 6"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 8"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "Vertical slide 10"
-        }
-      }
-    },
-    "effect": "The pillars vanish as soon as the effects of the forced movement are resolved.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_impart_force",
     "name": "Impart Force",
     "costs": {
@@ -1279,70 +409,6 @@
       }
     },
     "effect": "An object you target must be your size or smaller. You gain an edge on this ability. Additionally, for each square you push the target, they take 1 psychic damage.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_inertial_absorption",
-    "name": "Inertial Absorption",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Metakinetic",
-    "story_text": "You absorb an attack to empower your body.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Free triggered",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You take half the damage, negate any effects associated with the damage for you, and gain 3 surges.",
     "special_effect": null
   },
   {
@@ -1480,203 +546,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_interphase",
-    "name": "Interphase",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Chronokinetic",
-    "story_text": "You slip into a faster timestream to act more quickly.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You can use up to three signature abilities, each of which gains an edge.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_iron_body",
-    "name": "Iron Body",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Metakinetic",
-    "story_text": "You focus until your body becomes as hard as iron.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You gain 20 temporary Stamina. Additionally, until the end of the encounter, your stability gains a bonus equal to your Intuition score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_iron_grip",
-    "name": "Iron Grip",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You grab the target with supernatural force.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + A damage; A < WEAK, grabbed"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "14 + A damage; A < AVERAGE, grabbed"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + A damage; A < STRONG, grabbed"
-        }
-      }
-    },
-    "effect": "While grabbed this way, the target takes a bane on the Escape Grab maneuver. Each time they use that maneuver, they take damage equal to twice your Agility score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_joint_lock",
     "name": "Joint Lock",
     "costs": {
@@ -1742,72 +611,6 @@
       }
     },
     "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_kinetic_shield",
-    "name": "Kinetic Shield",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 5
-    },
-    "level": 2,
-    "subclass": "Metakinetic",
-    "story_text": "You manifest a force barrier that absorbs incoming kinetic energy.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Intuition"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 10 temporary Stamina."
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 15 temporary Stamina."
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "You gain 20 temporary Stamina."
-        }
-      }
-    },
-    "effect": "While you have temporary Stamina from this ability, you can't be made bleeding even while dying.",
     "special_effect": null
   },
   {
@@ -1950,70 +753,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_molecular_rearrangement_field",
-    "name": "Molecular Rearrangement Field",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "Your enemies' wounds open, your allies' wounds close.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy who has I < AVERAGE and enters the area for the first time in a combat round or starts their turn there is bleeding (save ends). Each ally who enters the area for the first time in a combat round or starts their turn there gains temporary Stamina equal to your Intuition score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_null_field",
     "name": "Null Field",
     "costs": {
@@ -2075,75 +814,6 @@
       }
     },
     "effect": "Each target reduces their potencies by 1.\nOnce as a free maneuver on each of your turns, you can spend 1 discipline and give your Null Field one of the following additional effects until the start of your next turn:\n- Gravitic Disruption: The first time on a turn that a target takes damage, you can slide them up to 2 squares.\n- Inertial Anchor: Any target who starts their turn in the area can't shift.\n- Synaptic Break: Whenever you or any ally uses an ability against a target that has a potency effect, the potency is increased by 1.\nThis ability remains active even after an encounter ends. It ends only if you are dying or if you willingly end it (no action required).",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_phase_hurl",
-    "name": "Phase Hurl",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You throw your foe out of phase with this manifold, causing them to harm other enemies as they return.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "9 + A damage; push 5; I < WEAK, dazed (save ends)"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A damage; push 7; I < AVERAGE, dazed (save ends)"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "18 + A damage; push 10; I < STRONG, dazed (save ends)"
-        }
-      }
-    },
-    "effect": "The target and each creature or object they collide with from this forced movement takes psychic damage equal to the total number of squares the target was force moved. While the target is dazed this way, they see glimpses of creatures from other parts of the timescape.",
     "special_effect": null
   },
   {
@@ -2213,138 +883,6 @@
       }
     },
     "effect": "Before the push is resolved, you teleport the target to a square adjacent to you and opposite the one they started in. If the target can't be teleported this way, you can't push them.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_phase_leap",
-    "name": "Phase Leap",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 5,
-    "subclass": null,
-    "story_text": "You leap beyond reality, leaving an afterimage of yourself.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Move",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "You jump up to your speed without provoking opportunity attacks. Until the end of your next turn, a static afterimage of you remains in the space you left, and any enemy adjacent to your afterimage takes a bane on ability rolls. You can use your abilities from your own space or from the space of your afterimage as if you were still there. Additionally, if your Null Field ability is active, your afterimage also projects the aura from that ability, which you control as if you were in the afterimage's space.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_phase_step",
-    "name": "Phase Step",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 9
-    },
-    "level": 6,
-    "subclass": "Chronokinetic",
-    "story_text": "You weaken your connection to this manifold, allowing you to move through and damage enemies.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self; see below",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "6 damage; M < WEAK, dazed"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "8 damage; M < AVERAGE, dazed"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 damage; M < STRONG, dazed"
-        }
-      }
-    },
-    "effect": "You can shift up to your speed, and squares occupied by enemies or objects are not difficult terrain for this shift. You make one power roll that targets each enemy you moved through during this shift.",
     "special_effect": null
   },
   {
@@ -2487,68 +1025,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_psi_boost",
-    "name": "Psi Boost",
-    "costs": {
-      "signature": false,
-      "resource": null,
-      "amount": null
-    },
-    "level": 7,
-    "subclass": null,
-    "story_text": null,
-    "keywords": [],
-    "action_type": null,
-    "trigger_text": null,
-    "range": {
-      "distance": null,
-      "area": null
-    },
-    "targets": null,
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Whenever you use an ability that is a main action or a maneuver with the Psionic keyword, you can spend additional discipline to apply a psi boost to it and enhance its effects. A psi boost's effects only last until the end of the turn which the ability is first used. You can apply multiple psi boosts to an ability, but only one instance of each specific boost. You can use the following psi boosts.\n\n##### Dynamic Power (1 Discipline)\nIf the ability force moves a target, the forced movement distance gains a bonus equal to your Intuition score.\n##### Expanded Power (3 Discipline)\nIf the ability targets an area, you increase the size of the area by 1. If the area is a line, you increase the size of one dimension, not both.\n##### Extended Power (1 Discipline)\nIf the ability is ranged, the distance gains a bonus equal to your Intuition score. If the ability is melee, the distance gains a +2 bonus.\n##### Heightened Power (1 Discipline)\nIf the ability deals rolled damage, it deals extra damage equal to your Intuition score.\n##### Magnified Power (5 Discipline)\nIf the ability has a potency, you increase that potency by an amount equal to your Intuition score.\n##### Shared Power (5 Discipline)\nIf the ability targets individual creatures or objects, you target one additional creature or object within distance.\n##### Sharpened Power (1 Discipline)\nIf the ability has any power roll, that roll gains an edge.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_psychic_pulse",
     "name": "Psychic Pulse",
     "costs": {
@@ -2610,75 +1086,6 @@
       }
     },
     "effect": "Each target takes psychic damage equal to twice your Intuition score. Until the start of your next turn, the size of your Null Field ability increases by 1. At the end of your current turn, each enemy in the area of your Null Field ability takes psychic damage equal to your Intuition score.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_realitas",
-    "name": "Realitas",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 9,
-    "subclass": "Metakinetic",
-    "story_text": "Your essential hyperreality disrupts your enemy's connection to existence.",
-    "keywords": [
-      "Melee",
-      "Psionic",
-      "Strike",
-      "Weapon"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "Melee 1",
-      "area": null
-    },
-    "targets": "One creature",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "7 + A psychic damage; I < WEAK, dazed"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "10 + A psychic damage; I < AVERAGE, dazed"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "13 + A psychic damage; I < STRONG, dazed"
-        }
-      }
-    },
-    "effect": "While dazed this way, the target takes psychic damage equal to twice your Intuition score at the start of each of your turns. If this ability causes a creature who is not a leader or solo creature to become winded, they are instead reduced to 0 Stamina. Any creature reduced to 0 Stamina by this ability is forgotten by all creatures of your level or lower in the timescape who are not present in the encounter. Loved ones of the forgotten creature retain a faint sense of melancholy. This effect can be reversed only at the Director's discretion.",
     "special_effect": null
   },
   {
@@ -2752,137 +1159,6 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_scalar_assault",
-    "name": "Scalar Assault",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 11
-    },
-    "level": 8,
-    "subclass": null,
-    "story_text": "You warp reality to grow a limb for just a moment and make a single devastating attack.",
-    "keywords": [
-      "Area",
-      "Psionic"
-    ],
-    "action_type": "Main action",
-    "trigger_text": null,
-    "range": {
-      "distance": "3 cube within 1",
-      "area": null
-    },
-    "targets": "Each enemy in the area",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [
-        "Agility"
-      ],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "12 psychic damage; push 3"
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "17 psychic damage; push 5"
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "23 psychic damage; push 7"
-        }
-      }
-    },
-    "effect": null,
-    "special_effect": null
-  },
-  {
-    "type": "ability",
-    "id": "ability_null_stabilizing_field",
-    "name": "Stabilizing Field",
-    "costs": {
-      "signature": false,
-      "resource": "Discipline",
-      "amount": 7
-    },
-    "level": 3,
-    "subclass": null,
-    "story_text": "You project order, making it harder for your enemies to interfere with you and your allies.",
-    "keywords": [
-      "Psionic"
-    ],
-    "action_type": "Maneuver",
-    "trigger_text": null,
-    "range": {
-      "distance": "Self",
-      "area": null
-    },
-    "targets": "Self",
-    "power_roll": {
-      "label": "Power roll",
-      "characteristics": [],
-      "tiers": {
-        "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        },
-        "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": null
-        }
-      }
-    },
-    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, you ignore difficult terrain and reduce the potency of enemy effects targeting you by 1 for you. You can also use a free triggered action at the start of each of your turns to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Each ally in the area also gains these benefits.",
-    "special_effect": null
-  },
-  {
-    "type": "ability",
     "id": "ability_null_stunning_blow",
     "name": "Stunning Blow",
     "costs": {
@@ -2952,6 +1228,598 @@
   },
   {
     "type": "ability",
+    "id": "ability_null_blur",
+    "name": "Blur",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Chronokinetic",
+    "story_text": "You release stored time, allowing you to act twice.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You can use a signature or heroic ability. You gain an edge on that ability's power rolls.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_entropic_field",
+    "name": "Entropic Field",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Cryokinetic",
+    "story_text": "You drastically increase the local entropy.",
+    "keywords": [
+      "Area",
+      "Psionic",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 cold damage; A < WEAK, slowed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 cold damage; A < AVERAGE, slowed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 cold damage; A < STRONG, slowed (save ends)"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_force_redirected",
+    "name": "Force Redirected",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Chronokinetic",
+    "story_text": "The force of your strike moves your target in a surprising direction.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 3",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + A damage; slide 1"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + A damage; slide 3"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + A damage; slide 5"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_gravitic_strike",
+    "name": "Gravitic Strike",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Metakinetic",
+    "story_text": "Your fist emanates gravitic force that pulls a distant enemy closer.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 3",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + A psychic damage; vertical pull 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 + A psychic damage; vertical pull 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "16 + A psychic damage; vertical pull 7"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_heat_sink",
+    "name": "Heat Sink",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Cryokinetic",
+    "story_text": "You absorb ambient heat, coating the ground in frost and precipitating snow from the air.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the start of your next turn, the size of your Null Field ability increases by 1, and you and any ally benefit from concealment while in the area. At the end of this turn, each enemy in the area takes cold damage equal to your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_kinetic_shield",
+    "name": "Kinetic Shield",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 5
+    },
+    "level": 2,
+    "subclass": "Metakinetic",
+    "story_text": "You manifest a force barrier that absorbs incoming kinetic energy.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 10 temporary Stamina."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 15 temporary Stamina."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 20 temporary Stamina."
+        }
+      }
+    },
+    "effect": "While you have temporary Stamina from this ability, you can't be made bleeding even while dying.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_absorption_field",
+    "name": "Absorption Field",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "Your null field absorbs kinetic energy.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy in the area takes a bane on ability rolls.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_molecular_rearrangement_field",
+    "name": "Molecular Rearrangement Field",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "Your enemies' wounds open, your allies' wounds close.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy who has I < AVERAGE and enters the area for the first time in a combat round or starts their turn there is bleeding (save ends). Each ally who enters the area for the first time in a combat round or starts their turn there gains temporary Stamina equal to your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_stabilizing_field",
+    "name": "Stabilizing Field",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 7
+    },
+    "level": 3,
+    "subclass": null,
+    "story_text": "You project order, making it harder for your enemies to interfere with you and your allies.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, you ignore difficult terrain and reduce the potency of enemy effects targeting you by 1 for you. You can also use a free triggered action at the start of each of your turns to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Each ally in the area also gains these benefits.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
     "id": "ability_null_synapse_field",
     "name": "Synapse Field",
     "costs": {
@@ -3016,26 +1884,164 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_synaptic_anchor",
-    "name": "Synaptic Anchor",
+    "id": "ability_null_anticipating_strike",
+    "name": "Anticipating Strike",
     "costs": {
       "signature": false,
       "resource": "Discipline",
-      "amount": 11
+      "amount": 9
     },
-    "level": 8,
+    "level": 5,
     "subclass": null,
-    "story_text": "You disrupt an enemy's strike and create a feedback loop in their mind, preventing them from focusing on future attacks.",
+    "story_text": "You suddenly strike an enemy, then grab them in a psionically enhanced grip.",
     "keywords": [
-      "Psionic"
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
     ],
     "action_type": "Free triggered",
     "trigger_text": null,
     "range": {
-      "distance": "Self; see below",
+      "distance": "Melee 1",
       "area": null
     },
-    "targets": "Self or one creature",
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + A damage; I < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A damage; I < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A damage; I < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": "This strike resolves before the triggering movement or main action.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_iron_grip",
+    "name": "Iron Grip",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You grab the target with supernatural force.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A damage; A < WEAK, grabbed"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "14 + A damage; A < AVERAGE, grabbed"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + A damage; A < STRONG, grabbed"
+        }
+      }
+    },
+    "effect": "While grabbed this way, the target takes a bane on the Escape Grab maneuver. Each time they use that maneuver, they take damage equal to twice your Agility score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_phase_leap",
+    "name": "Phase Leap",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 5,
+    "subclass": null,
+    "story_text": "You leap beyond reality, leaving an afterimage of yourself.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Move",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
     "power_roll": {
       "label": "Power roll",
       "characteristics": [],
@@ -3075,7 +2081,7 @@
         }
       }
     },
-    "effect": "The target takes half the damage, and if the triggering creature has I < AVERAGE, they are dazed (save ends). While the triggering creature is dazed this way, they take psychic damage equal to your Intuition score whenever they use a main action.",
+    "effect": "You jump up to your speed without provoking opportunity attacks. Until the end of your next turn, a static afterimage of you remains in the space you left, and any enemy adjacent to your afterimage takes a bane on ability rolls. You can use your abilities from your own space or from the space of your afterimage as if you were still there. Additionally, if your Null Field ability is active, your afterimage also projects the aura from that ability, which you control as if you were in the afterimage's space.",
     "special_effect": null
   },
   {
@@ -3145,20 +2151,153 @@
   },
   {
     "type": "ability",
-    "id": "ability_null_time_loop",
-    "name": "Time Loop",
+    "id": "ability_null_gravitic_charge",
+    "name": "Gravitic Charge",
     "costs": {
       "signature": false,
       "resource": "Discipline",
-      "amount": 11
+      "amount": 9
     },
-    "level": 9,
-    "subclass": "Chronokinetic",
-    "story_text": "You show shadows what true speed is.",
+    "level": 6,
+    "subclass": "Metakinetic",
+    "story_text": "You channel your discipline into momentum that defies gravity.",
     "keywords": [
       "Psionic"
     ],
-    "action_type": "Free triggered",
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 5"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 7"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 9"
+        }
+      }
+    },
+    "effect": "This movement ignores stability. If you slide into another creature, you resolve damage to both of you as if your force movement had ended, but you keep moving through that creature's space.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_ice_pillars",
+    "name": "Ice Pillars",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Cryokinetic",
+    "story_text": "Pillars of ice erupt from the ground and launch your foes into the air.",
+    "keywords": [
+      "Psionic",
+      "Ranged"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "Three creatures or objects",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 6"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 8"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "Vertical slide 10"
+        }
+      }
+    },
+    "effect": "The pillars vanish as soon as the effects of the forced movement are resolved.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_interphase",
+    "name": "Interphase",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Chronokinetic",
+    "story_text": "You slip into a faster timestream to act more quickly.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Main action",
     "trigger_text": null,
     "range": {
       "distance": "Self",
@@ -3204,7 +2343,139 @@
         }
       }
     },
-    "effect": "You take a bonus turn immediately after the triggering creature. This ability can be used only once per combat round.",
+    "effect": "You can use up to three signature abilities, each of which gains an edge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_iron_body",
+    "name": "Iron Body",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Metakinetic",
+    "story_text": "You focus until your body becomes as hard as iron.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You gain 20 temporary Stamina. Additionally, until the end of the encounter, your stability gains a bonus equal to your Intuition score.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_phase_step",
+    "name": "Phase Step",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 9
+    },
+    "level": 6,
+    "subclass": "Chronokinetic",
+    "story_text": "You weaken your connection to this manifold, allowing you to move through and damage enemies.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "6 damage; M < WEAK, dazed"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 damage; M < AVERAGE, dazed"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 damage; M < STRONG, dazed"
+        }
+      }
+    },
+    "effect": "You can shift up to your speed, and squares occupied by enemies or objects are not difficult terrain for this shift. You make one power roll that targets each enemy you moved through during this shift.",
     "special_effect": null
   },
   {
@@ -3271,6 +2542,735 @@
       }
     },
     "effect": "You can place this wall in occupied squares, sliding each creature in the area into the nearest unoccupied space of your choice. The wall remains until the end of the encounter or until you are dying. The wall's squares are treated as stone squares for the purpose of damage, and you and allies can move freely through the wall. Each enemy who enters a square adjacent to the wall and has M < AVERAGE is slowed (save ends). Each enemy who is force moved into the wall and has M < AVERAGE is restrained (save ends).",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_psi_boost",
+    "name": "Psi Boost",
+    "costs": {
+      "signature": false,
+      "resource": null,
+      "amount": null
+    },
+    "level": 7,
+    "subclass": null,
+    "story_text": null,
+    "keywords": [],
+    "action_type": null,
+    "trigger_text": null,
+    "range": {
+      "distance": null,
+      "area": null
+    },
+    "targets": null,
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "Whenever you use an ability that is a main action or a maneuver with the Psionic keyword, you can spend additional discipline to apply a psi boost to it and enhance its effects. A psi boost's effects only last until the end of the turn which the ability is first used. You can apply multiple psi boosts to an ability, but only one instance of each specific boost. You can use the following psi boosts.\n\n##### Dynamic Power (1 Discipline)\nIf the ability force moves a target, the forced movement distance gains a bonus equal to your Intuition score.\n##### Expanded Power (3 Discipline)\nIf the ability targets an area, you increase the size of the area by 1. If the area is a line, you increase the size of one dimension, not both.\n##### Extended Power (1 Discipline)\nIf the ability is ranged, the distance gains a bonus equal to your Intuition score. If the ability is melee, the distance gains a +2 bonus.\n##### Heightened Power (1 Discipline)\nIf the ability deals rolled damage, it deals extra damage equal to your Intuition score.\n##### Magnified Power (5 Discipline)\nIf the ability has a potency, you increase that potency by an amount equal to your Intuition score.\n##### Shared Power (5 Discipline)\nIf the ability targets individual creatures or objects, you target one additional creature or object within distance.\n##### Sharpened Power (1 Discipline)\nIf the ability has any power roll, that roll gains an edge.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_arcane_purge",
+    "name": "Arcane Purge",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You focus your null field into a pressure point strike that prevents your foe from channeling sorcery.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A damage; M < WEAK, the target is suppressed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "19 + A damage; M < AVERAGE, the target is suppressed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "24 + A damage; M < STRONG, the target is suppressed (save ends)"
+        }
+      }
+    },
+    "effect": "While suppressed, a target takes psychic damage equal to twice your Intuition score at the start of their turns, whenever they use a supernatural ability, or whenever they use an ability that costs Malice.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_phase_hurl",
+    "name": "Phase Hurl",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You throw your foe out of phase with this manifold, causing them to harm other enemies as they return.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "9 + A damage; push 5; I < WEAK, dazed (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A damage; push 7; I < AVERAGE, dazed (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "18 + A damage; push 10; I < STRONG, dazed (save ends)"
+        }
+      }
+    },
+    "effect": "The target and each creature or object they collide with from this forced movement takes psychic damage equal to the total number of squares the target was force moved. While the target is dazed this way, they see glimpses of creatures from other parts of the timescape.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_scalar_assault",
+    "name": "Scalar Assault",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You warp reality to grow a limb for just a moment and make a single devastating attack.",
+    "keywords": [
+      "Area",
+      "Psionic"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "3 cube within 1",
+      "area": null
+    },
+    "targets": "Each enemy in the area",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "12 psychic damage; push 3"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "17 psychic damage; push 5"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "23 psychic damage; push 7"
+        }
+      }
+    },
+    "effect": null,
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_synaptic_anchor",
+    "name": "Synaptic Anchor",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 8,
+    "subclass": null,
+    "story_text": "You disrupt an enemy's strike and create a feedback loop in their mind, preventing them from focusing on future attacks.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self; see below",
+      "area": null
+    },
+    "targets": "Self or one creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "The target takes half the damage, and if the triggering creature has I < AVERAGE, they are dazed (save ends). While the triggering creature is dazed this way, they take psychic damage equal to your Intuition score whenever they use a main action.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_absolute_zero",
+    "name": "Absolute Zero",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Cryokinetic",
+    "story_text": "You become the coldest thing in the timescape.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 20 temporary Stamina."
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 30 temporary Stamina."
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "You gain 40 temporary Stamina."
+        }
+      }
+    },
+    "effect": "Until the end of the encounter or until you are dead, you become an avatar of uttermost cold. You gain immunity to all damage equal to the cold damage immunity granted by your Entropic Adaptability trait, you ignore the negative effects of dying, and you have a +2 bonus to potencies.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_arrestor_cycle",
+    "name": "Arrestor Cycle",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Chronokinetic",
+    "story_text": "You trap your foe in a looping cycle of time, where they relive the last few seconds over and over again.",
+    "keywords": [
+      "Psionic",
+      "Ranged"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Ranged 10",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "I < WEAK, the target loses their turn"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "I < AVERAGE, the target loses their turn"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "I < STRONG, the target loses their turn"
+        }
+      }
+    },
+    "effect": "If the target loses their turn, the round continues as if they had acted. A target who doesn't lose their turn takes psychic damage equal to twice your Intuition score for each main action they take until the end of their next turn.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_heat_drain",
+    "name": "Heat Drain",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Cryokinetic",
+    "story_text": "You drain all the heat from the target.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike"
+    ],
+    "action_type": "Maneuver",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Intuition"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "8 + I cold damage; M < WEAK, restrained (save ends)"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "11 + I cold damage; M < AVERAGE, restrained (save ends)"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "15 + I cold damage; M < STRONG, restrained (save ends)"
+        }
+      }
+    },
+    "effect": "While restrained this way, the target takes cold damage equal to your Intuition score at the start of each of your turns. Additionally, whenever the target damages another creature while restrained this way, any potency associated with the damage is reduced by 2.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_inertial_absorption",
+    "name": "Inertial Absorption",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Metakinetic",
+    "story_text": "You absorb an attack to empower your body.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You take half the damage, negate any effects associated with the damage for you, and gain 3 surges.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_realitas",
+    "name": "Realitas",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Metakinetic",
+    "story_text": "Your essential hyperreality disrupts your enemy's connection to existence.",
+    "keywords": [
+      "Melee",
+      "Psionic",
+      "Strike",
+      "Weapon"
+    ],
+    "action_type": "Main action",
+    "trigger_text": null,
+    "range": {
+      "distance": "Melee 1",
+      "area": null
+    },
+    "targets": "One creature",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [
+        "Agility"
+      ],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "7 + A psychic damage; I < WEAK, dazed"
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "10 + A psychic damage; I < AVERAGE, dazed"
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": "13 + A psychic damage; I < STRONG, dazed"
+        }
+      }
+    },
+    "effect": "While dazed this way, the target takes psychic damage equal to twice your Intuition score at the start of each of your turns. If this ability causes a creature who is not a leader or solo creature to become winded, they are instead reduced to 0 Stamina. Any creature reduced to 0 Stamina by this ability is forgotten by all creatures of your level or lower in the timescape who are not present in the encounter. Loved ones of the forgotten creature retain a faint sense of melancholy. This effect can be reversed only at the Director's discretion.",
+    "special_effect": null
+  },
+  {
+    "type": "ability",
+    "id": "ability_null_time_loop",
+    "name": "Time Loop",
+    "costs": {
+      "signature": false,
+      "resource": "Discipline",
+      "amount": 11
+    },
+    "level": 9,
+    "subclass": "Chronokinetic",
+    "story_text": "You show shadows what true speed is.",
+    "keywords": [
+      "Psionic"
+    ],
+    "action_type": "Free triggered",
+    "trigger_text": null,
+    "range": {
+      "distance": "Self",
+      "area": null
+    },
+    "targets": "Self",
+    "power_roll": {
+      "label": "Power roll",
+      "characteristics": [],
+      "tiers": {
+        "low": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "mid": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        },
+        "high": {
+          "damage_expression": null,
+          "base_damage_value": null,
+          "characteristic_damage_options": [],
+          "damage_types": null,
+          "secondary_damage_expression": null,
+          "descriptive_text": null,
+          "potencies": [],
+          "conditions": [],
+          "all_text": null
+        }
+      }
+    },
+    "effect": "You take a bonus turn immediately after the triggering creature. This ability can be used only once per combat round.",
     "special_effect": null
   }
 ]
