@@ -39,12 +39,14 @@ class PerkPickerCard extends StatelessWidget {
     required this.perkComponents,
     required this.selections,
     required this.onSelectionChanged,
+    this.wrapWithCard = true,
   });
 
   final List<PerkAllowance> allowances;
   final List<Component> perkComponents;
   final Map<int, List<String?>> selections;
   final PerkSelectionChanged onSelectionChanged;
+  final bool wrapWithCard;
 
   @override
   Widget build(BuildContext context) {
@@ -53,17 +55,44 @@ class PerkPickerCard extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
-    final totalAllowed = allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
-    final selectedTotal = selections.values
-        .expand((slots) => slots)
-        .whereType<String>()
-        .length;
+    final totalAllowed =
+        allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
+    final selectedTotal =
+        selections.values.expand((slots) => slots).whereType<String>().length;
+
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$selectedTotal of $totalAllowed perk slots filled.',
+          style: theme.textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 12),
+        for (var index = 0; index < allowances.length; index++) ...[
+          _PerkAllowanceTile(
+            allowanceIndex: index,
+            allowance: allowances[index],
+            perkComponents: perkComponents,
+            selections: selections[index] ??
+                List<String?>.filled(allowances[index].count, null),
+            allSelections: selections,
+            onSelectionChanged: onSelectionChanged,
+          ),
+          if (index < allowances.length - 1) const SizedBox(height: 12),
+        ],
+      ],
+    );
+
+    if (!wrapWithCard) {
+      return body;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: StrifeTheme.cardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+        shape:
+            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -76,27 +105,7 @@ class PerkPickerCard extends StatelessWidget {
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$selectedTotal of $totalAllowed perk slots filled.',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  for (var index = 0; index < allowances.length; index++) ...[
-                    _PerkAllowanceTile(
-                      allowanceIndex: index,
-                      allowance: allowances[index],
-                      perkComponents: perkComponents,
-                      selections: selections[index] ?? List<String?>.filled(allowances[index].count, null),
-                      allSelections: selections,
-                      onSelectionChanged: onSelectionChanged,
-                    ),
-                    if (index < allowances.length - 1) const SizedBox(height: 12),
-                  ],
-                ],
-              ),
+              child: body,
             ),
           ],
         ),
@@ -135,7 +144,8 @@ class _PerkAllowanceTile extends StatelessWidget {
       key: ValueKey('perk_allowance_$allowanceIndex'),
       title: Text(
         '${allowance.label} ($selectedCount of ${allowance.count})',
-        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+        style:
+            theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(helperText, style: theme.textTheme.bodySmall),
       tilePadding: EdgeInsets.zero,
@@ -247,7 +257,8 @@ class _PerkSlotPicker extends StatelessWidget {
             items: dropdownItems,
             onChanged: eligiblePerks.isEmpty
                 ? null
-                : (value) => onSelectionChanged(allowanceIndex, slotIndex, value),
+                : (value) =>
+                    onSelectionChanged(allowanceIndex, slotIndex, value),
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.workspace_premium_outlined),
               labelText: 'Choose perk',
@@ -265,7 +276,8 @@ class _PerkSlotPicker extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () => onSelectionChanged(allowanceIndex, slotIndex, null),
+                onPressed: () =>
+                    onSelectionChanged(allowanceIndex, slotIndex, null),
                 icon: const Icon(Icons.clear),
                 label: const Text('Clear selection'),
               ),

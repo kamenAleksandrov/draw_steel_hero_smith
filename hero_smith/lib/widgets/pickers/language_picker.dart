@@ -39,12 +39,14 @@ class LanguagePickerCard extends StatelessWidget {
     required this.languageComponents,
     required this.selections,
     required this.onSelectionChanged,
+    this.wrapWithCard = true,
   });
 
   final List<LanguageAllowance> allowances;
   final List<Component> languageComponents;
   final Map<int, List<String?>> selections;
   final LanguageSelectionChanged onSelectionChanged;
+  final bool wrapWithCard;
 
   @override
   Widget build(BuildContext context) {
@@ -53,17 +55,44 @@ class LanguagePickerCard extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
-    final totalAllowed = allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
-    final selectedTotal = selections.values
-        .expand((slots) => slots)
-        .whereType<String>()
-        .length;
+    final totalAllowed =
+        allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
+    final selectedTotal =
+        selections.values.expand((slots) => slots).whereType<String>().length;
+
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$selectedTotal of $totalAllowed language slots filled.',
+          style: theme.textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 12),
+        for (var index = 0; index < allowances.length; index++) ...[
+          _LanguageAllowanceTile(
+            allowanceIndex: index,
+            allowance: allowances[index],
+            languageComponents: languageComponents,
+            selections: selections[index] ??
+                List<String?>.filled(allowances[index].count, null),
+            allSelections: selections,
+            onSelectionChanged: onSelectionChanged,
+          ),
+          if (index < allowances.length - 1) const SizedBox(height: 12),
+        ],
+      ],
+    );
+
+    if (!wrapWithCard) {
+      return body;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         elevation: StrifeTheme.cardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+        shape:
+            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -76,27 +105,7 @@ class LanguagePickerCard extends StatelessWidget {
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$selectedTotal of $totalAllowed language slots filled.',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  for (var index = 0; index < allowances.length; index++) ...[
-                    _LanguageAllowanceTile(
-                      allowanceIndex: index,
-                      allowance: allowances[index],
-                      languageComponents: languageComponents,
-                      selections: selections[index] ?? List<String?>.filled(allowances[index].count, null),
-                      allSelections: selections,
-                      onSelectionChanged: onSelectionChanged,
-                    ),
-                    if (index < allowances.length - 1) const SizedBox(height: 12),
-                  ],
-                ],
-              ),
+              child: body,
             ),
           ],
         ),
@@ -139,9 +148,11 @@ class _LanguageAllowanceTile extends StatelessWidget {
       key: ValueKey('language_allowance_$allowanceIndex'),
       title: Text(
         '${allowance.label} ($selectedCount of ${allowance.count})',
-        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+        style:
+            theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
       ),
-      subtitle: Text('$helperText · $restrictionLabel', style: theme.textTheme.bodySmall),
+      subtitle: Text('$helperText · $restrictionLabel',
+          style: theme.textTheme.bodySmall),
       tilePadding: EdgeInsets.zero,
       childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
       maintainState: true,
@@ -255,7 +266,8 @@ class _LanguageSlotPicker extends StatelessWidget {
             items: dropdownItems,
             onChanged: eligibleLanguages.isEmpty
                 ? null
-                : (value) => onSelectionChanged(allowanceIndex, slotIndex, value),
+                : (value) =>
+                    onSelectionChanged(allowanceIndex, slotIndex, value),
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.translate),
               labelText: 'Choose language',
@@ -298,7 +310,8 @@ class _LanguageSlotPicker extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
-                onPressed: () => onSelectionChanged(allowanceIndex, slotIndex, null),
+                onPressed: () =>
+                    onSelectionChanged(allowanceIndex, slotIndex, null),
                 icon: const Icon(Icons.clear),
                 label: const Text('Clear selection'),
               ),

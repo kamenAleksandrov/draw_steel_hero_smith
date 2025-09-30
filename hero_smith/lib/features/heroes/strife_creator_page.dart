@@ -38,6 +38,28 @@ const Map<String, String> _characteristicKeyAliases = <String, String>{
   'presence': 'presence',
 };
 
+const List<String> _allSkillGroups = <String>[
+  'crafting',
+  'exploration',
+  'interpersonal',
+  'intrigue',
+  'lore',
+];
+
+enum _CreatorSection {
+  level,
+  classSelection,
+  subclass,
+  basics,
+  characteristics,
+  skills,
+  perks,
+  abilities,
+  languages,
+  deityDomains,
+  features,
+}
+
 class StrifeCreatorTab extends ConsumerStatefulWidget {
   const StrifeCreatorTab({
     super.key,
@@ -70,14 +92,18 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   Map<String, int> _fixedStartingCharacteristics = <String, int>{};
   List<Map<String, dynamic>> _availableCharacteristicArrays = const [];
   int? _selectedCharacteristicArrayIndex;
-  Map<String, int?> _characteristicArrayAssignments = <String, int?>{};
+  List<_CharacteristicValueToken> _characteristicTokens = const [];
+  Map<String, _CharacteristicValueToken?> _characteristicArrayAssignments =
+      <String, _CharacteristicValueToken?>{};
 
   // Class skill selection state
   int _classSkillPickCount = 0;
-  List<String> _classSkillGroups = const [];
+
   final Set<String> _grantedClassSkillIds = <String>{};
   final Set<String> _classSkillCandidateIds = <String>{};
   final Set<String> _selectedClassSkillIds = <String>{};
+  // Track skill selections per allowance level and pick index
+  final Map<int, Map<int, String?>> _allowanceSkillSelections = {};
   final Set<String> _baselineSkillIds = <String>{};
   List<Component> _classSkillComponents = const [];
 
@@ -116,6 +142,11 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   Map<String, List<String>> _skillsByGroup = <String, List<String>>{};
   Map<String, Map<String, dynamic>> _domainFeatureData =
       <String, Map<String, dynamic>>{};
+  final Map<_CreatorSection, bool> _expandedSections = {
+    for (final section in _CreatorSection.values) section: true,
+  };
+
+  List<_SkillAllowance> _skillAllowances = const [];
 
   @override
   void initState() {
@@ -528,6 +559,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     HeroModel hero,
     Map<String, int> fixed,
     List<Map<String, dynamic>> arrays,
+    Map<String, dynamic>? metadata,
   ) {
     if (arrays.isEmpty) return null;
     final freeKeys =
@@ -546,62 +578,71 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       final values = _characteristicArrayValues(arrays[index]);
       if (values.length < freeKeys.length) continue;
 
-      final available = <int, int>{};
+      final remaining = <int, int>{};
       for (final value in values) {
-        available[value] = (available[value] ?? 0) + 1;
+        remaining[value] = (remaining[value] ?? 0) + 1;
+      }
+      final currentAssignments = <String, int>{};
+
+      bool search(int keyIndex) {
+        if (keyIndex >= freeKeys.length) {
+          final baseTotals = <String, int>{
+            for (final key in _characteristicKeys) key: fixed[key] ?? 0,
+          };
+          currentAssignments.forEach((key, value) {
+            baseTotals[key] = (baseTotals[key] ?? 0) + value;
+          });
+          final result = _applyLevelCharacteristicAdjustments(baseTotals,
+              metadata: metadata);
+          final totals = result.totals;
+          for (final key in _characteristicKeys) {
+            final statValue = heroStats[key];
+            if (statValue == null || totals[key] != statValue) {
+              return false;
+            }
+          }
+          return true;
+        }
+
+        final key = freeKeys[keyIndex];
+        final candidates = remaining.entries
+            .where((entry) => entry.value > 0)
+            .map((entry) => entry.key)
+            .toList();
+        for (final value in candidates) {
+          final count = remaining[value] ?? 0;
+          if (count <= 0) continue;
+          remaining[value] = count - 1;
+          currentAssignments[key] = value;
+          final matched = search(keyIndex + 1);
+          if (matched) {
+            return true;
+          }
+          currentAssignments.remove(key);
+          remaining[value] = count;
+        }
+        return false;
       }
 
-      final assignments = <String, int?>{};
-      var matches = true;
-      final remaining = Map<int, int>.from(available);
-
-      for (final key in freeKeys) {
-        final statValue = heroStats[key];
-        if (statValue == null) {
-          matches = false;
-          break;
-        }
-        final diff = statValue - (fixed[key] ?? 0);
-        final count = remaining[diff] ?? 0;
-        if (count <= 0) {
-          matches = false;
-          break;
-        }
-        remaining[diff] = count - 1;
-        assignments[key] = diff;
-      }
-
-      if (matches) {
-        for (final key in _characteristicKeys) {
-          assignments.putIfAbsent(key, () => null);
-        }
-        return (arrayIndex: index, assignments: assignments);
+      if (search(0)) {
+        final resolved = <String, int?>{
+          for (final key in _characteristicKeys) key: null,
+        };
+        currentAssignments.forEach((key, value) {
+          resolved[key] = value;
+        });
+        return (arrayIndex: index, assignments: resolved);
       }
     }
 
     return null;
   }
 
-  Map<String, int?> _defaultCharacteristicAssignmentsForArray(
-    List<int> values,
-    Map<String, int> fixed,
-  ) {
-    final assignments = <String, int?>{
-      for (final key in _characteristicKeys) key: null,
-    };
-
-    final freeKeys =
-        _characteristicKeys.where((key) => !fixed.containsKey(key)).toList();
-    for (var i = 0; i < freeKeys.length && i < values.length; i++) {
-      assignments[freeKeys[i]] = values[i];
-    }
-    return assignments;
-  }
-
   void _prepareCharacteristicState(Map<String, dynamic>? metadata) {
     final fixed = _extractFixedStartingCharacteristics(metadata);
     final arrays = _extractCharacteristicArraysFromMetadata(metadata);
-    final assignments = <String, int?>{
+
+    final inferredAssignments = <String, int?>{
       for (final key in _characteristicKeys) key: null,
     };
 
@@ -611,19 +652,40 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         _model!,
         fixed,
         arrays,
+        metadata,
       );
       if (inferred != null) {
         selectedIndex = inferred.arrayIndex;
-        assignments.addAll(inferred.assignments);
+        inferredAssignments.addAll(inferred.assignments);
       }
     }
 
     if (selectedIndex == null && arrays.length == 1) {
       selectedIndex = 0;
-      assignments.addAll(_defaultCharacteristicAssignmentsForArray(
-        _characteristicArrayValues(arrays.first),
-        fixed,
-      ));
+    }
+
+    var tokens = const <_CharacteristicValueToken>[];
+    final assignments = <String, _CharacteristicValueToken?>{
+      for (final key in _characteristicKeys) key: null,
+    };
+
+    if (selectedIndex != null &&
+        selectedIndex >= 0 &&
+        selectedIndex < arrays.length) {
+      final values = _characteristicArrayValues(arrays[selectedIndex]);
+      tokens = _buildTokensForValues(values);
+      final availableTokens = tokens.toList(growable: true);
+      for (final entry in inferredAssignments.entries) {
+        final key = entry.key;
+        final value = entry.value;
+        if (value == null) continue;
+        if (fixed.containsKey(key)) continue;
+        final tokenIndex =
+            availableTokens.indexWhere((token) => token.value == value);
+        if (tokenIndex == -1) continue;
+        final token = availableTokens.removeAt(tokenIndex);
+        assignments[key] = token;
+      }
     }
 
     if (!mounted) return;
@@ -631,74 +693,286 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       _fixedStartingCharacteristics = fixed;
       _availableCharacteristicArrays = arrays;
       _selectedCharacteristicArrayIndex = selectedIndex;
+      _characteristicTokens = tokens;
       _characteristicArrayAssignments = assignments;
     });
   }
 
+  List<_CharacteristicValueToken> _buildTokensForValues(List<int> values) {
+    final tokens = <_CharacteristicValueToken>[];
+    for (var i = 0; i < values.length; i++) {
+      tokens.add(_CharacteristicValueToken(id: i, value: values[i]));
+    }
+    return tokens;
+  }
+
   void _selectCharacteristicArray(int index) {
     if (index < 0 || index >= _availableCharacteristicArrays.length) return;
-    final fixed = Map<String, int>.from(_fixedStartingCharacteristics);
+    if (_selectedCharacteristicArrayIndex == index) return;
     final values = _characteristicArrayValues(
       _availableCharacteristicArrays[index],
     );
-    final assignments =
-        _defaultCharacteristicAssignmentsForArray(values, fixed);
+    final tokens = _buildTokensForValues(values);
+    final assignments = <String, _CharacteristicValueToken?>{
+      for (final key in _characteristicKeys) key: null,
+    };
     setState(() {
       _selectedCharacteristicArrayIndex = index;
+      _characteristicTokens = tokens;
       _characteristicArrayAssignments = assignments;
     });
     _setDirty(true);
   }
 
-  List<int> _availableValuesForCharacteristic(String key) {
-    if (_selectedCharacteristicArrayIndex == null) {
-      return const <int>[];
-    }
-    final array =
-        _availableCharacteristicArrays[_selectedCharacteristicArrayIndex!];
-    final values = _characteristicArrayValues(array);
-    if (values.isEmpty) return const <int>[];
-
-    final counts = <int, int>{};
-    for (final value in values) {
-      counts[value] = (counts[value] ?? 0) + 1;
-    }
-
-    final normalizedKey = _normalizeCharacteristicKey(key) ?? key;
-    final currentValue = _characteristicArrayAssignments[normalizedKey];
-
-    for (final entry in _characteristicArrayAssignments.entries) {
-      if (entry.key == normalizedKey) continue;
-      final assignedValue = entry.value;
-      if (assignedValue == null) continue;
-      final remaining = (counts[assignedValue] ?? 0) - 1;
-      counts[assignedValue] = remaining;
-    }
-
-    if (currentValue != null) {
-      counts[currentValue] = (counts[currentValue] ?? 0) + 1;
-    }
-
-    final available = counts.entries
-        .where((entry) => entry.value > 0)
-        .map((entry) => entry.key)
-        .toList();
-    available.sort((a, b) => b.compareTo(a));
-    return available;
+  List<_CharacteristicValueToken> get _unassignedCharacteristicTokens {
+    final assignedIds = _characteristicArrayAssignments.values
+        .whereType<_CharacteristicValueToken>()
+        .map((token) => token.id)
+        .toSet();
+    return _characteristicTokens
+        .where((token) => !assignedIds.contains(token.id))
+        .toList(growable: false);
   }
 
-  void _updateCharacteristicAssignment(String key, int? value) {
+  void _assignCharacteristicValue(
+    String key,
+    _CharacteristicValueToken token,
+  ) {
     final normalizedKey = _normalizeCharacteristicKey(key) ?? key;
+    if (_fixedStartingCharacteristics.containsKey(normalizedKey)) return;
     if (!_characteristicArrayAssignments.containsKey(normalizedKey)) return;
-    final updated = Map<String, int?>.from(_characteristicArrayAssignments);
-    updated[normalizedKey] = value;
+    final updated = Map<String, _CharacteristicValueToken?>.from(
+        _characteristicArrayAssignments);
+    var changed = false;
+    for (final entry in updated.entries) {
+      if (entry.value?.id == token.id) {
+        if (entry.key == normalizedKey) {
+          // Token already assigned to this slot; nothing to update.
+          return;
+        }
+        updated[entry.key] = null;
+        changed = true;
+      }
+    }
+    if (updated[normalizedKey]?.id != token.id) {
+      updated[normalizedKey] = token;
+      changed = true;
+    }
+    if (!changed) return;
     setState(() {
       _characteristicArrayAssignments = updated;
     });
     _setDirty(true);
   }
 
+  void _unassignCharacteristicValue(_CharacteristicValueToken token) {
+    final updated = Map<String, _CharacteristicValueToken?>.from(
+        _characteristicArrayAssignments);
+    var changed = false;
+    for (final entry in updated.entries) {
+      if (entry.value?.id == token.id) {
+        updated[entry.key] = null;
+        changed = true;
+      }
+    }
+    if (!changed) return;
+    setState(() {
+      _characteristicArrayAssignments = updated;
+    });
+    _setDirty(true);
+  }
+
+  void _clearCharacteristicAssignment(String key) {
+    final normalizedKey = _normalizeCharacteristicKey(key) ?? key;
+    if (!_characteristicArrayAssignments.containsKey(normalizedKey)) return;
+    if (_characteristicArrayAssignments[normalizedKey] == null) return;
+    final updated = Map<String, _CharacteristicValueToken?>.from(
+        _characteristicArrayAssignments);
+    updated[normalizedKey] = null;
+    setState(() {
+      _characteristicArrayAssignments = updated;
+    });
+    _setDirty(true);
+  }
+
+  Widget _buildAvailableTokensSection(
+    ThemeData theme, {
+    required List<_CharacteristicValueToken> tokens,
+    required bool enabled,
+    String? description,
+  }) {
+    final accent = StrifeTheme.classAccent;
+    return DragTarget<_CharacteristicValueToken>(
+      onWillAcceptWithDetails: (_) => enabled,
+      onAcceptWithDetails: enabled
+          ? (details) => _unassignCharacteristicValue(details.data)
+          : null,
+      builder: (context, candidate, rejected) {
+        final isActive = candidate.isNotEmpty && enabled;
+        final background = !enabled
+            ? theme.colorScheme.surfaceVariant.withValues(alpha: 0.08)
+            : isActive
+                ? accent.withValues(alpha: 0.18)
+                : theme.colorScheme.surfaceVariant.withValues(alpha: 0.12);
+        final borderColor = !enabled
+            ? theme.colorScheme.outline.withValues(alpha: 0.24)
+            : accent.withValues(alpha: isActive ? 0.7 : 0.4);
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: borderColor, width: 1.3),
+            color: background,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Available values',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: enabled ? accent : theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (!enabled) ...[
+                Text(
+                  'Select an array above to unlock these values.',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ] else ...[
+                if (description != null && description.isNotEmpty) ...[
+                  Text(
+                    description,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                if (tokens.isEmpty) ...[
+                  Text(
+                    'All values assigned. Drag a chip here to clear it.',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ] else
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: tokens
+                        .map((token) => _buildDraggableTokenChip(theme, token))
+                        .toList(),
+                  ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTokenChip(
+    ThemeData theme,
+    _CharacteristicValueToken token, {
+    bool filled = false,
+    bool isFeedback = false,
+  }) {
+    final accent = StrifeTheme.classAccent;
+    final background = filled ? accent : accent.withValues(alpha: 0.12);
+    final borderColor = accent.withValues(alpha: filled ? 0.9 : 0.45);
+    final textColor = filled ? theme.colorScheme.onPrimary : accent;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: background,
+        border: Border.all(color: borderColor, width: 1.2),
+        boxShadow: isFeedback
+            ? [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.35),
+                  blurRadius: 14,
+                  spreadRadius: 1,
+                ),
+              ]
+            : const [],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Text(
+          _formatSignedValue(token.value),
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: textColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDraggableTokenChip(
+    ThemeData theme,
+    _CharacteristicValueToken token,
+  ) {
+    final chip = _buildTokenChip(theme, token);
+    return LongPressDraggable<_CharacteristicValueToken>(
+      data: token,
+      feedback: Material(
+        color: Colors.transparent,
+        child: _buildTokenChip(theme, token, filled: true, isFeedback: true),
+      ),
+      childWhenDragging: Opacity(
+        opacity: 0.25,
+        child: chip,
+      ),
+      child: chip,
+    );
+  }
+
+  Widget _buildAssignedTokenChip(
+    ThemeData theme,
+    _CharacteristicValueToken token,
+  ) {
+    final chip = _buildTokenChip(theme, token, filled: true);
+    return LongPressDraggable<_CharacteristicValueToken>(
+      data: token,
+      feedback: Material(
+        color: Colors.transparent,
+        child: _buildTokenChip(theme, token, filled: true, isFeedback: true),
+      ),
+      childWhenDragging: Opacity(
+        opacity: 0.25,
+        child: chip,
+      ),
+      child: chip,
+    );
+  }
+
+  Widget _buildTokenPreviewChip(ThemeData theme, int value) {
+    final accent = StrifeTheme.classAccent;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: accent.withValues(alpha: 0.08),
+        border: Border.all(color: accent.withValues(alpha: 0.4), width: 1.1),
+      ),
+      child: Text(
+        _formatSignedValue(value),
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: accent,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  String _formatSignedValue(int value) {
+    return value >= 0 ? '+$value' : '$value';
+  }
+
   bool _hasCompleteCharacteristicAssignments() {
+    if (_availableCharacteristicArrays.isEmpty) {
+      return true;
+    }
     if (_selectedCharacteristicArrayIndex == null) return false;
     final fixedKeys = _fixedStartingCharacteristics.keys.toSet();
     for (final key in _characteristicKeys) {
@@ -710,14 +984,82 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return true;
   }
 
-  Map<String, int> _finalCharacteristicScores() {
-    final result = <String, int>{};
+  Map<String, int> _baseCharacteristicTotals() {
+    final totals = <String, int>{};
     for (final key in _characteristicKeys) {
       final base = _fixedStartingCharacteristics[key] ?? 0;
-      final bonus = _characteristicArrayAssignments[key] ?? 0;
-      result[key] = base + bonus;
+      final assignment = _characteristicArrayAssignments[key]?.value ?? 0;
+      totals[key] = base + assignment;
     }
-    return result;
+    return totals;
+  }
+
+  int _applySingleCharacteristicAdjustment(int current, dynamic data) {
+    if (data is Map) {
+      final map = data.cast<String, dynamic>();
+      var value = current;
+      final increase = _toIntOrNull(map['increaseBy'] ?? map['increase_by']);
+      if (increase != null) {
+        value += increase;
+      }
+      final setTo = _toIntOrNull(map['setTo'] ?? map['set_to']);
+      if (setTo != null && value < setTo) {
+        value = setTo;
+      }
+      final maxValue = _toIntOrNull(map['max']);
+      if (maxValue != null && value > maxValue) {
+        value = maxValue;
+      }
+      return value;
+    }
+    if (data is num) {
+      return current + data.toInt();
+    }
+    return current;
+  }
+
+  ({Map<String, int> totals, Map<String, int> bonuses})
+      _applyLevelCharacteristicAdjustments(
+    Map<String, int> baseTotals, {
+    Map<String, dynamic>? metadata,
+  }) {
+    final totals = Map<String, int>.from(baseTotals);
+    final bonuses = <String, int>{
+      for (final key in _characteristicKeys) key: 0,
+    };
+    final sourceMetadata = metadata ?? _classData;
+    for (final level in _levelsUpToCurrentFromMetadata(sourceMetadata)) {
+      final adjustments = level['characteristics'];
+      if (adjustments is! List) continue;
+      for (final adjustment in adjustments) {
+        if (adjustment is! Map) continue;
+        for (final entry in adjustment.entries) {
+          final normalizedKey =
+              _normalizeCharacteristicKey(entry.key?.toString());
+          if (normalizedKey == null) continue;
+          final targets = normalizedKey == 'all'
+              ? _characteristicKeys
+              : <String>[normalizedKey];
+          for (final target in targets) {
+            final before = totals[target] ?? 0;
+            final after =
+                _applySingleCharacteristicAdjustment(before, entry.value);
+            totals[target] = after;
+            final delta = after - before;
+            if (delta > 0) {
+              bonuses[target] = (bonuses[target] ?? 0) + delta;
+            }
+          }
+        }
+      }
+    }
+    return (totals: totals, bonuses: bonuses);
+  }
+
+  Map<String, int> _finalCharacteristicScores() {
+    final baseTotals = _baseCharacteristicTotals();
+    final applied = _applyLevelCharacteristicAdjustments(baseTotals);
+    return applied.totals;
   }
 
   List<Component> _eligiblePerksForAllowance(int allowanceIndex) {
@@ -920,7 +1262,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
           level: levelNumber,
           count: count,
           groups: groups,
-          label: 'Level $levelNumber · $labelGroups',
+          label: 'Level $levelNumber - $labelGroups',
         ));
       }
 
@@ -937,7 +1279,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             level: levelNumber,
             count: count,
             groups: const <String>{},
-            label: 'Level $levelNumber · any group',
+            label: 'Level $levelNumber - any group',
           ));
         }
       }
@@ -986,7 +1328,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
           level: levelNumber,
           count: count,
           types: types,
-          label: 'Level $levelNumber · $labelTypes',
+          label: 'Level $levelNumber - $labelTypes',
         ));
       }
 
@@ -1003,7 +1345,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             level: levelNumber,
             count: count,
             types: const <String>{},
-            label: 'Level $levelNumber · any type',
+            label: 'Level $levelNumber - any type',
           ));
         }
       }
@@ -1294,17 +1636,18 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     _fixedStartingCharacteristics = <String, int>{};
     _availableCharacteristicArrays = const [];
     _selectedCharacteristicArrayIndex = null;
+    _characteristicTokens = const [];
     _characteristicArrayAssignments = {
       for (final key in _characteristicKeys) key: null,
     };
 
     _subclassComponentId = null;
     _classSkillPickCount = 0;
-    _classSkillGroups = const [];
     _classSkillComponents = const [];
     _grantedClassSkillIds.clear();
     _classSkillCandidateIds.clear();
     _selectedClassSkillIds.clear();
+    _allowanceSkillSelections.clear();
     _baselineSkillIds
       ..clear()
       ..addAll(existingSkillIds);
@@ -1355,11 +1698,11 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     if (start is! Map<String, dynamic>) {
       setState(() {
         _classSkillPickCount = 0;
-        _classSkillGroups = const [];
         _classSkillComponents = const [];
         _grantedClassSkillIds.clear();
         _classSkillCandidateIds.clear();
         _selectedClassSkillIds.clear();
+        _allowanceSkillSelections.clear();
         _baselineSkillIds
           ..clear()
           ..addAll((_model?.skills ?? const <String>[]));
@@ -1371,11 +1714,11 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     if (skillsInfo is! Map<String, dynamic>) {
       setState(() {
         _classSkillPickCount = 0;
-        _classSkillGroups = const [];
         _classSkillComponents = const [];
         _grantedClassSkillIds.clear();
         _classSkillCandidateIds.clear();
         _selectedClassSkillIds.clear();
+        _allowanceSkillSelections.clear();
         _baselineSkillIds
           ..clear()
           ..addAll((_model?.skills ?? const <String>[]));
@@ -1407,6 +1750,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
 
     final subclassSlugSet = _activeSubclassSlugs;
     final subclassSkillNames = <String>{};
+    final allowances = <_SkillAllowance>[];
 
     void collectSubclassSkills(dynamic source) {
       if (source is Map) {
@@ -1467,13 +1811,50 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final allowAllGroups = groupNames.isEmpty &&
         ((skillsInfo['skill_count'] as num?)?.toInt() ?? 0) > 0;
 
-    final groupCandidateIds = allowAllGroups
+    final baseGroups = allowAllGroups
+        ? const <String>['Any']
+        : (groupNames.map((name) => name.capitalize()).toList()..sort());
+    final baseGranted = grantedNames.isEmpty
+        ? const <String>[]
+        : (grantedNames.toList()..sort());
+    if (pickCount > 0 || baseGranted.isNotEmpty) {
+      allowances.add(_SkillAllowance(
+        level: 1,
+        source: 'Class start',
+        pickCount: pickCount < 0 ? 0 : pickCount,
+        groups: baseGroups,
+        grantedSkillNames: baseGranted,
+      ));
+    }
+
+    final allowanceAllowsAll = allowances.any((allowance) =>
+        allowance.groups.isEmpty ||
+        allowance.groups.any((group) => group.toLowerCase() == 'any'));
+
+    final combinedGroupNames = <String>{...groupNames};
+    for (final allowance in allowances) {
+      for (final group in allowance.groups) {
+        final normalized = group.trim().toLowerCase();
+        if (normalized.isEmpty || normalized == 'any') continue;
+        combinedGroupNames.add(normalized);
+      }
+    }
+    if (allowanceAllowsAll) {
+      combinedGroupNames
+        ..clear()
+        ..addAll(_allSkillGroups);
+    }
+
+    final effectiveAllowAllGroups = allowAllGroups || allowanceAllowsAll;
+
+    final groupCandidateIds = effectiveAllowAllGroups
         ? allSkillComponents.map((component) => component.id).toSet()
         : allSkillComponents
             .where((component) {
               final group =
                   component.data['group']?.toString().trim().toLowerCase();
-              return group != null && groupNames.contains(group);
+              return combinedGroupNames.isEmpty ||
+                  (group != null && combinedGroupNames.contains(group));
             })
             .map((component) => component.id)
             .toSet();
@@ -1488,6 +1869,28 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .where((component) => candidateIds.contains(component.id))
         .toList()
       ..sort((a, b) => a.name.compareTo(b.name));
+
+    final levelEntries = _levelsUpToCurrentFromMetadata(metadata);
+    for (final levelEntry in levelEntries) {
+      final levelNumber = (levelEntry['level'] as num?)?.toInt() ?? 0;
+      if (levelNumber <= 1) continue;
+      void processSkillNode(dynamic node) {
+        if (node is Map<String, dynamic>) {
+          final allowance = _skillAllowanceFromLevelEntry(levelNumber, node);
+          if (allowance != null) allowances.add(allowance);
+        } else if (node is Map) {
+          final allowance = _skillAllowanceFromLevelEntry(
+              levelNumber, Map<String, dynamic>.from(node));
+          if (allowance != null) allowances.add(allowance);
+        } else if (node is List) {
+          for (final item in node) {
+            processSkillNode(item);
+          }
+        }
+      }
+
+      processSkillNode(levelEntry['skills']);
+    }
 
     final existingSkills = (_model?.skills ?? const <String>[]).toList();
     final baseline =
@@ -1504,10 +1907,10 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ...trimmedOptional,
     };
 
+    allowances.sort((a, b) => a.level.compareTo(b.level));
+
     setState(() {
       _classSkillPickCount = pickCount;
-      _classSkillGroups =
-          allowAllGroups ? const ['Any'] : (groupNames.toList()..sort());
       _classSkillComponents = eligibleComponents;
       _grantedClassSkillIds
         ..clear()
@@ -1521,7 +1924,75 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       _selectedClassSkillIds
         ..clear()
         ..addAll(selectedIds);
+      _skillAllowances = allowances;
+      _allowanceSkillSelections.clear();
     });
+  }
+
+  _SkillAllowance? _skillAllowanceFromLevelEntry(
+    int level,
+    Map<String, dynamic> entry,
+  ) {
+    final count = _toIntOrNull(entry['count'] ?? entry['skill_count']);
+    final groups = <String>{};
+
+    void addGroup(dynamic value) {
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) groups.add(trimmed.capitalize());
+      } else if (value is List) {
+        for (final item in value) {
+          addGroup(item);
+        }
+      }
+    }
+
+    addGroup(entry['groups']);
+    addGroup(entry['group']);
+    addGroup(entry['skill_groups']);
+
+    final grantedSkills = <String>{};
+
+    void addSkill(dynamic value) {
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) grantedSkills.add(trimmed);
+      } else if (value is List) {
+        for (final item in value) {
+          addSkill(item);
+        }
+      }
+    }
+
+    addSkill(entry['granted_skills']);
+    addSkill(entry['grantedSkills']);
+    addSkill(entry['granted']);
+    addSkill(entry['specific_skills']);
+
+    final sourceValue =
+        entry['source'] ?? entry['name'] ?? entry['feature'] ?? entry['title'];
+    final resolvedSource = sourceValue?.toString().trim();
+
+    final normalizedCount = count ?? 0;
+    if (normalizedCount <= 0 && grantedSkills.isEmpty) {
+      return null;
+    }
+
+    final normalizedGroups = level > 1
+        ? const <String>['Any']
+        : (groups.isEmpty ? const <String>[] : (groups.toList()..sort()));
+
+    return _SkillAllowance(
+      level: level,
+      source: resolvedSource == null || resolvedSource.isEmpty
+          ? 'Bonus'
+          : resolvedSource,
+      pickCount: normalizedCount < 0 ? 0 : normalizedCount,
+      groups: normalizedGroups,
+      grantedSkillNames: grantedSkills.isEmpty
+          ? const <String>[]
+          : (grantedSkills.toList()..sort()),
+    );
   }
 
   String? _resolveSkillComponentId(List<Component> skills, String name) {
@@ -2018,169 +2489,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     messenger.showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void _toggleSkillSelection(String skillId) {
-    if (_grantedClassSkillIds.contains(skillId)) return;
-    final isSelected = _selectedClassSkillIds.contains(skillId);
-    String? replacedSkillName;
-
-    setState(() {
-      if (isSelected) {
-        _selectedClassSkillIds.remove(skillId);
-      } else {
-        if (_classSkillPickCount > 0) {
-          final optionalIds = _selectedClassSkillIds
-              .where((id) => !_grantedClassSkillIds.contains(id))
-              .toList();
-          if (optionalIds.length >= _classSkillPickCount) {
-            final removedId = optionalIds.first;
-            _selectedClassSkillIds.remove(removedId);
-            replacedSkillName = _skillNameById(removedId);
-          }
-        }
-        _selectedClassSkillIds.add(skillId);
-      }
-      _selectedClassSkillIds.addAll(_grantedClassSkillIds);
-    });
-
-    if (!isSelected && replacedSkillName != null) {
-      final addedName = _skillNameById(skillId) ?? 'new skill';
-      _showLimitSnack('Replaced $replacedSkillName with $addedName.');
-    }
-    _setDirty(true);
-  }
-
-  String? _skillNameById(String skillId) {
-    for (final component in _classSkillComponents) {
-      if (component.id == skillId) {
-        return component.name;
-      }
-    }
-    return null;
-  }
-
-  int _selectedOptionalSkillCount() {
-    final optional =
-        _selectedClassSkillIds.length - _grantedClassSkillIds.length;
-    return optional < 0 ? 0 : optional;
-  }
-
-  int _remainingSkillChoices() {
-    if (_classSkillPickCount <= 0) return 0;
-    final remaining = _classSkillPickCount - _selectedOptionalSkillCount();
-    return remaining < 0 ? 0 : remaining;
-  }
-
-  void _applyQuickBuildSelection(List<String> quickBuild) {
-    if (quickBuild.isEmpty || _classSkillComponents.isEmpty) return;
-
-    final orderedSelection = <String>[];
-    orderedSelection.addAll(_grantedClassSkillIds);
-
-    final selectedOptional = <String>[];
-    for (final name in quickBuild) {
-      final id = _resolveSkillComponentId(_classSkillComponents, name);
-      if (id == null) continue;
-      if (_grantedClassSkillIds.contains(id)) {
-        if (!orderedSelection.contains(id)) orderedSelection.add(id);
-        continue;
-      }
-      if (!selectedOptional.contains(id)) selectedOptional.add(id);
-    }
-
-    if (_classSkillPickCount > 0 &&
-        selectedOptional.length > _classSkillPickCount) {
-      selectedOptional.removeRange(
-        _classSkillPickCount,
-        selectedOptional.length,
-      );
-    }
-
-    if (_classSkillPickCount > 0 &&
-        selectedOptional.length < _classSkillPickCount) {
-      final remainingNeeded = _classSkillPickCount - selectedOptional.length;
-      final existingOptional = _selectedClassSkillIds
-          .where((id) =>
-              !_grantedClassSkillIds.contains(id) &&
-              !selectedOptional.contains(id))
-          .take(remainingNeeded);
-      selectedOptional.addAll(existingOptional);
-    } else if (_classSkillPickCount <= 0) {
-      final existingOptional = _selectedClassSkillIds.where((id) =>
-          !_grantedClassSkillIds.contains(id) &&
-          !selectedOptional.contains(id));
-      selectedOptional.addAll(existingOptional);
-    }
-
-    orderedSelection.addAll(selectedOptional);
-
-    setState(() {
-      _selectedClassSkillIds
-        ..clear()
-        ..addAll(orderedSelection)
-        ..addAll(_grantedClassSkillIds);
-    });
-
-    final appliedNames = orderedSelection
-        .where((id) => !_grantedClassSkillIds.contains(id))
-        .map(_skillNameById)
-        .whereType<String>()
-        .toList();
-    if (appliedNames.isEmpty) {
-      _showLimitSnack('Quick build applied.');
-    } else {
-      _showLimitSnack('Quick build applied: ${appliedNames.join(', ')}');
-    }
-
-    _setDirty(true);
-  }
-
-  Widget _buildQuickBuildSection(ThemeData theme, List<String> quickBuild) {
-    final accent = StrifeTheme.skillsAccent;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: accent.withValues(alpha: 0.24)),
-        color: accent.withValues(alpha: 0.08),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick build suggestion',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: accent,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Apply the recommended skills instantly.',
-            style: theme.textTheme.bodySmall,
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: quickBuild
-                .map((skill) => _buildSkillChip(context, skill))
-                .toList(),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: FilledButton.icon(
-              onPressed: () => _applyQuickBuildSelection(quickBuild),
-              icon: const Icon(Icons.flash_on),
-              label: const Text('Apply quick build'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   String? _abilitySummary(Map<String, dynamic> ability) {
     final parts = <String>[];
     final level = _toIntOrNull(ability['level']);
@@ -2226,7 +2534,8 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ..perks = mergedPerks
       ..languages = mergedLanguages
       ..deityId = _selectedDeityId
-      ..domain = _selectedDomainSlugs.isNotEmpty ? _selectedDomainSlugs.first : null;
+      ..domain =
+          _selectedDomainSlugs.isNotEmpty ? _selectedDomainSlugs.first : null;
 
     Map<String, int>? finalCharacteristics;
     if (_availableCharacteristicArrays.isEmpty &&
@@ -2269,6 +2578,50 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       if (!result.contains(id)) result.add(id);
     }
     return result;
+  }
+
+  String? _getAllowanceSkillSelection(int allowanceIndex, int pickIndex) {
+    return _allowanceSkillSelections[allowanceIndex]?[pickIndex];
+  }
+
+  void _setAllowanceSkillSelection(
+      int allowanceIndex, int pickIndex, String? skillId) {
+    setState(() {
+      _allowanceSkillSelections.putIfAbsent(allowanceIndex, () => {});
+
+      // Remove this skill from other selections in the same allowance to prevent duplicates
+      if (skillId != null) {
+        final allowanceMap = _allowanceSkillSelections[allowanceIndex]!;
+        allowanceMap
+            .removeWhere((key, value) => key != pickIndex && value == skillId);
+      }
+
+      _allowanceSkillSelections[allowanceIndex]![pickIndex] = skillId;
+
+      // Update the selected class skills set
+      _updateSelectedClassSkillsFromAllowances();
+    });
+    _setDirty(true);
+  }
+
+  void _updateSelectedClassSkillsFromAllowances() {
+    final newSelections = <String>{};
+
+    // Add granted skills
+    newSelections.addAll(_grantedClassSkillIds);
+
+    // Add skills selected through allowances
+    for (final allowanceMap in _allowanceSkillSelections.values) {
+      for (final skillId in allowanceMap.values) {
+        if (skillId != null) {
+          newSelections.add(skillId);
+        }
+      }
+    }
+
+    _selectedClassSkillIds
+      ..clear()
+      ..addAll(newSelections);
   }
 
   Future<void> _updateLevel(int newLevel) async {
@@ -2329,12 +2682,106 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     return _buildStrifeContent(theme);
   }
 
+  Widget _buildSectionTileHeader(
+    ThemeData theme, {
+    required String title,
+    String? subtitle,
+    required IconData icon,
+    required Color accent,
+  }) {
+    final textTheme = theme.textTheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: accent, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (subtitle != null && subtitle.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    subtitle,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCollapsibleSection({
+    required ThemeData theme,
+    required _CreatorSection section,
+    required String title,
+    String? subtitle,
+    required IconData icon,
+    required Color accent,
+    required Widget Function() buildContent,
+  }) {
+    final expanded = _expandedSections[section] ?? true;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        elevation: StrifeTheme.cardElevation,
+        shape:
+            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+        child: Theme(
+          data: theme.copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            key: PageStorageKey<_CreatorSection>(section),
+            initiallyExpanded: expanded,
+            onExpansionChanged: (value) {
+              setState(() {
+                _expandedSections[section] = value;
+              });
+            },
+            tilePadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            childrenPadding: StrifeTheme.cardPadding,
+            maintainState: true,
+            trailing: Icon(
+              expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: accent,
+            ),
+            title: _buildSectionTileHeader(
+              theme,
+              title: title,
+              subtitle: subtitle,
+              icon: icon,
+              accent: accent,
+            ),
+            children: [buildContent()],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStrifeContent(ThemeData theme) {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: _buildLevelCard(theme)),
         SliverToBoxAdapter(child: _buildClassCard(theme)),
-        SliverToBoxAdapter(child: _buildSubclassCard(theme)),
         if (_classSlug == null)
           SliverToBoxAdapter(child: _buildSelectClassNotice(theme))
         else if (_classData == null)
@@ -2342,23 +2789,22 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Text(
-                'We couldn’t load this class’ data yet. Double-check that the seed files exist and try again.',
+                "We couldn't load this class data yet. Double-check that the seed files exist and try again.",
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium,
               ),
             ),
           )
         else ...[
-          SliverToBoxAdapter(child: _buildClassIdentityCard(theme)),
-          SliverToBoxAdapter(child: _buildStartingStatsCard(theme)),
-          SliverToBoxAdapter(child: _buildCharacteristicArraysCard(theme)),
-          SliverToBoxAdapter(child: _buildPotencyCard(theme)),
-          SliverToBoxAdapter(child: _buildSkillsCard(theme)),
-          SliverToBoxAdapter(child: _buildAbilitiesCard(theme)),
-          SliverToBoxAdapter(child: _buildPerksCard()),
-          SliverToBoxAdapter(child: _buildLanguagesCard()),
           SliverToBoxAdapter(child: _buildDeityDomainCard(theme)),
+          SliverToBoxAdapter(child: _buildSubclassCard(theme)),
+          SliverToBoxAdapter(child: _buildBasicsCard(theme)),
+          SliverToBoxAdapter(child: _buildCharacteristicArraysCard(theme)),
+          SliverToBoxAdapter(child: _buildSkillsCard(theme)),
+          SliverToBoxAdapter(child: _buildPerksCard(theme)),
+          SliverToBoxAdapter(child: _buildAbilitiesCard(theme)),
           SliverToBoxAdapter(child: _buildFeaturesCard(theme)),
+          SliverToBoxAdapter(child: _buildLanguagesCard(theme)),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ],
@@ -2366,123 +2812,98 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
   }
 
   Widget _buildLevelCard(ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        elevation: StrifeTheme.cardElevation,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.level,
+      title: 'Level',
+      subtitle: 'Choose the hero level for this class',
+      icon: Icons.trending_up,
+      accent: StrifeTheme.levelAccent,
+      buildContent: () {
+        return Row(
           children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Level',
-              subtitle: 'Choose the hero level for this class',
-              icon: Icons.trending_up,
-              accent: StrifeTheme.levelAccent,
+            IconButton(
+              onPressed: _level > 1 ? () => _updateLevel(_level - 1) : null,
+              icon: const Icon(Icons.remove_circle_outline),
             ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Row(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  IconButton(
-                    onPressed:
-                        _level > 1 ? () => _updateLevel(_level - 1) : null,
-                    icon: const Icon(Icons.remove_circle_outline),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          'Level $_level',
-                          style: theme.textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: StrifeTheme.levelAccent,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Slider(
-                          value: _level.toDouble(),
-                          min: 1,
-                          max: 10,
-                          divisions: 9,
-                          label: '$_level',
-                          onChanged: (value) => _updateLevel(value.round()),
-                        ),
-                      ],
+                  Text(
+                    'Level $_level',
+                    style: theme.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: StrifeTheme.levelAccent,
                     ),
                   ),
-                  IconButton(
-                    onPressed:
-                        _level < 10 ? () => _updateLevel(_level + 1) : null,
-                    icon: const Icon(Icons.add_circle_outline),
+                  const SizedBox(height: 8),
+                  Slider(
+                    value: _level.toDouble(),
+                    min: 1,
+                    max: 10,
+                    divisions: 9,
+                    label: '$_level',
+                    onChanged: (value) => _updateLevel(value.round()),
                   ),
                 ],
               ),
             ),
+            IconButton(
+              onPressed: _level < 10 ? () => _updateLevel(_level + 1) : null,
+              icon: const Icon(Icons.add_circle_outline),
+            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildClassCard(ThemeData theme) {
     final classesAsync = ref.watch(componentsByTypeProvider('class'));
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        elevation: StrifeTheme.cardElevation,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Class',
-              subtitle: 'Select one class to determine Strife progression',
-              icon: Icons.auto_stories,
-              accent: StrifeTheme.classAccent,
-            ),
-            classesAsync.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (e, st) => Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text('Failed to load classes: $e'),
-              ),
-              data: (classes) {
-                final sorted = classes.toList()
-                  ..sort((a, b) => a.name.compareTo(b.name));
-                return Padding(
-                  padding: StrifeTheme.cardPadding,
-                  child: DropdownButtonFormField<String?>(
-                    value: _classComponentId,
-                    items: [
-                      const DropdownMenuItem<String?>(
-                          value: null, child: Text('— Choose class —')),
-                      ...sorted.map(
-                        (c) => DropdownMenuItem<String?>(
-                          value: c.id,
-                          child: Text(c.name),
-                        ),
-                      ),
-                    ],
-                    onChanged: _updateClass,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.school_outlined),
-                      labelText: 'Class',
-                    ),
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.classSelection,
+      title: 'Class',
+      subtitle: 'Select one class to determine Strife progression',
+      icon: Icons.auto_stories,
+      accent: StrifeTheme.classAccent,
+      buildContent: () {
+        return classesAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(24),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (e, st) => Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text('Failed to load classes: $e'),
+          ),
+          data: (classes) {
+            final sorted = classes.toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
+            return DropdownButtonFormField<String?>(
+              value: _classComponentId,
+              items: [
+                const DropdownMenuItem<String?>(
+                  value: null,
+                  child: Text('-- Choose class --'),
+                ),
+                ...sorted.map(
+                  (c) => DropdownMenuItem<String?>(
+                    value: c.id,
+                    child: Text(c.name),
                   ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+                ),
+              ],
+              onChanged: _updateClass,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.school_outlined),
+                labelText: 'Class',
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -2493,87 +2914,73 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     }
 
     final subclassesAsync = ref.watch(componentsByTypeProvider('subclass'));
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        elevation: StrifeTheme.cardElevation,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Subclass',
-              subtitle:
-                  'Choose a specialization to unlock extra skills, features, and abilities.',
-              icon: Icons.auto_awesome,
-              accent: StrifeTheme.featuresAccent,
-            ),
-            subclassesAsync.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (e, st) => Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text('Failed to load subclasses: $e'),
-              ),
-              data: (subclasses) {
-                final filtered = subclasses.where((component) {
-                  final parent =
-                      component.data['parent_class']?.toString().toLowerCase();
-                  return parent == classSlug;
-                }).toList()
-                  ..sort((a, b) => a.name.compareTo(b.name));
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.subclass,
+      title: 'Subclass',
+      subtitle:
+          'Choose a specialization to unlock extra skills, features, and abilities.',
+      icon: Icons.auto_awesome,
+      accent: StrifeTheme.featuresAccent,
+      buildContent: () {
+        return subclassesAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(24),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (e, st) => Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text('Failed to load subclasses: $e'),
+          ),
+          data: (subclasses) {
+            final filtered = subclasses.where((component) {
+              final parent =
+                  component.data['parent_class']?.toString().toLowerCase();
+              return parent == classSlug;
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-                if (filtered.isEmpty) {
-                  return const SizedBox.shrink();
-                }
+            if (filtered.isEmpty) {
+              return const Text('This class does not define subclasses.');
+            }
 
-                final hasSelection = filtered
-                    .any((component) => component.id == _subclassComponentId);
-                final dropdownValue =
-                    hasSelection ? _subclassComponentId : null;
+            final hasSelection = filtered
+                .any((component) => component.id == _subclassComponentId);
+            final dropdownValue = hasSelection ? _subclassComponentId : null;
 
-                return Padding(
-                  padding: StrifeTheme.cardPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButtonFormField<String?>(
-                        value: dropdownValue,
-                        items: [
-                          const DropdownMenuItem<String?>(
-                            value: null,
-                            child: Text('— Choose subclass —'),
-                          ),
-                          ...filtered.map(
-                            (component) => DropdownMenuItem<String?>(
-                              value: component.id,
-                              child: Text(component.name),
-                            ),
-                          ),
-                        ],
-                        onChanged: _updateSubclass,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.category_outlined),
-                          labelText: 'Subclass',
-                        ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String?>(
+                  value: dropdownValue,
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('-- Choose subclass --'),
+                    ),
+                    ...filtered.map(
+                      (component) => DropdownMenuItem<String?>(
+                        value: component.id,
+                        child: Text(component.name),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Subclass choices add unique granted skills and unlock extra ability picks as you level up.',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
+                    ),
+                  ],
+                  onChanged: _updateSubclass,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.category_outlined),
+                    labelText: 'Subclass',
                   ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Subclass choices add unique granted skills and unlock extra ability picks as you level up.',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -2605,67 +3012,246 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
-  Widget _buildClassIdentityCard(ThemeData theme) {
+  Widget _buildBasicsCard(ThemeData theme) {
     final start = _startingCharacteristics;
     if (start == null) return const SizedBox.shrink();
     final motto = start['motto']?.toString();
     final resourceName = start['heroicResourceName']?.toString();
+    final resourceDescription = (start['heroicResourceDescription'] ??
+            start['heroic_resource_description'])
+        ?.toString();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Class Identity',
-              subtitle: 'Narrative hook and signature resource',
-              icon: Icons.spa_outlined,
-              accent: StrifeTheme.resourceAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (motto != null && motto.isNotEmpty) ...[
-                    Text(
-                      motto,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.italic,
-                        color: StrifeTheme.resourceAccent,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  if (resourceName != null && resourceName.isNotEmpty) ...[
-                    Text(
-                      'Heroic Resource',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: StrifeTheme.resourceAccent,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        const Icon(Icons.bolt, size: 18),
-                        const SizedBox(width: 6),
-                        Text(resourceName, style: theme.textTheme.bodyLarge),
-                      ],
-                    ),
-                  ],
-                ],
+    int? readStat(String camel, [String? snake]) {
+      if (start.containsKey(camel)) {
+        return _toIntOrNull(start[camel]);
+      }
+      if (snake != null && start.containsKey(snake)) {
+        return _toIntOrNull(start[snake]);
+      }
+      return null;
+    }
+
+    final stats = <(String, int?)?>[
+      ('Base stamina', readStat('baseStamina', 'base_stamina')),
+      ('Stamina per level', readStat('stamina_per_level')),
+      ('Base recoveries', readStat('baseRecoveries', 'base_recoveries')),
+      ('Base speed', readStat('baseSpeed', 'base_speed')),
+      ('Base stability', readStat('baseStability', 'base_stability')),
+      ('Base disengage', readStat('baseDisengage', 'base_disengage')),
+    ].whereType<(String, int?)>().toList();
+
+    final boosts = _fixedCharacteristicBoosts();
+    final progression = start['potency_progression'] as Map?;
+    final potencyEntries = progression == null
+        ? const <MapEntry<String, String>>[]
+        : progression.entries
+            .where((entry) => entry.value != null)
+            .map((entry) => MapEntry(
+                  entry.key.toString().capitalize(),
+                  entry.value.toString(),
+                ))
+            .toList();
+
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.basics,
+      title: 'Basics',
+      subtitle: 'Identity, vital stats, and potency guidance',
+      icon: Icons.layers_outlined,
+      accent: StrifeTheme.resourceAccent,
+      buildContent: () {
+        final children = <Widget>[];
+        if (motto != null && motto.isNotEmpty) {
+          children.addAll([
+            Text(
+              motto,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontStyle: FontStyle.italic,
+                color: StrifeTheme.resourceAccent,
               ),
             ),
-          ],
-        ),
-      ),
+            const SizedBox(height: 16),
+          ]);
+        }
+        if (resourceName != null && resourceName.isNotEmpty) {
+          children.addAll([
+            Text(
+              'Heroic Resource',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: StrifeTheme.resourceAccent,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: StrifeTheme.resourceAccent.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.bolt,
+                      color: StrifeTheme.resourceAccent, size: 18),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    resourceName,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]);
+          if (resourceDescription != null && resourceDescription.isNotEmpty) {
+            children.addAll([
+              const SizedBox(height: 6),
+              Text(
+                resourceDescription,
+                style: theme.textTheme.bodySmall,
+              ),
+            ]);
+          }
+          children.add(const SizedBox(height: 16));
+        }
+        if (stats.isNotEmpty) {
+          children.addAll([
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: stats
+                  .where((entry) => entry.$2 != null)
+                  .map((entry) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: StrifeTheme.resourceAccent
+                              .withValues(alpha: 0.08),
+                          border: Border.all(
+                            color: StrifeTheme.resourceAccent
+                                .withValues(alpha: 0.28),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              entry.$1,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: StrifeTheme.resourceAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${entry.$2}',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+          ]);
+        }
+        if (boosts.isNotEmpty) {
+          children.addAll([
+            Text(
+              'Fixed characteristic boosts',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: boosts.entries
+                  .map((entry) => _buildAbilityMetaChip(
+                        theme,
+                        label:
+                            '${_characteristicDisplayName(entry.key)}: +${entry.value}',
+                        color: StrifeTheme.resourceAccent,
+                        icon: Icons.trending_up,
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+          ]);
+        }
+        if (potencyEntries.isNotEmpty) {
+          children.addAll([
+            Text(
+              'Potency guidance',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: potencyEntries
+                  .map((entry) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: StrifeTheme.resourceAccent
+                              .withValues(alpha: 0.08),
+                          border: Border.all(
+                            color: StrifeTheme.resourceAccent
+                                .withValues(alpha: 0.28),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              entry.key,
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: StrifeTheme.resourceAccent,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              entry.value,
+                              style: theme.textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ]);
+        }
+        if (children.isNotEmpty && children.last is SizedBox) {
+          // keep trailing spacing consistent
+        } else if (children.isNotEmpty) {
+          children.add(const SizedBox(height: 4));
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        );
+      },
     );
   }
 
@@ -2803,127 +3389,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     );
   }
 
-  Widget _buildStartingStatsCard(ThemeData theme) {
-    final start = _startingCharacteristics;
-    if (start == null) return const SizedBox.shrink();
-
-    int? readStat(String camel, [String? snake]) {
-      if (start.containsKey(camel)) {
-        return _toIntOrNull(start[camel]);
-      }
-      if (snake != null && start.containsKey(snake)) {
-        return _toIntOrNull(start[snake]);
-      }
-      return null;
-    }
-
-    final stats = <(String, int?)?>[
-      ('Base stamina', readStat('baseStamina', 'base_stamina')),
-      ('Stamina per level', readStat('stamina_per_level')),
-      ('Base recoveries', readStat('baseRecoveries', 'base_recoveries')),
-      ('Base speed', readStat('baseSpeed', 'base_speed')),
-      ('Base stability', readStat('baseStability', 'base_stability')),
-      ('Base disengage', readStat('baseDisengage', 'base_disengage')),
-    ].whereType<(String, int?)>().toList();
-
-    final boosts = _fixedCharacteristicBoosts();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Starting stats',
-              subtitle: 'Baseline stamina, defenses, and automatic boosts',
-              icon: Icons.favorite_outline,
-              accent: StrifeTheme.resourceAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: stats
-                        .where((entry) => entry.$2 != null)
-                        .map((entry) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: StrifeTheme.resourceAccent
-                                    .withValues(alpha: 0.08),
-                                border: Border.all(
-                                  color: StrifeTheme.resourceAccent
-                                      .withValues(alpha: 0.28),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    entry.$1,
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: StrifeTheme.resourceAccent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${entry.$2}',
-                                    style:
-                                        theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: theme.colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                  if (boosts.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      'Fixed characteristic boosts to apply at level $_level',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: boosts.entries
-                          .map((entry) => _buildAbilityMetaChip(
-                                theme,
-                                label:
-                                    '${_characteristicDisplayName(entry.key)}: +${entry.value}',
-                                color: StrifeTheme.resourceAccent,
-                                icon: Icons.trending_up,
-                              ))
-                          .toList(),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildCharacteristicArraysCard(ThemeData theme) {
     final arrays = _availableCharacteristicArrays;
     if (arrays.isEmpty && _fixedStartingCharacteristics.isEmpty) {
@@ -2935,7 +3400,83 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final assignments = _characteristicArrayAssignments;
     final accent = StrifeTheme.classAccent;
 
-    final arrayOptions = arrays.isEmpty
+    final baseTotals = _baseCharacteristicTotals();
+    final applied = _applyLevelCharacteristicAdjustments(baseTotals);
+    final finalTotals = applied.totals;
+    final levelBonuses = applied.bonuses;
+
+    final unassignedTokens = _unassignedCharacteristicTokens;
+    final assignmentsComplete = _hasCompleteCharacteristicAssignments();
+    final selectedDescription = (selectedIndex != null &&
+            selectedIndex >= 0 &&
+            selectedIndex < arrays.length)
+        ? arrays[selectedIndex]['description']?.toString()
+        : null;
+
+    Widget buildArrayTile(int index) {
+      final array = arrays[index];
+      final values = _characteristicArrayValues(array);
+      final isSelected = index == selectedIndex;
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 160),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => _selectCharacteristicArray(index),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isSelected
+                      ? accent.withValues(alpha: 0.7)
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
+                  width: isSelected ? 1.6 : 1.2,
+                ),
+                color: isSelected
+                    ? accent.withValues(alpha: 0.14)
+                    : theme.colorScheme.surfaceVariant.withValues(alpha: 0.1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        size: 18,
+                        color: accent,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Array ${index + 1}',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: values
+                        .map((value) => _buildTokenPreviewChip(theme, value))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final arrayTiles = arrays.isEmpty
         ? <Widget>[
             Container(
               width: double.infinity,
@@ -2950,431 +3491,382 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
               ),
             ),
           ]
-        : arrays.asMap().entries.map((entry) {
-            final index = entry.key;
-            final array = entry.value;
-            final valueLabels = _characteristicArrayValues(array)
-                .map((value) => value >= 0 ? '+$value' : '$value')
-                .toList();
-            final description = array['description']?.toString();
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: RadioListTile<int>(
-                value: index,
-                groupValue: selectedIndex,
-                onChanged: (arrays.isEmpty)
-                    ? null
-                    : (value) {
-                        if (value != null) {
-                          _selectCharacteristicArray(value);
-                        }
-                      },
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: accent,
-                title: Text(
-                  valueLabels.isEmpty
-                      ? 'Custom array ${index + 1}'
-                      : valueLabels.join(' · '),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: accent,
-                  ),
-                ),
-                subtitle: description == null || description.isEmpty
-                    ? null
-                    : Text(
-                        description,
-                        style: theme.textTheme.bodySmall,
-                      ),
-              ),
-            );
-          }).toList();
+        : List.generate(arrays.length, buildArrayTile);
 
     final characteristicRows = <Widget>[];
     for (final key in _characteristicKeys) {
       final displayName = _characteristicDisplayName(key);
       final fixedValue = fixed[key];
-      final assignedValue = assignments[key];
-      final total = (fixedValue ?? 0) + (assignedValue ?? 0);
-      final isFixed = fixedValue != null;
-      final availableValues = _availableValuesForCharacteristic(key);
+      final assignedToken = assignments[key];
+      final assignedValue = assignedToken?.value;
+      final baseValue = fixedValue ?? 0;
+      final levelBonus = levelBonuses[key] ?? 0;
+      final total =
+          finalTotals[key] ?? (baseValue + (assignedValue ?? 0) + levelBonus);
 
-      if (isFixed) {
-        final fixedLabel = fixedValue >= 0 ? '+$fixedValue' : '$fixedValue';
-        final totalLabel = total >= 0 ? '+$total' : '$total';
+      if (fixedValue != null) {
         characteristicRows.add(
           _buildFixedCharacteristicRow(
             theme,
             name: displayName,
-            valueLabel: 'Fixed bonus $fixedLabel',
-            totalLabel: 'Total: $totalLabel',
+            valueLabel: 'Fixed bonus ${_formatSignedValue(fixedValue)}',
+            totalLabel: 'Total: ${_formatSignedValue(total)}',
+            bonusLabel: levelBonus > 0
+                ? 'Level bonus ${_formatSignedValue(levelBonus)}'
+                : null,
             accent: accent,
           ),
         );
         continue;
       }
 
+      final contributionChips = <Widget>[];
+      if (assignedValue != null) {
+        contributionChips.add(
+          _buildAbilityMetaChip(
+            theme,
+            label: 'Array ${_formatSignedValue(assignedValue)}',
+            color: accent,
+            icon: Icons.view_module,
+          ),
+        );
+      }
+      if (levelBonus > 0) {
+        contributionChips.add(
+          _buildAbilityMetaChip(
+            theme,
+            label: 'Level ${_formatSignedValue(levelBonus)}',
+            color: StrifeTheme.resourceAccent,
+            icon: Icons.trending_up,
+          ),
+        );
+      }
+
       characteristicRows.add(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              displayName,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: accent.withValues(alpha: 0.28),
+              width: 1.2,
             ),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<int?>(
-              value: assignedValue,
-              items: [
-                const DropdownMenuItem<int?>(
-                  value: null,
-                  child: Text('— Choose value —'),
-                ),
-                ...availableValues.map(
-                  (value) => DropdownMenuItem<int?>(
-                    value: value,
-                    child: Text(value >= 0 ? '+$value' : '$value'),
+            color: theme.colorScheme.surface.withValues(alpha: 0.06),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    displayName,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  const Spacer(),
+                  if (assignedToken != null)
+                    IconButton(
+                      tooltip: 'Clear assignment',
+                      onPressed: () => _clearCharacteristicAssignment(key),
+                      icon: const Icon(Icons.close),
+                      color: accent,
+                      splashRadius: 18,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              DragTarget<_CharacteristicValueToken>(
+                onWillAcceptWithDetails: (_) => selectedIndex != null,
+                onAcceptWithDetails: selectedIndex != null
+                    ? (details) => _assignCharacteristicValue(key, details.data)
+                    : null,
+                builder: (context, candidate, rejected) {
+                  final isActive =
+                      candidate.isNotEmpty && selectedIndex != null;
+                  final borderColor = selectedIndex == null
+                      ? theme.colorScheme.outline.withValues(alpha: 0.2)
+                      : isActive
+                          ? accent.withValues(alpha: 0.7)
+                          : theme.colorScheme.outline.withValues(alpha: 0.35);
+                  final background = selectedIndex == null
+                      ? theme.colorScheme.surfaceVariant.withValues(alpha: 0.08)
+                      : isActive
+                          ? accent.withValues(alpha: 0.14)
+                          : theme.colorScheme.surfaceVariant
+                              .withValues(alpha: 0.08);
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: borderColor,
+                        width: 1.4,
+                      ),
+                      color: background,
+                    ),
+                    child: assignedToken != null
+                        ? _buildAssignedTokenChip(theme, assignedToken)
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  selectedIndex == null
+                                      ? 'Select an array to enable assignments.'
+                                      : 'Long-press a value chip and drag it here.',
+                                  style: theme.textTheme.bodySmall,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.touch_app,
+                                size: 18,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ],
+                          ),
+                  );
+                },
+              ),
+              if (contributionChips.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: contributionChips,
                 ),
               ],
-              onChanged: (selectedIndex == null)
-                  ? null
-                  : (value) => _updateCharacteristicAssignment(key, value),
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.tune),
-                labelText: 'Assign value',
+              const SizedBox(height: 10),
+              Text(
+                'Final total: ${_formatSignedValue(total)}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Total: ${total >= 0 ? '+$total' : '$total'}',
-              style: theme.textTheme.bodySmall,
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
 
-    final assignmentsComplete = _hasCompleteCharacteristicAssignments();
     final summaryChips = assignmentsComplete
-        ? _finalCharacteristicScores().entries.map((entry) {
+        ? finalTotals.entries.map((entry) {
             final total = entry.value;
             return _buildAbilityMetaChip(
               theme,
               label:
-                  '${_characteristicDisplayName(entry.key)}: ${total >= 0 ? '+$total' : '$total'}',
+                  '${_characteristicDisplayName(entry.key)}: ${_formatSignedValue(total)}',
               color: accent,
               icon: Icons.check_circle_outline,
             );
           }).toList()
         : const <Widget>[];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.characteristics,
+      title: 'Characteristic arrays',
+      subtitle: arrays.isEmpty
+          ? 'Fixed bonuses only for this class.'
+          : 'Choose an array and drag each value to a characteristic.',
+      icon: Icons.view_module,
+      accent: accent,
+      buildContent: () {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Characteristic arrays',
-              subtitle: arrays.isEmpty
-                  ? 'Fixed bonuses only for this class.'
-                  : 'Choose an array and assign each value to a free characteristic.',
-              icon: Icons.view_module,
-              accent: accent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ...arrayOptions,
-                  const SizedBox(height: 16),
-                  if (arrays.isNotEmpty)
-                    Text(
-                      'Assignments',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  if (arrays.isEmpty)
-                    Text(
-                      'All characteristics are fixed by this class.',
-                      style: theme.textTheme.bodyMedium,
-                    )
-                  else ...[
-                    const SizedBox(height: 12),
-                    if (selectedIndex == null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Text(
-                          'Select an array above to start assigning values.',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ),
-                    for (var i = 0; i < characteristicRows.length; i++) ...[
-                      characteristicRows[i],
-                      if (i < characteristicRows.length - 1)
-                        const SizedBox(height: 12),
-                    ],
-                    const SizedBox(height: 8),
-                    Text(
-                      assignmentsComplete
-                          ? 'All characteristic slots assigned.'
-                          : 'Assign each value to finish setting up starting characteristics.',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                  if (summaryChips.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: summaryChips,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPotencyCard(ThemeData theme) {
-    final progression =
-        _startingCharacteristics?['potency_progression'] as Map?;
-    if (progression == null || progression.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final entries = progression.entries
-        .where((entry) => entry.value != null)
-        .map((entry) =>
-            MapEntry(entry.key.toString().capitalize(), entry.value.toString()))
-        .toList();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Potency guidance',
-              subtitle: 'Recommended characteristic scores for power rolls',
-              icon: Icons.auto_graph,
-              accent: StrifeTheme.potencyAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Wrap(
+            if (arrays.isEmpty)
+              ...arrayTiles
+            else
+              Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: entries
-                    .map(
-                      (entry) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color:
-                              StrifeTheme.potencyAccent.withValues(alpha: 0.08),
-                          border: Border.all(
-                            color: StrifeTheme.potencyAccent
-                                .withValues(alpha: 0.28),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              entry.key,
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: StrifeTheme.potencyAccent,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              entry.value,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
+                children: arrayTiles,
               ),
+            const SizedBox(height: 16),
+            _buildAvailableTokensSection(
+              theme,
+              tokens: unassignedTokens,
+              enabled: selectedIndex != null,
+              description: selectedDescription,
             ),
+            if (characteristicRows.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              for (var i = 0; i < characteristicRows.length; i++) ...[
+                characteristicRows[i],
+                if (i < characteristicRows.length - 1)
+                  const SizedBox(height: 12),
+              ],
+            ],
+            const SizedBox(height: 12),
+            Text(
+              assignmentsComplete
+                  ? 'All characteristic slots assigned.'
+                  : arrays.isEmpty
+                      ? 'All bonuses are fixed for this class.'
+                      : 'Assign each value to finish setting up starting characteristics.',
+              style: theme.textTheme.bodySmall,
+            ),
+            if (summaryChips.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: summaryChips,
+              ),
+            ],
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget _buildSkillsCard(ThemeData theme) {
-    if (_classSkillComponents.isEmpty &&
-        _grantedClassSkillIds.isEmpty &&
-        _classSkillPickCount == 0) {
+    final hasSkillOptions = _classSkillComponents.isNotEmpty ||
+        _grantedClassSkillIds.isNotEmpty ||
+        _classSkillPickCount > 0 ||
+        _skillAllowances.isNotEmpty;
+    if (!hasSkillOptions) {
       return const SizedBox.shrink();
     }
 
-    final start = _startingCharacteristics;
-    final skillsInfo = start?['starting_skills'];
-    List<String> quickBuild = const [];
-    if (skillsInfo is Map<String, dynamic>) {
-      final raw = skillsInfo['quick_build'] ?? skillsInfo['quickBuild'];
-      if (raw is List) {
-        quickBuild = raw
-            .whereType<String>()
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toSet()
-            .toList()
-          ..sort();
-      }
-    }
-
-    final groups = _classSkillGroups;
-    final remaining = _remainingSkillChoices();
-    final optionalSelected = _selectedOptionalSkillCount();
-    final grantedNames = _classSkillComponents
+    final accent = StrifeTheme.skillsAccent;
+    final grantedComponents = _classSkillComponents
         .where((component) => _grantedClassSkillIds.contains(component.id))
-        .map((component) => component.name)
-        .toList();
+        .toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: StrifeTheme.cardElevation,
-        shape:
-            const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            StrifeTheme.sectionHeader(
-              context,
-              title: 'Starting skills',
-              subtitle: _classSkillPickCount <= 0
-                  ? 'Automatically granted based on class'
-                  : 'Select $_classSkillPickCount skill${_classSkillPickCount == 1 ? '' : 's'} from the class list',
-              icon: Icons.psychology_alt,
-              accent: StrifeTheme.skillsAccent,
-            ),
-            Padding(
-              padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.check_circle,
-                          size: 18, color: StrifeTheme.skillsAccent),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _classSkillPickCount <= 0
-                              ? 'All listed skills are granted automatically.'
-                              : '$optionalSelected of $_classSkillPickCount optional picks selected. ${remaining > 0 ? '$remaining remaining.' : 'All picks used.'}',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (groups.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    if (groups.length == 1 &&
-                        groups.first.toLowerCase() == 'any')
-                      Text(
-                        'You can choose skills from any group.',
-                        style: theme.textTheme.bodyMedium,
-                      )
-                    else ...[
-                      Text(
-                        'Eligible skill groups',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: groups
-                            .map((group) => Chip(
-                                  label: Text(group.capitalize()),
-                                  avatar:
-                                      const Icon(Icons.folder_shared, size: 16),
-                                  backgroundColor: StrifeTheme.skillsAccent
-                                      .withValues(alpha: 0.1),
-                                ))
-                            .toList(),
-                      ),
-                    ],
-                  ],
-                  if (quickBuild.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    _buildQuickBuildSection(theme, quickBuild),
-                  ],
-                  const SizedBox(height: 16),
-                  if (_classSkillComponents.isEmpty)
-                    Text(
-                      'No selectable skills found for this class yet.',
-                      style: theme.textTheme.bodyMedium,
-                    )
-                  else
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 12,
-                      children: _classSkillComponents.map((component) {
-                        final selected =
-                            _selectedClassSkillIds.contains(component.id);
-                        final locked =
-                            _grantedClassSkillIds.contains(component.id);
-                        return _buildSkillChip(
-                          context,
-                          component.name,
-                          selected: selected,
-                          locked: locked,
-                          onTap: () => _toggleSkillSelection(component.id),
-                        );
-                      }).toList(),
-                    ),
-                  if (grantedNames.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.lock, size: 16),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Granted automatically: ${grantedNames.join(', ')}',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
+    final dropdownItems = _classSkillComponents.map((component) {
+      final group = component.data['group']?.toString().trim();
+      final groupLabel =
+          group == null || group.isEmpty ? 'Any' : group.capitalize();
+      return DropdownMenuItem<String?>(
+        value: component.id,
+        child: Text('${component.name} ($groupLabel)'),
+      );
+    }).toList();
+
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.skills,
+      title: 'Skills',
+      subtitle:
+          "Select skills granted or available for selection by your class.",
+      icon: Icons.psychology_alt,
+      accent: accent,
+      buildContent: () {
+        final children = <Widget>[];
+
+        if (grantedComponents.isNotEmpty) {
+          children.addAll([
+            Text(
+              'Granted skills',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: accent,
               ),
             ),
-          ],
-        ),
-      ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: grantedComponents
+                  .map((component) => _buildSkillChip(context, component.name))
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+          ]);
+        }
+
+        // Show skill selection dropdowns for each allowance
+        for (var allowanceIndex = 0;
+            allowanceIndex < _skillAllowances.length;
+            allowanceIndex++) {
+          final allowance = _skillAllowances[allowanceIndex];
+
+          // Show dropdowns for skill picks
+          if (allowance.pickCount > 0) {
+            children.addAll([
+              Text(
+                'Level ${allowance.level} - ${allowance.source}',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(height: 8),
+            ]);
+
+            final groupText = allowance.groups.isEmpty
+                ? 'any group'
+                : allowance.groups.any((group) => group.toLowerCase() == 'any')
+                    ? 'any group'
+                    : allowance.groups.join(', ');
+            children.add(Text(
+              'Choose ${allowance.pickCount} skill${allowance.pickCount == 1 ? '' : 's'} from $groupText',
+              style: theme.textTheme.bodySmall,
+            ));
+            children.add(const SizedBox(height: 8));
+
+            // Create dropdowns for each pick in this allowance
+            for (var pickIndex = 0;
+                pickIndex < allowance.pickCount;
+                pickIndex++) {
+              // Filter dropdown items based on allowance groups
+              final filteredItems = allowance.groups.isEmpty ||
+                      allowance.groups
+                          .any((group) => group.toLowerCase() == 'any')
+                  ? dropdownItems
+                  : dropdownItems.where((item) {
+                      final component = _classSkillComponents.firstWhereOrNull(
+                        (c) => c.id == item.value,
+                      );
+                      if (component == null) return false;
+                      final componentGroup =
+                          component.data['group']?.toString().trim() ?? '';
+                      return allowance.groups.any((allowedGroup) =>
+                          allowedGroup.toLowerCase() ==
+                          componentGroup.toLowerCase());
+                    }).toList();
+
+              children.addAll([
+                DropdownButtonFormField<String?>(
+                  value: _getAllowanceSkillSelection(allowanceIndex, pickIndex),
+                  items: [
+                    const DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text('-- Choose skill --'),
+                    ),
+                    ...filteredItems,
+                  ],
+                  onChanged: (value) {
+                    _setAllowanceSkillSelection(
+                        allowanceIndex, pickIndex, value);
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.psychology, color: accent),
+                    labelText: 'Skill choice ${pickIndex + 1}',
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ]);
+            }
+            children.add(const SizedBox(height: 8));
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        );
+      },
     );
   }
 
@@ -3386,43 +3878,65 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       return const SizedBox.shrink();
     }
 
-    return ClassAbilitiesWidget(
-      level: _level,
-      classMetadata: _classData,
-      abilities: _classAbilityData,
-      abilityDetailsById: _abilityDetailsById,
-      selectedAbilityIds: _selectedAbilityIds,
-      autoGrantedAbilityIds: _autoGrantedAbilityIds,
-      baselineAbilityIds: _baselineAbilityIds,
-      activeSubclassSlugs: _activeSubclassSlugs,
-      subclassLabel: _selectedSubclassDisplayName,
-      onSelectionChanged: _updateAbilitySelections,
-      abilitySummaryBuilder: _abilitySummary,
-      onAbilityPreviewRequested: _showAbilityDetails,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.abilities,
+      title: 'Abilities',
+      subtitle: 'Assign abilities unlocked by your class progression.',
+      icon: Icons.bolt,
+      accent: StrifeTheme.abilitiesAccent,
+      buildContent: () {
+        return ClassAbilitiesWidget(
+          level: _level,
+          classMetadata: _classData,
+          abilities: _classAbilityData,
+          abilityDetailsById: _abilityDetailsById,
+          selectedAbilityIds: _selectedAbilityIds,
+          autoGrantedAbilityIds: _autoGrantedAbilityIds,
+          baselineAbilityIds: _baselineAbilityIds,
+          activeSubclassSlugs: _activeSubclassSlugs,
+          subclassLabel: _selectedSubclassDisplayName,
+          onSelectionChanged: _updateAbilitySelections,
+          abilitySummaryBuilder: _abilitySummary,
+          onAbilityPreviewRequested: _showAbilityDetails,
+          wrapWithCard: false,
+        );
+      },
     );
   }
 
   Widget _buildFeaturesCard(ThemeData theme) {
     if (_classFeatures.isEmpty) return const SizedBox.shrink();
 
-    return ClassFeaturesWidget(
-      level: _level,
-      classMetadata: _classData,
-      features: _classFeatures,
-      featureDetailsById: _classFeatureDetailsById,
-      selectedOptions: _featureOptionSelections,
-      onSelectionChanged: _updateFeatureSelection,
-      domainLinkedFeatureIds: _domainLinkedFeatureIds,
-      selectedDomainSlugs: _selectedDomainSlugs,
-      abilityDetailsById: _abilityDetailsById,
-      abilityIdByName: _abilityIdByName,
-      onAbilityPreviewRequested: _showAbilityDetails,
-      activeSubclassSlugs: _activeSubclassSlugs,
-      subclassLabel: _selectedSubclassDisplayName,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.features,
+      title: 'Level features',
+      subtitle: 'Review class features unlocked up to level $_level.',
+      icon: Icons.military_tech,
+      accent: StrifeTheme.featuresAccent,
+      buildContent: () {
+        return ClassFeaturesWidget(
+          level: _level,
+          classMetadata: _classData,
+          features: _classFeatures,
+          featureDetailsById: _classFeatureDetailsById,
+          selectedOptions: _featureOptionSelections,
+          onSelectionChanged: _updateFeatureSelection,
+          domainLinkedFeatureIds: _domainLinkedFeatureIds,
+          selectedDomainSlugs: _selectedDomainSlugs,
+          abilityDetailsById: _abilityDetailsById,
+          abilityIdByName: _abilityIdByName,
+          onAbilityPreviewRequested: _showAbilityDetails,
+          activeSubclassSlugs: _activeSubclassSlugs,
+          subclassLabel: _selectedSubclassDisplayName,
+          wrapWithCard: false,
+        );
+      },
     );
   }
 
-  Widget _buildPerksCard() {
+  Widget _buildPerksCard(ThemeData theme) {
     if (_perkAllowances.isEmpty) return const SizedBox.shrink();
 
     final selections = <int, List<String?>>{};
@@ -3444,15 +3958,26 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       }
     }
 
-    return PerkPickerCard(
-      allowances: _perkAllowances,
-      perkComponents: _perkComponents,
-      selections: selections,
-      onSelectionChanged: _updatePerkSelection,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.perks,
+      title: 'Perks',
+      subtitle: 'Select perks based on class allowances.',
+      icon: Icons.workspace_premium_outlined,
+      accent: StrifeTheme.featuresAccent,
+      buildContent: () {
+        return PerkPickerCard(
+          allowances: _perkAllowances,
+          perkComponents: _perkComponents,
+          selections: selections,
+          onSelectionChanged: _updatePerkSelection,
+          wrapWithCard: false,
+        );
+      },
     );
   }
 
-  Widget _buildLanguagesCard() {
+  Widget _buildLanguagesCard(ThemeData theme) {
     if (_languageAllowances.isEmpty) return const SizedBox.shrink();
 
     final selections = <int, List<String?>>{};
@@ -3474,11 +3999,22 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       }
     }
 
-    return LanguagePickerCard(
-      allowances: _languageAllowances,
-      languageComponents: _languageComponents,
-      selections: selections,
-      onSelectionChanged: _updateLanguageSelection,
+    return _buildCollapsibleSection(
+      theme: theme,
+      section: _CreatorSection.languages,
+      title: 'Languages',
+      subtitle: 'Assign languages granted by your class progression.',
+      icon: Icons.language_outlined,
+      accent: StrifeTheme.levelAccent,
+      buildContent: () {
+        return LanguagePickerCard(
+          allowances: _languageAllowances,
+          languageComponents: _languageComponents,
+          selections: selections,
+          onSelectionChanged: _updateLanguageSelection,
+          wrapWithCard: false,
+        );
+      },
     );
   }
 
@@ -3583,6 +4119,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     required String name,
     required String valueLabel,
     required String totalLabel,
+    String? bonusLabel,
     required Color accent,
     IconData icon = Icons.lock,
   }) {
@@ -3615,6 +4152,14 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                   valueLabel,
                   style: theme.textTheme.bodySmall,
                 ),
+                if (bonusLabel != null)
+                  Text(
+                    bonusLabel,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 Text(
                   totalLabel,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -3628,6 +4173,32 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ),
     );
   }
+}
+
+class _CharacteristicValueToken {
+  const _CharacteristicValueToken({
+    required this.id,
+    required this.value,
+  });
+
+  final int id;
+  final int value;
+}
+
+class _SkillAllowance {
+  const _SkillAllowance({
+    required this.level,
+    required this.source,
+    this.pickCount = 0,
+    this.groups = const <String>[],
+    this.grantedSkillNames = const <String>[],
+  });
+
+  final int level;
+  final String source;
+  final int pickCount;
+  final List<String> groups;
+  final List<String> grantedSkillNames;
 }
 
 class _FaithRequirements {

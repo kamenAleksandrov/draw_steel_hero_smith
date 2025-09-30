@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/models/component.dart';
@@ -23,6 +22,7 @@ class DeityDomainPickerCard extends StatefulWidget {
     this.onDomainSkillChanged,
     this.domainFeatureData = const {},
     this.skillsByGroup = const {},
+    this.wrapWithCard = true,
   });
 
   final List<Component> deities;
@@ -41,6 +41,8 @@ class DeityDomainPickerCard extends StatefulWidget {
   final Map<String, Map<String, dynamic>> domainFeatureData;
   final Map<String, List<String>> skillsByGroup;
 
+  final bool wrapWithCard;
+
   @override
   State<DeityDomainPickerCard> createState() => _DeityDomainPickerCardState();
 }
@@ -50,12 +52,12 @@ class _DeityDomainPickerCardState extends State<DeityDomainPickerCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final summaryText = _summaryLine();
-    
+
     // Group deities by category
     final gods = <Component>[];
     final saints = <Component>[];
     final others = <Component>[];
-    
+
     for (final deity in widget.deities) {
       final category = (deity.data['category'] as String?) ?? 'other';
       switch (category) {
@@ -70,17 +72,121 @@ class _DeityDomainPickerCardState extends State<DeityDomainPickerCard> {
           break;
       }
     }
-    
+
     // Sort each group
     gods.sort((a, b) => a.name.compareTo(b.name));
     saints.sort((a, b) => a.name.compareTo(b.name));
     others.sort((a, b) => a.name.compareTo(b.name));
-    
+
     final availableChoices = _domainChoicesFor(widget.selectedDeityId).toList()
       ..sort((a, b) => _displayDomain(a).compareTo(_displayDomain(b)));
     final selectedDeity = _resolveDeity(widget.selectedDeityId);
 
     final hasDeityData = widget.deities.isNotEmpty;
+
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String?>(
+          value: widget.selectedDeityId,
+          items: [
+            const DropdownMenuItem<String?>(
+              value: null,
+              child: Text('-- Choose deity --'),
+            ),
+            if (gods.isNotEmpty) ..._buildDeitySection('Gods', gods),
+            if (saints.isNotEmpty) ..._buildDeitySection('Saints', saints),
+            if (others.isNotEmpty) ..._buildDeitySection('Others', others),
+          ],
+          onChanged: hasDeityData
+              ? (value) {
+                  if (value != null && value.startsWith('__section_header_')) {
+                    return;
+                  }
+                  widget.onDeityChanged(value);
+                }
+              : null,
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.auto_awesome),
+            labelText: 'Deity',
+          ),
+        ),
+        if (!hasDeityData && widget.requiredDeityCount > 0) ...[
+          const SizedBox(height: 12),
+          Text(
+            'Deity data is not available yet.',
+            style: theme.textTheme.bodySmall,
+          ),
+        ],
+        if (selectedDeity != null) ...[
+          const SizedBox(height: 16),
+          DeityCard(deity: selectedDeity),
+        ],
+        if (widget.requiredDomainCount > 0 ||
+            widget.availableDomainSlugs.isNotEmpty ||
+            widget.selectedDomainSlugs.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Available Domains',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (availableChoices.isNotEmpty) ...[
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: availableChoices.map((slug) {
+                final isSelected = widget.selectedDomainSlugs.contains(slug);
+                return FilterChip(
+                  label: Text(_displayDomain(slug)),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    final orderedSelection =
+                        List<String>.from(widget.selectedDomainSlugs);
+                    if (selected) {
+                      if (!orderedSelection.contains(slug)) {
+                        orderedSelection.add(slug);
+                        if (orderedSelection.length >
+                                widget.requiredDomainCount &&
+                            widget.requiredDomainCount > 0) {
+                          orderedSelection.removeAt(0);
+                        }
+                      }
+                    } else {
+                      orderedSelection.remove(slug);
+                    }
+                    widget.onDomainChanged(orderedSelection.toSet());
+                  },
+                );
+              }).toList(),
+            ),
+          ] else ...[
+            Text(
+              'No domains available for this deity.',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ],
+        if (widget.selectedDomainSlugs.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Domain features',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...widget.selectedDomainSlugs
+              .map((slug) => _buildDomainSkillCard(context, slug)),
+        ],
+      ],
+    );
+
+    if (!widget.wrapWithCard) {
+      return body;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -102,144 +208,7 @@ class _DeityDomainPickerCardState extends State<DeityDomainPickerCard> {
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Deity Selection
-                  DropdownButtonFormField<String?>(
-                    value: widget.selectedDeityId,
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('— Choose deity —'),
-                      ),
-                      // Gods section
-                      if (gods.isNotEmpty) ..._buildDeitySection('Gods', gods),
-                      // Saints section  
-                      if (saints.isNotEmpty) ..._buildDeitySection('Saints', saints),
-                      // Others section
-                      if (others.isNotEmpty) ..._buildDeitySection('Others', others),
-                    ],
-                    onChanged: hasDeityData ? widget.onDeityChanged : null,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.auto_awesome),
-                      labelText: 'Deity',
-                    ),
-                  ),
-                  if (!hasDeityData && widget.requiredDeityCount > 0) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      'Deity data is not available yet.',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                  if (selectedDeity != null) ...[
-                    const SizedBox(height: 16),
-                    DeityCard(deity: selectedDeity),
-                  ],
-                  // Domain Selection with Chips
-                  if (widget.requiredDomainCount > 0 ||
-                      widget.availableDomainSlugs.isNotEmpty ||
-                      widget.selectedDomainSlugs.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      'Available Domains',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (availableChoices.isNotEmpty) ...[
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 6,
-                        children: availableChoices.map((slug) {
-                          final isSelected =
-                              widget.selectedDomainSlugs.contains(slug);
-
-                          return FilterChip(
-                            label: Text(_displayDomain(slug)),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              final orderedSelection =
-                                  List<String>.from(widget.selectedDomainSlugs);
-
-                              if (selected) {
-                                if (!orderedSelection.contains(slug)) {
-                                  orderedSelection.add(slug);
-                                  if (widget.requiredDomainCount > 0 &&
-                                      orderedSelection.length >
-                                          widget.requiredDomainCount) {
-                                    if (widget.requiredDomainCount == 1) {
-                                      orderedSelection
-                                        ..clear()
-                                        ..add(slug);
-                                    } else {
-                                      while (orderedSelection.length >
-                                          widget.requiredDomainCount) {
-                                        final removalCandidate =
-                                            orderedSelection.firstWhere(
-                                          (value) => value != slug,
-                                          orElse: () => slug,
-                                        );
-                                        if (removalCandidate == slug) {
-                                          break;
-                                        }
-                                        orderedSelection
-                                            .remove(removalCandidate);
-                                      }
-                                    }
-                                  }
-                                }
-                              } else {
-                                orderedSelection.removeWhere(
-                                  (value) => value == slug,
-                                );
-                              }
-
-                              final nextSelection = <String>{
-                                ...orderedSelection,
-                              };
-                              if (!const SetEquality<String>().equals(
-                                nextSelection,
-                                widget.selectedDomainSlugs,
-                              )) {
-                                widget.onDomainChanged(nextSelection);
-                              }
-                            },
-                            showCheckmark: false,
-                          );
-                        }).toList(),
-                      ),
-                      if (widget.requiredDomainCount > 0) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          'Selected ${widget.selectedDomainSlugs.length} of ${widget.requiredDomainCount} required ${widget.requiredDomainCount == 1 ? 'domain' : 'domains'}',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ],
-                    ] else ...[
-                      Text(
-                        'No domains available for the current selection yet.',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ],
-                  // Selected Domains with Skills
-                  if (widget.selectedDomainSlugs.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      'Selected Domains & Skills',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    ...widget.selectedDomainSlugs
-                        .map((slug) => _buildDomainSkillCard(context, slug)),
-                  ],
-                ],
-              ),
+              child: body,
             ),
           ],
         ),
@@ -284,7 +253,6 @@ class _DeityDomainPickerCardState extends State<DeityDomainPickerCard> {
                 domainData['description'] ?? '',
                 style: theme.textTheme.bodySmall,
               ),
-              // Skill selection for this domain
               if (domainData['skill_group'] != null &&
                   widget.skillsByGroup[domainData['skill_group']] != null) ...[
                 const SizedBox(height: 8),
@@ -406,7 +374,7 @@ class _DeityDomainPickerCardState extends State<DeityDomainPickerCard> {
       // Section header (disabled item for visual separation)
       DropdownMenuItem<String?>(
         enabled: false,
-        value: null,
+        value: '__section_header_${sectionTitle.toLowerCase()}__',
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Text(

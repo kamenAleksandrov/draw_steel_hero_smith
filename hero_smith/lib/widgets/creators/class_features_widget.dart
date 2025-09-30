@@ -19,6 +19,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     this.onAbilityPreviewRequested,
     this.activeSubclassSlugs = const {},
     this.subclassLabel,
+    this.wrapWithCard = true,
   });
 
   final int level;
@@ -32,10 +33,10 @@ class ClassFeaturesWidget extends StatelessWidget {
   final Set<String> selectedDomainSlugs;
   final Map<String, Map<String, dynamic>> abilityDetailsById;
   final Map<String, String> abilityIdByName;
-  final void Function(Map<String, dynamic> ability)?
-      onAbilityPreviewRequested;
+  final void Function(Map<String, dynamic> ability)? onAbilityPreviewRequested;
   final Set<String> activeSubclassSlugs;
   final String? subclassLabel;
+  final bool wrapWithCard;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,39 @@ class ClassFeaturesWidget extends StatelessWidget {
     final picksFilledText = summary.totalRequiredPicks > 0
         ? '${summary.completedPicks} of ${summary.totalRequiredPicks} feature pick${summary.totalRequiredPicks == 1 ? '' : 's'} filled'
         : 'All feature selections are automatic at level $level';
+
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          picksFilledText,
+          style: theme.textTheme.bodyMedium,
+        ),
+        if (summary.lockedSubclassPicks > 0) ...[
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.lock, size: 16),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  summary.lockedSubclassPicks == 1
+                      ? '1 subclass-dependent choice shown below.'
+                      : '${summary.lockedSubclassPicks} subclass-dependent choices shown below.',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 12),
+        ..._buildLevelSections(theme, levelGroups),
+      ],
+    );
+
+    if (!wrapWithCard) {
+      return body;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -69,34 +103,7 @@ class ClassFeaturesWidget extends StatelessWidget {
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    picksFilledText,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  if (summary.lockedSubclassPicks > 0) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.lock, size: 16),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            summary.lockedSubclassPicks == 1
-                                ? '1 subclass-dependent choice shown below.'
-                                : '${summary.lockedSubclassPicks} subclass-dependent choices shown below.',
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                  const SizedBox(height: 12),
-                  ..._buildLevelSections(theme, levelGroups),
-                ],
-              ),
+              child: body,
             ),
           ],
         ),
@@ -136,10 +143,10 @@ class ClassFeaturesWidget extends StatelessWidget {
     final accent = config.feature.isSubclassFeature
         ? theme.colorScheme.tertiary
         : StrifeTheme.featuresAccent;
-    final subtitle = config.feature.isSubclassFeature &&
-            config.feature.subclassName != null
-        ? 'Subclass: ${config.feature.subclassName}'
-        : null;
+    final subtitle =
+        config.feature.isSubclassFeature && config.feature.subclassName != null
+            ? 'Subclass: ${config.feature.subclassName}'
+            : null;
 
     final details = config.details;
     final description =
@@ -216,11 +223,11 @@ class ClassFeaturesWidget extends StatelessWidget {
         ..addAll(sections);
     }
 
-  final directAbilityName = details?['ability']?.toString();
-  final directAbility = directAbilityName == null
-    ? null
-    : _resolveAbilityByName(directAbilityName);
-  final directAbilityLabel = directAbilityName?.trim();
+    final directAbilityName = details?['ability']?.toString();
+    final directAbility = directAbilityName == null
+        ? null
+        : _resolveAbilityByName(directAbilityName);
+    final directAbilityLabel = directAbilityName?.trim();
     if (directAbility != null && onAbilityPreviewRequested != null) {
       children
         ..add(const SizedBox(height: 12))
@@ -406,9 +413,8 @@ class ClassFeaturesWidget extends StatelessWidget {
     required bool selected,
     bool locked = false,
   }) {
-  final abilityDetails = option.abilityId == null
-    ? null
-    : abilityDetailsById[option.abilityId!];
+    final abilityDetails =
+        option.abilityId == null ? null : abilityDetailsById[option.abilityId!];
 
     final chips = <Widget>[];
     if (option.domain != null) {
@@ -418,7 +424,8 @@ class ClassFeaturesWidget extends StatelessWidget {
       chips.add(_buildSmallChip(theme, Icons.psychology, option.skill!));
     }
     if (option.skillGroup != null) {
-      chips.add(_buildSmallChip(theme, Icons.folder_shared, option.skillGroup!));
+      chips
+          .add(_buildSmallChip(theme, Icons.folder_shared, option.skillGroup!));
     }
     final rows = <Widget>[
       Row(
@@ -485,7 +492,8 @@ class ClassFeaturesWidget extends StatelessWidget {
         ));
     }
 
-    if (option.abilityName != null && abilityDetails != null &&
+    if (option.abilityName != null &&
+        abilityDetails != null &&
         onAbilityPreviewRequested != null) {
       rows
         ..add(const SizedBox(height: 8))
@@ -600,7 +608,7 @@ class ClassFeaturesWidget extends StatelessWidget {
 
   List<_FeatureLevelGroup> _buildLevelGroups() {
     final groups = <_FeatureLevelGroup>[];
-  final entriesByLevel = _metadataEntriesByLevel();
+    final entriesByLevel = _metadataEntriesByLevel();
 
     final featuresByLevel = <int, List<Feature>>{};
     for (final feature in features) {
@@ -611,7 +619,8 @@ class ClassFeaturesWidget extends StatelessWidget {
 
     final sortedLevels = featuresByLevel.keys.toList()..sort();
     for (final levelNumber in sortedLevels) {
-      final levelFeatures = featuresByLevel[levelNumber]!..sort(
+      final levelFeatures = featuresByLevel[levelNumber]!
+        ..sort(
           (a, b) => a.name.compareTo(b.name),
         );
       final configs = levelFeatures
@@ -651,14 +660,12 @@ class ClassFeaturesWidget extends StatelessWidget {
         restrictionMessage =
             'Select at least one domain above to unlock this feature option.';
       } else {
-        filteredOptions = options
-            .where((option) {
-              final domain = option.domain;
-              if (domain == null || domain.trim().isEmpty) return false;
-              final slug = _slugify(domain);
-              return selectedDomainSlugs.contains(slug);
-            })
-            .toList();
+        filteredOptions = options.where((option) {
+          final domain = option.domain;
+          if (domain == null || domain.trim().isEmpty) return false;
+          final slug = _slugify(domain);
+          return selectedDomainSlugs.contains(slug);
+        }).toList();
         if (filteredOptions.isEmpty) {
           restrictionMessage =
               'Your current domains do not grant this feature option.';
@@ -744,7 +751,7 @@ class ClassFeaturesWidget extends StatelessWidget {
   }
 
   List<_FeatureOption> _extractOptions(Map<String, dynamic>? details) {
-  if (details == null) return const [];
+    if (details == null) return const [];
     final rawOptions = details['options'];
     if (rawOptions is! List) return const [];
 
@@ -760,9 +767,8 @@ class ClassFeaturesWidget extends StatelessWidget {
       if (entry['ability'] != null && entry['ability'].toString().isNotEmpty) {
         abilityName = entry['ability'].toString();
       }
-      final abilityId = abilityName == null
-          ? null
-          : abilityIdByName[_slugify(abilityName)];
+      final abilityId =
+          abilityName == null ? null : abilityIdByName[_slugify(abilityName)];
       final benefit = entry['benefit']?.toString();
       result.add(
         _FeatureOption(
@@ -807,19 +813,19 @@ class ClassFeaturesWidget extends StatelessWidget {
   }
 
   String _slugify(String value) {
-  final normalized = value
-    .trim()
-    .toLowerCase()
-    .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-  final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
-  return collapsed.replaceAll(RegExp(r'^_|_$'), '');
+    final normalized =
+        value.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
+    return collapsed.replaceAll(RegExp(r'^_|_$'), '');
   }
 
   Set<String> _slugVariants(String value) {
     final base = _slugify(value);
     if (base.isEmpty) return const <String>{};
-    final tokens =
-        base.split('_').where((token) => token.isNotEmpty).toList(growable: false);
+    final tokens = base
+        .split('_')
+        .where((token) => token.isNotEmpty)
+        .toList(growable: false);
     if (tokens.isEmpty) return {base};
     final variants = <String>{base};
 

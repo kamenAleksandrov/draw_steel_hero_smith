@@ -21,6 +21,7 @@ class ClassAbilitiesWidget extends StatefulWidget {
     required this.onSelectionChanged,
     this.abilitySummaryBuilder,
     this.onAbilityPreviewRequested,
+    this.wrapWithCard = true,
   });
 
   final int level;
@@ -35,6 +36,7 @@ class ClassAbilitiesWidget extends StatefulWidget {
   final ValueChanged<Set<String>> onSelectionChanged;
   final String? Function(Map<String, dynamic> ability)? abilitySummaryBuilder;
   final void Function(Map<String, dynamic> ability)? onAbilityPreviewRequested;
+  final bool wrapWithCard;
 
   @override
   State<ClassAbilitiesWidget> createState() => _ClassAbilitiesWidgetState();
@@ -75,7 +77,63 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
     final hasAutoGrants = widget.autoGrantedAbilityIds.isNotEmpty;
     final hasBaseline = widget.baselineAbilityIds.isNotEmpty;
 
+    Widget buildEmptyBody() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'No ability picks are available at level ${widget.level} yet.',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Gain levels or select a subclass to unlock ability choices.',
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
+      );
+    }
+
+    Widget buildMainBody(List<String> summaryParts) {
+      final body = <Widget>[];
+      if (summaryParts.isNotEmpty) {
+        body.add(Text(
+          summaryParts.join(' | '),
+          style: theme.textTheme.bodyMedium,
+        ));
+        body.add(const SizedBox(height: 12));
+      }
+      if (hasAutoGrants) {
+        body.add(_buildAutoGrantedList(theme));
+        body.add(const SizedBox(height: 12));
+      }
+      if (hasBaseline) {
+        body.add(_buildBaselineNotice(theme));
+        body.add(const SizedBox(height: 12));
+      }
+      if (levelTiles.isNotEmpty) {
+        body.addAll(_withSpacing(levelTiles, const SizedBox(height: 12)));
+      } else {
+        body.add(Text(
+          'No selectable ability picks yet. Advance to higher levels to unlock choices.',
+          style: theme.textTheme.bodyMedium,
+        ));
+      }
+      if (leftoverSelections.isNotEmpty) {
+        body.add(const SizedBox(height: 16));
+        body.add(_buildLeftoverSection(theme, leftoverSelections));
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: body,
+      );
+    }
+
     if (!hasAllowances && !hasAutoGrants && !hasBaseline) {
+      final body = buildEmptyBody();
+      if (!widget.wrapWithCard) {
+        return body;
+      }
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Card(
@@ -89,16 +147,14 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
               StrifeTheme.sectionHeader(
                 context,
                 title: 'Class abilities',
-                subtitle: 'No ability picks are available at level ${widget.level} yet.',
+                subtitle:
+                    'No ability picks are available at level ${widget.level} yet.',
                 icon: Icons.bolt,
                 accent: StrifeTheme.abilitiesAccent,
               ),
               Padding(
                 padding: StrifeTheme.cardPadding,
-                child: Text(
-                  'Gain levels or select a subclass to unlock ability choices.',
-                  style: theme.textTheme.bodyMedium,
-                ),
+                child: body,
               ),
             ],
           ),
@@ -110,6 +166,12 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
     summaryParts.add('$selectedSlots of $totalSlots picks filled');
     if (widget.activeSubclassSlugs.isEmpty) {
       summaryParts.add('Subclass picks locked');
+    }
+
+    final body = buildMainBody(summaryParts);
+
+    if (!widget.wrapWithCard) {
+      return body;
     }
 
     return Padding(
@@ -131,36 +193,7 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
             ),
             Padding(
               padding: StrifeTheme.cardPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    summaryParts.join(' • '),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  if (hasAutoGrants) ...[
-                    _buildAutoGrantedList(theme),
-                    const SizedBox(height: 12),
-                  ],
-                  if (hasBaseline) ...[
-                    _buildBaselineNotice(theme),
-                    const SizedBox(height: 12),
-                  ],
-                  if (levelTiles.isNotEmpty) ...[
-                    ..._withSpacing(levelTiles, const SizedBox(height: 12)),
-                  ] else ...[
-                    Text(
-                      'No selectable ability picks yet. Advance to higher levels to unlock choices.',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                  if (leftoverSelections.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    _buildLeftoverSection(theme, leftoverSelections),
-                  ],
-                ],
-              ),
+              child: body,
             ),
           ],
         ),
@@ -348,7 +381,8 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
     Set<String> selectedAcrossSlots,
   ) {
     final candidates = _candidateAbilitiesForAllowance(allowance);
-    final requiresSubclass = allowance.requiresSubclass && widget.activeSubclassSlugs.isEmpty;
+    final requiresSubclass =
+        allowance.requiresSubclass && widget.activeSubclassSlugs.isEmpty;
     final hasOptions = candidates.isNotEmpty;
 
     final usedInThisAllowance = <String>{};
@@ -385,10 +419,9 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
         );
       }
 
-  final ability = currentId != null ? _abilityById(currentId) : null;
-      final summary = ability != null
-          ? widget.abilitySummaryBuilder?.call(ability)
-          : null;
+      final ability = currentId != null ? _abilityById(currentId) : null;
+      final summary =
+          ability != null ? widget.abilitySummaryBuilder?.call(ability) : null;
 
       slots.add(
         Container(
@@ -458,8 +491,7 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
                       ),
                     if (currentId != null)
                       TextButton.icon(
-                        onPressed: () =>
-                            _handleSlotChanged(currentId, null),
+                        onPressed: () => _handleSlotChanged(currentId, null),
                         icon: const Icon(Icons.clear),
                         label: const Text('Clear selection'),
                       ),
@@ -472,12 +504,10 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
       );
     }
 
-    final sourceLabel = allowance.source == _AllowanceSource.subclass
-        ? 'Subclass'
-        : 'Class';
-    final costLabel = allowance.cost == null
-        ? 'Signature'
-        : '${allowance.cost}-cost';
+    final sourceLabel =
+        allowance.source == _AllowanceSource.subclass ? 'Subclass' : 'Class';
+    final costLabel =
+        allowance.cost == null ? 'Signature' : '${allowance.cost}-cost';
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -824,8 +854,10 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
   Set<String> _slugVariants(String value) {
     final base = _slugify(value);
     if (base.isEmpty) return const <String>{};
-    final tokens =
-        base.split('_').where((token) => token.isNotEmpty).toList(growable: false);
+    final tokens = base
+        .split('_')
+        .where((token) => token.isNotEmpty)
+        .toList(growable: false);
     if (tokens.isEmpty) return {base};
     final variants = <String>{base};
 
@@ -848,10 +880,8 @@ class _ClassAbilitiesWidgetState extends State<ClassAbilitiesWidget> {
   }
 
   String _slugify(String value) {
-    final normalized = value
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final normalized =
+        value.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
     final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
     return collapsed.replaceAll(RegExp(r'^_|_$'), '');
   }
@@ -866,7 +896,8 @@ class _AbilityLevelConfig {
   final int level;
   final List<_AbilityAllowance> allowances;
 
-  int get totalSlots => allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
+  int get totalSlots =>
+      allowances.fold<int>(0, (sum, allowance) => sum + allowance.count);
 }
 
 class _AbilityAllowance {
