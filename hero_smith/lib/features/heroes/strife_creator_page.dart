@@ -1827,6 +1827,30 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       ));
     }
 
+    final levelEntries = _levelsUpToCurrentFromMetadata(metadata);
+    for (final levelEntry in levelEntries) {
+      final levelNumber = (levelEntry['level'] as num?)?.toInt() ?? 0;
+      if (levelNumber <= 1) continue;
+      void processSkillNode(dynamic node) {
+        if (node is Map<String, dynamic>) {
+          final allowance = _skillAllowanceFromLevelEntry(levelNumber, node);
+          if (allowance != null) allowances.add(allowance);
+        } else if (node is Map) {
+          final allowance = _skillAllowanceFromLevelEntry(
+            levelNumber,
+            Map<String, dynamic>.from(node),
+          );
+          if (allowance != null) allowances.add(allowance);
+        } else if (node is List) {
+          for (final item in node) {
+            processSkillNode(item);
+          }
+        }
+      }
+
+      processSkillNode(levelEntry['skills']);
+    }
+
     final allowanceAllowsAll = allowances.any((allowance) =>
         allowance.groups.isEmpty ||
         allowance.groups.any((group) => group.toLowerCase() == 'any'));
@@ -1870,28 +1894,6 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         .toList()
       ..sort((a, b) => a.name.compareTo(b.name));
 
-    final levelEntries = _levelsUpToCurrentFromMetadata(metadata);
-    for (final levelEntry in levelEntries) {
-      final levelNumber = (levelEntry['level'] as num?)?.toInt() ?? 0;
-      if (levelNumber <= 1) continue;
-      void processSkillNode(dynamic node) {
-        if (node is Map<String, dynamic>) {
-          final allowance = _skillAllowanceFromLevelEntry(levelNumber, node);
-          if (allowance != null) allowances.add(allowance);
-        } else if (node is Map) {
-          final allowance = _skillAllowanceFromLevelEntry(
-              levelNumber, Map<String, dynamic>.from(node));
-          if (allowance != null) allowances.add(allowance);
-        } else if (node is List) {
-          for (final item in node) {
-            processSkillNode(item);
-          }
-        }
-      }
-
-      processSkillNode(levelEntry['skills']);
-    }
-
     final existingSkills = (_model?.skills ?? const <String>[]).toList();
     final baseline =
         existingSkills.where((id) => !candidateIds.contains(id)).toSet();
@@ -1901,13 +1903,29 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
     final optionalOrdered = existingSelectedCandidates
         .where((id) => !grantedIds.contains(id))
         .toList();
-    final trimmedOptional = optionalOrdered.take(pickCount).toSet();
     final selectedIds = <String>{
       ...grantedIds,
-      ...trimmedOptional,
+      ...optionalOrdered,
     };
 
     allowances.sort((a, b) => a.level.compareTo(b.level));
+
+    final allowanceSelections = <int, Map<int, String?>>{};
+    var optionalIndex = 0;
+    for (var allowanceIndex = 0;
+        allowanceIndex < allowances.length;
+        allowanceIndex++) {
+      final allowance = allowances[allowanceIndex];
+      if (allowance.pickCount <= 0) continue;
+      final slots = <int, String?>{};
+      for (var pick = 0; pick < allowance.pickCount; pick++) {
+        final skillId = optionalIndex < optionalOrdered.length
+            ? optionalOrdered[optionalIndex++]
+            : null;
+        slots[pick] = skillId;
+      }
+      allowanceSelections[allowanceIndex] = slots;
+    }
 
     setState(() {
       _classSkillPickCount = pickCount;
@@ -1925,7 +1943,9 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
         ..clear()
         ..addAll(selectedIds);
       _skillAllowances = allowances;
-      _allowanceSkillSelections.clear();
+      _allowanceSkillSelections
+        ..clear()
+        ..addAll(allowanceSelections);
     });
   }
 
@@ -2002,6 +2022,15 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
       if (skill.id.toLowerCase() == normalized ||
           skill.name.toLowerCase() == normalized) {
         return skill.id;
+      }
+    }
+    return null;
+  }
+
+  String? _skillNameById(String skillId) {
+    for (final component in _classSkillComponents) {
+      if (component.id == skillId) {
+        return component.name;
       }
     }
     return null;
@@ -3820,7 +3849,7 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                 pickIndex < allowance.pickCount;
                 pickIndex++) {
               // Filter dropdown items based on allowance groups
-              final filteredItems = allowance.groups.isEmpty ||
+              var filteredItems = allowance.groups.isEmpty ||
                       allowance.groups
                           .any((group) => group.toLowerCase() == 'any')
                   ? dropdownItems
@@ -3836,9 +3865,25 @@ class StrifeCreatorTabState extends ConsumerState<StrifeCreatorTab> {
                           componentGroup.toLowerCase());
                     }).toList();
 
+              final currentValue =
+                  _getAllowanceSkillSelection(allowanceIndex, pickIndex);
+              if (currentValue != null &&
+                  filteredItems.every((item) => item.value != currentValue)) {
+                final missingLabel =
+                    _skillNameById(currentValue) ?? currentValue;
+                filteredItems = [
+                  ...filteredItems,
+                  DropdownMenuItem<String?>(
+                    value: currentValue,
+                    enabled: false,
+                    child: Text('$missingLabel (no longer available)'),
+                  ),
+                ];
+              }
+
               children.addAll([
                 DropdownButtonFormField<String?>(
-                  value: _getAllowanceSkillSelection(allowanceIndex, pickIndex),
+                  value: currentValue,
                   items: [
                     const DropdownMenuItem<String?>(
                       value: null,
