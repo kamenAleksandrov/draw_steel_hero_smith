@@ -1,48 +1,64 @@
 [
   {
-    "id": "feature_troubadour_acrobatics",
+    "id": "feature_troubadour_troubadour_class_act",
     "type": "feature",
-    "name": "Acrobatics",
+    "name": "Troubadour Class Act",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following performance ability, which is usable with your Routines feature."
+    "description": "Panache, melody, and depiction. Some troubadours have it all, but everyone starts somewhere. Your troubadour class act is your art form, summing up the manner in which the world becomes your stage. As you go about unearthing the drama of everyday life and strife, you choose a troubadour class act from the following options, each of which grants you a skill. (*Quick Build:* Virtuoso.)\n\nYour troubadour class act is your subclass, and your choice of class act determines many of the features you'll gain as you gain new levels.",
+    "options": [
+      {
+        "name": "Auteur",
+        "skill": "Brag",
+        "description": "Rewrite every scene to keep foes on cue and allies in the spotlight.",
+        "abilities": [
+          {
+            "id": "ability_troubadour_turnabout_is_fair_play",
+            "name": "Turnabout Is Fair Play"
+          }
+        ]
+      },
+      {
+        "name": "Duelist",
+        "skill": "Gymnastics",
+        "description": "Treat every clash as a staged duel, turning precision footwork into deadly art.",
+        "abilities": [
+          {
+            "id": "ability_troubadour_riposte",
+            "name": "Riposte"
+          }
+        ]
+      },
+      {
+        "name": "Virtuoso",
+        "skill": "Music",
+        "description": "Channel drama through soaring performances that inspire the crowd.",
+        "abilities": [
+          {
+            "id": "ability_troubadour_harmonize",
+            "name": "Harmonize"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_troubadour_blocking",
+    "id": "feature_troubadour_drama",
     "type": "feature",
-    "name": "Blocking",
+    "name": "Drama",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following performance ability, which is usable with your Routines feature."
-  },
-  {
-    "id": "feature_troubadour_drama_outside_of_combat",
-    "type": "feature",
-    "name": "Drama Outside of Combat",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Though you can't gain drama outside of combat, you can use your heroic abilities and effects that cost drama without spending it. Whenever you use an ability or effect outside of combat that costs drama, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited drama on its effect, such as Artful Flourish, you can use it as if you had spent an amount of drama equal to your Victories."
-  },
-  {
-    "id": "feature_troubadour_drama_in_combat",
-    "type": "feature",
-    "name": "Drama in Combat",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain drama equal to your Victories. At the start of each of your turns during combat, you gain 1d3 drama.\n\nAdditionally, you gain drama when certain events occur during a combat encounter:\n- The first time three or more heroes use an ability on the same turn, you gain 2 drama.\n- The first time any hero is made winded during the encounter, you gain 2 drama.\n- Whenever a creature within your line of effect rolls a natural 19 or 20, you gain 3 drama.\n- When you or another hero dies, you gain 10 drama.\nWhen you are dead, you continue to gain drama during combat as long as your body is intact. If you have 30 drama during the encounter in which you died, you can come back to life with 1 Stamina and 0 drama (no action required). If you are still dead after the encounter in which you died, you can't gain drama during future encounters.\nYou lose any remaining drama at the end of the encounter."
-  },
-  {
-    "id": "feature_troubadour_dramatic_monologue",
-    "type": "feature",
-    "name": "Dramatic Monologue",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
+    "description": "Drama is the emotional fuel you gather from the crowd, fueling your greatest reversals and encore moments.",
+    "in_combat": {
+      "name": "Drama in Combat",
+      "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain drama equal to your Victories. At the start of each of your turns during combat, you gain 1d3 drama.\n\nAdditionally, you gain drama when certain events occur during a combat encounter:\n- The first time three or more heroes use an ability on the same turn, you gain 2 drama.\n- The first time any hero is made winded during the encounter, you gain 2 drama.\n- Whenever a creature within your line of effect rolls a natural 19 or 20, you gain 3 drama.\n- When you or another hero dies, you gain 10 drama.\nWhen you are dead, you continue to gain drama during combat as long as your body is intact. If you have 30 drama during the encounter in which you died, you can come back to life with 1 Stamina and 0 drama (no action required). If you are still dead after the encounter in which you died, you can't gain drama during future encounters.\nYou lose any remaining drama at the end of the encounter."
+    },
+    "out_of_combat": {
+      "name": "Drama Outside of Combat",
+      "description": "Though you can't gain drama outside of combat, you can use your heroic abilities and effects that cost drama without spending it. Whenever you use an ability or effect outside of combat that costs drama, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited drama on its effect, such as Artful Flourish, you can use it as if you had spent an amount of drama equal to your Victories."
+    }
   },
   {
     "id": "feature_troubadour_kit",
@@ -54,24 +70,6 @@
     "description": "You can use and gain the benefits of a kit. See Chapter 6: Kits for more information. (*Quick Build:* Swashbuckler.)"
   },
   {
-    "id": "feature_troubadour_power_chord",
-    "type": "feature",
-    "name": "Power Chord",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_troubadour_routines",
-    "type": "feature",
-    "name": "Routines",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You enter every battle with a set of performance abilities at the ready. Performances are magical presentations (such as songs, dances, poems, or gymnastic feats) that your allies can participate in. These abilities have the Performance keyword. At the start of each combat round, as long as you are not dazed, dead, or surprised, you can either choose a new performance or maintain your current performance (no action required). Your performance lasts until you are unable to maintain it or until the end of the encounter.\n\nYou start off with the Choreography and Revitalizing Limerick performance abilities. Your choice of class act grants you additional performances."
-  },
-  {
     "id": "feature_troubadour_scene_partner",
     "type": "feature",
     "name": "Scene Partner",
@@ -81,76 +79,96 @@
     "description": "Whenever you obtain a success on a test to interact with an NPC using a skill from the interpersonal group, you can form a bond with that NPC. When you enter into a negotiation with a bonded NPC, their patience increases by 1 (to a maximum of 5). Additionally, the first time during a negotiation that you personally make an argument that would increase a bonded NPC's interest by 1, you instead increase their interest by 2 (to a maximum of 5).\n\nYou can have a number of bonds active equal to your level. When you form a bond with a new NPC that would exceed the limit, you must choose which of your active bonds to lose."
   },
   {
-    "id": "feature_troubadour_star_power",
+    "id": "feature_troubadour_routines",
     "type": "feature",
-    "name": "Star Power",
+    "name": "Routines",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "You enter every battle with a set of performance abilities at the ready. Performances are magical presentations (such as songs, dances, poems, or gymnastic feats) that your allies can participate in. These abilities have the Performance keyword. At the start of each combat round, as long as you are not dazed, dead, or surprised, you can either choose a new performance or maintain your current performance (no action required). Your performance lasts until you are unable to maintain it or until the end of the encounter.\n\nYou start off with the Choreography and Revitalizing Limerick performance abilities. Your choice of class act grants you additional performances.",
+    "performances": [
+      {
+        "id": "ability_troubadour_choreography",
+        "name": "Choreography"
+      },
+      {
+        "id": "ability_troubadour_revitalizing_limerick",
+        "name": "Revitalizing Limerick"
+      }
+    ]
+  },
+  {
+    "id": "feature_troubadour_repertoire",
+    "type": "feature",
+    "name": "Class Act Repertoire",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You add the following cornerstone performances and flourishes to your act.",
+    "repertoire": [
+      {
+        "name": "Acrobatics",
+        "description": "You have the following performance ability, which is usable with your Routines feature.",
+        "ability": "ability_troubadour_acrobatics"
+      },
+      {
+        "name": "Blocking",
+        "description": "You have the following performance ability, which is usable with your Routines feature.",
+        "ability": "ability_troubadour_blocking"
+      },
+      {
+        "name": "Dramatic Monologue",
+        "description": "You have the following ability.",
+        "ability": "ability_troubadour_dramatic_monologue"
+      },
+      {
+        "name": "Power Chord",
+        "description": "You have the following ability.",
+        "ability": "ability_troubadour_power_chord"
+      },
+      {
+        "name": "Star Power",
+        "description": "You have the following ability.",
+        "ability": "ability_troubadour_star_power"
+      },
+      {
+        "name": "Virtuoso Performances",
+        "description": "You have the following performance abilities, which are usable with your Routines feature.",
+        "abilities": [
+          "ability_troubadour_harsh_critic",
+          "ability_troubadour_hypnotic_overtones",
+          "ability_troubadour_quick_rewrite",
+          "ability_troubadour_upstage"
+        ]
+      }
+    ]
   },
   {
     "id": "feature_troubadour_troubadour_abilities",
     "type": "feature",
-    "name": "Troubadour Abilities",
+    "name": "Troubadour Signature Abilities",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Your performance centers around maneuvering through the scene of battle, maintaining its momentum so that the story flows as dramatically as possible."
-  },
-  {
-    "id": "feature_troubadour_troubadour_class_act",
-    "type": "feature",
-    "name": "Troubadour Class Act",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Panache, melody, and depiction. Some troubadours have it all, but everyone starts somewhere. Your troubadour class act is your art form, summing up the manner in which the world becomes your stage. As you go about unearthing the drama of everyday life and strife, you choose a troubadour class act from the following options, each of which grants you a skill. (*Quick Build:* Virtuoso.)\n\nYour troubadour class act is your subclass, and your choice of class act determines many of the features you'll gain as you gain new levels."
-  },
-  {
-    "id": "feature_troubadour_virtuoso_performances",
-    "type": "feature",
-    "name": "Virtuoso Performances",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following performance abilities, which are usable with your Routines feature."
-  },
-  {
-    "id": "feature_troubadour_2nd_level_auteur_ability",
-    "type": "feature",
-    "name": "2nd-Level Auteur Ability",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_2nd_level_duelist_ability",
-    "type": "feature",
-    "name": "2nd-Level Duelist Ability",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_2nd_level_virtuoso_ability",
-    "type": "feature",
-    "name": "2nd-Level Virtuoso Ability",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_allow_me_to_introduce_tonight_s_players",
-    "type": "feature",
-    "name": "Allow Me to Introduce Tonight's Players",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Whenever you take the first turn in a combat encounter, you can use a main action to introduce yourself and your allies to your opponents. Each ally can shift up to their speed, and ability rolls made against them have a double bane until the end of the combat round. Additionally, any surprised enemy is no longer surprised."
+    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will.",
+    "abilities": [
+      {
+        "id": "ability_troubadour_artful_flourish",
+        "name": "Artful Flourish"
+      },
+      {
+        "id": "ability_troubadour_cutting_sarcasm",
+        "name": "Cutting Sarcasm"
+      },
+      {
+        "id": "ability_troubadour_instigator",
+        "name": "Instigator"
+      },
+      {
+        "id": "ability_troubadour_witty_banter",
+        "name": "Witty Banter"
+      }
+    ]
   },
   {
     "id": "feature_troubadour_appeal_to_the_muses",
@@ -160,6 +178,58 @@
     "is_subclass_feature": false,
     "level": 2,
     "description": "You can give a rousing speech, invoke your inspirations, or lift your fellows' spirits, appealing to the muses to heighten a battle's drama. However, irony is eager to hand your fortune to the villain to achieve the same end.\n\nBefore you roll to gain drama at the start of your turn, you can make your appeal (no action required). If you do, your roll gains the following additional effects:\n- If the roll is a 1, you gain 1 additional drama. The Director gains 1d3 Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*).\n- If the roll is a 2, you gain 1 Heroic Resource, which you can keep or give to an ally within the distance of your active performance. The Director gains 1 Malice.\n- If the roll is a 3, you gain 2 of a Heroic Resource, which you can distribute among yourself and any allies within the distance of your active performance."
+  },
+  {
+    "id": "feature_troubadour_invocation",
+    "type": "feature",
+    "name": "Invocation",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "You channel the raw emotion of the crowd into powerful dramatic invocations.",
+    "abilities": [
+      {
+        "id": "ability_troubadour_harsh_critic",
+        "name": "Harsh Critic"
+      },
+      {
+        "id": "ability_troubadour_hypnotic_overtones",
+        "name": "Hypnotic Overtones"
+      },
+      {
+        "id": "ability_troubadour_quick_rewrite",
+        "name": "Quick Rewrite"
+      },
+      {
+        "id": "ability_troubadour_upstage",
+        "name": "Upstage"
+      },
+      {
+        "id": "ability_troubadour_dramatic_reversal",
+        "name": "Dramatic Reversal"
+      },
+      {
+        "id": "ability_troubadour_fake_your_death",
+        "name": "Fake Your Death"
+      },
+      {
+        "id": "ability_troubadour_flip_the_script",
+        "name": "Flip the Script"
+      },
+      {
+        "id": "ability_troubadour_method_acting",
+        "name": "Method Acting"
+      }
+    ]
+  },
+  {
+    "id": "feature_troubadour_allow_me_to_introduce_tonight_s_players",
+    "type": "feature",
+    "name": "Allow Me to Introduce Tonight's Players",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Whenever you take the first turn in a combat encounter, you can use a main action to introduce yourself and your allies to your opponents. Each ally can shift up to their speed, and ability rolls made against them have a double bane until the end of the combat round. Additionally, any surprised enemy is no longer surprised."
   },
   {
     "id": "feature_troubadour_formal_introductions",
@@ -189,33 +259,127 @@
     "description": "You gain one interpersonal, lore, or supernatural perk of your choice. See Chapter 7: Perks."
   },
   {
-    "id": "feature_troubadour_foil",
+    "id": "feature_troubadour_class_act_abilities_lvl2",
     "type": "feature",
-    "name": "Foil",
+    "name": "Class Act Abilities (5-Drama)",
     "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Duelist",
-    "level": 3,
-    "description": "At the start of an encounter, choose one creature within your line of effect. You have a double edge on power rolls made against or in competition with that creature. The chosen creature also has a double edge on power rolls made against or in competition with you. If the chosen creature is reduced to 0 Stamina, you can choose a new foil at the start of the next combat round."
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one 5-drama ability from your class act.",
+    "options": [
+      {
+        "name": "Auteur",
+        "abilities": [
+          {
+            "id": "ability_troubadour_guest_star",
+            "name": "Guest Star"
+          },
+          {
+            "id": "ability_troubadour_twist_at_the_end",
+            "name": "Twist at the End"
+          }
+        ]
+      },
+      {
+        "name": "Duelist",
+        "abilities": [
+          {
+            "id": "ability_troubadour_classic_chandelier_stunt",
+            "name": "Classic Chandelier Stunt"
+          },
+          {
+            "id": "ability_troubadour_en_garde",
+            "name": "En Garde!"
+          }
+        ]
+      },
+      {
+        "name": "Virtuoso",
+        "abilities": [
+          {
+            "id": "ability_troubadour_encore",
+            "name": "Encore"
+          },
+          {
+            "id": "ability_troubadour_tough_crowd",
+            "name": "Tough Crowd"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_troubadour_missed_cue",
+    "id": "feature_troubadour_class_act_feature_lvl3",
     "type": "feature",
-    "name": "Missed Cue",
-    "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Auteur",
-    "level": 3,
-    "description": "If you aren't surprised at the start of an encounter, you can choose one enemy within your line of effect who is not a leader or solo creature. The Director temporarily removes the chosen creature from the encounter. The chosen creature enters the encounter at the start of the second combat round. You must earn 3 Victories before you can use this feature again."
-  },
-  {
-    "id": "feature_troubadour_second_album",
-    "type": "feature",
-    "name": "Second Album",
+    "name": "Class Act Feature",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 3,
-    "description": "You have the following performance abilities, which are usable with your Routines feature."
+    "description": "Your class act grants an additional feature at 3rd level.",
+    "options": [
+      {
+        "name": "Auteur",
+        "feature": {
+          "name": "Missed Cue",
+          "description": "If you aren't surprised at the start of an encounter, you can choose one enemy within your line of effect who is not a leader or solo creature. The Director temporarily removes the chosen creature from the encounter. The chosen creature enters the encounter at the start of the second combat round. You must earn 3 Victories before you can use this feature again."
+        }
+      },
+      {
+        "name": "Duelist",
+        "feature": {
+          "name": "Foil",
+          "description": "At the start of an encounter, choose one creature within your line of effect. You have a double edge on power rolls made against or in competition with that creature. The chosen creature also has a double edge on power rolls made against or in competition with you. If the chosen creature is reduced to 0 Stamina, you can choose a new foil at the start of the next combat round."
+        }
+      },
+      {
+        "name": "Virtuoso",
+        "feature": {
+          "name": "Second Album",
+          "description": "You have the following performance abilities, which are usable with your Routines feature.",
+          "performances": [
+            "ability_troubadour_infernal_gavotte",
+            "ability_troubadour_moonlight_sonata",
+            "ability_troubadour_radical_fantasia",
+            "ability_troubadour_star_solo"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "feature_troubadour_abilities_7_drama",
+    "type": "feature",
+    "name": "Troubadour Abilities (7-Drama)",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 3,
+    "description": "Choose one 7-drama ability.",
+    "abilities": [
+      {
+        "id": "ability_troubadour_extensive_rewrites",
+        "name": "Extensive Rewrites"
+      },
+      {
+        "id": "ability_troubadour_infernal_gavotte",
+        "name": "Infernal Gavotte"
+      },
+      {
+        "id": "ability_troubadour_moonlight_sonata",
+        "name": "Moonlight Sonata"
+      },
+      {
+        "id": "ability_troubadour_radical_fantasia",
+        "name": "Radical Fantasia"
+      },
+      {
+        "id": "ability_troubadour_star_solo",
+        "name": "Star Solo"
+      },
+      {
+        "id": "ability_troubadour_we_meet_at_last",
+        "name": "We Meet at Last"
+      }
+    ]
   },
   {
     "id": "feature_troubadour_characteristic_increase_2",
@@ -225,33 +389,6 @@
     "is_subclass_feature": false,
     "level": 4,
     "description": "Your Agility and Presence scores each increase to 3."
-  },
-  {
-    "id": "feature_troubadour_foreshadowing",
-    "type": "feature",
-    "name": "Foreshadowing",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You can ask the Director for two clues regarding an upcoming encounter or negotiation. One of the clues can be false."
-  },
-  {
-    "id": "feature_troubadour_hear_ye_hear_ye",
-    "type": "feature",
-    "name": "Hear Ye, Hear Ye!",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "By bragging, intimidating, leading, or lying, you attempt to spread one piece of information into the local area. Make a Presence test:"
-  },
-  {
-    "id": "feature_troubadour_latest_goss",
-    "type": "feature",
-    "name": "Latest Goss",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You can ask the Director for three rumors regarding the area you're in or an area you plan on entering before your next respite. One of the rumors can be false."
   },
   {
     "id": "feature_troubadour_melodrama",
@@ -281,89 +418,108 @@
     "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
   },
   {
-    "id": "feature_troubadour_bolstering_banter",
+    "id": "feature_troubadour_foreshadowing",
     "type": "feature",
-    "name": "Bolstering Banter",
+    "name": "Foreshadowing",
     "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Virtuoso",
-    "level": 5,
-    "description": "Once on each of your turns, you can use a free maneuver to exchange words with a target of your current performance, other than yourself. The target can spend a Recovery to gain temporary Stamina equal to their recovery value."
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You can ask the Director for two clues regarding an upcoming encounter or negotiation. One of the clues can be false."
   },
   {
-    "id": "feature_troubadour_fix_it_in_post",
+    "id": "feature_troubadour_hear_ye_hear_ye",
     "type": "feature",
-    "name": "Fix It in Post",
+    "name": "Hear Ye, Hear Ye!",
     "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Auteur",
-    "level": 5,
-    "description": "Once on each of your turns, you can use a free maneuver to change one condition affecting a creature within distance of your Dramatic Monologue ability. Choose one of the following conditions on the target: bleeding, frightened, prone, slowed, or taunted. You change that condition to another of those conditions, maintaining the duration and origin of the original condition. A target who is no longer prone can stand up."
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "By bragging, intimidating, leading, or lying, you attempt to spread one piece of information into the local area. Make a Presence test:"
   },
   {
-    "id": "feature_troubadour_medley",
+    "id": "feature_troubadour_latest_goss",
     "type": "feature",
-    "name": "Medley",
+    "name": "Latest Goss",
     "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Virtuoso",
-    "level": 5,
-    "description": "You can maintain two performances at a time using your Routines feature."
+    "is_subclass_feature": false,
+    "level": 4,
+    "description": "You can ask the Director for three rumors regarding the area you're in or an area you plan on entering before your next respite. One of the rumors can be false."
   },
   {
-    "id": "feature_troubadour_take_two",
+    "id": "feature_troubadour_class_act_feature_lvl5",
     "type": "feature",
-    "name": "Take Two!",
+    "name": "Class Act Feature",
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 5,
-    "description": "You have the following performance ability, which is usable with your Routines feature."
+    "description": "Your class act grants additional benefits at 5th level.",
+    "options": [
+      {
+        "name": "Auteur",
+        "features": [
+          {
+            "name": "Fix It in Post",
+            "description": "Once on each of your turns, you can use a free maneuver to change one condition affecting a creature within distance of your Dramatic Monologue ability. Choose one of the following conditions on the target: bleeding, frightened, prone, slowed, or taunted. You change that condition to another of those conditions, maintaining the duration and origin of the original condition. A target who is no longer prone can stand up."
+          }
+        ]
+      },
+      {
+        "name": "Duelist",
+        "features": [
+          {
+            "name": "Verbal Duel",
+            "description": "Once on each of your turns while the target of your Foil feature is adjacent to you, you can use a free maneuver to exchange words with them. Make an opposed Presence test with the target. Whoever gets the higher result can make a free strike, which deals psychic damage instead of its usual damage."
+          }
+        ]
+      },
+      {
+        "name": "Virtuoso",
+        "features": [
+          {
+            "name": "Bolstering Banter",
+            "description": "Once on each of your turns, you can use a free maneuver to exchange words with a target of your current performance, other than yourself. The target can spend a Recovery to gain temporary Stamina equal to their recovery value."
+          },
+          {
+            "name": "Medley",
+            "description": "You can maintain two performances at a time using your Routines feature."
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_troubadour_verbal_duel",
+    "id": "feature_troubadour_abilities_9_drama",
     "type": "feature",
-    "name": "Verbal Duel",
+    "name": "Troubadour Abilities (9-Drama)",
     "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Duelist",
+    "is_subclass_feature": false,
     "level": 5,
-    "description": "Once on each of your turns while the target of your Foil feature is adjacent to you, you can use a free maneuver to exchange words with them. Make an opposed Presence test with the target. Whoever gets the higher result can make a free strike, which deals psychic damage instead of its usual damage."
-  },
-  {
-    "id": "feature_troubadour_we_can_t_be_upstaged",
-    "type": "feature",
-    "name": "We Can't Be Upstaged!",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 5,
-    "description": "You have the following performance ability, which is usable with your Routines feature."
-  },
-  {
-    "id": "feature_troubadour_6th_level_auteur_abilities",
-    "type": "feature",
-    "name": "6th-Level Auteur Abilities",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_6th_level_duelist_abilities",
-    "type": "feature",
-    "name": "6th-Level Duelist Abilities",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_6th_level_virtuoso_abilities",
-    "type": "feature",
-    "name": "6th-Level Virtuoso Abilities",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
+    "description": "Choose one 9-drama ability.",
+    "abilities": [
+      {
+        "id": "ability_troubadour_action_hero",
+        "name": "Action Hero"
+      },
+      {
+        "id": "ability_troubadour_continuity_error",
+        "name": "Continuity Error"
+      },
+      {
+        "id": "ability_troubadour_love_song",
+        "name": "Love Song"
+      },
+      {
+        "id": "ability_troubadour_patter_song",
+        "name": "Patter Song"
+      },
+      {
+        "id": "ability_troubadour_take_two",
+        "name": "Take Two!"
+      },
+      {
+        "id": "ability_troubadour_we_can_t_be_upstaged",
+        "name": "We Can't Be Upstaged!"
+      }
+    ]
   },
   {
     "id": "feature_troubadour_perk_4",
@@ -381,16 +537,61 @@
     "class": "troubadour",
     "is_subclass_feature": false,
     "level": 6,
-    "description": "You have the following performance ability, which is usable with your Routines feature."
+    "description": "You have the following performance ability, which is usable with your Routines feature.",
+    "ability": {
+      "id": "ability_troubadour_spotlight",
+      "name": "Spotlight"
+    }
   },
   {
-    "id": "feature_troubadour_a_muse_s_muse",
+    "id": "feature_troubadour_class_act_abilities_lvl6",
     "type": "feature",
-    "name": "A Muse's Muse",
+    "name": "Class Act Abilities (Level 6)",
     "class": "troubadour",
     "is_subclass_feature": false,
-    "level": 7,
-    "description": "At the start of each of your turns during combat, you gain 1d3 + 1 drama instead of 1d3."
+    "level": 6,
+    "description": "Choose one new ability from your class act.",
+    "options": [
+      {
+        "name": "Auteur",
+        "abilities": [
+          {
+            "id": "ability_troubadour_here_s_how_your_story_ends",
+            "name": "Here's How Your Story Ends"
+          },
+          {
+            "id": "ability_troubadour_you_re_all_my_understudies",
+            "name": "You're All My Understudies"
+          }
+        ]
+      },
+      {
+        "name": "Duelist",
+        "abilities": [
+          {
+            "id": "ability_troubadour_blood_on_the_stage",
+            "name": "Blood on the Stage"
+          },
+          {
+            "id": "ability_troubadour_fight_choreography",
+            "name": "Fight Choreography"
+          }
+        ]
+      },
+      {
+        "name": "Virtuoso",
+        "abilities": [
+          {
+            "id": "ability_troubadour_feedback",
+            "name": "Feedback"
+          },
+          {
+            "id": "ability_troubadour_legendary_drum_fill",
+            "name": "Legendary Drum Fill"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_troubadour_characteristic_increase_3",
@@ -411,6 +612,15 @@
     "description": "You can use your Scene Partner feature to form a bond with one willing hero instead of an NPC you interact with using a test. If you bond with another hero, you lose your existing bond with a hero.\n\nAdditionally, you and creatures you are bonded with gain a +1 bonus to saving throws. Whenever you or a bonded creature succeeds on a saving throw, you and each creature you are bonded with gains temporary Stamina equal to your level."
   },
   {
+    "id": "feature_troubadour_a_muse_s_muse",
+    "type": "feature",
+    "name": "A Muse's Muse",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "At the start of each of your turns during combat, you gain 1d3 + 1 drama instead of 1d3."
+  },
+  {
     "id": "feature_troubadour_skill_3",
     "type": "feature",
     "name": "Skill",
@@ -418,35 +628,6 @@
     "is_subclass_feature": false,
     "level": 7,
     "description": "You gain one skill of your choice."
-  },
-  {
-    "id": "feature_troubadour_crowd_favorites",
-    "type": "feature",
-    "name": "Crowd Favorites",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You have the following performance abilities, which are usable with your Routines feature."
-  },
-  {
-    "id": "feature_troubadour_deleted_scene",
-    "type": "feature",
-    "name": "Deleted Scene",
-    "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Auteur",
-    "level": 8,
-    "description": "Whenever a creature within distance of your Dramatic Monologue ability makes a power roll, you can spend 1 drama as a free triggered action to use Dramatic Monologue, targeting only one creature."
-  },
-  {
-    "id": "feature_troubadour_masterwork",
-    "type": "feature",
-    "name": "Masterwork",
-    "class": "troubadour",
-    "is_subclass_feature": true,
-    "subclass_name": "Duelist",
-    "level": 8,
-    "description": "Choose one of your signature abilities and name it after yourself. You always have this ability available, even if it is sourced from a kit you switch out. Whenever you use this ability, you gain an edge and 1 surge that you can use only on this ability.\n\nAdditionally, when your named signature ability is the last ability you use in an encounter, you can immediately use the Hear Ye, Hear Ye! effect of your Zeitgeist feature to tell tales of your exploits after the encounter ends."
   },
   {
     "id": "feature_troubadour_perk_5",
@@ -458,31 +639,85 @@
     "description": "You gain one perk of your choice."
   },
   {
-    "id": "feature_troubadour_9th_level_auteur_abilities",
+    "id": "feature_troubadour_class_act_feature_lvl8",
     "type": "feature",
-    "name": "9th-Level Auteur Abilities",
+    "name": "Class Act Feature",
     "class": "troubadour",
     "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
+    "level": 8,
+    "description": "Your class act grants additional benefits at 8th level.",
+    "options": [
+      {
+        "name": "Auteur",
+        "feature": {
+          "name": "Deleted Scene",
+          "description": "Whenever a creature within distance of your Dramatic Monologue ability makes a power roll, you can spend 1 drama as a free triggered action to use Dramatic Monologue, targeting only one creature."
+        }
+      },
+      {
+        "name": "Duelist",
+        "feature": {
+          "name": "Masterwork",
+          "description": "Choose one of your signature abilities and name it after yourself. You always have this ability available, even if it is sourced from a kit you switch out. Whenever you use this ability, you gain an edge and 1 surge that you can use only on this ability.\n\nAdditionally, when your named signature ability is the last ability you use in an encounter, you can immediately use the Hear Ye, Hear Ye! effect of your Zeitgeist feature to tell tales of your exploits after the encounter ends."
+        }
+      },
+      {
+        "name": "Virtuoso",
+        "feature": {
+          "name": "Crowd Favorites",
+          "description": "You have the following performance abilities, which are usable with your Routines feature.",
+          "performances": [
+            "ability_troubadour_ballad_of_the_beast",
+            "ability_troubadour_fire_up_the_night",
+            "ability_troubadour_never_ending_hero",
+            "ability_troubadour_thunder_mother"
+          ]
+        }
+      }
+    ]
   },
   {
-    "id": "feature_troubadour_9th_level_duelist_abilities",
+    "id": "feature_troubadour_abilities_11_drama",
     "type": "feature",
-    "name": "9th-Level Duelist Abilities",
+    "name": "Troubadour Abilities (11-Drama)",
     "class": "troubadour",
     "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_troubadour_9th_level_virtuoso_abilities",
-    "type": "feature",
-    "name": "9th-Level Virtuoso Abilities",
-    "class": "troubadour",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
+    "level": 8,
+    "description": "Choose one 11-drama ability.",
+    "abilities": [
+      {
+        "id": "ability_troubadour_ballad_of_the_beast",
+        "name": "\"Ballad of the Beast\""
+      },
+      {
+        "id": "ability_troubadour_fire_up_the_night",
+        "name": "\"Fire Up the Night\""
+      },
+      {
+        "id": "ability_troubadour_never_ending_hero",
+        "name": "\"Never-Ending Hero\""
+      },
+      {
+        "id": "ability_troubadour_thunder_mother",
+        "name": "\"Thunder Mother\""
+      },
+      {
+        "id": "ability_troubadour_dramatic_reveal",
+        "name": "Dramatic Reveal"
+      },
+      {
+        "id": "ability_troubadour_power_ballad",
+        "name": "Power Ballad"
+      },
+      {
+        "id": "ability_troubadour_saved_in_the_edit",
+        "name": "Saved in the Edit"
+      },
+      {
+        "id": "ability_troubadour_the_show_must_go_on",
+        "name": "The Show Must Go On"
+      }
+    ]
   },
   {
     "id": "feature_troubadour_roar_of_the_crowd",
@@ -492,6 +727,56 @@
     "is_subclass_feature": false,
     "level": 9,
     "description": "You are empowered by your audience, near and far. You can't be made frightened, and if you are prone, you can stand up as a free maneuver.\n\nAdditionally, whenever you spend a Recovery, you can forgo regaining Stamina to invoke the roar of an invisible applauding audience. You and each ally within 3 squares of you gains temporary Stamina equal to 10 + the number of active bonds from your Scene Partner feature + either your Victories or the number of players in your game (whichever is higher)."
+  },
+  {
+    "id": "feature_troubadour_class_act_abilities_lvl9",
+    "type": "feature",
+    "name": "Class Act Abilities (Level 9)",
+    "class": "troubadour",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one new ability from your class act.",
+    "options": [
+      {
+        "name": "Auteur",
+        "abilities": [
+          {
+            "id": "ability_troubadour_epic",
+            "name": "Epic"
+          },
+          {
+            "id": "ability_troubadour_rising_tension",
+            "name": "Rising Tension"
+          }
+        ]
+      },
+      {
+        "name": "Duelist",
+        "abilities": [
+          {
+            "id": "ability_troubadour_expert_fencer",
+            "name": "Expert Fencer"
+          },
+          {
+            "id": "ability_troubadour_renegotiated_contract",
+            "name": "Renegotiated Contract"
+          }
+        ]
+      },
+      {
+        "name": "Virtuoso",
+        "abilities": [
+          {
+            "id": "ability_troubadour_jam_session",
+            "name": "Jam Session"
+          },
+          {
+            "id": "ability_troubadour_melt_their_faces",
+            "name": "Melt Their Faces"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_troubadour_applause",

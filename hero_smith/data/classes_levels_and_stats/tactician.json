@@ -21,7 +21,7 @@
     "starting_skills": {
       "granted_skills": ["Lead"],
       "skill_groups": [
-        "(choose 2 from) Alertness, Architecture, Blacksmithing, Brag, Culture, Empathize, Fletching, Mechanics, Monsters, Search, Strategy, or any Exploration skill"
+        "Alertness, Architecture, Blacksmithing, Brag, Culture, Empathize, Fletching, Mechanics, Monsters, Search, Strategy, or any Exploration skill"
       ],
       "skill_count": 2,
       "quick_build": ["Lead", "Monsters", "Strategy"]
@@ -39,42 +39,42 @@
       {
         "level": 1,
         "features": [
-          "Tactical Doctrine",
-          "Focus",
-          "Doctrine Feature",
-          "Doctrine Triggered Action",
-          "Field Arsenal",
-          "Mark",
-          "Strike Now",
-          "Tactician Abilities",
-          "Kit"
-        ],
-        "subclass_features": [
-          { "insurgent": ["Covert Operations"] },
-          { "mastermind": ["Studied Commander"] },
-          { "vanguard": ["Commanding Presence"] }
+          {
+            "name": "Tactical Doctrine",
+
+            "type": "pick 1 subclass"
+          },
+          { "name": "Focus", "type": "granted" },
+          { "name": "Doctrine Feature", "type": "granted" },
+          { "name": "Doctrine Triggered Action", "type": "granted" },
+          { "name": "Mark", "type": "ability" },
+          { "name": "Strike Now", "type": "ability" },
+          { "name": "Field Arsenal", "type": "granted" },
+          { "name": "Kit", "type": "granted", "count": 2 }
         ],
         "new_abilities": { "3_cost": 1, "5_cost": 1 }
       },
       {
         "level": 2,
-        "features": ["Perk", "Doctrine Feature", "Doctrine Ability"],
-        "perks": [{ "count": 1 }],
+        "features": [{ "name": "Doctrine Feature", "type": "granted" }],
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "intrigue", "exploration"]
+          }
+        ],
         "new_subclass_abilities": { "5_cost": 1 }
       },
       {
         "level": 3,
-        "features": ["Out of Position", "7-Focus Ability"],
+        "features": [{ "name": "Out of Position", "type": "granted" }],
         "new_abilities": { "7_cost": 1 }
       },
       {
         "level": 4,
         "features": [
-          "Characteristic Increase",
-          "Focus on Their Weakness",
-          "Improved Field Arsenal",
-          "Perk",
-          "Skill"
+          { "name": "Focus on Their Weakness", "type": "granted" },
+          { "name": "Improved Field Arsenal", "type": "granted" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -85,57 +85,54 @@
       },
       {
         "level": 5,
-        "features": [
-          "Doctrine Feature",
-          "Anticipation / Distracted / I Predicted That / Leave No Trace / Shake It Off / Tactical Offensive",
-          "9-Focus Ability"
-        ],
+        "features": [{ "name": "Doctrine Feature", "type": "granted" }],
         "new_abilities": { "9_cost": 1 }
       },
       {
         "level": 6,
-        "features": ["Master of Arms", "Perk", "Doctrine Ability"],
-        "perks": [{ "count": 1 }],
+        "features": [{ "name": "Master of Arms", "type": "granted" }],
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "intrigue", "exploration"]
+          }
+        ],
         "new_subclass_abilities": { "9_cost": 1 }
       },
       {
         "level": 7,
         "features": [
-          "Characteristic Increase",
-          "Heightened Focus",
-          "Seize the Initiative",
-          "Skill",
-          "Doctrine Feature (e.g., Asymmetric Warfare / Grand Strategy / Shock and Awe)"
+          { "name": "Heightened Focus", "type": "granted" },
+          { "name": "Seize the Initiative", "type": "granted" },
+          { "name": "Doctrine Feature", "type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [
-          "Perk",
-          "Doctrine Feature (e.g., Bait and Ambush / Pincer Movement / See Your Enemies Driven Before You)",
-          "11-Focus Ability"
-        ],
+        "features": [{ "name": "Doctrine Feature", "type": "granted" }],
         "perks": [{ "count": 1 }],
         "new_abilities": { "11_cost": 1 }
       },
       {
         "level": 9,
-        "features": ["Grandmaster of Arms", "Doctrine Ability"],
+        "features": [{ "name": "Grandmaster of Arms", "type": "granted" }],
         "new_subclass_abilities": { "11_cost": 1 }
       },
       {
         "level": 10,
         "features": [
-          "Characteristic Increase",
-          "Command",
-          "Perk",
-          "Skill",
-          "True Focus",
-          "Warmaster"
+          { "name": "Command", "type": "granted" },
+          { "name": "True Focus", "type": "granted" },
+          { "name": "Warmaster", "type": "granted" }
         ],
-        "perks": [{ "count": 1 }],
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "intrigue", "exploration"]
+          }
+        ],
         "skills": [{ "count": 1 }],
         "characteristics": [
           { "Might": { "setTo": 5 } },

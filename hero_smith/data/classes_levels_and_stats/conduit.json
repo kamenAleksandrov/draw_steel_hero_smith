@@ -19,7 +19,7 @@
     },
 
     "starting_skills": {
-      "skill_groups": ["Interpersonal", "Lore"],
+      "skill_groups": ["interpersonal", "lore"],
       "skill_count": 2,
       "quick_build": ["Read Person", "Religion"]
     },
@@ -48,15 +48,15 @@
       {
         "level": 1,
         "features": [
-          "Deity and Domains",
-          "Piety",
-          "Domain Feature",
-          "Healing Grace",
-          "Ray of Wrath",
-          "Triggered Action",
-          "Prayer",
-          "Conduit Ward",
-          "Conduit Abilities"
+          { "name": "Deity and Domains", "deity": 1, "domain": 2 },
+          { "name": "Piety", "type": "granted" },
+          { "name": "Domain Feature", "type": "pick 1" },
+          { "name": "Domain Piety and Effects", "type": "granted" },
+          { "name": "Healing Grace", "type": "ability" },
+          { "name": "Ray of Wrath", "type": "ability" },
+          { "name": "Triggered Action", "type": "pick 1" },
+          { "name": "Prayer", "type": "pick 1" },
+          { "name": "Conduit Ward", "type": "pick 1" }
         ],
         "new_abilities": {
           "signature": 2,
@@ -67,10 +67,8 @@
       {
         "level": 2,
         "features": [
-          "The Lists of Heaven",
-          "Perk",
-          "Domain Feature",
-          "2nd-Level Domain Ability"
+          { "name": "The Lists of Heaven", "type": "ability" },
+          { "name": "Domain Feature", "type": "pick 1" }
         ],
         "perks": [
           {
@@ -84,7 +82,7 @@
       },
       {
         "level": 3,
-        "features": ["Minor Miracle", "7-Piety Ability"],
+        "features": ["Minor Miracle"],
         "new_abilities": {
           "7_cost": 1
         }
@@ -92,11 +90,8 @@
       {
         "level": 4,
         "features": [
-          "Blessed Domain",
-          "Characteristic Increase",
-          "Perk",
-          "Skill",
-          "Domain Feature"
+          { "name": "Blessed Domain", "type": "granted" },
+          { "name": "Domain Feature", "type": "pick 1" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -107,14 +102,14 @@
       },
       {
         "level": 5,
-        "features": ["Domain Feature", "9-Piety Ability"],
+        "features": [{ "name": "Domain Feature", "type": "pick 1" }],
         "new_abilities": {
           "9_cost": 1
         }
       },
       {
         "level": 6,
-        "features": ["Burgeoning Saint", "Perk", "Domain Ability"],
+        "features": [{ "name": "Burgeoning Saint", "type": "granted" }],
         "perks": [
           {
             "count": 1,
@@ -128,17 +123,15 @@
       {
         "level": 7,
         "features": [
-          "Characteristic Increase",
-          "Faithful’s Reward",
-          "Skill",
-          "Domain Feature"
+          { "name": "Faithful's Reward", "type": "granted" },
+          { "name": "Domain Feature", "type": "pick 1" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": ["Perk", "Domain Feature", "11-Piety Ability"],
+        "features": [{ "name": "Domain Feature", "type": "pick 1" }],
         "perks": [{ "count": 1 }],
         "new_abilities": {
           "11_cost": 1
@@ -146,7 +139,10 @@
       },
       {
         "level": 9,
-        "features": ["Faith’s Sword", "Ordained", "9th-Level Domain Ability"],
+        "features": [
+          { "name": "Faith's Sword", "type": "granted" },
+          { "name": "Ordained", "type": "granted" }
+        ],
         "new_subclass_abilities": {
           "11_cost": 1
         }
@@ -154,12 +150,9 @@
       {
         "level": 10,
         "features": [
-          "Avatar",
-          "Characteristic Increase",
-          "Divine Power",
-          "Most Pious",
-          "Perk",
-          "Skill"
+          { "name": "Avatar", "type": "granted" },
+          { "name": "Divine Power", "type": "granted" },
+          { "name": "Most Pious", "type": "granted" }
         ],
         "perks": [
           {

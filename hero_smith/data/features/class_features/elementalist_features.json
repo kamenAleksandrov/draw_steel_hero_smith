@@ -1,5 +1,73 @@
 [
   {
+    "id": "feature_elementalist_elemental_specialization",
+    "type": "feature",
+    "name": "Elemental Specialization",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Choose one element (Earth, Fire, Green, or Void) to guide your studies. Your choice grants the benefits listed here and determines later features.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "Acolyte of Earth",
+            "description": "You harness the flow of earth magic to become harder to move. Whenever you use an ability that has the Earth and Magic keywords, your stability increases by 1 until the start of your next turn. This benefit is cumulative."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "Acolyte of Fire",
+            "description": "You become an expert at wielding destructive flames. Your abilities that have the Fire and Magic keywords gain a +1 bonus to rolled damage. Your Hurl Element ability (see below) also gains this bonus when you use it to deal fire damage."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Acolyte of the Green",
+            "description": "You harness the residual magic from your green spells to bolster yourself and your allies. Whenever you deal damage to one or more creatures using an ability that has the Green and Magic keywords and that costs essence to use (see below), you or one creature within 10 squares of you gains temporary Stamina equal to your Reason score."
+          },
+          {
+            "name": "It Is the Soul Which Hears",
+            "description": "You can speak with and understand animals, beasts, and plant creatures, even if they don't share a language with you. Your ability to communicate with these creatures doesn't make them inherently more intelligent, but you can use Reason instead of Presence while making tests to influence them.\n\nAdditionally, you can touch a living plant that is not a plant creature to communicate with it telepathically. You can use words to communicate with the plant, but it communicates with you only by transmitting feelings and sensations that can't be overly specific."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Acolyte of the Mystery",
+            "description": "You use your immersion in the mystery of void magic to expand the reach of that magic better than other mages. The distance of all your abilities that have the Magic, Ranged, and Void keywords increases by 2 squares."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "feature_elementalist_essence",
+    "type": "feature",
+    "name": "Essence",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Elementalists harness a Heroic Resource called essence to power their magic.",
+    "in_combat": {
+      "name": "Essence in Combat",
+      "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain essence equal to your Victories. At the start of each of your turns during combat, you gain 2 essence.\n\nAdditionally, the first time each combat round that you or a creature within 10 squares takes damage that isn't untyped or holy damage, you gain 1 essence.\nYou lose any remaining essence at the end of the encounter."
+    },
+    "out_of_combat": {
+      "name": "Essence Outside of Combat",
+      "description": "Though you can't gain essence outside of combat, you can use your heroic abilities and effects that cost essence without spending it. Whenever you use an ability or effect outside of combat that costs essence, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use a persistent ability outside of combat (see Persistent Magic below), you can maintain it for a number of rounds equal to your Victories.\nWhen you use an ability outside of combat that lets you spend unlimited essence on its effect, you can use it as if you had spent an amount of essence equal to your Victories."
+    }
+  },
+  {
     "id": "feature_elementalist_a_beyonding_of_vision",
     "type": "feature",
     "name": "A Beyonding of Vision",
@@ -9,99 +77,6 @@
     "description": "You instantly recognize illusions for what they are, you can see invisible creatures, and supernatural effects can't conceal creatures and objects from you. Additionally, you always know if an area or object you observe is magical or affected by magic, and you know the specifics of what that magic can do.\n\nYou also gain the following ability."
   },
   {
-    "id": "feature_elementalist_earth_acolyte_of_earth",
-    "type": "feature",
-    "name": "Earth: Acolyte of Earth",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Earth",
-    "level": 1,
-    "description": "You harness the flow of earth magic to become harder to move. Whenever you use an ability that has the Earth and Magic keywords, your stability increases by 1 until the start of your next turn. This benefit is cumulative."
-  },
-  {
-    "id": "feature_elementalist_enchantment_of_battle",
-    "type": "feature",
-    "name": "Enchantment of Battle",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures.\n\nIf you have a kit, you can't take this enchantment."
-  },
-  {
-    "id": "feature_elementalist_enchantment_of_celerity",
-    "type": "feature",
-    "name": "Enchantment of Celerity",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
-  },
-  {
-    "id": "feature_elementalist_enchantment_of_destruction",
-    "type": "feature",
-    "name": "Enchantment of Destruction",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You gain a +1 bonus to rolled damage with magic abilities."
-  },
-  {
-    "id": "feature_elementalist_enchantment_of_distance",
-    "type": "feature",
-    "name": "Enchantment of Distance",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have a +2 bonus to the distance of your ranged magic abilities."
-  },
-  {
-    "id": "feature_elementalist_enchantment_of_permanence",
-    "type": "feature",
-    "name": "Enchantment of Permanence",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
-  },
-  {
-    "id": "feature_elementalist_essence_outside_of_combat",
-    "type": "feature",
-    "name": "Essence Outside of Combat",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Though you can't gain essence outside of combat, you can use your heroic abilities and effects that cost essence without spending it. Whenever you use an ability or effect outside of combat that costs essence, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use a persistent ability outside of combat (see Persistent Magic below), you can maintain it for a number of rounds equal to your Victories.\nWhen you use an ability outside of combat that lets you spend unlimited essence on its effect, you can use it as if you had spent an amount of essence equal to your Victories."
-  },
-  {
-    "id": "feature_elementalist_essence_in_combat",
-    "type": "feature",
-    "name": "Essence in Combat",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain essence equal to your Victories. At the start of each of your turns during combat, you gain 2 essence.\n\nAdditionally, the first time each combat round that you or a creature within 10 squares takes damage that isn't untyped or holy damage, you gain 1 essence.\nYou lose any remaining essence at the end of the encounter."
-  },
-  {
-    "id": "feature_elementalist_fire_acolyte_of_fire",
-    "type": "feature",
-    "name": "Fire: Acolyte of Fire",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 1,
-    "description": "You become an expert at wielding destructive flames. Your abilities that have the Fire and Magic keywords gain a +1 bonus to rolled damage. Your Hurl Element ability (see below) also gains this bonus when you use it to deal fire damage."
-  },
-  {
-    "id": "feature_elementalist_green_acolyte_of_the_green",
-    "type": "feature",
-    "name": "Green: Acolyte of the Green",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
-    "level": 1,
-    "description": "You harness the residual magic from your green spells to bolster yourself and your allies. Whenever you deal damage to one or more creatures using an ability that has the Green and Magic keywords and that costs essence to use (see below), you or one creature within 10 squares of you gains temporary Stamina equal to your Reason score."
-  },
-  {
     "id": "feature_elementalist_hurl_element",
     "type": "feature",
     "name": "Hurl Element",
@@ -109,25 +84,6 @@
     "is_subclass_feature": false,
     "level": 1,
     "description": "You have the following ability, which can be used as a ranged free strike."
-  },
-  {
-    "id": "feature_elementalist_it_is_the_soul_which_hears",
-    "type": "feature",
-    "name": "It Is the Soul Which Hears",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
-    "level": 1,
-    "description": "You can speak with and understand animals, beasts, and plant creatures, even if they don't share a language with you. Your ability to communicate with these creatures doesn't make them inherently more intelligent, but you can use Reason instead of Presence while making tests to influence them.\n\nAdditionally, you can touch a living plant that is not a plant creature to communicate with it telepathically. You can use words to communicate with the plant, but it communicates with you only by transmitting feelings and sensations that can't be overly specific."
-  },
-  {
-    "id": "feature_elementalist_motivate_earth",
-    "type": "feature",
-    "name": "Motivate Earth",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
   },
   {
     "id": "feature_elementalist_persistent_magic",
@@ -148,6 +104,15 @@
     "description": "You have the following ability."
   },
   {
+    "id": "feature_elementalist_motivate_earth",
+    "type": "feature",
+    "name": "Motivate Earth",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "You have the following ability."
+  },
+  {
     "id": "feature_elementalist_return_to_formlessness",
     "type": "feature",
     "name": "Return to Formlessness",
@@ -157,79 +122,308 @@
     "description": "You have the following ability."
   },
   {
+    "id": "feature_elementalist_enchantment",
+    "type": "feature",
+    "name": "Enchantment",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Choose one elemental enchantment to permanently weave into your spellwork.",
+    "options": [
+      {
+        "name": "Battle",
+        "description": "You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures.\n\nIf you have a kit, you can't take this enchantment."
+      },
+      {
+        "name": "Celerity",
+        "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
+      },
+      {
+        "name": "Destruction",
+        "description": "You gain a +1 bonus to rolled damage with magic abilities."
+      },
+      {
+        "name": "Distance",
+        "description": "You have a +2 bonus to the distance of your ranged magic abilities."
+      },
+      {
+        "name": "Permanence",
+        "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
+      }
+    ]
+  },
+  {
+    "id": "feature_elementalist_ward",
+    "type": "feature",
+    "name": "Elementalist Ward",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Select the ward that shapes how your elemental defenses respond to harm.",
+    "options": [
+      {
+        "name": "Delightful Consequences",
+        "description": "A protective field of void magic absorbs violence aimed at you, then lets you hurl it back at your enemies. The first time each round that you take damage, you gain 1 surge."
+      },
+      {
+        "name": "Excellent Protection",
+        "description": "You weave a shield of all the elements around yourself, channeling their full protective power. You have immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your Reason score."
+      },
+      {
+        "name": "Nature's Affection",
+        "description": "The green energy writhing within your body allows you to produce powerful vines when you're in danger. Whenever a creature within a number of squares equal to your Reason score deals damage to you, you can use a free triggered action to slide that creature up to a number of squares equal to your Reason score."
+      },
+      {
+        "name": "Surprising Reactivity",
+        "description": "You use the magic of fire to create a ward of explosive energy. Whenever an adjacent creature deals damage to you, you can use a free triggered action to push that creature up to a number of squares equal to twice your Reason score."
+      }
+    ]
+  },
+  {
+    "id": "feature_elementalist_specialization_triggered_action",
+    "type": "feature",
+    "name": "Specialization Triggered Action",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Gain the triggered action tied to your elemental specialization.",
+    "options": [
+      {
+        "element": "Earth",
+        "name": "Skin Like Castle Walls",
+        "ability_id": "ability_elementalist_skin_like_castle_walls",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "keywords": [
+          "Earth",
+          "Magic",
+          "Ranged"
+        ],
+        "effect": "The target takes half the damage.\n\nIf the damage has any potency effects associated with it, the potency is reduced by 1 for the target."
+      },
+      {
+        "element": "Fire",
+        "name": "Explosive Assistance",
+        "ability_id": "ability_elementalist_explosive_assistance",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged"
+        ],
+        "effect": "The forced movement distance gains a bonus equal to your Reason score.\n\nThe forced movement distance gains a bonus equal to twice your Reason score instead."
+      },
+      {
+        "element": "Green",
+        "name": "Breath of Dawn Remembered",
+        "ability_id": "ability_elementalist_breath_of_dawn_remembered",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "effect": "The target can spend a Recovery.\n\nThe target can spend an additional Recovery for each essence spent."
+      },
+      {
+        "element": "Void",
+        "name": "Subtle Relocation",
+        "ability_id": "ability_elementalist_subtle_relocation",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "effect": "You teleport the target up to a number of squares equal to your Reason score. If the target moves to trigger this ability, you can teleport them at any point during the move.\n\nYou teleport the target up to a number of squares equal to twice your Reason score instead."
+      }
+    ]
+  },
+  {
     "id": "feature_elementalist_signature_abilities",
     "type": "feature",
-    "name": "Signature Abilities",
+    "name": "Elementalist Abilities",
     "class": "elementalist",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Bifurcated Incineration, Viscous Fire.)"
+    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Bifurcated Incineration, Viscous Fire.)",
+    "options": [
+      {
+        "name": "Afflict a Bountiful Decay",
+        "ability_id": "ability_elementalist_afflict_a_bountiful_decay",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged",
+          "Rot",
+          "Strike"
+        ],
+        "effect": "Choose yourself or one ally within distance. That character can end one effect on them that is ended by a saving throw or that ends at the end of their turn.",
+        "story": "Your curse causes your foe's flesh to rot off as spores that aid your allies."
+      },
+      {
+        "name": "Bifurcated Incineration",
+        "ability_id": "ability_elementalist_bifurcated_incineration",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Two creatures or objects",
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "Two jets of flame lance out at your command."
+      },
+      {
+        "name": "Grasp of Beyond",
+        "ability_id": "ability_elementalist_grasp_of_beyond",
+        "action_type": "Main action",
+        "range": "Melee 1",
+        "targets": "One creature",
+        "keywords": [
+          "Magic",
+          "Melee",
+          "Strike",
+          "Void"
+        ],
+        "effect": "You can teleport up to a number of squares equal to your Reason score.",
+        "story": "You absorb the life energy of another creature and use it to teleport."
+      },
+      {
+        "name": "Hurl Element",
+        "ability_id": "ability_elementalist_hurl_element",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": "When you make this strike, choose the damage type from one of the following options: acid, cold, corruption, fire, lightning, poison, or sonic.",
+        "story": "You cast a ball of elemental energy at a foe."
+      },
+      {
+        "name": "Meteoric Introduction",
+        "ability_id": "ability_elementalist_meteoric_introduction",
+        "action_type": "Main action",
+        "range": "Melee 1",
+        "targets": "One creature or object",
+        "keywords": [
+          "Earth",
+          "Magic",
+          "Melee",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "You give your enemy a gentle tap-like an asteroid impact."
+      },
+      {
+        "name": "Ray of Agonizing Self-Reflection",
+        "ability_id": "ability_elementalist_ray_of_agonizing_self_reflection",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike",
+          "Void"
+        ],
+        "effect": null,
+        "story": "You inflict pain and doubt in equal measure."
+      },
+      {
+        "name": "The Green Within, the Green Without",
+        "ability_id": "ability_elementalist_the_green_within_the_green_without",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": "You slide one creature within 10 squares of the target up to 2 squares.",
+        "story": "Whipping vines erupt from a foe's body to grasp at another close by."
+      },
+      {
+        "name": "Viscous Fire",
+        "ability_id": "ability_elementalist_viscous_fire",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "A jet of heavy fire erupts where you strike."
+      }
+    ]
   },
   {
-    "id": "feature_elementalist_void_acolyte_of_the_mystery",
+    "id": "feature_elementalist_specialization_feature_2",
     "type": "feature",
-    "name": "Void: Acolyte of the Mystery",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
-    "level": 1,
-    "description": "You use your immersion in the mystery of void magic to expand the reach of that magic better than other mages. The distance of all your abilities that have the Magic, Ranged, and Void keywords increases by 2 squares."
-  },
-  {
-    "id": "feature_elementalist_ward_of_delightful_consequences",
-    "type": "feature",
-    "name": "Ward of Delightful Consequences",
+    "name": "Specialization Feature",
     "class": "elementalist",
     "is_subclass_feature": false,
-    "level": 1,
-    "description": "A protective field of void magic absorbs violence aimed at you, then lets you hurl it back at your enemies. The first time each round that you take damage, you gain 1 surge."
-  },
-  {
-    "id": "feature_elementalist_ward_of_excellent_protection",
-    "type": "feature",
-    "name": "Ward of Excellent Protection",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You weave a shield of all the elements around yourself, channeling their full protective power. You have immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your Reason score."
-  },
-  {
-    "id": "feature_elementalist_ward_of_nature_s_affection",
-    "type": "feature",
-    "name": "Ward of Nature's Affection",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "The green energy writhing within your body allows you to produce powerful vines when you're in danger. Whenever a creature within a number of squares equal to your Reason score deals damage to you, you can use a free triggered action to slide that creature up to a number of squares equal to your Reason score."
-  },
-  {
-    "id": "feature_elementalist_ward_of_surprising_reactivity",
-    "type": "feature",
-    "name": "Ward of Surprising Reactivity",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You use the magic of fire to create a ward of explosive energy. Whenever an adjacent creature deals damage to you, you can use a free triggered action to push that creature up to a number of squares equal to twice your Reason score."
-  },
-  {
-    "id": "feature_elementalist_disciple_of_earth",
-    "type": "feature",
-    "name": "Disciple of Earth",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Earth",
     "level": 2,
-    "description": "Your body is strengthened by your mind's connection to the element of permanence. You have a +6 bonus to Stamina, and you gain an additional +3 bonus to Stamina whenever you gain a level past 2nd."
-  },
-  {
-    "id": "feature_elementalist_disciple_of_fire",
-    "type": "feature",
-    "name": "Disciple of Fire",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 2,
-    "description": "Your connection to fire allows you to protect yourself from it, even as you rip away the protections of others. You have fire immunity equal to 5 plus your level. Additionally, fire damage you deal ignores a target's fire immunity.\n\nAt the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage."
+    "description": "You gain the 2nd-level feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "Disciple of Earth",
+            "description": "Your body is strengthened by your mind's connection to the element of permanence. You have a +6 bonus to Stamina, and you gain an additional +3 bonus to Stamina whenever you gain a level past 2nd."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "Disciple of Fire",
+            "description": "Your connection to fire allows you to protect yourself from it, even as you rip away the protections of others. You have fire immunity equal to 5 plus your level. Additionally, fire damage you deal ignores a target's fire immunity.\n\nAt the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "There Is No Space Between",
+            "ability_id": "ability_elementalist_there_is_no_space_between",
+            "action_type": "Maneuver",
+            "range": "Ranged 10",
+            "targets": "Special",
+            "keywords": [
+              "Magic",
+              "Ranged",
+              "Void"
+            ],
+            "effect": "You open two size 1 portals in unoccupied spaces within distance, which last until you move beyond distance from any portal, end the effect as a maneuver, or are dying. Each portal must be placed at a height of no more than 1 square above the ground. When you or any ally touch a portal, that creature can choose to be instantly teleported to an unoccupied space of their choice adjacent to the other portal. If an enemy is force moved into a portal, their forced movement ends and they emerge from the other portal in an unoccupied space chosen by the creature who force moved them.\nAt the start of each of your turns while the portals are active, you can open a new portal connected to the others. If three or more portals are present, you and your allies choose which portal to emerge from when entering a portal, and a creature who force moves an enemy into a portal chooses that enemy's destination portal.",
+            "story": "Knowledge of the mystery reveals that two spaces are the same space."
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_elementalist_new_5_essence_ability",
@@ -238,7 +432,138 @@
     "class": "elementalist",
     "is_subclass_feature": false,
     "level": 2,
-    "description": "Choose one heroic ability from the following options, each of which costs 5 essence to use. Alternatively, you can choose one of the 5-essence abilities you didn't select at 1st level (see 1st-Level Features)."
+    "description": "Choose one heroic ability from the following options, each of which costs 5 essence to use. Alternatively, you can choose one of the 5-essence abilities you didn't select at 1st level (see 1st-Level Features).",
+    "options": [
+      {
+        "name": "Conflagration",
+        "ability_id": "ability_elementalist_conflagration",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Fire",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "3 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": null,
+        "story": "A storm of fire descends upon your enemies."
+      },
+      {
+        "name": "Instantaneous Excavation",
+        "ability_id": "ability_elementalist_instantaneous_excavation",
+        "subclass": null,
+        "keywords": [
+          "Earth",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "You open up two holes with 1-square openings that are 4 squares deep, which can be placed on any mundane surface within distance. You can place these holes next to each other to create fewer holes with wider openings. When the holes open, make a separate power roll for each creature on the ground above a hole and small enough to fall in. (You can't score a critical hit with this ability because it uses a maneuver.)",
+        "story": "The surface of the world around you opens up to swallow foes."
+      },
+      {
+        "name": "No More Than a Breeze",
+        "ability_id": "ability_elementalist_no_more_than_a_breeze",
+        "subclass": null,
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "Until the start of your next turn, the target can move through solid matter, they ignore difficult terrain, and their movement can't provoke opportunity attacks. If the target ends their turn inside solid matter, they are forced out into the space where they entered it and this effect ends.",
+        "story": "The material substance of a creature shreds away at your command."
+      },
+      {
+        "name": "O Flower Aid, O Earth Defend",
+        "ability_id": "ability_elementalist_o_flower_aid_o_earth_defend",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Earth",
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "3 cube within 10",
+        "targets": "Special",
+        "effect": "Until the start of your next turn, the area gains the following effects:\n- Once as a free maneuver at the start of your turn, you allow yourself and each ally in the area to spend any number of Recoveries.\n- The area is difficult terrain for enemies.\n- Each enemy who enters the area for the first time in a combat round or starts their turn there takes damage equal to your Reason score.",
+        "story": "Revitalizing plants and jagged stones grow, helping allies and hindering foes."
+      },
+      {
+        "name": "Subvert the Green Within",
+        "ability_id": "ability_elementalist_subvert_the_green_within",
+        "subclass": null,
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged",
+          "Strike",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "effect": "The target uses their signature ability against a creature of your choice. This signature ability can target the creature even if it usually wouldn't. You then make a power roll against the target of this ability.",
+        "story": "Fungal spores sprout inside your enemy's brain, allowing you to control their actions."
+      },
+      {
+        "name": "Test of Rain",
+        "ability_id": "ability_elementalist_test_of_rain",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "3 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "You can end one effect on yourself that is ended by a saving throw or that ends at the end of your turn. Each ally in the area also gains this benefit.",
+        "story": "You call down a rain that burns your enemies and restores your allies."
+      },
+      {
+        "name": "Translated Through Flame",
+        "ability_id": "ability_elementalist_translated_through_flame",
+        "subclass": null,
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "The target is teleported to another space within distance. Make a power roll that affects each enemy adjacent to the target's new space.",
+        "story": "Your ally disappears, then reappears in a burst of fire."
+      },
+      {
+        "name": "Volcano's Embrace",
+        "ability_id": "ability_elementalist_volcano_s_embrace",
+        "subclass": null,
+        "keywords": [
+          "Earth",
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "effect": null,
+        "story": "Wrap them up in fire and melting stone."
+      }
+    ]
   },
   {
     "id": "feature_elementalist_perk_2",
@@ -250,61 +575,70 @@
     "description": "You gain one crafting, lore, or supernatural perk of your choice. See Chapter 7: Perks."
   },
   {
-    "id": "feature_elementalist_there_is_no_space_between",
+    "id": "feature_elementalist_specialization_feature_3",
     "type": "feature",
-    "name": "There Is No Space Between",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_elementalist_a_conversation_with_fire",
-    "type": "feature",
-    "name": "A Conversation With Fire",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 3,
-    "description": "When you spend 1 uninterrupted minute in front of a fire, you can speak the name of another creature. If that creature is willing to speak to you, their image appears in the fire, and they can see you before them in a shimmering ball of light. The two of you can speak to each other through these images as if you were together in person. As a maneuver, you or the creature can end the conversation."
-  },
-  {
-    "id": "feature_elementalist_distance_is_only_memory",
-    "type": "feature",
-    "name": "Distance Is Only Memory",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
-    "level": 3,
-    "description": "Each time you finish a respite, you can open a two-way portal that leads to any place you have previously been. You and your allies can pass through the portal, which remains open for 1 hour or until you dismiss it as a main action."
-  },
-  {
-    "id": "feature_elementalist_earth_accepts_me",
-    "type": "feature",
-    "name": "Earth Accepts Me",
+    "name": "Specialization Feature",
     "class": "elementalist",
     "is_subclass_feature": false,
     "level": 3,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_elementalist_remember_growth_and_sun_and_rain",
-    "type": "feature",
-    "name": "Remember Growth and Sun and Rain",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 3,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_elementalist_burning_grounds",
-    "type": "feature",
-    "name": "Burning Grounds",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 4,
-    "description": "At the end of each of your turns, each enemy in the area takes fire damage equal to your Reason score."
+    "description": "You gain the 3rd-level feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "Earth Accepts Me",
+            "description": "You have the following ability.",
+            "ability_id": "ability_elementalist_earth_accepts_me",
+            "action_type": "Main action",
+            "range": "Self",
+            "targets": "Self",
+            "keywords": [
+              "Earth",
+              "Magic"
+            ],
+            "effect": "You step into a mundane dirt, metal, or stone object (including a wall) that is as large as you or larger. You can remain inside the object for as long as you like. While inside the object, you can observe events and speak to creatures outside it, but you don't have line of effect to anything outside the object and vice versa. You can travel through the object freely until you exit it. If the object you meld with is destroyed, you take 10 damage and exit the object."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "A Conversation With Fire",
+            "description": "When you spend 1 uninterrupted minute in front of a fire, you can speak the name of another creature. If that creature is willing to speak to you, their image appears in the fire, and they can see you before them in a shimmering ball of light. The two of you can speak to each other through these images as if you were together in person. As a maneuver, you or the creature can end the conversation."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Remember Growth and Sun and Rain",
+            "ability_id": "ability_elementalist_remember_growth_and_sun_and_rain",
+            "action_type": "Main action",
+            "range": "Melee 1",
+            "targets": "One mundane wooden object",
+            "keywords": [
+              "Green",
+              "Magic",
+              "Melee"
+            ],
+            "effect": "You see and hear any events that have occurred within 10 squares of the object within the last 12 hours, perceiving those events from the object's location as if you were there.",
+            "story": "You stir any wood's memory and learn what it has seen."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Distance Is Only Memory",
+            "description": "Each time you finish a respite, you can open a two-way portal that leads to any place you have previously been. You and your allies can pass through the portal, which remains open for 1 hour or until you dismiss it as a main action."
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_elementalist_characteristic_increase_2",
@@ -314,16 +648,6 @@
     "is_subclass_feature": false,
     "level": 4,
     "description": "Your Reason score increases to 3. Additionally, you can increase one of your characteristic scores by 1, to a maximum of 3."
-  },
-  {
-    "id": "feature_elementalist_flowering_bed",
-    "type": "feature",
-    "name": "Flowering Bed",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
-    "level": 4,
-    "description": "At the end of each of your turns, each ally in the area gains temporary Stamina equal to your Reason score."
   },
   {
     "id": "feature_elementalist_font_of_essence",
@@ -344,16 +668,6 @@
     "description": "You gain one perk of your choice."
   },
   {
-    "id": "feature_elementalist_quaking_earth",
-    "type": "feature",
-    "name": "Quaking Earth",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Earth",
-    "level": 4,
-    "description": "At the end of each of your turns, you can push each enemy in the area up to a number of squares equal to your Reason score."
-  },
-  {
     "id": "feature_elementalist_skill_2",
     "type": "feature",
     "name": "Skill",
@@ -363,54 +677,98 @@
     "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
   },
   {
-    "id": "feature_elementalist_veiling_bed",
+    "id": "feature_elementalist_specialization_feature_4",
     "type": "feature",
-    "name": "Veiling Bed",
+    "name": "Specialization Feature",
     "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
+    "is_subclass_feature": false,
     "level": 4,
-    "description": "The area provides concealment for you and your allies."
+    "description": "You gain the 4th-level feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "Quaking Earth",
+            "description": "At the end of each of your turns, you can push each enemy in the area up to a number of squares equal to your Reason score."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "Burning Grounds",
+            "description": "At the end of each of your turns, each enemy in the area takes fire damage equal to your Reason score."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Flowering Bed",
+            "description": "At the end of each of your turns, each ally in the area gains temporary Stamina equal to your Reason score."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Veiling Bed",
+            "description": "The area provides concealment for you and your allies."
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_elementalist_hide_of_tenfold_shields",
+    "id": "feature_elementalist_specialization_feature_5",
     "type": "feature",
-    "name": "Hide of Tenfold Shields",
+    "name": "Specialization Feature",
     "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
+    "is_subclass_feature": false,
     "level": 5,
-    "description": "Your animal forms become hardier. You gain temporary Stamina equal to your level when you enter an animal form in combat, which is added to any temporary Stamina provided by the animal form.\n\nAdditionally, an adjacent ally can use a maneuver to pet you. If they do so, you can lose temporary Stamina down to a minimum of 0. The ally gains temporary Stamina equal to the amount you lost."
-  },
-  {
-    "id": "feature_elementalist_pierce_the_veil_of_substance",
-    "type": "feature",
-    "name": "Pierce the Veil of Substance",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
-    "level": 5,
-    "description": "Solidity is merely a suggestion to you. Mundane barriers that are 1 square thick or less do not block your senses or line of effect. You can only sense or have line of effect past one such barrier at a time.\n\nAdditionally, whenever you use a void ability, you or one ally within distance of the ability can teleport a number of squares equal to your Reason score."
-  },
-  {
-    "id": "feature_elementalist_smoldering_step",
-    "type": "feature",
-    "name": "Smoldering Step",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 5,
-    "description": "You can use 1 square of movement to walk into an area of fire your size or larger and teleport to any other area of fire your size or larger within 10 squares of the first area.\n\nAdditionally, whenever you use a fire ability or are targeted by an ability that deals fire damage, each enemy adjacent to you takes fire damage equal to your Reason score."
-  },
-  {
-    "id": "feature_elementalist_the_mountain_does_not_move",
-    "type": "feature",
-    "name": "The Mountain Does Not Move",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Earth",
-    "level": 5,
-    "description": "You stand firm and magnetize your allies to stay grounded. Your stability increases by your level.\n\nAdditionally, whenever an ally within distance of your Hurl Element ability is force moved, you can use a free triggered action to decrease your stability down to a minimum of 0, then increase the ally's stability by an amount equal to the stability you lost. This change lasts until the end of the round."
+    "description": "You gain the 5th-level feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "The Mountain Does Not Move",
+            "description": "You stand firm and magnetize your allies to stay grounded. Your stability increases by your level.\n\nAdditionally, whenever an ally within distance of your Hurl Element ability is force moved, you can use a free triggered action to decrease your stability down to a minimum of 0, then increase the ally's stability by an amount equal to the stability you lost. This change lasts until the end of the round."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "Smoldering Step",
+            "description": "You can use 1 square of movement to walk into an area of fire your size or larger and teleport to any other area of fire your size or larger within 10 squares of the first area.\n\nAdditionally, whenever you use a fire ability or are targeted by an ability that deals fire damage, each enemy adjacent to you takes fire damage equal to your Reason score."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Hide of Tenfold Shields",
+            "description": "Your animal forms become hardier. You gain temporary Stamina equal to your level when you enter an animal form in combat, which is added to any temporary Stamina provided by the animal form.\n\nAdditionally, an adjacent ally can use a maneuver to pet you. If they do so, you can lose temporary Stamina down to a minimum of 0. The ally gains temporary Stamina equal to the amount you lost."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Pierce the Veil of Substance",
+            "description": "Solidity is merely a suggestion to you. Mundane barriers that are 1 square thick or less do not block your senses or line of effect. You can only sense or have line of effect past one such barrier at a time.\n\nAdditionally, whenever you use a void ability, you or one ally within distance of the ability can teleport a number of squares equal to your Reason score."
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_elementalist_new_9_essence_ability",
@@ -419,7 +777,209 @@
     "class": "elementalist",
     "is_subclass_feature": false,
     "level": 6,
-    "description": "Choose one heroic ability from the following options, each of which costs 9 essence to use. Alternatively, you can choose one of the 9-assence abilities you didn't select at 5th level (see 5th-Level Features)."
+    "description": "Choose one heroic ability from the following options, each of which costs 9 essence to use. Alternatively, you can choose one of the 9-assence abilities you didn't select at 5th level (see 5th-Level Features).",
+    "options": [
+      {
+        "name": "Combustion Deferred",
+        "ability_id": "ability_elementalist_combustion_deferred",
+        "subclass": null,
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "effect": "When the target ends their next turn, or if they drop to 0 Stamina before then, each enemy adjacent to them takes fire damage equal to twice your Reason score. Each affected enemy then gains this same effect.",
+        "story": "Your flames dance from kindling to kindling to kindling."
+      },
+      {
+        "name": "Luminous Champion Aloft",
+        "ability_id": "ability_elementalist_luminous_champion_aloft",
+        "subclass": null,
+        "keywords": [
+          "Fire",
+          "Green",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "The target has a +3 bonus to speed, they can fly, and their abilities ignore concealment. Additionally, whenever the target gains their Heroic Resource, they gain 1 additional Heroic Resource. This effect lasts until the start of your next turn.",
+        "story": "They shine vibrantly, a beautiful diamond in the night sky."
+      },
+      {
+        "name": "Magma Titan",
+        "ability_id": "ability_elementalist_magma_titan",
+        "subclass": null,
+        "keywords": [
+          "Earth",
+          "Fire",
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "Until the start of your next turn, the target has the following benefits:\n- Their size and stability increase by 2, with any size 1 target becoming size 3. Each creature who is within the target's new space slides to the nearest unoccupied space, ignoring stability. If the target doesn't have space to grow, they grow as much as they can and become restrained until the effect ends.\n- They have fire immunity 10.\n- Their strikes deal extra fire damage equal to twice your Reason score.\n- When the target force moves a creature or object, the forced movement distance gains a +2 bonus.\n- They can use their highest characteristic instead of Might for Might power rolls.",
+        "story": "Their body swells with lava, mud, and might, towering over their enemies."
+      },
+      {
+        "name": "Meteor",
+        "ability_id": "ability_elementalist_meteor",
+        "subclass": null,
+        "keywords": [
+          "Earth",
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "effect": "If the target is teleported to a space where they would fall, they immediately do so, treating the fall as if their Agility score were 0. The target takes fire damage from the fall, and each enemy within 3 squares of where they land takes the same amount of fire damage. The ground within 3 squares of where the target lands is difficult terrain.",
+        "story": "You teleport the target into the air and let the ground and the elemental force of fire do the rest."
+      },
+      {
+        "name": "Storm of Sands",
+        "ability_id": "ability_elementalist_storm_of_sands",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "4 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "The area lasts until the start of your next turn. It is difficult terrain for enemies, and you and your allies have concealment while in the area.",
+        "story": "Dirt and debris swirl into a dark, pulsing hurricane."
+      },
+      {
+        "name": "Subverted Perception of Space",
+        "ability_id": "ability_elementalist_subverted_perception_of_space",
+        "subclass": null,
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "effect": null,
+        "story": "You rip an enemy's world in twain."
+      },
+      {
+        "name": "The Wode Remembers and Returns",
+        "ability_id": "ability_elementalist_the_wode_remembers_and_returns",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Earth",
+          "Green",
+          "Magic",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "4 burst",
+        "targets": "Special",
+        "effect": "The area becomes dark and verdant, with trees and plant life appearing in unoccupied spaces within it until the start of your next turn. The area is difficult terrain for enemies, and any ally who ends their turn in the area has cover.",
+        "story": "You create a terrarium that spans from canopy above to underbrush below."
+      },
+      {
+        "name": "Web of All That's Come Before",
+        "ability_id": "ability_elementalist_web_of_all_that_s_come_before",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "4 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "The area is difficult terrain until the start of your next turn. Each enemy who ends their turn in the area is restrained (save ends).",
+        "story": "Threads you've been weaving through your adventures create a vibrant, pearlescent web."
+      },
+      {
+        "name": "Magma Titan",
+        "ability_id": "ability_elementalist_magma_titan_2",
+        "subclass": "Earth",
+        "keywords": [
+          "Earth",
+          "Fire",
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "Until the start of your next turn, the target has the following benefits:\n- Their size and stability increase by 2, with any size 1 target becoming size 3. Each creature who is within the target's new space slides to the nearest unoccupied space, ignoring stability. If the target doesn't have space to grow, they grow as much as they can and become restrained until the effect ends.\n- They have fire immunity 10.\n- Their strikes deal extra fire damage equal to twice your Reason score.\n- When the target force moves a creature or object, the forced movement distance gains a +2 bonus.\n- They can use their highest characteristic instead of Might for Might power rolls.",
+        "story": "Their body swells with lava, mud, and might, towering over their enemies."
+      },
+      {
+        "name": "Meteor",
+        "ability_id": "ability_elementalist_meteor_2",
+        "subclass": "Fire",
+        "keywords": [
+          "Earth",
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "effect": "If the target is teleported to a space where they would fall, they immediately do so, treating the fall as if their Agility score were 0. The target takes fire damage from the fall, and each enemy within 3 squares of where they land takes the same amount of fire damage. The ground within 3 squares of where the target lands is difficult terrain.",
+        "story": "You teleport the target into the air and let the ground and the elemental force of fire do the rest."
+      },
+      {
+        "name": "The Wode Remembers and Returns",
+        "ability_id": "ability_elementalist_the_wode_remembers_and_returns_2",
+        "subclass": "Green",
+        "keywords": [
+          "Area",
+          "Earth",
+          "Green",
+          "Magic",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "4 burst",
+        "targets": "Special",
+        "effect": "The area becomes dark and verdant, with trees and plant life appearing in unoccupied spaces within it until the start of your next turn. The area is difficult terrain for enemies, and any ally who ends their turn in the area has cover.",
+        "story": "You create a terrarium that spans from canopy above to underbrush below."
+      },
+      {
+        "name": "Luminous Champion Aloft",
+        "ability_id": "ability_elementalist_luminous_champion_aloft_2",
+        "subclass": "Void",
+        "keywords": [
+          "Fire",
+          "Green",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "The target has a +3 bonus to speed, they can fly, and their abilities ignore concealment. Additionally, whenever the target gains their Heroic Resource, they gain 1 additional Heroic Resource. This effect lasts until the start of your next turn.",
+        "story": "They shine vibrantly, a beautiful diamond in the night sky."
+      }
+    ]
   },
   {
     "id": "feature_elementalist_perk_4",
@@ -458,15 +1018,6 @@
     "description": "Your Mantle of Essence feature no longer requires essence.\n\nAdditionally, your Mantle of Essence now radiates magic that creates a calming air. Creatures in the area of the mantle's aura have their starting patience increased by 1 (to a maximum of 5) during any negotiation. While in the area, you and any ally gain an edge on tests that use the Handle Animals skill. If you have 5 or more Victories, the bonus to patience increases to 2 and tests that use the Handle Animals skill have a double edge."
   },
   {
-    "id": "feature_elementalist_skill_3",
-    "type": "feature",
-    "name": "Skill",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You gain one skill of your choice."
-  },
-  {
     "id": "feature_elementalist_surging_essence",
     "type": "feature",
     "name": "Surging Essence",
@@ -476,24 +1027,370 @@
     "description": "When you gain essence at the start of each of your turns during combat, you gain 3 essence instead of 2."
   },
   {
-    "id": "feature_elementalist_black_hole_star",
+    "id": "feature_elementalist_skill_3",
     "type": "feature",
-    "name": "Black Hole Star",
+    "name": "Skill",
     "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
-    "level": 8,
-    "description": "You warp gravity around your heavenly body and can pull even the sturdiest titans toward your core. At the end of each of your turns, you target one creature or object within distance of your Hurl Element ability and vertical pull that target up to 5 squares. If their stability reduces this forced movement, they are pulled a minimum of 2 squares. This forced movement ignores stability for your allies.\n\nAdditionally, your Mantle of Essence improves. While in the area of the aura, enemies and objects have their stability reduced by an amount equal to your level."
+    "is_subclass_feature": false,
+    "level": 7,
+    "description": "You gain one skill of your choice."
   },
   {
-    "id": "feature_elementalist_chimeric_manifestation",
+    "id": "feature_elementalist_specialization_feature_8",
     "type": "feature",
-    "name": "Chimeric Manifestation",
+    "name": "Specialization Feature",
     "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
+    "is_subclass_feature": false,
     "level": 8,
-    "description": "Nature isn't static and unchanging, and neither are you. You can enter or exit your animal form as a free maneuver the first time you use your Disciple of the Green feature on your turn.\n\nAdditionally, whenever you use your Disciple of the Green feature, you can select an additional animal form and gain the positive benefits from both forms. You can choose the size of either animal, and if both animal forms grant you the same benefit, you can choose whichever you prefer. You gain the highest speed between the two animal forms and have all types of movement from both forms.\nYou can only combine animal forms whose levels add up to 12 or less. For example, you can combine a shark (8th level) with a horse (4th level), but you can't combine a shark with a bear (5th level)."
+    "description": "You gain the 8th-level feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "The Flame Primordial",
+            "description": "You produce a fire that entrances the fates, distracting them from aiding your foes. Whenever you deal fire damage to a creature or object, they take an extra 1d6 fire damage. If you deal fire damage to a mundane object, you can use a free triggered action to target it with your Return to Formlessness ability instead.\n\nAdditionally, any enemy who starts their turn adjacent to you has fire weakness equal to your Reason score until the start of their next turn. This increases to twice your Reason score if the enemy is made of or is wearing mostly metal."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Chimeric Manifestation",
+            "description": "Nature isn't static and unchanging, and neither are you. You can enter or exit your animal form as a free maneuver the first time you use your Disciple of the Green feature on your turn.\n\nAdditionally, whenever you use your Disciple of the Green feature, you can select an additional animal form and gain the positive benefits from both forms. You can choose the size of either animal, and if both animal forms grant you the same benefit, you can choose whichever you prefer. You gain the highest speed between the two animal forms and have all types of movement from both forms.\nYou can only combine animal forms whose levels add up to 12 or less. For example, you can combine a shark (8th level) with a horse (4th level), but you can't combine a shark with a bear (5th level)."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Black Hole Star",
+            "description": "You warp gravity around your heavenly body and can pull even the sturdiest titans toward your core. At the end of each of your turns, you target one creature or object within distance of your Hurl Element ability and vertical pull that target up to 5 squares. If their stability reduces this forced movement, they are pulled a minimum of 2 squares. This forced movement ignores stability for your allies.\n\nAdditionally, your Mantle of Essence improves. While in the area of the aura, enemies and objects have their stability reduced by an amount equal to your level."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "feature_elementalist_new_11_essence_ability",
+    "type": "feature",
+    "name": "New 11-Essence Ability",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one heroic ability from the following options, each of which costs 11 essence to use. Alternatively, you can choose one of the 11-essence abilities you didn't select at 8th level (see 8th-Level Features).",
+    "options": [
+      {
+        "name": "Earth Rejects You",
+        "ability_id": "ability_elementalist_earth_rejects_you",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "5 cube within 10",
+        "targets": "Each enemy and object in the area",
+        "effect": null,
+        "story": "Everyone and everything gets blown away in an eruption of rocks and debris."
+      },
+      {
+        "name": "Heart of the Wode",
+        "ability_id": "ability_elementalist_heart_of_the_wode",
+        "subclass": null,
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "A size 5 tree appears in an unoccupied space within distance. The tree has 100 Stamina and can't be force moved. You and any ally can touch the tree to use the Catch Breath maneuver as a free maneuver. Additionally, when you start your turn with line of effect to the tree, you can end one effect on yourself that is ended by a saving throw or that ends at the end of your turn, or you can stand up if you are prone. Each ally within distance also gains this benefit.\nEach enemy who ends their turn within 3 squares of the tree is restrained until the end of their next turn. A creature restrained this way can use a main action to end the effect early.",
+        "story": "You call forth one of the Great Tree's many splinters to provide for your every need."
+      },
+      {
+        "name": "Muse of Fire",
+        "ability_id": "ability_elementalist_muse_of_fire",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Fire",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "5 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "The Director's Malice can become negative as a result of this ability.",
+        "story": "The fire burns hot enough to sear the face of any god watching."
+      },
+      {
+        "name": "Prism",
+        "ability_id": "ability_elementalist_prism",
+        "subclass": null,
+        "keywords": [
+          "Magic",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Self",
+        "targets": "Self",
+        "effect": "You use up to three heroic abilities whose essence costs total 11 or less, spending no additional essence beyond the cost of this ability. You can shift up to 2 squares between your use of each ability.",
+        "story": "You split your essence, allowing you to cast multiple effects at once."
+      },
+      {
+        "name": "Return to Oblivion",
+        "ability_id": "ability_elementalist_return_to_oblivion",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "You create a size 1L vortex that lasts until the end of the encounter. At the start of each combat round while the vortex is unoccupied, the vortex vertical pulls 3 each enemy within 5 squares of it. Each enemy who enters the vortex or starts their turn there is knocked prone. At the end of the round, if a winded enemy who is not a leader or solo creature is in the vortex, they are instantly destroyed.",
+        "story": "You create a tear in reality that could consume everything."
+      },
+      {
+        "name": "The Green Defends Its Servants",
+        "ability_id": "ability_elementalist_the_green_defends_its_servants",
+        "subclass": null,
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "You conjure an elemental shield that protects the target until the end of your next turn. While the shield is active, the target can take the Defend main action as a maneuver on each of their turns. The target gains 30 temporary Stamina that lasts until depleted or until the effect ends. If this temporary Stamina disappears, the effect ends and the shield explodes, dealing 10 damage to each enemy within 5 squares of the target.",
+        "story": "A luminous green shield shows its true beauty the more it cracks."
+      },
+      {
+        "name": "Unquenchable Fire",
+        "ability_id": "ability_elementalist_unquenchable_fire",
+        "subclass": null,
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One enemy or object",
+        "effect": "This damage ignores immunity.",
+        "story": "You let fly a fiery missile braided with pure primal energy."
+      },
+      {
+        "name": "World Torn Asunder",
+        "ability_id": "ability_elementalist_world_torn_asunder",
+        "subclass": null,
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic"
+        ],
+        "action_type": "Main action",
+        "range": "5 burst",
+        "targets": "Each enemy in the area",
+        "effect": "You create a fissure in the ground adjacent to you that is a 10 x 2 line and 6 squares deep. Each creature in the area who is prone and size 2 or smaller falls in. Other creatures can enter the fissure or can shift to the nearest unoccupied space of their choice outside it.",
+        "story": "You stomp your foot and quake the whole world over."
+      },
+      {
+        "name": "Earth Rejects You",
+        "ability_id": "ability_elementalist_earth_rejects_you_2",
+        "subclass": "Earth",
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "5 cube within 10",
+        "targets": "Each enemy and object in the area",
+        "effect": null,
+        "story": "Everyone and everything gets blown away in an eruption of rocks and debris."
+      },
+      {
+        "name": "World Torn Asunder",
+        "ability_id": "ability_elementalist_world_torn_asunder_2",
+        "subclass": "Earth",
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic"
+        ],
+        "action_type": "Main action",
+        "range": "5 burst",
+        "targets": "Each enemy in the area",
+        "effect": "You create a fissure in the ground adjacent to you that is a 10 x 2 line and 6 squares deep. Each creature in the area who is prone and size 2 or smaller falls in. Other creatures can enter the fissure or can shift to the nearest unoccupied space of their choice outside it.",
+        "story": "You stomp your foot and quake the whole world over."
+      },
+      {
+        "name": "World Torn Asunder",
+        "ability_id": "ability_elementalist_world_torn_asunder_3",
+        "subclass": "Earth",
+        "keywords": [
+          "Area",
+          "Earth",
+          "Magic"
+        ],
+        "action_type": "Main action",
+        "range": "5 burst",
+        "targets": "Each enemy in the area",
+        "effect": "You create a fissure in the ground adjacent to you that is a 10 x 2 line and 6 squares deep. Each creature in the area who is prone and size 2 or smaller falls in. Other creatures can enter the fissure or can shift to the nearest unoccupied space of their choice outside it.",
+        "story": "You stomp your foot and quake the whole world over."
+      },
+      {
+        "name": "Muse of Fire",
+        "ability_id": "ability_elementalist_muse_of_fire_2",
+        "subclass": "Fire",
+        "keywords": [
+          "Area",
+          "Fire",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "5 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "The Director's Malice can become negative as a result of this ability.",
+        "story": "The fire burns hot enough to sear the face of any god watching."
+      },
+      {
+        "name": "Muse of Fire",
+        "ability_id": "ability_elementalist_muse_of_fire_3",
+        "subclass": "Fire",
+        "keywords": [
+          "Area",
+          "Fire",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "5 cube within 10",
+        "targets": "Each enemy in the area",
+        "effect": "The Director's Malice can become negative as a result of this ability.",
+        "story": "The fire burns hot enough to sear the face of any god watching."
+      },
+      {
+        "name": "Unquenchable Fire",
+        "ability_id": "ability_elementalist_unquenchable_fire_2",
+        "subclass": "Fire",
+        "keywords": [
+          "Fire",
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One enemy or object",
+        "effect": "This damage ignores immunity.",
+        "story": "You let fly a fiery missile braided with pure primal energy."
+      },
+      {
+        "name": "Heart of the Wode",
+        "ability_id": "ability_elementalist_heart_of_the_wode_3",
+        "subclass": "Green",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "A size 5 tree appears in an unoccupied space within distance. The tree has 100 Stamina and can't be force moved. You and any ally can touch the tree to use the Catch Breath maneuver as a free maneuver. Additionally, when you start your turn with line of effect to the tree, you can end one effect on yourself that is ended by a saving throw or that ends at the end of your turn, or you can stand up if you are prone. Each ally within distance also gains this benefit.\nEach enemy who ends their turn within 3 squares of the tree is restrained until the end of their next turn. A creature restrained this way can use a main action to end the effect early.",
+        "story": "You call forth one of the Great Tree's many splinters to provide for your every need."
+      },
+      {
+        "name": "Heart of the Wode",
+        "ability_id": "ability_elementalist_heart_of_the_wode_2",
+        "subclass": "Green",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "A size 5 tree appears in an unoccupied space within distance. The tree has 100 Stamina and can't be force moved. You and any ally can touch the tree to use the Catch Breath maneuver as a free maneuver. Additionally, when you start your turn with line of effect to the tree, you can end one effect on yourself that is ended by a saving throw or that ends at the end of your turn, or you can stand up if you are prone. Each ally within distance also gains this benefit.\nEach enemy who ends their turn within 3 squares of the tree is restrained until the end of their next turn. A creature restrained this way can use a main action to end the effect early.",
+        "story": "You call forth one of the Great Tree's many splinters to provide for your every need."
+      },
+      {
+        "name": "The Green Defends Its Servants",
+        "ability_id": "ability_elementalist_the_green_defends_its_servants_2",
+        "subclass": "Green",
+        "keywords": [
+          "Green",
+          "Magic",
+          "Ranged"
+        ],
+        "action_type": "Maneuver",
+        "range": "Ranged 10",
+        "targets": "Self or one ally",
+        "effect": "You conjure an elemental shield that protects the target until the end of your next turn. While the shield is active, the target can take the Defend main action as a maneuver on each of their turns. The target gains 30 temporary Stamina that lasts until depleted or until the effect ends. If this temporary Stamina disappears, the effect ends and the shield explodes, dealing 10 damage to each enemy within 5 squares of the target.",
+        "story": "A luminous green shield shows its true beauty the more it cracks."
+      },
+      {
+        "name": "Prism",
+        "ability_id": "ability_elementalist_prism_2",
+        "subclass": "Void",
+        "keywords": [
+          "Magic",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Self",
+        "targets": "Self",
+        "effect": "You use up to three heroic abilities whose essence costs total 11 or less, spending no additional essence beyond the cost of this ability. You can shift up to 2 squares between your use of each ability.",
+        "story": "You split your essence, allowing you to cast multiple effects at once."
+      },
+      {
+        "name": "Return to Oblivion",
+        "ability_id": "ability_elementalist_return_to_oblivion_3",
+        "subclass": "Void",
+        "keywords": [
+          "Area",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "You create a size 1L vortex that lasts until the end of the encounter. At the start of each combat round while the vortex is unoccupied, the vortex vertical pulls 3 each enemy within 5 squares of it. Each enemy who enters the vortex or starts their turn there is knocked prone. At the end of the round, if a winded enemy who is not a leader or solo creature is in the vortex, they are instantly destroyed.",
+        "story": "You create a tear in reality that could consume everything."
+      },
+      {
+        "name": "Return to Oblivion",
+        "ability_id": "ability_elementalist_return_to_oblivion_2",
+        "subclass": "Void",
+        "keywords": [
+          "Area",
+          "Magic",
+          "Ranged",
+          "Void"
+        ],
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "Special",
+        "effect": "You create a size 1L vortex that lasts until the end of the encounter. At the start of each combat round while the vortex is unoccupied, the vortex vertical pulls 3 each enemy within 5 squares of it. Each enemy who enters the vortex or starts their turn there is knocked prone. At the end of the round, if a winded enemy who is not a leader or solo creature is in the vortex, they are instantly destroyed.",
+        "story": "You create a tear in reality that could consume everything."
+      }
+    ]
   },
   {
     "id": "feature_elementalist_perk_5",
@@ -514,16 +1411,6 @@
     "description": "**Source of Earth**\n\n|       Elemental       |            -             |       Level 8       |          BRUTE          |          EV -          |\n| :-------------------: | :----------------------: | :-----------------: | :---------------------: | :--------------------: |\n|    **2**<br/> Size    |     **6**<br/> Speed     | **45**<br/> Stamina |  **5**<br/> Stability   | **5**<br/> Free Strike |\n| **-**<br/> Immunities | **Burrow**<br/> Movement |                     | **-**<br/> With Captain | **-**<br/> Weaknesses  |\n|   **+3**<br/> Might   |   **+1**<br/> Agility    | **-5**<br/> Reason  |  **-5**<br/> Intuition  |  **-3**<br/> Presence  |"
   },
   {
-    "id": "feature_elementalist_the_flame_primordial",
-    "type": "feature",
-    "name": "The Flame Primordial",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 8,
-    "description": "You produce a fire that entrances the fates, distracting them from aiding your foes. Whenever you deal fire damage to a creature or object, they take an extra 1d6 fire damage. If you deal fire damage to a mundane object, you can use a free triggered action to target it with your Return to Formlessness ability instead.\n\nAdditionally, any enemy who starts their turn adjacent to you has fire weakness equal to your Reason score until the start of their next turn. This increases to twice your Reason score if the enemy is made of or is wearing mostly metal."
-  },
-  {
     "id": "feature_elementalist_grand_wyrding",
     "type": "feature",
     "name": "Grand Wyrding",
@@ -531,24 +1418,6 @@
     "is_subclass_feature": false,
     "level": 9,
     "description": "You have mastered the magic of shaping a wyrd, and can use your Wyrding feature as a main action.\n\nAdditionally, when you have 5 or more Victories, choose one of the following damage types: acid, cold, corruption, fire, lightning, poison, or sonic. You have immunity all to that type."
-  },
-  {
-    "id": "feature_elementalist_new_11_essence_ability",
-    "type": "feature",
-    "name": "New 11-Essence Ability",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one heroic ability from the following options, each of which costs 11 essence to use. Alternatively, you can choose one of the 11-essence abilities you didn't select at 8th level (see 8th-Level Features)."
-  },
-  {
-    "id": "feature_elementalist_breath",
-    "type": "feature",
-    "name": "Breath",
-    "class": "elementalist",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You have an epic resource called breath. Each time you finish a respite, you gain breath equal to the XP you gain. You can spend any number of breath to gain essence (no action required). When you do, 1 breath becomes 3 essence.\n\nBreath remains until you convert it to essence."
   },
   {
     "id": "feature_elementalist_characteristic_increase",
@@ -560,6 +1429,15 @@
     "description": "Your Reason score increases to 5. Additionally, you can increase one of your characteristic scores by 1, to a maximum of 5."
   },
   {
+    "id": "feature_elementalist_breath",
+    "type": "feature",
+    "name": "Breath",
+    "class": "elementalist",
+    "is_subclass_feature": false,
+    "level": 10,
+    "description": "You have an epic resource called breath. Each time you finish a respite, you gain breath equal to the XP you gain. You can spend any number of breath to gain essence (no action required). When you do, 1 breath becomes 3 essence.\n\nBreath remains until you convert it to essence."
+  },
+  {
     "id": "feature_elementalist_essential_being",
     "type": "feature",
     "name": "Essential Being",
@@ -569,44 +1447,51 @@
     "description": "When you gain essence at the start of each of your turns during combat, you gain 4 essence instead of 3."
   },
   {
-    "id": "feature_elementalist_master_of_earth",
+    "id": "feature_elementalist_specialization_feature_10",
     "type": "feature",
-    "name": "Master of Earth",
+    "name": "Specialization Feature",
     "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Earth",
+    "is_subclass_feature": false,
     "level": 10,
-    "description": "You have damage immunity 5.\n\nAdditionally, as a respite activity, you can shape the mundane earth around you in a 1-mile radius. You can open sinkholes, form mountains, level mundane structures or whole settlements, create canyons, raise islands or sink them in the sea, and perform similar feats. You can't use this respite activity if another creature within 1 mile is already using it. Once you use this respite activity, you can't use it again for 10 days."
-  },
-  {
-    "id": "feature_elementalist_master_of_fire",
-    "type": "feature",
-    "name": "Master of Fire",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Fire",
-    "level": 10,
-    "description": "The damage bonus of your Acolyte of Fire feature increases to +5 and applies to all your magic abilities.\n\nAdditionally, your Return to Formlessness ability can be used on supernatural objects (but not on artifacts). When you melt a treasure (see Chapter 13: Rewards), you gain breath equal to its echelon."
-  },
-  {
-    "id": "feature_elementalist_master_of_green",
-    "type": "feature",
-    "name": "Master of Green",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Green",
-    "level": 10,
-    "description": "The number of Recoveries you have increases by 2, and each time you finish a respite, you can grant each ally who finished the respite with you 2 additional Recoveries. Your allies' additional Recoveries disappear when they finish their next respite.\n\nAdditionally, as a respite activity, you can perform a ritual that causes a fruit tree to spring from the ground, grow, mature, and produce 1d6 of a treasure called Life Fruit. You can use a respite activity to cause an existing tree to produce another 1d6 Life Fruit, but it does not grow these magic consumables on its own.\nAs a maneuver, a creature can consume a Life Fruit or feed it to an adjacent willing ally. When a creature eats a Life Fruit, they restore all their Stamina, they can end all conditions or effects on themself, and they can stand up if prone. Additionally, if the creature desires, their aging pauses for 1d10 years. If the creature eats additional Life Fruit and chooses to pause their aging, the effects don't stack. Instead, the creature gains the benefit from the Life Fruit that pauses their aging for the longest time."
-  },
-  {
-    "id": "feature_elementalist_master_of_void",
-    "type": "feature",
-    "name": "Master of Void",
-    "class": "elementalist",
-    "is_subclass_feature": true,
-    "subclass_name": "Void",
-    "level": 10,
-    "description": "Whenever you willingly move, you can teleport.\n\nAdditionally, your mind is connected to the mystery and helps you find the answers you seek. You no longer require project sources for research projects. Whenever you use a respite activity to make a project roll for a research project, you automatically complete the project."
+    "description": "You gain the 10th-level capstone feature associated with your chosen element.",
+    "options": [
+      {
+        "element": "Earth",
+        "features": [
+          {
+            "name": "Master of Earth",
+            "description": "You have damage immunity 5.\n\nAdditionally, as a respite activity, you can shape the mundane earth around you in a 1-mile radius. You can open sinkholes, form mountains, level mundane structures or whole settlements, create canyons, raise islands or sink them in the sea, and perform similar feats. You can't use this respite activity if another creature within 1 mile is already using it. Once you use this respite activity, you can't use it again for 10 days."
+          }
+        ]
+      },
+      {
+        "element": "Fire",
+        "features": [
+          {
+            "name": "Master of Fire",
+            "description": "The damage bonus of your Acolyte of Fire feature increases to +5 and applies to all your magic abilities.\n\nAdditionally, your Return to Formlessness ability can be used on supernatural objects (but not on artifacts). When you melt a treasure (see Chapter 13: Rewards), you gain breath equal to its echelon."
+          }
+        ]
+      },
+      {
+        "element": "Green",
+        "features": [
+          {
+            "name": "Master of Green",
+            "description": "The number of Recoveries you have increases by 2, and each time you finish a respite, you can grant each ally who finished the respite with you 2 additional Recoveries. Your allies' additional Recoveries disappear when they finish their next respite.\n\nAdditionally, as a respite activity, you can perform a ritual that causes a fruit tree to spring from the ground, grow, mature, and produce 1d6 of a treasure called Life Fruit. You can use a respite activity to cause an existing tree to produce another 1d6 Life Fruit, but it does not grow these magic consumables on its own.\nAs a maneuver, a creature can consume a Life Fruit or feed it to an adjacent willing ally. When a creature eats a Life Fruit, they restore all their Stamina, they can end all conditions or effects on themself, and they can stand up if prone. Additionally, if the creature desires, their aging pauses for 1d10 years. If the creature eats additional Life Fruit and chooses to pause their aging, the effects don't stack. Instead, the creature gains the benefit from the Life Fruit that pauses their aging for the longest time."
+          }
+        ]
+      },
+      {
+        "element": "Void",
+        "features": [
+          {
+            "name": "Master of Void",
+            "description": "Whenever you willingly move, you can teleport.\n\nAdditionally, your mind is connected to the mystery and helps you find the answers you seek. You no longer require project sources for research projects. Whenever you use a respite activity to make a project roll for a research project, you automatically complete the project."
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_elementalist_perk",

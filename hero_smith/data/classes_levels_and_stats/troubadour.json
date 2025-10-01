@@ -5,7 +5,7 @@
   "starting_characteristics": {
     "classId": "class_troubadour",
     "name": "Troubadour",
-    "motto": "“History is a tale. Change the story, and you change the world.” — Jackson Bootblack",
+    "motto": "\"History is a tale. Each of us is just a story we tell ourselves. Change the story, and you change the world.\" - Jackson Bootblack",
     "heroicResourceName": "Drama",
     "baseStamina": 18,
     "stamina_per_level": 6,
@@ -13,117 +13,177 @@
     "baseSpeed": 5,
     "baseStability": 0,
     "baseDisengage": 0,
-
     "potency_progression": {
       "weak": "Presence - 2",
       "average": "Presence - 1",
       "strong": "Presence"
     },
-
     "starting_skills": {
       "granted_skills": ["Read Person"],
-      "skill_groups": ["interpersonal", "interpersonal", "intrigue_or_lore"],
-      "skill_count": 3,
+      "skill_groups": ["interpersonal"],
+      "skill_count": 2,
+      "skill_groups_2": ["interpersonal", "lore"],
+      "skill_count_1": 1,
       "quick_build": ["Brag", "Read Person", "Rumors", "Society"]
     },
-    "fixed_starting_characteristics": { "agility": 2, "presence": 2 },
+    "fixed_starting_characteristics": {
+      "agility": 2,
+      "presence": 2
+    },
     "starting_characteristics_arrays": [
       {
         "values": [2, -1, -1],
         "description": "One strong, two weaknesses"
       },
-      { "values": [1, 1, -1], "description": "Two moderate, one weakness" },
-      { "values": [1, 0, 0], "description": "One moderate, others neutral" }
+      {
+        "values": [1, 1, -1],
+        "description": "Two moderate, one weakness"
+      },
+      {
+        "values": [1, 0, 0],
+        "description": "One moderate, others neutral"
+      }
     ],
     "levels": [
       {
         "level": 1,
         "features": [
-          "Troubadour Class Act",
-          "Drama",
-          "Kit",
-          "Scene Partner",
-          "Routines",
-          "Class Act Features",
-          "Class Act Triggered Action",
-          "Troubadour Abilities"
+          {
+            "name": "Troubadour Class Act",
+
+            "type": "pick 1 subclass"
+          },
+          { "name": "Drama", "type": "granted" },
+          { "name": "Kit", "type": "granted" },
+          { "name": "Scene Partner", "type": "granted" },
+          { "name": "Routines", "type": "granted" },
+          { "name": "Class Act Features", "type": "granted" },
+          { "name": "Class Act Triggered Action", "type": "granted" }
         ],
-        "subclass_features": [
-          { "auteur": ["Brag"] },
-          { "duelist": ["Gymnastics"] },
-          { "virtuoso": ["Music"] }
-        ],
-        "new_abilities": { "signature": 1, "3_cost": 1, "5_cost": 1 }
+        "new_abilities": {
+          "signature": 1,
+          "3_cost": 1,
+          "5_cost": 1
+        }
       },
       {
         "level": 2,
         "features": [
-          "Appeal to the Muses",
-          "Invocation",
-          "Perk",
-          "Class Act Ability"
+          { "name": "Appeal to the Muses", "type": "granted" },
+          { "name": "Invocation", "type": "pick 1" }
         ],
-        "perks": [{ "count": 1 }]
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "lore", "supernatural"]
+          }
+        ],
+        "new_subclass_abilities": {
+          "5_cost": 1
+        }
       },
       {
         "level": 3,
-        "features": ["Class Act Feature", "7-Drama Ability"],
-        "new_abilities": { "7_cost": 1 }
+        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "new_abilities": {
+          "7_cost": 1
+        }
       },
       {
         "level": 4,
         "features": [
-          "Characteristic Increase",
-          "Melodrama",
-          "Perk",
-          "Skill",
-          "Zeitgeist"
+          { "name": "Melodrama", "type": "granted" },
+          { "name": "Zeitgeist", "type": "pick 1" }
         ],
-        "perks": [{ "count": 1 }],
-        "skills": [{ "count": 1 }]
+        "perks": [
+          {
+            "count": 1
+          }
+        ],
+        "skills": [
+          {
+            "count": 1
+          }
+        ],
+        "characteristics": [
+          { "Agility": { "setTo": 3 } },
+          { "Presence": { "setTo": 3 } }
+        ]
       },
       {
         "level": 5,
-        "features": ["Class Act Feature", "9-Drama Ability"],
-        "new_abilities": { "9_cost": 1 }
+        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "new_abilities": {
+          "9_cost": 1
+        }
       },
       {
         "level": 6,
-        "features": ["Perk", "Spotlight", "Class Act Ability"],
-        "perks": [{ "count": 1 }]
+        "features": [{ "name": "Spotlight", "type": "ability" }],
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "lore", "supernatural"]
+          }
+        ],
+        "new_subclass_abilities": {
+          "9_cost": 1
+        }
       },
       {
         "level": 7,
         "features": [
-          "Characteristic Increase",
-          "A Muse’s Muse",
-          "Equal Billing",
-          "Skill"
+          { "name": "A Muse\u0027s Muse", "type": "granted" },
+          { "name": "Equal Billing", "type": "granted" }
         ],
-        "skills": [{ "count": 1 }]
+        "skills": [
+          {
+            "count": 1
+          }
+        ],
+        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": ["Perk", "Class Act Feature", "11-Drama Ability"],
-        "perks": [{ "count": 1 }],
-        "new_abilities": { "11_cost": 1 }
+        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "perks": [
+          {
+            "count": 1
+          }
+        ],
+        "new_abilities": {
+          "11_cost": 1
+        }
       },
       {
         "level": 9,
-        "features": ["Roar of the Crowd", "Class Act Ability"]
+        "features": [{ "name": "Roar of the Crowd", "type": "granted" }],
+        "new_subclass_abilities": {
+          "11_cost": 1
+        }
       },
       {
         "level": 10,
         "features": [
-          "Applause",
-          "Characteristic Increase",
-          "Dramaturgy",
-          "Greatest of All Time",
-          "Perk",
-          "Skill"
+          { "name": "Applause", "type": "granted" },
+          { "name": "Dramaturgy", "type": "granted" },
+          { "name": "Greatest of All Time", "type": "granted" }
         ],
-        "perks": [{ "count": 1 }],
-        "skills": [{ "count": 1 }]
+        "perks": [
+          {
+            "count": 1,
+            "perk_groups": ["interpersonal", "lore", "supernatural"]
+          }
+        ],
+        "skills": [
+          {
+            "count": 1
+          }
+        ],
+        "characteristics": [
+          { "Agility": { "setTo": 5 } },
+          { "Presence": { "setTo": 5 } }
+        ]
       }
     ]
   }

@@ -1,104 +1,115 @@
 [
   {
-    "id": "feature_conduit_bastion_ward",
-    "type": "feature",
-    "name": "Bastion Ward",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god grants you a holy countenance that protects you at all times. You gain a +1 bonus to saving throws."
-  },
-  {
-    "id": "feature_conduit_blessing_of_compassion",
-    "type": "feature",
-    "name": "Blessing of Compassion",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Love",
-    "level": 1,
-    "description": "You exude a magic presence that can soothe those willing to socially engage with you. You gain an edge on any test made to assist another creature with a test.\n\nAdditionally, when you are present at the start of a negotiation, one NPC of your choice has their patience increased by 1 (to a maximum of 5), and the first test made to influence them gains an edge."
-  },
-  {
-    "id": "feature_conduit_blessing_of_comprehension",
-    "type": "feature",
-    "name": "Blessing of Comprehension",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Knowledge",
-    "level": 1,
-    "description": "You can interpret diagrams and charts even if you don't understand the language associated with them. You are considered fluent in all languages for the purpose of understanding the project source for any research or crafting project (see Chapter 12: Downtime Projects)."
-  },
-  {
-    "id": "feature_conduit_blessing_of_fortunate_weather",
-    "type": "feature",
-    "name": "Blessing of Fortunate Weather",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Storm",
-    "level": 1,
-    "description": "Each time you finish a respite, you can decide the weather conditions within 100 squares. Until you finish another respite, the weather conditions you establish follow you through any mundane outdoor locations. Choose one of the following types of weather, each of which grants a benefit to you and your allies:\n\nYou and your allies gain an edge on tests that use the Search or Navigate skills.\n\nYou and your allies gain an edge on tests that use the Hide skill. **Overcast:** You and your allies gain an edge on tests that use the Endurance skill.\n\nWhen the ground is muddy or snowy, you and your allies gain an edge on tests that use the Track skill.\nIf you are in the same area as a creature using this or a similar feature who has chosen a different weather effect, the features negate each other where their areas overlap."
-  },
-  {
-    "id": "feature_conduit_creation_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Creation Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your connection to the Creation domain grants you divine power through piety and faithful actions."
-  },
-  {
-    "id": "feature_conduit_death_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Death Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your connection to the Death domain grants you divine power through piety and faithful actions related to death and the afterlife."
-  },
-  {
     "id": "feature_conduit_deity_and_domains",
     "type": "feature",
     "name": "Deity and Domains",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Choose a god or saint who your character reveres from Chapter 14: Gods and Religion, or ask your Director about the deities in your campaign world. With the Director's permission, you can also create your own deity and choose four domains to be part of their portfolio.\n\nAfter choosing your deity, pick two domains from their portfolio. The two domains you pick make up your subclass, and your choice of domains determines many of the features you'll gain as you gain new levels. (*Quick Build:* Adûn for deity, and Life and Protection as domains.)"
+    "description": "Choose a god or saint who your character reveres from Chapter 14: Gods and Religion, or ask your Director about the deities in your campaign world. With the Director's permission, you can also create your own deity and choose four domains to be part of their portfolio.\n\nAfter choosing your deity, pick two domains from their portfolio. The two domains you pick make up your subclass, and your choice of domains determines many of the features you'll gain as you gain new levels. (*Quick Build:* Ad\u00c3\u00bbn for deity, and Life and Protection as domains.)"
   },
   {
-    "id": "feature_conduit_faithful_friend",
+    "id": "feature_conduit_piety",
     "type": "feature",
-    "name": "Faithful Friend",
+    "name": "Piety",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "The gods measure your devotion through a Heroic Resource called piety, which fuels your miracles and domain effects.",
+    "in_combat": {
+      "name": "Piety in Combat",
+      "description": "At the start of each of your turns during combat, you can pray (no action required). When you do, roll 1d3 and gain that much piety. If you roll a 1, the Director can introduce a complication reflecting the risks of beseeching divine aid in the thick of danger. You lose any unspent piety at the end of the encounter."
+    },
+    "out_of_combat": {
+      "name": "Piety Outside of Combat",
+      "description": "Though you can't gain piety outside of combat, you can use your heroic abilities and effects that cost piety without spending it. Whenever you use an ability or effect outside of combat that costs piety, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited piety on its effect, such as Healing Grace, you can use it as if you had spent an amount of piety equal to your Victories."
+    }
   },
   {
-    "id": "feature_conduit_fate_domain_piety_and_effect",
+    "id": "feature_conduit_domain_feature_1",
     "type": "feature",
-    "name": "Fate Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_grave_speech",
-    "type": "feature",
-    "name": "Grave Speech",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_conduit_hands_of_the_maker",
-    "type": "feature",
-    "name": "Hands of the Maker",
+    "name": "Domain Feature",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "You gain a domain feature from your domains, as shown on the 1st-Level Conduit Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
+    "options": [
+      {
+        "domain": "Creation",
+        "name": "Hands of the Maker",
+        "skill_group": "Crafting",
+        "description": "You have the following ability.",
+        "ability": "Hands of the Maker"
+      },
+      {
+        "domain": "Death",
+        "name": "Grave Speech",
+        "skill_group": "Lore",
+        "description": "You have the following ability.",
+        "ability": "Grave Speech"
+      },
+      {
+        "domain": "Fate",
+        "name": "Oracular Visions",
+        "skill_group": "Lore",
+        "description": "Your deity rewards you with hazy visions of things to come. Each time you earn 1 or more Victories, you earn an equal number of fate points. Whenever you or a creature within 10 squares makes a test, you can spend 1 fate point to tap into a vision of the outcome, granting that creature an edge on the test. You lose any remaining fate points when you finish a respite."
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Blessing of Comprehension",
+        "skill_group": "Lore",
+        "description": "You can interpret diagrams and charts even if you don't understand the language associated with them. You are considered fluent in all languages for the purpose of understanding the project source for any research or crafting project (see Chapter 12: Downtime Projects)."
+      },
+      {
+        "domain": "Life",
+        "name": "Revitalizing Ritual",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. The chosen character gains a bonus to their recovery value equal to your level that lasts until you finish another respite."
+      },
+      {
+        "domain": "Love",
+        "name": "Blessing of Compassion",
+        "skill_group": "Interpersonal",
+        "description": "You exude a magic presence that can soothe those willing to socially engage with you. You gain an edge on any test made to assist another creature with a test.\n\nAdditionally, when you are present at the start of a negotiation, one NPC of your choice has their patience increased by 1 (to a maximum of 5), and the first test made to influence them gains an edge."
+      },
+      {
+        "domain": "Nature",
+        "name": "Faithful Friend",
+        "skill_group": "Exploration",
+        "description": "You have the following ability.",
+        "ability": "Faithful Friend"
+      },
+      {
+        "domain": "Protection",
+        "name": "Protective Circle",
+        "skill_group": "Exploration",
+        "description": "You can spend 10 uninterrupted minutes to create a protective circle on the ground large enough to hold one size 1 creature. The circle lasts for 24 hours, until you create another, or until you dismiss it (no action required). Only creatures you designate at the time of drawing the circle can enter and exit the area. While in the protective circle, a creature can't be targeted by strikes."
+      },
+      {
+        "domain": "Storm",
+        "name": "Blessing of Fortunate Weather",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can decide the weather conditions within 100 squares. Until you finish another respite, the weather conditions you establish follow you through any mundane outdoor locations. Choose one of the following types of weather, each of which grants a benefit to you and your allies:\n\nYou and your allies gain an edge on tests that use the Search or Navigate skills.\n\nYou and your allies gain an edge on tests that use the Hide skill. **Overcast:** You and your allies gain an edge on tests that use the Endurance skill.\n\nWhen the ground is muddy or snowy, you and your allies gain an edge on tests that use the Track skill.\nIf you are in the same area as a creature using this or a similar feature who has chosen a different weather effect, the features negate each other where their areas overlap."
+      },
+      {
+        "domain": "Sun",
+        "name": "Inner Light",
+        "skill_group": "Lore",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. You place a ray of morning light into the chosen character's soul, granting them a +1 bonus to saving throws that lasts until you finish another respite."
+      },
+      {
+        "domain": "Trickery",
+        "name": "Inspired Deception",
+        "skill_group": "Intrigue",
+        "description": "The gods favor your thievery with magic. Whenever you make a test that uses a skill you have from the intrigue skill group, you can use Intuition on the test instead of another characteristic."
+      },
+      {
+        "domain": "War",
+        "name": "Sanctified Weapon",
+        "skill_group": "Exploration",
+        "description": "As a respite activity, you can bless a weapon. Any creature who wields the weapon gains a +1 bonus to rolled damage with abilities that use the weapon. This benefit lasts until you finish another respite."
+      }
+    ]
   },
   {
     "id": "feature_conduit_healing_grace",
@@ -110,149 +121,6 @@
     "description": "You have the following ability, which you can use once on your turn."
   },
   {
-    "id": "feature_conduit_inner_light",
-    "type": "feature",
-    "name": "Inner Light",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Sun",
-    "level": 1,
-    "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. You place a ray of morning light into the chosen character's soul, granting them a +1 bonus to saving throws that lasts until you finish another respite."
-  },
-  {
-    "id": "feature_conduit_inspired_deception",
-    "type": "feature",
-    "name": "Inspired Deception",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Trickery",
-    "level": 1,
-    "description": "The gods favor your thievery with magic. Whenever you make a test that uses a skill you have from the intrigue skill group, you can use Intuition on the test instead of another characteristic."
-  },
-  {
-    "id": "feature_conduit_knowledge_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Knowledge Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_life_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Life Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_love_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Love Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_nature_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Nature Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_oracular_visions",
-    "type": "feature",
-    "name": "Oracular Visions",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Fate",
-    "level": 1,
-    "description": "Your deity rewards you with hazy visions of things to come. Each time you earn 1 or more Victories, you earn an equal number of fate points. Whenever you or a creature within 10 squares makes a test, you can spend 1 fate point to tap into a vision of the outcome, granting that creature an edge on the test. You lose any remaining fate points when you finish a respite."
-  },
-  {
-    "id": "feature_conduit_piety_outside_of_combat",
-    "type": "feature",
-    "name": "Piety Outside of Combat",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Though you can't gain piety outside of combat, you can use your heroic abilities and effects that cost piety without spending it. Whenever you use an ability or effect outside of combat that costs piety, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited piety on its effect, such as Healing Grace, you can use it as if you had spent an amount of piety equal to your Victories."
-  },
-  {
-    "id": "feature_conduit_prayer_of_destruction",
-    "type": "feature",
-    "name": "Prayer of Destruction",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god infuses wrath within your being. You gain a +1 bonus to rolled damage with magic abilities."
-  },
-  {
-    "id": "feature_conduit_prayer_of_distance",
-    "type": "feature",
-    "name": "Prayer of Distance",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god blesses you with the ability to stretch your divine magic farther. You have a +2 bonus to the distance of your ranged magic abilities."
-  },
-  {
-    "id": "feature_conduit_prayer_of_soldier_s_skill",
-    "type": "feature",
-    "name": "Prayer of Soldier's Skill",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god gives your mind the training of a soldier. You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures.\n\nIf you have a kit, you can't take this blessing."
-  },
-  {
-    "id": "feature_conduit_prayer_of_speed",
-    "type": "feature",
-    "name": "Prayer of Speed",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god blesses your flesh and infuses it with divine quickness. You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
-  },
-  {
-    "id": "feature_conduit_prayer_of_steel",
-    "type": "feature",
-    "name": "Prayer of Steel",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your god fills your body with the light of creation, making you harder to hurt and move. You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
-  },
-  {
-    "id": "feature_conduit_protection_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Protection Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_protective_circle",
-    "type": "feature",
-    "name": "Protective Circle",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Protection",
-    "level": 1,
-    "description": "You can spend 10 uninterrupted minutes to create a protective circle on the ground large enough to hold one size 1 creature. The circle lasts for 24 hours, until you create another, or until you dismiss it (no action required). Only creatures you designate at the time of drawing the circle can enter and exit the area. While in the protective circle, a creature can't be targeted by strikes."
-  },
-  {
-    "id": "feature_conduit_quickness_ward",
-    "type": "feature",
-    "name": "Quickness Ward",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "The gods imbue a divine swiftness within you. Whenever an adjacent creature deals damage to you, you can shift up to a number of squares equal to your Intuition score after the damage is dealt."
-  },
-  {
     "id": "feature_conduit_ray_of_wrath",
     "type": "feature",
     "name": "Ray of Wrath",
@@ -262,100 +130,345 @@
     "description": "You have the following ability, which can be used as a ranged free strike."
   },
   {
-    "id": "feature_conduit_revitalizing_ritual",
-    "type": "feature",
-    "name": "Revitalizing Ritual",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. The chosen character gains a bonus to their recovery value equal to your level that lasts until you finish another respite."
-  },
-  {
-    "id": "feature_conduit_sanctified_weapon",
-    "type": "feature",
-    "name": "Sanctified Weapon",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "War",
-    "level": 1,
-    "description": "As a respite activity, you can bless a weapon. Any creature who wields the weapon gains a +1 bonus to rolled damage with abilities that use the weapon. This benefit lasts until you finish another respite."
-  },
-  {
-    "id": "feature_conduit_sanctuary_ward",
-    "type": "feature",
-    "name": "Sanctuary Ward",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "In response to a foe's aggression, your god protects you. Whenever another creature damages you, that creature can't target you with a strike until you harm them or one of their allies, or until the end of their next turn."
-  },
-  {
-    "id": "feature_conduit_signature_abilities",
-    "type": "feature",
-    "name": "Signature Abilities",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Blessed Light, Staggering Curse.)"
-  },
-  {
-    "id": "feature_conduit_spirit_ward",
-    "type": "feature",
-    "name": "Spirit Ward",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Invisible spirits surround you if you are harmed. Whenever an adjacent creature deals damage to you, they take corruption damage equal to your Intuition score."
-  },
-  {
-    "id": "feature_conduit_storm_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Storm Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_sun_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Sun Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
-    "id": "feature_conduit_trickery_domain_piety_and_effect",
-    "type": "feature",
-    "name": "Trickery Domain Piety and Effect",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 1
-  },
-  {
     "id": "feature_conduit_triggered_action",
     "type": "feature",
     "name": "Triggered Action",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Choose one of the following triggered actions. (*Quick Build:* Word of Guidance.)"
+    "description": "Choose one of the following triggered actions. (*Quick Build:* Word of Guidance.)",
+    "options": [
+      {
+        "name": "Word of Guidance",
+        "ability_id": "ability_conduit_word_of_guidance",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "One ally",
+        "keywords": [
+          "Magic",
+          "Ranged"
+        ],
+        "effect": "The power roll gains an edge.\n\nThe power roll has a double edge."
+      },
+      {
+        "name": "Word of Judgment",
+        "ability_id": "ability_conduit_word_of_judgment",
+        "action_type": "Triggered",
+        "range": "Ranged 10",
+        "targets": "One ally",
+        "keywords": [
+          "Magic",
+          "Ranged"
+        ],
+        "effect": "The power roll takes a bane against the target.\n\nThe power roll has a double bane against the target."
+      }
+    ]
   },
   {
-    "id": "feature_conduit_war_domain_piety_and_effect",
+    "id": "feature_conduit_prayer",
     "type": "feature",
-    "name": "War Domain Piety and Effect",
+    "name": "Prayer",
     "class": "conduit",
     "is_subclass_feature": false,
-    "level": 1
+    "level": 1,
+    "description": "When you finish a respite, choose one of the following prayers to sustain your connection to the divine. The prayer remains active until you finish another respite and choose again.",
+    "options": [
+      {
+        "name": "Prayer of Destruction",
+        "id": "prayer_of_destruction",
+        "description": "Your god infuses wrath within your being. You gain a +1 bonus to rolled damage with magic abilities.",
+        "keywords": [
+          "Magic"
+        ],
+        "bonus_damage": 1
+      },
+      {
+        "name": "Prayer of Distance",
+        "id": "prayer_of_distance",
+        "description": "Your god blesses you with the ability to stretch your divine magic farther. You have a +2 bonus to the distance of your ranged magic abilities.",
+        "keywords": [
+          "Ranged",
+          "Magic"
+        ],
+        "ranged_distance_bonus": {
+          "1st_echelon": 2,
+          "2nd_echelon": 2,
+          "3rd_echelon": 2
+        }
+      },
+      {
+        "name": "Prayer of Soldier's Skill",
+        "id": "prayer_OF_soldier_skill",
+        "description": "Your god gives your mind the training of a soldier. You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures. If you have a kit, you can't take this blessing.",
+        "stamina_bonus": 3,
+        "ranged_distance_bonus": {
+          "1st_echelon": null,
+          "2nd_echelon": null,
+          "3rd_echelon": null
+        },
+        "melee_damage_bonus": {
+          "1st_echelon": 1,
+          "2nd_echelon": 1,
+          "3rd_echelon": 1
+        },
+        "melee_distance_bonus": {
+          "1st_echelon": null,
+          "2nd_echelon": null,
+          "3rd_echelon": null
+        },
+        "equipment_description": "You can wear light armor and wield light weapons effectively, even though you don't have a kit.",
+        "equipment": {
+          "armor": {
+            "none": false,
+            "light": true,
+            "medium": false,
+            "heavy": false,
+            "shield": false
+          },
+          "weapons": {
+            "bow": false,
+            "ensnaring_weapon": false,
+            "light": true,
+            "medium": false,
+            "heavy": false,
+            "polearm": false,
+            "unarmed_strikes": false,
+            "whip": false
+          }
+        }
+      },
+      {
+        "name": "Prayer of Speed",
+        "id": "prayer_of_speed",
+        "description": "Your god blesses your flesh and infuses it with divine quickness. You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action.",
+        "speed_bonus": 1,
+        "disengage_bonus": 1
+      },
+      {
+        "name": "Prayer of Steel",
+        "id": "prayer_of_steel",
+        "description": "Your god fills your body with the light of creation, making you harder to hurt and move. You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability.",
+        "stamina_bonus": 6,
+        "stability_bonus": 1
+      }
+    ]
   },
   {
-    "id": "feature_conduit_2nd_level_domain_feature",
+    "id": "feature_conduit_domain_piety_and_effects",
     "type": "feature",
-    "name": "2nd-Level Domain Feature",
+    "name": "Domain Piety and Effects",
+    "class": "conduit",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Each of your domains provides specific deeds that earn piety and unique effects you can invoke by spending it.",
+    "options": [
+      {
+        "domain": "Creation",
+        "description": "Your connection to the Creation domain grants you divine power through piety and faithful actions."
+      },
+      {
+        "domain": "Death",
+        "description": "Your connection to the Death domain grants you divine power through piety and faithful actions related to death and the afterlife."
+      },
+      {
+        "domain": "Fate",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Knowledge",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Life",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Love",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Nature",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Protection",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Storm",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Sun",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "Trickery",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      },
+      {
+        "domain": "War",
+        "description": "Refer to the Domain Piety and Effects table for how you earn piety and the effects granted by this domain."
+      }
+    ]
+  },
+  {
+    "id": "feature_conduit_ward",
+    "type": "feature",
+    "name": "Conduit Ward",
+    "class": "conduit",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Choose one of the following wards to shape the protection granted by your patron.",
+    "options": [
+      {
+        "name": "Bastion Ward",
+        "description": "Your god grants you a holy countenance that protects you at all times. You gain a +1 bonus to saving throws."
+      },
+      {
+        "name": "Quickness Ward",
+        "description": "The gods imbue a divine swiftness within you. Whenever an adjacent creature deals damage to you, you can shift up to a number of squares equal to your Intuition score after the damage is dealt."
+      },
+      {
+        "name": "Sanctuary Ward",
+        "description": "In response to a foe's aggression, your god protects you. Whenever another creature damages you, that creature can't target you with a strike until you harm them or one of their allies, or until the end of their next turn."
+      },
+      {
+        "name": "Spirit Ward",
+        "description": "Invisible spirits surround you if you are harmed. Whenever an adjacent creature deals damage to you, they take corruption damage equal to your Intuition score."
+      }
+    ]
+  },
+  {
+    "id": "feature_conduit_signature_abilities",
+    "type": "feature",
+    "name": "Conduit Abilities",
+    "class": "conduit",
+    "is_subclass_feature": false,
+    "level": 1,
+    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Blessed Light, Staggering Curse.)",
+    "options": [
+      {
+        "name": "Blessed Light",
+        "ability_id": "ability_conduit_blessed_light",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": "One ally within distance gains a number of surges equal to the tier outcome of your power roll.",
+        "story": "Burning radiance falls upon your foe, transferring some of their energy to a nearby ally."
+      },
+      {
+        "name": "Drain",
+        "ability_id": "ability_conduit_drain",
+        "action_type": "Main action",
+        "range": "Melee 1",
+        "targets": "One creature",
+        "keywords": [
+          "Magic",
+          "Melee",
+          "Strike"
+        ],
+        "effect": "You or one ally within distance can spend a Recovery.",
+        "story": "You drain the energy from your target to revitalize yourself or an ally."
+      },
+      {
+        "name": "Holy Lash",
+        "ability_id": "ability_conduit_holy_lash",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "A tendril of divine energy shoots forth to draw in your foe."
+      },
+      {
+        "name": "Lightfall",
+        "ability_id": "ability_conduit_lightfall",
+        "action_type": "Main action",
+        "range": "2 burst",
+        "targets": "Each enemy in the area",
+        "keywords": [
+          "Area",
+          "Magic"
+        ],
+        "effect": "You can teleport yourself and each ally in the area to unoccupied spaces in the area.",
+        "story": "A rain of holy light scours your enemies and repositions your allies."
+      },
+      {
+        "name": "Sacrificial Offer",
+        "ability_id": "ability_conduit_sacrificial_offer",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": "Choose yourself or one ally within distance. That character can impose a bane on one power roll made against them before the end of their next turn.",
+        "story": "Divine magic tears at your foe and defends a nearby friend."
+      },
+      {
+        "name": "Staggering Curse",
+        "ability_id": "ability_conduit_staggering_curse",
+        "action_type": "Main action",
+        "range": "Melee 1",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Melee",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "A blast of judgment disorients your foe."
+      },
+      {
+        "name": "Warrior's Prayer",
+        "ability_id": "ability_conduit_warrior_s_prayer",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": "You or one ally within distance gains temporary Stamina equal to your Intuition score.",
+        "story": "Your quickly uttered prayer lends aggressive divine energy to a friend engaged in melee."
+      },
+      {
+        "name": "Wither",
+        "ability_id": "ability_conduit_wither",
+        "action_type": "Main action",
+        "range": "Ranged 10",
+        "targets": "One creature or object",
+        "keywords": [
+          "Magic",
+          "Ranged",
+          "Strike"
+        ],
+        "effect": null,
+        "story": "A bolt of holy energy saps the life from a foe."
+      }
+    ]
+  },
+  {
+    "id": "feature_conduit_the_lists_of_heaven",
+    "type": "feature",
+    "name": "The Lists of Heaven",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 2,
-    "description": "You gain the 1st-level domain feature and ability to choose a skill for the domain you selected at 1st level but whose domain feature you didn't take at that level (see 1st-Level Domain Feature)."
+    "description": "Your deity is aware of your growing influence, making it easier to draw their attention and power when you heal your allies. Whenever you allow another creature to spend a Recovery, you can also spend a Recovery."
   },
   {
     "id": "feature_conduit_perk_2",
@@ -367,13 +480,13 @@
     "description": "You gain one crafting, lore, or supernatural perk of your choice. See Chapter 7: Perks."
   },
   {
-    "id": "feature_conduit_the_lists_of_heaven",
+    "id": "feature_conduit_2nd_level_domain_feature",
     "type": "feature",
-    "name": "The Lists of Heaven",
+    "name": "2nd-Level Domain Feature",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 2,
-    "description": "Your deity is aware of your growing influence, making it easier to draw their attention and power when you heal your allies. Whenever you allow another creature to spend a Recovery, you can also spend a Recovery."
+    "description": "You gain the 1st-level domain feature and ability to choose a skill for the domain you selected at 1st level but whose domain feature you didn't take at that level (see 1st-Level Domain Feature)."
   },
   {
     "id": "feature_conduit_minor_miracle",
@@ -394,25 +507,6 @@
     "description": "Whenever you gain piety from a domain feature, you gain 1 additional piety."
   },
   {
-    "id": "feature_conduit_blessing_of_life",
-    "type": "feature",
-    "name": "Blessing of Life",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Life",
-    "level": 4,
-    "description": "Your divine presence causes those you deem worthy to recover quickly from a fight. Whenever an ally within distance of your Healing Grace ability regains Stamina, they regain additional Stamina equal to your Intuition score."
-  },
-  {
-    "id": "feature_conduit_blessing_of_secrets",
-    "type": "feature",
-    "name": "Blessing of Secrets",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You have the following ability."
-  },
-  {
     "id": "feature_conduit_characteristic_increase_2",
     "type": "feature",
     "name": "Characteristic Increase",
@@ -420,66 +514,6 @@
     "is_subclass_feature": false,
     "level": 4,
     "description": "Your Intuition score increases to 3. Additionally, you can increase one of your characteristic scores by 1, to a maximum of 3."
-  },
-  {
-    "id": "feature_conduit_impervious_touch",
-    "type": "feature",
-    "name": "Impervious Touch",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Protection",
-    "level": 4,
-    "description": "As a maneuver, you can touch an object with a size equal to your Intuition score or smaller and place a protective spell on it. The object has immunity all to untyped damage. You can maintain this spell on a number of objects equal to your Intuition score, and you can end the spell on any object at any time (no action required).\n\nAdditionally, you can place this spell on a building or vehicle (or a similar structure with the Director's approval) that is of a size larger than your Intuition score. You can place the spell on only one such target at a time, and you can maintain the spell on a larger target and a number of objects equal to your Intuition score simultaneously."
-  },
-  {
-    "id": "feature_conduit_improved_hands_of_the_maker",
-    "type": "feature",
-    "name": "Improved Hands of the Maker",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Creation",
-    "level": 4,
-    "description": "When you use your Hands of the Maker ability, you can create a mundane object that is size 2 or smaller."
-  },
-  {
-    "id": "feature_conduit_improved_sanctified_weapon",
-    "type": "feature",
-    "name": "Improved Sanctified Weapon",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "War",
-    "level": 4,
-    "description": "The weapon improved by your Sanctified Weapon feature grants a +3 bonus to rolled damage instead of +1."
-  },
-  {
-    "id": "feature_conduit_invocation_of_the_heart",
-    "type": "feature",
-    "name": "Invocation of the Heart",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Love",
-    "level": 4,
-    "description": "As a main action, you forge a bond of love and friendship with a willing creature you touch. While this bond is active, you can telepathically speak with the creature over any distance, including across different worlds. Additionally, while this bond is active, you can attempt to assist the creature with any test they make regardless of their proximity to you. You can maintain only one bond at a time, and you can end a bond at any time (no action required)."
-  },
-  {
-    "id": "feature_conduit_light_of_revelation",
-    "type": "feature",
-    "name": "Light of Revelation",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Sun",
-    "level": 4,
-    "description": "As a maneuver, you make your body shine brightly, illuminating your space and each square within 5 squares. This light shines through any darkness. Hidden creatures in the area are automatically revealed, and creatures in the light, including you, can't hide. While this feature is active, you gain an edge on tests made to notice hidden objects and entrances and to detect supernatural illusions."
-  },
-  {
-    "id": "feature_conduit_oracular_warning",
-    "type": "feature",
-    "name": "Oracular Warning",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Fate",
-    "level": 4,
-    "description": "Each time you finish a respite, you can share the vague dreams of the future granted to you by the gods with allies who finished the respite with you. These premonitions help you and your allies stay alive, granting each of you temporary Stamina equal to 10 + your level that lasts until you finish a respite."
   },
   {
     "id": "feature_conduit_perk_3",
@@ -491,26 +525,6 @@
     "description": "You gain one perk of your choice."
   },
   {
-    "id": "feature_conduit_saint_s_epiphany",
-    "type": "feature",
-    "name": "Saint's Epiphany",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Knowledge",
-    "level": 4,
-    "description": "At the start of a respite, you can inspire yourself or another creature taking the same respite with divine knowledge. If the target makes a project roll during this respite, they can add 1d10 plus your Intuition score to the roll."
-  },
-  {
-    "id": "feature_conduit_seance",
-    "type": "feature",
-    "name": "Seance",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Death",
-    "level": 4,
-    "description": "You can commune with a network of spirits. As a respite activity, you speak the name of a creature who died and isn't undead. If the creature's spirit is free and willing to speak with you, they appear and you can have a conversation with them. During this time, the creature responds to you as they would have in life. If the creature isn't free or willing to appear, you can speak another name or choose another respite activity."
-  },
-  {
     "id": "feature_conduit_skill_2",
     "type": "feature",
     "name": "Skill",
@@ -520,24 +534,76 @@
     "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
   },
   {
-    "id": "feature_conduit_windwalk",
+    "id": "feature_conduit_domain_feature_4",
     "type": "feature",
-    "name": "Windwalk",
+    "name": "Domain Feature",
     "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Storm",
+    "is_subclass_feature": false,
     "level": 4,
-    "description": "While you have 5 or more Victories, you can fly. If you can already fly, you have a +2 bonus to speed while flying instead."
-  },
-  {
-    "id": "feature_conduit_wode_road",
-    "type": "feature",
-    "name": "Wode Road",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Nature",
-    "level": 4,
-    "description": "As a main action, you touch a living tree and make it part of a divine transportation network. You can maintain a number of trees in your network equal to your Intuition score. Whenever you touch any tree in your network, you can use a main action to teleport yourself and any willing creatures within 10 squares of you to a tree in your network on the same world. If a tree in your network dies, it is no longer part of the network. You can remove a tree from your network no matter your distance from it, including across different worlds (no action required)."
+    "description": "You gain a domain feature from your domains, as shown on the 4th-Level Conduit Domain Features table.",
+    "options": [
+      {
+        "domain": "Creation",
+        "name": "Improved Hands of the Maker",
+        "description": "When you use your Hands of the Maker ability, you can create a mundane object that is size 2 or smaller."
+      },
+      {
+        "domain": "Death",
+        "name": "Seance",
+        "description": "You can commune with a network of spirits. As a respite activity, you speak the name of a creature who died and isn't undead. If the creature's spirit is free and willing to speak with you, they appear and you can have a conversation with them. During this time, the creature responds to you as they would have in life. If the creature isn't free or willing to appear, you can speak another name or choose another respite activity."
+      },
+      {
+        "domain": "Fate",
+        "name": "Oracular Warning",
+        "description": "Each time you finish a respite, you can share the vague dreams of the future granted to you by the gods with allies who finished the respite with you. These premonitions help you and your allies stay alive, granting each of you temporary Stamina equal to 10 + your level that lasts until you finish a respite."
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Saint's Epiphany",
+        "description": "At the start of a respite, you can inspire yourself or another creature taking the same respite with divine knowledge. If the target makes a project roll during this respite, they can add 1d10 plus your Intuition score to the roll."
+      },
+      {
+        "domain": "Life",
+        "name": "Blessing of Life",
+        "description": "Your divine presence causes those you deem worthy to recover quickly from a fight. Whenever an ally within distance of your Healing Grace ability regains Stamina, they regain additional Stamina equal to your Intuition score."
+      },
+      {
+        "domain": "Love",
+        "name": "Invocation of the Heart",
+        "description": "As a main action, you forge a bond of love and friendship with a willing creature you touch. While this bond is active, you can telepathically speak with the creature over any distance, including across different worlds. Additionally, while this bond is active, you can attempt to assist the creature with any test they make regardless of their proximity to you. You can maintain only one bond at a time, and you can end a bond at any time (no action required)."
+      },
+      {
+        "domain": "Nature",
+        "name": "Wode Road",
+        "description": "As a main action, you touch a living tree and make it part of a divine transportation network. You can maintain a number of trees in your network equal to your Intuition score. Whenever you touch any tree in your network, you can use a main action to teleport yourself and any willing creatures within 10 squares of you to a tree in your network on the same world. If a tree in your network dies, it is no longer part of the network. You can remove a tree from your network no matter your distance from it, including across different worlds (no action required)."
+      },
+      {
+        "domain": "Protection",
+        "name": "Impervious Touch",
+        "description": "As a maneuver, you can touch an object with a size equal to your Intuition score or smaller and place a protective spell on it. The object has immunity all to untyped damage. You can maintain this spell on a number of objects equal to your Intuition score, and you can end the spell on any object at any time (no action required).\n\nAdditionally, you can place this spell on a building or vehicle (or a similar structure with the Director's approval) that is of a size larger than your Intuition score. You can place the spell on only one such target at a time, and you can maintain the spell on a larger target and a number of objects equal to your Intuition score simultaneously."
+      },
+      {
+        "domain": "Storm",
+        "name": "Windwalk",
+        "description": "While you have 5 or more Victories, you can fly. If you can already fly, you have a +2 bonus to speed while flying instead."
+      },
+      {
+        "domain": "Sun",
+        "name": "Light of Revelation",
+        "description": "As a maneuver, you make your body shine brightly, illuminating your space and each square within 5 squares. This light shines through any darkness. Hidden creatures in the area are automatically revealed, and creatures in the light, including you, can't hide. While this feature is active, you gain an edge on tests made to notice hidden objects and entrances and to detect supernatural illusions."
+      },
+      {
+        "domain": "Trickery",
+        "name": "Blessing of Secrets",
+        "description": "You have the following ability.",
+        "ability": "Blessing of Secrets"
+      },
+      {
+        "domain": "War",
+        "name": "Improved Sanctified Weapon",
+        "description": "The weapon improved by your Sanctified Weapon feature grants a +3 bonus to rolled damage instead of +1."
+      }
+    ]
   },
   {
     "id": "feature_conduit_5th_level_domain_feature",
@@ -567,16 +633,6 @@
     "description": "You gain one crafting, lore, or supernatural perk of your choice."
   },
   {
-    "id": "feature_conduit_blessing_of_iron",
-    "type": "feature",
-    "name": "Blessing of Iron",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Protection",
-    "level": 7,
-    "description": "The gods send divine favor to you and your allies. While you are not dying, enemies take a bane on strikes against you or any ally within 3 squares of you."
-  },
-  {
     "id": "feature_conduit_characteristic_increase_3",
     "type": "feature",
     "name": "Characteristic Increase",
@@ -584,25 +640,6 @@
     "is_subclass_feature": false,
     "level": 7,
     "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
-  },
-  {
-    "id": "feature_conduit_covenant_of_the_heart",
-    "type": "feature",
-    "name": "Covenant of the Heart",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You can maintain bonds with up to three willing creatures using your Invocation of the Heart feature. Additionally, you have the following ability."
-  },
-  {
-    "id": "feature_conduit_divine_quartermaster",
-    "type": "feature",
-    "name": "Divine Quartermaster",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Creation",
-    "level": 7,
-    "description": "Each time you finish a respite, you can choose a treasure with a project goal equal to 50 times your level or less. You gain a divine version of this treasure that lasts until you finish another respite or it is consumed."
   },
   {
     "id": "feature_conduit_faithful_s_reward",
@@ -614,43 +651,6 @@
     "description": "When you roll for piety at the start of your turn in combat, you gain 1d3 + 1 piety."
   },
   {
-    "id": "feature_conduit_font_of_grace",
-    "type": "feature",
-    "name": "Font of Grace",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each time you use your Healing Grace ability, you gain 1 piety that can be spent only on that ability during the same turn. If you don't use this piety, it is lost. Additionally, you can use your Minor Miracle feature to return a creature to life even if you don't have their remains."
-  },
-  {
-    "id": "feature_conduit_gods_library",
-    "type": "feature",
-    "name": "Gods' Library",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You can gain access to information you need through prayer, so that you no longer require research materials for crafting and research projects (see Chapter 12: Downtime Projects). Additionally, you add your level to project rolls you make for crafting and research projects. You also have any skills in the lore skill group you don't already have, and you gain a number of skills from any other skill groups equal to the number of skills you had in the lore skill group before you gained this feature."
-  },
-  {
-    "id": "feature_conduit_light_of_the_burning_sun",
-    "type": "feature",
-    "name": "Light of the Burning Sun",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Sun",
-    "level": 7,
-    "description": "Sun infuses your body. Whenever you use an ability to deal rolled damage to another creature, that ability deals an extra 5 fire damage, or an extra 15 fire damage if the creature is undead. Additionally, you have fire immunity equal to your level, which is added to any other fire immunity you have."
-  },
-  {
-    "id": "feature_conduit_nature_s_bounty",
-    "type": "feature",
-    "name": "Nature's Bounty",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "When you finish a respite, you can prepare a magic meal using local flora for any companions who rested with you. Choose two of the following benefits for creatures who consume the meal:\n\n- Each creature gains immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your level. You can choose this benefit twice, choosing a different damage immunity each time.\n- Each creature gains 20 temporary Stamina.\n- Each creature gains a +1 bonus to speed.\n- Each creature gains a +1 bonus to saving throws.\n- Each creature gains an edge on tests made to influence other creatures.\nEach benefit lasts until the creature who gains it finishes another respite."
-  },
-  {
     "id": "feature_conduit_skill_3",
     "type": "feature",
     "name": "Skill",
@@ -660,61 +660,76 @@
     "description": "You gain one skill of your choice."
   },
   {
-    "id": "feature_conduit_thunderstruck",
+    "id": "feature_conduit_domain_feature_7",
     "type": "feature",
-    "name": "Thunderstruck",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Storm",
-    "level": 7,
-    "description": "Lightning and thunder infuse your body. Whenever you use an ability to deal lightning or sonic damage to another creature, you gain 1 surge. Additionally, if you use an ability that force moves a creature, the forced movement distance gains a bonus equal to your Intuition score."
-  },
-  {
-    "id": "feature_conduit_trinity_of_trickery",
-    "type": "feature",
-    "name": "Trinity of Trickery",
+    "name": "Domain Feature",
     "class": "conduit",
     "is_subclass_feature": false,
     "level": 7,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_conduit_word_of_death_deferred",
-    "type": "feature",
-    "name": "Word of Death Deferred",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You can stop death from taking your allies. When an ally within distance of your Healing Grace ability dies and you are not dying, you can use a free triggered action to instead have that ally fall unconscious until they regain Stamina.\n\nAdditionally, your abilities deal an extra 5 damage to winded creatures."
-  },
-  {
-    "id": "feature_conduit_word_of_fate_denied",
-    "type": "feature",
-    "name": "Word of Fate Denied",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "Fate",
-    "level": 7,
-    "description": "When an ally within 10 squares takes damage that would leave them dying, you can use a free triggered action to make yourself or another willing creature within 10 squares of you the target of the triggering damage instead. The creature you choose takes the damage and suffers any effects associated with it, and that damage can't be reduced in any way."
-  },
-  {
-    "id": "feature_conduit_your_triumphs_are_remembered",
-    "type": "feature",
-    "name": "Your Triumphs Are Remembered",
-    "class": "conduit",
-    "is_subclass_feature": true,
-    "subclass_name": "War",
-    "level": 7,
-    "description": "The gods allow you and your companions to bask in the glory of past successes. Whenever you finish a respite, you and any other heroes who rested with you regain 1 Victory after your Victories are converted to XP. This Victory isn't converted into XP at the end of a subsequent respite."
-  },
-  {
-    "id": "feature_conduit_8th_level_domain_feature",
-    "type": "feature",
-    "name": "8th-Level Domain Feature",
-    "class": "conduit",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You gain the 7th-level domain feature for the domain whose feature you didn't select at that level (see 7th-Level Domain Feature)."
+    "description": "You gain a domain feature from your domains, as shown on the 7th-Level Conduit Domain Features table.",
+    "options": [
+      {
+        "domain": "Creation",
+        "name": "Divine Quartermaster",
+        "description": "Each time you finish a respite, you can choose a treasure with a project goal equal to 50 times your level or less. You gain a divine version of this treasure that lasts until you finish another respite or it is consumed."
+      },
+      {
+        "domain": "Death",
+        "name": "Word of Death Deferred",
+        "description": "You can stop death from taking your allies. When an ally within distance of your Healing Grace ability dies and you are not dying, you can use a free triggered action to instead have that ally fall unconscious until they regain Stamina.\n\nAdditionally, your abilities deal an extra 5 damage to winded creatures."
+      },
+      {
+        "domain": "Fate",
+        "name": "Word of Fate Denied",
+        "description": "When an ally within 10 squares takes damage that would leave them dying, you can use a free triggered action to make yourself or another willing creature within 10 squares of you the target of the triggering damage instead. The creature you choose takes the damage and suffers any effects associated with it, and that damage can't be reduced in any way."
+      },
+      {
+        "domain": "Knowledge",
+        "name": "Gods' Library",
+        "description": "You can gain access to information you need through prayer, so that you no longer require research materials for crafting and research projects (see Chapter 12: Downtime Projects). Additionally, you add your level to project rolls you make for crafting and research projects. You also have any skills in the lore skill group you don't already have, and you gain a number of skills from any other skill groups equal to the number of skills you had in the lore skill group before you gained this feature."
+      },
+      {
+        "domain": "Life",
+        "name": "Font of Grace",
+        "description": "Each time you use your Healing Grace ability, you gain 1 piety that can be spent only on that ability during the same turn. If you don't use this piety, it is lost. Additionally, you can use your Minor Miracle feature to return a creature to life even if you don't have their remains."
+      },
+      {
+        "domain": "Love",
+        "name": "Covenant of the Heart",
+        "description": "You can maintain bonds with up to three willing creatures using your Invocation of the Heart feature. Additionally, you have the following ability."
+      },
+      {
+        "domain": "Nature",
+        "name": "Nature's Bounty",
+        "description": "When you finish a respite, you can prepare a magic meal using local flora for any companions who rested with you. Choose two of the following benefits for creatures who consume the meal:\n\n- Each creature gains immunity to acid, cold, corruption, fire, lightning, poison, or sonic damage equal to your level. You can choose this benefit twice, choosing a different damage immunity each time.\n- Each creature gains 20 temporary Stamina.\n- Each creature gains a +1 bonus to speed.\n- Each creature gains a +1 bonus to saving throws.\n- Each creature gains an edge on tests made to influence other creatures.\nEach benefit lasts until the creature who gains it finishes another respite."
+      },
+      {
+        "domain": "Protection",
+        "name": "Blessing of Iron",
+        "description": "The gods send divine favor to you and your allies. While you are not dying, enemies take a bane on strikes against you or any ally within 3 squares of you."
+      },
+      {
+        "domain": "Storm",
+        "name": "Thunderstruck",
+        "description": "Lightning and thunder infuse your body. Whenever you use an ability to deal lightning or sonic damage to another creature, you gain 1 surge. Additionally, if you use an ability that force moves a creature, the forced movement distance gains a bonus equal to your Intuition score."
+      },
+      {
+        "domain": "Sun",
+        "name": "Light of the Burning Sun",
+        "description": "Sun infuses your body. Whenever you use an ability to deal rolled damage to another creature, that ability deals an extra 5 fire damage, or an extra 15 fire damage if the creature is undead. Additionally, you have fire immunity equal to your level, which is added to any other fire immunity you have."
+      },
+      {
+        "domain": "Trickery",
+        "name": "Trinity of Trickery",
+        "description": "You have the following ability.",
+        "ability": "Trinity of Trickery"
+      },
+      {
+        "domain": "War",
+        "name": "Your Triumphs Are Remembered",
+        "description": "The gods allow you and your companions to bask in the glory of past successes. Whenever you finish a respite, you and any other heroes who rested with you regain 1 Victory after your Victories are converted to XP. This Victory isn't converted into XP at the end of a subsequent respite."
+      }
+    ]
   },
   {
     "id": "feature_conduit_perk_5",
@@ -724,6 +739,15 @@
     "is_subclass_feature": false,
     "level": 8,
     "description": "You gain one perk of your choice."
+  },
+  {
+    "id": "feature_conduit_8th_level_domain_feature",
+    "type": "feature",
+    "name": "8th-Level Domain Feature",
+    "class": "conduit",
+    "is_subclass_feature": false,
+    "level": 8,
+    "description": "You gain the 7th-level domain feature for the domain whose feature you didn't select at that level (see 7th-Level Domain Feature)."
   },
   {
     "id": "feature_conduit_faith_s_sword",

@@ -1,84 +1,77 @@
 [
   {
-    "id": "feature_talent_accelerate",
+    "id": "feature_talent_talent_tradition",
     "type": "feature",
-    "name": "Accelerate",
+    "name": "Talent Tradition",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "- **Telepathy** abilities allow you to communicate with, read, and influence the minds of other creatures.\n\nYou choose a talent tradition from the following options: chronopathy, telekinesis, or telepathy. Your talent tradition is your subclass, and your choice of tradition determines many of the features you'll gain as you gain new levels. (Other talent traditions will be featured in future products.) (*Quick Build:* Telekinesis.)",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "description": "Manipulate the flow of time, hastening allies and rethreading fate.",
+        "abilities": [
+          {
+            "id": "ability_talent_accelerate",
+            "name": "Accelerate"
+          },
+          {
+            "id": "ability_talent_again",
+            "name": "Again"
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "description": "Leverage raw psionic force to move, shape, and defend the physical world.",
+        "abilities": [
+          {
+            "id": "ability_talent_minor_telekinesis",
+            "name": "Minor Telekinesis"
+          },
+          {
+            "id": "ability_talent_repel",
+            "name": "Repel"
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "description": "Weave through the thoughts of others, bolstering allies and disrupting foes.",
+        "abilities": [
+          {
+            "id": "ability_talent_remote_assistance",
+            "name": "Remote Assistance"
+          },
+          {
+            "id": "ability_talent_feedback_loop",
+            "name": "Feedback Loop"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_talent_again",
+    "id": "feature_talent_clarity_and_strain",
     "type": "feature",
-    "name": "Again",
+    "name": "Clarity and Strain",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_battle_augmentation",
-    "type": "feature",
-    "name": "Battle Augmentation",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures.\n\nIf you have a kit, you can't take this augmentation."
-  },
-  {
-    "id": "feature_talent_clarity_outside_of_combat",
-    "type": "feature",
-    "name": "Clarity Outside of Combat",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Though you can't gain clarity outside of combat, you can use your heroic abilities and effects that cost clarity without spending it. Whenever you use an ability or effect outside of combat that costs clarity, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nAdditionally, whenever you use any ability or effect that costs clarity within 1 minute of using another such ability, you take 1d6 damage and incur any strain effect from using the new ability.\nWhen you use an ability outside of combat that lets you spend unlimited clarity on its effect, such as Minor Telekinesis, you can use it as if you had spent an amount of clarity equal to your Victories."
-  },
-  {
-    "id": "feature_talent_density_augmentation",
-    "type": "feature",
-    "name": "Density Augmentation",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
-  },
-  {
-    "id": "feature_talent_distance_augmentation",
-    "type": "feature",
-    "name": "Distance Augmentation",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your ranged psionic abilities gain a +2 bonus to distance."
-  },
-  {
-    "id": "feature_talent_entropy_ward",
-    "type": "feature",
-    "name": "Entropy Ward",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your ward slows time for your enemies. Whenever a creature deals damage to you, their speed is reduced by an amount equal to your Reason score and they can't use triggered actions until the end of their next turn."
-  },
-  {
-    "id": "feature_talent_feedback_loop",
-    "type": "feature",
-    "name": "Feedback Loop",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_force_augmentation",
-    "type": "feature",
-    "name": "Force Augmentation",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage."
+    "description": "Clarity is the psionic energy you gather to reshape thoughts, matter, and time. You build it as battles unfold and spend it to empower your abilities.",
+    "in_combat": {
+      "name": "Clarity in Combat",
+      "description": "At the start of each of your turns during combat, roll 1d3 and gain that much clarity. The first time each combat round that any creature is force moved, you gain 1 clarity. You lose any remaining clarity at the end of the encounter."
+    },
+    "out_of_combat": {
+      "name": "Clarity Outside of Combat",
+      "description": "Though you can't gain clarity outside of combat, you can use your heroic abilities and effects that cost clarity without spending it. Whenever you use an ability or effect outside of combat that costs clarity, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nAdditionally, whenever you use any ability or effect that costs clarity within 1 minute of using another such ability, you take 1d6 damage and incur any strain effect from using the new ability.\nWhen you use an ability outside of combat that lets you spend unlimited clarity on its effect, such as Minor Telekinesis, you can use it as if you had spent an amount of clarity equal to your Victories."
+    },
+    "strain": {
+      "name": "Strain",
+      "description": "You can overspend clarity, allowing it to drop below 0. When you resolve an ability that leaves you with negative clarity, you take damage equal to the clarity you overspent and become strained until your clarity is 0 or higher. While strained, any psionic ability that lists a strained effect also triggers that entry when you use the ability."
+    }
   },
   {
     "id": "feature_talent_mind_spike",
@@ -87,79 +80,66 @@
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability, which can be used as a ranged free strike."
+    "description": "You have the following ability, which can be used as a ranged free strike.",
+    "ability": "ability_talent_mind_spike"
   },
   {
-    "id": "feature_talent_minor_telekinesis",
+    "id": "feature_talent_psionic_augmentation",
     "type": "feature",
-    "name": "Minor Telekinesis",
+    "name": "Psionic Augmentation",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
+    "description": "You reinforce your body with disciplined psionic energy. Choose one augmentation from the options below.",
+    "options": [
+      {
+        "name": "Battle Augmentation",
+        "description": "You can wear light armor and wield light weapons effectively, even though you don't have a kit. While you wear light armor, you gain a +3 bonus to Stamina, and that bonus increases by 3 at 4th, 7th, and 10th levels. While you wield a light weapon, you gain a +1 damage bonus with weapon abilities, including free strikes. You can use light armor treasures and light weapon treasures.\n\nIf you have a kit, you can't take this augmentation."
+      },
+      {
+        "name": "Density Augmentation",
+        "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
+      },
+      {
+        "name": "Distance Augmentation",
+        "description": "Your ranged psionic abilities gain a +2 bonus to distance."
+      },
+      {
+        "name": "Force Augmentation",
+        "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage."
+      },
+      {
+        "name": "Speed Augmentation",
+        "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
+      }
+    ]
   },
   {
-    "id": "feature_talent_remote_assistance",
+    "id": "feature_talent_talent_ward",
     "type": "feature",
-    "name": "Remote Assistance",
+    "name": "Talent Ward",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_repel",
-    "type": "feature",
-    "name": "Repel",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_repulsive_ward",
-    "type": "feature",
-    "name": "Repulsive Ward",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You surround yourself with an invisible ward of telekinetic energy. Whenever an adjacent creature deals damage to you, you can use a free triggered action to push them up to a number of squares equal to your Reason score."
-  },
-  {
-    "id": "feature_talent_signature_abilities",
-    "type": "feature",
-    "name": "Signature Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Incinerate, Kinetic Grip.)"
-  },
-  {
-    "id": "feature_talent_speed_augmentation",
-    "type": "feature",
-    "name": "Speed Augmentation",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
-  },
-  {
-    "id": "feature_talent_steel_ward",
-    "type": "feature",
-    "name": "Steel Ward",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Your ward reacts to danger, protecting you from future harm. Whenever you take damage, after the damage resolves, you gain damage immunity equal to your Reason score until the end of your next turn."
-  },
-  {
-    "id": "feature_talent_talent_tradition",
-    "type": "feature",
-    "name": "Talent Tradition",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "- **Telepathy** abilities allow you to communicate with, read, and influence the minds of other creatures.\n\nYou choose a talent tradition from the following options: chronopathy, telekinesis, or telepathy. Your talent tradition is your subclass, and your choice of tradition determines many of the features you'll gain as you gain new levels. (Other talent traditions will be featured in future products.) (*Quick Build:* Telekinesis.)"
+    "description": "You erect a psychic barrier that shapes how foes interact with you. Choose one ward.",
+    "options": [
+      {
+        "name": "Entropy Ward",
+        "description": "Your ward slows time for your enemies. Whenever a creature deals damage to you, their speed is reduced by an amount equal to your Reason score and they can't use triggered actions until the end of their next turn."
+      },
+      {
+        "name": "Repulsive Ward",
+        "description": "You surround yourself with an invisible ward of telekinetic energy. Whenever an adjacent creature deals damage to you, you can use a free triggered action to push them up to a number of squares equal to your Reason score."
+      },
+      {
+        "name": "Steel Ward",
+        "description": "Your ward reacts to danger, protecting you from future harm. Whenever you take damage, after the damage resolves, you gain damage immunity equal to your Reason score until the end of your next turn."
+      },
+      {
+        "name": "Vanishing Ward",
+        "description": "Your ward allows you to slip away from threats. Whenever you take damage, you become invisible until the end of your next turn."
+      }
+    ]
   },
   {
     "id": "feature_talent_telepathic_speech",
@@ -171,70 +151,66 @@
     "description": "You know the Mindspeech language (see Languages in Orden in Chapter 4: Background). Additionally, you can telepathically communicate with any creatures within distance of your Mind Spike ability if they share a language with you and you know of each other. When you communicate with someone this way, they can respond telepathically."
   },
   {
-    "id": "feature_talent_vanishing_ward",
+    "id": "feature_talent_tradition_features_lvl1",
     "type": "feature",
-    "name": "Vanishing Ward",
+    "name": "Tradition Features",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 1,
-    "description": "Your ward allows you to slip away from threats. Whenever you take damage, you become invisible until the end of your next turn."
+    "description": "Your tradition immediately grants exclusive psionic techniques. The abilities below are learned automatically.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "description": "Time bends at your command, allowing quick adjustments to the battlefield.",
+        "abilities": [
+          {
+            "id": "ability_talent_accelerate",
+            "name": "Accelerate"
+          },
+          {
+            "id": "ability_talent_again",
+            "name": "Again"
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "description": "Psionic force protects your allies and hurls obstacles out of the way.",
+        "abilities": [
+          {
+            "id": "ability_talent_minor_telekinesis",
+            "name": "Minor Telekinesis"
+          },
+          {
+            "id": "ability_talent_repel",
+            "name": "Repel"
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "description": "Mental links let you guide allies and punish hostile thoughts.",
+        "abilities": [
+          {
+            "id": "ability_talent_remote_assistance",
+            "name": "Remote Assistance"
+          },
+          {
+            "id": "ability_talent_feedback_loop",
+            "name": "Feedback Loop"
+          }
+        ]
+      }
+    ]
   },
   {
-    "id": "feature_talent_2nd_level_chronopathy_ability",
+    "id": "feature_talent_talent_abilities",
     "type": "feature",
-    "name": "2nd-Level Chronopathy Ability",
+    "name": "Talent Abilities",
     "class": "talent",
     "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_2nd_level_telekinesis_ability",
-    "type": "feature",
-    "name": "2nd-Level Telekinesis Ability",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_2nd_level_telepathy_ability",
-    "type": "feature",
-    "name": "2nd-Level Telepathy Ability",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_ease_their_fall",
-    "type": "feature",
-    "name": "Ease Their Fall",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telekinesis",
-    "level": 2,
-    "description": "Whenever you land after a fall, or if any falling creature lands within 2 squares of you, you can use a free triggered action to reduce the falling damage by an amount equal to 2 + your Reason score."
-  },
-  {
-    "id": "feature_talent_ease_the_hours",
-    "type": "feature",
-    "name": "Ease the Hours",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Chronopathy",
-    "level": 2,
-    "description": "You can increase the number of rounds in a montage test by 1 if the test would end before the heroes hit the success limit."
-  },
-  {
-    "id": "feature_talent_ease_the_mind",
-    "type": "feature",
-    "name": "Ease the Mind",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telepathy",
-    "level": 2,
-    "description": "You gain an edge on tests made to stop combat and start a negotiation. Additionally, if you are present during a negotiation, any NPC who has a hostile or suspicious starting attitude has their patience increased by 1 (to a maximum of 5)."
+    "level": 1,
+    "description": "Choose two signature abilities from the following options. Signature abilities can be used at will. (*Quick Build:* Incinerate, Kinetic Grip.)"
   },
   {
     "id": "feature_talent_perk_2",
@@ -244,6 +220,88 @@
     "is_subclass_feature": false,
     "level": 2,
     "description": "You gain one interpersonal, lore, or supernatural perk of your choice. See Chapter 7: Perks."
+  },
+  {
+    "id": "feature_talent_tradition_feature_lvl2",
+    "type": "feature",
+    "name": "Tradition Feature",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Your tradition unlocks an additional feature at 2nd level.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "feature": {
+          "name": "Ease the Hours",
+          "description": "You can increase the number of rounds in a montage test by 1 if the test would end before the heroes hit the success limit."
+        }
+      },
+      {
+        "name": "Telekinesis",
+        "feature": {
+          "name": "Ease Their Fall",
+          "description": "Whenever you land after a fall, or if any falling creature lands within 2 squares of you, you can use a free triggered action to reduce the falling damage by an amount equal to 2 + your Reason score."
+        }
+      },
+      {
+        "name": "Telepathy",
+        "feature": {
+          "name": "Ease the Mind",
+          "description": "You gain an edge on tests made to stop combat and start a negotiation. Additionally, if you are present during a negotiation, any NPC who has a hostile or suspicious starting attitude has their patience increased by 1 (to a maximum of 5)."
+        }
+      }
+    ]
+  },
+  {
+    "id": "feature_talent_tradition_abilities_lvl2",
+    "type": "feature",
+    "name": "Tradition Abilities (5-Clarity)",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 2,
+    "description": "Choose one 5-clarity ability from your tradition.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "abilities": [
+          {
+            "id": "ability_talent_applied_chronometrics",
+            "name": "Applied Chronometrics"
+          },
+          {
+            "id": "ability_talent_slow",
+            "name": "Slow"
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "abilities": [
+          {
+            "id": "ability_talent_gravitic_burst",
+            "name": "Gravitic Burst"
+          },
+          {
+            "id": "ability_talent_levity_and_gravity",
+            "name": "Levity and Gravity"
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "abilities": [
+          {
+            "id": "ability_talent_overwhelm",
+            "name": "Overwhelm"
+          },
+          {
+            "id": "ability_talent_synaptic_override",
+            "name": "Synaptic Override"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_talent_scan",
@@ -309,91 +367,54 @@
     "description": "You can fly. While flying, your stability is reduced to 0 and can't be increased. If you can already fly, you have a +2 bonus to speed while flying instead.\n\nIf you are strained while flying and are force moved, the forced movement distance gains a +2 bonus."
   },
   {
-    "id": "feature_talent_compulsion",
+    "id": "feature_talent_tradition_feature_lvl5",
     "type": "feature",
-    "name": "Compulsion",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telepathy",
-    "level": 5,
-    "description": "Whenever you obtain a success on a test using a skill from the interpersonal skill group while interacting with an NPC, you can ask them a question using your Telepathic Speech feature. The NPC must answer the question truthfully to the best of their ability."
-  },
-  {
-    "id": "feature_talent_distortion_temporal",
-    "type": "feature",
-    "name": "Distortion Temporal",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Chronopathy",
-    "level": 5,
-    "description": "While you are not dying, time behaves irregularly around you in a 3 aura. That area is difficult terrain for enemies. Additionally, when an ally enters the area for the first time in a combat round or starts their turn there, they gain a +2 bonus to speed until the end of the turn."
-  },
-  {
-    "id": "feature_talent_kinetic_amplifier",
-    "type": "feature",
-    "name": "Kinetic Amplifier",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telekinesis",
-    "level": 5,
-    "description": "Whenever you force move a creature, you can spend up to 2 surges. For each surge spent, the forced movement distance gains a bonus equal to your Reason score."
-  },
-  {
-    "id": "feature_talent_remote_amplification",
-    "type": "feature",
-    "name": "Remote Amplification",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telepathy",
-    "level": 5,
-    "description": "The distance of your ranged psionic abilities increases by 5. Additionally, the range of your Telepathic Speech feature increases to 1 mile."
-  },
-  {
-    "id": "feature_talent_speed_of_thought",
-    "type": "feature",
-    "name": "Speed of Thought",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Chronopathy",
-    "level": 5,
-    "description": "Once per combat round while you are not dying, you can spend 2 clarity when you use a triggered action to turn it into a free triggered action."
-  },
-  {
-    "id": "feature_talent_triangulate",
-    "type": "feature",
-    "name": "Triangulate",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telekinesis",
-    "level": 5,
-    "description": "Whenever an ally uses a ranged ability while you are within the ability's distance, you can spend 1 clarity as a free triggered action to allow them to use the ability as if they were in your space."
-  },
-  {
-    "id": "feature_talent_6th_level_chronopathy_abilities",
-    "type": "feature",
-    "name": "6th-Level Chronopathy Abilities",
+    "name": "Tradition Feature",
     "class": "talent",
     "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_6th_level_telekinesis_abilities",
-    "type": "feature",
-    "name": "6th-Level Telekinesis Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_6th_level_telepathy_abilities",
-    "type": "feature",
-    "name": "6th-Level Telepathy Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose one of the following abilities."
+    "level": 5,
+    "description": "Your tradition grants additional benefits at 5th level.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "features": [
+          {
+            "name": "Distortion Temporal",
+            "description": "While you are not dying, time behaves irregularly around you in a 3 aura. That area is difficult terrain for enemies. Additionally, when an ally enters the area for the first time in a combat round or starts their turn there, they gain a +2 bonus to speed until the end of the turn."
+          },
+          {
+            "name": "Speed of Thought",
+            "description": "Once per combat round while you are not dying, you can spend 2 clarity when you use a triggered action to turn it into a free triggered action."
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "features": [
+          {
+            "name": "Kinetic Amplifier",
+            "description": "Whenever you force move a creature, you can spend up to 2 surges. For each surge spent, the forced movement distance gains a bonus equal to your Reason score."
+          },
+          {
+            "name": "Triangulate",
+            "description": "Whenever an ally uses a ranged ability while you are within the ability's distance, you can spend 1 clarity as a free triggered action to allow them to use the ability as if they were in your space."
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "features": [
+          {
+            "name": "Compulsion",
+            "description": "Whenever you obtain a success on a test using a skill from the interpersonal skill group while interacting with an NPC, you can ask them a question using your Telepathic Speech feature. The NPC must answer the question truthfully to the best of their ability."
+          },
+          {
+            "name": "Remote Amplification",
+            "description": "The distance of your ranged psionic abilities increases by 5. Additionally, the range of your Telepathic Speech feature increases to 1 mile."
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_talent_perk_4",
@@ -403,6 +424,103 @@
     "is_subclass_feature": false,
     "level": 6,
     "description": "You gain one interpersonal, lore, or supernatural perk of your choice."
+  },
+  {
+    "id": "feature_talent_psi_boost",
+    "type": "feature",
+    "name": "Psi Boost",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Whenever you use an ability that is a main action or a maneuver with the Psionic keyword, you can spend additional discipline to apply a psi boost to it and enhance its effects. A psi boost's effects only last until the end of the turn which the ability is first used. You can apply multiple psi boosts to an ability, but only one instance of each specific boost. You can use the following psi boosts.",
+    "ability": "ability_talent_psi_boost",
+    "psi_boosts": [
+      {
+        "name": "Dynamic Power",
+        "cost": "1 Clarity",
+        "description": "If the ability force moves a target, the forced movement distance gains a bonus equal to your Reason score."
+      },
+      {
+        "name": "Expanded Power",
+        "cost": "3 Clarity",
+        "description": "If the ability targets an area, you increase the size of the area by 1. If the area is a line, you increase the size of one dimension, not both."
+      },
+      {
+        "name": "Extended Power",
+        "cost": "1 Clarity",
+        "description": "If the ability is ranged, the distance gains a bonus equal to your Reason score. If the ability is melee, the distance gains a +2 bonus."
+      },
+      {
+        "name": "Heightened Power",
+        "cost": "1 Clarity",
+        "description": "If the ability deals rolled damage, it deals extra damage equal to your Reason score."
+      },
+      {
+        "name": "Magnified Power",
+        "cost": "5 Clarity",
+        "description": "If the ability has a potency, you increase that potency by an amount equal to your Reason score."
+      },
+      {
+        "name": "Shared Power",
+        "cost": "5 Clarity",
+        "description": "If the ability targets individual creatures or objects, you target one additional creature or object within distance."
+      },
+      {
+        "name": "Sharpened Power",
+        "cost": "1 Clarity",
+        "description": "If the ability has any power roll, that roll gains an edge."
+      }
+    ]
+  },
+  {
+    "id": "feature_talent_tradition_abilities_lvl6",
+    "type": "feature",
+    "name": "Tradition Abilities (9-Clarity)",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 6,
+    "description": "Choose one 9-clarity ability from your tradition.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "abilities": [
+          {
+            "id": "ability_talent_fate",
+            "name": "Fate"
+          },
+          {
+            "id": "ability_talent_stasis_field",
+            "name": "Stasis Field"
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "abilities": [
+          {
+            "id": "ability_talent_gravitic_well",
+            "name": "Gravitic Well"
+          },
+          {
+            "id": "ability_talent_greater_kinetic_grip",
+            "name": "Greater Kinetic Grip"
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "abilities": [
+          {
+            "id": "ability_talent_synaptic_conditioning",
+            "name": "Synaptic Conditioning"
+          },
+          {
+            "id": "ability_talent_synaptic_dissipation",
+            "name": "Synaptic Dissipation"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_talent_ancestral_memory",
@@ -450,45 +568,6 @@
     "description": "You gain one skill of your choice."
   },
   {
-    "id": "feature_talent_doubling_the_hours",
-    "type": "feature",
-    "name": "Doubling the Hours",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Chronopathy",
-    "level": 8,
-    "description": "While you have 5 or more Victories, you can undertake an additional respite activity during a respite."
-  },
-  {
-    "id": "feature_talent_levitation_field",
-    "type": "feature",
-    "name": "Levitation Field",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_low_gravity",
-    "type": "feature",
-    "name": "Low Gravity",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telekinesis",
-    "level": 8,
-    "description": "Your mind can carry your body through tough times. You ignore difficult terrain and don't need to spend additional movement while prone."
-  },
-  {
-    "id": "feature_talent_mindlink",
-    "type": "feature",
-    "name": "Mindlink",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telepathy",
-    "level": 8,
-    "description": "During a respite, you can choose a number of creatures up to your Reason score who you have communicated with using your Telepathic Speech feature, creating a telepathic link among all of you. Whenever a linked creature spends one or more Recoveries, each other linked creature can spend a Recovery."
-  },
-  {
     "id": "feature_talent_perk_5",
     "type": "feature",
     "name": "Perk",
@@ -498,50 +577,66 @@
     "description": "You gain one perk of your choice."
   },
   {
+    "id": "feature_talent_tradition_feature_lvl8",
+    "type": "feature",
+    "name": "Tradition Feature",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 8,
+    "description": "Your tradition continues to evolve at 8th level.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "features": [
+          {
+            "name": "Doubling the Hours",
+            "description": "While you have 5 or more Victories, you can undertake an additional respite activity during a respite."
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "features": [
+          {
+            "name": "Low Gravity",
+            "description": "Your mind can carry your body through tough times. You ignore difficult terrain and don't need to spend additional movement while prone."
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "features": [
+          {
+            "name": "Mindlink",
+            "description": "During a respite, you can choose a number of creatures up to your Reason score who you have communicated with using your Telepathic Speech feature, creating a telepathic link among all of you. Whenever a linked creature spends one or more Recoveries, each other linked creature can spend a Recovery."
+          },
+          {
+            "name": "Universal Connection",
+            "description": "The range of your Telepathic Speech feature increases to anywhere on the same world."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "feature_talent_levitation_field",
+    "type": "feature",
+    "name": "Levitation Field",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 8,
+    "description": "You have the following ability.",
+    "ability": "ability_talent_levitation_field"
+  },
+  {
     "id": "feature_talent_stasis_shield",
     "type": "feature",
     "name": "Stasis Shield",
     "class": "talent",
     "is_subclass_feature": false,
     "level": 8,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_talent_universal_connection",
-    "type": "feature",
-    "name": "Universal Connection",
-    "class": "talent",
-    "is_subclass_feature": true,
-    "subclass_name": "Telepathy",
-    "level": 8,
-    "description": "The range of your Telepathic Speech feature increases to anywhere on the same world."
-  },
-  {
-    "id": "feature_talent_9th_level_chronopathy_abilities",
-    "type": "feature",
-    "name": "9th-Level Chronopathy Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_9th_level_telekinesis_abilities",
-    "type": "feature",
-    "name": "9th-Level Telekinesis Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
-  },
-  {
-    "id": "feature_talent_9th_level_telepathy_abilities",
-    "type": "feature",
-    "name": "9th-Level Telepathy Abilities",
-    "class": "talent",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose one of the following abilities."
+    "description": "You have the following ability.",
+    "ability": "ability_talent_stasis_shield"
   },
   {
     "id": "feature_talent_fortress_of_perfect_thought",
@@ -551,6 +646,56 @@
     "is_subclass_feature": false,
     "level": 9,
     "description": "Your mind is an impenetrable palace that shields you from danger. You gain the following effects:\n\n- You can breathe even when there is no breathable air.\n- You have psychic immunity 10.\n- Creatures can't read your thoughts unless you allow them to.\n- Your Reason and Intuition are treated as 2 higher for the purpose of resisting the potency of abilities.\n- You can't be made taunted or frightened."
+  },
+  {
+    "id": "feature_talent_tradition_abilities_lvl9",
+    "type": "feature",
+    "name": "Tradition Abilities (11-Clarity)",
+    "class": "talent",
+    "is_subclass_feature": false,
+    "level": 9,
+    "description": "Choose one 11-clarity ability from your tradition.",
+    "options": [
+      {
+        "name": "Chronopathy",
+        "abilities": [
+          {
+            "id": "ability_talent_acceleration_field",
+            "name": "Acceleration Field"
+          },
+          {
+            "id": "ability_talent_borrow_from_the_future",
+            "name": "Borrow From the Future"
+          }
+        ]
+      },
+      {
+        "name": "Telekinesis",
+        "abilities": [
+          {
+            "id": "ability_talent_fulcrum",
+            "name": "Fulcrum"
+          },
+          {
+            "id": "ability_talent_gravitic_nova",
+            "name": "Gravitic Nova"
+          }
+        ]
+      },
+      {
+        "name": "Telepathy",
+        "abilities": [
+          {
+            "id": "ability_talent_resonant_mind_spike",
+            "name": "Resonant Mind Spike"
+          },
+          {
+            "id": "ability_talent_synaptic_terror",
+            "name": "Synaptic Terror"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": "feature_talent_characteristic_increase",

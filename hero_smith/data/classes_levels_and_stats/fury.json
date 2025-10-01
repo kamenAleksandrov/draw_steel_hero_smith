@@ -49,22 +49,15 @@
       {
         "level": 1,
         "features": [
-          "Primordial Aspect (Berserker, Reaver, or Stormwight)",
-          "Ferocity",
-          "Ferocity in Combat",
-          "Ferocity Outside of Combat",
-          "Growing Ferocity",
-          "1st-Level Aspect Features",
-          "Beast Shape",
-          "Kit",
-          "Primordial Cunning",
-          "Primordial Strength",
-          "Relentless Hunter",
-          "Aspect Triggered Action",
-          "Mighty Leaps",
-          "Fury Abilities",
-          "Signature Ability",
-          "Heroic Abilities"
+          {
+            "name": "Primordial Aspect",
+            "type": "pick 1 subclass"
+          },
+          { "name": "Kit", "type": "pick 1" },
+          { "name": "Ferocity", "type": "granted" },
+          { "name": "Growing Ferocity", "type": "granted" },
+          { "name": "Aspect Features", "type": "granted" },
+          { "name": "Aspect Triggered Action", "type": "granted" }
         ],
         "new_abilities": {
           "signature": 1,
@@ -74,22 +67,12 @@
       },
       {
         "level": 2,
-        "features": [
-          "Perk",
-          "2nd-Level Aspect Feature",
-          "Inescapable Wrath / Tooth and Claw / Unstoppable Force",
-          "2nd-Level Aspect Ability"
-        ],
+        "features": [{ "name": "Aspect Features", "type": "granted" }],
         "perks": [
           {
             "count": 1,
             "perk_groups": ["crafting", "exploration", "intrigue"]
           }
-        ],
-        "subclass_features": [
-          { "berserker": ["Unstoppable Force"] },
-          { "reaver": ["Inescapable Wrath"] },
-          { "stormwight": ["Tooth and Claw"] }
         ],
         "new_subclass_abilities": {
           "5_cost": 1
@@ -97,16 +80,7 @@
       },
       {
         "level": 3,
-        "features": [
-          "3rd-Level Aspect Feature",
-          "Immovable Object / See Through Their Tricks / Nature’s Knight",
-          "7-Ferocity Ability"
-        ],
-        "subclass_features": [
-          { "berserker": ["Immovable Object"] },
-          { "reaver": ["See Through Their Tricks"] },
-          { "stormwight": ["Nature’s Knight"] }
-        ],
+        "features": [{ "name": "Aspect Features", "type": "granted" }],
         "new_abilities": {
           "7_cost": 1
         }
@@ -114,13 +88,10 @@
       {
         "level": 4,
         "features": [
-          "Characteristic Increase",
-          "Damaging Ferocity",
-          "Growing Ferocity Improvement",
-          "Perk",
-          "Primordial Attunement",
-          "Primordial Strike",
-          "Skill"
+          { "name": "Damaging Ferocity", "type": "granted" },
+          { "name": "Growing Ferocity Improvement", "type": "granted" },
+          { "name": "Primordial Attunement", "type": "granted" },
+          { "name": "Primordial Strike", "type": "granted" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -131,16 +102,7 @@
       },
       {
         "level": 5,
-        "features": [
-          "5th-Level Aspect Feature",
-          "Bounder / Stormborn / Unfettered",
-          "9-Ferocity Ability"
-        ],
-        "subclass_features": [
-          { "berserker": ["Bounder"] },
-          { "reaver": ["Unfettered"] },
-          { "stormwight": ["Stormborn"] }
-        ],
+        "features": [{ "name": "Aspect Feature", "type": "granted" }],
         "new_abilities": {
           "9_cost": 1
         }
@@ -148,12 +110,12 @@
       {
         "level": 6,
         "features": [
-          "Marauder of the Primordial Chaos",
-          "Primordial Portal",
-          "Perk",
-          "6th-Level Aspect Ability"
+          { "name": "Marauder of the Primordial Chaos", "type": "granted" },
+          { "name": "Primordial Portal", "type": "granted" }
         ],
-        "perks": [{ "count": 1 }],
+        "perks": [
+          { "count": 1, "perk_groups": ["crafting", "exploration", "intrigue"] }
+        ],
         "new_subclass_abilities": {
           "9_cost": 1
         }
@@ -161,39 +123,24 @@
       {
         "level": 7,
         "features": [
-          "Characteristic Increase",
-          "Elemental Form",
-          "Greater Ferocity",
-          "Growing Ferocity Improvement",
-          "Skill"
+          { "name": "Elemental Form", "type": "granted" },
+          { "name": "Greater Ferocity", "type": "granted" },
+          { "name": "Growing Ferocity Improvement", "type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [
-          "Perk",
-          "8th-Level Aspect Feature",
-          "Menagerie / A Step Ahead / Strongest There Is",
-          "11-Ferocity Ability"
-        ],
+        "features": [{ "name": "Aspect Feature", "type": "granted" }],
         "perks": [{ "count": 1 }],
-        "subclass_features": [
-          { "berserker": ["Strongest There Is"] },
-          { "reaver": ["A Step Ahead"] },
-          { "stormwight": ["Menagerie"] }
-        ],
         "new_abilities": {
           "11_cost": 1
         }
       },
       {
         "level": 9,
-        "features": [
-          "Harbinger of the Primordial Chaos",
-          "9th-Level Aspect Ability"
-        ],
+        "features": ["Harbinger of the Primordial Chaos"],
         "new_subclass_abilities": {
           "11_cost": 1
         }
@@ -201,15 +148,14 @@
       {
         "level": 10,
         "features": [
-          "Chaos Incarnate",
-          "Characteristic Increase",
-          "Growing Ferocity Improvement",
-          "Perk",
-          "Primordial Ferocity",
-          "Primordial Power",
-          "Skill"
+          { "name": "Chaos Incarnate", "type": "granted" },
+          { "name": "Growing Ferocity Improvement", "type": "granted" },
+          { "name": "Primordial Ferocity", "type": "granted" },
+          { "name": "Primordial Power", "type": "granted" }
         ],
-        "perks": [{ "count": 1 }],
+        "perks": [
+          { "count": 1, "perk_groups": ["crafting", "exploration", "intrigue"] }
+        ],
         "skills": [{ "count": 1 }],
         "characteristics": [
           { "Might": { "setTo": 5 } },

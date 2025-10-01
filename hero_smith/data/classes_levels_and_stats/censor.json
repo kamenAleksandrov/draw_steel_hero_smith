@@ -65,15 +65,12 @@
       },
       {
         "level": 2,
+        "features": [{ "name": "Order Features", "type": "granted" }],
         "perks": {
           "count": 1,
           "perk_groups": ["interpersonal", "lore", "supernatural"]
         },
-        "subclass_features": [
-          { "exorcist": ["Saint's Vigilance", "A Sense for Truth"] },
-          { "oracle": ["It Was Foretold", "Judge of Character"] },
-          { "paragon": ["Lead by Example", "Stalwart Icon"] }
-        ],
+
         "new_subclass_abilities": {
           "5_cost": 1
         }
@@ -105,12 +102,7 @@
         "features": [{ "name": "Order Feature", "type": "granted" }],
         "new_abilities": {
           "9_cost": 1
-        },
-        "subclass_features": [
-          { "exorcist": ["Evil Revealed"] },
-          { "oracle": ["Prophecy"] },
-          { "paragon": ["Stand Fast!"] }
-        ]
+        }
       },
       {
         "level": 6,
@@ -140,18 +132,12 @@
         "perks": [{ "count": 1 }],
         "new_abilities": {
           "11_cost": 1
-        },
-        "subclass_features": [
-          { "exorcist": ["Demonologist"] },
-          { "oracle": ["Their Past Revealed"] },
-          { "paragon": ["Vow"] }
-        ]
+        }
       },
       {
         "level": 9,
         "features": [
-          { "name": "Improved Implement of Wrath", "type": "granted" },
-          { "name": "Order Ability", "type": "pick 1" }
+          { "name": "Improved Implement of Wrath", "type": "granted" }
         ],
         "new_subclass_abilities": {
           "11_cost": 1
@@ -161,9 +147,7 @@
         "level": 10,
         "features": [
           { "name": "Templar", "type": "granted" },
-
           { "name": "Virtue", "type": "granted" },
-
           { "name": "Wrath of the Gods", "type": "granted" }
         ],
         "perks": [
