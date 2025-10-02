@@ -47,15 +47,20 @@
         "features": [
           {
             "name": "Censor Order",
-            "type": "pick 1 subclass"
+            "grant_type": "pick",
+            "type": "subclass"
           },
           { "name": "Deity and Domains", "deity": 1, "domain": 1 },
-          { "name": "Wrath", "type": "granted" },
-          { "name": "Judgment", "type": "ability" },
-          { "name": "Judgment Order Benefit", "type": "granted" },
-          { "name": "Kit", "type": "pick 1" },
-          { "name": "My Life for Yours", "type": "ability" },
-          { "name": "Domain Feature", "type": "granted" }
+          { "name": "Wrath", "grant_type": "granted" },
+          { "name": "Judgment", "grant_type": "ability" },
+          {
+            "name": "Judgment Order Benefit",
+            "grant_type": "granted",
+            "type": "subclass"
+          },
+          { "name": "Kit", "grant_type": "pick", "count": 1 },
+          { "name": "My Life for Yours", "grant_type": "ability" },
+          { "name": "Domain Feature", "grant_type": "granted" }
         ],
         "new_abilities": {
           "signature": 1,
@@ -65,7 +70,13 @@
       },
       {
         "level": 2,
-        "features": [{ "name": "Order Features", "type": "granted" }],
+        "features": [
+          {
+            "name": "Order Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "perks": {
           "count": 1,
           "perk_groups": ["interpersonal", "lore", "supernatural"]
@@ -78,7 +89,7 @@
       {
         "level": 3,
         "features": [
-          { "name": "Look On My Work and Despair", "type": "granted" }
+          { "name": "Look On My Work and Despair", "grant_type": "granted" }
         ],
         "new_abilities": {
           "7_cost": 1
@@ -87,8 +98,8 @@
       {
         "level": 4,
         "features": [
-          { "name": "Wrath Beyond Wrath", "type": "granted" },
-          { "name": "Domain Feature", "type": "granted" }
+          { "name": "Wrath Beyond Wrath", "grant_type": "granted" },
+          { "name": "Domain Feature", "grant_type": "granted" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -99,14 +110,20 @@
       },
       {
         "level": 5,
-        "features": [{ "name": "Order Feature", "type": "granted" }],
+        "features": [
+          {
+            "name": "Order Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "new_abilities": {
           "9_cost": 1
         }
       },
       {
         "level": 6,
-        "features": [{ "name": "Implement of Wrath", "type": "granted" }],
+        "features": [{ "name": "Implement of Wrath", "grant_type": "granted" }],
         "perks": [
           {
             "count": 1,
@@ -120,15 +137,21 @@
       {
         "level": 7,
         "features": [
-          { "name": "Domain Feature", "type": "granted" },
-          { "name": "Focused Wrath", "type": "granted" }
+          { "name": "Domain Feature", "grant_type": "granted" },
+          { "name": "Focused Wrath", "grant_type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [{ "name": "Order Feature", "type": "granted" }],
+        "features": [
+          {
+            "name": "Order Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "perks": [{ "count": 1 }],
         "new_abilities": {
           "11_cost": 1
@@ -137,7 +160,7 @@
       {
         "level": 9,
         "features": [
-          { "name": "Improved Implement of Wrath", "type": "granted" }
+          { "name": "Improved Implement of Wrath", "grant_type": "granted" }
         ],
         "new_subclass_abilities": {
           "11_cost": 1
@@ -146,9 +169,9 @@
       {
         "level": 10,
         "features": [
-          { "name": "Templar", "type": "granted" },
-          { "name": "Virtue", "type": "granted" },
-          { "name": "Wrath of the Gods", "type": "granted" }
+          { "name": "Templar", "grant_type": "granted" },
+          { "name": "Virtue", "grant_type": "granted" },
+          { "name": "Wrath of the Gods", "grant_type": "granted" }
         ],
         "perks": [
           {

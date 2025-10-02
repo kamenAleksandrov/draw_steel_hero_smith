@@ -51,13 +51,13 @@
         "features": [
           {
             "name": "Primordial Aspect",
-            "type": "pick 1 subclass"
+            "grant_type": "pick", "type": "subclass"
           },
-          { "name": "Kit", "type": "pick 1" },
-          { "name": "Ferocity", "type": "granted" },
-          { "name": "Growing Ferocity", "type": "granted" },
-          { "name": "Aspect Features", "type": "granted" },
-          { "name": "Aspect Triggered Action", "type": "granted" }
+          { "name": "Kit", "grant_type": "pick", "count": 1 },
+          { "name": "Ferocity", "grant_type": "granted" },
+          { "name": "Growing Ferocity", "grant_type": "granted" },
+          { "name": "Aspect Features", "grant_type": "granted", "type": "subclass" },
+          { "name": "Aspect Triggered Action", "grant_type": "granted", "type": "subclass" }
         ],
         "new_abilities": {
           "signature": 1,
@@ -67,7 +67,7 @@
       },
       {
         "level": 2,
-        "features": [{ "name": "Aspect Features", "type": "granted" }],
+        "features": [{ "name": "Aspect Features", "grant_type": "granted", "type": "subclass" }],
         "perks": [
           {
             "count": 1,
@@ -80,7 +80,7 @@
       },
       {
         "level": 3,
-        "features": [{ "name": "Aspect Features", "type": "granted" }],
+        "features": [{ "name": "Aspect Features", "grant_type": "granted", "type": "subclass" }],
         "new_abilities": {
           "7_cost": 1
         }
@@ -88,10 +88,10 @@
       {
         "level": 4,
         "features": [
-          { "name": "Damaging Ferocity", "type": "granted" },
-          { "name": "Growing Ferocity Improvement", "type": "granted" },
-          { "name": "Primordial Attunement", "type": "granted" },
-          { "name": "Primordial Strike", "type": "granted" }
+          { "name": "Damaging Ferocity", "grant_type": "granted" },
+          { "name": "Growing Ferocity Improvement", "grant_type": "granted" },
+          { "name": "Primordial Attunement", "grant_type": "granted" },
+          { "name": "Primordial Strike", "grant_type": "granted" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -102,7 +102,7 @@
       },
       {
         "level": 5,
-        "features": [{ "name": "Aspect Feature", "type": "granted" }],
+        "features": [{ "name": "Aspect Features", "grant_type": "granted", "type": "subclass" }],
         "new_abilities": {
           "9_cost": 1
         }
@@ -110,8 +110,8 @@
       {
         "level": 6,
         "features": [
-          { "name": "Marauder of the Primordial Chaos", "type": "granted" },
-          { "name": "Primordial Portal", "type": "granted" }
+          { "name": "Marauder of the Primordial Chaos", "grant_type": "granted" },
+          { "name": "Primordial Portal", "grant_type": "granted" }
         ],
         "perks": [
           { "count": 1, "perk_groups": ["crafting", "exploration", "intrigue"] }
@@ -123,16 +123,16 @@
       {
         "level": 7,
         "features": [
-          { "name": "Elemental Form", "type": "granted" },
-          { "name": "Greater Ferocity", "type": "granted" },
-          { "name": "Growing Ferocity Improvement", "type": "granted" }
+          { "name": "Elemental Form", "grant_type": "granted" },
+          { "name": "Greater Ferocity", "grant_type": "granted" },
+          { "name": "Growing Ferocity Improvement", "grant_type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [{ "name": "Aspect Feature", "type": "granted" }],
+        "features": [{ "name": "Aspect Feature", "grant_type": "granted", "type": "subclass" }],
         "perks": [{ "count": 1 }],
         "new_abilities": {
           "11_cost": 1
@@ -148,10 +148,10 @@
       {
         "level": 10,
         "features": [
-          { "name": "Chaos Incarnate", "type": "granted" },
-          { "name": "Growing Ferocity Improvement", "type": "granted" },
-          { "name": "Primordial Ferocity", "type": "granted" },
-          { "name": "Primordial Power", "type": "granted" }
+          { "name": "Chaos Incarnate", "grant_type": "granted" },
+          { "name": "Growing Ferocity Improvement", "grant_type": "granted" },
+          { "name": "Primordial Ferocity", "grant_type": "granted" },
+          { "name": "Primordial Power", "grant_type": "granted" }
         ],
         "perks": [
           { "count": 1, "perk_groups": ["crafting", "exploration", "intrigue"] }

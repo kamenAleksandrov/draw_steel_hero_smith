@@ -9,10 +9,7 @@
       "amount": null
     },
     "story_text": "You project an illusory aura that makes you and allies harder to notice.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -72,9 +69,7 @@
       "amount": null
     },
     "story_text": "An animal spirit is drawn to you, sharing their senses with you and serving you faithfully.",
-    "keywords": [
-      "Magic"
-    ],
+    "keywords": ["Magic"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -134,9 +129,7 @@
       "amount": null
     },
     "story_text": "You commune with the lingering soul of the recently dead.",
-    "keywords": [
-      "Magic"
-    ],
+    "keywords": ["Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -195,11 +188,9 @@
       "resource": null,
       "amount": null
     },
+    "level": 7,
     "story_text": "You concentrate on a friend and teleport to them.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -258,10 +249,9 @@
       "resource": null,
       "amount": null
     },
+    "level": 1,
     "story_text": "You craft objects with the power of your mind.",
-    "keywords": [
-      "Magic"
-    ],
+    "keywords": ["Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -320,11 +310,9 @@
       "resource": null,
       "amount": null
     },
+    "level": 1,
     "story_text": "You utter a prayer that outlines your foe in holy energy.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -383,11 +371,9 @@
       "resource": null,
       "amount": null
     },
+    "level": 1,
     "story_text": "You channel some of your vitality into more resilience for you or an ally.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Triggered",
     "trigger_text": null,
     "range": {
@@ -446,12 +432,9 @@
       "resource": "Wrath",
       "amount": 9
     },
+    "level": 5,
     "story_text": "You strike a foe and create a fleet of divine shields that protect your allies.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -461,9 +444,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -513,10 +494,7 @@
       "amount": 9
     },
     "story_text": "Hey! I'm over here. No, here, numbskull.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -578,12 +556,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "\"I got you, you son of a bitch.\"",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -593,9 +566,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -647,12 +618,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You channel power through your weapon to repel foes.",
-    "keywords": [
-      "Area",
-      "Magic",
-      "Melee",
-      "Weapon"
-    ],
+    "keywords": ["Area", "Magic", "Melee", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -662,9 +628,7 @@
     "targets": "Each enemy in the area",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -716,11 +680,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "A mighty blow turns your foe's vitality into a holy light that envelops you and an ally, discouraging enemies who might attack you.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -730,9 +690,7 @@
     "targets": "One creature or object",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -784,13 +742,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You attack a foe and your enemies behold a vision of the true nature of your resolve.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Magic", "Melee", "Ranged", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -800,9 +752,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -854,11 +804,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "Judged and sentenced.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -868,9 +814,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -922,11 +866,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "As you force your enemy back with your weapon, you use your faith to stay close.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -936,9 +876,7 @@
     "targets": "One creature or object",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -990,11 +928,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You show your foe a glimpse of their fate after death.",
-    "keywords": [
-      "Magic",
-      "Ranged",
-      "Strike"
-    ],
+    "keywords": ["Magic", "Ranged", "Strike"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1004,9 +938,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1058,11 +990,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You infuse your weapon with holy magic that makes it difficult for your foe to get away.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1072,9 +1000,7 @@
     "targets": "One creature or object",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1126,13 +1052,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "The gods judge, fire cleanses.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Magic", "Melee", "Ranged", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1142,9 +1062,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1196,11 +1114,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You conjure memories of their sins to harry your foes.",
-    "keywords": [
-      "Magic",
-      "Ranged",
-      "Strike"
-    ],
+    "keywords": ["Magic", "Ranged", "Strike"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1210,9 +1124,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1264,12 +1176,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "You channel holy energy to smite a foe and heal an ally.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1279,9 +1186,7 @@
     "targets": "One creature or object",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1333,11 +1238,7 @@
     "level": 1,
     "subclass": null,
     "story_text": "Your magic strike turns your foe's guilt into a burst of holy power.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1347,9 +1248,7 @@
     "targets": "One creature or object",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1401,10 +1300,7 @@
     "level": 2,
     "subclass": "Paragon",
     "story_text": "The gods reward your faith.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1466,11 +1362,7 @@
     "level": 2,
     "subclass": "Exorcist",
     "story_text": "I am but a vessel. Your own deeds weigh upon you.",
-    "keywords": [
-      "Magic",
-      "Ranged",
-      "Strike"
-    ],
+    "keywords": ["Magic", "Ranged", "Strike"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1480,9 +1372,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1534,10 +1424,7 @@
     "level": 2,
     "subclass": "Oracle",
     "story_text": "Gifted by a prescient vision, you warn an ally of an impending attack.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Triggered",
     "trigger_text": null,
     "range": {
@@ -1599,10 +1486,7 @@
     "level": 2,
     "subclass": "Oracle",
     "story_text": "You channel holy energy to harm unbelievers and reveal those hidden from your judgment.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1664,12 +1548,7 @@
     "level": 2,
     "subclass": "Exorcist",
     "story_text": "The shock of your condemnation freezes your enemy in their boots.",
-    "keywords": [
-      "Magic",
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Magic", "Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1679,9 +1558,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -1733,10 +1610,7 @@
     "level": 2,
     "subclass": "Paragon",
     "story_text": "A word in prayer, and the gods show the way.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -1798,10 +1672,7 @@
     "level": 3,
     "subclass": null,
     "story_text": "The evil within your foes detonates with holy fire that burns only the guilty.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1863,10 +1734,7 @@
     "level": 3,
     "subclass": null,
     "story_text": "Within the area of your divine presence, your enemies will regret using their fell abilities.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1928,10 +1796,7 @@
     "level": 3,
     "subclass": null,
     "story_text": "You shed a righteous energy that punishes enemies who would harm you or your allies.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -1993,10 +1858,7 @@
     "level": 3,
     "subclass": null,
     "story_text": "The holy aura you project makes it painful for evil-doers to leave your reach.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -2058,9 +1920,7 @@
     "level": 5,
     "subclass": null,
     "story_text": "You channel your god's will to overcome hardship and inflict pain.",
-    "keywords": [
-      "Area"
-    ],
+    "keywords": ["Area"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -2070,9 +1930,7 @@
     "targets": "Self and each ally in the area",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2124,11 +1982,7 @@
     "level": 5,
     "subclass": null,
     "story_text": "You amplify the power of your judgment.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2138,9 +1992,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2192,10 +2044,7 @@
     "level": 6,
     "subclass": "Exorcist",
     "story_text": "You terrify your enemies into retreating, creating chaos in their ranks.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2205,9 +2054,7 @@
     "targets": "Each enemy in the area",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2259,11 +2106,7 @@
     "level": 6,
     "subclass": "Oracle",
     "story_text": "You reveal a vision of your enemies' fate that causes them to scramble as it staggers them.",
-    "keywords": [
-      "Magic",
-      "Ranged",
-      "Strike"
-    ],
+    "keywords": ["Magic", "Ranged", "Strike"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -2273,9 +2116,7 @@
     "targets": "Three enemies",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2327,11 +2168,7 @@
     "level": 6,
     "subclass": "Paragon",
     "story_text": "You focus your allies' wrath on a chosen foe.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2341,9 +2178,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2395,10 +2230,7 @@
     "level": 6,
     "subclass": "Oracle",
     "story_text": "You anticipate your foes' moves and deny them.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -2460,9 +2292,7 @@
     "level": 6,
     "subclass": "Paragon",
     "story_text": "You channel divine force for movement that cannot be stopped.",
-    "keywords": [
-      "Ranged"
-    ],
+    "keywords": ["Ranged"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2524,10 +2354,7 @@
     "level": 6,
     "subclass": "Paragon",
     "story_text": "You take your ally's place.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Free triggered",
     "trigger_text": null,
     "range": {
@@ -2589,10 +2416,7 @@
     "level": 6,
     "subclass": "Exorcist",
     "story_text": "You reverse the effects from an evildoer.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Free triggered",
     "trigger_text": null,
     "range": {
@@ -2654,10 +2478,7 @@
     "level": 8,
     "subclass": null,
     "story_text": "You have looked at various futures, and only this one works.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Triggered",
     "trigger_text": null,
     "range": {
@@ -2719,11 +2540,7 @@
     "level": 8,
     "subclass": null,
     "story_text": "You use your foe as a tool against your enemies.",
-    "keywords": [
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Ranged", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2733,9 +2550,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2787,11 +2602,7 @@
     "level": 8,
     "subclass": null,
     "story_text": "Your enemy's guilt fuels a holy flame that burns your foes.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2801,9 +2612,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2855,11 +2664,7 @@
     "level": 8,
     "subclass": null,
     "story_text": "\"I know what you fear.\"",
-    "keywords": [
-      "Magic",
-      "Ranged",
-      "Strike"
-    ],
+    "keywords": ["Magic", "Ranged", "Strike"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2869,9 +2674,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2923,11 +2726,7 @@
     "level": 9,
     "subclass": "Paragon",
     "story_text": "You channel holy energy to seal an enemy's fate.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -2937,9 +2736,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -2991,11 +2788,7 @@
     "level": 9,
     "subclass": "Exorcist",
     "story_text": "You sever the target's tenuous connection to the world.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -3005,9 +2798,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -3059,10 +2850,7 @@
     "level": 9,
     "subclass": "Oracle",
     "story_text": "The gods bless and damn in equal measure.",
-    "keywords": [
-      "Magic",
-      "Ranged"
-    ],
+    "keywords": ["Magic", "Ranged"],
     "action_type": "Triggered",
     "trigger_text": null,
     "range": {
@@ -3124,10 +2912,7 @@
     "level": 9,
     "subclass": "Paragon",
     "story_text": "You and your allies are clad in shimmering armor.",
-    "keywords": [
-      "Area",
-      "Magic"
-    ],
+    "keywords": ["Area", "Magic"],
     "action_type": "Maneuver",
     "trigger_text": null,
     "range": {
@@ -3189,11 +2974,7 @@
     "level": 9,
     "subclass": "Exorcist",
     "story_text": "You curse your foe to become a bane to their allies.",
-    "keywords": [
-      "Melee",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Melee", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -3203,9 +2984,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Might"
-      ],
+      "characteristics": ["Might"],
       "tiers": {
         "low": {
           "damage_expression": null,
@@ -3257,11 +3036,7 @@
     "level": 9,
     "subclass": "Oracle",
     "story_text": "You turn your enemies' ire to the target.",
-    "keywords": [
-      "Ranged",
-      "Strike",
-      "Weapon"
-    ],
+    "keywords": ["Ranged", "Strike", "Weapon"],
     "action_type": "Main action",
     "trigger_text": null,
     "range": {
@@ -3271,9 +3046,7 @@
     "targets": "One creature",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": [
-        "Presence"
-      ],
+      "characteristics": ["Presence"],
       "tiers": {
         "low": {
           "damage_expression": null,

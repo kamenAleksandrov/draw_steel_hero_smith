@@ -51,16 +51,16 @@
         "features": [
           {
             "name": "Elemental Specialization",
-            "type": "pick 1 subclass"
+            "grant_type": "pick", "type": "subclass"
           },
-          { "name": "Essence", "type": "granted" },
-          { "name": "Hurl Element", "type": "ability" },
-          { "name": "Persistent Magic", "type": "granted" },
-          { "name": "Practical Magic", "type": "ability" },
-          { "name": "Specialization Feature", "type": "granted" },
-          { "name": "Specialization Triggered Action", "type": "granted" },
-          { "name": "Enchantment", "type": "pick 1" },
-          { "name": "Elementalist Ward", "type": "pick 1" }
+          { "name": "Essence", "grant_type": "granted" },
+          { "name": "Hurl Element", "grant_type": "ability" },
+          { "name": "Persistent Magic", "grant_type": "granted" },
+          { "name": "Practical Magic", "grant_type": "ability" },
+          { "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" },
+          { "name": "Specialization Triggered Action", "grant_type": "granted", "type": "subclass" },
+          { "name": "Enchantment", "grant_type": "pick", "count": 1 },
+          { "name": "Elementalist Ward", "grant_type": "pick", "count": 1 }
         ],
         "new_abilities": {
           "signature": 2,
@@ -70,7 +70,7 @@
       },
       {
         "level": 2,
-        "features": [{ "name": "Specialization Feature", "type": "granted" }],
+        "features": [{ "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" }],
         "perks": {
           "count": 1,
           "perk_groups": ["crafting", "lore", "supernatural"]
@@ -95,9 +95,9 @@
       {
         "level": 4,
         "features": [
-          { "name": "Font of Essence", "type": "granted" },
-          { "name": "Mantle of Essence", "type": "granted" },
-          { "name": "Specialization Feature", "type": "granted" }
+          { "name": "Font of Essence", "grant_type": "granted" },
+          { "name": "Mantle of Essence", "grant_type": "granted" },
+          { "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" }
         ],
         "perks": {
           "count": 1
@@ -110,12 +110,12 @@
       },
       {
         "level": 5,
-        "features": [{ "name": "Specialization Feature", "type": "granted" }],
+        "features": [{ "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" }],
         "new_abilities": { "9_cost": 1 }
       },
       {
         "level": 6,
-        "features": [{ "name": "Wyrding", "type": "granted" }],
+        "features": [{ "name": "Wyrding", "grant_type": "granted" }],
         "perks": [
           {
             "count": 1,
@@ -130,21 +130,21 @@
       {
         "level": 7,
         "features": [
-          { "name": "Mantle of Quintessence", "type": "granted" },
-          { "name": "Surging Essence", "type": "granted" }
+          { "name": "Mantle of Quintessence", "grant_type": "granted" },
+          { "name": "Surging Essence", "grant_type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [{ "name": "Specialization Feature", "type": "granted" }],
+        "features": [{ "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" }],
         "perks": [{ "count": 1 }],
         "new_abilities": { "11_cost": 1 }
       },
       {
         "level": 9,
-        "features": [{ "name": "Grand Wyrding", "type": "granted" }],
+        "features": [{ "name": "Grand Wyrding", "grant_type": "granted" }],
         "new_subclass_abilities": {
           "grants_previous_levels": true,
           "11_cost": 1
@@ -153,10 +153,10 @@
       {
         "level": 10,
         "features": [
-          { "name": "Specialization Feature", "type": "granted" },
-          { "name": "Breath", "type": "granted" },
-          { "name": "Essential Being", "type": "granted" },
-          { "name": "One", "type": "granted" }
+          { "name": "Specialization Feature", "grant_type": "granted", "type": "subclass" },
+          { "name": "Breath", "grant_type": "granted" },
+          { "name": "Essential Being", "grant_type": "granted" },
+          { "name": "One", "grant_type": "granted" }
         ],
         "perks": [
           {

@@ -51,14 +51,15 @@
           {
             "name": "Troubadour Class Act",
 
-            "type": "pick 1 subclass"
+            "grant_type": "pick",
+            "type": "subclass"
           },
-          { "name": "Drama", "type": "granted" },
-          { "name": "Kit", "type": "granted" },
-          { "name": "Scene Partner", "type": "granted" },
-          { "name": "Routines", "type": "granted" },
-          { "name": "Class Act Features", "type": "granted" },
-          { "name": "Class Act Triggered Action", "type": "granted" }
+          { "name": "Drama", "grant_type": "granted" },
+          { "name": "Kit", "grant_type": "pick", "count": 1 },
+          { "name": "Scene Partner", "grant_type": "granted" },
+          { "name": "Routines", "grant_type": "granted" },
+          { "name": "Class Act Features", "grant_type": "granted", "type": "subclass" },
+          { "name": "Class Act Triggered Action", "grant_type": "granted", "type": "subclass" }
         ],
         "new_abilities": {
           "signature": 1,
@@ -69,8 +70,8 @@
       {
         "level": 2,
         "features": [
-          { "name": "Appeal to the Muses", "type": "granted" },
-          { "name": "Invocation", "type": "pick 1" }
+          { "name": "Appeal to the Muses", "grant_type": "granted" },
+          { "name": "Invocation", "grant_type": "pick", "count": 1 }
         ],
         "perks": [
           {
@@ -84,7 +85,7 @@
       },
       {
         "level": 3,
-        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "features": [{ "name": "Class Act Feature", "grant_type": "granted", "type": "subclass" }],
         "new_abilities": {
           "7_cost": 1
         }
@@ -92,8 +93,8 @@
       {
         "level": 4,
         "features": [
-          { "name": "Melodrama", "type": "granted" },
-          { "name": "Zeitgeist", "type": "pick 1" }
+          { "name": "Melodrama", "grant_type": "granted" },
+          { "name": "Zeitgeist", "grant_type": "pick", "count": 1 }
         ],
         "perks": [
           {
@@ -112,14 +113,14 @@
       },
       {
         "level": 5,
-        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "features": [{ "name": "Class Act Feature", "grant_type": "granted", "type": "subclass" }],
         "new_abilities": {
           "9_cost": 1
         }
       },
       {
         "level": 6,
-        "features": [{ "name": "Spotlight", "type": "ability" }],
+        "features": [{ "name": "Spotlight", "grant_type": "ability" }],
         "perks": [
           {
             "count": 1,
@@ -133,8 +134,8 @@
       {
         "level": 7,
         "features": [
-          { "name": "A Muse\u0027s Muse", "type": "granted" },
-          { "name": "Equal Billing", "type": "granted" }
+          { "name": "A Muse\u0027s Muse", "grant_type": "granted" },
+          { "name": "Equal Billing", "grant_type": "granted" }
         ],
         "skills": [
           {
@@ -145,7 +146,7 @@
       },
       {
         "level": 8,
-        "features": [{ "name": "Class Act Feature", "type": "granted" }],
+        "features": [{ "name": "Class Act Feature", "grant_type": "granted", "type": "subclass" }],
         "perks": [
           {
             "count": 1
@@ -157,7 +158,7 @@
       },
       {
         "level": 9,
-        "features": [{ "name": "Roar of the Crowd", "type": "granted" }],
+        "features": [{ "name": "Roar of the Crowd", "grant_type": "granted" }],
         "new_subclass_abilities": {
           "11_cost": 1
         }
@@ -165,9 +166,9 @@
       {
         "level": 10,
         "features": [
-          { "name": "Applause", "type": "granted" },
-          { "name": "Dramaturgy", "type": "granted" },
-          { "name": "Greatest of All Time", "type": "granted" }
+          { "name": "Applause", "grant_type": "granted" },
+          { "name": "Dramaturgy", "grant_type": "granted" },
+          { "name": "Greatest of All Time", "grant_type": "granted" }
         ],
         "perks": [
           {

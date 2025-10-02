@@ -42,15 +42,20 @@
         "features": [
           {
             "name": "Null Tradition",
-            "type": "pick 1 subclass"
+            "grant_type": "pick",
+            "type": "subclass"
           },
-          { "name": "Discipline", "type": "granted" },
-          { "name": "Null Field", "type": "ability" },
-          { "name": "Inertial Shield", "type": "ability" },
-          { "name": "Discipline Mastery", "type": "granted" },
-          { "name": "Null Speed", "type": "granted" },
-          { "name": "Psionic Augmentation", "type": "pick 1" },
-          { "name": "Psionic Martial Arts", "type": "granted" }
+          { "name": "Discipline", "grant_type": "granted" },
+          { "name": "Null Field", "grant_type": "ability" },
+          { "name": "Inertial Shield", "grant_type": "ability" },
+          {
+            "name": "Discipline Mastery",
+            "grant_type": "granted",
+            "type": "subclass"
+          },
+          { "name": "Null Speed", "grant_type": "granted" },
+          { "name": "Psionic Augmentation", "grant_type": "pick", "count": 1 },
+          { "name": "Psionic Martial Arts", "grant_type": "granted" }
         ],
         "new_abilities": {
           "signature": 1,
@@ -60,7 +65,13 @@
       },
       {
         "level": 2,
-        "features": [{ "name": "Tradition Feature", "type": "granted" }],
+        "features": [
+          {
+            "name": "Tradition Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "perks": [
           {
             "count": 1,
@@ -72,17 +83,17 @@
       {
         "level": 3,
         "features": [
-          { "name": "Psionic Leap", "type": "granted" },
-          { "name": "Reorder", "type": "granted" }
+          { "name": "Psionic Leap", "grant_type": "granted" },
+          { "name": "Reorder", "grant_type": "granted" }
         ],
         "new_abilities": { "7_cost": 1 }
       },
       {
         "level": 4,
         "features": [
-          { "name": "Discipline Mastery Improvement", "type": "granted" },
-          { "name": "Enhanced Null Field", "type": "granted" },
-          { "name": "Regenerative Field", "type": "granted" }
+          { "name": "Discipline Mastery Improvement", "grant_type": "granted" },
+          { "name": "Enhanced Null Field", "grant_type": "granted" },
+          { "name": "Regenerative Field", "grant_type": "granted" }
         ],
         "perks": [{ "count": 1 }],
         "skills": [{ "count": 1 }],
@@ -93,14 +104,20 @@
       },
       {
         "level": 5,
-        "features": [{ "name": "Tradition Feature", "type": "granted" }],
+        "features": [
+          {
+            "name": "Tradition Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "new_abilities": { "9_cost": 1 }
       },
       {
         "level": 6,
         "features": [
-          { "name": "Elemental Absorption", "type": "granted" },
-          { "name": "Elemental Buffer", "type": "granted" }
+          { "name": "Elemental Absorption", "grant_type": "granted" },
+          { "name": "Elemental Buffer", "grant_type": "granted" }
         ],
         "perks": [
           {
@@ -113,31 +130,40 @@
       {
         "level": 7,
         "features": [
-          { "name": "Discipline Mastery Improvement", "type": "granted" },
-          { "name": "Psi Boost", "type": "granted" },
-          { "name": "Improved Body", "type": "granted" }
+          { "name": "Discipline Mastery Improvement", "grant_type": "granted" },
+          { "name": "Psi Boost", "grant_type": "granted" },
+          { "name": "Improved Body", "grant_type": "granted" }
         ],
         "skills": [{ "count": 1 }],
         "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
       },
       {
         "level": 8,
-        "features": [{ "name": "Tradition Feature", "type": "granted" }],
+        "features": [
+          {
+            "name": "Tradition Feature",
+            "grant_type": "granted",
+            "type": "subclass"
+          }
+        ],
         "perks": [{ "count": 1 }],
         "new_abilities": { "11_cost": 1 }
       },
       {
         "level": 9,
-        "features": [{ "name": "I Am the Weapon", "type": "granted" }],
+        "features": [{ "name": "I Am the Weapon", "grant_type": "granted" }],
         "new_subclass_abilities": { "11_cost": 1 }
       },
       {
         "level": 10,
         "features": [
-          { "name": " Discipline Mastery Improvement", "type": "granted" },
-          { "name": "Manifold Body", "type": "granted" },
-          { "name": "Manifold Resonance", "type": "granted" },
-          { "name": "Order", "type": "granted" }
+          {
+            "name": " Discipline Mastery Improvement",
+            "grant_type": "granted"
+          },
+          { "name": "Manifold Body", "grant_type": "granted" },
+          { "name": "Manifold Resonance", "grant_type": "granted" },
+          { "name": "Order", "grant_type": "granted" }
         ],
         "perks": [
           {
