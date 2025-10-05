@@ -9,8 +9,8 @@ class AppColors {
   static const Color secondary = Color(0xFF4C956C);
   static const Color surface = Colors.white;
   static const Color background = Color(0xFFF7F7F7);
-  static const Color textPrimary = Color(0xFF1F2937);
-  static const Color textSecondary = Color(0xFF4B5563);
+  static const Color textPrimary = Color(0xFFE5E7EB);
+  static const Color textSecondary = Color(0xFFD1D5DB);
   static const Color accent = Color(0xFFFFA500);
 
   // Characteristic colors - used throughout the app for character stats

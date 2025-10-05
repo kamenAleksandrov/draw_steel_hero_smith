@@ -1,0 +1,282 @@
+[
+  {
+    "animalType": "Canine",
+    "level": 2,
+    "temporaryStamina": 5,
+    "speed": { "base": 7 },
+    "size": { "value": 1, "category": "M" },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 1,
+      "2nd_echelon": 1,
+      "3rd_echelon": 1
+    },
+    "special": "You gain an edge on tests that involve smell."
+  },
+  {
+    "animalType": "Fish",
+    "level": 2,
+    "temporaryStamina": 0,
+    "speed": { "base": 5, "type": "swim" },
+    "size": { "value": 1, "category": "T" },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "You can breathe in water but can’t breathe outside of it."
+  },
+  {
+    "animalType": "Rodent",
+    "level": 2,
+    "temporaryStamina": 0,
+    "speed": { "base": 5 },
+    "size": { "value": 1, "category": "T" },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "You gain an edge on tests that involve smell."
+  },
+  {
+    "animalType": "Bird",
+    "level": 3,
+    "temporaryStamina": 0,
+    "speed": { "base": 5, "type": "fly" },
+    "size": { "value": 1, "category": "T" },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": ""
+  },
+  {
+    "animalType": "Great cat",
+    "level": 3,
+    "temporaryStamina": 5,
+    "speed": { "base": 6, "type": "climb" },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 1,
+      "2nd_echelon": 1,
+      "3rd_echelon": 1
+    },
+    "special": "As a maneuver, you can jump up to 3 squares in any direction. If you land on an enemy of your size or smaller, that enemy is knocked prone, and you can make a melee free strike against them (no action required)."
+  },
+  {
+    "animalType": "Giant frog",
+    "level": 4,
+    "temporaryStamina": 5,
+    "speed": { "base": 5, "type": "swim" },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "Your melee free strike has a distance of Melee 3. When you take the Advance move action, you can high jump or long jump up to half your speed. This jump can allow you to move more squares than your speed."
+  },
+  {
+    "animalType": "Horse",
+    "level": 4,
+    "temporaryStamina": 5,
+    "speed": { "base": 8 },
+    "size": { "value": 2 },
+    "stabilityBonus": 1,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "You can use the Charge main action as a maneuver. You can’t use two Charge main actions on the same turn."
+  },
+  {
+    "animalType": "Mohler",
+    "level": 4,
+    "temporaryStamina": 0,
+    "speed": { "base": 7, "type": "burrow" },
+    "size": { "value": 1, "category": "S" },
+    "stabilityBonus": 1,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "Your melee distance gains a +1 bonus."
+  },
+  {
+    "animalType": "Bear",
+    "level": 5,
+    "temporaryStamina": 10,
+    "speed": { "base": 5, "type": "climb" },
+    "size": { "value": 2 },
+    "stabilityBonus": 1,
+    "melee_damage_bonus": {
+      "1st_echelon": 2,
+      "2nd_echelon": 2,
+      "3rd_echelon": 2
+    },
+    "special": "Your melee distance gains a +1 bonus."
+  },
+  {
+    "animalType": "Giant bird",
+    "level": 5,
+    "temporaryStamina": 0,
+    "speed": { "base": 7, "type": "fly" },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 1,
+      "2nd_echelon": 1,
+      "3rd_echelon": 1
+    },
+    "special": "After making a melee free strike, you can shift up to 3 squares as a free triggered action."
+  },
+  {
+    "animalType": "Giant salamander",
+    "level": 6,
+    "temporaryStamina": 5,
+    "speed": { "base": 5 },
+    "size": { "value": 1, "category": "L" },
+    "stabilityBonus": 3,
+    "melee_damage_bonus": {
+      "1st_echelon": 2,
+      "2nd_echelon": 2,
+      "3rd_echelon": 2
+    },
+    "special": "Your melee free strike deals fire damage. Additionally, you have Fire immunity 3."
+  },
+  {
+    "animalType": "Giant spider",
+    "level": 6,
+    "temporaryStamina": 0,
+    "speed": { "base": 5, "type": "climb" },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 1,
+      "3rd_echelon": 2
+    },
+    "special": "You have a double edge on melee free strikes against creatures you are hidden from."
+  },
+  {
+    "animalType": "Giant snake",
+    "level": 7,
+    "temporaryStamina": 5,
+    "speed": { "base": 5 },
+    "size": { "value": 3 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 1,
+      "3rd_echelon": 2
+    },
+    "special": "Whenever you obtain a tier 2 or tier 3 outcome on a melee free strike, you can automatically grab the target. While grabbed this way, the target takes 2 damage at the start of each of their turns."
+  },
+  {
+    "animalType": "Kangaroo",
+    "level": 7,
+    "temporaryStamina": 0,
+    "speed": { "base": 7 },
+    "size": { "value": 1, "category": "L" },
+    "stabilityBonus": 1,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 4
+    },
+    "special": "When you score a critical hit with a melee free strike, the target is dazed (save ends). When you take the Advance move action, you can high jump or long jump up to half your speed. This jump can allow you to move more squares than your speed."
+  },
+  {
+    "animalType": "Spiny armadillo",
+    "level": 7,
+    "temporaryStamina": 10,
+    "speed": { "base": 5 },
+    "size": { "value": 1, "category": "M" },
+    "stabilityBonus": 2,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "Whenever you take damage from an adjacent creature’s melee ability, that creature takes 3 damage."
+  },
+  {
+    "animalType": "Ostrich",
+    "level": 8,
+    "temporaryStamina": 0,
+    "speed": { "base": 10 },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 1,
+      "2nd_echelon": 1,
+      "3rd_echelon": 1
+    },
+    "special": "Your movement does not provoke opportunity attacks."
+  },
+  {
+    "animalType": "Shark",
+    "level": 8,
+    "temporaryStamina": 0,
+    "speed": { "base": 8, "type": "swim" },
+    "size": { "value": 2 },
+    "stabilityBonus": 0,
+    "melee_damage_bonus": {
+      "1st_echelon": 2,
+      "2nd_echelon": 2,
+      "3rd_echelon": 2
+    },
+    "special": "You can breathe in water but can’t breathe outside of it. Additionally, you gain an edge on strikes against targets who are bleeding or are winded."
+  },
+  {
+    "animalType": "Giant octopus",
+    "level": 9,
+    "temporaryStamina": 5,
+    "speed": { "base": 5, "type": "swim" },
+    "size": { "value": 3 },
+    "stabilityBonus": 2,
+    "melee_damage_bonus": {
+      "1st_echelon": 0,
+      "2nd_echelon": 0,
+      "3rd_echelon": 0
+    },
+    "special": "You can breathe in water. Additionally, you can target two creatures or objects with your melee free strike. Whenever you obtain a tier 2 or tier 3 outcome on a melee free strike, you can automatically grab the target. You can have up to eight creatures grabbed."
+  },
+  {
+    "animalType": "Rhinoceros",
+    "level": 9,
+    "temporaryStamina": 10,
+    "speed": { "base": 8 },
+    "size": { "value": 2 },
+    "stabilityBonus": 5,
+    "melee_damage_bonus": {
+      "1st_echelon": 2,
+      "2nd_echelon": 2,
+      "3rd_echelon": 2
+    },
+    "special": "Whenever you make a melee free strike as part of the Charge action, that strike gains an edge."
+  },
+  {
+    "animalType": "King terror lizard",
+    "level": 10,
+    "temporaryStamina": 20,
+    "speed": { "base": 5 },
+    "size": { "value": 4 },
+    "stabilityBonus": 3,
+    "melee_damage_bonus": {
+      "1st_echelon": 2,
+      "2nd_echelon": 2,
+      "3rd_echelon": 2
+    },
+    "special": "Your melee free strike is 3 bust with the Area and Strike keywords."
+  }
+]

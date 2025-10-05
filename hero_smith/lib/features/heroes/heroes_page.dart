@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
 import '../../core/theme/hero_theme.dart';
-import 'hero_creator_page.dart';
+import '../creators/hero_creators/hero_creator_page.dart';
+// import '../creators/hero_creators/strife_creator_page.dart';
+// OutlinedButton.icon(
+//             onPressed: () {
+//               Navigator.of(context).push(
+//                 MaterialPageRoute(builder: (_) => const StrifeCreatorPage2()),
+//               );
+//             },
+//             icon: const Icon(Icons.science),
+//             label: const Text('Test New Creator (Demo)'),
+//           ),
 
 class HeroesPage extends ConsumerWidget {
   const HeroesPage({super.key});
@@ -69,7 +79,7 @@ class HeroesPage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.person,
             size: 48,
             color: HeroTheme.primarySection,
@@ -98,18 +108,23 @@ class HeroesPage extends ConsumerWidget {
   Widget _buildCreateHeroSection(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: FilledButton.icon(
-        onPressed: () async {
-          final repo = ref.read(heroRepositoryProvider);
-          final id = await repo.createHero(name: 'New Hero');
-          if (!context.mounted) return;
-          await Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
-          );
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Create New Hero'),
-        style: HeroTheme.primaryActionButtonStyle(context),
+      child: Column(
+        children: [
+          FilledButton.icon(
+            onPressed: () async {
+              final repo = ref.read(heroRepositoryProvider);
+              final id = await repo.createHero(name: 'New Hero');
+              if (!context.mounted) return;
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Create New Hero'),
+            style: HeroTheme.primaryActionButtonStyle(context),
+          ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
@@ -261,7 +276,7 @@ class HeroesPage extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
+          const CircularProgressIndicator(
             color: HeroTheme.primarySection,
           ),
           const SizedBox(height: 24),

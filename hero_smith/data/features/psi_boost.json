@@ -1,0 +1,56 @@
+{
+  "id": "psi_boost",
+  "name": "Psi Boost",
+  "type": "feature",
+  "trigger": "When you use an ability that is a main action or a maneuver with the Psionic keyword.",
+  "effect_scope": "You can spend additional Discipline to apply one or more psi boosts to enhance that ability.",
+  "duration": "until_end_of_turn_of_first_use",
+  "stacking_rules": {
+    "multiple_boosts_allowed": true,
+    "duplicate_same_boost_allowed": false
+  },
+  "boosts": [
+    {
+      "id": "dynamic_power",
+      "name": "Dynamic Power",
+      "discipline_cost": 1,
+      "effect": "If the ability force moves a target, the forced movement distance gains a bonus equal to your Intuition score."
+    },
+    {
+      "id": "expanded_power",
+      "name": "Expanded Power",
+      "discipline_cost": 3,
+      "effect": "If the ability targets an area, you increase the size of the area by 1. If the area is a line, you increase the size of one dimension, not both."
+    },
+    {
+      "id": "extended_power",
+      "name": "Extended Power",
+      "discipline_cost": 1,
+      "effect": "If the ability is ranged, the distance gains a bonus equal to your Intuition score. If the ability is melee, the distance gains a +2 bonus."
+    },
+    {
+      "id": "heightened_power",
+      "name": "Heightened Power",
+      "discipline_cost": 1,
+      "effect": "If the ability deals rolled damage, it deals extra damage equal to your Intuition score."
+    },
+    {
+      "id": "magnified_power",
+      "name": "Magnified Power",
+      "discipline_cost": 5,
+      "effect": "If the ability has a potency, you increase that potency by an amount equal to your Intuition score."
+    },
+    {
+      "id": "shared_power",
+      "name": "Shared Power",
+      "discipline_cost": 5,
+      "effect": "If the ability targets individual creatures or objects, you target one additional creature or object within distance."
+    },
+    {
+      "id": "sharpened_power",
+      "name": "Sharpened Power",
+      "discipline_cost": 1,
+      "effect": "If the ability has any roll, that roll gains an edge."
+    }
+  ]
+}

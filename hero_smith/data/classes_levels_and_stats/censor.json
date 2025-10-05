@@ -13,9 +13,12 @@
     "baseDisengage": 0,
 
     "potency_progression": {
-      "weak": "Presence - 2",
-      "average": "Presence - 1",
-      "strong": "Presence"
+      "characteristic": "Presence",
+      "modifiers": {
+        "weak": -2,
+        "average": -1,
+        "strong": 0
+      }
     },
 
     "starting_skills": {
@@ -29,162 +32,159 @@
     },
     "starting_characteristics_arrays": [
       {
-        "values": [2, -1, -1],
-        "description": "High focus with some weaknesses"
+        "values": [2, -1, -1]
       },
       {
-        "values": [1, 1, -1],
-        "description": "Two moderate strengths with one weakness"
+        "values": [1, 1, -1]
       },
       {
-        "values": [1, 0, 0],
-        "description": "One strength, others neutral"
-      }
-    ],
-    "levels": [
-      {
-        "level": 1,
-        "features": [
-          {
-            "name": "Censor Order",
-            "grant_type": "pick",
-            "type": "subclass"
-          },
-          { "name": "Deity and Domains", "deity": 1, "domain": 1 },
-          { "name": "Wrath", "grant_type": "granted" },
-          { "name": "Judgment", "grant_type": "ability" },
-          {
-            "name": "Judgment Order Benefit",
-            "grant_type": "granted",
-            "type": "subclass"
-          },
-          { "name": "Kit", "grant_type": "pick", "count": 1 },
-          { "name": "My Life for Yours", "grant_type": "ability" },
-          { "name": "Domain Feature", "grant_type": "granted" }
-        ],
-        "new_abilities": {
-          "signature": 1,
-          "3_cost": 1,
-          "5_cost": 1
-        }
-      },
-      {
-        "level": 2,
-        "features": [
-          {
-            "name": "Order Feature",
-            "grant_type": "granted",
-            "type": "subclass"
-          }
-        ],
-        "perks": {
-          "count": 1,
-          "perk_groups": ["interpersonal", "lore", "supernatural"]
-        },
-
-        "new_subclass_abilities": {
-          "5_cost": 1
-        }
-      },
-      {
-        "level": 3,
-        "features": [
-          { "name": "Look On My Work and Despair", "grant_type": "granted" }
-        ],
-        "new_abilities": {
-          "7_cost": 1
-        }
-      },
-      {
-        "level": 4,
-        "features": [
-          { "name": "Wrath Beyond Wrath", "grant_type": "granted" },
-          { "name": "Domain Feature", "grant_type": "granted" }
-        ],
-        "perks": [{ "count": 1 }],
-        "skills": [{ "count": 1 }],
-        "characteristics": [
-          { "Might": { "setTo": 3 } },
-          { "Presence": { "setTo": 3 } }
-        ]
-      },
-      {
-        "level": 5,
-        "features": [
-          {
-            "name": "Order Feature",
-            "grant_type": "granted",
-            "type": "subclass"
-          }
-        ],
-        "new_abilities": {
-          "9_cost": 1
-        }
-      },
-      {
-        "level": 6,
-        "features": [{ "name": "Implement of Wrath", "grant_type": "granted" }],
-        "perks": [
-          {
-            "count": 1,
-            "perk_groups": ["interpersonal", "lore", "supernatural"]
-          }
-        ],
-        "new_subclass_abilities": {
-          "9_cost": 1
-        }
-      },
-      {
-        "level": 7,
-        "features": [
-          { "name": "Domain Feature", "grant_type": "granted" },
-          { "name": "Focused Wrath", "grant_type": "granted" }
-        ],
-        "skills": [{ "count": 1 }],
-        "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
-      },
-      {
-        "level": 8,
-        "features": [
-          {
-            "name": "Order Feature",
-            "grant_type": "granted",
-            "type": "subclass"
-          }
-        ],
-        "perks": [{ "count": 1 }],
-        "new_abilities": {
-          "11_cost": 1
-        }
-      },
-      {
-        "level": 9,
-        "features": [
-          { "name": "Improved Implement of Wrath", "grant_type": "granted" }
-        ],
-        "new_subclass_abilities": {
-          "11_cost": 1
-        }
-      },
-      {
-        "level": 10,
-        "features": [
-          { "name": "Templar", "grant_type": "granted" },
-          { "name": "Virtue", "grant_type": "granted" },
-          { "name": "Wrath of the Gods", "grant_type": "granted" }
-        ],
-        "perks": [
-          {
-            "count": 1,
-            "perk_groups": ["crafting", "lore", "supernatural"]
-          }
-        ],
-        "skills": [{ "count": 1 }],
-        "characteristics": [
-          { "Might": { "setTo": 5 } },
-          { "Presence": { "setTo": 5 } }
-        ]
+        "values": [1, 0, 0]
       }
     ]
-  }
+  },
+  "levels": [
+    {
+      "level": 1,
+      "features": [
+        {
+          "name": "Censor Order",
+          "grant_type": "pick",
+          "type": "class_subclass"
+        },
+        { "name": "Deity and Domains", "deity": 1, "domain": 1 },
+        { "name": "Wrath", "grant_type": "granted" },
+        { "name": "Judgment", "grant_type": "ability" },
+        {
+          "name": "Judgment Order Benefit",
+          "grant_type": "granted",
+          "type": "subclass"
+        },
+        { "name": "Kit", "grant_type": "pick", "count": 1 },
+        { "name": "My Life for Yours", "grant_type": "ability" },
+        { "name": "Domain Feature", "grant_type": "granted" }
+      ],
+      "new_abilities": {
+        "signature": 1,
+        "3_cost": 1,
+        "5_cost": 1
+      }
+    },
+    {
+      "level": 2,
+      "features": [
+        {
+          "name": "Order Feature",
+          "grant_type": "granted",
+          "type": "subclass"
+        }
+      ],
+      "perks": {
+        "count": 1,
+        "perk_groups": ["interpersonal", "lore", "supernatural"]
+      },
+
+      "new_subclass_abilities": {
+        "5_cost": 1
+      }
+    },
+    {
+      "level": 3,
+      "features": [
+        { "name": "Look On My Work and Despair", "grant_type": "granted" }
+      ],
+      "new_abilities": {
+        "7_cost": 1
+      }
+    },
+    {
+      "level": 4,
+      "features": [
+        { "name": "Wrath Beyond Wrath", "grant_type": "granted" },
+        { "name": "Domain Feature", "grant_type": "granted" }
+      ],
+      "perks": [{ "count": 1 }],
+      "skills": [{ "count": 1 }],
+      "characteristics": [
+        { "Might": { "setTo": 3 } },
+        { "Presence": { "setTo": 3 } }
+      ]
+    },
+    {
+      "level": 5,
+      "features": [
+        {
+          "name": "Order Feature",
+          "grant_type": "granted",
+          "type": "subclass"
+        }
+      ],
+      "new_abilities": {
+        "9_cost": 1
+      }
+    },
+    {
+      "level": 6,
+      "features": [{ "name": "Implement of Wrath", "grant_type": "granted" }],
+      "perks": [
+        {
+          "count": 1,
+          "perk_groups": ["interpersonal", "lore", "supernatural"]
+        }
+      ],
+      "new_subclass_abilities": {
+        "9_cost": 1
+      }
+    },
+    {
+      "level": 7,
+      "features": [
+        { "name": "Domain Feature", "grant_type": "granted" },
+        { "name": "Focused Wrath", "grant_type": "granted" }
+      ],
+      "skills": [{ "count": 1 }],
+      "characteristics": [{ "All": { "increaseBy": 1, "max": 4 } }]
+    },
+    {
+      "level": 8,
+      "features": [
+        {
+          "name": "Order Feature",
+          "grant_type": "granted",
+          "type": "subclass"
+        }
+      ],
+      "perks": [{ "count": 1 }],
+      "new_abilities": {
+        "11_cost": 1
+      }
+    },
+    {
+      "level": 9,
+      "features": [
+        { "name": "Improved Implement of Wrath", "grant_type": "granted" }
+      ],
+      "new_subclass_abilities": {
+        "11_cost": 1
+      }
+    },
+    {
+      "level": 10,
+      "features": [
+        { "name": "Templar", "grant_type": "granted" },
+        { "name": "Virtue", "grant_type": "granted" },
+        { "name": "Wrath of the Gods", "grant_type": "granted" }
+      ],
+      "perks": [
+        {
+          "count": 1,
+          "perk_groups": ["crafting", "lore", "supernatural"]
+        }
+      ],
+      "skills": [{ "count": 1 }],
+      "characteristics": [
+        { "Might": { "setTo": 5 } },
+        { "Presence": { "setTo": 5 } }
+      ]
+    }
+  ]
 }
