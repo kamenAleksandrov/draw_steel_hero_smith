@@ -45,9 +45,11 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
   @override
   void didUpdateWidget(covariant ClassFeaturesSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final classChanged = oldWidget.classData.classId != widget.classData.classId;
+    final classChanged =
+        oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
-    final subclassChanged = oldWidget.selectedSubclass != widget.selectedSubclass;
+    final subclassChanged =
+        oldWidget.selectedSubclass != widget.selectedSubclass;
     final initialSelectionsChanged =
         !_mapsEqual(oldWidget.initialSelections, widget.initialSelections);
 
@@ -108,14 +110,29 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
         }
       });
 
-      final workingSelections = Map<String, Set<String>>.from(cleanedSelections);
+      final workingSelections =
+          Map<String, Set<String>>.from(cleanedSelections);
       final domainSlugs =
           ClassFeatureDataService.selectedDomainSlugs(widget.selectedSubclass);
+      final deitySlugs =
+          ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
       ClassFeatureDataService.applyDomainSelectionToFeatures(
         selections: workingSelections,
         featureDetailsById: result.featureDetailsById,
         domainLinkedFeatureIds: result.domainLinkedFeatureIds,
         domainSlugs: domainSlugs,
+      );
+      ClassFeatureDataService.applySubclassSelectionToFeatures(
+        selections: workingSelections,
+        features: result.features,
+        featureDetailsById: result.featureDetailsById,
+        subclassSlugs: activeSubclassSlugs,
+      );
+      ClassFeatureDataService.applyDeitySelectionToFeatures(
+        selections: workingSelections,
+        featureDetailsById: result.featureDetailsById,
+        deityLinkedFeatureIds: result.deityLinkedFeatureIds,
+        deitySlugs: deitySlugs,
       );
 
       if (!mounted || requestId != _loadRequestId) return;
@@ -176,11 +193,27 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     if (data != null) {
       final domainSlugs =
           ClassFeatureDataService.selectedDomainSlugs(widget.selectedSubclass);
+      final subclassSlugs =
+          ClassFeatureDataService.activeSubclassSlugs(widget.selectedSubclass);
+      final deitySlugs =
+          ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
       ClassFeatureDataService.applyDomainSelectionToFeatures(
         selections: updated,
         featureDetailsById: data.featureDetailsById,
         domainLinkedFeatureIds: data.domainLinkedFeatureIds,
         domainSlugs: domainSlugs,
+      );
+      ClassFeatureDataService.applySubclassSelectionToFeatures(
+        selections: updated,
+        features: data.features,
+        featureDetailsById: data.featureDetailsById,
+        subclassSlugs: subclassSlugs,
+      );
+      ClassFeatureDataService.applyDeitySelectionToFeatures(
+        selections: updated,
+        featureDetailsById: data.featureDetailsById,
+        deityLinkedFeatureIds: data.deityLinkedFeatureIds,
+        deitySlugs: deitySlugs,
       );
     }
 
@@ -273,21 +306,26 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
         ClassFeatureDataService.selectedDomainSlugs(widget.selectedSubclass);
     final subclassSlugs =
         ClassFeatureDataService.activeSubclassSlugs(widget.selectedSubclass);
-    final subclassLabel = ClassFeatureDataService.subclassLabel(widget.selectedSubclass);
+    final subclassLabel =
+        ClassFeatureDataService.subclassLabel(widget.selectedSubclass);
+    final deitySlugs =
+        ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
 
     return ClassFeaturesWidget(
       level: widget.selectedLevel,
-      classMetadata: data.classMetadata,
       features: data.features,
       featureDetailsById: data.featureDetailsById,
       selectedOptions: _selections,
       onSelectionChanged: _handleSelectionChanged,
       domainLinkedFeatureIds: data.domainLinkedFeatureIds,
       selectedDomainSlugs: domainSlugs,
+      deityLinkedFeatureIds: data.deityLinkedFeatureIds,
+      selectedDeitySlugs: deitySlugs,
       abilityDetailsById: data.abilityDetailsById,
       abilityIdByName: data.abilityIdByName,
       activeSubclassSlugs: subclassSlugs,
       subclassLabel: subclassLabel,
+      subclassSelection: widget.selectedSubclass,
     );
   }
 }

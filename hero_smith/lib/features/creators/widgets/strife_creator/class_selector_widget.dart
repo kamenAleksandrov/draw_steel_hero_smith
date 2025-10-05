@@ -80,7 +80,7 @@ class ClassSelectorWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.auto_awesome,
                           color: AppColors.secondary,
                           size: 20,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hero_smith/core/models/feature.dart';
+import 'package:hero_smith/core/models/subclass_models.dart';
 import 'package:hero_smith/core/repositories/feature_repository.dart';
 import 'package:hero_smith/core/services/class_feature_data_service.dart';
 
@@ -13,31 +14,63 @@ class ClassFeaturesWidget extends StatelessWidget {
   const ClassFeaturesWidget({
     super.key,
     required this.level,
-    this.classMetadata,
     required this.features,
     required this.featureDetailsById,
     this.selectedOptions = const {},
     this.onSelectionChanged,
     this.domainLinkedFeatureIds = const {},
+    this.deityLinkedFeatureIds = const {},
     this.selectedDomainSlugs = const {},
+    this.selectedDeitySlugs = const {},
     this.abilityDetailsById = const {},
     this.abilityIdByName = const {},
     this.activeSubclassSlugs = const {},
     this.subclassLabel,
+    this.subclassSelection,
   });
 
   final int level;
-  final Map<String, dynamic>? classMetadata;
   final List<Feature> features;
   final Map<String, Map<String, dynamic>> featureDetailsById;
   final Map<String, Set<String>> selectedOptions;
   final FeatureSelectionChanged? onSelectionChanged;
   final Set<String> domainLinkedFeatureIds;
+  final Set<String> deityLinkedFeatureIds;
   final Set<String> selectedDomainSlugs;
+  final Set<String> selectedDeitySlugs;
   final Map<String, Map<String, dynamic>> abilityDetailsById;
   final Map<String, String> abilityIdByName;
   final Set<String> activeSubclassSlugs;
   final String? subclassLabel;
+  final SubclassSelectionResult? subclassSelection;
+
+  static const List<String> _widgetSubclassOptionKeys = [
+    'subclass',
+    'subclass_name',
+    'tradition',
+    'order',
+    'doctrine',
+    'mask',
+    'path',
+    'circle',
+    'college',
+    'element',
+    'role',
+    'discipline',
+    'oath',
+    'school',
+    'guild',
+    'domain',
+    'name',
+  ];
+
+  static const List<String> _widgetDeityOptionKeys = [
+    'deity',
+    'deity_name',
+    'patron',
+    'pantheon',
+    'god',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +81,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     final grouped = FeatureRepository.groupFeaturesByLevel(features);
     final levels = FeatureRepository.getSortedLevels(grouped);
 
-    final header = _buildHeaderCard(context);
-    final children = <Widget>[if (header != null) header];
+    final children = <Widget>[];
 
     for (final levelNumber in levels) {
       final levelFeatures = grouped[levelNumber];
@@ -65,137 +97,6 @@ class ClassFeaturesWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children,
       ),
-    );
-  }
-
-  Widget? _buildHeaderCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final metadata = classMetadata;
-    final title = metadata == null
-        ? 'Class Features'
-        : (metadata['name']?.toString().trim().isNotEmpty == true
-            ? metadata['name'].toString().trim()
-            : 'Class Features');
-
-    final subtitleParts = <String>['Level $level'];
-    if (subclassLabel != null && subclassLabel!.trim().isNotEmpty) {
-      subtitleParts.add(subclassLabel!.trim());
-    }
-    final subtitle = subtitleParts.join(' · ');
-
-    final domainChips = selectedDomainSlugs
-        .map(
-          (slug) => _buildTagChip(
-            context,
-            _humanizeSlug(slug),
-            leading: const Icon(Icons.account_tree, size: 16),
-          ),
-        )
-        .toList();
-    final metadataSummary = metadata == null
-        ? null
-        : _buildMetadataSummary(context, metadata);
-
-    if (metadata == null && domainChips.isEmpty) {
-      return Card(
-        margin: const EdgeInsets.only(bottom: 12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-            ),
-            if (domainChips.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: domainChips,
-              ),
-            ],
-            if (metadataSummary != null) ...[
-              const SizedBox(height: 12),
-              metadataSummary,
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMetadataSummary(
-    BuildContext context,
-    Map<String, dynamic> metadata,
-  ) {
-    final theme = Theme.of(context);
-    final starting = metadata['starting_characteristics'];
-    Map<String, dynamic>? startingMap;
-    if (starting is Map<String, dynamic>) {
-      startingMap = starting;
-    } else if (starting is Map) {
-      startingMap = starting.cast<String, dynamic>();
-    }
-
-    final heroicResource =
-        startingMap?['heroicResourceName']?.toString().trim();
-    final motto = startingMap?['motto']?.toString().trim();
-
-    final chips = <Widget>[];
-    if (heroicResource != null && heroicResource.isNotEmpty) {
-      chips.add(
-        _buildTagChip(
-          context,
-          'Heroic Resource: $heroicResource',
-          leading: const Icon(Icons.auto_awesome, size: 16),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (chips.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: chips,
-          ),
-        if (motto != null && motto.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Text(
-            motto,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ],
     );
   }
 
@@ -236,9 +137,16 @@ class ClassFeaturesWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final details = featureDetailsById[feature.id];
     final description = _coalesceDescription(feature, details);
-    final options = _extractOptions(details);
-    final selections = selectedOptions[feature.id] ?? const <String>{};
+    final allOptions = _extractOptions(details);
+    final originalSelections = selectedOptions[feature.id] ?? const <String>{};
     final isDomainLinked = domainLinkedFeatureIds.contains(feature.id);
+    final isDeityLinked = deityLinkedFeatureIds.contains(feature.id);
+
+    final optionsContext = _prepareFeatureOptions(
+      feature: feature,
+      allOptions: allOptions,
+      currentSelections: originalSelections,
+    );
 
     final tags = <Widget>[];
     if (feature.isSubclassFeature) {
@@ -261,15 +169,18 @@ class ClassFeaturesWidget extends StatelessWidget {
         ),
       );
     }
-
-    final selectedLabels = <String>[];
-    for (final option in options) {
-      final key = ClassFeatureDataService.featureOptionKey(option);
-      final label = ClassFeatureDataService.featureOptionLabel(option);
-      if (selections.contains(key)) {
-        selectedLabels.add(label);
-      }
+    if (isDeityLinked) {
+      tags.add(
+        _buildTagChip(
+          context,
+          'Deity Linked',
+          leading: const Icon(Icons.church, size: 16),
+        ),
+      );
     }
+
+    final selectedLabels =
+        _deriveSelectionLabels(optionsContext.selectedKeys, allOptions);
 
     final children = <Widget>[
       Text(
@@ -319,16 +230,15 @@ class ClassFeaturesWidget extends StatelessWidget {
 
     children.addAll(_buildDetailSections(context, details));
 
-    if (options.isNotEmpty) {
+    if (allOptions.isNotEmpty || optionsContext.messages.isNotEmpty) {
       children.add(const SizedBox(height: 12));
       children.add(
-        _buildOptionsList(
-          context,
-          feature,
-          details,
-          options,
-          selections,
-          isDomainLinked,
+        _buildOptionsSection(
+          context: context,
+          feature: feature,
+          details: details,
+          optionsContext: optionsContext,
+          originalSelections: originalSelections,
         ),
       );
     }
@@ -342,32 +252,30 @@ class ClassFeaturesWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionsList(
-    BuildContext context,
-    Feature feature,
-    Map<String, dynamic>? details,
-    List<Map<String, dynamic>> options,
-    Set<String> selections,
-    bool isDomainLinked,
-  ) {
+  Widget _buildOptionsSection({
+    required BuildContext context,
+    required Feature feature,
+    required Map<String, dynamic>? details,
+    required _FeatureOptionsContext optionsContext,
+    required Set<String> originalSelections,
+  }) {
     final theme = Theme.of(context);
     final allowMultiple =
-        _inferAllowMultiple(feature.id, details, selections);
-    final canEdit = onSelectionChanged != null &&
-        (!isDomainLinked || selectedDomainSlugs.isEmpty);
-    final groupValue = allowMultiple || selections.isEmpty
+        _inferAllowMultiple(feature.id, details, originalSelections);
+    final effectiveSelections = optionsContext.selectedKeys;
+    final canEdit = onSelectionChanged != null && optionsContext.allowEditing;
+    final groupValue = allowMultiple || effectiveSelections.isEmpty
         ? null
-        : selections.first;
+        : effectiveSelections.first;
 
     final optionTiles = <Widget>[];
-    for (final option in options) {
+    for (final option in optionsContext.options) {
       final key = ClassFeatureDataService.featureOptionKey(option);
       final label = ClassFeatureDataService.featureOptionLabel(option);
-      final selected = selections.contains(key);
+      final selected = effectiveSelections.contains(key);
       final recommended = _optionMatchesActiveSubclass(option);
       final ability = _resolveAbility(option);
-      final subtitleWidgets =
-          _buildOptionDetails(context, option, ability);
+      final subtitleWidgets = _buildOptionDetails(context, option, ability);
 
       Widget tile;
       if (allowMultiple) {
@@ -375,7 +283,7 @@ class ClassFeaturesWidget extends StatelessWidget {
           value: selected,
           onChanged: canEdit
               ? (value) {
-                  final updated = Set<String>.from(selections);
+                  final updated = Set<String>.from(effectiveSelections);
                   if (value ?? false) {
                     updated.add(key);
                   } else {
@@ -441,22 +349,339 @@ class ClassFeaturesWidget extends StatelessWidget {
       );
     }
 
+    final content = <Widget>[];
+
+    for (var i = 0; i < optionsContext.messages.length; i++) {
+      content.add(_buildInfoMessage(context, optionsContext.messages[i]));
+      if (i < optionsContext.messages.length - 1) {
+        content.add(const SizedBox(height: 8));
+      }
+    }
+
+    if (optionTiles.isNotEmpty) {
+      if (content.isNotEmpty) {
+        content.add(const SizedBox(height: 12));
+      }
+      content.add(Text('Options', style: theme.textTheme.titleSmall));
+      content.add(const SizedBox(height: 8));
+      content.add(Column(children: optionTiles));
+    }
+
+    if (content.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Options', style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        Column(children: optionTiles),
-        if (isDomainLinked && selectedDomainSlugs.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Selections are managed automatically from your chosen domains.',
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+      children: content,
+    );
+  }
+
+  _FeatureOptionsContext _prepareFeatureOptions({
+    required Feature feature,
+    required List<Map<String, dynamic>> allOptions,
+    required Set<String> currentSelections,
+  }) {
+    var filteredOptions = List<Map<String, dynamic>>.from(allOptions);
+    var allowEditing = true;
+    final messages = <String>[];
+    var requiresExternalSelection = false;
+
+    void applyFilter(_OptionFilterResult result) {
+      filteredOptions = result.options;
+      allowEditing = allowEditing && result.allowEditing;
+      messages.addAll(result.messages);
+      requiresExternalSelection =
+          requiresExternalSelection || result.requiresExternalSelection;
+    }
+
+    if (domainLinkedFeatureIds.contains(feature.id)) {
+      final result = _applyDomainFilter(filteredOptions, feature.id);
+      applyFilter(result);
+      if (filteredOptions.isEmpty && result.requiresExternalSelection) {
+        return _FeatureOptionsContext(
+          options: filteredOptions,
+          selectedKeys: const <String>{},
+          allowEditing: false,
+          messages: messages,
+          requiresExternalSelection: true,
+        );
+      }
+    }
+
+    if (deityLinkedFeatureIds.contains(feature.id)) {
+      final result = _applyDeityFilter(filteredOptions);
+      applyFilter(result);
+      if (filteredOptions.isEmpty && result.requiresExternalSelection) {
+        return _FeatureOptionsContext(
+          options: filteredOptions,
+          selectedKeys: const <String>{},
+          allowEditing: false,
+          messages: messages,
+          requiresExternalSelection: true,
+        );
+      }
+    }
+
+    if (feature.isSubclassFeature) {
+      final result = _applySubclassFilter(filteredOptions);
+      applyFilter(result);
+    }
+
+    final filteredKeys = filteredOptions
+        .map((option) => ClassFeatureDataService.featureOptionKey(option))
+        .toSet();
+
+    final selectedKeys = currentSelections.where(filteredKeys.contains).toSet();
+
+    return _FeatureOptionsContext(
+      options: filteredOptions,
+      selectedKeys: selectedKeys,
+      allowEditing: allowEditing,
+      messages: messages,
+      requiresExternalSelection: requiresExternalSelection,
+    );
+  }
+
+  _OptionFilterResult _applyDomainFilter(
+    List<Map<String, dynamic>> currentOptions,
+    String featureId,
+  ) {
+    if (selectedDomainSlugs.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['Choose domains above to unlock this feature.'],
+        requiresExternalSelection: true,
+      );
+    }
+
+    final allowedKeys = ClassFeatureDataService.domainOptionKeysFor(
+      featureDetailsById,
+      featureId,
+      selectedDomainSlugs,
+    );
+
+    if (allowedKeys.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['No options match your selected domains.'],
+      );
+    }
+
+    final filtered = currentOptions
+        .where(
+          (option) => allowedKeys
+              .contains(ClassFeatureDataService.featureOptionKey(option)),
+        )
+        .toList();
+
+    if (filtered.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['No options match your selected domains.'],
+      );
+    }
+
+    final allowEditing = selectedDomainSlugs.length > 1 && filtered.length > 1;
+    final messages = allowEditing
+        ? const <String>[
+            'Pick the option that fits your chosen domains.',
+          ]
+        : const <String>[
+            'Automatically applied for your domain.',
+          ];
+
+    return _OptionFilterResult(
+      options: filtered,
+      allowEditing: allowEditing,
+      messages: messages,
+    );
+  }
+
+  _OptionFilterResult _applyDeityFilter(
+    List<Map<String, dynamic>> currentOptions,
+  ) {
+    if (selectedDeitySlugs.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['Choose a deity above to unlock this feature.'],
+        requiresExternalSelection: true,
+      );
+    }
+
+    final filtered = <Map<String, dynamic>>[];
+    var hasTaggedOption = false;
+    for (final option in currentOptions) {
+      final slugs = _optionDeitySlugs(option);
+      if (slugs.isEmpty) continue;
+      hasTaggedOption = true;
+      if (slugs.intersection(selectedDeitySlugs).isNotEmpty) {
+        filtered.add(option);
+      }
+    }
+
+    if (!hasTaggedOption) {
+      return _OptionFilterResult(
+        options: currentOptions,
+        allowEditing: true,
+      );
+    }
+
+    if (filtered.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['No options match your chosen deity.'],
+      );
+    }
+
+    final allowEditing = filtered.length > 1;
+    final deityName = subclassSelection?.deityName?.trim();
+    final message = allowEditing
+        ? 'Pick the option that matches your deity.'
+        : (deityName == null || deityName.isEmpty
+            ? 'Automatically applied for your deity.'
+            : 'Automatically applied for $deityName.');
+
+    return _OptionFilterResult(
+      options: filtered,
+      allowEditing: allowEditing,
+      messages: message == null ? const [] : <String>[message],
+    );
+  }
+
+  _OptionFilterResult _applySubclassFilter(
+    List<Map<String, dynamic>> currentOptions,
+  ) {
+    if (activeSubclassSlugs.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['Choose a subclass above to unlock this feature.'],
+        requiresExternalSelection: true,
+      );
+    }
+
+    final filtered = <Map<String, dynamic>>[];
+    var hasTaggedOption = false;
+    for (final option in currentOptions) {
+      final slugs = _optionSubclassSlugs(option);
+      if (slugs.isEmpty) continue;
+      hasTaggedOption = true;
+      if (slugs.intersection(activeSubclassSlugs).isNotEmpty) {
+        filtered.add(option);
+      }
+    }
+
+    if (!hasTaggedOption) {
+      return _OptionFilterResult(
+        options: currentOptions,
+        allowEditing: true,
+      );
+    }
+
+    if (filtered.isEmpty) {
+      return const _OptionFilterResult(
+        options: <Map<String, dynamic>>[],
+        allowEditing: false,
+        messages: ['No options match your selected subclass.'],
+      );
+    }
+
+    final allowEditing = filtered.length > 1;
+    final subclassName = subclassSelection?.subclassName?.trim();
+    final message = allowEditing
+        ? 'Pick the option that fits your subclass.'
+        : (subclassName == null || subclassName.isEmpty
+            ? 'Automatically applied for your subclass.'
+            : 'Automatically applied for $subclassName.');
+
+    return _OptionFilterResult(
+      options: filtered,
+      allowEditing: allowEditing,
+      messages: message == null ? const [] : <String>[message],
+    );
+  }
+
+  List<String> _deriveSelectionLabels(
+    Set<String> selectedKeys,
+    List<Map<String, dynamic>> allOptions,
+  ) {
+    if (selectedKeys.isEmpty) {
+      return const [];
+    }
+
+    final labels = <String>[];
+    for (final option in allOptions) {
+      final key = ClassFeatureDataService.featureOptionKey(option);
+      if (!selectedKeys.contains(key)) continue;
+      labels.add(ClassFeatureDataService.featureOptionLabel(option));
+    }
+    return labels;
+  }
+
+  Widget _buildInfoMessage(BuildContext context, String message) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceVariant.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 18,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: theme.textTheme.bodySmall,
+            ),
           ),
         ],
-      ],
+      ),
     );
+  }
+
+  Set<String> _optionSubclassSlugs(Map<String, dynamic> option) {
+    return _extractOptionSlugs(option, _widgetSubclassOptionKeys);
+  }
+
+  Set<String> _optionDeitySlugs(Map<String, dynamic> option) {
+    return _extractOptionSlugs(option, _widgetDeityOptionKeys);
+  }
+
+  Set<String> _extractOptionSlugs(
+    Map<String, dynamic> option,
+    List<String> keys,
+  ) {
+    final slugs = <String>{};
+    for (final key in keys) {
+      final value = option[key];
+      if (value == null) continue;
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isEmpty) continue;
+        slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+      } else if (value is List) {
+        for (final entry in value.whereType<String>()) {
+          final trimmed = entry.trim();
+          if (trimmed.isEmpty) continue;
+          slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+        }
+      }
+    }
+    return slugs;
   }
 
   List<Widget> _buildDetailSections(
@@ -659,7 +884,8 @@ class ClassFeaturesWidget extends StatelessWidget {
       }
       final abilityId = option['ability_id']?.toString().trim();
       if (abilityId != null && abilityId.isNotEmpty) {
-        details.add(Text('Ability ID: $abilityId', style: theme.textTheme.bodySmall));
+        details.add(
+            Text('Ability ID: $abilityId', style: theme.textTheme.bodySmall));
       }
     }
 
@@ -900,15 +1126,34 @@ class ClassFeaturesWidget extends StatelessWidget {
     }
     return value.toString();
   }
+}
 
-  String _humanizeSlug(String slug) {
-    final tokens = slug
-        .split(RegExp(r'[_\-]+'))
-        .where((token) => token.isNotEmpty)
-        .toList();
-    if (tokens.isEmpty) return slug;
-    return tokens
-        .map((token) => token[0].toUpperCase() + token.substring(1))
-        .join(' ');
-  }
+class _FeatureOptionsContext {
+  const _FeatureOptionsContext({
+    required this.options,
+    required this.selectedKeys,
+    required this.allowEditing,
+    required this.messages,
+    required this.requiresExternalSelection,
+  });
+
+  final List<Map<String, dynamic>> options;
+  final Set<String> selectedKeys;
+  final bool allowEditing;
+  final List<String> messages;
+  final bool requiresExternalSelection;
+}
+
+class _OptionFilterResult {
+  const _OptionFilterResult({
+    required this.options,
+    required this.allowEditing,
+    this.messages = const [],
+    this.requiresExternalSelection = false,
+  });
+
+  final List<Map<String, dynamic>> options;
+  final bool allowEditing;
+  final List<String> messages;
+  final bool requiresExternalSelection;
 }

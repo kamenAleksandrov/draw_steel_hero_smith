@@ -4,7 +4,7 @@
     "type": "feature",
     "name": "Censor Order",
     "class": "censor",
-    "is_subclass_feature": false,
+    "is_subclass": true,
     "level": 1,
     "description": "Censors are the will of their god made physically manifest, and you act as your god's agent in the world. As you shoulder that responsibility, you choose a censor order from the following options, each of which grants you a skill. (*Quick Build:* Paragon.)\n\nYour censor order is your subclass, and your choice of order determines many of the features you'll gain as you gain new levels.",
     "options": [
@@ -150,7 +150,7 @@
     "type": "feature",
     "name": "Judgment Order Benefit",
     "class": "censor",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
     "description": "The first time on a turn that you use your Judgment ability to judge a creature, you gain the following benefit based on your order:",
     "options": [

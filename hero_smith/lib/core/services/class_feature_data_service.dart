@@ -13,6 +13,7 @@ class ClassFeatureDataResult {
     required this.features,
     required this.featureDetailsById,
     required this.domainLinkedFeatureIds,
+    required this.deityLinkedFeatureIds,
     required this.abilityDetailsById,
     required this.abilityIdByName,
   });
@@ -21,6 +22,7 @@ class ClassFeatureDataResult {
   final List<feature_model.Feature> features;
   final Map<String, Map<String, dynamic>> featureDetailsById;
   final Set<String> domainLinkedFeatureIds;
+  final Set<String> deityLinkedFeatureIds;
   final Map<String, Map<String, dynamic>> abilityDetailsById;
   final Map<String, String> abilityIdByName;
 }
@@ -39,32 +41,31 @@ class ClassFeatureDataService {
   }) async {
     final slug = _classSlugFromId(classData.classId);
     if (slug == null) {
-      throw Exception('Unable to resolve slug for class "${classData.classId}".');
+      throw Exception(
+          'Unable to resolve slug for class "${classData.classId}".');
     }
 
     Map<String, dynamic>? metadata;
     try {
-      final rawMetadata =
-          await rootBundle.loadString('data/classes_levels_and_stats/$slug.json');
+      final rawMetadata = await rootBundle
+          .loadString('data/classes_levels_and_stats/$slug.json');
       metadata = jsonDecode(rawMetadata) as Map<String, dynamic>;
     } catch (_) {
       metadata = null;
     }
 
     final allFeatures = await FeatureRepository.loadClassFeatures(slug);
-    final filteredFeatures = allFeatures
-        .where((feature) => feature.level <= level)
-        .where((feature) {
-          if (!feature.isSubclassFeature) return true;
-          if (activeSubclassSlugs.isEmpty) return false;
-          return matchesSelectedSubclass(feature.subclassName, activeSubclassSlugs);
-        })
-        .toList()
-      ..sort((a, b) {
-        final levelCompare = a.level.compareTo(b.level);
-        if (levelCompare != 0) return levelCompare;
-        return a.name.compareTo(b.name);
-      });
+    final filteredFeatures =
+        allFeatures.where((feature) => feature.level <= level).where((feature) {
+      if (!feature.isSubclassFeature) return true;
+      if (activeSubclassSlugs.isEmpty) return true;
+      return matchesSelectedSubclass(feature.subclassName, activeSubclassSlugs);
+    }).toList()
+          ..sort((a, b) {
+            final levelCompare = a.level.compareTo(b.level);
+            if (levelCompare != 0) return levelCompare;
+            return a.name.compareTo(b.name);
+          });
 
     final featureMaps = await FeatureRepository.loadClassFeatureMaps(slug);
     final featureDetails = <String, Map<String, dynamic>>{};
@@ -75,6 +76,7 @@ class ClassFeatureDataService {
     }
 
     final domainLinked = identifyDomainLinkedFeatures(featureDetails);
+    final deityLinked = identifyDeityLinkedFeatures(featureDetails);
 
     final abilityMaps = await _loadClassAbilityMaps(slug);
     final abilityDetails = <String, Map<String, dynamic>>{};
@@ -101,6 +103,7 @@ class ClassFeatureDataService {
       features: filteredFeatures,
       featureDetailsById: featureDetails,
       domainLinkedFeatureIds: domainLinked,
+      deityLinkedFeatureIds: deityLinked,
       abilityDetailsById: abilityDetails,
       abilityIdByName: abilityNameIndex,
     );
@@ -114,6 +117,20 @@ class ClassFeatureDataService {
         .map(slugify)
         .where((slug) => slug.isNotEmpty)
         .toSet();
+  }
+
+  static Set<String> selectedDeitySlugs(SubclassSelectionResult? selection) {
+    if (selection == null) return const <String>{};
+    final slugs = <String>{};
+
+    void addValue(String? value) {
+      if (value == null || value.trim().isEmpty) return;
+      slugs.addAll(slugVariants(value));
+    }
+
+    addValue(selection.deityName);
+    addValue(selection.deityId);
+    return slugs;
   }
 
   static Set<String> activeSubclassSlugs(SubclassSelectionResult? selection) {
@@ -140,15 +157,16 @@ class ClassFeatureDataService {
   static Set<String> slugVariants(String value) {
     final base = slugify(value);
     if (base.isEmpty) return const <String>{};
-    final tokens =
-        base.split('_').where((token) => token.isNotEmpty).toList(growable: false);
+    final tokens = base
+        .split('_')
+        .where((token) => token.isNotEmpty)
+        .toList(growable: false);
     if (tokens.isEmpty) return {base};
 
     final variants = <String>{base};
 
-    final trimmedAll = tokens
-        .where((token) => !_subclassStopWords.contains(token))
-        .join('_');
+    final trimmedAll =
+        tokens.where((token) => !_subclassStopWords.contains(token)).join('_');
     if (trimmedAll.isNotEmpty) variants.add(trimmedAll);
 
     for (var i = 1; i < tokens.length; i++) {
@@ -241,6 +259,27 @@ class ClassFeatureDataService {
     return ids;
   }
 
+  static Set<String> identifyDeityLinkedFeatures(
+    Map<String, Map<String, dynamic>> featureDetailsById,
+  ) {
+    final ids = <String>{};
+    featureDetailsById.forEach((featureId, details) {
+      final options = details['options'];
+      if (options is! List) return;
+      final hasDeity = options.any((option) {
+        if (option is! Map) return false;
+        final map = option is Map<String, dynamic>
+            ? option
+            : option.cast<String, dynamic>();
+        return _extractDeitySlugs(map).isNotEmpty;
+      });
+      if (hasDeity) {
+        ids.add(featureId);
+      }
+    });
+    return ids;
+  }
+
   static Set<String> domainOptionKeysFor(
     Map<String, Map<String, dynamic>> featureDetailsById,
     String featureId,
@@ -260,6 +299,70 @@ class ClassFeatureDataService {
       if (domainSlugs.contains(slug)) {
         keys.add(featureOptionKey(option));
       }
+    }
+    return keys;
+  }
+
+  static Set<String> subclassOptionKeysFor(
+    Map<String, Map<String, dynamic>> featureDetailsById,
+    String featureId,
+    Set<String> subclassSlugs,
+  ) {
+    final details = featureDetailsById[featureId];
+    if (details == null) return const <String>{};
+    final options = details['options'];
+    if (options is! List) return const <String>{};
+
+    final keys = <String>{};
+    var hasTaggedOption = false;
+    for (final option in options) {
+      if (option is! Map) continue;
+      final map = option is Map<String, dynamic>
+          ? option
+          : option.cast<String, dynamic>();
+      final slugs = _extractSubclassSlugs(map);
+      if (slugs.isEmpty) continue;
+      hasTaggedOption = true;
+      if (subclassSlugs.isEmpty) continue;
+      if (slugs.intersection(subclassSlugs).isNotEmpty) {
+        keys.add(featureOptionKey(map));
+      }
+    }
+
+    if (!hasTaggedOption) {
+      return const <String>{};
+    }
+    return keys;
+  }
+
+  static Set<String> deityOptionKeysFor(
+    Map<String, Map<String, dynamic>> featureDetailsById,
+    String featureId,
+    Set<String> deitySlugs,
+  ) {
+    final details = featureDetailsById[featureId];
+    if (details == null) return const <String>{};
+    final options = details['options'];
+    if (options is! List) return const <String>{};
+
+    final keys = <String>{};
+    var hasTaggedOption = false;
+    for (final option in options) {
+      if (option is! Map) continue;
+      final map = option is Map<String, dynamic>
+          ? option
+          : option.cast<String, dynamic>();
+      final slugs = _extractDeitySlugs(map);
+      if (slugs.isEmpty) continue;
+      hasTaggedOption = true;
+      if (deitySlugs.isEmpty) continue;
+      if (slugs.intersection(deitySlugs).isNotEmpty) {
+        keys.add(featureOptionKey(map));
+      }
+    }
+
+    if (!hasTaggedOption) {
+      return const <String>{};
     }
     return keys;
   }
@@ -295,6 +398,149 @@ class ClassFeatureDataService {
     }
   }
 
+  static void applySubclassSelectionToFeatures({
+    required Map<String, Set<String>> selections,
+    required List<feature_model.Feature> features,
+    required Map<String, Map<String, dynamic>> featureDetailsById,
+    required Set<String> subclassSlugs,
+  }) {
+    for (final feature in features) {
+      if (!feature.isSubclassFeature) continue;
+      final details = featureDetailsById[feature.id];
+      if (details == null) {
+        if (subclassSlugs.isEmpty) {
+          selections.remove(feature.id);
+        }
+        continue;
+      }
+
+      final options = details['options'];
+      if (options is! List) {
+        if (subclassSlugs.isEmpty) {
+          selections.remove(feature.id);
+        }
+        continue;
+      }
+
+      final matchingKeys = <String>{};
+      var hasTaggedOption = false;
+
+      for (final option in options) {
+        if (option is! Map) continue;
+        final map = option is Map<String, dynamic>
+            ? option
+            : option.cast<String, dynamic>();
+        final slugs = _extractSubclassSlugs(map);
+        if (slugs.isEmpty) continue;
+        hasTaggedOption = true;
+        if (subclassSlugs.isEmpty) continue;
+        if (slugs.intersection(subclassSlugs).isNotEmpty) {
+          matchingKeys.add(featureOptionKey(map));
+        }
+      }
+
+      if (!hasTaggedOption) {
+        if (subclassSlugs.isEmpty) {
+          selections.remove(feature.id);
+        }
+        continue;
+      }
+
+      if (subclassSlugs.isEmpty) {
+        selections.remove(feature.id);
+        continue;
+      }
+
+      if (matchingKeys.isEmpty) {
+        selections.remove(feature.id);
+        continue;
+      }
+
+      if (matchingKeys.length == 1) {
+        selections[feature.id] = matchingKeys;
+      } else {
+        final existing = selections[feature.id] ?? const <String>{};
+        final validExisting = existing.intersection(matchingKeys);
+        if (validExisting.isNotEmpty) {
+          selections[feature.id] = validExisting;
+        } else {
+          selections.remove(feature.id);
+        }
+      }
+    }
+  }
+
+  static void applyDeitySelectionToFeatures({
+    required Map<String, Set<String>> selections,
+    required Map<String, Map<String, dynamic>> featureDetailsById,
+    required Set<String> deityLinkedFeatureIds,
+    required Set<String> deitySlugs,
+  }) {
+    for (final featureId in deityLinkedFeatureIds) {
+      final details = featureDetailsById[featureId];
+      if (details == null) {
+        if (deitySlugs.isEmpty) {
+          selections.remove(featureId);
+        }
+        continue;
+      }
+
+      final options = details['options'];
+      if (options is! List) {
+        if (deitySlugs.isEmpty) {
+          selections.remove(featureId);
+        }
+        continue;
+      }
+
+      final matchingKeys = <String>{};
+      var hasTaggedOption = false;
+
+      for (final option in options) {
+        if (option is! Map) continue;
+        final map = option is Map<String, dynamic>
+            ? option
+            : option.cast<String, dynamic>();
+        final slugs = _extractDeitySlugs(map);
+        if (slugs.isEmpty) continue;
+        hasTaggedOption = true;
+        if (deitySlugs.isEmpty) continue;
+        if (slugs.intersection(deitySlugs).isNotEmpty) {
+          matchingKeys.add(featureOptionKey(map));
+        }
+      }
+
+      if (!hasTaggedOption) {
+        if (deitySlugs.isEmpty) {
+          selections.remove(featureId);
+        }
+        continue;
+      }
+
+      if (deitySlugs.isEmpty) {
+        selections.remove(featureId);
+        continue;
+      }
+
+      if (matchingKeys.isEmpty) {
+        selections.remove(featureId);
+        continue;
+      }
+
+      if (matchingKeys.length == 1) {
+        selections[featureId] = matchingKeys;
+      } else {
+        final existing = selections[featureId] ?? const <String>{};
+        final validExisting = existing.intersection(matchingKeys);
+        if (validExisting.isNotEmpty) {
+          selections[featureId] = validExisting;
+        } else {
+          selections.remove(featureId);
+        }
+      }
+    }
+  }
+
   static String? _classSlugFromId(String? classId) {
     if (classId == null || classId.trim().isEmpty) return null;
     var slug = classId.trim().toLowerCase();
@@ -304,7 +550,8 @@ class ClassFeatureDataService {
     return slug.isEmpty ? null : slug;
   }
 
-  Future<List<Map<String, dynamic>>> _loadClassAbilityMaps(String classSlug) async {
+  Future<List<Map<String, dynamic>>> _loadClassAbilityMaps(
+      String classSlug) async {
     final path = 'data/abilities/class_abilities/${classSlug}_abilites.json';
     try {
       final raw = await rootBundle.loadString(path);
@@ -323,3 +570,71 @@ class ClassFeatureDataService {
 }
 
 const Set<String> _subclassStopWords = {'the', 'of'};
+
+const List<String> _subclassOptionKeys = [
+  'subclass',
+  'subclass_name',
+  'tradition',
+  'order',
+  'doctrine',
+  'mask',
+  'path',
+  'circle',
+  'college',
+  'element',
+  'role',
+  'discipline',
+  'oath',
+  'school',
+  'guild',
+  'domain',
+  'name',
+];
+
+const List<String> _deityOptionKeys = [
+  'deity',
+  'deity_name',
+  'patron',
+  'pantheon',
+  'god',
+];
+
+Set<String> _extractSubclassSlugs(Map<String, dynamic> option) {
+  final slugs = <String>{};
+  for (final key in _subclassOptionKeys) {
+    final value = option[key];
+    if (value == null) continue;
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) continue;
+      slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+    } else if (value is List) {
+      for (final entry in value.whereType<String>()) {
+        final trimmed = entry.trim();
+        if (trimmed.isEmpty) continue;
+        slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+      }
+    }
+  }
+  return slugs;
+}
+
+Set<String> _extractDeitySlugs(Map<String, dynamic> option) {
+  final slugs = <String>{};
+  for (final key in _deityOptionKeys) {
+    final value = option[key];
+    if (value == null) continue;
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) continue;
+      slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+    } else if (value is List) {
+      for (final entry in value.whereType<String>()) {
+        final trimmed = entry.trim();
+        if (trimmed.isEmpty) continue;
+        slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+      }
+    }
+  }
+  return slugs;
+}
