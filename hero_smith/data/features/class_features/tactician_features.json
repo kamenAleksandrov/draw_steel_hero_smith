@@ -4,39 +4,24 @@
     "type": "feature",
     "name": "Tactical Doctrine",
     "class": "tactician",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
-    "description": "Warfare is as old as civilization\u00e2\u20ac\u201dand perhaps even older. As battle became ever more complex, military leaders invented tactical doctrine, outlining how combatants should be structured, used, and deployed. Doctrine can be learned at war colleges passing on ancient martial traditions, or directly through blood and sweat on the battlefield. Whatever path brought you to your mastery of historically proven tactics, you choose a tactical doctrine from the following options, each of which grants you a skill. (*Quick Build:* Vanguard and the Intimidate skill.)\n\nYour tactical doctrine is your subclass, and your choice of doctrine determines many of the features you'll gain as you gain new levels.",
+    "description": "Warfare is as old as civilization—and perhaps even older. As battle became ever more complex, military leaders invented tactical doctrine, outlining how combatants should be structured, used, and deployed. Doctrine can be learned at war colleges passing on ancient martial traditions, or directly through blood and sweat on the battlefield. Whatever path brought you to your mastery of historically proven tactics, you choose a tactical doctrine from the following options, each of which grants you a skill. (Quick Build: Vanguard and the Intimidate skill.)\n  Your tactical doctrine is your subclass, and your choice of doctrine determines many of the features you’ll gain as you gain new levels.",
     "options": [
       {
-        "doctrine": "Insurgent",
-        "skill": "Intrigue",
-        "features": [
-          {
-            "name": "Covert Operations",
-            "description": "While in your presence or working according to your plans, each of your allies gains an edge on tests using any skill from the intrigue skill group. Additionally, you can use the Lead skill to assist another creature with any test made using a skill from the intrigue group.\n\nAt the Director's discretion, you and your allies can use skills from the intrigue skill group to attempt research or reconnaissance during a negotiation instead of outside of a negotiation."
-          }
-        ]
+        "subclass_name": "Insurgent",
+        "skill_group": "Intrigue",
+        "description": "Doing your duty, playing fair, and dying honorably in battle is your opponent’s job. You’ll do whatever it takes to keep your allies alive. You gain a skill from the intrigue skill group."
       },
       {
-        "doctrine": "Mastermind",
-        "skill": "Lore",
-        "features": [
-          {
-            "name": "Studied Commander",
-            "description": "Your encyclopedic knowledge of the history of battle lets you apply that knowledge to current challenges. While you are present, each hero with you treats the Discover Lore project related to a war or battle as one category cheaper. This makes projects seeking common lore free, but such projects still require a respite activity to complete. (See Chapter 12: Downtime Projects for more information.)\n\nAdditionally, if you have 24 hours or more before a combat encounter or negotiation, and you have one or more clues or rumors regarding the encounter or negotiation, you can make a Reason test as a respite activity. The following test outcomes apply to a combat encounter:\n\nThe following test outcomes apply to a negotiation:\n\nYou can make this test only once for any encounter or negotiation."
-          }
-        ]
+        "subclass_name": "Mastermind",
+        "skill_group": "Lore",
+        "description": "You have an encyclopedic knowledge of warfare, viewing the battlefield as a game board and seeking victory by thinking steps ahead of your opponents. You gain a skill from the lore skill group."
       },
       {
-        "doctrine": "Vanguard",
-        "skill": "Interpersonal",
-        "features": [
-          {
-            "name": "Commanding Presence",
-            "description": "You command any room you walk into. While you are present during a negotiation, each hero with you treats their Renown as 2 higher than usual. Additionally, each hero with you during a combat encounter has a double edge on tests made to stop combat and start a negotiation."
-          }
-        ]
+        "subclass_name": "Vanguard",
+        "skill_group": "Interpersonal",
+        "description": "You have learned the stratagems of ancient heroes, letting you lead from the front lines and seek victory through sheer force of will and personality. You gain a skill from the interpersonal skill group."
       }
     ]
   },
@@ -45,7 +30,6 @@
     "type": "feature",
     "name": "Focus",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You direct the flow of battle using a Heroic Resource called focus.",
     "in_combat": {
@@ -62,99 +46,73 @@
     "type": "feature",
     "name": "Mark",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 1,
-    "description": "You know how to focus the attention of your allies as you push them toward victory. You have the following ability."
+    "description": "You know how to focus the attention of your allies as you push them toward victory. You have the following ability.",
+    "ability": "Mark"
   },
   {
     "id": "feature_tactician_strike_now",
     "type": "feature",
-    "name": "Tactician Abilities",
+    "name": "Strike Now",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 1,
-    "description": "Choose one signature command to unleash at will.",
-    "options": [
-      {
-        "name": "\"Strike Now!\"",
-        "ability_id": "ability_tactician_strike_now",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "One ally",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "The target can use a signature ability as a free triggered action.\n\nYou target two allies instead of one.",
-        "story": "Your foe left an opening. You point this out to an ally!"
-      }
-    ]
+    "description": "You have the following ability.",
+    "ability": "Strike Now"
   },
   {
     "id": "feature_tactician_field_arsenal",
     "type": "feature",
     "name": "Field Arsenal",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You have drilled with a broad array of arms and armor, and have developed techniques to optimize their use. You can use and gain the benefits of two kits, including both their signature abilities. Whenever you would choose or change one kit, you can choose or change your second kit as well. See Chapter 6: Kits for more information. (*Quick Build:* Shining Armor, Sniper.)\n\nIf both kits grant you the same benefit, you take one or the other and can't change your choice until you finish a respite. (This usually means taking the higher of two bonuses.)\nFor example, if you take the Shining Armor and Sniper kits, you gain the following benefits overall:\n- Stamina Bonus: +12 per echelon\n- Stability Bonus: +1\n- Melee Damage Bonus: +2/+2/+2\n- Ranged Damage Bonus: +0/+0/+4\n- Speed Bonus: +1\n- Ranged Distance Bonus: +10\n- Disengage Bonus: +1\n- You can use the Patient Shot and Protective Attack signature abilities.\nKit signature abilities have their kit's bonuses already applied, which might require you to adjust the bonuses of the signature abilities you gain from a kit. For example, you might take the Martial Artist kit, which gives a melee weapon damage bonus of +2/+2/+2, and the Mountain kit, which gives a melee weapon damage bonus of +0/+0/+4. If you choose to use the Mountain kit's damage bonus, then the Battle Grace signature ability from the Martial Artist kit loses the +2/+2/+2 bonus from that kit, reducing its usual 5/8/11 damage for its tier 1, tier 2, and tier 3 outcomes to 3/6/9. It then gains the +0/+0/+4 of the Mountain kit to deal 3/6/13 damage."
-  },
-  {
-    "id": "feature_tactician_kit_signature_ability",
-    "type": "feature",
-    "name": "Kit Signature Ability",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Each kit from your Field Arsenal feature grants you a signature ability. Signature abilities can be used at will."
   },
   {
     "id": "feature_tactician_doctrine_triggered_action",
     "type": "feature",
     "name": "Doctrine Triggered Action",
     "class": "tactician",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
     "description": "Adopt the triggered action granted by your tactical doctrine.",
     "options": [
       {
-        "doctrine": "Insurgent",
-        "name": "Overwatch",
-        "ability_id": "ability_tactician_overwatch",
-        "action_type": "Triggered",
-        "range": "Ranged 10",
-        "targets": "One creature",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "At any time during the target's movement, one ally can make a free strike against them.\n\nIf the target has R < AVERAGE, they are slowed (EoT).",
-        "story": "Under your direction, an ally waits for just the right moment to strike."
+        "subclass_name": "Insurgent",
+        "ability": "Overwatch"
       },
       {
-        "doctrine": "Mastermind",
-        "name": "Advanced Tactics",
-        "ability_id": "ability_tactician_advanced_tactics",
-        "action_type": "Triggered",
-        "range": "Ranged 10",
-        "targets": "One ally",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "The target gains 2 surges, which they can use on the triggering damage.\n\nIf the damage has any potency effect associated with it, the potency is increased by 1.",
-        "story": "Your leadership aids an ally."
+        "subclass_name": "Mastermind",
+        "ability": "Advanced Tactics"
       },
       {
-        "doctrine": "Vanguard",
-        "name": "Parry",
-        "ability_id": "ability_tactician_parry",
-        "action_type": "Triggered",
-        "range": "Melee 2",
-        "targets": "Self or one ally",
-        "keywords": [
-          "Melee",
-          "Weapon"
-        ],
-        "effect": "You can shift 1 square. If the target is you, or if you end this shift adjacent to the target, the target takes half the damage. If the damage has any potency effect associated with it, the potency is decreased by 1.\n\nThis ability's distance becomes Melee 1 + your Reason score, and you can shift up to a number of squares equal to your Reason score instead of 1 square.",
-        "story": "Your quick reflexes cost an enemy the precision they seek."
+        "subclass_name": "Vanguard",
+        "ability": "Parry"
+      }
+    ]
+  },
+  {
+    "id": "feature_tactician_doctrine_feature_1",
+    "type": "feature",
+    "name": "Doctrine Feature",
+    "description": "You gain the 1st-level feature from your tactical doctrine.",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "level": 1,
+    "options": [
+      {
+        "subclass_name": "Insurgent",
+        "name": "Covert Operations",
+        "description": " While in your presence or working according to your plans, each of your allies gains an edge on tests using any skill from the intrigue skill group. Additionally, you can use the Lead skill to assist another creature with any test made using a skill from the intrigue group. At the Director’s discretion, you and your allies can use skills from the intrigue skill group to attempt research or reconnaissance during a negotiation instead of outside of a negotiation."
+      },
+      {
+        "subclass_name": "Mastermind",
+        "name": "Studied Commander",
+        "description": "Your encyclopedic knowledge of the history of battle lets you apply that knowledge to current challenges. While you are present, each hero with you treats the Discover Lore project related to a war or battle as one category cheaper. This makes projects seeking common lore free, but such projects still require a respite activity to complete. (See Chapter 12: Downtime Projects for more information.) Additionally, if you have 24 hours or more before a combat encounter or negotiation, and you have one or more clues or rumors regarding the encounter or negotiation, you can make a Reason test as a respite activity. The following test outcomes apply to a combat encounter:\n<=11 The Director tells you the number of creatures in the encounter.\n12-16 The Director tells you the number and level of the creatures in the encounter.\n17+ The Director tells you the tier 2 outcome information, and when the encounter begins, all enemies are surprised.\nThe following test outcomes apply to a negotiation:\n<=11 The Director gives you three motivations, one of which belongs to an NPC in the negotiation.\n12-16 The Director gives you one motivation for an NPC in the negotiation.\n17+ The Director tells you the tier 2 outcome information, and you and each of your allies gains an edge on tests made to influence NPCs during the negotiation. You can make this test only once for any encounter or negotiation."
+      },
+      {
+        "subclass_name": "Vanguard",
+        "name": "Commanding Presence",
+        "description": " You command any room you walk into. While you are present during a negotiation, each hero with you treats their Renown as 2 higher than usual. Additionally, each hero with you during a combat encounter has a double edge on tests made to stop combat and start a negotiation."
       }
     ]
   },
@@ -163,279 +121,24 @@
     "type": "feature",
     "name": "Doctrine Feature",
     "class": "tactician",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2nd-level feature from your tactical doctrine.",
     "options": [
       {
         "doctrine": "Insurgent",
-        "features": [
-          {
-            "name": "Infiltration Tactics",
-            "description": "You have trained your squad to work together, stay silent, and wait for the opportune time to strike. Whenever you or any ally within 10 squares of you becomes hidden, that creature gains 1 surge."
-          }
-        ]
+        "name": "Infiltration Tactics",
+        "description": "You have trained your squad to work together, stay silent, and wait for the opportune time to strike. Whenever you or any ally within 10 squares of you becomes hidden, that creature gains 1 surge."
       },
       {
         "doctrine": "Mastermind",
-        "features": [
-          {
-            "name": "Goaded",
-            "description": "You have learned to leverage your marked foes' psychology and goad them into acting before they're tactically ready. Whenever a creature marked by you uses a strike that targets you or any ally within your line of effect, you can use a free triggered action to change one target of the strike to you or another ally within your line of effect. The new target must be within distance of the ability and within line of effect of the creature using it."
-          }
-        ]
+        "name": "Goaded",
+        "description": "You have learned to leverage your marked foes' psychology and goad them into acting before they're tactically ready. Whenever a creature marked by you uses a strike that targets you or any ally within your line of effect, you can use a free triggered action to change one target of the strike to you or another ally within your line of effect. The new target must be within distance of the ability and within line of effect of the creature using it."
       },
       {
         "doctrine": "Vanguard",
-        "features": [
-          {
-            "name": "Melee Superiority",
-            "description": "After constant drills, you can more accurately anticipate an enemy's plan and thwart their attempts to move across the battlefield. Whenever you make an opportunity attack, the target's speed is reduced to 0 until the end of the current turn.\n\nWhen a creature marked by you attempts to move or shift within distance of your melee free strike, you can use a free triggered action and spend 2 focus to make a melee free strike against that creature."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_perk_2",
-    "type": "feature",
-    "name": "Perk",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice. See Chapter 7: Perks."
-  },
-  {
-    "id": "feature_tactician_3_focus_abilities",
-    "type": "feature",
-    "name": "3-Focus Abilities",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one ability that costs 3 focus to use.",
-    "options": [
-      {
-        "name": "Battle Cry",
-        "ability_id": "ability_tactician_battle_cry",
-        "action_type": "Maneuver",
-        "range": "Ranged 10",
-        "targets": "Three allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": null,
-        "story": "You shout a phrase that galvanizes your team."
-      },
-      {
-        "name": "Concussive Strike",
-        "ability_id": "ability_tactician_concussive_strike",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Your precise strike leaves your foe struggling to respond."
-      },
-      {
-        "name": "Inspiring Strike",
-        "ability_id": "ability_tactician_inspiring_strike",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Your attack gives an ally hope."
-      },
-      {
-        "name": "Squad! Forward!",
-        "ability_id": "ability_tactician_squad_forward",
-        "action_type": "Maneuver",
-        "range": "Ranged 10",
-        "targets": "Self and two allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "Each target can move up to their speed.",
-        "story": "On your command, you and your allies force back the enemy line."
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_5_focus_abilities",
-    "type": "feature",
-    "name": "5-Focus Abilities",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one ability that costs 5 focus to use.",
-    "options": [
-      {
-        "name": "Hammer and Anvil",
-        "ability_id": "ability_tactician_hammer_and_anvil",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "If the target is reduced to 0 Stamina before one or both chosen allies has made their strike, the ally or allies can pick a different target.",
-        "story": "\"Let's not argue about who's the hammer and who's the anvil!\""
-      },
-      {
-        "name": "Mind Game",
-        "ability_id": "ability_tactician_mind_game",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You mark the target.\n\nBefore the start of your next turn, the first time any ally deals damage to any target marked by you, that ally can spend a Recovery.",
-        "story": "Your attack demoralizes your foe. Your allies begin to think you can win."
-      },
-      {
-        "name": "Now!",
-        "ability_id": "ability_tactician_now",
-        "action_type": "Maneuver",
-        "range": "Ranged 10",
-        "targets": "Three allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "Each target can make a free strike.",
-        "story": "Your allies wait for your command\u00e2\u20ac\u201dthen unleash death!"
-      },
-      {
-        "name": "This Is What We Planned For",
-        "ability_id": "ability_tactician_this_is_what_we_planned_for",
-        "action_type": "Maneuver",
-        "range": "Ranged 10",
-        "targets": "Two allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "Each target who hasn't acted yet this combat round can take their turn in any order immediately after yours.",
-        "story": "All those coordination drills you made them do finally pay off."
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_doctrine_5_focus_abilities",
-    "type": "feature",
-    "name": "Doctrine Ability (5-Focus)",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose a 5-focus ability granted by your doctrine.",
-    "options": [
-      {
-        "doctrine": "Insurgent",
-        "abilities": [
-          {
-            "name": "Fog of War",
-            "ability_id": "ability_tactician_fog_of_war",
-            "action_type": "Maneuver",
-            "range": "Ranged 10",
-            "targets": "Two creatures",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "Each target is marked by you, and must immediately make a free strike against a creature of your choice within 5 squares of them.",
-            "story": "Your unorthodox strategy causes enemies to lash out in fear, heedless of who they might be attacking."
-          },
-          {
-            "name": "Try Me Instead",
-            "ability_id": "ability_tactician_try_me_instead",
-            "action_type": "Main action",
-            "range": "Self; see below",
-            "targets": "Self",
-            "keywords": [
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "You shift up to your speed directly toward an ally, ending adjacent to them, then swapping locations with that ally as long as you can fit into each other's spaces. The ally can spend a Recovery, and you can make the following weapon strike with a distance of melee 1 against a creature.",
-            "story": "\"Try picking on someone my size.\""
-          }
-        ]
-      },
-      {
-        "doctrine": "Mastermind",
-        "abilities": [
-          {
-            "name": "I've Got Your Back",
-            "ability_id": "ability_tactician_i_ve_got_your_back",
-            "action_type": "Main action",
-            "range": "Ranged 5",
-            "targets": "One creature",
-            "keywords": [
-              "Ranged",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "One ally adjacent to the target can spend a Recovery.",
-            "story": "Your enemy will think twice about attacking your friend."
-          },
-          {
-            "name": "Targets of Opportunity",
-            "ability_id": "ability_tactician_targets_of_opportunity",
-            "action_type": "Maneuver",
-            "range": "Ranged 5",
-            "targets": "Two creatures",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "Each target is marked by you, and you gain two surges.",
-            "story": "You point out easy targets to your friends, allowing them to include more enemies in their attacks."
-          }
-        ]
-      },
-      {
-        "doctrine": "Vanguard",
-        "abilities": [
-          {
-            "name": "No Dying on My Watch",
-            "ability_id": "ability_tactician_no_dying_on_my_watch",
-            "action_type": "Triggered",
-            "range": "Ranged 5",
-            "targets": "One enemy",
-            "keywords": [
-              "Ranged",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "You move up to your speed toward the triggering ally, ending this movement adjacent to them or in the nearest square if you can't reach an adjacent square. The triggering ally can spend a Recovery and gains 5 temporary Stamina for each enemy you came adjacent to during the move. You then make a power roll against the target.",
-            "story": "You prioritize saving an ally over your own safety."
-          },
-          {
-            "name": "Squad! On Me!",
-            "ability_id": "ability_tactician_squad_on_me",
-            "action_type": "Maneuver",
-            "range": "1 burst",
-            "targets": "Self and each ally in the area",
-            "keywords": [
-              "Area"
-            ],
-            "effect": "Until the start of your next turn, each target has a bonus to stability equal to your Might score. Additionally, each target gains 2 surges.",
-            "story": "Together we are invincible!"
-          }
-        ]
+        "name": "Melee Superiority",
+        "description": "After constant drills, you can more accurately anticipate an enemy's plan and thwart their attempts to move across the battlefield. Whenever you make an opportunity attack, the target's speed is reduced to 0 until the end of the current turn.\n\nWhen a creature marked by you attempts to move or shift within distance of your melee free strike, you can use a free triggered action and spend 2 focus to make a melee free strike against that creature."
       }
     ]
   },
@@ -444,84 +147,14 @@
     "type": "feature",
     "name": "Out of Position",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 3,
     "description": "Even before battle begins, your enemies struggle to keep up with your tactics. At the start of an encounter, you can use a free triggered action to use your Mark ability against one enemy you have line of effect to, even if you are surprised. You can then slide the marked target up to 3 squares, ignoring stability. The target can't be moved in a way that would harm them (such as over a cliff), leave them dying, or result in them suffering a condition or other negative effect."
-  },
-  {
-    "id": "feature_tactician_7_focus_abilities",
-    "type": "feature",
-    "name": "7-Focus Abilities",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 3,
-    "description": "Choose one ability that costs 7 focus to use.",
-    "options": [
-      {
-        "name": "Frontal Assault",
-        "ability_id": "ability_tactician_frontal_assault",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "Until the end of the encounter or until you are dying, the first time on a turn that you or any ally deals damage to a target marked by you, the creature who dealt the damage can push the target up to 2 squares and then shift up to 2 squares. Additionally, any ally using the Charge main action to target a creature marked by you can use a melee strike signature ability or a melee strike heroic ability instead of a melee free strike.",
-        "story": "The purpose of a charge is to break their morale and force a retreat."
-      },
-      {
-        "name": "Hit 'Em Hard!",
-        "ability_id": "ability_tactician_hit_em_hard",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, that creature gains 2 surges, which they can use immediately.",
-        "story": "Your allies see the advantages in attacking the targets you select."
-      },
-      {
-        "name": "Rout",
-        "ability_id": "ability_tactician_rout",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you who has R < AVERAGE, the target is frightened of the creature who dealt the damage (save ends).",
-        "story": "The tide begins to turn."
-      },
-      {
-        "name": "Stay Strong and Focus!",
-        "ability_id": "ability_tactician_stay_strong_and_focus",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, the creature who dealt the damage can spend a Recovery.",
-        "story": "\"We can do this! Keep faith and hold fast!\""
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_characteristic_increase_2",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "Your Might and Reason scores each increase to 3."
   },
   {
     "id": "feature_tactician_focus_on_their_weaknesses",
     "type": "feature",
     "name": "Focus on Their Weaknesses",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "The first time each combat round that you or any ally damages a target marked by you, you gain 2 focus instead of 1."
   },
@@ -530,138 +163,8 @@
     "type": "feature",
     "name": "Improved Field Arsenal",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "Your expertise with weapons has grown. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you gain an edge."
-  },
-  {
-    "id": "feature_tactician_perk_3",
-    "type": "feature",
-    "name": "Perk",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_tactician_skill_2",
-    "type": "feature",
-    "name": "Skill",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
-  },
-  {
-    "id": "feature_tactician_doctrine_feature_5",
-    "type": "feature",
-    "name": "Doctrine Feature",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 5,
-    "description": "You gain the 5th-level feature from your tactical doctrine.",
-    "options": [
-      {
-        "doctrine": "Insurgent",
-        "features": [
-          {
-            "name": "Distracted",
-            "description": "You have mastered the ability to distract your foes, allowing you and your allies to take advantage of their gaps in attention. Whenever you or any ally attempts to hide, any creature marked by you doesn't count as an observer. Additionally, you and your allies can use other allies as cover for the purpose of hiding."
-          },
-          {
-            "name": "Leave No Trace",
-            "description": "You and any ally within 10 squares of you can move at full speed while sneaking. Additionally, enemies within 10 squares of you take a bane on tests made to search for you or your allies while any of you are hidden."
-          }
-        ]
-      },
-      {
-        "doctrine": "Mastermind",
-        "features": [
-          {
-            "name": "Anticipation",
-            "description": "You have learned to be more preemptive on the battlefield, thinking more steps ahead than your opponents. You can target two creatures with your Mark ability."
-          },
-          {
-            "name": "I Predicted That",
-            "description": "Your expertise in history and lore allows you and your allies to outthink rivals in the present day. You and any ally within 10 squares of you gain an edge on Reason tests."
-          }
-        ]
-      },
-      {
-        "doctrine": "Vanguard",
-        "features": [
-          {
-            "name": "Shake It Off",
-            "description": "As a free maneuver, you can spend 1d6 Stamina to ignore a consequence from a test, or to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally adjacent to you can also spend Stamina as a free maneuver to gain this benefit."
-          },
-          {
-            "name": "Tactical Offensive",
-            "description": "When you use the Charge main action to attack a creature marked by you, you can use a signature or heroic ability with the Melee and Strike keywords instead of a melee free strike."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_9_focus_abilities",
-    "type": "feature",
-    "name": "9-Focus Abilities",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 5,
-    "description": "Choose one ability that costs 9 focus to use.",
-    "options": [
-      {
-        "name": "Squad! Gear Check!",
-        "ability_id": "ability_tactician_squad_gear_check",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You and each ally adjacent to the target gain 10 temporary Stamina.",
-        "story": "You distract a foe while your allies secure their defensive gear."
-      },
-      {
-        "name": "Squad! Remember Your Training!",
-        "ability_id": "ability_tactician_squad_remember_your_training",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "Self and two allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "Each target gains 1 surge and can use a signature ability that has a double edge.",
-        "story": "You remind your allies how to best use their gear."
-      },
-      {
-        "name": "Win This Day!",
-        "ability_id": "ability_tactician_win_this_day",
-        "action_type": "Main action",
-        "range": "3 burst",
-        "targets": "Self and each ally in the area",
-        "keywords": [
-          "Area"
-        ],
-        "effect": "Each target gains 2 surges. Additionally, they can spend a Recovery, remove any conditions or effects on them, and stand up if they are prone.",
-        "story": "You inspire your allies to recover and gather their strength."
-      },
-      {
-        "name": "You've Still Got Something Left",
-        "ability_id": "ability_tactician_you_ve_still_got_something_left",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "One ally",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "The target uses a heroic ability with the Strike keyword as a free triggered action, and deals extra damage with that ability equal to your Reason score. The ability has its Heroic Resource cost reduced by 1 + your Reason score (minimum cost 0).",
-        "story": "You push an ally to use a heroic ability sooner than they otherwise would."
-      }
-    ]
   },
   {
     "id": "feature_tactician_master_of_arms",
@@ -673,172 +176,36 @@
     "description": "Your expertise with weapons has grown to true mastery. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you can negate a bane on the power roll or reduce a double bane to a bane."
   },
   {
-    "id": "feature_tactician_perk_4",
-    "type": "feature",
-    "name": "Perk",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
-  },
-  {
-    "id": "feature_tactician_doctrine_9_focus_abilities",
-    "type": "feature",
-    "name": "Doctrine Ability (9-Focus)",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose a 9-focus ability granted by your doctrine.",
-    "options": [
-      {
-        "doctrine": "Insurgent",
-        "abilities": [
-          {
-            "name": "Coordinated Execution",
-            "ability_id": "ability_tactician_coordinated_execution",
-            "action_type": "Free triggered",
-            "range": "Ranged 10",
-            "targets": "One ally",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "If the target of the triggering ability is not a leader or solo creature, they are reduced to 0 Stamina. If the target of the triggering ability is a minion, the entire squad is killed. If the target of the triggering ability is a leader or solo creature, the triggering ability's power roll automatically obtains a tier 3 outcome.",
-            "story": "You direct your ally to make a killing blow."
-          },
-          {
-            "name": "Panic in Their Lines",
-            "ability_id": "ability_tactician_panic_in_their_lines",
-            "action_type": "Main action",
-            "range": "Melee 1 or ranged 5",
-            "targets": "Two creatures",
-            "keywords": [
-              "Melee",
-              "Ranged",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "If a target is force moved into another creature, they must make a free strike against that creature.",
-            "story": "You confuse your foes, causing them to turn on each other."
-          }
-        ]
-      },
-      {
-        "doctrine": "Mastermind",
-        "abilities": [
-          {
-            "name": "Battle Plan",
-            "ability_id": "ability_tactician_battle_plan",
-            "action_type": "Maneuver",
-            "range": "Ranged 10",
-            "targets": "Three creatures",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "Each target is marked by you. Immediately and until the end of the encounter, the Director tells you if any creatures marked by you have damage immunity or weakness and the value of that immunity or weakness. Additionally, you and each ally within 3 squares of you gains 2 surges.",
-            "story": "With new understanding of your foes, you create the perfect plan to win the battle."
-          },
-          {
-            "name": "Hustle!",
-            "ability_id": "ability_tactician_hustle",
-            "action_type": "Maneuver",
-            "range": "2 burst",
-            "targets": "Self and each ally in the area",
-            "keywords": [
-              "Area"
-            ],
-            "effect": "You mark two enemies within 10 squares of you. Each target can shift up to their speed. You and each target gain 2 surges.",
-            "story": "You and your allies coordinate to form a new battle line."
-          }
-        ]
-      },
-      {
-        "doctrine": "Vanguard",
-        "abilities": [
-          {
-            "name": "Instant Retaliation",
-            "ability_id": "ability_tactician_instant_retaliation",
-            "action_type": "Free triggered",
-            "range": "Melee 1",
-            "targets": "One ally",
-            "keywords": [
-              "Melee",
-              "Weapon"
-            ],
-            "effect": "The target takes half the damage. You then make a power roll against the triggering creature.",
-            "story": "You parry with almost supernatural speed."
-          },
-          {
-            "name": "To Me Squad!",
-            "ability_id": "ability_tactician_to_me_squad",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "One creature",
-            "keywords": [
-              "Charge",
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "If the target is hit with two or more strikes as part of this ability and they have R < STRONG, they are dazed (save ends). If the target is reduced to 0 Stamina before one or both allies has made their strike, the ally or allies can pick a different target.",
-            "story": "You lead your allies in a charge."
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "feature_tactician_doctrine_feature_7",
     "type": "feature",
     "name": "Doctrine Feature",
     "class": "tactician",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 7,
     "description": "You gain the 7th-level feature from your tactical doctrine.",
     "options": [
       {
         "doctrine": "Insurgent",
-        "features": [
-          {
-            "name": "Asymmetric Warfare",
-            "description": "You have advanced your skills in subterfuge, now directing full battlefield strategy and logistics. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the intrigue skill group. Additionally, you can use skills from the intrigue skill group to conceal large groups of people, such as escaping civilians and groups of guerilla warriors."
-          }
-        ]
+        "name": "Asymmetric Warfare",
+        "description": "You have advanced your skills in subterfuge, now directing full battlefield strategy and logistics. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the intrigue skill group. Additionally, you can use skills from the intrigue skill group to conceal large groups of people, such as escaping civilians and groups of guerilla warriors."
       },
       {
         "doctrine": "Mastermind",
-        "features": [
-          {
-            "name": "Grand Strategy",
-            "description": "You have grown your skills in strategy, wielding intricate battlefield tactics and plans. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the lore skill group. Additionally, when you take a respite, you can make a project roll for a research project in addition to undertaking another respite activity."
-          }
-        ]
+        "name": "Grand Strategy",
+        "description": "You have grown your skills in strategy, wielding intricate battlefield tactics and plans. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the lore skill group. Additionally, when you take a respite, you can make a project roll for a research project in addition to undertaking another respite activity."
       },
       {
         "doctrine": "Vanguard",
-        "features": [
-          {
-            "name": "Shock and Awe",
-            "description": "You have expanded your leadership skills, strengthening your followers' morale and providing logistical support. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the interpersonal skill group. Additionally, you can convince a group of people to help you with a crafting project during a respite. If these people are available when you take a respite, you can make a project roll for a crafting project in addition to undertaking another respite activity."
-          }
-        ]
+        "name": "Shock and Awe",
+        "description": "You have expanded your leadership skills, strengthening your followers' morale and providing logistical support. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the interpersonal skill group. Additionally, you can convince a group of people to help you with a crafting project during a respite. If these people are available when you take a respite, you can make a project roll for a crafting project in addition to undertaking another respite activity."
       }
     ]
-  },
-  {
-    "id": "feature_tactician_characteristic_increase_3",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
   },
   {
     "id": "feature_tactician_heightened_focus",
     "type": "feature",
     "name": "Heightened Focus",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "When you gain focus at the start of each of your turns during combat, you gain 3 focus instead of 2."
   },
@@ -847,125 +214,32 @@
     "type": "feature",
     "name": "Seize the Initiative",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "If you are not surprised when combat begins, your side gets to go first. If an enemy has an ability that allows their side to go first, you roll as usual to determine who goes first."
-  },
-  {
-    "id": "feature_tactician_skill_3",
-    "type": "feature",
-    "name": "Skill",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You gain one skill of your choice."
   },
   {
     "id": "feature_tactician_doctrine_feature_8",
     "type": "feature",
     "name": "Doctrine Feature",
     "class": "tactician",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature from your tactical doctrine.",
     "options": [
       {
         "doctrine": "Insurgent",
-        "features": [
-          {
-            "name": "Bait and Ambush",
-            "description": "You have trained your squad to be silent ambushers.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to let the character making the strike shift up to a number of squares equal to your Reason score and use the Hide maneuver as a free maneuver once during the shift. The creature can shift before or after the strike is resolved."
-          }
-        ]
+        "name": "Bait and Ambush",
+        "description": "You have trained your squad to be silent ambushers.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to let the character making the strike shift up to a number of squares equal to your Reason score and use the Hide maneuver as a free maneuver once during the shift. The creature can shift before or after the strike is resolved."
       },
       {
         "doctrine": "Mastermind",
-        "features": [
-          {
-            "name": "Pincer Movement",
-            "description": "You have trained your squad to coordinate their movements to maximize combat impact.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to have the character making the strike shift up to a number of squares equal to your Reason score before the strike is resolved. If you didn't make the strike, you can make this shift as well. If you did make the strike, one ally within 10 squares of you can make this shift as well."
-          }
-        ]
+        "name": "Pincer Movement",
+        "description": "You have trained your squad to coordinate their movements to maximize combat impact.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to have the character making the strike shift up to a number of squares equal to your Reason score before the strike is resolved. If you didn't make the strike, you can make this shift as well. If you did make the strike, one ally within 10 squares of you can make this shift as well."
       },
       {
         "doctrine": "Vanguard",
-        "features": [
-          {
-            "name": "See Your Enemies Driven Before You",
-            "description": "You have trained your squad to maximize impact and break enemy lines when they attack.\n\nWhen you or any ally makes a melee strike against a creature marked by you, you can spend 2 focus to have the character making the strike push the target up to a number of squares equal to your Reason score. That character can then shift up to a number of squares equal to your Reason score, ending this shift adjacent to the target."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_perk_5",
-    "type": "feature",
-    "name": "Perk",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_tactician_11_focus_abilities",
-    "type": "feature",
-    "name": "11-Focus Abilities",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "Choose one ability that costs 11 focus to use.",
-    "options": [
-      {
-        "name": "Finish Them!",
-        "ability_id": "ability_tactician_finish_them",
-        "action_type": "Free triggered",
-        "range": "Ranged 10",
-        "targets": "One creature",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "The target is killed. Additionally, the creature who caused the target to be winded can spend a Recovery.",
-        "story": "You point out an opening to your ally so they can land a killing blow."
-      },
-      {
-        "name": "Floodgates Open",
-        "ability_id": "ability_tactician_floodgates_open",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "Three allies",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "Each target gains 1 surge and can use a signature ability as a free triggered action. That ability gains an edge on the power roll and increases the potency of any potency effects by 1.",
-        "story": "You direct your squad to strike in unison and with devastating effect."
-      },
-      {
-        "name": "Go Now and Speed Well",
-        "ability_id": "ability_tactician_go_now_and_speed_well",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "Self or one ally",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "The target gains 2 surges and can use a signature or heroic ability as a free triggered action. The ability has a double edge on the power roll, ignores damage immunity, and increases the potency of any potency effects by 1.",
-        "story": "You direct an attack to strike true."
-      },
-      {
-        "name": "I'll Open and You'll Close",
-        "ability_id": "ability_tactician_i_ll_open_and_you_ll_close",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "One ally within 10 squares of you can use a heroic ability against the target as a free triggered action without spending any of their Heroic Resource, as long as they have enough Heroic Resource to pay for the ability. If the target is reduced to 0 Stamina before the chosen ally has used their ability, the ally can pick a different target.",
-        "story": "You create an opening for an ally."
+        "name": "See Your Enemies Driven Before You",
+        "description": "You have trained your squad to maximize impact and break enemy lines when they attack.\n\nWhen you or any ally makes a melee strike against a creature marked by you, you can spend 2 focus to have the character making the strike push the target up to a number of squares equal to your Reason score. That character can then shift up to a number of squares equal to your Reason score, ending this shift adjacent to the target."
       }
     ]
   },
@@ -974,131 +248,14 @@
     "type": "feature",
     "name": "Grandmaster of Arms",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 9,
     "description": "Your expertise with weapons has grown to true mastery. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you automatically obtain a tier 3 outcome on the power roll. You can still roll to determine if you score a critical hit."
-  },
-  {
-    "id": "feature_tactician_doctrine_11_focus_abilities",
-    "type": "feature",
-    "name": "Doctrine Ability (11-Focus)",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose a 11-focus ability granted by your doctrine.",
-    "options": [
-      {
-        "doctrine": "Insurgent",
-        "abilities": [
-          {
-            "name": "Squad! Hit and Run!",
-            "ability_id": "ability_tactician_squad_hit_and_run",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "Self and two allies",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "Each target gains 2 surges, and can use a free triggered action to use a signature ability that gains an edge. After resolving their ability, each target can shift up to 2 squares and become hidden even if they have no cover or concealment, or if they are observed.",
-            "story": "I had to pry this secret from the shadow colleges."
-          },
-          {
-            "name": "Their Lack of Focus Is Their Undoing",
-            "ability_id": "ability_tactician_their_lack_of_focus_is_their_undoing",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "Three enemies",
-            "keywords": [
-              "Magic",
-              "Ranged",
-              "Weapon"
-            ],
-            "effect": "Each target uses a signature ability against one or more targets of your choosing, with each ability automatically obtaining a tier 3 outcome on the power roll. After resolving the targets' abilities, you make a power roll against each original target.",
-            "story": "You trick your enemies into attacking each other and leave them confused by the aftermath."
-          }
-        ]
-      },
-      {
-        "doctrine": "Mastermind",
-        "abilities": [
-          {
-            "name": "Blot Out the Sun!",
-            "ability_id": "ability_tactician_blot_out_the_sun",
-            "action_type": "Main action",
-            "range": "3 burst",
-            "targets": "Self and each ally in the area",
-            "keywords": [
-              "Area"
-            ],
-            "effect": "Each target can make a ranged free strike that gains an edge against any enemy marked by you within distance of their ranged free strike. A target ignores banes and double banes when making this strike.",
-            "story": "What makes a good soldier? The ability to fire four shots a minute in any weather."
-          },
-          {
-            "name": "Counterstrategy",
-            "ability_id": "ability_tactician_counterstrategy",
-            "action_type": "Main action",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "-"
-            ],
-            "effect": "You gain 6 surges. Until the end of the encounter or until you are dying, whenever the Director spends Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*), choose yourself or one ally within 10 squares. The chosen character gains 2 of their Heroic Resource.",
-            "story": "I've identified a way to negate their strengths."
-          }
-        ]
-      },
-      {
-        "doctrine": "Vanguard",
-        "abilities": [
-          {
-            "name": "No Escape",
-            "ability_id": "ability_tactician_no_escape",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "One creature",
-            "keywords": [
-              "Charge",
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "You mark the target.\n\nIf you use this ability as part of the Charge main action, enemies' spaces don't count as difficult terrain for your movement. Additionally, if you move through any creature's space, you can slide that creature 1 square out of the path of your charge.",
-            "story": "Nothing will stop you from reaching your foe."
-          },
-          {
-            "name": "That One Is Mine!",
-            "ability_id": "ability_tactician_that_one_is_mine",
-            "action_type": "Main action",
-            "range": "Melee 1 or ranged 5",
-            "targets": "One creature",
-            "keywords": [
-              "Melee",
-              "Ranged",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "The target is marked by you.\n\nUntil the end of the encounter or until you are dying, you can use a signature or heroic ability instead of a free strike against any target marked by you.",
-            "story": "You focus on making an enemy irrelevant."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_tactician_characteristic_increase",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "Your Might and Reason scores each increase to 5."
   },
   {
     "id": "feature_tactician_command",
     "type": "feature",
     "name": "Command",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You have an epic resource called command. Each time you finish a respite, you gain command equal to the XP you gain. You can spend command on your abilities as if it were focus.\n\nAdditionally, whenever you or any ally uses an ability to deal rolled damage to a creature marked by you, you can spend 1 command as a free triggered action to increase the power roll outcome for that target by one tier. Whenever an enemy marked by you makes an ability roll, you can spend 1 command as a free triggered action to decrease the power roll outcome by one tier.\nCommand remains until you spend it."
   },
@@ -1107,7 +264,6 @@
     "type": "feature",
     "name": "True Focus",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "When you gain focus at the start of each of your turns during combat, you gain 4 focus instead of 3."
   },
@@ -1116,26 +272,7 @@
     "type": "feature",
     "name": "Warmaster",
     "class": "tactician",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You have mastered the entirety of possible strategies and tactics. Whenever you or any ally makes an ability roll against a target marked by you, the character making the roll can roll three dice and choose which two to use.\n\nAdditionally, whenever an ally uses a heroic ability that targets one or more creatures marked by you, they spend 2 fewer of their Heroic Resource on that ability (minimum 1)."
-  },
-  {
-    "id": "feature_tactician_perk",
-    "type": "feature",
-    "name": "Perk",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
-  },
-  {
-    "id": "feature_tactician_skill",
-    "type": "feature",
-    "name": "Skill",
-    "class": "tactician",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one skill of your choice."
   }
 ]

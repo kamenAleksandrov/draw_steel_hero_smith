@@ -4,39 +4,24 @@
     "type": "feature",
     "name": "Null Tradition",
     "class": "null",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
     "description": "Through extensive physical and psionic training, you have learned to unlock the full potential of your body. As you shape the growth of your power, you choose a null tradition from the following options, each of which grants you a skill. (*Quick Build:* Chronokinetic and the Monsters skill.)\n\nYour null tradition is your subclass, and your choice of tradition determines many of the features you'll gain as you gain new levels.",
     "options": [
       {
-        "tradition": "Chronokinetic",
-        "skill": "Monsters",
-        "features": [
-          {
-            "name": "Rapid Processing",
-            "description": "As a maneuver, you can read an entire book or process a similar amount of information. Additionally, during any respite, you can take an additional respite activity."
-          }
-        ]
+        "subclass_name": "Chronokinetic",
+        "skill_group": "Lore",
+        "description": " Your training unmoors you from temporal reality, allowing you to use the flow of time as another dimension that all things move through. You gain one skill from the lore group."
       },
       {
-        "tradition": "Cryokinetic",
-        "skill": "Religion",
-        "features": [
-          {
-            "name": "Entropic Adaptability",
-            "description": "You have cold immunity equal to twice your Intuition score. Additionally, you ignore difficult terrain related to cold and ice, and you can automatically climb at full speed while moving."
-          }
-        ]
+        "subclass_name": "Cryokinetic",
+        "skill_group": "Crafting",
+        "description": "You can tap into absolute cold, the most essential energy of myriad manifolds, and manifest its effects in your body. You gain one skill from the crafting group."
       },
       {
-        "tradition": "Metakinetic",
-        "skill": "Psionics",
-        "features": [
-          {
-            "name": "Inertial Sink",
-            "description": "You add your Intuition score to your effective size for the purpose of interacting with creatures and objects, such as for determining whether you can lift an object, whether you are affected by forced movement, and so forth. This has no effect on whether you can be grabbed.\n\nAdditionally, when you fall, you reduce the effective height of the fall by 5 squares in addition to any other reductions. Whenever you take damage from being force moved, you reduce that damage by an amount equal to your level."
-          }
-        ]
+        "subclass_name": "Metakinetic",
+        "skill_group": "Exploration",
+        "description": "You learn to see through the illusions of the universe to more fully understand your body and its psionic potential. You gain one skill from the exploration group."
       }
     ]
   },
@@ -45,21 +30,33 @@
     "type": "feature",
     "name": "Discipline Mastery",
     "class": "null",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
-    "description": "Track the escalating benefits from your tradition's Discipline Mastery table as you amass discipline.",
+    "description": "As you advance in your chosen null tradition, you gain certain benefits in combat, including benefits based on the amount of discipline you have. Benefits based on how much discipline you have last until the end of your turn, even if a benefit would become unavailable to you because of the amount of discipline you spend during your turn. Some Discipline Mastery benefits can be applied only if you are a specific level or higher, with the level of those benefits noted in the tables below.",
     "options": [
       {
-        "tradition": "Chronokinetic",
-        "reference": "See the Chronokinetic Discipline Mastery table."
+        "subclass_name": "Chronokinetic",
+        "description": " Whenever you use the Inertial Shield ability, you can use the Disengage move action as a free triggered action. Additionally, as your discipline grows, your psionic mastery of your body intensifies, granting benefits from the Chronokinetic Mastery table. Benefits are cumulative except where an improved benefit replaces a lesser benefit.",
+        "load_additional_features": {
+          "type": "table",
+          "name": "discipline_mastery.json"
+        }
       },
       {
-        "tradition": "Cryokinetic",
-        "reference": "See the Cryokinetic Discipline Mastery table."
+        "subclass_name": "Cryokinetic",
+        "description": " Whenever you use your Inertial Shield ability, you can then use the Grab maneuver as a free triggered action. Additionally, as your discipline grows, you strengthen the psionic power suffusing you, granting benefits from the Cryokinetic Mastery table. Benefits are cumulative except where an improved benefit replaces a lesser benefit.",
+        "load_additional_features": {
+          "type": "table",
+          "name": "discipline_mastery.json"
+        }
       },
       {
-        "tradition": "Metakinetic",
-        "reference": "See the Metakinetic Discipline Mastery table."
+        "subclass_name": "Metakinetic",
+        "description": " Whenever you use your Inertial Shield ability, you can then use the Knockback maneuver as a free triggered action. Additionally, as your discipline grows, your psionic potential is amplified, granting benefits from the Metakinetic Mastery table. Benefits are cumulative except where an improved benefit replaces a lesser benefit.",
+        "load_additional_features": {
+          "type": "table",
+          "name": "discipline_mastery.json"
+        }
       }
     ]
   },
@@ -68,437 +65,58 @@
     "type": "feature",
     "name": "Null Field",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You project a psionic field of order around your body, dampening the effects of supernatural abilities harmful to you and your allies.",
-    "options": [
-      {
-        "name": "Gravitic Disruption",
-        "effect": "Spend 1 discipline when a creature in the field would be force moved to reduce the forced movement to 0."
-      },
-      {
-        "name": "Inertial Anchor",
-        "effect": "Spend 1 discipline when a creature enters the field to immobilize it (save ends)."
-      },
-      {
-        "name": "Synaptic Break",
-        "effect": "Spend 2 discipline when a creature starts its turn in the field to deal psychic damage equal to twice your Intuition score."
-      }
-    ]
+    "ability": "Null Field"
   },
   {
     "id": "feature_null_inertial_shield",
     "type": "feature",
     "name": "Inertial Shield",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 1,
-    "description": "Your instincts for danger let you predict attacks before they happen."
+    "description": "Your instincts for danger let you predict attacks before they happen.",
+    "ability": "Inertial Shield"
   },
   {
     "id": "feature_null_null_speed",
     "type": "feature",
     "name": "Null Speed",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 1,
-    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score.",
-    "options": [
-      {
-        "name": "Density",
-        "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
-      },
-      {
-        "name": "Force",
-        "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage."
-      },
-      {
-        "name": "Speed",
-        "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
-      }
-    ]
+    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score."
   },
   {
     "id": "feature_null_psionic_martial_arts",
     "type": "feature",
     "name": "Psionic Martial Arts",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "Whenever you use the Knockback or Grab maneuver, you use Intuition instead of Might for the power roll and for determining if you can target creatures larger than you. Additionally, whenever you use the Knockback maneuver, you can choose to slide the target instead of pushing them."
-  },
-  {
-    "id": "feature_null_signature_abilities",
-    "type": "feature",
-    "name": "Null Abilities",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose two signature abilities to express your psionic martial arts.",
-    "options": [
-      {
-        "name": "Dance of Blows",
-        "ability_id": "ability_null_dance_of_blows",
-        "action_type": "Main action",
-        "range": "1 burst",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Psionic",
-          "Weapon"
-        ],
-        "effect": "You can slide one adjacent enemy up to a number of squares equal to your Intuition score.",
-        "story": "You strike everywhere at once, tricking an enemy into moving out of position."
-      },
-      {
-        "name": "Faster Than the Eye",
-        "ability_id": "ability_null_faster_than_the_eye",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "Two creatures or objects",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You can deal damage equal to your Agility score to one creature or object adjacent to you.",
-        "story": "You strike so quickly that your hands become a blur."
-      },
-      {
-        "name": "Inertial Step",
-        "ability_id": "ability_null_inertial_step",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You can shift up to half your speed before or after you make this strike.",
-        "story": "You flit about the battlefield and take an opportunistic strike."
-      },
-      {
-        "name": "Joint Lock",
-        "ability_id": "ability_null_joint_lock",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "You contort your enemy's body into a stance they struggle to escape from."
-      },
-      {
-        "name": "Kinetic Strike",
-        "ability_id": "ability_null_kinetic_strike",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Your opponent staggers. They cannot ignore you."
-      },
-      {
-        "name": "Magnetic Strike",
-        "ability_id": "ability_null_magnetic_strike",
-        "action_type": "Main action",
-        "range": "Melee 2",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "The force of your blow extends past the limits of your body, pulling your enemy closer."
-      },
-      {
-        "name": "Phase Inversion Strike",
-        "ability_id": "ability_null_phase_inversion_strike",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "Before the push is resolved, you teleport the target to a square adjacent to you and opposite the one they started in. If the target can't be teleported this way, you can't push them.",
-        "story": "You step momentarily out of phase as you pull an enemy through you."
-      },
-      {
-        "name": "Pressure Points",
-        "ability_id": "ability_null_pressure_points",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "You strike at key nerve clusters to leave your foe staggered."
-      }
-    ]
-  },
-  {
-    "id": "feature_null_3_discipline_abilities",
-    "type": "feature",
-    "name": "3-Discipline Abilities",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose one psionic ability that costs 3 discipline to use.",
-    "options": [
-      {
-        "name": "Chronal Spike",
-        "ability_id": "ability_null_chronal_spike",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You can shift up to half your speed before or after you make this strike. Additionally, whenever an effect lets you make a free strike or use a signature ability, you can use this ability instead, paying its discipline cost as usual.",
-        "story": "You foresee the best moment to strike, then exploit it."
-      },
-      {
-        "name": "Psychic Pulse",
-        "ability_id": "ability_null_psychic_pulse",
-        "action_type": "Maneuver",
-        "range": "2 burst",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Psionic"
-        ],
-        "effect": "Each target takes psychic damage equal to twice your Intuition score. Until the start of your next turn, the size of your Null Field ability increases by 1. At the end of your current turn, each enemy in the area of your Null Field ability takes psychic damage equal to your Intuition score.",
-        "story": "A burst of psionic energy interferes with your enemy's synapses."
-      },
-      {
-        "name": "Relentless Nemesis",
-        "ability_id": "ability_null_relentless_nemesis",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "Until the start of your next turn, whenever the target moves or is force moved, you can use a free triggered action to shift up to your speed. You must end this shift adjacent to the target.",
-        "story": "You strike, and for the next few moments, your enemy can't escape you."
-      },
-      {
-        "name": "Stunning Blow",
-        "ability_id": "ability_null_stunning_blow",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "You focus your psionic technique into a concussive punch."
-      }
-    ]
-  },
-  {
-    "id": "feature_null_null_speed",
-    "type": "feature",
-    "name": "Null Speed",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score.",
-    "options": [
-      {
-        "name": "Density",
-        "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability."
-      },
-      {
-        "name": "Force",
-        "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage."
-      },
-      {
-        "name": "Speed",
-        "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action."
-      }
-    ]
   },
   {
     "id": "feature_null_tradition_feature_2",
     "type": "feature",
     "name": "Tradition Feature",
     "class": "null",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2th-level feature for your null tradition.",
     "options": [
       {
-        "tradition": "Chronokinetic",
-        "features": [
-          {
-            "name": "Rapid Processing",
-            "description": "As a maneuver, you can read an entire book or process a similar amount of information. Additionally, during any respite, you can take an additional respite activity."
-          }
-        ]
+        "subclass_name": "Chronokinetic",
+        "name": "Rapid Processing",
+        "description": "As a maneuver, you can read an entire book or process a similar amount of information. Additionally, during any respite, you can take an additional respite activity."
       },
       {
-        "tradition": "Cryokinetic",
-        "features": [
-          {
-            "name": "Entropic Adaptability",
-            "description": "You have cold immunity equal to twice your Intuition score. Additionally, you ignore difficult terrain related to cold and ice, and you can automatically climb at full speed while moving."
-          }
-        ]
+        "subclass_name": "Cryokinetic",
+        "name": "Entropic Adaptability",
+        "description": "You have cold immunity equal to twice your Intuition score. Additionally, you ignore difficult terrain related to cold and ice, and you can automatically climb at full speed while moving."
       },
       {
-        "tradition": "Metakinetic",
-        "features": [
-          {
-            "name": "Inertial Sink",
-            "description": "You add your Intuition score to your effective size for the purpose of interacting with creatures and objects, such as for determining whether you can lift an object, whether you are affected by forced movement, and so forth. This has no effect on whether you can be grabbed.\n\nAdditionally, when you fall, you reduce the effective height of the fall by 5 squares in addition to any other reductions. Whenever you take damage from being force moved, you reduce that damage by an amount equal to your level."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_null_perk_2",
-    "type": "feature",
-    "name": "Perk",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice. See Chapter 7: Perks."
-  },
-  {
-    "id": "feature_null_tradition_5_discipline_abilities",
-    "type": "feature",
-    "name": "Tradition Ability (5-Discipline)",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose a 5-discipline ability granted by your null tradition.",
-    "options": [
-      {
-        "tradition": "Chronokinetic",
-        "abilities": [
-          {
-            "name": "Blur",
-            "ability_id": "ability_null_blur",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "You can use a signature or heroic ability. You gain an edge on that ability's power rolls.",
-            "story": "You release stored time, allowing you to act twice."
-          },
-          {
-            "name": "Force Redirected",
-            "ability_id": "ability_null_force_redirected",
-            "action_type": "Main action",
-            "range": "Melee 3",
-            "targets": "One creature",
-            "keywords": [
-              "Melee",
-              "Psionic",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": null,
-            "story": "The force of your strike moves your target in a surprising direction."
-          }
-        ]
-      },
-      {
-        "tradition": "Cryokinetic",
-        "abilities": [
-          {
-            "name": "Entropic Field",
-            "ability_id": "ability_null_entropic_field",
-            "action_type": "Main action",
-            "range": "3 cube within 1",
-            "targets": "Each enemy in the area",
-            "keywords": [
-              "Area",
-              "Psionic",
-              "Weapon"
-            ],
-            "effect": null,
-            "story": "You drastically increase the local entropy."
-          },
-          {
-            "name": "Heat Sink",
-            "ability_id": "ability_null_heat_sink",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "Until the start of your next turn, the size of your Null Field ability increases by 1, and you and any ally benefit from concealment while in the area. At the end of this turn, each enemy in the area takes cold damage equal to your Intuition score.",
-            "story": "You absorb ambient heat, coating the ground in frost and precipitating snow from the air."
-          }
-        ]
-      },
-      {
-        "tradition": "Metakinetic",
-        "abilities": [
-          {
-            "name": "Gravitic Strike",
-            "ability_id": "ability_null_gravitic_strike",
-            "action_type": "Main action",
-            "range": "Melee 3",
-            "targets": "One creature",
-            "keywords": [
-              "Melee",
-              "Psionic",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": null,
-            "story": "Your fist emanates gravitic force that pulls a distant enemy closer."
-          },
-          {
-            "name": "Kinetic Shield",
-            "ability_id": "ability_null_kinetic_shield",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "While you have temporary Stamina from this ability, you can't be made bleeding even while dying.",
-            "story": "You manifest a force barrier that absorbs incoming kinetic energy."
-          }
-        ]
+        "subclass_name": "Metakinetic",
+        "name": "Inertial Sink",
+        "description": "You add your Intuition score to your effective size for the purpose of interacting with creatures and objects, such as for determining whether you can lift an object, whether you are affected by forced movement, and so forth. This has no effect on whether you can be grabbed.\n\nAdditionally, when you fall, you reduce the effective height of the fall by 5 squares in addition to any other reductions. Whenever you take damage from being force moved, you reduce that damage by an amount equal to your level."
       }
     ]
   },
@@ -507,7 +125,6 @@
     "type": "feature",
     "name": "Psionic Leap",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 3,
     "description": "You can long jump and high jump a distance equal to twice your Agility score without needing to make a test."
   },
@@ -516,84 +133,14 @@
     "type": "feature",
     "name": "Reorder",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 3,
     "description": "At the start of each of your turns, you can use a free triggered action to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Alternatively, you can grant this benefit to one creature in the area of your Null Field ability."
-  },
-  {
-    "id": "feature_null_7_discipline_abilities",
-    "type": "feature",
-    "name": "7-Discipline Abilities",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 3,
-    "description": "Choose one psionic ability that costs 7 discipline to use.",
-    "options": [
-      {
-        "name": "Absorption Field",
-        "ability_id": "ability_null_absorption_field",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy in the area takes a bane on ability rolls.",
-        "story": "Your null field absorbs kinetic energy."
-      },
-      {
-        "name": "Molecular Rearrangement Field",
-        "ability_id": "ability_null_molecular_rearrangement_field",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, each enemy who has I < AVERAGE and enters the area for the first time in a combat round or starts their turn there is bleeding (save ends). Each ally who enters the area for the first time in a combat round or starts their turn there gains temporary Stamina equal to your Intuition score.",
-        "story": "Your enemies' wounds open, your allies' wounds close."
-      },
-      {
-        "name": "Stabilizing Field",
-        "ability_id": "ability_null_stabilizing_field",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, you ignore difficult terrain and reduce the potency of enemy effects targeting you by 1 for you. You can also use a free triggered action at the start of each of your turns to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Each ally in the area also gains these benefits.",
-        "story": "You project order, making it harder for your enemies to interfere with you and your allies."
-      },
-      {
-        "name": "Synapse Field",
-        "ability_id": "ability_null_synapse_field",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "Until the end of the encounter, the size of your Null Field ability increases by 1. While the area of that ability is enlarged this way, whenever an enemy in the area takes rolled damage, they take extra psychic damage equal to twice your Intuition score.",
-        "story": "Attacks made by allies in your null field disrupt your enemies' thoughts, causing psychic pain."
-      }
-    ]
-  },
-  {
-    "id": "feature_null_characteristic_increase_2",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "Your Agility and Intuition scores each increase to 3."
   },
   {
     "id": "feature_null_discipline_mastery_improvement_2",
     "type": "feature",
     "name": "Discipline Mastery Improvement",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "Your Discipline Mastery feature provides additional benefits when you have 8 or more discipline."
   },
@@ -602,138 +149,40 @@
     "type": "feature",
     "name": "Enhanced Null Field",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "While using your Null Field ability, you disrupt magic and psionic power suffusing the area around you. During combat, any temporary supernatural terrain effects of your level or lower are removed when your aura partially or fully overlaps with their location. Permanent supernatural terrain effects of your level or lower are temporarily negated while your aura overlaps with their location, but return when the aura no longer overlaps with them."
-  },
-  {
-    "id": "feature_null_perk_3",
-    "type": "feature",
-    "name": "Perk",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one perk of your choice."
   },
   {
     "id": "feature_null_regenerative_field",
     "type": "feature",
     "name": "Regenerative Field",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "The first time each combat round that an enemy in the area of your Null Field ability uses a main action, you gain 2 discipline instead of 1."
-  },
-  {
-    "id": "feature_null_skill_2",
-    "type": "feature",
-    "name": "Skill",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
   },
   {
     "id": "feature_null_tradition_feature_5",
     "type": "feature",
     "name": "Tradition Feature",
     "class": "null",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature for your null tradition.",
     "options": [
       {
-        "tradition": "Chronokinetic",
-        "features": [
-          {
-            "name": "Instant Action",
-            "description": "If you're not surprised at the start of your first turn in combat, you gain an edge on ability rolls and gain 2 surges. If you are surprised, you can spend 3 discipline to no longer be surprised and gain the benefits of this feature."
-          }
-        ]
+        "subclass_name": "Chronokinetic",
+        "name": "Instant Action",
+        "description": "If you're not surprised at the start of your first turn in combat, you gain an edge on ability rolls and gain 2 surges. If you are surprised, you can spend 3 discipline to no longer be surprised and gain the benefits of this feature."
       },
       {
-        "tradition": "Cryokinetic",
-        "features": [
-          {
-            "name": "Chilling Readiness",
-            "description": "You steel yourself for imminent danger by tapping into your body's cold energy. At the start of any combat, you gain a number of surges equal to your Victories."
-          }
-        ]
+        "subclass_name": "Cryokinetic",
+        "name": "Chilling Readiness",
+        "description": "You steel yourself for imminent danger by tapping into your body's cold energy. At the start of any combat, you gain a number of surges equal to your Victories."
       },
       {
-        "tradition": "Metakinetic",
-        "features": [
-          {
-            "name": "Inertial Fulcrum",
-            "description": "Whenever you use an ability to reduce damage dealt to you or to reduce the distance of forced movement imposed upon you, you can deal damage to one enemy in the area of your Null Field ability equal to your Intuition score."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_null_9_discipline_abilities",
-    "type": "feature",
-    "name": "9-Discipline Abilities",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 5,
-    "description": "Choose one psionic ability that costs 9 discipline to use.",
-    "options": [
-      {
-        "name": "Anticipating Strike",
-        "ability_id": "ability_null_anticipating_strike",
-        "action_type": "Free triggered",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "This strike resolves before the triggering movement or main action.",
-        "story": "You suddenly strike an enemy, then grab them in a psionically enhanced grip."
-      },
-      {
-        "name": "Iron Grip",
-        "ability_id": "ability_null_iron_grip",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "While grabbed this way, the target takes a bane on the Escape Grab maneuver. Each time they use that maneuver, they take damage equal to twice your Agility score.",
-        "story": "You grab the target with supernatural force."
-      },
-      {
-        "name": "Phase Leap",
-        "ability_id": "ability_null_phase_leap",
-        "action_type": "Move",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "You jump up to your speed without provoking opportunity attacks. Until the end of your next turn, a static afterimage of you remains in the space you left, and any enemy adjacent to your afterimage takes a bane on ability rolls. You can use your abilities from your own space or from the space of your afterimage as if you were still there. Additionally, if your Null Field ability is active, your afterimage also projects the aura from that ability, which you control as if you were in the afterimage's space.",
-        "story": "You leap beyond reality, leaving an afterimage of yourself."
-      },
-      {
-        "name": "Synaptic Reset",
-        "ability_id": "ability_null_synaptic_reset",
-        "action_type": "Maneuver",
-        "range": "3 burst",
-        "targets": "Self and each ally in the area",
-        "keywords": [
-          "Area",
-          "Psionic"
-        ],
-        "effect": "Each target can end any conditions or effects on themself, and gains 5 temporary Stamina for each condition or effect removed.",
-        "story": "You expand your nullifying power to mitigate harmful effects."
+        "subclass_name": "Metakinetic",
+        "name": "Inertial Fulcrum",
+        "description": "Whenever you use an ability to reduce damage dealt to you or to reduce the distance of forced movement imposed upon you, you can deal damage to one enemy in the area of your Null Field ability equal to your Intuition score."
       }
     ]
   },
@@ -742,7 +191,6 @@
     "type": "feature",
     "name": "Elemental Absorption",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 6,
     "description": "Whenever you use your Inertial Shield triggered action, you gain immunity to acid, cold, corruption, fire, lightning, poison, and sonic damage equal to your Intuition score against the triggering damage."
   },
@@ -751,137 +199,14 @@
     "type": "feature",
     "name": "Elemental Buffer",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 6,
     "description": "Whenever you reduce acid, cold, corruption, fire, lightning, poison, or sonic damage with damage immunity, you gain 2 surges that can be used only to increase the damage of your next strike."
-  },
-  {
-    "id": "feature_null_perk_4",
-    "type": "feature",
-    "name": "Perk",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
-  },
-  {
-    "id": "feature_null_tradition_9_discipline_abilities",
-    "type": "feature",
-    "name": "Tradition Ability (9-Discipline)",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose a 9-discipline ability granted by your null tradition.",
-    "options": [
-      {
-        "tradition": "Chronokinetic",
-        "abilities": [
-          {
-            "name": "Interphase",
-            "ability_id": "ability_null_interphase",
-            "action_type": "Main action",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "You can use up to three signature abilities, each of which gains an edge.",
-            "story": "You slip into a faster timestream to act more quickly."
-          },
-          {
-            "name": "Phase Step",
-            "ability_id": "ability_null_phase_step",
-            "action_type": "Main action",
-            "range": "Self; see below",
-            "targets": "Self",
-            "keywords": [
-              "Melee",
-              "Psionic",
-              "Weapon"
-            ],
-            "effect": "You can shift up to your speed, and squares occupied by enemies or objects are not difficult terrain for this shift. You make one power roll that targets each enemy you moved through during this shift.",
-            "story": "You weaken your connection to this manifold, allowing you to move through and damage enemies."
-          }
-        ]
-      },
-      {
-        "tradition": "Cryokinetic",
-        "abilities": [
-          {
-            "name": "Ice Pillars",
-            "ability_id": "ability_null_ice_pillars",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "Three creatures or objects",
-            "keywords": [
-              "Psionic",
-              "Ranged"
-            ],
-            "effect": "The pillars vanish as soon as the effects of the forced movement are resolved.",
-            "story": "Pillars of ice erupt from the ground and launch your foes into the air."
-          },
-          {
-            "name": "Wall of Ice",
-            "ability_id": "ability_null_wall_of_ice",
-            "action_type": "Main action",
-            "range": "10 wall within 10",
-            "targets": "Special",
-            "keywords": [
-              "Area",
-              "Psionic",
-              "Ranged"
-            ],
-            "effect": "You can place this wall in occupied squares, sliding each creature in the area into the nearest unoccupied space of your choice. The wall remains until the end of the encounter or until you are dying. The wall's squares are treated as stone squares for the purpose of damage, and you and allies can move freely through the wall. Each enemy who enters a square adjacent to the wall and has M < AVERAGE is slowed (save ends). Each enemy who is force moved into the wall and has M < AVERAGE is restrained (save ends).",
-            "story": "You create a wall of ice."
-          }
-        ]
-      },
-      {
-        "tradition": "Metakinetic",
-        "abilities": [
-          {
-            "name": "Gravitic Charge",
-            "ability_id": "ability_null_gravitic_charge",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "This movement ignores stability. If you slide into another creature, you resolve damage to both of you as if your force movement had ended, but you keep moving through that creature's space.",
-            "story": "You channel your discipline into momentum that defies gravity."
-          },
-          {
-            "name": "Iron Body",
-            "ability_id": "ability_null_iron_body",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "You gain 20 temporary Stamina. Additionally, until the end of the encounter, your stability gains a bonus equal to your Intuition score.",
-            "story": "You focus until your body becomes as hard as iron."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_null_characteristic_increase_3",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
   },
   {
     "id": "feature_null_discipline_mastery_improvement_3",
     "type": "feature",
     "name": "Discipline Mastery Improvement",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "Your Discipline Mastery feature provides additional benefits when you have 10 or more discipline."
   },
@@ -890,129 +215,32 @@
     "type": "feature",
     "name": "Improved Body",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "When you gain discipline at the start of each of your turns during combat, you gain 3 discipline instead of 2."
-  },
-  {
-    "id": "feature_null_skill_3",
-    "type": "feature",
-    "name": "Skill",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You gain one skill of your choice."
   },
   {
     "id": "feature_null_tradition_feature_8",
     "type": "feature",
     "name": "Tradition Feature",
     "class": "null",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature for your null tradition.",
     "options": [
       {
-        "tradition": "Chronokinetic",
-        "features": [
-          {
-            "name": "Shared Momentum",
-            "description": "When you take the Disengage move action, one ally in the area of your Null Field ability can also take the Disengage move action as a free triggered action, using your distance for that move action."
-          }
-        ]
+        "subclass_name": "Chronokinetic",
+        "name": "Shared Momentum",
+        "description": "When you take the Disengage move action, one ally in the area of your Null Field ability can also take the Disengage move action as a free triggered action, using your distance for that move action."
       },
       {
-        "tradition": "Cryokinetic",
-        "features": [
-          {
-            "name": "Synaptic Triage",
-            "description": "As a free maneuver, you can spend 1d6 Stamina to remove one effect on you. Each creature of your choice in the area of your Null Field ability also gains this benefit."
-          }
-        ]
+        "subclass_name": "Cryokinetic",
+        "name": "Synaptic Triage",
+        "description": "As a free maneuver, you can spend 1d6 Stamina to remove one effect on you. Each creature of your choice in the area of your Null Field ability also gains this benefit."
       },
       {
-        "tradition": "Metakinetic",
-        "features": [
-          {
-            "name": "Inertial Dampener",
-            "description": "You and each creature or object of your choice in the area of your Null Field ability gain a bonus to stability equal to your Intuition score. A creature who attempts to force move a target with this bonus takes psychic damage equal to your Intuition score."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_null_perk_5",
-    "type": "feature",
-    "name": "Perk",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_null_11_discipline_abilities",
-    "type": "feature",
-    "name": "11-Discipline Abilities",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "Choose one psionic ability that costs 11 discipline to use.",
-    "options": [
-      {
-        "name": "Arcane Purge",
-        "ability_id": "ability_null_arcane_purge",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "While suppressed, a target takes psychic damage equal to twice your Intuition score at the start of their turns, whenever they use a supernatural ability, or whenever they use an ability that costs Malice.",
-        "story": "You focus your null field into a pressure point strike that prevents your foe from channeling sorcery."
-      },
-      {
-        "name": "Phase Hurl",
-        "ability_id": "ability_null_phase_hurl",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Psionic",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "The target and each creature or object they collide with from this forced movement takes psychic damage equal to the total number of squares the target was force moved. While the target is dazed this way, they see glimpses of creatures from other parts of the timescape.",
-        "story": "You throw your foe out of phase with this manifold, causing them to harm other enemies as they return."
-      },
-      {
-        "name": "Scalar Assault",
-        "ability_id": "ability_null_scalar_assault",
-        "action_type": "Main action",
-        "range": "3 cube within 1",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Psionic"
-        ],
-        "effect": null,
-        "story": "You warp reality to grow a limb for just a moment and make a single devastating attack."
-      },
-      {
-        "name": "Synaptic Anchor",
-        "ability_id": "ability_null_synaptic_anchor",
-        "action_type": "Free triggered",
-        "range": "Self; see below",
-        "targets": "Self or one creature",
-        "keywords": [
-          "Psionic"
-        ],
-        "effect": "The target takes half the damage, and if the triggering creature has I < AVERAGE, they are dazed (save ends). While the triggering creature is dazed this way, they take psychic damage equal to your Intuition score whenever they use a main action.",
-        "story": "You disrupt an enemy's strike and create a feedback loop in their mind, preventing them from focusing on future attacks."
+        "subclass_name": "Metakinetic",
+        "name": "Inertial Dampener",
+        "description": "You and each creature or object of your choice in the area of your Null Field ability gain a bonus to stability equal to your Intuition score. A creature who attempts to force move a target with this bonus takes psychic damage equal to your Intuition score."
       }
     ]
   },
@@ -1021,129 +249,14 @@
     "type": "feature",
     "name": "I Am the Weapon",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 9,
     "description": "Your Stamina increases by 21 and you can't be made bleeding even while dying. You no longer age or have need of food. Additionally, you can use Intuition instead of another characteristic when resisting potencies."
-  },
-  {
-    "id": "feature_null_tradition_11_discipline_abilities",
-    "type": "feature",
-    "name": "Tradition Ability (11-Discipline)",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose a 11-discipline ability granted by your null tradition.",
-    "options": [
-      {
-        "tradition": "Chronokinetic",
-        "abilities": [
-          {
-            "name": "Arrestor Cycle",
-            "ability_id": "ability_null_arrestor_cycle",
-            "action_type": "Free triggered",
-            "range": "Ranged 10",
-            "targets": "One creature",
-            "keywords": [
-              "Psionic",
-              "Ranged"
-            ],
-            "effect": "If the target loses their turn, the round continues as if they had acted. A target who doesn't lose their turn takes psychic damage equal to twice your Intuition score for each main action they take until the end of their next turn.",
-            "story": "You trap your foe in a looping cycle of time, where they relive the last few seconds over and over again."
-          },
-          {
-            "name": "Time Loop",
-            "ability_id": "ability_null_time_loop",
-            "action_type": "Free triggered",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "You take a bonus turn immediately after the triggering creature. This ability can be used only once per combat round.",
-            "story": "You show shadows what true speed is."
-          }
-        ]
-      },
-      {
-        "tradition": "Cryokinetic",
-        "abilities": [
-          {
-            "name": "Absolute Zero",
-            "ability_id": "ability_null_absolute_zero",
-            "action_type": "Maneuver",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "Until the end of the encounter or until you are dead, you become an avatar of uttermost cold. You gain immunity to all damage equal to the cold damage immunity granted by your Entropic Adaptability trait, you ignore the negative effects of dying, and you have a +2 bonus to potencies.",
-            "story": "You become the coldest thing in the timescape."
-          },
-          {
-            "name": "Heat Drain",
-            "ability_id": "ability_null_heat_drain",
-            "action_type": "Maneuver",
-            "range": "Melee 1",
-            "targets": "One creature",
-            "keywords": [
-              "Melee",
-              "Psionic",
-              "Strike"
-            ],
-            "effect": "While restrained this way, the target takes cold damage equal to your Intuition score at the start of each of your turns. Additionally, whenever the target damages another creature while restrained this way, any potency associated with the damage is reduced by 2.",
-            "story": "You drain all the heat from the target."
-          }
-        ]
-      },
-      {
-        "tradition": "Metakinetic",
-        "abilities": [
-          {
-            "name": "Inertial Absorption",
-            "ability_id": "ability_null_inertial_absorption",
-            "action_type": "Free triggered",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Psionic"
-            ],
-            "effect": "You take half the damage, negate any effects associated with the damage for you, and gain 3 surges.",
-            "story": "You absorb an attack to empower your body."
-          },
-          {
-            "name": "Realitas",
-            "ability_id": "ability_null_realitas",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "One creature",
-            "keywords": [
-              "Melee",
-              "Psionic",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "While dazed this way, the target takes psychic damage equal to twice your Intuition score at the start of each of your turns. If this ability causes a creature who is not a leader or solo creature to become winded, they are instead reduced to 0 Stamina. Any creature reduced to 0 Stamina by this ability is forgotten by all creatures of your level or lower in the timescape who are not present in the encounter. Loved ones of the forgotten creature retain a faint sense of melancholy. This effect can be reversed only at the Director's discretion.",
-            "story": "Your essential hyperreality disrupts your enemy's connection to existence."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_null_characteristic_increase",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "Your Agility and Intuition scores each increase to 5."
   },
   {
     "id": "feature_null_discipline_mastery_improvement",
     "type": "feature",
     "name": "Discipline Mastery Improvement",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "Your Discipline Mastery feature provides additional benefits when you have 12 or more discipline."
   },
@@ -1152,7 +265,6 @@
     "type": "feature",
     "name": "Manifold Body",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "When you gain discipline at the start of each of your turns during combat, you gain 4 discipline instead of 3."
   },
@@ -1161,7 +273,6 @@
     "type": "feature",
     "name": "Manifold Resonance",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "Your body becomes perfected matter, beyond the whims and chaos of the timescape and the restrictions of the manifolds. Each time you finish a respite, you can shift yourself and any creatures in the area of your Null Field ability to any location in the timescape known to you, known to any other creature in the area, or where any supernatural treasure in the area has been before.\n\nWhenever you use an ability, you gain 1 discipline that can be used only to apply a benefit from your Psi Boost feature to that ability. Additionally, you and allies in the area of your Null Field ability ignore banes and double banes on your power rolls."
   },
@@ -1170,26 +281,7 @@
     "type": "feature",
     "name": "Order",
     "class": "null",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You have an epic resource called order. Each time you finish a respite, you gain order equal to the XP you gain. You can spend order on your abilities as if it were discipline.\n\nAt the start of a combat encounter, you can spend 1 order to increase the size of your Null Field by 1 until the end of the encounter.\nOrder remains until you spend it."
-  },
-  {
-    "id": "feature_null_perk",
-    "type": "feature",
-    "name": "Perk",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice."
-  },
-  {
-    "id": "feature_null_skill",
-    "type": "feature",
-    "name": "Skill",
-    "class": "null",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one skill of your choice."
   }
 ]

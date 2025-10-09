@@ -311,21 +311,26 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     final deitySlugs =
         ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
 
-    return ClassFeaturesWidget(
-      level: widget.selectedLevel,
-      features: data.features,
-      featureDetailsById: data.featureDetailsById,
-      selectedOptions: _selections,
-      onSelectionChanged: _handleSelectionChanged,
-      domainLinkedFeatureIds: data.domainLinkedFeatureIds,
-      selectedDomainSlugs: domainSlugs,
-      deityLinkedFeatureIds: data.deityLinkedFeatureIds,
-      selectedDeitySlugs: deitySlugs,
-      abilityDetailsById: data.abilityDetailsById,
-      abilityIdByName: data.abilityIdByName,
-      activeSubclassSlugs: subclassSlugs,
-      subclassLabel: subclassLabel,
-      subclassSelection: widget.selectedSubclass,
+    return SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: double.infinity),
+        child: ClassFeaturesWidget(
+          level: widget.selectedLevel,
+          features: data.features,
+          featureDetailsById: data.featureDetailsById,
+          selectedOptions: _selections,
+          onSelectionChanged: _handleSelectionChanged,
+          domainLinkedFeatureIds: data.domainLinkedFeatureIds,
+          selectedDomainSlugs: domainSlugs,
+          deityLinkedFeatureIds: data.deityLinkedFeatureIds,
+          selectedDeitySlugs: deitySlugs,
+          abilityDetailsById: data.abilityDetailsById,
+          abilityIdByName: data.abilityIdByName,
+          activeSubclassSlugs: subclassSlugs,
+          subclassLabel: subclassLabel,
+          subclassSelection: widget.selectedSubclass,
+        ),
+      ),
     );
   }
 }

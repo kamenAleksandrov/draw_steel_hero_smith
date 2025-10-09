@@ -3,23 +3,23 @@
     "id": "feature_censor_censor_order",
     "type": "feature",
     "name": "Censor Order",
+    "is_subclass_feature": true,
     "class": "censor",
-    "is_subclass": true,
     "level": 1,
     "description": "Censors are the will of their god made physically manifest, and you act as your god's agent in the world. As you shoulder that responsibility, you choose a censor order from the following options, each of which grants you a skill. (*Quick Build:* Paragon.)\n\nYour censor order is your subclass, and your choice of order determines many of the features you'll gain as you gain new levels.",
     "options": [
       {
-        "name": "Exorcist",
+        "subclass_name": "Exorcist",
         "skill": "Read Person",
         "description": "You specialize in hunting your order’s hidden enemies, knowing that an open mind is an unguarded fortress. You have the Read Person skill."
       },
       {
-        "name": "Oracle",
+        "subclass_name": "Oracle",
         "skill": "Magic",
         "description": "Corruption has deep tendrils that can be missed, leading you to specialize in uncovering clandestine threats to your order. You have the Magic skill."
       },
       {
-        "name": "Paragon",
+        "subclass_name": "Paragon",
         "skill": "Lead",
         "description": "Without a strong example and a firm hand, the weak will be corrupted. You specialize in setting an example for your order. You have the Lead skill."
       }
@@ -30,7 +30,6 @@
     "type": "feature",
     "name": "Wrath",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "The power you serve grants you a Heroic Resource called wrath, fueling your abilities as you censor those your church deems to be heretics.",
     "in_combat": {
@@ -140,7 +139,6 @@
     "type": "feature",
     "name": "Judgment",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You pick out the enemies most worthy of your wrath and place a divine judgment upon them, censoring them with the power of your god. You have the following ability.",
     "ability": "Judgment"
@@ -150,21 +148,21 @@
     "type": "feature",
     "name": "Judgment Order Benefit",
     "class": "censor",
-    "is_subclass_feature": true,
     "level": 1,
+    "is_subclass_feature": true,
     "description": "The first time on a turn that you use your Judgment ability to judge a creature, you gain the following benefit based on your order:",
     "options": [
       {
-        "order": "Exorcist",
-        "benefit": " You can teleport up to a number of squares equal to twice your Presence score. This movement must take you closer to the judged creature. You do not need line of effect to your destination."
+        "subclass_name": "Exorcist",
+        "description": " You can teleport up to a number of squares equal to twice your Presence score. This movement must take you closer to the judged creature. You do not need line of effect to your destination."
       },
       {
-        "order": "Oracle",
-        "benefit": " You can deal holy damage equal to twice your Presence score to the judged creature."
+        "subclass_name": "Oracle",
+        "description": " You can deal holy damage equal to twice your Presence score to the judged creature."
       },
       {
-        "order": "Paragon",
-        "benefit": "You can vertical pull the judged creature up to a number of squares equal to twice your Presence score."
+        "subclass_name": "Paragon",
+        "description": "You can vertical pull the judged creature up to a number of squares equal to twice your Presence score."
       }
     ]
   },
@@ -173,77 +171,79 @@
     "type": "feature",
     "name": "My Life for Yours",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You channel your will to mend your wounds or the wounds of your allies. You have the following ability.",
     "ability": "My Life for Yours"
   },
   {
-    "id": "feature_censor_a_sense_for_truth",
+    "id": "2nd_level_order_feature",
+    "name": "Order Feature",
     "type": "feature",
-    "name": "A Sense for Truth",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Exorcist",
     "level": 2,
-    "description": "You are trained in secret techniques from your order that allow you to discern the truth with supernatural precision. If a creature is of a lower level than you, you automatically know when they are lying, though you don't necessarily know the actual truth behind their lie. Additionally, you gain an edge on tests made to detect lies or hidden motives."
-  },
-  {
-    "id": "feature_censor_it_was_foretold",
-    "type": "feature",
-    "name": "It Was Foretold",
-    "class": "censor",
     "is_subclass_feature": true,
-    "subclass_name": "Oracle",
-    "level": 2,
-    "description": "Your order has trained you to understand fragments of the visions granted to you by your deity, giving you a momentary advantage in challenging situations. At the start of an encounter, you can take one main action before any other creature and before your first turn. Additionally, whenever the Director calls for a montage test, you can make one free test before the montage begins, which counts as an earned success or failure as usual."
-  },
-  {
-    "id": "feature_censor_judge_of_character",
-    "type": "feature",
-    "name": "Judge of Character",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Oracle",
-    "level": 2,
-    "description": "Your focus on your fragmentary visions grants divine insight into the world and its creatures beyond your usual senses. Whenever you would make an Intuition test, you can make a Presence test instead."
-  },
-  {
-    "id": "feature_censor_lead_by_example",
-    "type": "feature",
-    "name": "Lead by Example",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Paragon",
-    "level": 2,
-    "description": "Your devotion to your deity allows you to take command of the battlefield, letting your allies benefit from your wisdom. While you are adjacent to a creature, your allies gain the benefits of flanking against that creature. Additionally, your allies gain an edge on tests made to aid other creatures with their tests."
-  },
-  {
-    "id": "feature_censor_saint_s_vigilance",
-    "type": "feature",
-    "name": "Saint's Vigilance",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Exorcist",
-    "level": 2,
-    "description": "You have honed your ability to detect sin and can use it to find those who hide from justice. Any creature judged by you can't use the Hide maneuver. Additionally, you gain an edge when searching for hidden creatures. If you find a hidden creature, you can use your Judgment ability against them as a free triggered action."
-  },
-  {
-    "id": "feature_censor_stalwart_icon",
-    "type": "feature",
-    "name": "Stalwart Icon",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Paragon",
-    "level": 2,
-    "description": "You exhibit a small spark of your deity's power, causing creatures to trust or fear you, depending on what you need. You gain an edge on tests made to intimidate or persuade others."
+    "description": "Your censor order grants you two features.",
+    "options": [
+      {
+        "id": "feature_censor_a_sense_for_truth",
+        "type": "feature",
+        "name": "A Sense for Truth",
+        "class": "censor",
+        "subclass_name": "Exorcist",
+        "level": 2,
+        "description": "You are trained in secret techniques from your order that allow you to discern the truth with supernatural precision. If a creature is of a lower level than you, you automatically know when they are lying, though you don't necessarily know the actual truth behind their lie. Additionally, you gain an edge on tests made to detect lies or hidden motives."
+      },
+      {
+        "id": "feature_censor_it_was_foretold",
+        "type": "feature",
+        "name": "It Was Foretold",
+        "class": "censor",
+        "subclass_name": "Oracle",
+        "level": 2,
+        "description": "Your order has trained you to understand fragments of the visions granted to you by your deity, giving you a momentary advantage in challenging situations. At the start of an encounter, you can take one main action before any other creature and before your first turn. Additionally, whenever the Director calls for a montage test, you can make one free test before the montage begins, which counts as an earned success or failure as usual."
+      },
+      {
+        "id": "feature_censor_judge_of_character",
+        "type": "feature",
+        "name": "Judge of Character",
+        "class": "censor",
+        "subclass_name": "Oracle",
+        "level": 2,
+        "description": "Your focus on your fragmentary visions grants divine insight into the world and its creatures beyond your usual senses. Whenever you would make an Intuition test, you can make a Presence test instead."
+      },
+      {
+        "id": "feature_censor_lead_by_example",
+        "type": "feature",
+        "name": "Lead by Example",
+        "class": "censor",
+        "subclass_name": "Paragon",
+        "level": 2,
+        "description": "Your devotion to your deity allows you to take command of the battlefield, letting your allies benefit from your wisdom. While you are adjacent to a creature, your allies gain the benefits of flanking against that creature. Additionally, your allies gain an edge on tests made to aid other creatures with their tests."
+      },
+      {
+        "id": "feature_censor_saint_s_vigilance",
+        "type": "feature",
+        "name": "Saint's Vigilance",
+        "class": "censor",
+        "subclass_name": "Exorcist",
+        "level": 2,
+        "description": "You have honed your ability to detect sin and can use it to find those who hide from justice. Any creature judged by you can't use the Hide maneuver. Additionally, you gain an edge when searching for hidden creatures. If you find a hidden creature, you can use your Judgment ability against them as a free triggered action."
+      },
+      {
+        "id": "feature_censor_stalwart_icon",
+        "type": "feature",
+        "name": "Stalwart Icon",
+        "class": "censor",
+        "subclass_name": "Paragon",
+        "level": 2,
+        "description": "You exhibit a small spark of your deity's power, causing creatures to trust or fear you, depending on what you need. You gain an edge on tests made to intimidate or persuade others."
+      }
+    ]
   },
   {
     "id": "feature_censor_look_on_my_work_and_despair",
     "type": "feature",
     "name": "Look On My Work and Despair",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 3,
     "description": "Your judgment has grown in divine power, instilling fear in those you condemn. Whenever you use your Judgment ability, you can spend 1 wrath, and if the target has P < AVERAGE, they are frightened of you (save ends). Additionally, whenever a creature judged by you is reduced to 0 Stamina and you use Judgment as a free triggered action, if the new target has P < STRONG, they are frightened of you (save ends). If the target is already frightened of you, they instead take holy damage equal to twice your Presence score."
   },
@@ -333,46 +333,52 @@
     "type": "feature",
     "name": "Wrath Beyond Wrath",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "The first time each combat round that you deal damage to a creature judged by you, you gain 2 wrath instead of 1."
   },
   {
-    "id": "feature_censor_evil_revealed",
+    "id": "5th_level_order_feature",
     "type": "feature",
-    "name": "Evil Revealed",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Exorcist",
+    "name": "Order Feature",
     "level": 5,
-    "description": "Your order has taught you methods to discern the disguises of both mortals and monsters. You automatically see through disguises and illusions created by creatures of your level or lower, and you gain an edge on tests made to see through the disguises and illusions of more powerful creatures. Whenever you see through a creature's disguise or illusion, you can use your Judgment ability against them as a free triggered action."
-  },
-  {
-    "id": "feature_censor_prophecy",
-    "type": "feature",
-    "name": "Prophecy",
-    "class": "censor",
     "is_subclass_feature": true,
-    "subclass_name": "Oracle",
-    "level": 5,
-    "description": "You can better sift through the constant fragmentary visions from your deity and act to make them manifest. Each time you earn 1 or more Victories, you can make a number of 2d10 rolls equal to the number of Victories you earned. Record each roll in order. Then whenever you or a creature within 10 squares makes a power roll, you can use a free triggered action to replace the total on the dice with your first recorded roll.\n\nYou discard each roll as it is used, and each time you earn Victories, you add new rolls to the bottom of the list. Any unused rolls are discarded when you finish a respite."
+    "description": "Your censor order grants you a feature.",
+    "options": [
+      {
+        "id": "feature_censor_evil_revealed",
+        "type": "feature",
+        "name": "Evil Revealed",
+        "class": "censor",
+        "subclass_name": "Exorcist",
+        "level": 5,
+        "description": "Your order has taught you methods to discern the disguises of both mortals and monsters. You automatically see through disguises and illusions created by creatures of your level or lower, and you gain an edge on tests made to see through the disguises and illusions of more powerful creatures. Whenever you see through a creature's disguise or illusion, you can use your Judgment ability against them as a free triggered action."
+      },
+      {
+        "id": "feature_censor_prophecy",
+        "type": "feature",
+        "name": "Prophecy",
+        "class": "censor",
+        "subclass_name": "Oracle",
+        "level": 5,
+        "description": "You can better sift through the constant fragmentary visions from your deity and act to make them manifest. Each time you earn 1 or more Victories, you can make a number of 2d10 rolls equal to the number of Victories you earned. Record each roll in order. Then whenever you or a creature within 10 squares makes a power roll, you can use a free triggered action to replace the total on the dice with your first recorded roll.\n\nYou discard each roll as it is used, and each time you earn Victories, you add new rolls to the bottom of the list. Any unused rolls are discarded when you finish a respite."
+      },
+      {
+        "id": "feature_censor_stand_fast",
+        "type": "feature",
+        "name": "Stand Fast!",
+        "class": "censor",
+        "subclass_name": "Paragon",
+        "level": 5,
+        "description": "Your divine spark grows in power, allowing you and your allies to focus and endure. At the start of each of your turns, you can spend 1d6 Stamina to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally who starts their turn within 5 squares of you can also spend Stamina to gain this benefit."
+      }
+    ]
   },
-  {
-    "id": "feature_censor_stand_fast",
-    "type": "feature",
-    "name": "Stand Fast!",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Paragon",
-    "level": 5,
-    "description": "Your divine spark grows in power, allowing you and your allies to focus and endure. At the start of each of your turns, you can spend 1d6 Stamina to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally who starts their turn within 5 squares of you can also spend Stamina to gain this benefit."
-  },
+
   {
     "id": "feature_censor_implement_of_wrath",
     "type": "feature",
     "name": "Implement of Wrath",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 6,
     "description": "Each time you finish a respite, you can choose one hero's weapon, including your own, to channel supernatural power as an implement of your god's wrath. The weapon becomes magic and gains the following benefits until your next respite:\n\n- Strikes with the weapon deal extra holy damage equal to the wielder's highest characteristic score.\n- Any creature struck by the weapon who has holy weakness and has P < STRONG is frightened and weakened (save ends).\n- Any minion targeted by a strike using the weapon dies. That minion's Stamina maximum is removed from the minion Stamina pool before any damage is applied to the rest of the squad.\n- The weapon's wielder can't be made frightened."
   },
@@ -462,55 +468,51 @@
     "type": "feature",
     "name": "Focused Wrath",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "When you gain wrath at the start of each of your turns during combat, you gain 3 wrath instead of 2."
   },
   {
-    "id": "feature_censor_demonologist",
+    "id": "8th_level_order_feature",
     "type": "feature",
-    "name": "Demonologist",
-    "class": "censor",
+    "name": "Order Feature",
+    "level": 8,
     "is_subclass_feature": true,
-    "subclass_name": "Exorcist",
-    "level": 8,
-    "description": "The most esoteric secrets of your order teach you that to defeat your enemy, you must understand them. You treat your Renown as 2 higher than usual when dealing with demons, devils, and other agents of chaos. If you successfully complete a negotiation with one of these creatures, you gain an edge on power rolls made against them and can use your Judgment ability against them as a free triggered action before an encounter begins."
-  },
-  {
-    "id": "feature_censor_perk_5",
-    "type": "feature",
-    "name": "Perk",
-    "class": "censor",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_censor_their_past_revealed",
-    "type": "feature",
-    "name": "Their Past Revealed",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Oracle",
-    "level": 8,
-    "description": "Your constant fragmentary visions become clearer, and can be honed to understand the past of creatures you interact with. While speaking with any creature, you can make a medium Presence test to see visions from their past. On a success, you see a clear view of any subject related to the creature's past that you wish to understand. On a success with a consequence, you see two visions, one false and one true. On a failure, you lose 2d6 Stamina."
-  },
-  {
-    "id": "feature_censor_vow",
-    "type": "feature",
-    "name": "Vow",
-    "class": "censor",
-    "is_subclass_feature": true,
-    "subclass_name": "Paragon",
-    "level": 8,
-    "description": "Your words take on the power of your deity, with all the authority that entails. If you convince a creature to take an oath, they can't break it for 7 days. If you take an oath, you can't break it for 7 days."
+    "description": "Your censor order grants you a feature.",
+    "options": [
+      {
+        "id": "feature_censor_demonologist",
+        "type": "feature",
+        "name": "Demonologist",
+        "class": "censor",
+        "subclass_name": "Exorcist",
+        "level": 8,
+        "description": "The most esoteric secrets of your order teach you that to defeat your enemy, you must understand them. You treat your Renown as 2 higher than usual when dealing with demons, devils, and other agents of chaos. If you successfully complete a negotiation with one of these creatures, you gain an edge on power rolls made against them and can use your Judgment ability against them as a free triggered action before an encounter begins."
+      },
+      {
+        "id": "feature_censor_their_past_revealed",
+        "type": "feature",
+        "name": "Their Past Revealed",
+        "class": "censor",
+        "subclass_name": "Oracle",
+        "level": 8,
+        "description": "Your constant fragmentary visions become clearer, and can be honed to understand the past of creatures you interact with. While speaking with any creature, you can make a medium Presence test to see visions from their past. On a success, you see a clear view of any subject related to the creature's past that you wish to understand. On a success with a consequence, you see two visions, one false and one true. On a failure, you lose 2d6 Stamina."
+      },
+      {
+        "id": "feature_censor_vow",
+        "type": "feature",
+        "name": "Vow",
+        "class": "censor",
+        "subclass_name": "Paragon",
+        "level": 8,
+        "description": "Your words take on the power of your deity, with all the authority that entails. If you convince a creature to take an oath, they can't break it for 7 days. If you take an oath, you can't break it for 7 days."
+      }
+    ]
   },
   {
     "id": "feature_censor_improved_implement_of_wrath",
     "type": "feature",
     "name": "Improved Implement of Wrath",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 9,
     "description": "The weapon you target with your Implement of Wrath feature gains the following additional benefits:\n\n- The weapon's wielder and each ally adjacent to them gain a +2 bonus to saving throws.\n- At the end of each of the weapon wielder's turns, each ally adjacent to the wielder makes a saving throw against each effect on them that is ended by a saving throw.\n- The weapon's wielder has corruption immunity 10."
   },
@@ -519,7 +521,6 @@
     "type": "feature",
     "name": "Templar",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You are the ultimate representation of your god's justice in the timescape. Whenever you use your Judgment ability, you can use a free triggered action to use a conduit domain effect (see [Domain Piety and Effects](#page-110-0) in the [Conduit](#page-108-0) section) associated with your chosen domain, or a domain you access with virtue (see below). If the effect calls for the use of your Intuition score, you use your Presence score instead. If the effect uses your conduit level, use your censor level instead.\n\nAdditionally, whenever you take a respite, you can open a portal to rest in the presence of your deity and bring along any allies. When you do, you can ask your deity three questions, which the Director must answer honestly if your deity knows the answers (though they might answer cryptically or incompletely). When you finish your respite, you and your allies can appear at any location in the timescape where someone worships your deity.\nWhile you rest in their presence, your god might also give you priority targets to enact justice upon. You and your allies each have a double edge on power rolls made against such targets. If you attempt to open a portal to your deity again before you have defeated your priority targets, you suffer your god's wrath, as determined by the Director."
   },
@@ -528,7 +529,6 @@
     "type": "feature",
     "name": "Virtue",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You have an epic resource called virtue. Each time you finish a respite, you gain virtue equal to the XP you gain. You can spend virtue on your abilities as if it were wrath.\n\nAdditionally, you can spend 3 virtue to access one of your deity's domains that you usually don't have access to. When you do, you can use that domain's features until you finish another respite.\nVirtue remains until you spend it."
   },
@@ -537,7 +537,6 @@
     "type": "feature",
     "name": "Wrath of the Gods",
     "class": "censor",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "When you gain wrath at the start of each of your turns during combat, you gain 4 wrath instead of 3."
   }

@@ -350,9 +350,38 @@ class _StartingCharacteristicsWidgetState
       );
     }
 
-    return Column(
-      children:
-          stats.map((stat) => _buildAssignableTile(stat, summary)).toList(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 12.0;
+        const runSpacing = 12.0;
+        const minTileWidth = 260.0;
+
+        final availableWidth = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+
+        var columns = (availableWidth / (minTileWidth + spacing)).floor();
+        if (columns < 1) {
+          columns = 1;
+        }
+        columns = columns.clamp(1, stats.length).toInt();
+
+        final totalSpacing = spacing * (columns - 1);
+        final usableWidth = availableWidth - totalSpacing;
+        final tileWidth = usableWidth / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: [
+            for (final stat in stats)
+              SizedBox(
+                width: tileWidth,
+                child: _buildAssignableTile(stat, summary),
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -363,7 +392,8 @@ class _StartingCharacteristicsWidgetState
     final levelBonus = summary.levelBonuses[stat] ?? 0;
     final total = summary.totals[stat] ?? 0;
     final assignedToken = _controller.assignments[stat];
-    final isPending = _controller.selectedArray != null && assignedToken == null;
+    final isPending =
+        _controller.selectedArray != null && assignedToken == null;
 
     return DragTarget<CharacteristicValueToken>(
       onWillAcceptWithDetails: (_) => true,
@@ -379,7 +409,6 @@ class _StartingCharacteristicsWidgetState
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -465,8 +494,8 @@ class _StartingCharacteristicsWidgetState
     final borderColor = color.withOpacity(highlight ? 0.8 : 0.5);
     final backgroundColor =
         highlight ? color.withOpacity(0.18) : color.withOpacity(0.1);
-  final message =
-    _controller.selectedArray == null ? 'Select array' : 'Drop value';
+    final message =
+        _controller.selectedArray == null ? 'Select array' : 'Drop value';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -596,8 +625,7 @@ class _StartingCharacteristicsWidgetState
     final accent = AppColors.secondary;
     return DragTarget<CharacteristicValueToken>(
       onWillAcceptWithDetails: (_) => true,
-      onAcceptWithDetails: (details) =>
-          _controller.clearToken(details.data),
+      onAcceptWithDetails: (details) => _controller.clearToken(details.data),
       builder: (context, candidateData, rejectedData) {
         final isActive = candidateData.isNotEmpty;
         final background = accent.withOpacity(isActive ? 0.18 : 0.1);
@@ -654,12 +682,12 @@ class _StartingCharacteristicsWidgetState
   }
 
   Widget _buildPotencySection(Map<String, int> potencyValues) {
-  final progression =
-    _controller.classData.startingCharacteristics.potencyProgression;
-  final baseKey =
-    CharacteristicUtils.normalizeKey(progression.characteristic) ??
-      progression.characteristic;
-  final baseName = _displayName(baseKey);
+    final progression =
+        _controller.classData.startingCharacteristics.potencyProgression;
+    final baseKey =
+        CharacteristicUtils.normalizeKey(progression.characteristic) ??
+            progression.characteristic;
+    final baseName = _displayName(baseKey);
     const order = ['strong', 'average', 'weak'];
     return Container(
       width: double.infinity,

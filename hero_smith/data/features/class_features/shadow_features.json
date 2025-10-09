@@ -4,79 +4,24 @@
     "type": "feature",
     "name": "Shadow College",
     "class": "shadow",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
     "description": "Choose a shadow college to guide your techniques and training.",
     "options": [
       {
-        "college": "Black Ash",
+        "subclass_name": "Black Ash",
         "skill": "Magic",
-        "features": [
-          {
-            "name": "Black Ash Teleport",
-            "description": "You have the following ability.",
-            "ability": {
-              "name": "Black Ash Teleport",
-              "ability_id": "ability_shadow_black_ash_teleport",
-              "action_type": "Maneuver",
-              "range": "Self",
-              "targets": "Self",
-              "keywords": [
-                "Magic"
-              ],
-              "effect": "You teleport up to 5 squares. If you have concealment or cover at your destination, you can use the Hide maneuver even if you are observed. If you successfully hide using this maneuver, you gain 1 surge.\n\nYou teleport 1 additional square for each insight spent.",
-              "story": "In a swirl of black ash, you step from one place to another."
-            }
-          }
-        ]
+        "description": " The College of Black Ash founded the art of being a shadow. Its graduates are unmatched in mobility, using sorcery to teleport around the battlefield, manipulate shadows, and summon darkness. You have the Magic skill."
       },
       {
-        "college": "Caustic Alchemy",
+        "subclass_name": "Caustic Alchemy",
         "skill": "Alchemy",
-        "features": [
-          {
-            "name": "Coat the Blade",
-            "description": "You have the following ability.",
-            "ability": {
-              "name": "Coat the Blade",
-              "ability_id": "ability_shadow_coat_the_blade",
-              "action_type": "Maneuver",
-              "range": "Self",
-              "targets": "Self",
-              "keywords": [
-                "-"
-              ],
-              "effect": "You gain 2 surges. Additionally, whenever you use a surge before the end of the encounter, you can choose to have it deal poison damage.\n\nFor each insight you spend, you gain 1 additional surge.",
-              "story": "A little poison goes a long way."
-            }
-          },
-          {
-            "name": "Smoke Bomb",
-            "description": "You always carry a supply of smoke bombs to use for distractions and easy getaways. You can use the Hide maneuver even if you are observed and don't initially have cover or concealment. When you do so, you can shift a number of squares equal to your Agility score. If you end this movement with cover or concealment, you are automatically hidden."
-          }
-        ]
+        "description": " The College of Caustic Alchemy teaches its students recipes for the acids, bombs, and poisons used in their grim work. Graduates of the college are exceptional assassins. You have the Alchemy skill."
       },
       {
-        "college": "Harlequin Mask",
+        "subclass_name": "Harlequin Mask",
         "skill": "Lie",
-        "features": [
-          {
-            "name": "I'm No Threat",
-            "description": "You have the following ability.",
-            "ability": {
-              "name": "I'm No Threat",
-              "ability_id": "ability_shadow_i_m_no_threat",
-              "action_type": "Maneuver",
-              "range": "Self",
-              "targets": "Self",
-              "keywords": [
-                "Magic"
-              ],
-              "effect": "You envelop yourself in an illusion that makes you appear nonthreatening and harmless to your enemies. You might take on the appearance of a harmless animal of your size, such as a sheep or capybara, or you might appear as a less heroic and unarmed version of yourself. While this illusion lasts, your strikes gain an edge, and when you take the Disengage move action, you gain a +1 bonus to the distance you can shift.\nThe illusion ends when you harm another creature, when you physically interact with a creature, when you use this ability again, or when you end the illusion (no action required). If you end this illusion by harming another creature, you gain 1 surge.\n\nChoose a creature whose size is no more than 1 greater than yours and who is within 10 squares. This ability's illusion makes you appear as that creature. This illusion covers your entire body, including clothing and armor, and alters your voice to sound like that of the creature. You gain an edge on tests made to convince the creature's allies that you are the creature.",
-              "story": "Taking on an illusory countenance gives you an advantage on subterfuge."
-            }
-          }
-        ]
+        "description": "Graduates of the College of the Harlequin Mask learn illusion magic, which they use to infiltrate enemy strongholds and create orchestrated chaos in combat. You have the Lie skill."
       }
     ]
   },
@@ -85,7 +30,6 @@
     "type": "feature",
     "name": "Insight",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 1,
     "description": "You cultivate insight by watching for openings and exploiting foes' mistakes.",
     "in_combat": {
@@ -102,170 +46,36 @@
     "type": "feature",
     "name": "Hesitation Is Weakness",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 1,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_shadow_kit",
-    "type": "feature",
-    "name": "Kit",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "You can use and gain the benefits of a kit. See Chapter 6: Kits for more information. (*Quick Build:* Cloak and Dagger.)"
+    "description": "You have the following ability.",
+    "ability": "Hesitation Is Weakness"
   },
   {
     "id": "feature_shadow_college_triggered_action",
     "type": "feature",
     "name": "College Triggered Action",
     "class": "shadow",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 1,
-    "description": "Adopt the triggered action granted by your shadow college.",
+    "description": "Your shadow college grants you a triggered action, as shown on the College Triggered Actions table.",
     "options": [
       {
-        "college": "Black Ash",
-        "name": "Too Slow",
-        "ability_id": "ability_shadow_too_slow",
-        "action_type": "Free triggered",
-        "range": "Self; see below",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "You ignore any effects associated with the damage that triggered your In All This Confusion ability. Before you teleport, you can make a free strike against a creature who damaged you to trigger In All This Confusion. After you teleport, you can spend a Recovery.",
-        "story": "Your foe made a big mistake."
+        "subclass_name": "Black Ash",
+        "name": "In All This Confusion",
+        "description": "You have the following ability.",
+        "ability": "In All This Confusion"
       },
       {
-        "college": "Caustic Alchemy",
-        "name": "Sticky Bomb",
-        "ability_id": "ability_shadow_sticky_bomb",
-        "action_type": "Main action",
-        "range": "Ranged 10",
-        "targets": "One creature",
-        "keywords": [
-          "Ranged"
-        ],
-        "effect": "You attach a small bomb to a creature. If you are hidden from the creature, they don't notice the bomb and you remain hidden. The creature otherwise notices the bomb and can disarm and remove it as a main action. If they don't, at the end of your next turn, the bomb detonates. When the bomb detonates, you make a power roll targeting each enemy within 2 squares of it.",
-        "story": "Explosives are best when they're attached to an enemy."
+        "subclass_name": "Caustic Alchemy",
+        "name": "Defensive Roll",
+        "description": "You have the following ability.",
+        "ability": "Defensive Roll"
       },
       {
-        "college": "Harlequin Mask",
-        "name": "So Gullible",
-        "ability_id": "ability_shadow_so_gullible",
-        "action_type": "Free triggered",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Magic"
-        ],
-        "effect": "You use your Clever Trick ability with no insight cost against the triggering creature and strike. You can teleport to an unoccupied space within 3 squares of that creature and can make a free strike against them. You can then spend a Recovery.",
-        "story": "When your enemy strikes, you reveal you were in a different place all along."
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_signature_ability",
-    "type": "feature",
-    "name": "Shadow Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose one signature technique to define your style.",
-    "options": [
-      {
-        "name": "Gasping in Pain",
-        "ability_id": "ability_shadow_gasping_in_pain",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "One ally within 5 squares of the target gains 1 surge.",
-        "story": "Your precise strikes let your allies take advantage of a target's agony."
-      },
-      {
-        "name": "I Work Better Alone",
-        "ability_id": "ability_shadow_i_work_better_alone",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "If the target has none of your allies adjacent to them, you gain 1 surge before making the power roll.",
-        "story": "\"It's better, just you and me. Isn't it?\""
-      },
-      {
-        "name": "Teamwork Has Its Place",
-        "ability_id": "ability_shadow_teamwork_has_its_place",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "If any ally is adjacent to the target, you gain 1 surge before making the power roll.",
-        "story": "You attack an enemy as an ally exposes their weakness."
-      },
-      {
-        "name": "You Were Watching the Wrong One",
-        "ability_id": "ability_shadow_you_were_watching_the_wrong_one",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "As long as you have one or more allies within 5 squares of the target, you gain 1 surge. If you are flanking the target when you use this ability, choose one ally who is flanking with you. That ally also gains 1 surge.",
-        "story": "They can't watch both of you at once."
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_1_insight_abilities",
-    "type": "feature",
-    "name": "1-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 1,
-    "description": "Choose one ability that costs 1 insight to use.",
-    "options": [
-      {
+        "subclass_name": "Harlequin Mask",
         "name": "Clever Trick",
-        "ability_id": "ability_shadow_clever_trick",
-        "action_type": "Triggered",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Magic"
-        ],
-        "effect": "Choose an enemy within distance of the triggering strike, including the enemy who targeted you. The strike targets that enemy instead.",
-        "story": "You sow a moment of confusion in combat, to your enemy's peril."
-      },
-      {
-        "name": "Hesitation Is Weakness",
-        "ability_id": "ability_shadow_hesitation_is_weakness",
-        "action_type": "Free triggered",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "You take your turn after the triggering hero.",
-        "story": "Keep up the attack. Never give them a moment's grace."
+        "description": "You have the following ability.",
+        "ability": "Clever Trick"
       }
     ]
   },
@@ -274,286 +84,24 @@
     "type": "feature",
     "name": "College Feature",
     "class": "shadow",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2nd-level feature from your shadow college.",
     "options": [
       {
-        "college": "Black Ash",
-        "features": [
-          {
-            "name": "Burning Ash",
-            "description": "The ash you leave behind burns your foes. The first time on a turn that you use a shadow ability to teleport away from or into a space adjacent to an enemy, that enemy takes fire damage equal to your Agility score."
-          }
-        ]
+        "subclass_name": "Black Ash",
+        "name": "Burning Ash",
+        "description": "The ash you leave behind burns your foes. The first time on a turn that you use a shadow ability to teleport away from or into a space adjacent to an enemy, that enemy takes fire damage equal to your Agility score."
       },
       {
-        "college": "Caustic Alchemy",
-        "features": [
-          {
-            "name": "Trained Assassin",
-            "description": "You know just where to cut your enemies. Whenever you make a strike that has no bane or double bane, and that incorporates 1 or more surges, you gain 1 additional surge that you can use only on that strike."
-          }
-        ]
+        "subclass_name": "Caustic Alchemy",
+        "name": "Trained Assassin",
+        "description": "You know just where to cut your enemies. Whenever you make a strike that has no bane or double bane, and that incorporates 1 or more surges, you gain 1 additional surge that you can use only on that strike."
       },
       {
-        "college": "Harlequin Mask",
-        "features": [
-          {
-            "name": "Friend!",
-            "description": "Your illusions make your enemies believe you are their friend in critical moments. Whenever an enemy uses an ability or trait that targets multiple allies and you are within distance of the effect, you can choose to be a target of the effect as well.\n\nAdditionally, when you use your I'm No Threat ability, you can take the Disengage move action as part of that ability."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_perk_2",
-    "type": "feature",
-    "name": "Perk",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "You gain one exploration, interpersonal, or intrigue perk of your choice. See Chapter 7: Perks."
-  },
-  {
-    "id": "feature_shadow_college_5_insight_abilities",
-    "type": "feature",
-    "name": "College Ability (5-Insight)",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose a 5-insight ability from your college.",
-    "options": [
-      {
-        "college": "Black Ash",
-        "abilities": [
-          {
-            "name": "In a Puff of Ash",
-            "ability_id": "ability_shadow_in_a_puff_of_ash",
-            "action_type": "Main action",
-            "range": "Melee 1 or ranged 5",
-            "targets": "One creature",
-            "keywords": [
-              "Magic",
-              "Melee",
-              "Ranged",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": null,
-            "story": "You enchant a strike with your teleportation magic."
-          },
-          {
-            "name": "Too Slow",
-            "ability_id": "ability_shadow_too_slow",
-            "action_type": "Free triggered",
-            "range": "Self; see below",
-            "targets": "Self",
-            "keywords": [
-              "-"
-            ],
-            "effect": "You ignore any effects associated with the damage that triggered your In All This Confusion ability. Before you teleport, you can make a free strike against a creature who damaged you to trigger In All This Confusion. After you teleport, you can spend a Recovery.",
-            "story": "Your foe made a big mistake."
-          }
-        ]
-      },
-      {
-        "college": "Caustic Alchemy",
-        "abilities": [
-          {
-            "name": "Sticky Bomb",
-            "ability_id": "ability_shadow_sticky_bomb",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "One creature",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "You attach a small bomb to a creature. If you are hidden from the creature, they don't notice the bomb and you remain hidden. The creature otherwise notices the bomb and can disarm and remove it as a main action. If they don't, at the end of your next turn, the bomb detonates. When the bomb detonates, you make a power roll targeting each enemy within 2 squares of it.",
-            "story": "Explosives are best when they're attached to an enemy."
-          },
-          {
-            "name": "Stink Bomb",
-            "ability_id": "ability_shadow_stink_bomb",
-            "action_type": "Main action",
-            "range": "3 cube within 10",
-            "targets": "Each creature in the area",
-            "keywords": [
-              "Area",
-              "Ranged"
-            ],
-            "effect": "The gas remains in the area until the end of the encounter. Any creature who starts their turn in the area and has M < AVERAGE is weakened (save ends).",
-            "story": "Putrid yellow gas explodes from a bomb you toss."
-          }
-        ]
-      },
-      {
-        "college": "Harlequin Mask",
-        "abilities": [
-          {
-            "name": "Machinations of Sound",
-            "ability_id": "ability_shadow_machinations_of_sound",
-            "action_type": "Maneuver",
-            "range": "3 cube within 10",
-            "targets": "Each creature in the area",
-            "keywords": [
-              "Area",
-              "Magic",
-              "Ranged"
-            ],
-            "effect": "This forced movement ignores stability. Instead, the forced movement is reduced by a number equal to the target's Intuition score.",
-            "story": "Illusory sounds make your foes reposition themselves as they cower or investigate the disturbance."
-          },
-          {
-            "name": "So Gullible",
-            "ability_id": "ability_shadow_so_gullible",
-            "action_type": "Free triggered",
-            "range": "Self",
-            "targets": "Self",
-            "keywords": [
-              "Magic"
-            ],
-            "effect": "You use your Clever Trick ability with no insight cost against the triggering creature and strike. You can teleport to an unoccupied space within 3 squares of that creature and can make a free strike against them. You can then spend a Recovery.",
-            "story": "When your enemy strikes, you reveal you were in a different place all along."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_5_insight_abilities",
-    "type": "feature",
-    "name": "5-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one ability that costs 5 insight to use.",
-    "options": [
-      {
-        "name": "Coup de Grace",
-        "ability_id": "ability_shadow_coup_de_grace",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Your blade might be the last thing they see."
-      },
-      {
-        "name": "One Hundred Throats",
-        "ability_id": "ability_shadow_one_hundred_throats",
-        "action_type": "Main action",
-        "range": "Self; see below",
-        "targets": "Self",
-        "keywords": [
-          "Melee",
-          "Weapon"
-        ],
-        "effect": "You shift up to your speed and make one power roll that targets up to three enemies who came adjacent to you during the move.",
-        "story": "As you move across the battlefield, every foe within reach feels your wrath."
-      },
-      {
-        "name": "Setup",
-        "ability_id": "ability_shadow_setup",
-        "action_type": "Main action",
-        "range": "Ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Your friends will thank you."
-      },
-      {
-        "name": "Shadowstrike",
-        "ability_id": "ability_shadow_shadowstrike",
-        "action_type": "Main action",
-        "range": "Self; see below",
-        "targets": "Self",
-        "keywords": [
-          "Magic",
-          "Melee",
-          "Ranged"
-        ],
-        "effect": "You use a strike signature ability twice.",
-        "story": "They have no idea what the college taught you."
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_3_insight_abilities",
-    "type": "feature",
-    "name": "3-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 2,
-    "description": "Choose one ability that costs 3 insight to use.",
-    "options": [
-      {
-        "name": "Disorienting Strike",
-        "ability_id": "ability_shadow_disorienting_strike",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You can shift into any square the target leaves when you slide them.",
-        "story": "Your attack leaves them reeling, allowing you to follow up."
-      },
-      {
-        "name": "Eviscerate",
-        "ability_id": "ability_shadow_eviscerate",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "You leave your foe bleeding out after a devastating attack."
-      },
-      {
-        "name": "Get In Get Out",
-        "ability_id": "ability_shadow_get_in_get_out",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "Move unexpectedly, strike fast, and be gone!"
-      },
-      {
-        "name": "Two Throats at Once",
-        "ability_id": "ability_shadow_two_throats_at_once",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "Two creatures or objects",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "A bargain."
+        "subclass_name": "Harlequin Mask",
+        "name": "Friend!",
+        "description": "Your illusions make your enemies believe you are their friend in critical moments. Whenever an enemy uses an ability or trait that targets multiple allies and you are within distance of the effect, you can choose to be a target of the effect as well.\n\nAdditionally, when you use your I'm No Threat ability, you can take the Disengage move action as part of that ability."
       }
     ]
   },
@@ -562,92 +110,15 @@
     "type": "feature",
     "name": "Careful Observation",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 3,
-    "description": "You have the following ability."
-  },
-  {
-    "id": "feature_shadow_7_insight_abilities",
-    "type": "feature",
-    "name": "7-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 3,
-    "description": "Choose one ability that costs 7 insight to use.",
-    "options": [
-      {
-        "name": "Dancer",
-        "ability_id": "ability_shadow_dancer",
-        "action_type": "Maneuver",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "-"
-        ],
-        "effect": "Until the end of the encounter, whenever an enemy moves or is force moved adjacent to you or damages you, you can take the Disengage move action as a free triggered action.",
-        "story": "You enter a flow state that makes you nearly impossible to pin down."
-      },
-      {
-        "name": "Misdirecting Strike",
-        "ability_id": "ability_shadow_misdirecting_strike",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "The target is taunted by a willing ally within 5 squares of you until the end of the target's next turn.",
-        "story": "\"Why are you looking at ME?!\""
-      },
-      {
-        "name": "Pinning Shot",
-        "ability_id": "ability_shadow_pinning_shot",
-        "action_type": "Main action",
-        "range": "Ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "One missile\u00e2\u20ac\u201dplaced well and placed hard."
-      },
-      {
-        "name": "Staggering Blow",
-        "ability_id": "ability_shadow_staggering_blow",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "There's no recovering from this."
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_characteristic_increase_2",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "Your Agility score increases to 3. Additionally, you can increase one of your characteristic scores by 1, to a maximum of 3."
+    "description": "You have the following ability.",
+    "ability": "Careful Observation"
   },
   {
     "id": "feature_shadow_keep_it_down",
     "type": "feature",
     "name": "Keep It Down",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "While conversing with any creature you share a language with, you can decide whether anyone else can perceive what you're conveying, even while yelling."
   },
@@ -656,34 +127,14 @@
     "type": "feature",
     "name": "Night Watch",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "Your sense for stealth shows those around you how to evade notice. While you are hidden, enemies take a bane on tests made to search for you or other hidden creatures within 10 squares of you.\n\nAdditionally, you have the following ability."
-  },
-  {
-    "id": "feature_shadow_perk_3",
-    "type": "feature",
-    "name": "Perk",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_shadow_skill_2",
-    "type": "feature",
-    "name": "Skill",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 4,
-    "description": "You gain one skill of your choice. See Skills in Chapter 9: Tests."
   },
   {
     "id": "feature_shadow_surge_of_insight",
     "type": "feature",
     "name": "Surge of Insight",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 4,
     "description": "The first time each combat round that you deal damage incorporating 1 or more surges, you gain 2 insight instead of 1."
   },
@@ -692,272 +143,56 @@
     "type": "feature",
     "name": "College Feature",
     "class": "shadow",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature from your shadow college.",
     "options": [
       {
-        "college": "Black Ash",
-        "features": [
-          {
-            "name": "Trail of Cinders",
-            "description": "Whenever you reduce a non-minion creature to 0 Stamina, you can immediately use a free maneuver to use your Black Ash Teleport ability.\n\nAdditionally, you can now bring an adjacent willing creature along with you whenever you use a shadow ability to teleport. The creature appears in an unoccupied space adjacent to the space into which you teleported. If no such space exists, they can't teleport with you."
-          }
-        ]
+        "subclass_name": "Black Ash",
+        "name": "Trail of Cinders",
+        "description": "Whenever you reduce a non-minion creature to 0 Stamina, you can immediately use a free maneuver to use your Black Ash Teleport ability.\n\nAdditionally, you can now bring an adjacent willing creature along with you whenever you use a shadow ability to teleport. The creature appears in an unoccupied space adjacent to the space into which you teleported. If no such space exists, they can't teleport with you."
       },
       {
-        "college": "Caustic Alchemy",
-        "features": [
-          {
-            "name": "Volatile Reagents",
-            "description": "Whenever you take damage, each enemy adjacent to you takes fire, acid, or poison damage (your choice) equal to your Agility score.\n\nAdditionally, your Defensive Roll ability now allows you to shift up to 5 squares, including shifting vertically. If you don't end this shift on solid ground and are not flying, you fall."
-          }
-        ]
+        "subclass_name": "Caustic Alchemy",
+        "name": "Volatile Reagents",
+        "description": "Whenever you take damage, each enemy adjacent to you takes fire, acid, or poison damage (your choice) equal to your Agility score.\n\nAdditionally, your Defensive Roll ability now allows you to shift up to 5 squares, including shifting vertically. If you don't end this shift on solid ground and are not flying, you fall."
       },
       {
-        "college": "Harlequin Mask",
-        "features": [
-          {
-            "name": "Harlequin Gambit",
-            "description": "Whenever you reduce an adjacent non-minion creature to 0 Stamina, you can immediately use a free maneuver to use your I'm No Threat ability and then move up to your speed.\n\nIf the creature is the same size as you, you can disguise yourself as them using I'm No Threat without spending insight. If you do, while I'm No Threat is active, the creature's body is disguised to look like your body. The illusion ends on their body if another creature physically interacts with it. When the illusion would end for either you or the creature's body, it ends for both."
-          }
-        ]
+        "subclass_name": "Harlequin Mask",
+        "name": "Harlequin Gambit",
+        "description": "Whenever you reduce an adjacent non-minion creature to 0 Stamina, you can immediately use a free maneuver to use your I'm No Threat ability and then move up to your speed.\n\nIf the creature is the same size as you, you can disguise yourself as them using I'm No Threat without spending insight. If you do, while I'm No Threat is active, the creature's body is disguised to look like your body. The illusion ends on their body if another creature physically interacts with it. When the illusion would end for either you or the creature's body, it ends for both."
       }
     ]
-  },
-  {
-    "id": "feature_shadow_9_insight_abilities",
-    "type": "feature",
-    "name": "9-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 5,
-    "description": "Choose one ability that costs 9 insight to use.",
-    "options": [
-      {
-        "name": "Blackout",
-        "ability_id": "ability_shadow_blackout",
-        "action_type": "Maneuver",
-        "range": "3 burst",
-        "targets": "Special",
-        "keywords": [
-          "Area",
-          "Magic"
-        ],
-        "effect": "A black cloud fills the area until the end of your next turn, granting you and your allies concealment against enemies. While you are in the area, whenever an enemy ends their turn in the area, you can use a free triggered action to shift to a new location within the area and make a free strike against them.",
-        "story": "You cause a plume of shadow to erupt from your eyes and create a cloud of darkness."
-      },
-      {
-        "name": "Into the Shadows",
-        "ability_id": "ability_shadow_into_the_shadows",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Magic",
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "You and the target are removed from the encounter map until the start of your next turn. You reappear in the spaces you left or the nearest unoccupied spaces. Make a power roll upon your return.",
-        "story": "You sweep your foe off their feet and plunge them into absolute darkness."
-      },
-      {
-        "name": "Shadowfall",
-        "ability_id": "ability_shadow_shadowfall",
-        "action_type": "Main action",
-        "range": "10 x 1 line within 1",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Melee",
-          "Weapon"
-        ],
-        "effect": "You disappear before making the power roll. After the power roll is resolved, you appear in the first unoccupied space at the far end of the line.",
-        "story": "You vanish. They fall. You reappear."
-      },
-      {
-        "name": "You Talk Too Much",
-        "ability_id": "ability_shadow_you_talk_too_much",
-        "action_type": "Main action",
-        "range": "Melee 1 or ranged 5",
-        "targets": "One creature",
-        "keywords": [
-          "Melee",
-          "Ranged",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "The target can't communicate with anyone until the end of the encounter.",
-        "story": "Silence is a virtue. A knife pinning their mouth shut is the next best thing."
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_perk_4",
-    "type": "feature",
-    "name": "Perk",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "You gain one perk of your choice."
   },
   {
     "id": "feature_shadow_umbral_form",
     "type": "feature",
     "name": "Umbral Form",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 6,
     "description": "As a maneuver, you lose control of yourself, becoming a shadow creature dripping with ash. This transformation lasts until the end of the encounter, until you are dying, or after 1 uninterrupted hour of quiet focus outside of combat. You gain the following effects while in this form:\n\n- You can automatically climb at full speed while moving.\n- Enemies' spaces don't count as difficult terrain for you. An enemy takes corruption damage equal to your Agility score the first time you pass through their space on a turn.\n- If you end your turn with cover or concealment from another creature, you are automatically hidden from that creature.\n- You gain 1 surge at the start of each of your turns.\n- You have corruption immunity equal to 5 + your level.\n- Creatures gain an edge on strikes against you.\n- You take a bane on Presence tests made to interact with other creatures."
-  },
-  {
-    "id": "feature_shadow_college_9_insight_abilities",
-    "type": "feature",
-    "name": "College Ability (9-Insight)",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 6,
-    "description": "Choose a 9-insight ability from your college.",
-    "options": [
-      {
-        "college": "Black Ash",
-        "abilities": [
-          {
-            "name": "Black Ash Eruption",
-            "ability_id": "ability_shadow_black_ash_eruption",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "One creature",
-            "keywords": [
-              "Magic",
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "A creature force moved by this ability must be moved straight upward.",
-            "story": "Your attack produces a cloud of black ash that launches an enemy into the air."
-          },
-          {
-            "name": "Cinderstorm",
-            "ability_id": "ability_shadow_cinderstorm",
-            "action_type": "Maneuver",
-            "range": "4 burst",
-            "targets": "Self and each ally in the area",
-            "keywords": [
-              "Magic"
-            ],
-            "effect": "Each target can teleport up to 5 squares. For each target in addition to you who teleports away from or into a space adjacent to an enemy, that enemy takes fire damage equal to your Agility score. Additionally, a target who ends this movement in concealment or cover can use the Hide maneuver even if they are observed.",
-            "story": "You teleport your friends in a burst of ash and fire."
-          }
-        ]
-      },
-      {
-        "college": "Caustic Alchemy",
-        "abilities": [
-          {
-            "name": "One Vial Makes You Better",
-            "ability_id": "ability_shadow_one_vial_makes_you_better",
-            "action_type": "Maneuver",
-            "range": "Ranged 10",
-            "targets": "Three creatures",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion can spend up to 2 Recoveries, and has acid immunity, fire immunity, or poison immunity (their choice) equal to your level until the end of the encounter.",
-            "story": "A well-timed throw of a potion will keep your allies in the fight."
-          },
-          {
-            "name": "One Vial Makes You Faster",
-            "ability_id": "ability_shadow_one_vial_makes_you_faster",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "Three creatures",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion receives benefits based on your power roll.",
-            "story": "Each ally who catches a potion you throw can take the battle to the next level."
-          }
-        ]
-      },
-      {
-        "college": "Harlequin Mask",
-        "abilities": [
-          {
-            "name": "Look!",
-            "ability_id": "ability_shadow_look",
-            "action_type": "Maneuver",
-            "range": "5 burst",
-            "targets": "Each enemy in the area",
-            "keywords": [
-              "Area",
-              "Magic"
-            ],
-            "effect": "Until the start of your next turn, any ability roll made against a target gains an edge.",
-            "story": "You distract your foes, allowing your allies to take advantage of that distraction."
-          },
-          {
-            "name": "Puppet Strings",
-            "ability_id": "ability_shadow_puppet_strings",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "Two enemies",
-            "keywords": [
-              "Magic",
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "You choose the new targets for the original target's free strike or ability. Additionally, if you are hidden or disguised, using this ability doesn't cause you to be revealed.",
-            "story": "You prick little needles on the tips of your fingers into the nerves of your enemies and cause them to lose control."
-          }
-        ]
-      }
-    ]
   },
   {
     "id": "feature_shadow_careful_observation_improvement_2",
     "type": "feature",
     "name": "Careful Observation Improvement",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "You can target two creatures simultaneously with your Careful Observation ability, observing both simultaneously. Making a strike against one target doesn't end your observation of the other target."
-  },
-  {
-    "id": "feature_shadow_characteristic_increase_3",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "Each of your characteristic scores increases by 1, to a maximum of 4."
   },
   {
     "id": "feature_shadow_keen_insight",
     "type": "feature",
     "name": "Keen Insight",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "At the start of each of your turns during combat, you gain 1d3 + 1 insight instead of 1d3."
-  },
-  {
-    "id": "feature_shadow_skill_3",
-    "type": "feature",
-    "name": "Skill",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 7,
-    "description": "You gain one skill of your choice."
   },
   {
     "id": "feature_shadow_ventriloquist",
     "type": "feature",
     "name": "Ventriloquist",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 7,
     "description": "Whenever you communicate, you can throw your voice so that it seems to originate from a creature or object within 10 squares. If you are hidden, talking this way doesn't cause you to be revealed."
   },
@@ -966,109 +201,24 @@
     "type": "feature",
     "name": "College Feature",
     "class": "shadow",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature from your shadow college.",
     "options": [
       {
         "college": "Black Ash",
-        "features": [
-          {
-            "name": "Cinder Step",
-            "description": "Whenever you willingly move, you can teleport. When you teleport this way, it counts as using a shadow ability for the purpose of using your Burning Ash and Trail of Cinders features."
-          }
-        ]
+        "name": "Cinder Step",
+        "description": "Whenever you willingly move, you can teleport. When you teleport this way, it counts as using a shadow ability for the purpose of using your Burning Ash and Trail of Cinders features."
       },
       {
         "college": "Caustic Alchemy",
-        "features": [
-          {
-            "name": "Time Bomb",
-            "description": "You have damage immunity against area abilities and effects equal to your Agility score. You also have the following ability, which you can use once per round on your turn."
-          }
-        ]
+        "name": "Time Bomb",
+        "description": "You have damage immunity against area abilities and effects equal to your Agility score. You also have the following ability, which you can use once per round on your turn."
       },
       {
         "college": "Harlequin Mask",
-        "features": [
-          {
-            "name": "Parkour",
-            "description": "Your movement no longer provokes opportunity attacks. Additionally, you can use your Harlequin Gambit feature as a free triggered action when a creature is reduced to 0 Stamina by your Clever Trick ability."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "feature_shadow_perk_5",
-    "type": "feature",
-    "name": "Perk",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_shadow_11_insight_abilities",
-    "type": "feature",
-    "name": "11-Insight Abilities",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 8,
-    "description": "Choose one ability that costs 11 insight to use.",
-    "options": [
-      {
-        "name": "Assassinate",
-        "ability_id": "ability_shadow_assassinate",
-        "action_type": "Main action",
-        "range": "Melee 1",
-        "targets": "One creature or object",
-        "keywords": [
-          "Melee",
-          "Strike",
-          "Weapon"
-        ],
-        "effect": "A target who is not a minion, leader, or solo creature and who is winded after taking this damage is reduced to 0 Stamina.",
-        "story": "A practiced attack will instantly kill an already weakened foe."
-      },
-      {
-        "name": "Shadowgrasp",
-        "ability_id": "ability_shadow_shadowgrasp",
-        "action_type": "Main action",
-        "range": "2 burst",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Magic"
-        ],
-        "effect": null,
-        "story": "The shadows around you give way, allowing the shadow creature within you to grasp at your foes."
-      },
-      {
-        "name": "Speed of Shadows",
-        "ability_id": "ability_shadow_speed_of_shadows",
-        "action_type": "Main action",
-        "range": "Self",
-        "targets": "Self",
-        "keywords": [
-          "Magic"
-        ],
-        "effect": "You can use a strike signature ability four times, use a strike signature ability that gains an edge three times, or use a strike signature ability that has a double edge twice. You can shift up to 2 squares between each use.",
-        "story": "You make multiple strikes against a foe before they even notice they're dead."
-      },
-      {
-        "name": "They Always Line Up",
-        "ability_id": "ability_shadow_they_always_line_up",
-        "action_type": "Main action",
-        "range": "5 x 1 line within 5",
-        "targets": "Each enemy in the area",
-        "keywords": [
-          "Area",
-          "Ranged",
-          "Weapon"
-        ],
-        "effect": null,
-        "story": "You fire a projectile so fast that it passes through a line of foes, hamstringing them."
+        "name": "Parkour",
+        "description": "Your movement no longer provokes opportunity attacks. Additionally, you can use your Harlequin Gambit feature as a free triggered action when a creature is reduced to 0 Stamina by your Clever Trick ability."
       }
     ]
   },
@@ -1077,142 +227,22 @@
     "type": "feature",
     "name": "Gloom Squad",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 9,
     "description": "At the start of each of your turns, you can forgo gaining insight to create 1d6 clones of yourself in unoccupied adjacent spaces. A clone acts on your turn and uses your statistics, except they have 1 Stamina. They are affected by any conditions and effects on you, and last until the start of your next turn. A clone doesn't have insight and can't use the Careful Observation ability, the Umbral Form feature, or any triggered actions. On their turn, a clone has a move action, a maneuver, and a main action that they can use only to make a free strike. While making a free strike, a clone must choose targets that you or another clone aren't also striking.\n\nOutside of combat, you can have one clone active for every 2 Victories you have. If a clone is destroyed, you must wait 1 hour before creating another one."
-  },
-  {
-    "id": "feature_shadow_college_11_insight_abilities",
-    "type": "feature",
-    "name": "College Ability (11-Insight)",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 9,
-    "description": "Choose a 11-insight ability from your college.",
-    "options": [
-      {
-        "college": "Black Ash",
-        "abilities": [
-          {
-            "name": "Cacophony of Cinders",
-            "ability_id": "ability_shadow_cacophony_of_cinders",
-            "action_type": "Main action",
-            "range": "Self; see below",
-            "targets": "Self",
-            "keywords": [
-              "Magic",
-              "Melee",
-              "Weapon"
-            ],
-            "effect": "You shift up to twice your speed, making one power roll that targets each creature you come adjacent to during the shift.",
-            "story": "You tumble through the battle, stabbing foes and teleporting allies."
-          },
-          {
-            "name": "Demon Door",
-            "ability_id": "ability_shadow_demon_door",
-            "action_type": "Main action",
-            "range": "Melee 3",
-            "targets": "One creature",
-            "keywords": [
-              "Magic",
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "On a critical hit, the target is grabbed by the demon and pulled through the portal before it closes, never to be seen again.",
-            "story": "You create a temporary portal to allow a massive demonic hand to reach through."
-          }
-        ]
-      },
-      {
-        "college": "Caustic Alchemy",
-        "abilities": [
-          {
-            "name": "Chain Reaction",
-            "ability_id": "ability_shadow_chain_reaction",
-            "action_type": "Main action",
-            "range": "Ranged 10",
-            "targets": "One creature or object",
-            "keywords": [
-              "Ranged"
-            ],
-            "effect": "Each enemy within 3 squares of the target who is not currently targeted by this ability also becomes targeted by this ability. This effect continues until there are no more available targets. The ability deals acid, fire, or poison damage (your choice).",
-            "story": "One explosion, an offense. Three explosions, an assault. Nine explosions, a celebration."
-          },
-          {
-            "name": "To the Stars",
-            "ability_id": "ability_shadow_to_the_stars",
-            "action_type": "Main action",
-            "range": "Melee 1 or ranged 10",
-            "targets": "One creature or object",
-            "keywords": [
-              "Melee",
-              "Ranged",
-              "Strike"
-            ],
-            "effect": "The ground beneath a 3-cube area around the target's starting position is difficult terrain.",
-            "story": "You attach your most potent explosive to your foe. Under less pressing circumstances, you're sure you could launch them into orbit."
-          }
-        ]
-      },
-      {
-        "college": "Harlequin Mask",
-        "abilities": [
-          {
-            "name": "I Am You",
-            "ability_id": "ability_shadow_i_am_you",
-            "action_type": "Maneuver",
-            "range": "Ranged 10",
-            "targets": "One creature",
-            "keywords": [
-              "Magic",
-              "Ranged"
-            ],
-            "effect": "Until the end of the encounter, you gain the target's damage immunities and speed (if they are better than yours), and can use any types of movement they can use. You can also use the target's signature ability, using their bonus for the power roll.",
-            "story": "Your mask reflects your foe's face. Surely they won't need it much longer."
-          },
-          {
-            "name": "It Was Me All Along",
-            "ability_id": "ability_shadow_it_was_me_all_along",
-            "action_type": "Main action",
-            "range": "Melee 1",
-            "targets": "One creature or object",
-            "keywords": [
-              "Melee",
-              "Strike",
-              "Weapon"
-            ],
-            "effect": "If you are disguised as a creature the target knew using your I'm No Threat ability, this ability deals extra damage equal to three times your Agility score.",
-            "story": "After everything you've been through together, you twist the blade and make the pain extra personal."
-          }
-        ]
-      }
-    ]
   },
   {
     "id": "feature_shadow_careful_observation_improvement",
     "type": "feature",
     "name": "Careful Observation Improvement",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You can target three creatures simultaneously with your Careful Observation ability."
-  },
-  {
-    "id": "feature_shadow_characteristic_increase",
-    "type": "feature",
-    "name": "Characteristic Increase",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "Your Agility score increases to 5. Additionally, you can increase one of your characteristic scores by 1, to a maximum of 5."
   },
   {
     "id": "feature_shadow_death_pool",
     "type": "feature",
     "name": "Death Pool",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "The first time each combat round that you deal damage incorporating 1 or more surges, you gain 3 insight instead of 2."
   },
@@ -1221,34 +251,14 @@
     "type": "feature",
     "name": "Improved Umbral Form",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You gain full control over the shadow creature you become with your Umbral Form feature, and you can end the transformation at will (no action required). Additionally, you are always wreathed in darkness that grants you concealment while in this form, and creatures no longer gain an edge on strikes against you.\n\nWhile you are in your umbral form, you can spend 1 uninterrupted minute concentrating on a location where you've been before. At the end of that minute, you and each willing creature of your choice within 10 squares of you can teleport to unoccupied spaces of your choice within that location. Each creature who teleports this way is invisible for 1 hour or until they use an ability."
-  },
-  {
-    "id": "feature_shadow_perk",
-    "type": "feature",
-    "name": "Perk",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one perk of your choice."
-  },
-  {
-    "id": "feature_shadow_skill",
-    "type": "feature",
-    "name": "Skill",
-    "class": "shadow",
-    "is_subclass_feature": false,
-    "level": 10,
-    "description": "You gain one skill of your choice."
   },
   {
     "id": "feature_shadow_subterfuge",
     "type": "feature",
     "name": "Subterfuge",
     "class": "shadow",
-    "is_subclass_feature": false,
     "level": 10,
     "description": "You have an epic resource called subterfuge. Each time you finish a respite, you gain subterfuge equal to the XP you gain. You can spend subterfuge on your abilities as if it were insight.\n\nAdditionally, you can spend subterfuge to take additional maneuvers on your turn. You can use one maneuver for each subterfuge you spend.\nSubterfuge remains until you spend it."
   }
