@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "blade_of_the_heavens",
+  "name": "Blade of the Heavens",
+  "level": 6,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "A greatsword streams down from the sky, threatening to pin your foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Prone; Restrained (save ends); and"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Prone; Restrained (save ends); and"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Prone; Restrained (save ends); and"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

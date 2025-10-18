@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "turnabout_is_fair_play",
+  "name": "Turnabout Is Fair Play",
+  "level": 1,
+  "costs": null,
+  "story_text": "All's fair in love and whatever.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target makes an ability roll that has an edge, a double edge, a bane, or a double bane.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "An edge on the triggering roll becomes a bane, or a double edge becomes an edge. A bane becomes an edge, or a double bane becomes a bane.\n\nAn edge on the triggering roll becomes a double bane, or a double edge is negated. A bane becomes a double edge, or a double bane is negated.",
+  "special_effect": null
+}

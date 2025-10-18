@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "pinning_shot",
+  "name": "Pinning Shot",
+  "level": 3,
+  "costs": {
+    "resource": "Insight",
+    "amount": 7
+  },
+  "story_text": "One missile\u2014placed well and placed hard.",
+  "keywords": [
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

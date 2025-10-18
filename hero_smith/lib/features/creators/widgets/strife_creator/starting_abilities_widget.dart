@@ -110,29 +110,58 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
   }
 
   AbilityOption _mapComponentToOption(Component component) {
-    final data = component.data;
-    final costs = data['costs'] as Map<String, dynamic>?;
-    final isSignature = costs?['signature'] == true;
-    final costAmount =
-        costs?['amount'] is num ? (costs?['amount'] as num).toInt() : null;
-    final resource = costs?['resource']?.toString();
-    final level = data['level'] is num
-        ? (data['level'] as num).toInt()
-        : CharacteristicUtils.toIntOrNull(data['level']) ?? 0;
-    final subclassRaw = data['subclass']?.toString().trim();
-    final subclass =
-        subclassRaw == null || subclassRaw.isEmpty ? null : subclassRaw;
+    try {
+      final data = component.data;
+      final costsRaw = data['costs'];
+      
+      // Check if this is a signature ability
+      // New format: costs == "signature" (string)
+      // Old format: costs['signature'] == true (boolean in map)
+      final bool isSignature;
+      if (costsRaw is String) {
+        isSignature = costsRaw.toLowerCase() == 'signature';
+      } else if (costsRaw is Map) {
+        isSignature = costsRaw['signature'] == true;
+      } else {
+        isSignature = false;
+      }
+      
+      // Extract cost amount and resource (only applicable for non-signature abilities)
+      final int? costAmount;
+      final String? resource;
+      if (costsRaw is Map) {
+        final amountRaw = costsRaw['amount'];
+        costAmount = amountRaw is num ? amountRaw.toInt() : null;
+        resource = costsRaw['resource']?.toString();
+      } else {
+        costAmount = null;
+        resource = null;
+      }
+      final level = data['level'] is num
+          ? (data['level'] as num).toInt()
+          : CharacteristicUtils.toIntOrNull(data['level']) ?? 0;
+      final subclassRaw = data['subclass']?.toString().trim();
+      final subclass =
+          subclassRaw == null || subclassRaw.isEmpty ? null : subclassRaw;
 
-    return AbilityOption(
-      id: component.id,
-      name: component.name,
-      component: component,
-      level: level,
-      isSignature: isSignature,
-      costAmount: costAmount,
-      resource: resource,
-      subclass: subclass,
-    );
+      return AbilityOption(
+        id: component.id,
+        name: component.name,
+        component: component,
+        level: level,
+        isSignature: isSignature,
+        costAmount: costAmount,
+        resource: resource,
+        subclass: subclass,
+      );
+    } catch (e, stackTrace) {
+      debugPrint('Error mapping component to option:');
+      debugPrint('Component ID: ${component.id}');
+      debugPrint('Component Name: ${component.name}');
+      debugPrint('Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   void _rebuildPlan({

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "maw_of_earth",
+  "name": "Maw of Earth",
+  "level": 3,
+  "costs": {
+    "resource": "Essence",
+    "amount": 7
+  },
+  "story_text": "You open up the ground, spewing out shrapnel of stone and debris.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The ground in or directly beneath the area drops 3 squares.",
+  "special_effect": null
+}

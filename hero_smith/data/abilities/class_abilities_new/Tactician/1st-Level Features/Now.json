@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "now",
+  "name": "Now!",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "Your allies wait for your command\u2014then unleash death!",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three allies",
+  "power_roll": null,
+  "effect": "Each target can make a free strike.",
+  "special_effect": null
+}

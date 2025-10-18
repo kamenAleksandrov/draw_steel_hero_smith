@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "magnetic_strike",
+  "name": "Magnetic Strike",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "The force of your blow extends past the limits of your body, pulling your enemy closer.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 1"
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 2"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 3"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

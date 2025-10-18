@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "impart_force",
+  "name": "Impart Force",
+  "level": 1,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "A single touch from you, and your enemy flies backward.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Push 3"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Push 5"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Push 7"
+      }
+    }
+  },
+  "effect": "An object you target must be your size or smaller. You gain an edge on this ability. Additionally, for each square you push the target, they take 1 psychic damage.",
+  "special_effect": null
+}

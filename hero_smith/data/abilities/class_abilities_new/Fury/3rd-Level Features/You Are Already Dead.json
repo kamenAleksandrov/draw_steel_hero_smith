@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "you_are_already_dead",
+  "name": "You Are Already Dead",
+  "level": 3,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 7
+  },
+  "story_text": "Slash. Walk away.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "If the target is not a leader or solo creature, they are reduced to 0 Stamina at the end of their next turn. If the target is a leader or solo creature, you gain 3 surges and can make a melee free strike against them.",
+  "special_effect": null
+}

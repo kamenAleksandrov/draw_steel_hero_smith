@@ -6,6 +6,7 @@ import '../models/class_data.dart';
 import '../models/feature.dart' as feature_model;
 import '../models/subclass_models.dart';
 import '../repositories/feature_repository.dart';
+import 'ability_data_service.dart';
 
 class ClassFeatureDataResult {
   const ClassFeatureDataResult({
@@ -33,6 +34,8 @@ class ClassFeatureDataService {
   static final ClassFeatureDataService _instance = ClassFeatureDataService._();
 
   factory ClassFeatureDataService() => _instance;
+
+  final Map<String, dynamic> _additionalFeatureCache = {};
 
   Future<ClassFeatureDataResult> loadFeatures({
     required ClassData classData,
@@ -72,7 +75,7 @@ class ClassFeatureDataService {
     for (final entry in featureMaps) {
       final id = entry['id']?.toString();
       if (id == null || id.isEmpty) continue;
-      featureDetails[id] = Map<String, dynamic>.from(entry);
+      featureDetails[id] = await _hydrateFeatureDetail(entry);
     }
 
     final domainLinked = identifyDomainLinkedFeatures(featureDetails);
@@ -94,6 +97,10 @@ class ClassFeatureDataService {
       abilityDetails[resolvedId] = copy;
       if (rawName.trim().isNotEmpty) {
         abilityNameIndex[slugify(rawName)] = resolvedId;
+      }
+      final originalId = ability['original_id'];
+      if (originalId is String && originalId.trim().isNotEmpty) {
+        abilityNameIndex[slugify(originalId)] = resolvedId;
       }
       abilityNameIndex[slugify(resolvedId)] = resolvedId;
     }
@@ -552,20 +559,120 @@ class ClassFeatureDataService {
 
   Future<List<Map<String, dynamic>>> _loadClassAbilityMaps(
       String classSlug) async {
-    final path = 'data/abilities/class_abilities/${classSlug}_abilites.json';
     try {
-      final raw = await rootBundle.loadString(path);
-      final decoded = jsonDecode(raw);
-      if (decoded is List) {
-        return decoded
-            .whereType<Map>()
-            .map((entry) => entry.cast<String, dynamic>())
-            .toList(growable: false);
-      }
+      final library = AbilityDataService();
+      final components = await library.loadClassAbilities(classSlug);
+      return components
+          .map((component) => {
+                'id': component.id,
+                'name': component.name,
+                ...component.data,
+              })
+          .toList(growable: false);
     } catch (_) {
       // Ignore ability load failures; features can still render.
     }
     return const [];
+  }
+
+  Future<Map<String, dynamic>> _hydrateFeatureDetail(
+    Map<String, dynamic> raw,
+  ) async {
+    final normalized = Map<String, dynamic>.from(raw);
+
+    final featureAdditional = await _resolveAdditionalFeatures(
+        normalized['load_additional_features']);
+    if (featureAdditional != null && featureAdditional.isNotEmpty) {
+      normalized['loaded_additional_features'] = featureAdditional;
+    }
+
+    final options = normalized['options'];
+    if (options is List) {
+      final processed = <Map<String, dynamic>>[];
+      for (final option in options) {
+        if (option is! Map) continue;
+        final optionMap = option is Map<String, dynamic>
+            ? Map<String, dynamic>.from(option)
+            : option.cast<String, dynamic>();
+        final optionAdditional = await _resolveAdditionalFeatures(
+            optionMap['load_additional_features']);
+        if (optionAdditional != null && optionAdditional.isNotEmpty) {
+          optionMap['loaded_additional_features'] = optionAdditional;
+        }
+        processed.add(optionMap);
+      }
+      normalized['options'] = processed;
+    }
+
+    return normalized;
+  }
+
+  Future<List<Map<String, dynamic>>?> _resolveAdditionalFeatures(
+    dynamic spec,
+  ) async {
+    if (spec == null) return null;
+
+    final specs = <Map<String, dynamic>>[];
+    if (spec is Map) {
+      specs.add(spec is Map<String, dynamic>
+          ? Map<String, dynamic>.from(spec)
+          : spec.cast<String, dynamic>());
+    } else if (spec is List) {
+      for (final entry in spec) {
+        if (entry is Map) {
+          specs.add(entry is Map<String, dynamic>
+              ? Map<String, dynamic>.from(entry)
+              : entry.cast<String, dynamic>());
+        }
+      }
+    }
+
+    if (specs.isEmpty) return null;
+
+    final resolved = <Map<String, dynamic>>[];
+    for (final entry in specs) {
+      final rawName = entry['name']?.toString().trim();
+      if (rawName == null || rawName.isEmpty) continue;
+      final data = await _loadAdditionalFeatureData(rawName);
+      if (data == null) continue;
+      final type = entry['type']?.toString().trim();
+      resolved.add({
+        'type': type ?? 'table',
+        'name': rawName,
+        'title': entry['title']?.toString(),
+        'data': data,
+      });
+    }
+
+    return resolved.isEmpty ? null : resolved;
+  }
+
+  Future<dynamic> _loadAdditionalFeatureData(String name) async {
+    if (_additionalFeatureCache.containsKey(name)) {
+      return _additionalFeatureCache[name];
+    }
+
+    final candidates = <String>[
+      name,
+      'data/features/$name',
+      'data/features/class_features/$name',
+      'data/kits/$name',
+      'data/$name',
+    ];
+
+    for (final candidate in candidates) {
+      try {
+        final raw = await rootBundle.loadString(candidate);
+        final decoded = jsonDecode(raw);
+        _additionalFeatureCache[name] = decoded;
+        return decoded;
+      } catch (_) {
+        continue;
+      }
+    }
+
+    _additionalFeatureCache[name] = null;
+    return null;
   }
 }
 

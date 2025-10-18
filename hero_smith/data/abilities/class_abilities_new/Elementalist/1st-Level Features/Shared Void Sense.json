@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "shared_void_sense",
+  "name": "Shared Void Sense",
+  "level": 1,
+  "costs": null,
+  "story_text": "You grant allies a taste of your unearthly vision.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "For each Victory you have, you can target one creature. Each target gains the benefit of your A Beyonding of Vision feature until the end of your next turn, but doesn't gain the use of the Shared Void Sense ability.",
+  "special_effect": null
+}

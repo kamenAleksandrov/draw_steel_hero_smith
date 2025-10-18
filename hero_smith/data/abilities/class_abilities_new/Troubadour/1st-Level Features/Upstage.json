@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "upstage",
+  "name": "Upstage",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 3
+  },
+  "story_text": "As you bob and weave through the crowd, you can't help but leave the audience wanting more.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility or Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Prone; Taunted; (EoT)"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Prone; Taunted; (EoT)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Prone; Taunted; (EoT) and can't stand (EoT)"
+      }
+    }
+  },
+  "effect": "You shift up to your speed. You make one power roll that targets each enemy you move adjacent to during this shift.",
+  "special_effect": null
+}

@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "catch_breath",
+  "name": "Catch Breath",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature who uses the Catch Breath maneuver spends a Recovery and regains Stamina equal to their recovery value. (See below for [Stamina.](#page-291-0) See [Recoveries](#page-21-3) in [Chapter 1: The Basics](#page-17-3).)\n\nA creature who is dying (see [Dying and Death](#page-292-1) in [Stamina](#page-291-0) below) can't use the Catch Breath maneuver, but other creatures can help them spend Recoveries in other ways.",
+  "special_effect": null
+}

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "expert_fencer",
+  "name": "Expert Fencer",
+  "level": 9,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "If you can land the strike, the crowd goes wild.",
+  "keywords": [
+    "Charge",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 3
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 21,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 28,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Bleeding (save ends)"
+      }
+    }
+  },
+  "effect": "This ability can't obtain better than a tier 2 outcome unless the target is at maximum distance. If you obtain a tier 3 outcome with a natural 17 or higher, you gain 3 surges that you can use immediately.",
+  "special_effect": null
+}

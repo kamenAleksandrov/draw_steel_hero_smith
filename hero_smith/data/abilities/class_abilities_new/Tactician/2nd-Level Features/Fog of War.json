@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "fog_of_war",
+  "name": "Fog of War",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "Your unorthodox strategy causes enemies to lash out in fear, heedless of who they might be attacking.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Two creatures",
+  "power_roll": null,
+  "effect": "Each target is marked by you, and must immediately make a free strike against a creature of your choice within 5 squares of them.",
+  "special_effect": "Mark Benefit: Until the end of the encounter, whenever you or any ally makes a strike against a creature marked by you, you can spend 2 focus to force that target to make a free strike against a creature of your choice within 5 squares of them."
+}

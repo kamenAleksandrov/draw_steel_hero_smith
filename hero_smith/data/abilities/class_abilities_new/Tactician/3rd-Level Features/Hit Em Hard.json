@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "hit_em_hard",
+  "name": "Hit 'Em Hard!",
+  "level": 3,
+  "costs": {
+    "resource": "Focus",
+    "amount": 7
+  },
+  "story_text": "Your allies see the advantages in attacking the targets you select.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, that creature gains 2 surges, which they can use immediately.",
+  "special_effect": null
+}

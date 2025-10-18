@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "edict_of_stillness",
+  "name": "Edict of Stillness",
+  "level": 3,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 7
+  },
+  "story_text": "The holy aura you project makes it painful for evil-doers to leave your reach.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "2"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever a target moves or is force moved out of the area, they take holy damage equal to twice your Presence score. A target judged by you who moves willingly takes an extra 2d6 holy damage.",
+  "special_effect": null
+}

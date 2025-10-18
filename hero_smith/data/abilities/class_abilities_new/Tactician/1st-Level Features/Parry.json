@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "parry",
+  "name": "Parry",
+  "level": 1,
+  "costs": null,
+  "story_text": "Your quick reflexes cost an enemy the precision they seek.",
+  "keywords": [
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "A creature deals damage to the target.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "You can shift 1 square. If the target is you, or if you end this shift adjacent to the target, the target takes half the damage. If the damage has any potency effect associated with it, the potency is decreased by 1.\n\nThis ability's distance becomes Melee 1 + your Reason score, and you can shift up to a number of squares equal to your Reason score instead of 1 square.",
+  "special_effect": null
+}

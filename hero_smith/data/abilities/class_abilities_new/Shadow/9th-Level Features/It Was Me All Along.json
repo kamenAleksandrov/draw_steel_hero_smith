@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "it_was_me_all_along",
+  "name": "It Was Me All Along",
+  "level": 9,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "After everything you've been through together, you twist the blade and make the pain extra personal.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 21,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 28,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "If you are disguised as a creature the target knew using your I'm No Threat ability, this ability deals extra damage equal to three times your Agility score.",
+  "special_effect": null
+}

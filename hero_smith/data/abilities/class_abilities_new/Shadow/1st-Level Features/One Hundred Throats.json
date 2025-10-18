@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "one_hundred_throats",
+  "name": "One Hundred Throats",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "As you move across the battlefield, every foe within reach feels your wrath.",
+  "keywords": [
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You shift up to your speed and make one power roll that targets up to three enemies who came adjacent to you during the move.",
+  "special_effect": null
+}

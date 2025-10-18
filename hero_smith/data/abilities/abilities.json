@@ -3,65 +3,50 @@
     "type": "ability",
     "id": "test_id",
     "name": "test_name",
+    "level": "Some integer value 1-10",
     "costs": {
-      "resource": null,
-      "amount": null
+      "resource": "Wrath/Piety/Essence/Ferocity/Discipline/Insight/Focus/Clarity/Drama",
+      "amount": "1/2/3/5/7/9/11"
     },
     "story_text": "test_story_text",
-    "keywords": [
-      "test_keyword_1",
-      "test_keyword_2",
-      "test_keyword_3",
-      "test_keyword_4"
-    ],
-    "action_type": "test_action_type",
-    "trigger_text": "test_trigger_text",
+    "keywords": "Area/Charge/Magic/Melee/Psionic/Ranged/Strike/Weapon",
+    "action_type": "main action/maneuver/move action/triggered action/free maneuver/free triggered action",
+    "trigger_text": "If the action is a triggered action or free triggered action, this field contains the trigger condition.",
     "range": {
-      "distance": "test_distance",
-      "area": null
+      "distance": "Melee/Ranged/Melee or Ranged/Self",
+      "area": "Aura/Burst/Cube/Line/Wall",
+      "range_value": "*integer value or text*"
     },
-    "targets": "test_target",
+    "targets": "Creature/Object/Enemy/Ally/Self/Each [Target]",
     "power_roll": {
       "label": "Power roll",
-      "characteristics": ["test_characteristics_score"],
+      "characteristics": "Might(M/m)/Agility(A/a)/Reason(R/r)/Intuition(I/i)/Presence(P/p)",
       "tiers": {
         "low": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "test_descriptive_text_low"
+          "base_damage_value": "*some integer value if any*",
+          "characteristic_damage_options": "M/A/R/I/P damage",
+          "damage_types": "acid/cold/corruption/fire/holy/lightning/poison/psychic/sonic",
+          "potencies": "M/A/R/I/P < WEAK/AVERAGE/STRONG",
+          "conditions": "Bleeding/Dazed/Frightened/Grabbed/Prone/Restrained/Slowed/Taunted/Weakened"
         },
         "mid": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "test_descriptive_text_mid"
+          "base_damage_value": "*some integer value if any*",
+          "characteristic_damage_options": "M/A/R/I/P damage",
+          "damage_types": "acid/cold/corruption/fire/holy/lightning/poison/psychic/sonic",
+          "potencies": "M/A/R/I/P < WEAK/AVERAGE/STRONG",
+          "conditions": "Bleeding/Dazed/Frightened/Grabbed/Prone/Restrained/Slowed/Taunted/Weakened"
         },
         "high": {
-          "damage_expression": null,
-          "base_damage_value": null,
-          "characteristic_damage_options": [],
-          "damage_types": null,
-          "secondary_damage_expression": null,
-          "descriptive_text": null,
-          "potencies": [],
-          "conditions": [],
-          "all_text": "test_descriptive_text_high"
+          "base_damage_value": "*some integer value if any*",
+          "characteristic_damage_options": "M/A/R/I/P damage",
+          "damage_types": "acid/cold/corruption/fire/holy/lightning/poison/psychic/sonic",
+          "potencies": "M/A/R/I/P < WEAK/AVERAGE/STRONG",
+          "conditions": "Bleeding/Dazed/Frightened/Grabbed/Prone/Restrained/Slowed/Taunted/Weakened"
         }
       }
     },
     "effect": "test_effect",
-    "special_effect": "test_special_effect"
+    "special_effect": "*This field is filled when the ability has a special effect that costs resources or needs some conditions to be met.*"
   },
   {
     "type": "ability",

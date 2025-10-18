@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "stink_bomb",
+  "name": "Stink Bomb",
+  "level": 2,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "Putrid yellow gas explodes from a bomb you toss.",
+  "keywords": [
+    "Area",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each creature in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The gas remains in the area until the end of the encounter. Any creature who starts their turn in the area and has M < AVERAGE is weakened (save ends).",
+  "special_effect": null
+}

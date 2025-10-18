@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "earth_rejects_you",
+  "name": "Earth Rejects You",
+  "level": 9,
+  "costs": {
+    "resource": "Essence",
+    "amount": 11
+  },
+  "story_text": "Everyone and everything gets blown away in an eruption of rocks and debris.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "5 within 10"
+  },
+  "targets": "Each enemy and object in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Persistent 2: At the start of your turn, you can use a maneuver to use this ability again without spending essence."
+}

@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "hurl_element",
+  "name": "Hurl Element",
+  "level": 1,
+  "costs": null,
+  "story_text": "You cast a ball of elemental energy at a foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "When you make this strike, choose the damage type from one of the following options: acid, cold, corruption, fire, lightning, poison, or sonic.",
+  "special_effect": null
+}

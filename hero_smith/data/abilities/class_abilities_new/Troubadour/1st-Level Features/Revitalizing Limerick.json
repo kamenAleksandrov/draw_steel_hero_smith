@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "revitalizing_limerick",
+  "name": "Revitalizing Limerick",
+  "level": 1,
+  "costs": null,
+  "story_text": "There once was a man from Capital...",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "At the end of each of your turns while this performance is active, you can choose up to a number of targets equal to your Presence score. Each chosen target can spend a Recovery.",
+  "special_effect": null
+}

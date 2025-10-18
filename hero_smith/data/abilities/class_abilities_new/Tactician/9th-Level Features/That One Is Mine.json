@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "that_one_is_mine",
+  "name": "That One Is Mine!",
+  "level": 9,
+  "costs": {
+    "resource": "Focus",
+    "amount": 11
+  },
+  "story_text": "You focus on making an enemy irrelevant.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target is marked by you.\n\nUntil the end of the encounter or until you are dying, you can use a signature or heroic ability instead of a free strike against any target marked by you.",
+  "special_effect": null
+}

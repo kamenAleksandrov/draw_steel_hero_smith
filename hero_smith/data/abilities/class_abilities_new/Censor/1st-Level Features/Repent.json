@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "repent",
+  "name": "Repent!",
+  "level": 1,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 3
+  },
+  "story_text": "You conjure memories of their sins to harry your foes.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "holy",
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "holy",
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "holy",
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

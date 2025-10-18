@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "encore",
+  "name": "Encore",
+  "level": 2,
+  "costs": {
+    "resource": "Drama",
+    "amount": 5
+  },
+  "story_text": "Again! Again!",
+  "keywords": [
+    "Magic",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Special",
+    "area": null,
+    "range_value": "Special"
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "You use an ability that you have observed being used this combat round. The ability must have the Strike keyword, cost 5 or fewer of a Heroic Resource, and cost no Malice. When you make the strike, you use your Presence score for any power rolls, and any damage you deal is sonic damage.",
+  "special_effect": null
+}

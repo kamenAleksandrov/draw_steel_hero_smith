@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "web_of_all_that_s_come_before",
+  "name": "Web of All That's Come Before",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "Threads you've been weaving through your adventures create a vibrant, pearlescent web.",
+  "keywords": [
+    "Area",
+    "Green",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "4 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "A < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "A < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "A < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "The area is difficult terrain until the start of your next turn. Each enemy who ends their turn in the area is restrained (save ends).",
+  "special_effect": "Persistent 1: The area remains until the start of your next turn."
+}

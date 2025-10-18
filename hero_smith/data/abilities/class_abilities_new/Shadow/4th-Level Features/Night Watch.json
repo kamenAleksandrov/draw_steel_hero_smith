@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "night_watch",
+  "name": "Night Watch",
+  "level": 4,
+  "costs": null,
+  "story_text": "A steely dagger from out of the blue knocks another weapon off course.",
+  "keywords": [
+    "Ranged",
+    "Weapon"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target takes damage from another creature's ability while you are hidden.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target takes half the damage. You remain hidden.",
+  "special_effect": null
+}

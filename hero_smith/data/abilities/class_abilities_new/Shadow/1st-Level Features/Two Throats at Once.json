@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "two_throats_at_once",
+  "name": "Two Throats at Once",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 3
+  },
+  "story_text": "A bargain.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "Two creatures or objects",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

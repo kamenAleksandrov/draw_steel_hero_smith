@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "no_more_than_a_breeze",
+  "name": "No More Than a Breeze",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "The material substance of a creature shreds away at your command.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "Until the start of your next turn, the target can move through solid matter, they ignore difficult terrain, and their movement can't provoke opportunity attacks. If the target ends their turn inside solid matter, they are forced out into the space where they entered it and this effect ends.",
+  "special_effect": "Persistent 1: The effect lasts until the start of your next turn."
+}

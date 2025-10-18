@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "death_strike",
+  "name": "Death Strike",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "Once you taste your foe's blood, you become more efficient and turn every killing blow into an opportunity.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "You reduce a creature to 0 Stamina with a strike.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You target a creature adjacent to you with the same strike, using the same power roll as the triggering strike.",
+  "special_effect": null
+}

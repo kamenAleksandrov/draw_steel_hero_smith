@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "return_to_formlessness",
+  "name": "Return to Formlessness",
+  "level": 1,
+  "costs": null,
+  "story_text": "With the merest touch, you cause an object to turn to slag or ash.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Melee"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One mundane object",
+  "power_roll": null,
+  "effect": "You heat the target and cause it to melt or combust, destroying it. If the object is larger than 1 square, then only the square of the object you touch is destroyed.",
+  "special_effect": null
+}

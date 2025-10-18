@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "you_ve_still_got_something_left",
+  "name": "You've Still Got Something Left",
+  "level": 5,
+  "costs": {
+    "resource": "Focus",
+    "amount": 9
+  },
+  "story_text": "You push an ally to use a heroic ability sooner than they otherwise would.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target uses a heroic ability with the Strike keyword as a free triggered action, and deals extra damage with that ability equal to your Reason score. The ability has its Heroic Resource cost reduced by 1 + your Reason score (minimum cost 0).",
+  "special_effect": null
+}

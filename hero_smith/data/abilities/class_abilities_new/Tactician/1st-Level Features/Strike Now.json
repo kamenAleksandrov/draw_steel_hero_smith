@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "strike_now",
+  "name": "\"Strike Now!\"",
+  "level": 1,
+  "costs": null,
+  "story_text": "Your foe left an opening. You point this out to an ally!",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target can use a signature ability as a free triggered action.\n\nYou target two allies instead of one.",
+  "special_effect": null
+}

@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_censor_censor_order",
-    "type": "feature",
+    "type": "subclass",
     "name": "Censor Order",
     "is_subclass_feature": true,
     "class": "censor",
@@ -27,7 +27,7 @@
   },
   {
     "id": "feature_censor_wrath",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Wrath",
     "class": "censor",
     "level": 1,
@@ -44,9 +44,9 @@
   {
     "id": "censor_1_level_domain_feature",
     "type": "feature",
-    "name": "Domain Feature",
+    "name": "Deity and Domains",
     "level": 1,
-    "description": " You gain a domain feature from your domain, as shown on the 1st-Level Censor Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
+    "description": "You gain a domain feature from your domain, as shown on the 1st-Level Censor Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
     "options": [
       {
         "domain": "Creation",

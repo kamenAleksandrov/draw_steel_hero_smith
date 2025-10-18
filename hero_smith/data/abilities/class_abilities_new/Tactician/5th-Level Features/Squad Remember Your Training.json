@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "squad_remember_your_training",
+  "name": "Squad! Remember Your Training!",
+  "level": 5,
+  "costs": {
+    "resource": "Focus",
+    "amount": 9
+  },
+  "story_text": "You remind your allies how to best use their gear.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self and two allies",
+  "power_roll": null,
+  "effect": "Each target gains 1 surge and can use a signature ability that has a double edge.",
+  "special_effect": null
+}

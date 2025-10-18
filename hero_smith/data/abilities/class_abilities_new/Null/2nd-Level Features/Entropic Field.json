@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "entropic_field",
+  "name": "Entropic Field",
+  "level": 2,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "You drastically increase the local entropy.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "cold",
+        "potencies": "A < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": "cold",
+        "potencies": "A < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": "cold",
+        "potencies": "A < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

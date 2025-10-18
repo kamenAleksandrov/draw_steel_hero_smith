@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "stay_strong_and_focus",
+  "name": "Stay Strong and Focus!",
+  "level": 3,
+  "costs": {
+    "resource": "Focus",
+    "amount": 7
+  },
+  "story_text": "\"We can do this! Keep faith and hold fast!\"",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you, the creature who dealt the damage can spend a Recovery.",
+  "special_effect": null
+}

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "hammer_and_anvil",
+  "name": "Hammer and Anvil",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "\"Let's not argue about who's the hammer and who's the anvil!\"",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "one ally within 10 squares of you can use a strike signature ability against the target as a free triggered action"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "one ally within 10 squares of you can use a strike signature ability that gains an edge against the target as a free triggered action"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "two allies within 10 squares of you can each use a strike signature ability that gains an edge against the target as a free triggered action"
+      }
+    }
+  },
+  "effect": "If the target is reduced to 0 Stamina before one or both chosen allies has made their strike, the ally or allies can pick a different target.",
+  "special_effect": null
+}

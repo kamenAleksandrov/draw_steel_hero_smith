@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "i_ve_got_your_back",
+  "name": "I've Got Your Back",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "Your enemy will think twice about attacking your friend.",
+  "keywords": [
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT)"
+      }
+    }
+  },
+  "effect": "One ally adjacent to the target can spend a Recovery.",
+  "special_effect": null
+}

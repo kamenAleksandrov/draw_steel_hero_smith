@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "net_and_stab",
+  "name": "Net and Stab",
+  "level": null,
+  "costs": null,
+  "story_text": "The well-thrown net that follows your main attack leaves your foes right where you want them.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might or Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Slowed; (EoT)"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Slowed; (EoT)"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Restrained; (EoT)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

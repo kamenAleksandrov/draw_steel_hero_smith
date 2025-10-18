@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "synaptic_anchor",
+  "name": "Synaptic Anchor",
+  "level": 8,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You disrupt an enemy's strike and create a feedback loop in their mind, preventing them from focusing on future attacks.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "The target takes damage from another creature's ability while in the area of your Null Field ability.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self or one creature",
+  "power_roll": null,
+  "effect": "The target takes half the damage, and if the triggering creature has I < AVERAGE, they are dazed (save ends). While the triggering creature is dazed this way, they take psychic damage equal to your Intuition score whenever they use a main action.",
+  "special_effect": null
+}

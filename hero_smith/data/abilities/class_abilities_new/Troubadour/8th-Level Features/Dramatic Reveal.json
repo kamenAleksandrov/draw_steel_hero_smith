@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "dramatic_reveal",
+  "name": "Dramatic Reveal",
+  "level": 8,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "A little stage trickery, and where once stood a foe, now stands a friend!",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter, whenever you reduce a creature to 0 Stamina using an ability, you can use a free triggered action to teleport an ally within distance of that ability into the creature's space in a plume of rose petals. You or the teleported ally can then make a melee free strike.",
+  "special_effect": null
+}

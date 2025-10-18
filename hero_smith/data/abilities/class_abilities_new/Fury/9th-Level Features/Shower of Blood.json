@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "shower_of_blood",
+  "name": "Shower of Blood",
+  "level": 9,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 11
+  },
+  "story_text": "You shock your foes with the brutality of your strike, resetting the balance of combat.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 24,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Each enemy within 5 squares of you is distracted until the end of the round. While a creature is distracted this way, they can't take triggered actions or free triggered actions, ability rolls made against them gain an edge, and their characteristic scores are considered 1 lower for the purpose of resisting potencies.",
+  "special_effect": null
+}

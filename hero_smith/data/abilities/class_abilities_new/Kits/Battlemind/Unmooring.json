@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "unmooring",
+  "name": "Unmooring",
+  "level": null,
+  "costs": null,
+  "story_text": "Your weapon unleashes psionic energy that reduces your target's weight.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might, Reason, Intuition, or Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of the target's next turn, any forced movement that affects the target has its distance increased by 2.",
+  "special_effect": null
+}

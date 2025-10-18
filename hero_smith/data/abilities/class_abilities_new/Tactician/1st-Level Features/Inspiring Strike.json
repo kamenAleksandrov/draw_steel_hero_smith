@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "inspiring_strike",
+  "name": "Inspiring Strike",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 3
+  },
+  "story_text": "Your attack gives an ally hope.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you or one ally within 10 squares of you can spend a Recovery"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you or one ally within 10 squares of you can spend a Recovery"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you and one ally within 10 squares of you can spend a Recovery and each of you gains an edge on the next ability roll you make during the encounter"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

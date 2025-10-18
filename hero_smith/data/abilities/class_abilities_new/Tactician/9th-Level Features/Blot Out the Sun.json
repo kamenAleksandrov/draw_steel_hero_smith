@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "blot_out_the_sun",
+  "name": "Blot Out the Sun!",
+  "level": 9,
+  "costs": {
+    "resource": "Focus",
+    "amount": 11
+  },
+  "story_text": "What makes a good soldier? The ability to fire four shots a minute in any weather.",
+  "keywords": [
+    "Area"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Each target can make a ranged free strike that gains an edge against any enemy marked by you within distance of their ranged free strike. A target ignores banes and double banes when making this strike.",
+  "special_effect": null
+}

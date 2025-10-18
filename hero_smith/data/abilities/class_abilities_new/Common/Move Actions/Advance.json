@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "advance",
+  "name": "Advance",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "When a creature takes the Advance move action, they move a number of squares up to their speed. They can break up this movement with their maneuver and main action however they wish.",
+  "special_effect": null
+}

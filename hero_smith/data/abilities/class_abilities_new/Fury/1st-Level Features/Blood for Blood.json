@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "blood_for_blood",
+  "name": "Blood for Blood!",
+  "level": 1,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 5
+  },
+  "story_text": "See how well they fight after you've bled them dry.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Bleeding; Weakened (save ends); and"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Bleeding; Weakened (save ends); and"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Bleeding; Weakened (save ends); and"
+      }
+    }
+  },
+  "effect": "You can deal 1d6 damage to yourself to deal an extra 1d6 damage to the target.",
+  "special_effect": null
+}

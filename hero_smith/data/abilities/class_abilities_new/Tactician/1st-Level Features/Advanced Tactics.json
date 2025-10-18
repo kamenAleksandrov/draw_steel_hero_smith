@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "advanced_tactics",
+  "name": "Advanced Tactics",
+  "level": 1,
+  "costs": null,
+  "story_text": "Your leadership aids an ally.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target deals damage to another creature.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target gains 2 surges, which they can use on the triggering damage.\n\nIf the damage has any potency effect associated with it, the potency is increased by 1.",
+  "special_effect": null
+}

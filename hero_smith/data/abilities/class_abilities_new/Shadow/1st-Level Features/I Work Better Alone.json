@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "i_work_better_alone",
+  "name": "I Work Better Alone",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "\"It's better, just you and me. Isn't it?\"",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "If the target has none of your allies adjacent to them, you gain 1 surge before making the power roll.",
+  "special_effect": null
+}

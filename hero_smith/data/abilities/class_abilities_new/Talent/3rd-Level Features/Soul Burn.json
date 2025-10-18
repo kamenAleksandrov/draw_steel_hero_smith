@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "soul_burn",
+  "name": "Soul Burn",
+  "level": 3,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 7
+  },
+  "story_text": "You blast their soul out of their body, leaving it to helplessly float back to a weakened husk.",
+  "keywords": [
+    "Animapathy",
+    "Psionic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": "The target takes a bane on Presence tests until the end of the encounter.",
+  "special_effect": "Strained: The potency of this ability increases by 1. You take 2d6 damage and gain 3 surges that you can use immediately."
+}

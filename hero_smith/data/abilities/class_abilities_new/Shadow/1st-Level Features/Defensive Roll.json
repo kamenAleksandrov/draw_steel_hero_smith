@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "defensive_roll",
+  "name": "Defensive Roll",
+  "level": 1,
+  "costs": null,
+  "story_text": "When an enemy attacks, you roll with the impact to reduce the harm.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "Another creature damages you.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You take half the triggering damage, then can shift up to 2 squares after the triggering effect resolves. If you end this shift with concealment or cover, you can use the Hide maneuver even if you are observed.\n\nThe potency of any effects associated with the damage are reduced by 1 for you.",
+  "special_effect": null
+}

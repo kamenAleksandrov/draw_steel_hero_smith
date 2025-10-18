@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "riposte",
+  "name": "Riposte",
+  "level": 1,
+  "costs": null,
+  "story_text": "\"I'd have brought treats had I known I'd be fighting a dog.\"",
+  "keywords": [
+    "Melee"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target takes damage from a melee strike.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target makes a free strike against the creature who made the triggering strike.",
+  "special_effect": null
+}

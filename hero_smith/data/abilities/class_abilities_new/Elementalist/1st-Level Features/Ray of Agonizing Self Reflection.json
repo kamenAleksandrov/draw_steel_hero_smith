@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "ray_of_agonizing_self_reflection",
+  "name": "Ray of Agonizing Self-Reflection",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You inflict pain and doubt in equal measure.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": "R < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": "R < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": "R < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

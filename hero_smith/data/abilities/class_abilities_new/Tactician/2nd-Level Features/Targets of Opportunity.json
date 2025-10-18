@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "targets_of_opportunity",
+  "name": "Targets of Opportunity",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "You point out easy targets to your friends, allowing them to include more enemies in their attacks.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "Two creatures",
+  "power_roll": null,
+  "effect": "Each target is marked by you, and you gain two surges.",
+  "special_effect": "Mark Benefit: Until the end of the encounter, whenever you or any ally makes a strike against a creature marked by you, you can spend 2 focus to add one additional target to the strike."
+}

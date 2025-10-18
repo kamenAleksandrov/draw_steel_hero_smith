@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "aid_attack",
+  "name": "Aid Attack",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature who uses the Aid Attack maneuver chooses an enemy adjacent to them. The next ability roll an ally makes against that enemy before the start of the aiding creature's next turn gains an edge.",
+  "special_effect": null
+}

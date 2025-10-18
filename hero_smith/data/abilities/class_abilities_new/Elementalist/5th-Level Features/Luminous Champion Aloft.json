@@ -1,0 +1,29 @@
+{
+  "type": "ability",
+  "id": "luminous_champion_aloft",
+  "name": "Luminous Champion Aloft",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "They shine vibrantly, a beautiful diamond in the night sky.",
+  "keywords": [
+    "Fire",
+    "Green",
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target has a +3 bonus to speed, they can fly, and their abilities ignore concealment. Additionally, whenever the target gains their Heroic Resource, they gain 1 additional Heroic Resource. This effect lasts until the start of your next turn.",
+  "special_effect": "Persistent 1: The effect lasts until the start of your next turn."
+}

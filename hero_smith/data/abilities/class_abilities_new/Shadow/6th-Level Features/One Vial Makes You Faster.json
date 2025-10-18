@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "one_vial_makes_you_faster",
+  "name": "One Vial Makes You Faster",
+  "level": 6,
+  "costs": {
+    "resource": "Insight",
+    "amount": 9
+  },
+  "story_text": "Each ally who catches a potion you throw can take the battle to the next level.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three creatures",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The creature's speed is increased by 2 until the end of the encounter"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The creature can fly until the end of the encounter"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The creature turns invisible until the end of their next turn"
+      }
+    }
+  },
+  "effect": "You ready, hand, or lob a potion to each target, who can immediately quaff the potion (no action required). If they don't drink the potion right away, they must use the Use Consumable maneuver to consume it later. The potion loses its potency at the end of the encounter.\nA creature who drinks the potion receives benefits based on your power roll.",
+  "special_effect": null
+}

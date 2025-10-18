@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "ray_of_wrath",
+  "name": "Ray of Wrath",
+  "level": 1,
+  "costs": null,
+  "story_text": "You unleash a blast of holy light upon your foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You can have this ability deal holy damage.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "en_garde",
+  "name": "En Garde!",
+  "level": 2,
+  "costs": {
+    "resource": "Drama",
+    "amount": 5
+  },
+  "story_text": "Wait, it's... Guard! Turn! Parry! Dodge! Spin! Thrust! Ha!",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "**A**"
+      },
+      "mid": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "**A**"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "**A**"
+      }
+    }
+  },
+  "effect": "The target can make a melee free strike against you. If they do, you can make a melee free strike against the target.",
+  "special_effect": null
+}

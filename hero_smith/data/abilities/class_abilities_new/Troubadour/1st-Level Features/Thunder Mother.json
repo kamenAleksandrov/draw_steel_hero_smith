@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "thunder_mother",
+  "name": "\"Thunder Mother\"",
+  "level": 1,
+  "costs": null,
+  "story_text": "All for thunder motherrr! \u266a Run and hide for coverrr!\u266a",
+  "keywords": [
+    "Magic",
+    "Performance",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "equal to your level"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "equal to 5 your level"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "equal to 10 your level"
+      }
+    }
+  },
+  "effect": "At the end of each combat round while this performance is active, you can make a power roll against the target that ignores cover. You can't target the same creature twice with this effect.",
+  "special_effect": null
+}

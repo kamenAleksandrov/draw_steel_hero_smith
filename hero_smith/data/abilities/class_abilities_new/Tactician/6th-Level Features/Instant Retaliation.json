@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "instant_retaliation",
+  "name": "Instant Retaliation",
+  "level": 6,
+  "costs": {
+    "resource": "Focus",
+    "amount": 9
+  },
+  "story_text": "You parry with almost supernatural speed.",
+  "keywords": [
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "A creature deals damage to the target.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One ally",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": "The target takes half the damage. You then make a power roll against the triggering creature.",
+  "special_effect": null
+}

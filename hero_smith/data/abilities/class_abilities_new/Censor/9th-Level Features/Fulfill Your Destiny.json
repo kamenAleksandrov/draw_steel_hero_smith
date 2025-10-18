@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "fulfill_your_destiny",
+  "name": "Fulfill Your Destiny",
+  "level": 9,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "You have looked at various futures, and only this one works.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "You or another hero ends their turn.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target takes their turn after the triggering hero, and immediately removes all conditions and negative effects on themself. During their turn, the target has a double edge on power rolls.",
+  "special_effect": null
+}

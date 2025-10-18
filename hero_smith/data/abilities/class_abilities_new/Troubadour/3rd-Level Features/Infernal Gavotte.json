@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "infernal_gavotte",
+  "name": "Infernal Gavotte",
+  "level": 3,
+  "costs": {
+    "resource": "Drama",
+    "amount": 7
+  },
+  "story_text": "A spicy performance lights a fire under your allies' feet.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": "A < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": "A < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": "A < STRONG",
+        "conditions": "Weakened (save ends)"
+      }
+    }
+  },
+  "effect": "Each ally in the area can shift up to 2 squares.",
+  "special_effect": null
+}

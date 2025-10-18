@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "overwhelm",
+  "name": "Overwhelm",
+  "level": 2,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "You overload their senses, turning all their subconscious thoughts into conscious ones.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Strike",
+    "Telepathy"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "psychic",
+        "potencies": "I < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "psychic",
+        "potencies": "I < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "psychic",
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: You start crying, and you can't use triggered actions or make free strikes until the end of the target's next turn."
+}

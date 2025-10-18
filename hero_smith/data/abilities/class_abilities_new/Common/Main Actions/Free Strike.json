@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "free_strike",
+  "name": "Free Strike",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature can use this main action to make a free strike (see [Free](#page-289-1) [Strikes](#page-289-1) below). Most of the time, you'll want to use the more impactful main actions granted by your class, kit, or other feature, just as the Director will use the main actions in a creature's stat block, but free strikes are available for when all else fails. For instance, a fury who has no other options for ranged strikes might use the Ranged Weapon Free Strike ability with an improvised weapon when battling a flying foe.",
+  "special_effect": null
+}

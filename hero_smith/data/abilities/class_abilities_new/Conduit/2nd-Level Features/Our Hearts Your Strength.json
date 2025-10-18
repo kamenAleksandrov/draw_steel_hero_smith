@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "our_hearts_your_strength",
+  "name": "Our Hearts Your Strength",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "An ally gains strength from their friends.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self and one ally",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until the target is dying, at the start of each of the target's turns, they gain a bonus to speed and a bonus to rolled damage equal to the number of allies within 10 squares of them. This bonus lasts until the start of their next turn.",
+  "special_effect": null
+}

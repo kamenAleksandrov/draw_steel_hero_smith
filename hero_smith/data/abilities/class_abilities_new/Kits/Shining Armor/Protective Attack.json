@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "protective_attack",
+  "name": "Protective Attack",
+  "level": null,
+  "costs": null,
+  "story_text": "The strength of your assault makes it impossible for your foe to ignore you.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might or Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target is taunted until the end of their next turn.",
+  "special_effect": null
+}

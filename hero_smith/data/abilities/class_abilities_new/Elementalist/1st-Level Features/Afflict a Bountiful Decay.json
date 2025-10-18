@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "afflict_a_bountiful_decay",
+  "name": "Afflict a Bountiful Decay",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Your curse causes your foe's flesh to rot off as spores that aid your allies.",
+  "keywords": [
+    "Green",
+    "Magic",
+    "Ranged",
+    "Rot",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Choose yourself or one ally within distance. That character can end one effect on them that is ended by a saving throw or that ends at the end of their turn.",
+  "special_effect": null
+}

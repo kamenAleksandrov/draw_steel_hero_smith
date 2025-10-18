@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "inertial_absorption",
+  "name": "Inertial Absorption",
+  "level": 9,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You absorb an attack to empower your body.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "Another creature damages you using an ability.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You take half the damage, negate any effects associated with the damage for you, and gain 3 surges.",
+  "special_effect": null
+}

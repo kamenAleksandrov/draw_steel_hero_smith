@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "never_ending_hero",
+  "name": "\"Never-Ending Hero\"",
+  "level": 3,
+  "costs": null,
+  "story_text": "And toniiight we can truly say \u266a They will alllways find a way!\u266a",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn dying while in the area gains an edge on power rolls and ignores the effects of bleeding until the end of their turn.",
+  "special_effect": null
+}

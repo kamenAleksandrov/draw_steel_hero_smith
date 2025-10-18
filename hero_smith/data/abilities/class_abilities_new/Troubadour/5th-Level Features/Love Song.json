@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "love_song",
+  "name": "Love Song",
+  "level": 5,
+  "costs": {
+    "resource": "Drama",
+    "amount": 9
+  },
+  "story_text": "You play a small ditty that plants you inside your target's heart.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": null,
+  "effect": "The target gains 20 temporary Stamina. Until the end of the encounter, whenever the target takes damage while you're within distance, you can choose to take the damage instead of the target.",
+  "special_effect": null
+}

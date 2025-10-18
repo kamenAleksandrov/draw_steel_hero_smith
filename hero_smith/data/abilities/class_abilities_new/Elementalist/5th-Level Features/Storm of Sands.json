@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "storm_of_sands",
+  "name": "Storm of Sands",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "Dirt and debris swirl into a dark, pulsing hurricane.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "4 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The area lasts until the start of your next turn. It is difficult terrain for enemies, and you and your allies have concealment while in the area.",
+  "special_effect": "Persistent 1: The area remains until the start of your next turn, and you can move it up to 5 squares (no action required). As a maneuver, you can make the power roll again without spending essence."
+}

@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "the_green_within_the_green_without",
+  "name": "The Green Within, the Green Without",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Whipping vines erupt from a foe's body to grasp at another close by.",
+  "keywords": [
+    "Green",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You slide one creature within 10 squares of the target up to 2 squares.",
+  "special_effect": null
+}

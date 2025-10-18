@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "wall_of_ice",
+  "name": "Wall of Ice",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You create a wall of ice.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Wall",
+    "range_value": "10 within 10"
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "You can place this wall in occupied squares, sliding each creature in the area into the nearest unoccupied space of your choice. The wall remains until the end of the encounter or until you are dying. The wall's squares are treated as stone squares for the purpose of damage, and you and allies can move freely through the wall. Each enemy who enters a square adjacent to the wall and has M < AVERAGE is slowed (save ends). Each enemy who is force moved into the wall and has M < AVERAGE is restrained (save ends).",
+  "special_effect": null
+}

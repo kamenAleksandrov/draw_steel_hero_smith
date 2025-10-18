@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "fire_up_the_night",
+  "name": "\"Fire Up the Night\"",
+  "level": 3,
+  "costs": null,
+  "story_text": "Maybe you and I \u266a We can still bring the light!\u266a",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn in the area doesn't take a bane on strikes against creatures with concealment. Once during their turn, they can search for hidden creatures as a free maneuver (see Hide and Sneak in Chapter 9: Tests).",
+  "special_effect": null
+}

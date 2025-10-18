@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "lines_of_force",
+  "name": "Lines of Force",
+  "level": 1,
+  "costs": null,
+  "story_text": "You redirect the energy of motion.",
+  "keywords": [
+    "Magic",
+    "Melee"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target would be force moved.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "Self or one creature",
+  "power_roll": null,
+  "effect": "You can select a new target of the same size or smaller within distance to be force moved instead. You become the source of the forced movement, determine the new target's destination, and can push the target instead of using the original forced movement type. Additionally, the forced movement distance gains a bonus equal to your Might score.\n\nThe forced movement distance gains a bonus equal to twice your Might score instead.",
+  "special_effect": null
+}

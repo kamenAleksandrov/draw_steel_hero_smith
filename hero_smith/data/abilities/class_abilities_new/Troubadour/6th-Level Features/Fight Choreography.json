@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "fight_choreography",
+  "name": "Fight Choreography",
+  "level": 6,
+  "costs": {
+    "resource": "Drama",
+    "amount": 9
+  },
+  "story_text": "You and your partner make a flashy show of derring-do, then get back to your corners.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "You and the target each make a melee free strike that targets each enemy within 3 squares of either of you, dividing the enemies between each of you. You choose which enemies your free strike targets and which enemies the target creature's free strike targets. You then slide the target 5 squares, ignoring stability.",
+  "special_effect": null
+}

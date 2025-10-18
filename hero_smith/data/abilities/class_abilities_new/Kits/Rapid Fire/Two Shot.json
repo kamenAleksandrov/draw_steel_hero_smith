@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "two_shot",
+  "name": "Two Shot",
+  "level": null,
+  "costs": null,
+  "story_text": "When you fire two arrows back-to-back, both hit their mark.",
+  "keywords": [
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 12
+  },
+  "targets": "Two creatures or objects",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might or Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

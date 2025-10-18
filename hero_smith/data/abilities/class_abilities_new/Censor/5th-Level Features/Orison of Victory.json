@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "orison_of_victory",
+  "name": "Orison of Victory",
+  "level": 5,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 9
+  },
+  "story_text": "You channel your god's will to overcome hardship and inflict pain.",
+  "keywords": [
+    "Area"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "1"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 1 surge"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 2 surges"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 3 surges"
+      }
+    }
+  },
+  "effect": "A target can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
+  "special_effect": null
+}

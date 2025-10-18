@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "penance",
+  "name": "Penance",
+  "level": 5,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "\"If you won't kneel, the gods will make you.\"",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "4 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "I < WEAK",
+        "conditions": "Prone; and can't stand (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "I < AVERAGE",
+        "conditions": "Prone; and can't stand (save ends)"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": "I < STRONG",
+        "conditions": "Prone; and can't stand (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

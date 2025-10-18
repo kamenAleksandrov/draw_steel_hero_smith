@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "ripples_in_the_earth",
+  "name": "Ripples in the Earth",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 3
+  },
+  "story_text": "Like a stone was dropped into a pond, waves in the earth radiate from you.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "2"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Prone"
+      }
+    }
+  },
+  "effect": "You must be touching the ground to use this ability. Additionally, you can choose a square of ground in the area that is unoccupied or is occupied by you or any ally. A pillar of earth rises out of the ground in that square, with a height in squares up to your Reason score. The pillar can't collide with any creatures or objects, nor can it force creatures raised by it to collide with other creatures or objects.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "slow",
+  "name": "Slow",
+  "level": 2,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "Perhaps they wonder why everyone else is moving so quickly?",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three creatures or objects",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Slowed (save ends); The target's speed is halved (save ends) or if the target is"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Slowed (save ends); The target is or if the target's speed is 0 (save ends)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Slowed (save ends); The target is or if the target's speed is 0 (save ends)"
+      }
+    }
+  },
+  "effect": "A target can't use triggered actions while their speed is reduced this way.",
+  "special_effect": "Strained: The potency of this ability increases by 1 and you take 1d6 damage. At the start of each combat round while any target is affected by this ability, you take 1d6 damage. You can end the effect on all affected targets at any time (no action required)."
+}

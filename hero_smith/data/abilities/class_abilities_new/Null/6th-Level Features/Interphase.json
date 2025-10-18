@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "interphase",
+  "name": "Interphase",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You slip into a faster timestream to act more quickly.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You can use up to three signature abilities, each of which gains an edge.",
+  "special_effect": null
+}

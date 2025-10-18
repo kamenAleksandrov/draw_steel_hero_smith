@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "faith_is_our_armor",
+  "name": "Faith Is Our Armor",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "The heroes' armor glows with golden light, granting divine protection.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Four allies",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target gains 5 temporary Stamina"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target gains 10 temporary Stamina"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target gains 15 temporary Stamina"
+      }
+    }
+  },
+  "effect": "You can target yourself instead of one ally with this ability.",
+  "special_effect": null
+}

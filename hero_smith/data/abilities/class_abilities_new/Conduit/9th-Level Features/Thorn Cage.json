@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "thorn_cage",
+  "name": "Thorn Cage",
+  "level": 9,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "Vines burst forth from the ground and bind your foe, slowly closing around them.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 21,
+        "characteristic_damage_options": "I damage",
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "While restrained this way, the target takes 10 damage at the start of each of your turns.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "epic",
+  "name": "Epic",
+  "level": 9,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "Your story tells a tale of the villain's waning power and how the heroes rose to the occasion to stop them.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 10"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target takes a bane on ability rolls (save ends)"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target has a double bane on ability rolls (save ends)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "The target has a double bane on power rolls (save ends)"
+      }
+    }
+  },
+  "effect": "Choose one ally within distance. While the target is affected by this ability, each time they use an ability, that ally can make a free strike against them after the ability is resolved.",
+  "special_effect": null
+}

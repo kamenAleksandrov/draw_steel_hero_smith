@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "spotlight",
+  "name": "Spotlight",
+  "level": 6,
+  "costs": null,
+  "story_text": "The audience is watching, so you'd better give them a show.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn in the area gains 1 of their Heroic Resource. This Heroic Resource disappears at the end of the target's turn if they don't spend it.",
+  "special_effect": null
+}

@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "iron_body",
+  "name": "Iron Body",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You focus until your body becomes as hard as iron.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You gain 20 temporary Stamina. Additionally, until the end of the encounter, your stability gains a bonus equal to your Intuition score.",
+  "special_effect": null
+}

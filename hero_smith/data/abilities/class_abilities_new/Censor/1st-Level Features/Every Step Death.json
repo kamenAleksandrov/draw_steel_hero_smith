@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "every_step_death",
+  "name": "Every Step... Death!",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You show your foe a glimpse of their fate after death.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Each time the target willingly moves before the end of your next turn, they take 1 psychic damage for each square they move.",
+  "special_effect": null
+}

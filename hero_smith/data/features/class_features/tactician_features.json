@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_tactician_tactical_doctrine",
-    "type": "feature",
+    "type": "subclass",
     "name": "Tactical Doctrine",
     "class": "tactician",
     "is_subclass_feature": true,
@@ -27,7 +27,7 @@
   },
   {
     "id": "feature_tactician_focus",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Focus",
     "class": "tactician",
     "level": 1,

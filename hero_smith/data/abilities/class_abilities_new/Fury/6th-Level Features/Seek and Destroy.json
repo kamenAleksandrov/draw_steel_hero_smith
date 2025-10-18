@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "seek_and_destroy",
+  "name": "Seek and Destroy",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You break through the enemy lines to make an example.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": "You shift up to your speed.\n\nIf a target who is not a leader or solo creature is winded by this strike, they are reduced to 0 Stamina and you choose an enemy within 5 squares of you. If that enemy has P < AVERAGE, they are frightened of you (save ends).",
+  "special_effect": null
+}

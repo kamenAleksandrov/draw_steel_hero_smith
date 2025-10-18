@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "edict_of_perfect_order",
+  "name": "Edict of Perfect Order",
+  "level": 3,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 7
+  },
+  "story_text": "Within the area of your divine presence, your enemies will regret using their fell abilities.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "2"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever a target uses an ability that costs Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*), they take holy damage equal to three times your Presence score. A target judged by you takes an extra 2d6 holy damage.",
+  "special_effect": null
+}

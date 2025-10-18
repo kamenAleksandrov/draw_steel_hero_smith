@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "thunder_roar",
+  "name": "Thunder Roar",
+  "level": 1,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 5
+  },
+  "story_text": "You unleash a howl that hurls your enemies back.",
+  "keywords": [
+    "Area",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Line",
+    "range_value": "5 x 1 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 4"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 6"
+      }
+    }
+  },
+  "effect": "The targets are force moved one at a time, starting with the target nearest to you, and can be pushed into other targets in the same line.",
+  "special_effect": null
+}

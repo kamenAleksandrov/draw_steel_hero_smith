@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "instigator",
+  "name": "Instigator",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "I didn't do it! What?",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target is taunted by you or a willing ally adjacent to you until the end of the target's next turn.",
+  "special_effect": null
+}

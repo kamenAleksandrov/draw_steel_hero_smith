@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "rout",
+  "name": "Rout",
+  "level": 3,
+  "costs": {
+    "resource": "Focus",
+    "amount": 7
+  },
+  "story_text": "The tide begins to turn.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever you or any ally deals damage to a target marked by you who has R < AVERAGE, the target is frightened of the creature who dealt the damage (save ends).",
+  "special_effect": null
+}

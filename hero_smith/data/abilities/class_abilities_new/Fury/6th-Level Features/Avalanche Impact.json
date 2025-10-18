@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "avalanche_impact",
+  "name": "Avalanche Impact",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You leap and crash down, causing a shockwave that devastates foes.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 1"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 3"
+      }
+    }
+  },
+  "effect": "You jump up to your maximum jump distance and make one power roll that targets each creature adjacent to the space where you land.",
+  "special_effect": null
+}

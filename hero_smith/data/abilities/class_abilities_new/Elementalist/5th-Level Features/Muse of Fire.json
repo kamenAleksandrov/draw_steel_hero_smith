@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "muse_of_fire",
+  "name": "Muse of Fire",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 11
+  },
+  "story_text": "The fire burns hot enough to sear the face of any god watching.",
+  "keywords": [
+    "Area",
+    "Fire",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "5 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "the Director loses 2 Malice (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "the Director loses 3 Malice"
+      },
+      "high": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "the Director loses 4 Malice"
+      }
+    }
+  },
+  "effect": "The Director's Malice can become negative as a result of this ability.",
+  "special_effect": null
+}

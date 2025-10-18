@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "cacophony_of_cinders",
+  "name": "Cacophony of Cinders",
+  "level": 9,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "You tumble through the battle, stabbing foes and teleporting allies.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "An enemy takes 6 an ally can teleport up to 3 squares"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "An enemy takes 10 an ally can teleport up to 5 squares"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "An enemy takes 14 an ally can teleport up to 7 squares"
+      }
+    }
+  },
+  "effect": "You shift up to twice your speed, making one power roll that targets each creature you come adjacent to during the shift.",
+  "special_effect": null
+}

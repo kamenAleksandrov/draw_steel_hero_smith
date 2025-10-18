@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "harmonize",
+  "name": "Harmonize",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 3
+  },
+  "story_text": "Give the chorus a little punch.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target uses an ability that targets only one enemy and costs 3 or fewer of their Heroic Resource.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target can choose one additional target for the triggering ability. Any damage dealt to the additional target is sonic damage.\n\nYou can trigger this ability when a target uses an ability that has a Heroic Resource cost of 3 + each additional drama spent.",
+  "special_effect": null
+}

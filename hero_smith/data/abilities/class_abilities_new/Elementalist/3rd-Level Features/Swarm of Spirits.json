@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "swarm_of_spirits",
+  "name": "Swarm of Spirits",
+  "level": 3,
+  "costs": {
+    "resource": "Essence",
+    "amount": 7
+  },
+  "story_text": "Guardian animal spirits surround you to harry your foes and bolster your allies.",
+  "keywords": [
+    "Area",
+    "Green",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "3"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of your next turn, each ally in the area has each of their characteristic scores treated as 1 higher for the purpose of resisting potencies, and has a +1 bonus to saving throws.",
+  "special_effect": "Persistent 1: You make the power roll again to target each enemy in the area without spending essence, and the effect lasts until the start of your next turn."
+}

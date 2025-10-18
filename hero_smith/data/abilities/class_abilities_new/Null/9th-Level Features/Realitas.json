@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "realitas",
+  "name": "Realitas",
+  "level": 9,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "Your essential hyperreality disrupts your enemy's connection to existence.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": "I < WEAK",
+        "conditions": "Dazed"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": "I < STRONG",
+        "conditions": "Dazed"
+      }
+    }
+  },
+  "effect": "While dazed this way, the target takes psychic damage equal to twice your Intuition score at the start of each of your turns. If this ability causes a creature who is not a leader or solo creature to become winded, they are instead reduced to 0 Stamina. Any creature reduced to 0 Stamina by this ability is forgotten by all creatures of your level or lower in the timescape who are not present in the encounter. Loved ones of the forgotten creature retain a faint sense of melancholy. This effect can be reversed only at the Director's discretion.",
+  "special_effect": null
+}

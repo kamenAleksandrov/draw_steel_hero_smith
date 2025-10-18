@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "kinetic_pulse",
+  "name": "Kinetic Pulse",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "The force of your mind hurls enemies backward.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Telepathy"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "push 1"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "push 2"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: The size of the burst increases by 2, and you are bleeding until the start of your next turn."
+}

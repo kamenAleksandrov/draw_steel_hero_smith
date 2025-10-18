@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "in_all_this_confusion",
+  "name": "In All This Confusion",
+  "level": 1,
+  "costs": null,
+  "story_text": "You vanish in a plume of black smoke to avoid danger.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "You take damage.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You take half the damage, then can teleport up to 4 squares after the triggering effect resolves.\n\nYou teleport 1 additional square for each insight spent.",
+  "special_effect": null
+}

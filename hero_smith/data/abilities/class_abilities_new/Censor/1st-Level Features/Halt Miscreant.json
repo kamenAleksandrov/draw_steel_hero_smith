@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "halt_miscreant",
+  "name": "Halt Miscreant!",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You infuse your weapon with holy magic that makes it difficult for your foe to get away.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

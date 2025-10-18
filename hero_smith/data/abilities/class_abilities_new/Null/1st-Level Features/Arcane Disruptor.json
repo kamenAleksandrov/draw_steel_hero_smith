@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "arcane_disruptor",
+  "name": "Arcane Disruptor",
+  "level": 1,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "Your blow reorders a foe's body, causing pain if they attempt to channel sorcery.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": "M < WEAK",
+        "conditions": "Weakened (save ends); **A**"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": "M < AVERAGE",
+        "conditions": "Weakened (save ends); **A**"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": "M < STRONG",
+        "conditions": "Weakened (save ends); **A**"
+      }
+    }
+  },
+  "effect": "While weakened this way, the target takes damage equal to your Intuition score whenever they use a supernatural ability that costs Malice.",
+  "special_effect": null
+}

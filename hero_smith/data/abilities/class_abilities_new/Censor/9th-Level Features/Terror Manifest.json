@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "terror_manifest",
+  "name": "Terror Manifest",
+  "level": 9,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "\"I know what you fear.\"",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": "While frightened this way, if a target who is a leader or solo creature is winded, they take an extra 25 psychic damage. If a target frightened this way is not a leader or solo creature and is winded, they are reduced to 0 Stamina.",
+  "special_effect": null
+}

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "mind_game",
+  "name": "Mind Game",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "Your attack demoralizes your foe. Your allies begin to think you can win.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "Weakened (save ends)"
+      }
+    }
+  },
+  "effect": "You mark the target.\n\nBefore the start of your next turn, the first time any ally deals damage to any target marked by you, that ally can spend a Recovery.",
+  "special_effect": null
+}

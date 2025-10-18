@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "the_flesh_a_crucible",
+  "name": "The Flesh, a Crucible",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 3
+  },
+  "story_text": "Fire engulfs your target and continues to churn.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Persistent 1: If the target is within distance at the start of your turn, you can make the power roll again without spending essence (no action required)."
+}

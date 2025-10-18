@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "beacon_of_grace",
+  "name": "Beacon of Grace",
+  "level": 5,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "You ignite a foe with holy radiance, rewarding allies who attack them.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of the encounter, whenever you or any ally damages the target using an ability, that creature can spend a Recovery. If the target is reduced to 0 Stamina before the end of the encounter, you can use a free triggered action to move this effect to another creature within distance.",
+  "special_effect": null
+}

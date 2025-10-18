@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "weakening_brand",
+  "name": "Weakening Brand",
+  "level": null,
+  "costs": null,
+  "story_text": "The impact of your weapon brands your target for destruction.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might, Reason, Intuition, or Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M/R/I/P damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of the target's next turn, they have damage weakness equal to the characteristic score used for this ability's power roll.",
+  "special_effect": null
+}

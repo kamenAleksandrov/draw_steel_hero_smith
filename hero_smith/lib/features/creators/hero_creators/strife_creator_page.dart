@@ -79,7 +79,7 @@ class _StrifeCreatorPageState extends State<StrifeCreatorPage> {
       _selectedAbilities = {};
       _selectedPerks = {};
       _selectedSubclass = null;
-      _featureSelections.clear();
+      _featureSelections = {};
     });
   }
 

@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "speed_of_shadows",
+  "name": "Speed of Shadows",
+  "level": 8,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "You make multiple strikes against a foe before they even notice they're dead.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You can use a strike signature ability four times, use a strike signature ability that gains an edge three times, or use a strike signature ability that has a double edge twice. You can shift up to 2 squares between each use.",
+  "special_effect": null
+}

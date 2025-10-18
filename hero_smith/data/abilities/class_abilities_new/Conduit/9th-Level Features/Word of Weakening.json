@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "word_of_weakening",
+  "name": "Word of Weakening",
+  "level": 9,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "You utter a divine word that makes a foe brittle.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "A < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "A < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 21,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "A < STRONG",
+        "conditions": "Weakened (save ends)"
+      }
+    }
+  },
+  "effect": "While weakened this way, the target has damage weakness 10.",
+  "special_effect": null
+}

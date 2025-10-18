@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "judgment_s_hammer",
+  "name": "Judgment's Hammer",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 3
+  },
+  "story_text": "Your divine fury is a hammer that crashes down upon the unrighteous.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "A < WEAK",
+        "conditions": "Prone"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "A < AVERAGE",
+        "conditions": "Prone"
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "A < STRONG",
+        "conditions": "Prone; and can't stand (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "hypersonic",
+  "name": "Hypersonic",
+  "level": 5,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 9
+  },
+  "story_text": "You move fast enough to turn around and watch your foes feel the aftermath.",
+  "keywords": [
+    "Area",
+    "Charge",
+    "Psionic",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Line",
+    "range_value": "5 x 2 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 24,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You teleport to a square on the opposite side of the area before making the power roll.",
+  "special_effect": "Strained: If you obtain a tier 2 outcome or better, you are slowed until the end of your turn and each target is slowed until the end of their turn."
+}

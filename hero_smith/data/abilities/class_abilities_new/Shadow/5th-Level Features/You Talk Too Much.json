@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "you_talk_too_much",
+  "name": "You Talk Too Much",
+  "level": 5,
+  "costs": {
+    "resource": "Insight",
+    "amount": 9
+  },
+  "story_text": "Silence is a virtue. A knife pinning their mouth shut is the next best thing.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 21,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": "The target can't communicate with anyone until the end of the encounter.",
+  "special_effect": null
+}

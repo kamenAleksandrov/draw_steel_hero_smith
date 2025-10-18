@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "back_blasphemer",
+  "name": "Back Blasphemer!",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You channel power through your weapon to repel foes.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "2 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "push 1"
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "push 3"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

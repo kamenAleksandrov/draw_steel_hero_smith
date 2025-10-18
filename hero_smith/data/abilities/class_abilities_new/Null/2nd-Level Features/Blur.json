@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "blur",
+  "name": "Blur",
+  "level": 2,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "You release stored time, allowing you to act twice.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You can use a signature or heroic ability. You gain an edge on that ability's power rolls.",
+  "special_effect": null
+}

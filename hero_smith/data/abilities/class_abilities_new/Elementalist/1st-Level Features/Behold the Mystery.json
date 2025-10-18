@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "behold_the_mystery",
+  "name": "Behold the Mystery",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 3
+  },
+  "story_text": "You open a rift into the void to harry your foes.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Persistent 1: At the start of your turn, you can use a maneuver to use this ability again without spending essence."
+}

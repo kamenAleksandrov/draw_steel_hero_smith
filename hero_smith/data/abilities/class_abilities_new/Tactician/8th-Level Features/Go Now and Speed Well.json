@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "go_now_and_speed_well",
+  "name": "Go Now and Speed Well",
+  "level": 8,
+  "costs": {
+    "resource": "Focus",
+    "amount": 11
+  },
+  "story_text": "You direct an attack to strike true.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target gains 2 surges and can use a signature or heroic ability as a free triggered action. The ability has a double edge on the power roll, ignores damage immunity, and increases the potency of any potency effects by 1.",
+  "special_effect": null
+}

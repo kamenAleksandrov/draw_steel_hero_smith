@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "fling_through_time",
+  "name": "Fling Through Time",
+  "level": 3,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 7
+  },
+  "story_text": "You hurl the target through the annals of time, forcing them to witness every moment of their existence all at once.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < AVERAGE",
+        "conditions": "Weakened (save ends); the target is flung through time and if they are"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < STRONG",
+        "conditions": "Weakened (save ends); the target is flung through time and if they are"
+      }
+    }
+  },
+  "effect": "A target who is flung through time is removed from the encounter map until the end of their next turn, reappearing in their original space or the nearest unoccupied space.",
+  "special_effect": "Strained: You take 2d6 damage and permanently grow visibly older (the equivalent of 10 years for a human). If you obtain a tier 3 outcome on the power roll, you gain 2 clarity."
+}

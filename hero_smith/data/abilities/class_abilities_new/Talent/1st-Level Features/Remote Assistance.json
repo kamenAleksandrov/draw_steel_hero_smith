@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "remote_assistance",
+  "name": "Remote Assistance",
+  "level": 1,
+  "costs": null,
+  "story_text": "An ally gains the benefit of your intellect.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": null,
+  "effect": "The next ability roll an ally makes against the target before the start of your next turn gains an edge.\n\nYou target one additional creature or object.",
+  "special_effect": null
+}

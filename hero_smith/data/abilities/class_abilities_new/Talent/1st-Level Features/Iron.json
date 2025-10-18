@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "iron",
+  "name": "Iron",
+  "level": 1,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "The target's skin turns to hard, dark metal, impenetrable and dense.",
+  "keywords": [
+    "Metamorphosis",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target's stability increases by an amount equal to your Reason score, and they gain 10 temporary Stamina and 2 surges. This stability increase lasts until the target no longer has temporary Stamina from this ability.",
+  "special_effect": "Strained: You can't use maneuvers (save ends)."
+}

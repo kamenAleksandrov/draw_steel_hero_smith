@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "primordial_vortex",
+  "name": "Primordial Vortex",
+  "level": 9,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 11
+  },
+  "story_text": "You channel the power of the Primordial Chaos to pull foes to you.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 3"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 5"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 7"
+      }
+    }
+  },
+  "effect": "If this forced movement causes a target to slam into you, you take no damage from the collision and the target takes the damage you would have taken.",
+  "special_effect": null
+}

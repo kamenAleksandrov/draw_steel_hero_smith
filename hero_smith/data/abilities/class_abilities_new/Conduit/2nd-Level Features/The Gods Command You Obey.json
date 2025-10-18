@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "the_gods_command_you_obey",
+  "name": "The Gods Command You Obey",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "You speak with the voice of your saint, commanding your enemies.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "P < WEAK",
+        "conditions": "before taking the target makes a free strike against a target you choose"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "P < AVERAGE",
+        "conditions": "before taking the target uses an ability of your choice and you choose any targets for that ability"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "P < STRONG",
+        "conditions": "before taking the target shifts up to their speed to a location you choose uses an ability of your choice and you choose any targets for that ability"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

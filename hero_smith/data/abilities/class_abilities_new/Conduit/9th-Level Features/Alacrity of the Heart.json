@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "alacrity_of_the_heart",
+  "name": "Alacrity of the Heart",
+  "level": 9,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "You speak inspiring words to a friend and spur them to incredible feats.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target has an additional main action they can use on their next turn, and gains 3 of their Heroic Resource.",
+  "special_effect": null
+}

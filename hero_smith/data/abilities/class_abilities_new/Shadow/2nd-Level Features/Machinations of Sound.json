@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "machinations_of_sound",
+  "name": "Machinations of Sound",
+  "level": 2,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "Illusory sounds make your foes reposition themselves as they cower or investigate the disturbance.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each creature in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Slide 4"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Slide 5"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Slide 7"
+      }
+    }
+  },
+  "effect": "This forced movement ignores stability. Instead, the forced movement is reduced by a number equal to the target's Intuition score.",
+  "special_effect": null
+}

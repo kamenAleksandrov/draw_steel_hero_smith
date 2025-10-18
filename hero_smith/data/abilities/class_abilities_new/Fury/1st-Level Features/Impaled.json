@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "impaled",
+  "name": "Impaled!",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You skewer your enemy like a boar upon a spit.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature of your size or smaller",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Grabbed"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Grabbed"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Grabbed"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

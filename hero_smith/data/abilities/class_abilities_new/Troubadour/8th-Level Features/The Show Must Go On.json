@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "the_show_must_go_on",
+  "name": "The Show Must Go On",
+  "level": 8,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "You shine a bright light on the players on the stage and compel them to finish the performance.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "5 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "the target can't willingly leave the area (EoT)"
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "the target can't willingly leave the area (save ends)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "the target can't willingly leave the area (EoT) if they can't willingly leave the area (save ends)"
+      }
+    }
+  },
+  "effect": "Each ally within distance can't obtain lower than a tier 2 outcome on the next test they make before the start of your next turn.",
+  "special_effect": null
+}

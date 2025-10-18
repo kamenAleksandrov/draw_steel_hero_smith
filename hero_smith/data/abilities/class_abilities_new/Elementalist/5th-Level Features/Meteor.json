@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "meteor",
+  "name": "Meteor",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "You teleport the target into the air and let the ground and the elemental force of fire do the rest.",
+  "keywords": [
+    "Earth",
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You teleport the target up to 4 squares"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You teleport the target up to 6 squares"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You teleport the target up to 8 squares"
+      }
+    }
+  },
+  "effect": "If the target is teleported to a space where they would fall, they immediately do so, treating the fall as if their Agility score were 0. The target takes fire damage from the fall, and each enemy within 3 squares of where they land takes the same amount of fire damage. The ground within 3 squares of where the target lands is difficult terrain.",
+  "special_effect": null
+}

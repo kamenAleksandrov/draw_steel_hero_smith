@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "volcano_s_embrace",
+  "name": "Volcano's Embrace",
+  "level": 2,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "Wrap them up in fire and melting stone.",
+  "keywords": [
+    "Earth",
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "A < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "A < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "A < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

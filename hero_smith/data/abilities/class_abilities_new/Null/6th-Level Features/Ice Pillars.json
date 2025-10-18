@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "ice_pillars",
+  "name": "Ice Pillars",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "Pillars of ice erupt from the ground and launch your foes into the air.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three creatures or objects",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 6"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 8"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 10"
+      }
+    }
+  },
+  "effect": "The pillars vanish as soon as the effects of the forced movement are resolved.",
+  "special_effect": null
+}

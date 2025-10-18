@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "explosive_assistance",
+  "name": "Explosive Assistance",
+  "level": 1,
+  "costs": null,
+  "story_text": "You add a little magic to an ally's aggression at just the right time.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target force moves a creature or object.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The forced movement distance gains a bonus equal to your Reason score.\n\nThe forced movement distance gains a bonus equal to twice your Reason score instead.",
+  "special_effect": null
+}

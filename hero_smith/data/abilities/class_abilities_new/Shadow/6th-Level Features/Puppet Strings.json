@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "puppet_strings",
+  "name": "Puppet Strings",
+  "level": 6,
+  "costs": {
+    "resource": "Insight",
+    "amount": 9
+  },
+  "story_text": "You prick little needles on the tips of your fingers into the nerves of your enemies and cause them to lose control.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "Two enemies",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "if the target has before the is resolved they make a free strike"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "if the target has before the is resolved they use a main action ability of your choice"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "if the target has before the is resolved they can shift up to their speed and use a main action ability of your choice"
+      }
+    }
+  },
+  "effect": "You choose the new targets for the original target's free strike or ability. Additionally, if you are hidden or disguised, using this ability doesn't cause you to be revealed.",
+  "special_effect": null
+}

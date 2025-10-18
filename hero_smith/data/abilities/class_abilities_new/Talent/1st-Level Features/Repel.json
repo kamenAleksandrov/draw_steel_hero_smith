@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "repel",
+  "name": "Repel",
+  "level": 1,
+  "costs": null,
+  "story_text": "They aren't going anywhere, but you might!",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target takes damage or is force moved.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target takes half the triggering damage, or the distance of the triggering forced movement is reduced by a number of squares equal to your Reason score. If the target took damage and was force moved, you choose the effect. If the forced movement is reduced to 0 squares, the target can push the source of the forced movement a number of squares equal to your Reason score.",
+  "special_effect": null
+}

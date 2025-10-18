@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "it_is_justice_you_fear",
+  "name": "It Is Justice You Fear",
+  "level": 2,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "I am but a vessel. Your own deeds weigh upon you.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": "If the target is already frightened of you or another creature and this ability would frighten them again, they instead take psychic damage equal to twice your Presence score.",
+  "special_effect": null
+}

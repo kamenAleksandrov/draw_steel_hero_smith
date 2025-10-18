@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "fate",
+  "name": "Fate",
+  "level": 6,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 9
+  },
+  "story_text": "Your foe gets a glimpse of how it will end for them.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Melee"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One enemy",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target has damage weakness 5 until the end of your next turn. Whenever the target takes damage while they have this weakness, they are knocked prone.",
+  "special_effect": "Strained: This ability gains the Strike keyword as the vision hurts the target's psyche. You make a power roll, then are weakened (save ends)."
+}

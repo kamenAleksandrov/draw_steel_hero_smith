@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "staggering_curse",
+  "name": "Staggering Curse",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A blast of judgment disorients your foe.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 1"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 2"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 3"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

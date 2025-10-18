@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "subverted_perception_of_space",
+  "name": "Subverted Perception of Space",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "You rip an enemy's world in twain.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "the target has line of effect only to creatures and objects within 4 squares of them until the start of your next turn"
+      },
+      "high": {
+        "base_damage_value": 15,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "the target has line of effect only to adjacent creatures and objects until the start of your next turn"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

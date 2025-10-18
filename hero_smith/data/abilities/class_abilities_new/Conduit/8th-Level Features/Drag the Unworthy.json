@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "drag_the_unworthy",
+  "name": "Drag the Unworthy",
+  "level": 8,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "You conjure an angel who moves a foe and heals your allies.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 3"
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 4"
+      },
+      "high": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "slide 6"
+      }
+    }
+  },
+  "effect": "Each ally the target comes adjacent to during the forced movement can spend a Recovery.",
+  "special_effect": null
+}

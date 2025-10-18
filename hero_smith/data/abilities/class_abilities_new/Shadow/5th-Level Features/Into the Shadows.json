@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "into_the_shadows",
+  "name": "Into the Shadows",
+  "level": 5,
+  "costs": {
+    "resource": "Insight",
+    "amount": 9
+  },
+  "story_text": "You sweep your foe off their feet and plunge them into absolute darkness.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You and the target are removed from the encounter map until the start of your next turn. You reappear in the spaces you left or the nearest unoccupied spaces. Make a power roll upon your return.",
+  "special_effect": null
+}

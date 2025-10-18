@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "debilitating_strike",
+  "name": "Debilitating Strike",
+  "level": 5,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You need just one blow to sabotage your target.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": "While slowed this way, the target takes 1 damage for every square they move, including from forced movement.",
+  "special_effect": null
+}

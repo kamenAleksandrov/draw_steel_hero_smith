@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "kinetic_strike",
+  "name": "Kinetic Strike",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Your opponent staggers. They cannot ignore you.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT) slide 1"
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Taunted; (EoT) slide 2"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

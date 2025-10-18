@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "subtle_relocation",
+  "name": "Subtle Relocation",
+  "level": 1,
+  "costs": null,
+  "story_text": "You call on the void to swallow and spit out an ally.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target starts their turn, moves, or is force moved.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "You teleport the target up to a number of squares equal to your Reason score. If the target moves to trigger this ability, you can teleport them at any point during the move.\n\nYou teleport the target up to a number of squares equal to twice your Reason score instead.",
+  "special_effect": null
+}

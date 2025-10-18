@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "viscous_fire",
+  "name": "Viscous Fire",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A jet of heavy fire erupts where you strike.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "push 4"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

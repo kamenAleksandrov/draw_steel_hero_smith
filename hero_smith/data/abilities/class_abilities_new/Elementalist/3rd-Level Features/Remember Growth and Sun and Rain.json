@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "remember_growth_and_sun_and_rain",
+  "name": "Remember Growth and Sun and Rain",
+  "level": 3,
+  "costs": null,
+  "story_text": "You stir any wood's memory and learn what it has seen.",
+  "keywords": [
+    "Green",
+    "Magic",
+    "Melee"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One mundane wooden object",
+  "power_roll": null,
+  "effect": "You see and hear any events that have occurred within 10 squares of the object within the last 12 hours, perceiving those events from the object's location as if you were there.",
+  "special_effect": null
+}

@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_and_a_curse",
+  "name": "Blessing and a Curse",
+  "level": 9,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "The gods bless and damn in equal measure.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target makes a power roll.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "The target obtains a tier 1 or tier 3 outcome on their power roll (your choice). You can then choose another target within distance, who obtains the opposite outcome on their next power roll.",
+  "special_effect": null
+}

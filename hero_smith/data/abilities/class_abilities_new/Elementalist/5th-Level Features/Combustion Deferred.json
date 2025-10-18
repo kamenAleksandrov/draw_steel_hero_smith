@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "combustion_deferred",
+  "name": "Combustion Deferred",
+  "level": 5,
+  "costs": {
+    "resource": "Essence",
+    "amount": 9
+  },
+  "story_text": "Your flames dance from kindling to kindling to kindling.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "When the target ends their next turn, or if they drop to 0 Stamina before then, each enemy adjacent to them takes fire damage equal to twice your Reason score. Each affected enemy then gains this same effect.",
+  "special_effect": null
+}

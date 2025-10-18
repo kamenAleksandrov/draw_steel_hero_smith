@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "dramatic_monologue",
+  "name": "Dramatic Monologue",
+  "level": 1,
+  "costs": null,
+  "story_text": "It doesn't need to make sense. Just say it with emotion.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "Choose one of the following effects:\n- You orate a rousing tale of victory. One ally within distance gains an edge on the next power roll they make before the start of your next turn.\n- You weave a tale of high-stakes heroics. One ally within distance gains 1 surge.\n- You insult a foe where they're most vulnerable. One enemy within distance takes a bane on the next power roll they make before the end of their next turn.\n\nYou can choose two targets for the chosen effect.",
+  "special_effect": null
+}

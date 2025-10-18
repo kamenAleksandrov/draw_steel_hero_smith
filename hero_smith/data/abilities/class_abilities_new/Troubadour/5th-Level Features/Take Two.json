@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "take_two",
+  "name": "Take Two!",
+  "level": 5,
+  "costs": null,
+  "story_text": "One more, and this time make it interesting.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn in the area can reroll the first power roll that turn that obtains a tier 2 outcome. They must use the new roll.",
+  "special_effect": null
+}

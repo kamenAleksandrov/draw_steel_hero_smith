@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "unquenchable_fire",
+  "name": "Unquenchable Fire",
+  "level": 8,
+  "costs": {
+    "resource": "Essence",
+    "amount": 11
+  },
+  "story_text": "You let fly a fiery missile braided with pure primal energy.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One enemy or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 25,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "fire",
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": "This damage ignores immunity.",
+  "special_effect": null
+}

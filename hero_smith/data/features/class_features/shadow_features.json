@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_shadow_shadow_college",
-    "type": "feature",
+    "type": "subclass",
     "name": "Shadow College",
     "class": "shadow",
     "is_subclass_feature": true,
@@ -27,7 +27,7 @@
   },
   {
     "id": "feature_shadow_insight",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Insight",
     "class": "shadow",
     "level": 1,

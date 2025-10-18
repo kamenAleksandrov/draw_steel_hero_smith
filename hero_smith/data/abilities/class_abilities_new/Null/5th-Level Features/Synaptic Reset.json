@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "synaptic_reset",
+  "name": "Synaptic Reset",
+  "level": 5,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You expand your nullifying power to mitigate harmful effects.",
+  "keywords": [
+    "Area",
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Each target can end any conditions or effects on themself, and gains 5 temporary Stamina for each condition or effect removed.",
+  "special_effect": null
+}

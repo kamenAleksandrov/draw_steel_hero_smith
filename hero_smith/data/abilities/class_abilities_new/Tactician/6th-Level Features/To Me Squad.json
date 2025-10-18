@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "to_me_squad",
+  "name": "To Me Squad!",
+  "level": 6,
+  "costs": {
+    "resource": "Focus",
+    "amount": 9
+  },
+  "story_text": "You lead your allies in a charge.",
+  "keywords": [
+    "Charge",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "one ally within 10 squares can use the Charge main action as a free triggered action and can use a melee strike signature ability instead of a free strike for the charge"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "one ally within 10 squares can use the Charge main action as a free triggered action and can use a melee strike signature ability that gains an edge instead of a free strike for the charge"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "two allies within 10 squares can use the Charge main action as a free triggered action and can each use a melee strike signature ability that gains an edge instead of a free strike for the charge"
+      }
+    }
+  },
+  "effect": "If the target is hit with two or more strikes as part of this ability and they have R < STRONG, they are dazed (save ends). If the target is reduced to 0 Stamina before one or both allies has made their strike, the ally or allies can pick a different target.",
+  "special_effect": null
+}

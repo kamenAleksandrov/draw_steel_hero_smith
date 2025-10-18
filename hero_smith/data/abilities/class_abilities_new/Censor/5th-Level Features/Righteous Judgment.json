@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "righteous_judgment",
+  "name": "Righteous Judgment",
+  "level": 5,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 9
+  },
+  "story_text": "You amplify the power of your judgment.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of the encounter, whenever any ally deals damage to a target judged by you, that ally gains 1 surge.",
+  "special_effect": null
+}

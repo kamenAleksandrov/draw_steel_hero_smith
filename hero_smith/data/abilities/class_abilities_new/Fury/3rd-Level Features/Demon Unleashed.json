@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "demon_unleashed",
+  "name": "Demon Unleashed",
+  "level": 3,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 7
+  },
+  "story_text": "Foes tremble at the sight of you.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each enemy who starts their turn adjacent to you and has P < STRONG is frightened until the end of their turn.",
+  "special_effect": null
+}

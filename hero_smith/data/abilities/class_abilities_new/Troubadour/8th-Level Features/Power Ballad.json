@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "power_ballad",
+  "name": "Power Ballad",
+  "level": 8,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "A song for the brokenhearted wraps itself around the target and blossoms into a ward of thorns.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "Until the end of the encounter, whenever the target takes damage while winded, they can use a free triggered action to deal half the damage they took to the source of the damage.",
+  "special_effect": null
+}

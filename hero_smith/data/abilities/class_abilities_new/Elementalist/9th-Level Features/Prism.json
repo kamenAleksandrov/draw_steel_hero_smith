@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "prism",
+  "name": "Prism",
+  "level": 9,
+  "costs": {
+    "resource": "Essence",
+    "amount": 11
+  },
+  "story_text": "You split your essence, allowing you to cast multiple effects at once.",
+  "keywords": [
+    "Magic",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You use up to three heroic abilities whose essence costs total 11 or less, spending no additional essence beyond the cost of this ability. You can shift up to 2 squares between your use of each ability.",
+  "special_effect": null
+}

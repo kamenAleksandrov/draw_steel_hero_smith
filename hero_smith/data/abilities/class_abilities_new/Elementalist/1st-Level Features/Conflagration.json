@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "conflagration",
+  "name": "Conflagration",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "A storm of fire descends upon your enemies.",
+  "keywords": [
+    "Area",
+    "Fire",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Persistent 2: At the start of your turn, you can use a maneuver to use this ability again without spending essence."
+}

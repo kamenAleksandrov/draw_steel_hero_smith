@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "inertia_soak",
+  "name": "Inertia Soak",
+  "level": 1,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "Your psionic energy surrounds the target and pushes everything else away from them.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Telekinesis"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target ignores difficult terrain and takes no damage from forced movement until the start of your next turn. Whenever the target enters a square while under this effect, they can push one adjacent creature up to a number of squares equal to your Reason score. When pushing an ally, the target can ignore that ally's stability. A creature can only be force moved this way once a turn.",
+  "special_effect": "Strained: You are weakened (save ends). While you are weakened this way, whenever you are force moved, the forced movement distance gains a +5 bonus."
+}

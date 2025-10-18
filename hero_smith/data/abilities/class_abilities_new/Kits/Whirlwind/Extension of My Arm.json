@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "extension_of_my_arm",
+  "name": "Extension of My Arm",
+  "level": null,
+  "costs": null,
+  "story_text": "When you draw your whip back after an attack, your enemy is drawn ever closer.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 3
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might or Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 1"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 2"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical pull 3"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

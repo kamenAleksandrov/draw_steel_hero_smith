@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "behold_the_face_of_justice",
+  "name": "Behold the Face of Justice!",
+  "level": 1,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "You attack a foe and your enemies behold a vision of the true nature of your resolve.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < WEAK",
+        "conditions": "Frightened; if the target has each enemy within 2 squares of them is of you (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < AVERAGE",
+        "conditions": "Frightened; if the target has each enemy within 2 squares of them is of you (save ends)"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": "P < STRONG",
+        "conditions": "Frightened; if the target has each enemy within 2 squares of them is of you (save ends)"
+      }
+    }
+  },
+  "effect": "Each enemy frightened this way is pushed up to 2 squares away from the target and takes psychic damage equal to your Presence score.",
+  "special_effect": null
+}

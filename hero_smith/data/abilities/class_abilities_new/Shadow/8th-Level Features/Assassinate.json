@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "assassinate",
+  "name": "Assassinate",
+  "level": 8,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "A practiced attack will instantly kill an already weakened foe.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 24,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "A target who is not a minion, leader, or solo creature and who is winded after taking this damage is reduced to 0 Stamina.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "pillar_of_holy_fire",
+  "name": "Pillar of Holy Fire",
+  "level": 8,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "Your enemy's guilt fuels a holy flame that burns your foes.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends)"
+      }
+    }
+  },
+  "effect": "At the end of each of your turns, a target dazed this way deals holy damage equal to twice your Presence score to each enemy within 2 squares of them.",
+  "special_effect": null
+}

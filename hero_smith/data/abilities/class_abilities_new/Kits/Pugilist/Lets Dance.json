@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "let_s_dance",
+  "name": "Let's Dance",
+  "level": null,
+  "costs": null,
+  "story_text": "Keeping your enemies stumbling around the battlefield is second nature to you.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might or Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 1"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M/A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 2"
+      }
+    }
+  },
+  "effect": "You can shift into any square the target leaves after you slide them.",
+  "special_effect": null
+}

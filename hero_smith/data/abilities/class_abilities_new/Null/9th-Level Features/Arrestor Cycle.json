@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "arrestor_cycle",
+  "name": "Arrestor Cycle",
+  "level": 9,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You trap your foe in a looping cycle of time, where they relive the last few seconds over and over again.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "The triggering creature starts their turn.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "the target loses their turn"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "the target loses their turn"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "the target loses their turn"
+      }
+    }
+  },
+  "effect": "If the target loses their turn, the round continues as if they had acted. A target who doesn't lose their turn takes psychic damage equal to twice your Intuition score for each main action they take until the end of their next turn.",
+  "special_effect": null
+}

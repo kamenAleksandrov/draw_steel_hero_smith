@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "synaptic_terror",
+  "name": "Synaptic Terror",
+  "level": 9,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "You project a terrifying image into the brains of your foes, and their fear psionically invigorates your allies.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Telepathy"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each ally and enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": "You and each target ally can't obtain lower than a tier 2 outcome on power rolls until the start of your next turn. Each target enemy is affected by the ability's power roll.",
+  "special_effect": "Strained: You can't use this ability if doing so would cause you to have negative clarity."
+}

@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "hypnotic_overtones",
+  "name": "Hypnotic Overtones",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 3
+  },
+  "story_text": "You produce an entrancing note that twists the senses in a spectacular fashion.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "2"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends); Slide 1"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends); Slide 1"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends); Slide 2"
+      }
+    }
+  },
+  "effect": "The size of the burst increases by 1 for every 2 drama spent.",
+  "special_effect": null
+}

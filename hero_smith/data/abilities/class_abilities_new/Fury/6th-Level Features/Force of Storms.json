@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "force_of_storms",
+  "name": "Force of Storms",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You strike an enemy hard enough to be a projectile that knocks a crowd of creatures around.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "mid": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 5"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 7"
+      }
+    }
+  },
+  "effect": "When the target ends this forced movement, each creature within 2 squares of the target is pushed 3 squares.",
+  "special_effect": null
+}

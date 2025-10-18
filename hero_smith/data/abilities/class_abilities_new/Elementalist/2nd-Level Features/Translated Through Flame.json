@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "translated_through_flame",
+  "name": "Translated Through Flame",
+  "level": 2,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "Your ally disappears, then reappears in a burst of fire.",
+  "keywords": [
+    "Fire",
+    "Magic",
+    "Ranged",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target is teleported to another space within distance. Make a power roll that affects each enemy adjacent to the target's new space.",
+  "special_effect": null
+}

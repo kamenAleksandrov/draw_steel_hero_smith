@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "apostate",
+  "name": "Apostate",
+  "level": 9,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "You channel holy energy to seal an enemy's fate.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 19,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 26,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Until the end of the encounter or until you are dying, the target has damage weakness 10.",
+  "special_effect": null
+}

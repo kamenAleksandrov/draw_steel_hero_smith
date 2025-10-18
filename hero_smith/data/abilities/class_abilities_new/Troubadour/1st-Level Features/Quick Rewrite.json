@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "quick_rewrite",
+  "name": "Quick Rewrite",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 3
+  },
+  "story_text": "You write something unexpected into the scene that hinders your enemy.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "The area is difficult terrain for enemies.",
+  "special_effect": null
+}

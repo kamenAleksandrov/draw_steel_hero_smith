@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "accelerate",
+  "name": "Accelerate",
+  "level": 1,
+  "costs": null,
+  "story_text": "To your ally, it seems as though the world has slowed down.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one creature",
+  "power_roll": null,
+  "effect": "The target shifts up to a number of squares equal to your Reason score.\n\nThe target can use a maneuver.",
+  "special_effect": null
+}

@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "classic_chandelier_stunt",
+  "name": "Classic Chandelier Stunt",
+  "level": 2,
+  "costs": {
+    "resource": "Drama",
+    "amount": 5
+  },
+  "story_text": "Audiences love this bit.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "Self and one willing ally",
+  "power_roll": null,
+  "effect": "Each target can shift up to 5 squares, including vertically, but must end this movement adjacent to the other target and on solid ground. Each target can then make a melee free strike that deals extra damage equal to twice their highest characteristic score.",
+  "special_effect": null
+}

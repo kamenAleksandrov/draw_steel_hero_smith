@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "again",
+  "name": "Again",
+  "level": 1,
+  "costs": null,
+  "story_text": "You step back a split second to see if things play out a little differently.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target makes an ability roll.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one creature",
+  "power_roll": null,
+  "effect": "You can use this ability after seeing the result of the triggering roll. The target must reroll the power roll and use the new roll.",
+  "special_effect": null
+}

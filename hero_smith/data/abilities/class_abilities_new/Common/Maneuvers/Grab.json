@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "grab",
+  "name": "Grab",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature seeking to keep a foe close and locked down can attempt to grab a creature using the following ability.\n\nUnless otherwise indicated, a creature can grab only one creature at a time.\n\nSee [Conditions](#page-91-2) in [Chapter 5: Classes](#page-83-2) for information on the grabbed condition.",
+  "special_effect": null
+}

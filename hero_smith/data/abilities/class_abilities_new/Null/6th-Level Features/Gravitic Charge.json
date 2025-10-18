@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "gravitic_charge",
+  "name": "Gravitic Charge",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You channel your discipline into momentum that defies gravity.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 5"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 7"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Vertical slide 9"
+      }
+    }
+  },
+  "effect": "This movement ignores stability. If you slide into another creature, you resolve damage to both of you as if your force movement had ended, but you keep moving through that creature's space.",
+  "special_effect": null
+}

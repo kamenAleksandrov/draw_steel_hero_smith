@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "warrior_s_prayer",
+  "name": "Warrior's Prayer",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Your quickly uttered prayer lends aggressive divine energy to a friend engaged in melee.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You or one ally within distance gains temporary Stamina equal to your Intuition score.",
+  "special_effect": null
+}

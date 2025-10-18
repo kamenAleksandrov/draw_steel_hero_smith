@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "levitation_field",
+  "name": "Levitation Field",
+  "level": 8,
+  "costs": null,
+  "story_text": "You manipulate the air around your allies so they can move as freely through the sky as you can.",
+  "keywords": [
+    "Area",
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each ally in the area",
+  "power_roll": null,
+  "effect": "Each target can fly until the start of your next turn, and can immediately shift up to their speed. You can also shift up to your speed. While flying, a target's stability is reduced to 0 and can't be increased.\n\nThe effects last for 1 hour instead.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "shadowfall",
+  "name": "Shadowfall",
+  "level": 5,
+  "costs": {
+    "resource": "Insight",
+    "amount": 9
+  },
+  "story_text": "You vanish. They fall. You reappear.",
+  "keywords": [
+    "Area",
+    "Melee",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Line",
+    "range_value": "10 x 1 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You disappear before making the power roll. After the power roll is resolved, you appear in the first unoccupied space at the far end of the line.",
+  "special_effect": null
+}

@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_the_blade",
+  "name": "Blessing of the Blade",
+  "level": 8,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "\"The power of the gods is within you, friends. Allow me to unleash it.\"",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "At the end of each of your turns until the end of the encounter or until you are dying, each target gains 3 surges.",
+  "special_effect": null
+}

@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "purifying_fire",
+  "name": "Purifying Fire",
+  "level": 1,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "The gods judge, fire cleanses.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy/fire",
+        "potencies": "M < WEAK",
+        "conditions": "the target has weakness 3 (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy/fire",
+        "potencies": "M < AVERAGE",
+        "conditions": "the target has weakness 5 (save ends)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy/fire",
+        "potencies": "M < STRONG",
+        "conditions": "the target has weakness 7 (save ends)"
+      }
+    }
+  },
+  "effect": "While the target has fire weakness from this ability, you can choose to have your abilities deal fire damage to the target instead of holy damage.",
+  "special_effect": null
+}

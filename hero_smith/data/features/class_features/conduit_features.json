@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_conduit_deity_and_domains",
-    "type": "feature",
+    "type": "subclass",
     "name": "Deity and Domains",
     "class": "conduit",
     "level": 1,
@@ -9,7 +9,7 @@
   },
   {
     "id": "feature_conduit_piety",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Piety",
     "class": "conduit",
     "level": 1,

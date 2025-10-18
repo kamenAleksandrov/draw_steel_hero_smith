@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "subvert_the_green_within",
+  "name": "Subvert the Green Within",
+  "level": 2,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "Fungal spores sprout inside your enemy's brain, allowing you to control their actions.",
+  "keywords": [
+    "Green",
+    "Magic",
+    "Ranged",
+    "Strike",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "poison",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The target uses their signature ability against a creature of your choice. This signature ability can target the creature even if it usually wouldn't. You then make a power roll against the target of this ability.",
+  "special_effect": null
+}

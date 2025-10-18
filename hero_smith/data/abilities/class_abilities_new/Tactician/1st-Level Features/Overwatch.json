@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "overwatch",
+  "name": "Overwatch",
+  "level": 1,
+  "costs": null,
+  "story_text": "Under your direction, an ally waits for just the right moment to strike.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target moves.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "At any time during the target's movement, one ally can make a free strike against them.\n\nIf the target has R < AVERAGE, they are slowed (EoT).",
+  "special_effect": null
+}

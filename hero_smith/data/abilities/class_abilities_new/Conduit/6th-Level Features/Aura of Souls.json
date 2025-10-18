@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "aura_of_souls",
+  "name": "Aura of Souls",
+  "level": 6,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "A whirlwind of souls of the dead flies around you at your command.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "4"
+  },
+  "targets": "Each creature in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, at the end of each of your turns, you can slide each creature in the area up to a number of squares equal to your Intuition score. This forced movement ignores stability for your allies.",
+  "special_effect": null
+}

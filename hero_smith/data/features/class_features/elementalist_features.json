@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_elementalist_elemental_specialization",
-    "type": "feature",
+    "type": "subclass",
     "name": "Elemental Specialization",
     "class": "elementalist",
     "is_subclass_feature": true,
@@ -32,7 +32,7 @@
   },
   {
     "id": "feature_elementalist_essence",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Essence",
     "class": "elementalist",
     "level": 1,

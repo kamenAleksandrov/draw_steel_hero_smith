@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "shadowstrike",
+  "name": "Shadowstrike",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "They have no idea what the college taught you.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You use a strike signature ability twice.",
+  "special_effect": null
+}

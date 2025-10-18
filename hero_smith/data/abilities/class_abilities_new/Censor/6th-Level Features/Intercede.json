@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "intercede",
+  "name": "Intercede",
+  "level": 6,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 9
+  },
+  "story_text": "You take your ally's place.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "A creature makes a strike against the target.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target is unaffected by the strike and you become the target instead, even if you aren't a valid target for it. You take half the damage from the strike, and the target gains 3 surges.",
+  "special_effect": null
+}

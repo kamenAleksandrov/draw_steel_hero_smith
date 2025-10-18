@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "they_always_line_up",
+  "name": "They Always Line Up",
+  "level": 8,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "You fire a projectile so fast that it passes through a line of foes, hamstringing them.",
+  "keywords": [
+    "Area",
+    "Ranged",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Line",
+    "range_value": "5 x 1 within 5"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 24,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

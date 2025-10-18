@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "choke",
+  "name": "Choke",
+  "level": 1,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 3
+  },
+  "story_text": "You crush a foe in a telekinetic grip.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Strike",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "You can vertical pull the target up to 2 squares. If the target is made restrained by this ability, this forced movement ignores their stability.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "banish",
+  "name": "Banish",
+  "level": 9,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "You sever the target's tenuous connection to the world.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "the target is banished (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "the target is banished (save ends)"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "the target is banished (save ends)"
+      }
+    }
+  },
+  "effect": "This ability gains an edge against demons, devils, undead, and creatures not native to your current world. If you know the target's true name, this ability has a double edge. While banished, the target is sent to another manifold in the timescape and removed from the encounter map. A banished target can do nothing but make saving throws, and takes 10 holy damage each time they do so. If the target is reduced to 0 Stamina while banished, they are lost to the timescape.",
+  "special_effect": null
+}

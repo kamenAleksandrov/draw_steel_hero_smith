@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "time_loop",
+  "name": "Time Loop",
+  "level": 9,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You show shadows what true speed is.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "Another creature on the encounter map ends their turn.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You take a bonus turn immediately after the triggering creature. This ability can be used only once per combat round.",
+  "special_effect": null
+}

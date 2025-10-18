@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "knockback",
+  "name": "Knockback",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature wanting to push an adjacent creature away from them can attempt to shove that creature using the following ability.",
+  "special_effect": null
+}

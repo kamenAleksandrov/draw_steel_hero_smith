@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "death_rattle",
+  "name": "Death Rattle",
+  "level": 9,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 11
+  },
+  "story_text": "You unleash an otherworldly cry that rips through your enemies, killing the weakest of them.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "any target who is a minion is reduced to 0 Stamina"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "any target who is a minion is reduced to 0 Stamina as does one winded target who is not a leader or solo creature"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "each target who is not a leader or solo creature is winded any target who is a minion is reduced to 0 Stamina as does one winded target who is not a leader or solo creature"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

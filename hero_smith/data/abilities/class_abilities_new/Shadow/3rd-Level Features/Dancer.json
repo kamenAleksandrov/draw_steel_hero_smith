@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "dancer",
+  "name": "Dancer",
+  "level": 3,
+  "costs": {
+    "resource": "Insight",
+    "amount": 7
+  },
+  "story_text": "You enter a flow state that makes you nearly impossible to pin down.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter, whenever an enemy moves or is force moved adjacent to you or damages you, you can take the Disengage move action as a free triggered action.",
+  "special_effect": null
+}

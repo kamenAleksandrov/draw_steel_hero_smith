@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "wellspring_of_grace",
+  "name": "Wellspring of Grace",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "A holy light is emitted from your body, healing your allies.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "3"
+  },
+  "targets": "Each ally in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, whenever a target starts their turn in the area, they can spend a Recovery.",
+  "special_effect": null
+}

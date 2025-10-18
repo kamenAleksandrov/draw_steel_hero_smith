@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "wither",
+  "name": "Wither",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A bolt of holy energy saps the life from a foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "P < WEAK",
+        "conditions": "the target takes a bane on their next power roll"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "P < AVERAGE",
+        "conditions": "the target takes a bane on their next power roll"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": "P < STRONG",
+        "conditions": "the target takes a bane on their next power roll"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

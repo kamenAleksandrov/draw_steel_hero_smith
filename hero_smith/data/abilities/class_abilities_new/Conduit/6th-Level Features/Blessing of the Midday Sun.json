@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_the_midday_sun",
+  "name": "Blessing of the Midday Sun",
+  "level": 6,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "Your body emits a heat that bakes your enemies and inspires your allies.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "4"
+  },
+  "targets": "Self and each creature in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each enemy in the area takes a bane on power rolls, and you and each ally in the area gain 1 surge at the end of each of your turns.",
+  "special_effect": null
+}

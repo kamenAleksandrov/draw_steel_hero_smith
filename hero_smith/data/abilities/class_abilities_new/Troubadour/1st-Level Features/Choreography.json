@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "choreography",
+  "name": "Choreography",
+  "level": 1,
+  "costs": null,
+  "story_text": "Taps, kicks, steps. It's all \"choreography.\"",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn in the area gains a +2 bonus to speed until the end of their turn.",
+  "special_effect": null
+}

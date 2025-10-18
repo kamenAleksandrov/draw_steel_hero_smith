@@ -163,7 +163,8 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     selections.forEach((featureId, values) {
       final trimmedId = featureId.trim();
       if (trimmedId.isEmpty) return;
-      final cleanedValues = values
+      final valueSet = values;
+      final cleanedValues = valueSet
           .map((value) => value.trim())
           .where((value) => value.isNotEmpty)
           .toSet();
@@ -179,7 +180,8 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     if (trimmedId.isEmpty) return;
 
     final updated = Map<String, Set<String>>.from(_selections);
-    final cleanedSelections = selections
+    final selectionSet = selections;
+    final cleanedSelections = selectionSet
         .map((value) => value.trim())
         .where((value) => value.isNotEmpty)
         .toSet();

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "to_the_stars",
+  "name": "To the Stars",
+  "level": 9,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "You attach your most potent explosive to your foe. Under less pressing circumstances, you're sure you could launch them into orbit.",
+  "keywords": [
+    "Melee",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 10"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "vertical push 8"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "vertical push 10"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "fire",
+        "potencies": null,
+        "conditions": "vertical push 15"
+      }
+    }
+  },
+  "effect": "The ground beneath a 3-cube area around the target's starting position is difficult terrain.",
+  "special_effect": null
+}

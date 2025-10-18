@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "make_peace_with_your_god",
+  "name": "Make Peace With Your God!",
+  "level": 1,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 5
+  },
+  "story_text": "Anger is your energy.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Free maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You gain 1 surge, and the next ability roll you make this turn automatically obtains a tier 3 outcome.",
+  "special_effect": null
+}

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "arcane_purge",
+  "name": "Arcane Purge",
+  "level": 8,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You focus your null field into a pressure point strike that prevents your foe from channeling sorcery.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "the target is suppressed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 19,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "the target is suppressed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 24,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "the target is suppressed (save ends)"
+      }
+    }
+  },
+  "effect": "While suppressed, a target takes psychic damage equal to twice your Intuition score at the start of their turns, whenever they use a supernatural ability, or whenever they use an ability that costs Malice.",
+  "special_effect": null
+}

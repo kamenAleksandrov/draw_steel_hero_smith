@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "feedback",
+  "name": "Feedback",
+  "level": 6,
+  "costs": {
+    "resource": "Drama",
+    "amount": 9
+  },
+  "story_text": "Your music pounds the crowd to the beat until their hearts can't stand it anymore.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": "P < WEAK",
+        "conditions": "Prone"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": "P < AVERAGE",
+        "conditions": "Prone"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": "P < STRONG",
+        "conditions": "Prone"
+      }
+    }
+  },
+  "effect": "A prone target ignores this ability.",
+  "special_effect": null
+}

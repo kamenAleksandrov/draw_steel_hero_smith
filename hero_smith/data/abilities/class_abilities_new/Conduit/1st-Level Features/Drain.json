@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "drain",
+  "name": "Drain",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You drain the energy from your target to revitalize yourself or an ally.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You or one ally within distance can spend a Recovery.",
+  "special_effect": null
+}

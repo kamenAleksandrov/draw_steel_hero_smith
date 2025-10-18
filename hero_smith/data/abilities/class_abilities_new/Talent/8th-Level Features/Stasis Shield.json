@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "stasis_shield",
+  "name": "Stasis Shield",
+  "level": 8,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 3
+  },
+  "story_text": "You freeze time just long enough to bring the victim to safety!",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target takes damage.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self, or one creature or object",
+  "power_roll": null,
+  "effect": "The target is teleported to an unoccupied space adjacent to you, taking no damage and suffering no additional effects if this movement would get them out of harm's way.",
+  "special_effect": "Strained: You can't target yourself, and you take the damage and any additional effects instead of the target."
+}

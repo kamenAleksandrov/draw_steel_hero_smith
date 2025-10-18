@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "doubt",
+  "name": "Doubt",
+  "level": 8,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "You tug at the strings of the foe's anima and unravel them, allowing someone else to take advantage of their drive.",
+  "keywords": [
+    "Animapathy",
+    "Psionic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Slowed (save ends); Weakened; and"
+      }
+    }
+  },
+  "effect": "This ability gains an edge against a target with a soul (see *[Draw Steel: Monsters](https://mcdm.gg/DS-Monsters)*). After you make the power roll, you or one ally within distance have a double edge on the next power roll you make before the end of the encounter.",
+  "special_effect": "Strained: You feel dispirited until you finish a respite. If you obtain a tier 3 outcome on the power roll, you and the target each have damage weakness 5 (save ends)."
+}

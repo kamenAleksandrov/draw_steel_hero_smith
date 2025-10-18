@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "force_redirected",
+  "name": "Force Redirected",
+  "level": 2,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "The force of your strike moves your target in a surprising direction.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 3
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 1"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 3"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 5"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

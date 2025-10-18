@@ -1,0 +1,52 @@
+{
+  "type": "ability",
+  "id": "scalar_assault",
+  "name": "Scalar Assault",
+  "level": 8,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You warp reality to grow a limb for just a moment and make a single devastating attack.",
+  "keywords": [
+    "Area",
+    "Psionic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "mid": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "push 5"
+      },
+      "high": {
+        "base_damage_value": 23,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "push 7"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

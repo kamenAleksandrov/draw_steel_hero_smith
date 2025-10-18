@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "finish_them",
+  "name": "Finish Them!",
+  "level": 8,
+  "costs": {
+    "resource": "Focus",
+    "amount": 11
+  },
+  "story_text": "You point out an opening to your ally so they can land a killing blow.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "The target is not a leader or solo creature, and becomes winded.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": null,
+  "effect": "The target is killed. Additionally, the creature who caused the target to be winded can spend a Recovery.",
+  "special_effect": null
+}

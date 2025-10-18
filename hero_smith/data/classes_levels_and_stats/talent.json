@@ -50,7 +50,7 @@
         },
         { "name": "Clarity and Strain", "grant_type": "granted" },
         { "name": "Mind Spike", "grant_type": "ability" },
-        { "name": "Psionic Augmentation", "grant_type": "granted" },
+        { "name": "Psionic Augmentation", "grant_type": "pick", "count": 1 },
         { "name": "Talent Ward", "grant_type": "granted" },
         { "name": "Telepathic Speech", "grant_type": "granted" },
         {

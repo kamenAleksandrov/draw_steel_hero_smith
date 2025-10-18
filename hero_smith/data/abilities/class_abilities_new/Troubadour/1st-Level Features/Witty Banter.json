@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "witty_banter",
+  "name": "Witty Banter",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A lyrical (and physical) jab insults an enemy and inspires an ally.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 5"
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "One ally within 10 squares of you can end one effect on them that is ended by a saving throw or that ends at the end of their turn.\n\nThe chosen ally can spend a Recovery.",
+  "special_effect": null
+}

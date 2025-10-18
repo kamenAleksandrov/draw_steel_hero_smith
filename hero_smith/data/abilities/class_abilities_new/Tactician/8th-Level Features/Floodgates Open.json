@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "floodgates_open",
+  "name": "Floodgates Open",
+  "level": 8,
+  "costs": {
+    "resource": "Focus",
+    "amount": 11
+  },
+  "story_text": "You direct your squad to strike in unison and with devastating effect.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three allies",
+  "power_roll": null,
+  "effect": "Each target gains 1 surge and can use a signature ability as a free triggered action. That ability gains an edge on the power roll and increases the potency of any potency effects by 1.",
+  "special_effect": null
+}

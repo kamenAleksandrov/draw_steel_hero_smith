@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "rejuvenate",
+  "name": "Rejuvenate",
+  "level": 8,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "You reshape the flow of time in the target's body to return it to an earlier state.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "Choose two of the following effects:\n- The target can spend any number of Recoveries.\n- The target gains 1 of their Heroic Resource, and can end any effects on them that are ended by a saving throw or that end at the end of their turn.\n- The target gains 2 surges, and gains a +3 bonus to speed until the end of the encounter.",
+  "special_effect": "Strained: You and the target both permanently grow visibly younger (the equivalent of 20 human years, to the minimum of an 18-year-old). Additionally, you are weakened and slowed (save ends)."
+}

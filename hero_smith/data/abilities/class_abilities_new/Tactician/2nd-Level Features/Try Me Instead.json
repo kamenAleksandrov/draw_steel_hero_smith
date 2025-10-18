@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "try_me_instead",
+  "name": "Try Me Instead",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "\"Try picking on someone my size.\"",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": "You shift up to your speed directly toward an ally, ending adjacent to them, then swapping locations with that ally as long as you can fit into each other's spaces. The ally can spend a Recovery, and you can make the following weapon strike with a distance of melee 1 against a creature.",
+  "special_effect": null
+}

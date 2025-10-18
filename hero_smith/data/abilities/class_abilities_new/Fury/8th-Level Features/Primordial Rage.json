@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "primordial_rage",
+  "name": "Primordial Rage",
+  "level": 8,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 11
+  },
+  "story_text": "Your ferocity manifests into primordial power.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Choose acid, cold, corruption, fire, lightning, poison, or sonic damage. Until the end of the encounter or until you are dying, you can choose one target of any ability you use, with that target taking an extra 15 damage of the chosen type. Additionally, whenever you gain ferocity from taking damage, the source of the damage takes 5 damage of the chosen type.",
+  "special_effect": null
+}

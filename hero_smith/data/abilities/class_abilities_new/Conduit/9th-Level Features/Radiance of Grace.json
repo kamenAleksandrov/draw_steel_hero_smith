@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "radiance_of_grace",
+  "name": "Radiance of Grace",
+  "level": 9,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "Intense light is emitted from your body, healing your allies.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Four allies",
+  "power_roll": null,
+  "effect": "You can target yourself instead of one ally with this ability. Each target can spend any number of Recoveries, can end any effects on them that are ended by a saving throw or that end at the end of their turn, and can stand up if they are prone.",
+  "special_effect": null
+}

@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "reap",
+  "name": "Reap",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "The gods reward those who smite their foes.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Each ally",
+  "power_roll": null,
+  "effect": "Until the start of your next turn, each time a target kills an enemy, they regain Stamina equal to 5 + your Intuition score.",
+  "special_effect": null
+}

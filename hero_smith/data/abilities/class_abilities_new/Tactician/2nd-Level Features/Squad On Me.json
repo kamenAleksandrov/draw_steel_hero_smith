@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "squad_on_me",
+  "name": "Squad! On Me!",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "Together we are invincible!",
+  "keywords": [
+    "Area"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "1"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Until the start of your next turn, each target has a bonus to stability equal to your Might score. Additionally, each target gains 2 surges.",
+  "special_effect": null
+}

@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "too_slow",
+  "name": "Too Slow",
+  "level": 2,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "Your foe made a big mistake.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "You use your In All This Confusion ability.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You ignore any effects associated with the damage that triggered your In All This Confusion ability. Before you teleport, you can make a free strike against a creature who damaged you to trigger In All This Confusion. After you teleport, you can spend a Recovery.",
+  "special_effect": null
+}

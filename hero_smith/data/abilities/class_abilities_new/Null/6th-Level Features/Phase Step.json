@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "phase_step",
+  "name": "Phase Step",
+  "level": 6,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You weaken your connection to this manifold, allowing you to move through and damage enemies.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Dazed"
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Dazed"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Dazed"
+      }
+    }
+  },
+  "effect": "You can shift up to your speed, and squares occupied by enemies or objects are not difficult terrain for this shift. You make one power roll that targets each enemy you moved through during this shift.",
+  "special_effect": null
+}

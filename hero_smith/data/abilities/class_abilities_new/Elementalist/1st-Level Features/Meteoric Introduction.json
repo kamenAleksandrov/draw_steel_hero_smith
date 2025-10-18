@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "meteoric_introduction",
+  "name": "Meteoric Introduction",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You give your enemy a gentle tap-like an asteroid impact.",
+  "keywords": [
+    "Earth",
+    "Magic",
+    "Melee",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 4"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

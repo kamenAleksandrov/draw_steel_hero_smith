@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "hoarfrost",
+  "name": "Hoarfrost",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You blast a foe with a pulse of cold energy.",
+  "keywords": [
+    "Cryokinesis",
+    "Psionic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "cold",
+        "potencies": "M < WEAK",
+        "conditions": "Slowed; (EoT)"
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "cold",
+        "potencies": "M < AVERAGE",
+        "conditions": "Slowed; (EoT)"
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "cold",
+        "potencies": "M < STRONG",
+        "conditions": "Slowed; (EoT)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: You are slowed until the end of your next turn. Additionally, a target slowed by this ability is restrained instead."
+}

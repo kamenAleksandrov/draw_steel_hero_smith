@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "greater_kinetic_grip",
+  "name": "Greater Kinetic Grip",
+  "level": 6,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 9
+  },
+  "story_text": "You raise the target into the air without breaking a sweat.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Strike",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Slide 4 R the forced movement is vertical"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Slide 8 R the forced movement is vertical"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Prone; Slide 12 R the forced movement is vertical"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: The forced movement ignores stability. You take 2d6 damage and are weakened (save ends)."
+}

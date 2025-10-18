@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "call_the_thunder_down",
+  "name": "Call the Thunder Down",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 3
+  },
+  "story_text": "You ask your saint for thunder and your prayer is answered.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 1"
+      },
+      "mid": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 2"
+      },
+      "high": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 3"
+      }
+    }
+  },
+  "effect": "You can push each willing ally in the area the same distance, ignoring stability.",
+  "special_effect": null
+}

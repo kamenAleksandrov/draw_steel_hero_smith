@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "face_the_storm",
+  "name": "Face the Storm!",
+  "level": 3,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 7
+  },
+  "story_text": "Shocked in the face of your naked brutality, your enemy's instincts take over.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each creature you make a melee strike against who has P < AVERAGE is taunted until the end of their next turn. Additionally, when you use an ability that deals rolled damage against any enemy taunted by you, the ability deals extra damage equal to twice your Might score and increases its potency by 1.",
+  "special_effect": null
+}

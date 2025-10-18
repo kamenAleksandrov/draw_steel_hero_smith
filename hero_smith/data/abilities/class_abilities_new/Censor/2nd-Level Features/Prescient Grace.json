@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "prescient_grace",
+  "name": "Prescient Grace",
+  "level": 2,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "Gifted by a prescient vision, you warn an ally of an impending attack.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "An enemy within 10 squares starts their turn.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "You can spend a Recovery to allow the target to regain Stamina equal to your recovery value. The target can then take their turn immediately before the triggering enemy.",
+  "special_effect": null
+}

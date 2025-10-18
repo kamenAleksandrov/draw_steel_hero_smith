@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "flip_the_script",
+  "name": "Flip the Script",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 5
+  },
+  "story_text": "You try a different take on events, justifying the new locations everyone ended up in.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Each target can teleport up to 5 squares. Any teleported target who was slowed is no longer slowed.",
+  "special_effect": null
+}

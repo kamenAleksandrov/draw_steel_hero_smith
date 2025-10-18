@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_the_faithful",
+  "name": "Blessing of the Faithful",
+  "level": 2,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "The gods reward your faith.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "3"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each target gains 1 surge at the end of each of your turns.",
+  "special_effect": null
+}

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "widgets/ability_display_widget.md",
+                "file": "objects/ability_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ability_display_widget"
+              "title": "ability_object"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "abilities and features plan/conduit.md",
+                "file": "widgets/ability_display_widget.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "conduit"
+              "title": "ability_display_widget"
             }
           },
           {
@@ -63,8 +63,7 @@
               "title": "downtime_projects_object"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -137,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "objects/classes.canvas",
+                "file": "objects/ability_object.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +146,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for classes"
+              "title": "Backlinks for ability_object"
             }
           },
           {
@@ -156,12 +155,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "objects/classes.canvas",
+                "file": "objects/ability_object.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from classes"
+              "title": "Outgoing links from ability_object"
             }
           },
           {
@@ -198,8 +197,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -212,10 +210,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "93c5747b13561805",
+  "active": "61a524f57d3c6bef",
   "lastOpenFiles": [
-    "abilities and features plan/elementalist.md",
+    "widgets/ability_display_widget.md",
+    "widgets/summaries/ability_summary.md",
+    "objects/ability_object.md",
     "abilities and features plan/conduit.md",
+    "abilities and features plan/elementalist.md",
     "abilities and features plan/censor.md",
     "abilities and features plan/troubadour.md",
     "abilities and features plan/talent.md",
@@ -223,12 +224,9 @@
     "abilities and features plan/shadow.md",
     "abilities and features plan/null.md",
     "abilities and features plan/fury.md",
-    "objects/ability_object.md",
     "pages/home_page.md",
     "abilities and features plan",
     "objects/hero_object.md",
-    "widgets/summaries/ability_summary.md",
-    "widgets/ability_display_widget.md",
     "objects/downtime_projects_object.md",
     "pages/downtime_projects_page.md",
     "pages/gear_page.md",

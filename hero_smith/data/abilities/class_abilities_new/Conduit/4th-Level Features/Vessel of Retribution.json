@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "vessel_of_retribution",
+  "name": "Vessel of Retribution",
+  "level": 4,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "You infuse yourself or an ally with the retributive energy of the gods, waiting to be unleashed.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The first time the target is dying or winded before the end of the encounter, each enemy within 5 squares of them takes 15 holy damage.",
+  "special_effect": null
+}

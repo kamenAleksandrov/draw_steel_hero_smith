@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_the_fortress",
+  "name": "Blessing of the Fortress",
+  "level": 9,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "A magic circle extends out from you, barring foes from getting close.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, no enemy can approach within 5 squares of you by moving or by being force moved by any enemy. Targets can be force moved closer to you by you or your allies, or can move closer because of your movement.",
+  "special_effect": null
+}

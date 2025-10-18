@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "cutting_sarcasm",
+  "name": "Cutting Sarcasm",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "There you are, radiating your usual charisma.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < WEAK",
+        "conditions": "Bleeding (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < AVERAGE",
+        "conditions": "Bleeding (save ends)"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "psychic",
+        "potencies": "P < STRONG",
+        "conditions": "Bleeding (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "black_ash_teleport",
+  "name": "Black Ash Teleport",
+  "level": 1,
+  "costs": null,
+  "story_text": "In a swirl of black ash, you step from one place to another.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You teleport up to 5 squares. If you have concealment or cover at your destination, you can use the Hide maneuver even if you are observed. If you successfully hide using this maneuver, you gain 1 surge.\n\nYou teleport 1 additional square for each insight spent.",
+  "special_effect": null
+}

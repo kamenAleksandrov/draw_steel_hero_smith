@@ -1,7 +1,7 @@
 [
   {
     "id": "feature_fury_primordial_aspect",
-    "type": "feature",
+    "type": "subclass",
     "name": "Primordial Aspect",
     "is_subclass_feature": true,
     "class": "fury",
@@ -53,7 +53,7 @@
   },
   {
     "id": "feature_fury_ferocity",
-    "type": "feature",
+    "type": "heroic resource",
     "name": "Ferocity",
     "class": "fury",
     "level": 1,

@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "force_orbs",
+  "name": "Force Orbs",
+  "level": 3,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 7
+  },
+  "story_text": "Spheres of solid psionic energy float around you.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Strike",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": "; see below"
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You create three size 1T orbs that orbit your body. Each orb gives you a cumulative damage immunity 1. Each time you take damage, you lose 1 orb.\nOnce on each of your turns, you can use a free maneuver to fire an orb at a creature or object within 5 squares as a ranged strike, losing the orb after the strike.",
+  "special_effect": "Strained: You create five orbs, and you are weakened while you have any orbs active."
+}

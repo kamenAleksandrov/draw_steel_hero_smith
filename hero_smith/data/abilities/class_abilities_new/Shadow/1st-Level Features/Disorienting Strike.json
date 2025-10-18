@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "disorienting_strike",
+  "name": "Disorienting Strike",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 3
+  },
+  "story_text": "Your attack leaves them reeling, allowing you to follow up.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 2"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 3"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "slide 5"
+      }
+    }
+  },
+  "effect": "You can shift into any square the target leaves when you slide them.",
+  "special_effect": null
+}

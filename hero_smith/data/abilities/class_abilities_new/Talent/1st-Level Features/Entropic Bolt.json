@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "entropic_bolt",
+  "name": "Entropic Bolt",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You advance an enemy's age for a moment.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "corruption",
+        "potencies": "P < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": "The target takes an extra 1 corruption damage for each additional time they are targeted by this ability during the encounter.",
+  "special_effect": "Strained: You gain 1 clarity when you obtain a tier 2 or tier 3 outcome on the power roll."
+}

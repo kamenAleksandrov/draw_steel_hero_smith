@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "ballad_of_the_beast",
+  "name": "\"Ballad of the Beast\"",
+  "level": 1,
+  "costs": null,
+  "story_text": "Teeth are bare! \u266a Eyes black! \u266a No escaping the beast!\u266a",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, each target who starts their turn in the area gains 1 surge.",
+  "special_effect": null
+}

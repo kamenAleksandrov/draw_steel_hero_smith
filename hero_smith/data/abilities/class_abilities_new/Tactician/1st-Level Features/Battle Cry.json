@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "battle_cry",
+  "name": "Battle Cry",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 3
+  },
+  "story_text": "You shout a phrase that galvanizes your team.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three allies",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 1 surge"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 2 surges"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Each target gains 3 surges"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

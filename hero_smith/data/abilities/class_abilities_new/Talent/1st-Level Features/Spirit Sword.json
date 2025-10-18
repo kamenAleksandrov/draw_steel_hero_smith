@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "spirit_sword",
+  "name": "Spirit Sword",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You form a blade of mind energy and stab your target, invigorating yourself.",
+  "keywords": [
+    "Animapathy",
+    "Melee",
+    "Psionic",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You gain 1 surge.",
+  "special_effect": "Strained: The target takes an extra 3 damage. You also take 3 damage that can't be reduced in any way."
+}

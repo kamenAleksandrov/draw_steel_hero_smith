@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "psychic_pulse",
+  "name": "Psychic Pulse",
+  "level": 1,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 3
+  },
+  "story_text": "A burst of psionic energy interferes with your enemy's synapses.",
+  "keywords": [
+    "Area",
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "2"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": null,
+  "effect": "Each target takes psychic damage equal to twice your Intuition score. Until the start of your next turn, the size of your Null Field ability increases by 1. At the end of your current turn, each enemy in the area of your Null Field ability takes psychic damage equal to your Intuition score.",
+  "special_effect": null
+}

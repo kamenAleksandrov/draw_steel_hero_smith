@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+
 import '../../core/models/component.dart';
-import 'ability_summary.dart';
+import '../../core/theme/semantic/semantic_tokens.dart';
+import 'abilities_shared.dart';
 import 'ability_full_view.dart';
+import 'ability_summary.dart';
 
 class AbilityExpandableItem extends StatefulWidget {
-  final Component component;
   const AbilityExpandableItem({super.key, required this.component});
+
+  final Component component;
 
   @override
   State<AbilityExpandableItem> createState() => _AbilityExpandableItemState();
@@ -16,60 +20,74 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
 
   @override
   Widget build(BuildContext context) {
+    final ability = AbilityData(widget.component);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: _expanded 
-            ? scheme.primary.withOpacity(0.3)
-            : scheme.outline.withOpacity(0.2),
-          width: _expanded ? 2 : 1,
-        ),
+
+    final resourceColor = ability.resourceType != null
+        ? HeroicResourceTokens.color(ability.resourceType!)
+        : scheme.primary;
+    final borderColor =
+        resourceColor.withValues(alpha: _expanded ? 0.75 : 0.45);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeInOut,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: resourceColor.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: borderColor.withValues(alpha: 0.22),
+            blurRadius: _expanded ? 16 : 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          children: [
-            Material(
-              color: _expanded 
-                ? scheme.primaryContainer.withOpacity(0.3)
-                : Colors.transparent,
-              child: InkWell(
-                onTap: () => setState(() => _expanded = !_expanded),
-                child: Row(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: AbilitySummary(component: widget.component)),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Icon(
-                        _expanded ? Icons.expand_less : Icons.expand_more,
-                        color: scheme.primary,
-                        size: 24,
+                    Expanded(
+                      child: AbilitySummary(
+                        component: widget.component,
+                        abilityData: ability,
                       ),
+                    ),
+                    Icon(
+                      _expanded ? Icons.expand_less : Icons.expand_more,
+                      color: borderColor,
                     ),
                   ],
                 ),
-              ),
-            ),
-            if (_expanded)
-              Container(
-                decoration: BoxDecoration(
-                  color: scheme.surfaceContainerHighest.withOpacity(0.4),
-                  border: Border(
-                    top: BorderSide(
-                      color: scheme.primary.withOpacity(0.3),
-                      width: 1,
-                    ),
+                if (_expanded) ...[
+                  const SizedBox(height: 16),
+                  Divider(
+                    color: borderColor.withValues(alpha: 0.5),
+                    thickness: 1.1,
+                    height: 1.1,
                   ),
-                ),
-                child: AbilityFullView(component: widget.component),
-              ),
-          ],
+                  const SizedBox(height: 16),
+                  AbilityFullView(
+                    component: widget.component,
+                    abilityData: ability,
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

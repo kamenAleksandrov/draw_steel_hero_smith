@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "gravitic_burst",
+  "name": "Gravitic Burst",
+  "level": 2,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "Everyone get away from me!",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical push 2"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical push 4"
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "vertical push 6"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: The size of the burst increases by 1, and you are weakened until the end of your turn."
+}

@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "precognition",
+  "name": "Precognition",
+  "level": 1,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 3
+  },
+  "story_text": "You give a target a glimpse into the future so that they're ready for what comes next.",
+  "keywords": [
+    "Chronopathy",
+    "Melee",
+    "Psionic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "Ability rolls made against the target take a bane until the start of your next turn. Whenever the target takes damage while under this effect, they can use a triggered action to make a free strike against the source of the damage.",
+  "special_effect": null
+}

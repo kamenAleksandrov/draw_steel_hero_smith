@@ -404,9 +404,15 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         ? null
         : _optionsByKey[_selectedSubclassKey!];
 
+    // Only use the selected key if it exists in the options
+    final validatedValue = _selectedSubclassKey != null && 
+                           _optionsByKey.containsKey(_selectedSubclassKey!)
+        ? _selectedSubclassKey
+        : null;
+
     return [
       DropdownButtonFormField<String?>(
-        value: _selectedSubclassKey,
+        value: validatedValue,
         decoration: const InputDecoration(
           labelText: 'Subclass',
           border: OutlineInputBorder(),

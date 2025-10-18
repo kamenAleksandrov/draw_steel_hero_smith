@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "no_dying_on_my_watch",
+  "name": "No Dying on My Watch",
+  "level": 2,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "You prioritize saving an ally over your own safety.",
+  "keywords": [
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target deals damage to an ally.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "One enemy",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "Frightened; the target is of the triggering ally (save ends)"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "Frightened; the target is of the triggering ally (save ends)"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "Frightened; the target is of the triggering ally (save ends)"
+      }
+    }
+  },
+  "effect": "You move up to your speed toward the triggering ally, ending this movement adjacent to them or in the nearest square if you can't reach an adjacent square. The triggering ally can spend a Recovery and gains 5 temporary Stamina for each enemy you came adjacent to during the move. You then make a power roll against the target.",
+  "special_effect": null
+}

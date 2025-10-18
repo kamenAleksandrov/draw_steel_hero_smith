@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "riders_on_the_storm",
+  "name": "Riders on the Storm",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You focus your connection to the Primordial Chaos into a seething storm.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "3"
+  },
+  "targets": "Each creature in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each enemy target takes damage of your primordial damage type equal to twice your Might score at the end of each of your turns. Additionally, you can fly while the aura is active. Each ally target who starts or ends their turn in the area can also fly until the start of their next turn or until the effect ends.",
+  "special_effect": "Special: When you use this ability outside of combat without spending ferocity, you must spend 1 uninterrupted minute summoning a primordial storm that fills the area, and you take 1d6 damage before the ability takes effect. The storm lasts for 1 hour or until a combat encounter begins."
+}

@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "frontal_assault",
+  "name": "Frontal Assault",
+  "level": 3,
+  "costs": {
+    "resource": "Focus",
+    "amount": 7
+  },
+  "story_text": "The purpose of a charge is to break their morale and force a retreat.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, the first time on a turn that you or any ally deals damage to a target marked by you, the creature who dealt the damage can push the target up to 2 squares and then shift up to 2 squares. Additionally, any ally using the Charge main action to target a creature marked by you can use a melee strike signature ability or a melee strike heroic ability instead of a melee free strike.",
+  "special_effect": null
+}

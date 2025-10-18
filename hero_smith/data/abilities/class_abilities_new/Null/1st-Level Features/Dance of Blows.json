@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "dance_of_blows",
+  "name": "Dance of Blows",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You strike everywhere at once, tricking an enemy into moving out of position.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "1"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You can slide one adjacent enemy up to a number of squares equal to your Intuition score.",
+  "special_effect": null
+}

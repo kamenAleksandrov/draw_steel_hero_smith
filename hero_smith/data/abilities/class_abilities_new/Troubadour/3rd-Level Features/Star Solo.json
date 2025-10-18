@@ -1,0 +1,55 @@
+{
+  "type": "ability",
+  "id": "star_solo",
+  "name": "Star Solo",
+  "level": 3,
+  "costs": {
+    "resource": "Drama",
+    "amount": 7
+  },
+  "story_text": "Your performance travels and doesn't stop moving until your audience is completely rocked.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 10"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "high": {
+        "base_damage_value": 11,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 5"
+      }
+    }
+  },
+  "effect": "You can choose to have this ability deal sonic damage. Additionally, you can use this ability against the same target for the next 2 combat rounds without spending drama.",
+  "special_effect": null
+}

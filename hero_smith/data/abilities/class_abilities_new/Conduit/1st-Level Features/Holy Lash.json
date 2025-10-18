@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "holy_lash",
+  "name": "Holy Lash",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A tendril of divine energy shoots forth to draw in your foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "vertical pull 2"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "vertical pull 3"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": "vertical pull 4"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

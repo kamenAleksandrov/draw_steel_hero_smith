@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "curse_of_terror",
+  "name": "Curse of Terror",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "Fear of divine judgment overwhelms your foe.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "I < WEAK",
+        "conditions": "Frightened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "I < AVERAGE",
+        "conditions": "Frightened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "holy",
+        "potencies": "I < STRONG",
+        "conditions": "Frightened (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

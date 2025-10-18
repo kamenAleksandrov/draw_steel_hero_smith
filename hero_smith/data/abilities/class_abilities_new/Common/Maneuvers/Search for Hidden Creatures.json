@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "search_for_hidden_creatures",
+  "name": "Search for Hidden Creatures",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "The Search for Hidden Creatures maneuver allows a creature to attempt to locate creatures hidden from them (see Hide and Sneak in Chapter 9: Tests).",
+  "special_effect": null
+}

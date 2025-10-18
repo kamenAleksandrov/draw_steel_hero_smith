@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "grasp_of_beyond",
+  "name": "Grasp of Beyond",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You absorb the life energy of another creature and use it to teleport.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You can teleport up to a number of squares equal to your Reason score.",
+  "special_effect": null
+}

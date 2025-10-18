@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "sacrificial_offer",
+  "name": "Sacrificial Offer",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Divine magic tears at your foe and defends a nearby friend.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Choose yourself or one ally within distance. That character can impose a bane on one power roll made against them before the end of their next turn.",
+  "special_effect": null
+}

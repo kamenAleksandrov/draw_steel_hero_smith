@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "joint_lock",
+  "name": "Joint Lock",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You contort your enemy's body into a stance they struggle to escape from.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < WEAK",
+        "conditions": "Grabbed"
+      },
+      "mid": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < AVERAGE",
+        "conditions": "Grabbed"
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "A < STRONG",
+        "conditions": "Grabbed"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

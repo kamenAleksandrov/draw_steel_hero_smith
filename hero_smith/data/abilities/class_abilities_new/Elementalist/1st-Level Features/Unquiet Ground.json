@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "unquiet_ground",
+  "name": "Unquiet Ground",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "A sudden storm of detritus assaults your foes and leaves them struggling to move.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "2 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The ground beneath the area is difficult terrain for enemies.",
+  "special_effect": null
+}

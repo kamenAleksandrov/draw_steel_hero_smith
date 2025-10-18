@@ -1,0 +1,28 @@
+{
+  "type": "ability",
+  "id": "wall_of_fire",
+  "name": "Wall of Fire",
+  "level": 3,
+  "costs": {
+    "resource": "Essence",
+    "amount": 7
+  },
+  "story_text": "A blazing, beautifully organized inferno erupts at your command.",
+  "keywords": [
+    "Area",
+    "Fire",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Wall",
+    "range_value": "10 within 10"
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "The wall lasts until the start of your next turn, and can be placed in occupied squares. Creatures can enter and pass through the wall. Each enemy who enters the area for the first time in a combat round or starts their turn there takes fire damage equal to your Reason score for each square of the area they start their turn in or enter.",
+  "special_effect": "Persistent 1: The wall lasts until the start of your next turn, and you can add a number of squares to the wall equal to your Reason score."
+}

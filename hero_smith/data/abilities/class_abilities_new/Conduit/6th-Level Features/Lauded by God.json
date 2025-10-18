@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "lauded_by_god",
+  "name": "Lauded by God",
+  "level": 6,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "You beseech the gods to give your allies what they need to win the day, and the gods answer.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Two allies",
+  "power_roll": null,
+  "effect": "Each target gains 3 of their Heroic Resource.",
+  "special_effect": null
+}

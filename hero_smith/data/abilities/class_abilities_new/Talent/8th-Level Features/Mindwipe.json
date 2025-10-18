@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "mindwipe",
+  "name": "Mindwipe",
+  "level": 8,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "You attempt to make them forget all their training.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Telepathy"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "the target takes a bane on their next power roll"
+      },
+      "mid": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "the target takes a bane on power rolls (save ends)"
+      },
+      "high": {
+        "base_damage_value": 23,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "the target has a double bane on power rolls (save ends)"
+      }
+    }
+  },
+  "effect": "The target can't communicate with anyone until the end of the encounter.",
+  "special_effect": "Strained: You take 3d6 damage."
+}

@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "steel",
+  "name": "Steel",
+  "level": 8,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "The target's skin becomes covered in tough metal.",
+  "keywords": [
+    "Metamorphosis",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target has damage immunity 5 and can't be made slowed or weakened until the start of your next turn. Whenever the target force moves a creature or object while under this effect, the forced movement distance gains a +5 bonus.",
+  "special_effect": "Strained: You can't use maneuvers (save ends)."
+}

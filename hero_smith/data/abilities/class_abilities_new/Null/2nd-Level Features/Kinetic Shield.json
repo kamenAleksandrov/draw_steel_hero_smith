@@ -1,0 +1,51 @@
+{
+  "type": "ability",
+  "id": "kinetic_shield",
+  "name": "Kinetic Shield",
+  "level": 2,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "You manifest a force barrier that absorbs incoming kinetic energy.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You gain 10 temporary Stamina"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You gain 15 temporary Stamina"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You gain 20 temporary Stamina"
+      }
+    }
+  },
+  "effect": "While you have temporary Stamina from this ability, you can't be made bleeding even while dying.",
+  "special_effect": null
+}

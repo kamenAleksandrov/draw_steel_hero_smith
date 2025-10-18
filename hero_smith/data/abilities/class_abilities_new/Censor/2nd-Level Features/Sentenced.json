@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "sentenced",
+  "name": "Sentenced",
+  "level": 2,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "The shock of your condemnation freezes your enemy in their boots.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "While the target is restrained this way, your abilities that impose forced movement can still move them.",
+  "special_effect": null
+}

@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_insight",
+  "name": "Blessing of Insight",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "The gods grant insight revealing where best to strike your enemies.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self and each ally",
+  "power_roll": null,
+  "effect": "Until the end of the encounter or until you are dying, each target gains 1 surge at the end of each of your turns.",
+  "special_effect": null
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "gravitic_nova",
+  "name": "Gravitic Nova",
+  "level": 9,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "Unbridled psionic energy erupts from your body and flashes outward, hurling your foes back.",
+  "keywords": [
+    "Area",
+    "Psionic",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each enemy and object in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 7"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 10"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "push 15"
+      }
+    }
+  },
+  "effect": "On a critical hit, the size of the area increases by 3, and this ability deals an extra 10 damage.",
+  "special_effect": "Strained: You are weakened (save ends). If you scored a critical hit with this ability, you die."
+}

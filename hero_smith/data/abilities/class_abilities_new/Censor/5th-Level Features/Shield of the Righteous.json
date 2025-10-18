@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "shield_of_the_righteous",
+  "name": "Shield of the Righteous",
+  "level": 5,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 9
+  },
+  "story_text": "You strike a foe and create a fleet of divine shields that protect your allies.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you and each ally adjacent to you gain 10 temporary Stamina"
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you and each ally adjacent to you gain 15 temporary Stamina"
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "you and each ally adjacent to you gain 20 temporary Stamina"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

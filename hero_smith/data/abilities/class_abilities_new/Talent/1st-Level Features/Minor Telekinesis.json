@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "minor_telekinesis",
+  "name": "Minor Telekinesis",
+  "level": 1,
+  "costs": null,
+  "story_text": "Wisps of psychic energy ripple visibly from your brain as you force the target to move using only your mind.",
+  "keywords": [
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one size 1 creature or object",
+  "power_roll": null,
+  "effect": "You slide the target up to a number of squares equal to your Reason score.\n\nThe size of the creature or object you can target increases by 1 for every 2 clarity spent.\n\nYou can vertical slide the target.",
+  "special_effect": null
+}

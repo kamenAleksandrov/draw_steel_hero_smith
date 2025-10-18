@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "test_of_rain",
+  "name": "Test of Rain",
+  "level": 1,
+  "costs": {
+    "resource": "Essence",
+    "amount": 5
+  },
+  "story_text": "You call down a rain that burns your enemies and restores your allies.",
+  "keywords": [
+    "Area",
+    "Green",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "acid",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "acid",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "acid",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "You can end one effect on yourself that is ended by a saving throw or that ends at the end of your turn. Each ally in the area also gains this benefit.",
+  "special_effect": null
+}

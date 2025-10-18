@@ -103,7 +103,7 @@ class SubclassDataService {
   SubclassOption _mapToSubclassOption(Map<String, dynamic> option) {
     String? _string(dynamic value) => value?.toString();
 
-    final rawName = _string(option['name']) ?? 'Subclass Option';
+    final rawName = _string(option['name'] ?? option['subclass_name']) ?? 'Subclass Option';
     final key = _buildOptionKey(option, rawName);
 
     return SubclassOption(

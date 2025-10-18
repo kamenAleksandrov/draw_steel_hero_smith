@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "smolder",
+  "name": "Smolder",
+  "level": 1,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 3
+  },
+  "story_text": "Smoke flows from your enemy like tears as their skin begins to blacken and flake.",
+  "keywords": [
+    "Psionic",
+    "Pyrokinesis",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < WEAK",
+        "conditions": "the target has weakness 5 (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < AVERAGE",
+        "conditions": "the target has weakness 5 (save ends)"
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "R < STRONG",
+        "conditions": "the target has weakness equal to 5 your Reason score (save ends)"
+      }
+    }
+  },
+  "effect": "Choose the damage type and the weakness for this ability from one of the following: acid, corruption, or fire. The target takes damage before this ability imposes any weakness.",
+  "special_effect": null
+}

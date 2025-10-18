@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:hero_smith/core/models/feature.dart';
@@ -149,6 +151,27 @@ class ClassFeaturesWidget extends StatelessWidget {
     );
 
     final tags = <Widget>[];
+    final typeLabel = feature.type.trim();
+    if (typeLabel.isNotEmpty &&
+        typeLabel.toLowerCase() != 'feature' &&
+        !feature.isSubclassFeature) {
+      final normalizedType = typeLabel.toLowerCase();
+      IconData icon;
+      switch (normalizedType) {
+        case 'heroic resource':
+          icon = Icons.bolt;
+          break;
+        default:
+          icon = Icons.category;
+      }
+      tags.add(
+        _buildTagChip(
+          context,
+          _formatTitleCase(typeLabel),
+          leading: Icon(icon, size: 16),
+        ),
+      );
+    }
     if (feature.isSubclassFeature) {
       tags.add(
         _buildTagChip(
@@ -550,7 +573,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     return _OptionFilterResult(
       options: filtered,
       allowEditing: allowEditing,
-      messages: message == null ? const [] : <String>[message],
+      messages: <String>[message],
     );
   }
 
@@ -603,7 +626,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     return _OptionFilterResult(
       options: filtered,
       allowEditing: allowEditing,
-      messages: message == null ? const [] : <String>[message],
+      messages: <String>[message],
     );
   }
 
@@ -717,6 +740,14 @@ class ClassFeaturesWidget extends StatelessWidget {
     addSection('Out of Combat', details['out_of_combat']);
     addSection('Special', details['special']);
     addSection('Notes', details['notes']);
+
+    sections.addAll(
+      _buildAdditionalContentWidgets(
+        context,
+        details['loaded_additional_features'],
+        owner: details,
+      ),
+    );
 
     return sections;
   }
@@ -889,6 +920,14 @@ class ClassFeaturesWidget extends StatelessWidget {
       }
     }
 
+    details.addAll(
+      _buildAdditionalContentWidgets(
+        context,
+        option['loaded_additional_features'],
+        owner: option,
+      ),
+    );
+
     return details;
   }
 
@@ -940,7 +979,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     }
 
     final keywords = ability['keywords'] is List
-        ? ability['keywords']
+        ? (ability['keywords'] as List)
             .whereType<String>()
             .map((keyword) => keyword.trim())
             .where((keyword) => keyword.isNotEmpty)
@@ -1088,6 +1127,384 @@ class ClassFeaturesWidget extends StatelessWidget {
     );
   }
 
+  List<Widget> _buildAdditionalContentWidgets(
+    BuildContext context,
+    dynamic raw, {
+    Map<String, dynamic>? owner,
+  }) {
+    if (raw is! List) return const [];
+    final widgets = <Widget>[];
+    for (final entry in raw) {
+      if (entry is! Map) continue;
+      final map = entry is Map<String, dynamic>
+          ? Map<String, dynamic>.from(entry)
+          : entry.cast<String, dynamic>();
+      final data = map['data'];
+      if (data == null) continue;
+      final filteredData = _filterAdditionalData(data, owner);
+      if (filteredData == null) continue;
+      if (filteredData is List && filteredData.isEmpty) continue;
+      final type = map['type']?.toString() ?? 'table';
+      final title = (map['title'] ?? map['name'] ?? type).toString();
+      widgets.add(const SizedBox(height: 12));
+      widgets.add(
+        _buildAdditionalContentBlock(
+          context,
+          _formatTitleCase(title),
+          type,
+          filteredData,
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  Widget _buildAdditionalContentBlock(
+    BuildContext context,
+    String title,
+    String type,
+    dynamic data,
+  ) {
+    final theme = Theme.of(context);
+    final body = _renderAdditionalContent(context, type, data);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceVariant.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          if (body.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            ..._withSpacing(body),
+          ],
+        ],
+      ),
+    );
+  }
+
+  dynamic _filterAdditionalData(
+    dynamic data,
+    Map<String, dynamic>? owner,
+  ) {
+    if (owner == null) return data;
+
+    if (data is List &&
+        data.isNotEmpty &&
+        data.every((element) => element is Map)) {
+      final selectors = <String>[];
+      void addSelector(String? value) {
+        if (value == null) return;
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) selectors.add(trimmed.toLowerCase());
+      }
+
+      addSelector(owner['subclass_name']?.toString());
+      addSelector(owner['aspect']?.toString());
+      addSelector(owner['domain']?.toString());
+      addSelector(owner['tradition']?.toString());
+      addSelector(owner['path']?.toString());
+
+      if (selectors.isEmpty) {
+        return data;
+      }
+
+      final matched = <Map<String, dynamic>>[];
+      for (final entry in data) {
+        if (entry is! Map) continue;
+        final map = entry is Map<String, dynamic>
+            ? Map<String, dynamic>.from(entry)
+            : entry.cast<String, dynamic>();
+        final comparableValues = <String>[
+          map['name']?.toString() ?? '',
+          map['id']?.toString() ?? '',
+          map['title']?.toString() ?? '',
+          map['animalType']?.toString() ?? '',
+        ];
+        final filtered = comparableValues
+            .where((value) => value.trim().isNotEmpty)
+            .map((value) => value.toLowerCase())
+            .join(' ');
+
+        if (selectors.any((selector) => filtered.contains(selector))) {
+          matched.add(map);
+        }
+      }
+
+      if (matched.isNotEmpty) {
+        return matched;
+      }
+
+      // If selectors were provided but no data matched, return an empty list
+      // to avoid displaying unrelated entries.
+      return const <Map<String, dynamic>>[];
+    }
+
+    return data;
+  }
+
+  List<Widget> _renderAdditionalContent(
+    BuildContext context,
+    String type,
+    dynamic data,
+  ) {
+    if (data is List) {
+      final entries = <Widget>[];
+      for (final item in data) {
+        if (item is! Map) continue;
+        final map = item is Map<String, dynamic>
+            ? Map<String, dynamic>.from(item)
+            : item.cast<String, dynamic>();
+        entries.add(_buildAdditionalEntryCard(context, map));
+      }
+      if (entries.isNotEmpty) {
+        return entries;
+      }
+    } else if (data is Map) {
+      final map = data is Map<String, dynamic>
+          ? Map<String, dynamic>.from(data)
+          : data.cast<String, dynamic>();
+      return [_buildAdditionalEntryCard(context, map, isStandalone: true)];
+    }
+
+    return [
+      SelectableText(
+        const JsonEncoder.withIndent('  ').convert(data),
+      ),
+    ];
+  }
+
+  Widget _buildAdditionalEntryCard(
+    BuildContext context,
+    Map<String, dynamic> entry, {
+    bool isStandalone = false,
+  }) {
+    final theme = Theme.of(context);
+    final title = entry['name']?.toString().trim() ??
+        entry['animalType']?.toString().trim() ??
+        entry['id']?.toString().trim();
+    final description = entry['description']?.toString().trim();
+
+    final contentWidgets = <Widget>[];
+    if (description != null && description.isNotEmpty) {
+      contentWidgets.add(Text(description, style: theme.textTheme.bodyMedium));
+    }
+
+    if (entry['boosts'] is List) {
+      final boostWidgets = <Widget>[];
+      for (final boost in entry['boosts']) {
+        if (boost is! Map) continue;
+        final map = boost is Map<String, dynamic>
+            ? Map<String, dynamic>.from(boost)
+            : boost.cast<String, dynamic>();
+        final name = map['name']?.toString().trim() ?? 'Boost';
+        final cost = map['cost'];
+        final effect = map['effect']?.toString().trim();
+        final buffer = StringBuffer(name);
+        if (cost != null) {
+          buffer.write(' (Cost: $cost)');
+        }
+        boostWidgets.add(
+          Text(
+            buffer.toString(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
+        if (effect != null && effect.isNotEmpty) {
+          boostWidgets.add(
+            Padding(
+              padding: const EdgeInsets.only(left: 8, bottom: 8, top: 4),
+              child: Text(effect, style: theme.textTheme.bodyMedium),
+            ),
+          );
+        }
+      }
+      contentWidgets.addAll(boostWidgets);
+    }
+
+    if (entry['progression'] is List) {
+      contentWidgets.addAll(
+        _buildProgressionList(context, entry['progression'] as List),
+      );
+    }
+
+    final remaining = Map<String, dynamic>.from(entry)
+      ..removeWhere(
+        (key, _) => {
+          'id',
+          'name',
+          'title',
+          'animalType',
+          'description',
+          'progression',
+          'boosts',
+        }.contains(key),
+      );
+
+    if (remaining.isNotEmpty) {
+      contentWidgets.addAll(_buildKeyValueWidgetList(context, remaining));
+    }
+
+    if (contentWidgets.isEmpty) {
+      contentWidgets.add(
+        SelectableText(
+          const JsonEncoder.withIndent('  ').convert(entry),
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(top: isStandalone ? 0 : 4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null && title.isNotEmpty) ...[
+            Text(
+              title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+          ],
+          ..._withSpacing(contentWidgets),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildProgressionList(
+    BuildContext context,
+    List<dynamic> entries,
+  ) {
+    final theme = Theme.of(context);
+    final widgets = <Widget>[];
+    for (final entry in entries) {
+      if (entry is! Map) continue;
+      final map = entry is Map<String, dynamic>
+          ? Map<String, dynamic>.from(entry)
+          : entry.cast<String, dynamic>();
+      final ferocity = map['ferocity'];
+      final discipline = map['discipline'];
+      final tierLabel = ferocity != null
+          ? 'Ferocity $ferocity'
+          : discipline != null
+              ? 'Discipline $discipline'
+              : map.containsKey('level')
+                  ? 'Level ${map['level']}'
+                  : null;
+      final levelReq = map['level'];
+      final benefit = map['benefit']?.toString().trim();
+
+      final header = StringBuffer();
+      if (tierLabel != null) {
+        header.write(tierLabel);
+      }
+      if (levelReq != null) {
+        if (header.isNotEmpty) header.write(' • ');
+        header.write('Level $levelReq');
+      }
+
+      if (header.isNotEmpty) {
+        widgets.add(
+          Text(
+            header.toString(),
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      }
+
+      if (benefit != null && benefit.isNotEmpty) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 8, top: 4),
+            child: Text(benefit, style: theme.textTheme.bodyMedium),
+          ),
+        );
+      }
+    }
+    return widgets;
+  }
+
+  List<Widget> _buildKeyValueWidgetList(
+    BuildContext context,
+    Map<String, dynamic> data,
+  ) {
+    if (data.isEmpty) return const [];
+    final theme = Theme.of(context);
+    final widgets = <Widget>[];
+    final keys = data.keys.toList()..sort();
+    for (final key in keys) {
+      final value = data[key];
+      if (value == null) continue;
+      final rendered = _stringifyValue(value);
+      if (rendered.isEmpty) continue;
+      widgets.add(
+        RichText(
+          text: TextSpan(
+            style: theme.textTheme.bodyMedium,
+            children: [
+              TextSpan(
+                text: '${_formatTitleCase(key.toString())}: ',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              TextSpan(text: rendered),
+            ],
+          ),
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  String _stringifyValue(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value.trim();
+    if (value is num || value is bool) return value.toString();
+    if (value is Map) {
+      final parts = <String>[];
+      final keys = value.keys.map((key) => key.toString()).toList()..sort();
+      for (final key in keys) {
+        final rendered = _stringifyValue(value[key]);
+        if (rendered.isEmpty) continue;
+        parts.add('${_formatTitleCase(key)}: $rendered');
+      }
+      return parts.join(', ');
+    }
+    if (value is Iterable) {
+      final iterable = value;
+      final parts = iterable
+          .map(_stringifyValue)
+          .where((element) => element.isNotEmpty)
+          .toList();
+      return parts.join(', ');
+    }
+    return value.toString();
+  }
+
   List<Widget> _withSpacing(List<Widget> widgets) {
     if (widgets.isEmpty) return widgets;
     final spaced = <Widget>[];
@@ -1098,6 +1515,17 @@ class ClassFeaturesWidget extends StatelessWidget {
       }
     }
     return spaced;
+  }
+
+  String _formatTitleCase(String input) {
+    if (input.isEmpty) return input;
+    final cleaned = input.replaceAll(RegExp(r'[_\-]+'), ' ');
+    final splitParts = cleaned.split(RegExp(r'\s+'));
+    final parts = splitParts
+        .where((part) => part.isNotEmpty)
+        .map((part) => part[0].toUpperCase() + part.substring(1))
+        .toList();
+    return parts.join(' ');
   }
 
   String? _coalesceDescription(Feature feature, Map<String, dynamic>? details) {
@@ -1116,7 +1544,8 @@ class ClassFeaturesWidget extends StatelessWidget {
       return trimmed.isEmpty ? null : trimmed;
     }
     if (value is List) {
-      final parts = value
+      final list = value;
+      final parts = list
           .whereType<String>()
           .map((part) => part.trim())
           .where((part) => part.isNotEmpty)

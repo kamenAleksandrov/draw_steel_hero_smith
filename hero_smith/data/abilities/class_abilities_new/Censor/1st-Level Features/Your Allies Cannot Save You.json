@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "your_allies_cannot_save_you",
+  "name": "Your Allies Cannot Save You!",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "Your magic strike turns your foe's guilt into a burst of holy power.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": "holy",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "Each enemy adjacent to the target is pushed away from the target up to a number of squares equal to your Presence score.",
+  "special_effect": null
+}

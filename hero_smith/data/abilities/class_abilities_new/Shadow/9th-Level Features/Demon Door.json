@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "demon_door",
+  "name": "Demon Door",
+  "level": 9,
+  "costs": {
+    "resource": "Insight",
+    "amount": 11
+  },
+  "story_text": "You create a temporary portal to allow a massive demonic hand to reach through.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 3
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "push 3"
+      },
+      "mid": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "push 5"
+      },
+      "high": {
+        "base_damage_value": 25,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "push 7"
+      }
+    }
+  },
+  "effect": "On a critical hit, the target is grabbed by the demon and pulled through the portal before it closes, never to be seen again.",
+  "special_effect": null
+}

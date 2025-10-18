@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "clever_trick",
+  "name": "Clever Trick",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 1
+  },
+  "story_text": "You sow a moment of confusion in combat, to your enemy's peril.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "An enemy targets you with a strike.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "Choose an enemy within distance of the triggering strike, including the enemy who targeted you. The strike targets that enemy instead.",
+  "special_effect": null
+}

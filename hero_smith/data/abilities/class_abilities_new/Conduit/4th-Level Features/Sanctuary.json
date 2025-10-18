@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "sanctuary",
+  "name": "Sanctuary",
+  "level": 4,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "You send yourself or an ally to a divine manifold to instantaneously regain health.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target is removed from the encounter map until the start of their next turn and can spend any number of Recoveries. At the start of their turn, the target reappears in the space they left or the nearest unoccupied space of their choice.",
+  "special_effect": null
+}

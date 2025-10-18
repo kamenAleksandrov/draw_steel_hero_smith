@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "phase_leap",
+  "name": "Phase Leap",
+  "level": 5,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You leap beyond reality, leaving an afterimage of yourself.",
+  "keywords": [
+    "Psionic"
+  ],
+  "action_type": "Move action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You jump up to your speed without provoking opportunity attacks. Until the end of your next turn, a static afterimage of you remains in the space you left, and any enemy adjacent to your afterimage takes a bane on ability rolls. You can use your abilities from your own space or from the space of your afterimage as if you were still there. Additionally, if your Null Field ability is active, your afterimage also projects the aura from that ability, which you control as if you were in the afterimage's space.",
+  "special_effect": null
+}

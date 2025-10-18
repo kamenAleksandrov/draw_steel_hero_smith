@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "we_can_t_be_upstaged",
+  "name": "We Can't Be Upstaged!",
+  "level": 5,
+  "costs": null,
+  "story_text": "Swordplay so graceful it looks like you all practiced this.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Performance"
+  ],
+  "action_type": "No action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "While this performance is active, a target who starts their turn in the area gains a bonus to the distance they can shift equal to your Presence score until the end of their turn.",
+  "special_effect": null
+}

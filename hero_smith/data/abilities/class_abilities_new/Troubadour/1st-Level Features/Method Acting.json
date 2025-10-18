@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "method_acting",
+  "name": "Method Acting",
+  "level": 1,
+  "costs": {
+    "resource": "Drama",
+    "amount": 5
+  },
+  "story_text": "They're so hurt by your performance, you start to believe it yourself.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < WEAK",
+        "conditions": "Weakened (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < AVERAGE",
+        "conditions": "Weakened (save ends)"
+      },
+      "high": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "P < STRONG",
+        "conditions": "Weakened (save ends)"
+      }
+    }
+  },
+  "effect": "You can become bleeding (save ends) to deal an extra 5 corruption damage to the target.",
+  "special_effect": null
+}

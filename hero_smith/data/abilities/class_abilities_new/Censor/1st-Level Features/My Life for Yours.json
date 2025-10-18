@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "my_life_for_yours",
+  "name": "My Life for Yours",
+  "level": 1,
+  "costs": null,
+  "story_text": "You channel some of your vitality into more resilience for you or an ally.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target starts their turn or takes damage.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "You spend a Recovery and the target regains Stamina equal to your recovery value.\n\nYou can end one effect on the target that is ended by a saving throw or that ends at the end of their turn, or a prone target can stand up.",
+  "special_effect": null
+}

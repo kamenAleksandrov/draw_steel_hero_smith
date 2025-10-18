@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "hesitation_is_weakness",
+  "name": "Hesitation Is Weakness",
+  "level": 1,
+  "costs": {
+    "resource": "Insight",
+    "amount": 1
+  },
+  "story_text": "Keep up the attack. Never give them a moment's grace.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "Another hero ends their turn. That hero can't have used this ability to start their turn.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You take your turn after the triggering hero.",
+  "special_effect": null
+}

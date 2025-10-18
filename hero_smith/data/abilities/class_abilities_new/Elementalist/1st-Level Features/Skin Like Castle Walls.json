@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "skin_like_castle_walls",
+  "name": "Skin Like Castle Walls",
+  "level": 1,
+  "costs": null,
+  "story_text": "You cover yourself or an ally in protective stone.",
+  "keywords": [
+    "Earth",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target takes damage.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target takes half the damage.\n\nIf the damage has any potency effects associated with it, the potency is reduced by 1 for the target.",
+  "special_effect": null
+}

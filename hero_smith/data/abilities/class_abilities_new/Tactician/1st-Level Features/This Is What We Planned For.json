@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "this_is_what_we_planned_for",
+  "name": "This Is What We Planned For",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 5
+  },
+  "story_text": "All those coordination drills you made them do finally pay off.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Two allies",
+  "power_roll": null,
+  "effect": "Each target who hasn't acted yet this combat round can take their turn in any order immediately after yours.",
+  "special_effect": null
+}

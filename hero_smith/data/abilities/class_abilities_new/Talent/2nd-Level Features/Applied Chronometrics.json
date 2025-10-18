@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "applied_chronometrics",
+  "name": "Applied Chronometrics",
+  "level": 2,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "Time slows down around you. Your heartbeat is the only gauge of the extra moments you've gained.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Special",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You target two creatures one of which can be you"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You target three creatures one of which can be you"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "You target four creatures one of which can be you"
+      }
+    }
+  },
+  "effect": "Until the start of your next turn, each target gains a +5 bonus to speed, they can't be made dazed, and they can use an additional maneuver on their turn. If a target is already dazed, that condition ends for them.",
+  "special_effect": "Strained: Your speed is halved until the end of the encounter."
+}

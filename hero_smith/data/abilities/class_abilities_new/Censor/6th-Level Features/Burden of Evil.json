@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "burden_of_evil",
+  "name": "Burden of Evil",
+  "level": 6,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 9
+  },
+  "story_text": "You reveal a vision of your enemies' fate that causes them to scramble as it staggers them.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three enemies",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends); Slide 3"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends); Slide 5"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends); Slide 7"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

@@ -1,0 +1,24 @@
+{
+  "type": "ability",
+  "id": "breath_of_dawn_remembered",
+  "name": "Breath of Dawn Remembered",
+  "level": 1,
+  "costs": null,
+  "story_text": "The power you channel grants the ability to get back in the fight.",
+  "keywords": [
+    "Green",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target starts their turn or takes damage.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self or one ally",
+  "power_roll": null,
+  "effect": "The target can spend a Recovery.\n\nThe target can spend an additional Recovery for each essence spent.",
+  "special_effect": null
+}

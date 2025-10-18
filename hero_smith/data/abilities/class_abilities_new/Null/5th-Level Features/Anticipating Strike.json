@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "anticipating_strike",
+  "name": "Anticipating Strike",
+  "level": 5,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 9
+  },
+  "story_text": "You suddenly strike an enemy, then grab them in a psionically enhanced grip.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "The target moves or uses a main action.",
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Restrained (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Restrained (save ends)"
+      },
+      "high": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Restrained (save ends)"
+      }
+    }
+  },
+  "effect": "This strike resolves before the triggering movement or main action.",
+  "special_effect": null
+}

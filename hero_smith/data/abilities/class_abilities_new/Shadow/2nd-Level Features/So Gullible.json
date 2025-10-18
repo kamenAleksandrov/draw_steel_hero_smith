@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "so_gullible",
+  "name": "So Gullible",
+  "level": 2,
+  "costs": {
+    "resource": "Insight",
+    "amount": 5
+  },
+  "story_text": "When your enemy strikes, you reveal you were in a different place all along.",
+  "keywords": [
+    "Magic"
+  ],
+  "action_type": "Free triggered action",
+  "trigger_text": "Another creature targets you with a strike.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You use your Clever Trick ability with no insight cost against the triggering creature and strike. You can teleport to an unoccupied space within 3 squares of that creature and can make a free strike against them. You can then spend a Recovery.",
+  "special_effect": null
+}

@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "squad_forward",
+  "name": "Squad! Forward!",
+  "level": 1,
+  "costs": {
+    "resource": "Focus",
+    "amount": 3
+  },
+  "story_text": "On your command, you and your allies force back the enemy line.",
+  "keywords": [
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Self and two allies",
+  "power_roll": null,
+  "effect": "Each target can move up to their speed.",
+  "special_effect": null
+}

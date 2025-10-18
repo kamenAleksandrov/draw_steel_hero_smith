@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "synaptic_conditioning",
+  "name": "Synaptic Conditioning",
+  "level": 6,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 9
+  },
+  "story_text": "It's a subtle mindset shift. It's not that they're your enemy\u2014you just don't like them!",
+  "keywords": [
+    "Psionic",
+    "Melee",
+    "Strike",
+    "Telepathy"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 2
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "the target takes a bane on ability rolls made to harm you or your allies (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "the target has a double bane on ability rolls made to harm you or your allies (save ends)"
+      },
+      "high": {
+        "base_damage_value": 20,
+        "characteristic_damage_options": null,
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "the target considers you and your allies to be their allies when using abilities and features (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: While the target is under this effect, you no longer consider your enemies to be your enemies when using your abilities and features."
+}

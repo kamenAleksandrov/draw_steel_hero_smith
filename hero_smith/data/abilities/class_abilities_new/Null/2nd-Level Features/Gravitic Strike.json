@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "gravitic_strike",
+  "name": "Gravitic Strike",
+  "level": 2,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 5
+  },
+  "story_text": "Your fist emanates gravitic force that pulls a distant enemy closer.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 3
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 3"
+      },
+      "mid": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 5"
+      },
+      "high": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "A damage",
+        "damage_types": "psychic",
+        "potencies": null,
+        "conditions": "vertical pull 7"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

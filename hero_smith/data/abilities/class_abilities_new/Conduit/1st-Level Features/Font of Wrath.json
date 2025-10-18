@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "font_of_wrath",
+  "name": "Font of Wrath",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 3
+  },
+  "story_text": "A brilliant column of holy light appears on the battlefield, striking out at nearby enemies.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Special",
+  "power_roll": null,
+  "effect": "You summon a spirit of size 2 who can't be harmed, and who appears in an unoccupied space within distance. The spirit lasts until the end of your next turn. You and your allies can move through the spirit's space, but enemies can't. Any enemy who moves within 2 squares of the spirit for the first time in a combat round or starts their turn there takes holy damage equal to your Intuition score.",
+  "special_effect": null
+}

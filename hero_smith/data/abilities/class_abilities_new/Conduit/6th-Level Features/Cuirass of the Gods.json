@@ -1,0 +1,27 @@
+{
+  "type": "ability",
+  "id": "cuirass_of_the_gods",
+  "name": "Cuirass of the Gods",
+  "level": 6,
+  "costs": {
+    "resource": "Piety",
+    "amount": 9
+  },
+  "story_text": "Your allies are covered in spiritual armor.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Three creatures",
+  "power_roll": null,
+  "effect": "You can target yourself instead of one creature with this ability. Each target has damage immunity 5 until the start of your next turn.",
+  "special_effect": null
+}

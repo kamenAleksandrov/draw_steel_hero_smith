@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "violence_will_not_aid_thee",
+  "name": "Violence Will Not Aid Thee",
+  "level": 1,
+  "costs": {
+    "resource": "Piety",
+    "amount": 3
+  },
+  "story_text": "After some holy lightning, your enemy will think twice about their next attack.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": null
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": null
+      },
+      "high": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "I damage",
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": null
+      }
+    }
+  },
+  "effect": "The first time on a turn that the target deals damage to another creature, the target of this ability takes 1d10 lightning damage (save ends).",
+  "special_effect": null
+}

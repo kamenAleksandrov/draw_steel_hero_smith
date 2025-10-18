@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "erase",
+  "name": "Erase",
+  "level": 3,
+  "costs": {
+    "resource": "Essence",
+    "amount": 7
+  },
+  "story_text": "With a flick of the wrist, you phase creatures out of existence.",
+  "keywords": [
+    "Magic",
+    "Ranged",
+    "Strike",
+    "Void"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "Special",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "One creature"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Two creatures"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Three creatures"
+      }
+    }
+  },
+  "effect": "Each target begins to fade from existence (save ends). On their first turn while fading from existence, a target takes a bane on power rolls. At the end of their first turn, they have a double bane on power rolls. At the end of their second turn, they fade from existence for 1 hour, after which they reappear in their original space or the nearest unoccupied space.",
+  "special_effect": "Special: The number of creatures you target with this ability is determined by your power roll."
+}

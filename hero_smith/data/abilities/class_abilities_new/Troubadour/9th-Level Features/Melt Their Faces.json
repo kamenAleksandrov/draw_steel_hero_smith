@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "melt_their_faces",
+  "name": "Melt Their Faces",
+  "level": 9,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "The power of music rips through the reality around the target and blows them away.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Ranged",
+    "Strike"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee or Ranged",
+    "area": null,
+    "range_value": "Melee 1 or Ranged 10"
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 5"
+      },
+      "mid": {
+        "base_damage_value": 16,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 10"
+      },
+      "high": {
+        "base_damage_value": 22,
+        "characteristic_damage_options": "P damage",
+        "damage_types": "sonic",
+        "potencies": null,
+        "conditions": "push 15"
+      }
+    }
+  },
+  "effect": "Forced movement from this ability ignores stability.",
+  "special_effect": null
+}

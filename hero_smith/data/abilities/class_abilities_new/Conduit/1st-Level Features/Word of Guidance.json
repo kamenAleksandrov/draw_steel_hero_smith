@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "word_of_guidance",
+  "name": "Word of Guidance",
+  "level": 1,
+  "costs": null,
+  "story_text": "You invigorate an attacking ally with divine energy.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target makes an ability roll for a damage-dealing ability.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The power roll gains an edge.\n\nThe power roll has a double edge.",
+  "special_effect": null
+}

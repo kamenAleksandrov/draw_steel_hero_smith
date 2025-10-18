@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "rising_tension",
+  "name": "Rising Tension",
+  "level": 9,
+  "costs": {
+    "resource": "Drama",
+    "amount": 11
+  },
+  "story_text": "You narrate the tension of the scene and put all hope into your protagonist to turn things around.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The target gains 3 of their Heroic Resource, has a double edge on a power roll of their choice made during their next turn, is no longer slowed or weakened if they were before, and can immediately take their turn after yours if they have not taken their turn already this round.",
+  "special_effect": null
+}

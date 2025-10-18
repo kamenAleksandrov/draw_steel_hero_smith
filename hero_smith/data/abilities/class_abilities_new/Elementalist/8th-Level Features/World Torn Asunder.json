@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "world_torn_asunder",
+  "name": "World Torn Asunder",
+  "level": 8,
+  "costs": {
+    "resource": "Essence",
+    "amount": 11
+  },
+  "story_text": "You stomp your foot and quake the whole world over.",
+  "keywords": [
+    "Area",
+    "Earth",
+    "Magic"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "5"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Prone"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Prone"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Prone"
+      }
+    }
+  },
+  "effect": "You create a fissure in the ground adjacent to you that is a 10 x 2 line and 6 squares deep. Each creature in the area who is prone and size 2 or smaller falls in. Other creatures can enter the fissure or can shift to the nearest unoccupied space of their choice outside it.",
+  "special_effect": null
+}

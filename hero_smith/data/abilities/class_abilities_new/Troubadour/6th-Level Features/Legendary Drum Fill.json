@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "legendary_drum_fill",
+  "name": "Legendary Drum Fill",
+  "level": 6,
+  "costs": {
+    "resource": "Drama",
+    "amount": 9
+  },
+  "story_text": "You start a drumroll that roars like thunder with every impact the heroes make.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "4"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Each target gains 1 surge, then gains 1 surge at the start of each combat round until the end of the encounter.",
+  "special_effect": null
+}

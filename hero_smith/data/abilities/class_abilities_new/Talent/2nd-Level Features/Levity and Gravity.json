@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "levity_and_gravity",
+  "name": "Levity and Gravity",
+  "level": 2,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 5
+  },
+  "story_text": "You raise the target slightly into the air, then smother them against the ground.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Strike",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Prone"
+      },
+      "mid": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Prone"
+      },
+      "high": {
+        "base_damage_value": 14,
+        "characteristic_damage_options": "R damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Prone; and can't stand (save ends)"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: You take half the damage the target takes."
+}

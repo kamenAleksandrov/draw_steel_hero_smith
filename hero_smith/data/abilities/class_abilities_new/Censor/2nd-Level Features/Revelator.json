@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "revelator",
+  "name": "Revelator",
+  "level": 2,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 5
+  },
+  "story_text": "You channel holy energy to harm unbelievers and reveal those hidden from your judgment.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": null,
+  "effect": "Each target takes holy damage equal to twice your Presence score. Additionally, each hidden target is automatically revealed and can't become hidden again until the start of your next turn. You can then use your Judgment ability against one target as a free triggered action.",
+  "special_effect": null
+}

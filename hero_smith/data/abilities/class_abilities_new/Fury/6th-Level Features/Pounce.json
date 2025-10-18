@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "pounce",
+  "name": "Pounce",
+  "level": 6,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 9
+  },
+  "story_text": "You strike at the target like the ultimate predator you are.",
+  "keywords": [
+    "Magic",
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Grabbed"
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Grabbed"
+      },
+      "high": {
+        "base_damage_value": 17,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Grabbed"
+      }
+    }
+  },
+  "effect": "You can shift up to 4 squares, bringing the target with you. While grabbed this way, the target takes damage equal to twice your Might score at the start of each of your turns.",
+  "special_effect": null
+}

@@ -1,0 +1,23 @@
+{
+  "type": "ability",
+  "id": "word_of_judgment",
+  "name": "Word of Judgment",
+  "level": 1,
+  "costs": null,
+  "story_text": "Your holy word saps an attacking enemy's strength.",
+  "keywords": [
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "The target would take damage from an ability that uses a power roll.",
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One ally",
+  "power_roll": null,
+  "effect": "The power roll takes a bane against the target.\n\nThe power roll has a double bane against the target.",
+  "special_effect": null
+}

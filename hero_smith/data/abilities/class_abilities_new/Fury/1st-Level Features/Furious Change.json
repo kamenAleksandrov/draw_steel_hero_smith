@@ -1,0 +1,22 @@
+{
+  "type": "ability",
+  "id": "furious_change",
+  "name": "Furious Change",
+  "level": 1,
+  "costs": null,
+  "story_text": "In your anger, you revert to a more bestial form.",
+  "keywords": [
+    "-"
+  ],
+  "action_type": "Triggered action",
+  "trigger_text": "You lose Stamina and are not dying.",
+  "range": {
+    "distance": "Self",
+    "area": null,
+    "range_value": null
+  },
+  "targets": "Self",
+  "power_roll": null,
+  "effect": "You gain temporary Stamina equal to your Might score and can enter your animal form or hybrid form.\n\nIf you are not dying, you can spend a Recovery.",
+  "special_effect": null
+}

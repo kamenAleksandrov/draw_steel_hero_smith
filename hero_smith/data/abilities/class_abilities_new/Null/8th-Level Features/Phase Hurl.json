@@ -1,0 +1,54 @@
+{
+  "type": "ability",
+  "id": "phase_hurl",
+  "name": "Phase Hurl",
+  "level": 8,
+  "costs": {
+    "resource": "Discipline",
+    "amount": 11
+  },
+  "story_text": "You throw your foe out of phase with this manifold, causing them to harm other enemies as they return.",
+  "keywords": [
+    "Melee",
+    "Psionic",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Agility",
+    "tiers": {
+      "low": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Dazed (save ends); push 5"
+      },
+      "mid": {
+        "base_damage_value": 13,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Dazed (save ends); push 7"
+      },
+      "high": {
+        "base_damage_value": 18,
+        "characteristic_damage_options": "A damage",
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Dazed (save ends); push 10"
+      }
+    }
+  },
+  "effect": "The target and each creature or object they collide with from this forced movement takes psychic damage equal to the total number of squares the target was force moved. While the target is dazed this way, they see glimpses of creatures from other parts of the timescape.",
+  "special_effect": null
+}

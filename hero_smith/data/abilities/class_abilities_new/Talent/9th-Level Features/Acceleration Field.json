@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "acceleration_field",
+  "name": "Acceleration Field",
+  "level": 9,
+  "costs": {
+    "resource": "Clarity",
+    "amount": 11
+  },
+  "story_text": "You forcibly stuff more moments into a critical point in time, knowing full well you might need to steal some of your own.",
+  "keywords": [
+    "Chronopathy",
+    "Psionic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 5
+  },
+  "targets": "Three allies",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 4,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 6,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 10,
+        "characteristic_damage_options": null,
+        "damage_types": "corruption",
+        "potencies": null,
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": "Each target can use any main action available to them as a free triggered action, but they lose their main action on their next turn.",
+  "special_effect": "Strained: Make a power roll that targets you and each enemy within distance."
+}

@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "your_allies_turn_on_you",
+  "name": "Your Allies Turn on You!",
+  "level": 8,
+  "costs": {
+    "resource": "Wrath",
+    "amount": 11
+  },
+  "story_text": "You turn your enemies' ire to the target.",
+  "keywords": [
+    "Ranged",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Presence",
+    "tiers": {
+      "low": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "I < WEAK",
+        "conditions": "Slowed (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 9,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "I < AVERAGE",
+        "conditions": "Slowed (save ends)"
+      },
+      "high": {
+        "base_damage_value": 12,
+        "characteristic_damage_options": "P damage",
+        "damage_types": null,
+        "potencies": "I < STRONG",
+        "conditions": "Slowed (save ends)"
+      }
+    }
+  },
+  "effect": "While the target is slowed this way, each of their allies who starts their turn within 5 squares of them must use a free maneuver to make a free strike against the target. Additionally, while the target is slowed this way, each of their allies within 5 squares of them who can make a triggered free strike against a different creature must make the free strike against the target instead.",
+  "special_effect": null
+}

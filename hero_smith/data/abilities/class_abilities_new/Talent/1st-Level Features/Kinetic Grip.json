@@ -1,0 +1,50 @@
+{
+  "type": "ability",
+  "id": "kinetic_grip",
+  "name": "Kinetic Grip",
+  "level": 1,
+  "costs": "signature",
+  "story_text": "You lift and hurl your foe away from you.",
+  "keywords": [
+    "Psionic",
+    "Ranged",
+    "Telekinesis"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": null,
+    "range_value": 10
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Reason",
+    "tiers": {
+      "low": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Slide 2 R"
+      },
+      "mid": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Slide 4 R"
+      },
+      "high": {
+        "base_damage_value": null,
+        "characteristic_damage_options": null,
+        "damage_types": null,
+        "potencies": null,
+        "conditions": "Prone; Slide 6 R"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": "Strained: You must vertical push the target instead of sliding them."
+}

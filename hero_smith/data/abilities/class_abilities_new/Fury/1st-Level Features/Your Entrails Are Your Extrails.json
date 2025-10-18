@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "your_entrails_are_your_extrails",
+  "name": "Your Entrails Are Your Extrails!",
+  "level": 1,
+  "costs": {
+    "resource": "Ferocity",
+    "amount": 3
+  },
+  "story_text": "Hard for them to fight when they're busy holding in their giblets.",
+  "keywords": [
+    "Melee",
+    "Strike",
+    "Weapon"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Melee",
+    "area": null,
+    "range_value": 1
+  },
+  "targets": "One creature or object",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Might",
+    "tiers": {
+      "low": {
+        "base_damage_value": 3,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < WEAK",
+        "conditions": "Bleeding (save ends)"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < AVERAGE",
+        "conditions": "Bleeding (save ends)"
+      },
+      "high": {
+        "base_damage_value": 8,
+        "characteristic_damage_options": "M damage",
+        "damage_types": null,
+        "potencies": "M < STRONG",
+        "conditions": "Bleeding (save ends)"
+      }
+    }
+  },
+  "effect": "While bleeding this way, the target takes damage equal to your Might score at the end of each of your turns.",
+  "special_effect": null
+}

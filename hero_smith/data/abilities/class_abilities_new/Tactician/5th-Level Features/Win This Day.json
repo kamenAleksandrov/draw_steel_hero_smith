@@ -1,0 +1,25 @@
+{
+  "type": "ability",
+  "id": "win_this_day",
+  "name": "Win This Day!",
+  "level": 5,
+  "costs": {
+    "resource": "Focus",
+    "amount": 9
+  },
+  "story_text": "You inspire your allies to recover and gather their strength.",
+  "keywords": [
+    "Area"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Burst",
+    "range_value": "3"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Each target gains 2 surges. Additionally, they can spend a Recovery, remove any conditions or effects on them, and stand up if they are prone.",
+  "special_effect": null
+}

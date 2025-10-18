@@ -1,0 +1,26 @@
+{
+  "type": "ability",
+  "id": "blessing_of_steel",
+  "name": "Blessing of Steel",
+  "level": 8,
+  "costs": {
+    "resource": "Piety",
+    "amount": 11
+  },
+  "story_text": "A protective aura defends your allies from harm.",
+  "keywords": [
+    "Area",
+    "Magic"
+  ],
+  "action_type": "Maneuver",
+  "trigger_text": null,
+  "range": {
+    "distance": "Self",
+    "area": "Aura",
+    "range_value": "5"
+  },
+  "targets": "Self and each ally in the area",
+  "power_roll": null,
+  "effect": "Until the end of the encounter, any ability roll made against a target takes a bane and each target has damage immunity 5.",
+  "special_effect": null
+}
