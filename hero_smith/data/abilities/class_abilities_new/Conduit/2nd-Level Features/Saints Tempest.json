@@ -1,0 +1,53 @@
+{
+  "type": "ability",
+  "id": "saint_s_tempest",
+  "name": "Saint's Tempest",
+  "level": 2,
+  "costs": {
+    "resource": "Piety",
+    "amount": 5
+  },
+  "story_text": "A raging storm appears, striking your foes with lightning and throwing them around with wind.",
+  "keywords": [
+    "Area",
+    "Magic",
+    "Ranged"
+  ],
+  "action_type": "Main action",
+  "trigger_text": null,
+  "range": {
+    "distance": "Ranged",
+    "area": "Cube",
+    "range_value": "3 within 10"
+  },
+  "targets": "Each enemy in the area",
+  "power_roll": {
+    "label": "Power roll",
+    "characteristics": "Intuition",
+    "tiers": {
+      "low": {
+        "base_damage_value": 2,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "vertical slide 1"
+      },
+      "mid": {
+        "base_damage_value": 5,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "vertical slide 2"
+      },
+      "high": {
+        "base_damage_value": 7,
+        "characteristic_damage_options": null,
+        "damage_types": "lightning",
+        "potencies": null,
+        "conditions": "vertical slide 3"
+      }
+    }
+  },
+  "effect": null,
+  "special_effect": null
+}

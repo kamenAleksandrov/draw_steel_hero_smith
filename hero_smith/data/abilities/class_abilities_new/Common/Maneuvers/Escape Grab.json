@@ -1,0 +1,20 @@
+{
+  "type": "ability",
+  "id": "escape_grab",
+  "name": "Escape Grab",
+  "level": null,
+  "costs": null,
+  "story_text": null,
+  "keywords": [],
+  "action_type": null,
+  "trigger_text": null,
+  "range": {
+    "distance": null,
+    "area": null,
+    "range_value": null
+  },
+  "targets": null,
+  "power_roll": null,
+  "effect": "A creature who is grabbed by another creature, an object, or an effect (see [Grab](#page-287-5) below) can attempt to escape by using the following ability.\n\nSee [Conditions](#page-91-2) in [Chapter 5: Classes](#page-83-2) for information on the grabbed condition.",
+  "special_effect": null
+}
