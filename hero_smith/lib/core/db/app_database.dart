@@ -25,7 +25,8 @@ class Components extends Table {
 class Heroes extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
-  TextColumn get classComponentId => text().nullable().references(Components, #id)();
+  TextColumn get classComponentId =>
+      text().nullable().references(Components, #id)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   @override
@@ -87,7 +88,8 @@ class AppDatabase extends _$AppDatabase {
     String? parentId,
     DateTime? createdAtOverride,
   }) async {
-    final existing = await (select(components)..where((c) => c.id.equals(id))).getSingleOrNull();
+    final existing = await (select(components)..where((c) => c.id.equals(id)))
+        .getSingleOrNull();
     final now = DateTime.now();
     await into(components).insert(
       ComponentsCompanion.insert(
@@ -106,25 +108,32 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<Component>> getAllComponents() => select(components).get();
   Stream<List<Component>> watchAllComponents() => select(components).watch();
-  Stream<List<Component>> watchComponentsByType(String type) => (select(components)..where((c) => c.type.equals(type))).watch();
+  Stream<List<Component>> watchComponentsByType(String type) =>
+      (select(components)..where((c) => c.type.equals(type))).watch();
 
   Future<bool> deleteComponent(String id) async {
-    final count = await (delete(components)..where((c) => c.id.equals(id))).go();
+    final count =
+        await (delete(components)..where((c) => c.id.equals(id))).go();
     return count > 0;
   }
 
   // --- Meta helpers (simple key-value store) ---
   Future<String?> getMeta(String key) async {
-    final row = await (select(metaEntries)..where((t) => t.key.equals(key))).getSingleOrNull();
+    final row = await (select(metaEntries)..where((t) => t.key.equals(key)))
+        .getSingleOrNull();
     return row?.value;
   }
 
   Future<void> setMeta(String key, String value) async {
-    final existing = await (select(metaEntries)..where((t) => t.key.equals(key))).getSingleOrNull();
+    final existing = await (select(metaEntries)
+          ..where((t) => t.key.equals(key)))
+        .getSingleOrNull();
     if (existing == null) {
-      await into(metaEntries).insert(MetaEntriesCompanion.insert(key: key, value: value));
+      await into(metaEntries)
+          .insert(MetaEntriesCompanion.insert(key: key, value: value));
     } else {
-      await (update(metaEntries)..where((t) => t.key.equals(key))).write(MetaEntriesCompanion(value: Value(value)));
+      await (update(metaEntries)..where((t) => t.key.equals(key)))
+          .write(MetaEntriesCompanion(value: Value(value)));
     }
   }
 
@@ -177,7 +186,10 @@ class AppDatabase extends _$AppDatabase {
   }) async {
     // Avoid duplicate rows for the same hero+component+category
     final exists = await (select(heroComponents)
-          ..where((t) => t.heroId.equals(heroId) & t.componentId.equals(componentId) & t.category.equals(category)))
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.componentId.equals(componentId) &
+              t.category.equals(category)))
         .getSingleOrNull();
     if (exists != null) return;
     await into(heroComponents).insert(HeroComponentsCompanion.insert(
@@ -232,8 +244,13 @@ class AppDatabase extends _$AppDatabase {
     return (select(heroValues)..where((t) => t.heroId.equals(heroId))).get();
   }
 
+  Stream<List<HeroValue>> watchHeroValues(String heroId) {
+    return (select(heroValues)..where((t) => t.heroId.equals(heroId))).watch();
+  }
+
   Future<List<HeroComponent>> getHeroComponents(String heroId) {
-    return (select(heroComponents)..where((t) => t.heroId.equals(heroId))).get();
+    return (select(heroComponents)..where((t) => t.heroId.equals(heroId)))
+        .get();
   }
 
   /// Replace all components for a hero in a given category with the provided component IDs.
@@ -244,7 +261,8 @@ class AppDatabase extends _$AppDatabase {
   }) async {
     await transaction(() async {
       final existing = await (select(heroComponents)
-            ..where((t) => t.heroId.equals(heroId) & t.category.equals(category)))
+            ..where(
+                (t) => t.heroId.equals(heroId) & t.category.equals(category)))
           .get();
       final existingIds = existing.map((e) => e.componentId).toSet();
       final desired = componentIds.toSet();
@@ -252,7 +270,10 @@ class AppDatabase extends _$AppDatabase {
       final toRemove = existingIds.difference(desired);
       if (toRemove.isNotEmpty) {
         await (delete(heroComponents)
-              ..where((t) => t.heroId.equals(heroId) & t.category.equals(category) & t.componentId.isIn(toRemove.toList())))
+              ..where((t) =>
+                  t.heroId.equals(heroId) &
+                  t.category.equals(category) &
+                  t.componentId.isIn(toRemove.toList())))
             .go();
       }
       for (final compId in toAdd) {
@@ -268,7 +289,8 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deleteHero(String heroId) async {
     await transaction(() async {
       await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();
-      await (delete(heroComponents)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroComponents)..where((t) => t.heroId.equals(heroId)))
+          .go();
       await (delete(heroes)..where((t) => t.id.equals(heroId))).go();
     });
   }

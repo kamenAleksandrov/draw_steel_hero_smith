@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/db/providers.dart';
 import '../../../core/models/abilities_models.dart';
 import '../../../core/models/class_data.dart';
 import '../../../core/models/perks_models.dart';
@@ -16,14 +18,16 @@ import '../widgets/strife_creator/level_selector_widget.dart';
 import '../widgets/strife_creator/starting_characteristics_widget.dart';
 
 /// Demo page for the new Strife Creator (Level, Class, and Starting Characteristics)
-class StrifeCreatorPage extends StatefulWidget {
-  const StrifeCreatorPage({super.key});
+class StrifeCreatorPage extends ConsumerStatefulWidget {
+  const StrifeCreatorPage({super.key, required this.heroId});
+
+  final String heroId;
 
   @override
-  State<StrifeCreatorPage> createState() => _StrifeCreatorPageState();
+  ConsumerState<StrifeCreatorPage> createState() => _StrifeCreatorPageState();
 }
 
-class _StrifeCreatorPageState extends State<StrifeCreatorPage> {
+class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   final ClassDataService _classDataService = ClassDataService();
 
   bool _isLoading = true;
@@ -152,19 +156,58 @@ class _StrifeCreatorPageState extends State<StrifeCreatorPage> {
     return true;
   }
 
-  void _handleSave() {
+  Future<void> _handleSave() async {
     if (!_validateSelections()) return;
 
-    // TODO: Implement actual save logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Saved: Level $_selectedLevel ${_selectedClass!.name}\n'
-          'Characteristics: ${_assignedCharacteristics.entries.map((e) => '${e.key}: ${e.value}').join(', ')}',
+    final repo = ref.read(heroRepositoryProvider);
+    
+    try {
+      // Save level
+      await repo.updateMainStats(
+        widget.heroId,
+        level: _selectedLevel,
+      );
+
+      // Save characteristics (base values directly to DB)
+      final updates = <Future>[];
+      
+      _assignedCharacteristics.forEach((characteristic, value) {
+        // Determine which DB key to use based on characteristic name
+        final charLower = characteristic.toLowerCase();
+        if (charLower == 'might' || charLower == 'agility' || 
+            charLower == 'reason' || charLower == 'intuition' || 
+            charLower == 'presence') {
+          // Save base characteristic value directly
+          updates.add(
+            repo.setCharacteristicBase(widget.heroId, characteristic: charLower, value: value),
+          );
+        }
+      });
+      
+      await Future.wait(updates);
+
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Saved: Level $_selectedLevel ${_selectedClass!.name}\n'
+            'Characteristics saved successfully',
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
         ),
-        duration: const Duration(seconds: 3),
-      ),
-    );
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save: $e'),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

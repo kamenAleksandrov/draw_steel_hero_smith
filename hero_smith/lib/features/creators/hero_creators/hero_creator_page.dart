@@ -245,6 +245,6 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
   @override
   Widget build(BuildContext context) {
     // TODO: Integrate Strife creator state changes with dirty tracking.
-    return const StrifeCreatorPage();
+    return StrifeCreatorPage(heroId: widget.heroId);
   }
 }

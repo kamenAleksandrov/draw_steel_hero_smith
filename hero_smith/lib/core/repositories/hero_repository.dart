@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 
 import '../db/app_database.dart' as db;
 import '../models/hero_model.dart';
+import '../models/hero_mod_keys.dart';
 
 class HeroSummary {
   final String id;
@@ -25,6 +26,90 @@ class HeroSummary {
   });
 }
 
+class HeroMainStats {
+  final int victories;
+  final int exp;
+  final int level;
+
+  final int wealthBase;
+  final int renownBase;
+
+  final int mightBase;
+  final int agilityBase;
+  final int reasonBase;
+  final int intuitionBase;
+  final int presenceBase;
+
+  final int sizeBase;
+  final int speedBase;
+  final int disengageBase;
+  final int stabilityBase;
+
+  final int staminaCurrent;
+  final int staminaMaxBase;
+  final int staminaTemp;
+
+  final int recoveriesCurrent;
+  final int recoveriesMaxBase;
+
+  final int surgesCurrent;
+
+  final String? classId;
+  final String? heroicResourceName;
+  final int heroicResourceCurrent;
+
+  final Map<String, int> modifications;
+
+  const HeroMainStats({
+    required this.victories,
+    required this.exp,
+    required this.level,
+    required this.wealthBase,
+    required this.renownBase,
+    required this.mightBase,
+    required this.agilityBase,
+    required this.reasonBase,
+    required this.intuitionBase,
+    required this.presenceBase,
+    required this.sizeBase,
+    required this.speedBase,
+    required this.disengageBase,
+    required this.stabilityBase,
+    required this.staminaCurrent,
+    required this.staminaMaxBase,
+    required this.staminaTemp,
+    required this.recoveriesCurrent,
+    required this.recoveriesMaxBase,
+    required this.surgesCurrent,
+    required this.classId,
+    required this.heroicResourceName,
+    required this.heroicResourceCurrent,
+    required this.modifications,
+  });
+
+  int modValue(String key) => modifications[key] ?? 0;
+
+  int get wealthTotal => wealthBase + modValue(HeroModKeys.wealth);
+  int get renownTotal => renownBase + modValue(HeroModKeys.renown);
+
+  int get mightTotal => mightBase + modValue(HeroModKeys.might);
+  int get agilityTotal => agilityBase + modValue(HeroModKeys.agility);
+  int get reasonTotal => reasonBase + modValue(HeroModKeys.reason);
+  int get intuitionTotal => intuitionBase + modValue(HeroModKeys.intuition);
+  int get presenceTotal => presenceBase + modValue(HeroModKeys.presence);
+
+  int get sizeTotal => sizeBase + modValue(HeroModKeys.size);
+  int get speedTotal => speedBase + modValue(HeroModKeys.speed);
+  int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage);
+  int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability);
+
+  int get staminaMaxEffective =>
+      staminaMaxBase + modValue(HeroModKeys.staminaMax);
+  int get recoveriesMaxEffective =>
+      recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax);
+  int get surgesTotal => surgesCurrent + modValue(HeroModKeys.surges);
+}
+
 class HeroRepository {
   HeroRepository(this._db);
   final db.AppDatabase _db;
@@ -39,6 +124,199 @@ class HeroRepository {
   Future<List<db.Heroe>> getAllHeroes() => _db.getAllHeroes();
 
   Future<void> deleteHero(String heroId) => _db.deleteHero(heroId);
+
+  Stream<HeroMainStats> watchMainStats(String heroId) async* {
+    yield await fetchMainStats(heroId);
+    yield* _db.watchHeroValues(heroId).map(_mapValuesToMainStats);
+  }
+
+  Future<HeroMainStats> fetchMainStats(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    return _mapValuesToMainStats(values);
+  }
+
+  Future<void> updateMainStats(
+    String heroId, {
+    int? victories,
+    int? exp,
+    int? level,
+    int? wealth,
+    int? renown,
+  }) async {
+    Future<void> setInt(String key, int? value) async {
+      if (value == null) return;
+      await _db.upsertHeroValue(heroId: heroId, key: key, value: value);
+    }
+
+    await Future.wait([
+      setInt(_k.victories, victories),
+      setInt(_k.exp, exp),
+      setInt(_k.level, level),
+      setInt(_k.wealth, wealth),
+      setInt(_k.renown, renown),
+    ]);
+  }
+
+  Future<void> setModification(
+    String heroId, {
+    required String key,
+    required int value,
+  }) async {
+    final values = await _db.getHeroValues(heroId);
+    final current = Map<String, int>.from(_extractModifications(values));
+    if (value == 0) {
+      current.remove(key);
+    } else {
+      current[key] = value;
+    }
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.modifications,
+      jsonMap: current,
+    );
+  }
+
+  Future<void> updateVitals(
+    String heroId, {
+    int? staminaCurrent,
+    int? staminaMax,
+    int? staminaTemp,
+    int? windedValue,
+    int? dyingValue,
+    int? recoveriesCurrent,
+    int? recoveriesMax,
+    int? surgesCurrent,
+    int? heroicResourceCurrent,
+  }) async {
+    Future<void> setInt(String key, int? value) async {
+      if (value == null) return;
+      await _db.upsertHeroValue(heroId: heroId, key: key, value: value);
+    }
+
+    await Future.wait([
+      setInt(_k.staminaCurrent, staminaCurrent),
+      setInt(_k.staminaMax, staminaMax),
+      setInt(_k.staminaTemp, staminaTemp),
+      setInt(_k.windedValue, windedValue),
+      setInt(_k.dyingValue, dyingValue),
+      setInt(_k.recoveriesCurrent, recoveriesCurrent),
+      setInt(_k.recoveriesMax, recoveriesMax),
+      setInt(_k.surgesCurrent, surgesCurrent),
+      setInt(_k.heroicResourceCurrent, heroicResourceCurrent),
+    ]);
+  }
+
+  Future<void> updateHeroicResourceName(String heroId, String? name) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.heroicResource,
+      textValue: name,
+    );
+  }
+
+  Future<void> setCharacteristicBase(
+    String heroId, {
+    required String characteristic,
+    required int value,
+  }) async {
+    String key;
+    switch (characteristic.toLowerCase()) {
+      case 'might':
+        key = _k.might;
+        break;
+      case 'agility':
+        key = _k.agility;
+        break;
+      case 'reason':
+        key = _k.reason;
+        break;
+      case 'intuition':
+        key = _k.intuition;
+        break;
+      case 'presence':
+        key = _k.presence;
+        break;
+      default:
+        throw ArgumentError('Unknown characteristic: $characteristic');
+    }
+    
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: key,
+      value: value,
+    );
+  }
+
+  HeroMainStats _mapValuesToMainStats(List<db.HeroValue> values) {
+    int readInt(String key, {int defaultValue = 0}) {
+      final v = values.firstWhereOrNull((e) => e.key == key);
+      if (v == null) return defaultValue;
+      return v.value ?? int.tryParse(v.textValue ?? '') ?? defaultValue;
+    }
+
+    String? readText(String key) {
+      final v = values.firstWhereOrNull((e) => e.key == key);
+      return v?.textValue;
+    }
+
+    final modifications = _extractModifications(values);
+
+    final classId = readText(_k.className);
+
+    return HeroMainStats(
+      victories: readInt(_k.victories),
+      exp: readInt(_k.exp),
+      level: readInt(_k.level, defaultValue: 1),
+      wealthBase: readInt(_k.wealth),
+      renownBase: readInt(_k.renown),
+      mightBase: readInt(_k.might),
+      agilityBase: readInt(_k.agility),
+      reasonBase: readInt(_k.reason),
+      intuitionBase: readInt(_k.intuition),
+      presenceBase: readInt(_k.presence),
+      sizeBase: readInt(_k.size),
+      speedBase: readInt(_k.speed),
+      disengageBase: readInt(_k.disengage),
+      stabilityBase: readInt(_k.stability),
+      staminaCurrent: readInt(_k.staminaCurrent),
+      staminaMaxBase: readInt(_k.staminaMax),
+      staminaTemp: readInt(_k.staminaTemp),
+      recoveriesCurrent: readInt(_k.recoveriesCurrent),
+      recoveriesMaxBase: readInt(_k.recoveriesMax),
+      surgesCurrent: readInt(_k.surgesCurrent),
+      classId: classId,
+      heroicResourceName: readText(_k.heroicResource),
+      heroicResourceCurrent: readInt(_k.heroicResourceCurrent),
+      modifications: modifications,
+    );
+  }
+
+  Map<String, int> _extractModifications(List<db.HeroValue> values) {
+    final entry = values.firstWhereOrNull((e) => e.key == _k.modifications);
+    if (entry == null) return const {};
+    final raw = entry.jsonValue ?? entry.textValue;
+    if (raw == null || raw.isEmpty) return const {};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        final map = <String, int>{};
+        decoded.forEach((key, value) {
+          map[key.toString()] = _toInt(value) ?? 0;
+        });
+        return Map.unmodifiable(map);
+      }
+    } catch (_) {}
+    return const {};
+  }
+
+  int? _toInt(dynamic value) {
+    return switch (value) {
+      int v => v,
+      double d => d.round(),
+      String s => int.tryParse(s),
+      _ => null,
+    };
+  }
 
   // Lightweight projection for list screens
   Stream<List<HeroSummary>> watchSummaries() async* {

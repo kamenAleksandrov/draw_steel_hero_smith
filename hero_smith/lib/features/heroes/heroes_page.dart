@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
 import '../../core/theme/hero_theme.dart';
 import '../creators/hero_creators/hero_creator_page.dart';
+import 'hero_sheet/hero_sheet_page.dart';
 // import '../creators/hero_creators/strife_creator_page.dart';
 // OutlinedButton.icon(
 //             onPressed: () {
@@ -168,35 +169,56 @@ class HeroesPage extends ConsumerWidget {
         ),
         subtitle: subtitleParts.isNotEmpty 
           ? Text(
-              subtitleParts.join(' â€¢ '),
+              subtitleParts.join(' • '),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             )
           : null,
-        trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert),
-          onSelected: (value) async {
-            if (value == 'delete') {
-              await _deleteHero(context, ref, hero);
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete_outline, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Delete'),
-                ],
-              ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              tooltip: 'Edit Hero',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => HeroCreatorPage(heroId: hero.id),
+                  ),
+                );
+              },
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (value) async {
+                if (value == 'delete') {
+                  await _deleteHero(context, ref, hero);
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Delete'),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: hero.id)),
+            MaterialPageRoute(
+              builder: (_) => HeroSheetPage(
+                heroId: hero.id,
+                heroName: hero.name,
+              ),
+            ),
           );
         },
       ),
@@ -324,3 +346,4 @@ class HeroesPage extends ConsumerWidget {
     }
   }
 }
+
