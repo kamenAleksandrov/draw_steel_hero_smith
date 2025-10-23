@@ -737,313 +737,6 @@ class HeroesCompanion extends UpdateCompanion<Heroe> {
   }
 }
 
-class $HeroComponentsTable extends HeroComponents
-    with TableInfo<$HeroComponentsTable, HeroComponent> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HeroComponentsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _autoIdMeta = const VerificationMeta('autoId');
-  @override
-  late final GeneratedColumn<int> autoId = GeneratedColumn<int>(
-      'auto_id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
-  @override
-  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
-      'hero_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
-  static const VerificationMeta _componentIdMeta =
-      const VerificationMeta('componentId');
-  @override
-  late final GeneratedColumn<String> componentId = GeneratedColumn<String>(
-      'component_id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('REFERENCES components (id)'));
-  static const VerificationMeta _categoryMeta =
-      const VerificationMeta('category');
-  @override
-  late final GeneratedColumn<String> category = GeneratedColumn<String>(
-      'category', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant('generic'));
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: currentDateAndTime);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [autoId, heroId, componentId, category, createdAt];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'hero_components';
-  @override
-  VerificationContext validateIntegrity(Insertable<HeroComponent> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('auto_id')) {
-      context.handle(_autoIdMeta,
-          autoId.isAcceptableOrUnknown(data['auto_id']!, _autoIdMeta));
-    }
-    if (data.containsKey('hero_id')) {
-      context.handle(_heroIdMeta,
-          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
-    } else if (isInserting) {
-      context.missing(_heroIdMeta);
-    }
-    if (data.containsKey('component_id')) {
-      context.handle(
-          _componentIdMeta,
-          componentId.isAcceptableOrUnknown(
-              data['component_id']!, _componentIdMeta));
-    } else if (isInserting) {
-      context.missing(_componentIdMeta);
-    }
-    if (data.containsKey('category')) {
-      context.handle(_categoryMeta,
-          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {autoId};
-  @override
-  HeroComponent map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return HeroComponent(
-      autoId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}auto_id'])!,
-      heroId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
-      componentId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}component_id'])!,
-      category: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
-    );
-  }
-
-  @override
-  $HeroComponentsTable createAlias(String alias) {
-    return $HeroComponentsTable(attachedDatabase, alias);
-  }
-}
-
-class HeroComponent extends DataClass implements Insertable<HeroComponent> {
-  final int autoId;
-  final String heroId;
-  final String componentId;
-  final String category;
-  final DateTime createdAt;
-  const HeroComponent(
-      {required this.autoId,
-      required this.heroId,
-      required this.componentId,
-      required this.category,
-      required this.createdAt});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['auto_id'] = Variable<int>(autoId);
-    map['hero_id'] = Variable<String>(heroId);
-    map['component_id'] = Variable<String>(componentId);
-    map['category'] = Variable<String>(category);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    return map;
-  }
-
-  HeroComponentsCompanion toCompanion(bool nullToAbsent) {
-    return HeroComponentsCompanion(
-      autoId: Value(autoId),
-      heroId: Value(heroId),
-      componentId: Value(componentId),
-      category: Value(category),
-      createdAt: Value(createdAt),
-    );
-  }
-
-  factory HeroComponent.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return HeroComponent(
-      autoId: serializer.fromJson<int>(json['autoId']),
-      heroId: serializer.fromJson<String>(json['heroId']),
-      componentId: serializer.fromJson<String>(json['componentId']),
-      category: serializer.fromJson<String>(json['category']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'autoId': serializer.toJson<int>(autoId),
-      'heroId': serializer.toJson<String>(heroId),
-      'componentId': serializer.toJson<String>(componentId),
-      'category': serializer.toJson<String>(category),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-    };
-  }
-
-  HeroComponent copyWith(
-          {int? autoId,
-          String? heroId,
-          String? componentId,
-          String? category,
-          DateTime? createdAt}) =>
-      HeroComponent(
-        autoId: autoId ?? this.autoId,
-        heroId: heroId ?? this.heroId,
-        componentId: componentId ?? this.componentId,
-        category: category ?? this.category,
-        createdAt: createdAt ?? this.createdAt,
-      );
-  HeroComponent copyWithCompanion(HeroComponentsCompanion data) {
-    return HeroComponent(
-      autoId: data.autoId.present ? data.autoId.value : this.autoId,
-      heroId: data.heroId.present ? data.heroId.value : this.heroId,
-      componentId:
-          data.componentId.present ? data.componentId.value : this.componentId,
-      category: data.category.present ? data.category.value : this.category,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HeroComponent(')
-          ..write('autoId: $autoId, ')
-          ..write('heroId: $heroId, ')
-          ..write('componentId: $componentId, ')
-          ..write('category: $category, ')
-          ..write('createdAt: $createdAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(autoId, heroId, componentId, category, createdAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is HeroComponent &&
-          other.autoId == this.autoId &&
-          other.heroId == this.heroId &&
-          other.componentId == this.componentId &&
-          other.category == this.category &&
-          other.createdAt == this.createdAt);
-}
-
-class HeroComponentsCompanion extends UpdateCompanion<HeroComponent> {
-  final Value<int> autoId;
-  final Value<String> heroId;
-  final Value<String> componentId;
-  final Value<String> category;
-  final Value<DateTime> createdAt;
-  const HeroComponentsCompanion({
-    this.autoId = const Value.absent(),
-    this.heroId = const Value.absent(),
-    this.componentId = const Value.absent(),
-    this.category = const Value.absent(),
-    this.createdAt = const Value.absent(),
-  });
-  HeroComponentsCompanion.insert({
-    this.autoId = const Value.absent(),
-    required String heroId,
-    required String componentId,
-    this.category = const Value.absent(),
-    this.createdAt = const Value.absent(),
-  })  : heroId = Value(heroId),
-        componentId = Value(componentId);
-  static Insertable<HeroComponent> custom({
-    Expression<int>? autoId,
-    Expression<String>? heroId,
-    Expression<String>? componentId,
-    Expression<String>? category,
-    Expression<DateTime>? createdAt,
-  }) {
-    return RawValuesInsertable({
-      if (autoId != null) 'auto_id': autoId,
-      if (heroId != null) 'hero_id': heroId,
-      if (componentId != null) 'component_id': componentId,
-      if (category != null) 'category': category,
-      if (createdAt != null) 'created_at': createdAt,
-    });
-  }
-
-  HeroComponentsCompanion copyWith(
-      {Value<int>? autoId,
-      Value<String>? heroId,
-      Value<String>? componentId,
-      Value<String>? category,
-      Value<DateTime>? createdAt}) {
-    return HeroComponentsCompanion(
-      autoId: autoId ?? this.autoId,
-      heroId: heroId ?? this.heroId,
-      componentId: componentId ?? this.componentId,
-      category: category ?? this.category,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (autoId.present) {
-      map['auto_id'] = Variable<int>(autoId.value);
-    }
-    if (heroId.present) {
-      map['hero_id'] = Variable<String>(heroId.value);
-    }
-    if (componentId.present) {
-      map['component_id'] = Variable<String>(componentId.value);
-    }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HeroComponentsCompanion(')
-          ..write('autoId: $autoId, ')
-          ..write('heroId: $heroId, ')
-          ..write('componentId: $componentId, ')
-          ..write('category: $category, ')
-          ..write('createdAt: $createdAt')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $HeroValuesTable extends HeroValues
     with TableInfo<$HeroValuesTable, HeroValue> {
   @override
@@ -1702,7 +1395,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ComponentsTable components = $ComponentsTable(this);
   late final $HeroesTable heroes = $HeroesTable(this);
-  late final $HeroComponentsTable heroComponents = $HeroComponentsTable(this);
   late final $HeroValuesTable heroValues = $HeroValuesTable(this);
   late final $MetaEntriesTable metaEntries = $MetaEntriesTable(this);
   @override
@@ -1710,7 +1402,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [components, heroes, heroComponents, heroValues, metaEntries];
+      [components, heroes, heroValues, metaEntries];
 }
 
 typedef $$ComponentsTableCreateCompanionBuilder = ComponentsCompanion Function({
@@ -1766,21 +1458,6 @@ final class $$ComponentsTableReferences
         (f) => f.classComponentId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_heroesRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
-  }
-
-  static MultiTypedResultKey<$HeroComponentsTable, List<HeroComponent>>
-      _heroComponentsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.heroComponents,
-              aliasName: $_aliasNameGenerator(
-                  db.components.id, db.heroComponents.componentId));
-
-  $$HeroComponentsTableProcessedTableManager get heroComponentsRefs {
-    final manager = $$HeroComponentsTableTableManager($_db, $_db.heroComponents)
-        .filter((f) => f.componentId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_heroComponentsRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -1849,27 +1526,6 @@ class $$ComponentsTableFilterComposer
             $$HeroesTableFilterComposer(
               $db: $db,
               $table: $db.heroes,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
-  Expression<bool> heroComponentsRefs(
-      Expression<bool> Function($$HeroComponentsTableFilterComposer f) f) {
-    final $$HeroComponentsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.heroComponents,
-        getReferencedColumn: (t) => t.componentId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroComponentsTableFilterComposer(
-              $db: $db,
-              $table: $db.heroComponents,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -2000,27 +1656,6 @@ class $$ComponentsTableAnnotationComposer
             ));
     return f(composer);
   }
-
-  Expression<T> heroComponentsRefs<T extends Object>(
-      Expression<T> Function($$HeroComponentsTableAnnotationComposer a) f) {
-    final $$HeroComponentsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.heroComponents,
-        getReferencedColumn: (t) => t.componentId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroComponentsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.heroComponents,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
 }
 
 class $$ComponentsTableTableManager extends RootTableManager<
@@ -2034,8 +1669,7 @@ class $$ComponentsTableTableManager extends RootTableManager<
     $$ComponentsTableUpdateCompanionBuilder,
     (Component, $$ComponentsTableReferences),
     Component,
-    PrefetchHooks Function(
-        {bool parentId, bool heroesRefs, bool heroComponentsRefs})> {
+    PrefetchHooks Function({bool parentId, bool heroesRefs})> {
   $$ComponentsTableTableManager(_$AppDatabase db, $ComponentsTable table)
       : super(TableManagerState(
           db: db,
@@ -2096,16 +1730,10 @@ class $$ComponentsTableTableManager extends RootTableManager<
                     $$ComponentsTableReferences(db, table, e)
                   ))
               .toList(),
-          prefetchHooksCallback: (
-              {parentId = false,
-              heroesRefs = false,
-              heroComponentsRefs = false}) {
+          prefetchHooksCallback: ({parentId = false, heroesRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [
-                if (heroesRefs) db.heroes,
-                if (heroComponentsRefs) db.heroComponents
-              ],
+              explicitlyWatchedTables: [if (heroesRefs) db.heroes],
               addJoins: <
                   T extends TableManagerState<
                       dynamic,
@@ -2146,19 +1774,6 @@ class $$ComponentsTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem:
                             (item, referencedItems) => referencedItems
                                 .where((e) => e.classComponentId == item.id),
-                        typedResults: items),
-                  if (heroComponentsRefs)
-                    await $_getPrefetchedData<Component, $ComponentsTable,
-                            HeroComponent>(
-                        currentTable: table,
-                        referencedTable: $$ComponentsTableReferences
-                            ._heroComponentsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$ComponentsTableReferences(db, table, p0)
-                                .heroComponentsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.componentId == item.id),
                         typedResults: items)
                 ];
               },
@@ -2178,8 +1793,7 @@ typedef $$ComponentsTableProcessedTableManager = ProcessedTableManager<
     $$ComponentsTableUpdateCompanionBuilder,
     (Component, $$ComponentsTableReferences),
     Component,
-    PrefetchHooks Function(
-        {bool parentId, bool heroesRefs, bool heroComponentsRefs})>;
+    PrefetchHooks Function({bool parentId, bool heroesRefs})>;
 typedef $$HeroesTableCreateCompanionBuilder = HeroesCompanion Function({
   required String id,
   required String name,
@@ -2214,21 +1828,6 @@ final class $$HeroesTableReferences
     if (item == null) return manager;
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: [item]));
-  }
-
-  static MultiTypedResultKey<$HeroComponentsTable, List<HeroComponent>>
-      _heroComponentsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.heroComponents,
-              aliasName:
-                  $_aliasNameGenerator(db.heroes.id, db.heroComponents.heroId));
-
-  $$HeroComponentsTableProcessedTableManager get heroComponentsRefs {
-    final manager = $$HeroComponentsTableTableManager($_db, $_db.heroComponents)
-        .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_heroComponentsRefsTable($_db));
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
   }
 
   static MultiTypedResultKey<$HeroValuesTable, List<HeroValue>>
@@ -2285,27 +1884,6 @@ class $$HeroesTableFilterComposer
                   $removeJoinBuilderFromRootComposer,
             ));
     return composer;
-  }
-
-  Expression<bool> heroComponentsRefs(
-      Expression<bool> Function($$HeroComponentsTableFilterComposer f) f) {
-    final $$HeroComponentsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.heroComponents,
-        getReferencedColumn: (t) => t.heroId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroComponentsTableFilterComposer(
-              $db: $db,
-              $table: $db.heroComponents,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
   }
 
   Expression<bool> heroValuesRefs(
@@ -2413,27 +1991,6 @@ class $$HeroesTableAnnotationComposer
     return composer;
   }
 
-  Expression<T> heroComponentsRefs<T extends Object>(
-      Expression<T> Function($$HeroComponentsTableAnnotationComposer a) f) {
-    final $$HeroComponentsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.heroComponents,
-        getReferencedColumn: (t) => t.heroId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroComponentsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.heroComponents,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return f(composer);
-  }
-
   Expression<T> heroValuesRefs<T extends Object>(
       Expression<T> Function($$HeroValuesTableAnnotationComposer a) f) {
     final $$HeroValuesTableAnnotationComposer composer = $composerBuilder(
@@ -2467,10 +2024,7 @@ class $$HeroesTableTableManager extends RootTableManager<
     $$HeroesTableUpdateCompanionBuilder,
     (Heroe, $$HeroesTableReferences),
     Heroe,
-    PrefetchHooks Function(
-        {bool classComponentId,
-        bool heroComponentsRefs,
-        bool heroValuesRefs})> {
+    PrefetchHooks Function({bool classComponentId, bool heroValuesRefs})> {
   $$HeroesTableTableManager(_$AppDatabase db, $HeroesTable table)
       : super(TableManagerState(
           db: db,
@@ -2518,15 +2072,10 @@ class $$HeroesTableTableManager extends RootTableManager<
                   (e.readTable(table), $$HeroesTableReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: (
-              {classComponentId = false,
-              heroComponentsRefs = false,
-              heroValuesRefs = false}) {
+              {classComponentId = false, heroValuesRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [
-                if (heroComponentsRefs) db.heroComponents,
-                if (heroValuesRefs) db.heroValues
-              ],
+              explicitlyWatchedTables: [if (heroValuesRefs) db.heroValues],
               addJoins: <
                   T extends TableManagerState<
                       dynamic,
@@ -2555,19 +2104,6 @@ class $$HeroesTableTableManager extends RootTableManager<
               },
               getPrefetchedDataCallback: (items) async {
                 return [
-                  if (heroComponentsRefs)
-                    await $_getPrefetchedData<Heroe, $HeroesTable,
-                            HeroComponent>(
-                        currentTable: table,
-                        referencedTable: $$HeroesTableReferences
-                            ._heroComponentsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$HeroesTableReferences(db, table, p0)
-                                .heroComponentsRefs,
-                        referencedItemsForCurrentItem: (item,
-                                referencedItems) =>
-                            referencedItems.where((e) => e.heroId == item.id),
-                        typedResults: items),
                   if (heroValuesRefs)
                     await $_getPrefetchedData<Heroe, $HeroesTable, HeroValue>(
                         currentTable: table,
@@ -2598,355 +2134,7 @@ typedef $$HeroesTableProcessedTableManager = ProcessedTableManager<
     $$HeroesTableUpdateCompanionBuilder,
     (Heroe, $$HeroesTableReferences),
     Heroe,
-    PrefetchHooks Function(
-        {bool classComponentId, bool heroComponentsRefs, bool heroValuesRefs})>;
-typedef $$HeroComponentsTableCreateCompanionBuilder = HeroComponentsCompanion
-    Function({
-  Value<int> autoId,
-  required String heroId,
-  required String componentId,
-  Value<String> category,
-  Value<DateTime> createdAt,
-});
-typedef $$HeroComponentsTableUpdateCompanionBuilder = HeroComponentsCompanion
-    Function({
-  Value<int> autoId,
-  Value<String> heroId,
-  Value<String> componentId,
-  Value<String> category,
-  Value<DateTime> createdAt,
-});
-
-final class $$HeroComponentsTableReferences
-    extends BaseReferences<_$AppDatabase, $HeroComponentsTable, HeroComponent> {
-  $$HeroComponentsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
-
-  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes.createAlias(
-      $_aliasNameGenerator(db.heroComponents.heroId, db.heroes.id));
-
-  $$HeroesTableProcessedTableManager get heroId {
-    final $_column = $_itemColumn<String>('hero_id')!;
-
-    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
-        .filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-
-  static $ComponentsTable _componentIdTable(_$AppDatabase db) =>
-      db.components.createAlias($_aliasNameGenerator(
-          db.heroComponents.componentId, db.components.id));
-
-  $$ComponentsTableProcessedTableManager get componentId {
-    final $_column = $_itemColumn<String>('component_id')!;
-
-    final manager = $$ComponentsTableTableManager($_db, $_db.components)
-        .filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_componentIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
-  }
-}
-
-class $$HeroComponentsTableFilterComposer
-    extends Composer<_$AppDatabase, $HeroComponentsTable> {
-  $$HeroComponentsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get autoId => $composableBuilder(
-      column: $table.autoId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get category => $composableBuilder(
-      column: $table.category, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnFilters(column));
-
-  $$HeroesTableFilterComposer get heroId {
-    final $$HeroesTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.heroId,
-        referencedTable: $db.heroes,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroesTableFilterComposer(
-              $db: $db,
-              $table: $db.heroes,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-
-  $$ComponentsTableFilterComposer get componentId {
-    final $$ComponentsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.componentId,
-        referencedTable: $db.components,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$ComponentsTableFilterComposer(
-              $db: $db,
-              $table: $db.components,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HeroComponentsTableOrderingComposer
-    extends Composer<_$AppDatabase, $HeroComponentsTable> {
-  $$HeroComponentsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get autoId => $composableBuilder(
-      column: $table.autoId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get category => $composableBuilder(
-      column: $table.category, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
-
-  $$HeroesTableOrderingComposer get heroId {
-    final $$HeroesTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.heroId,
-        referencedTable: $db.heroes,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroesTableOrderingComposer(
-              $db: $db,
-              $table: $db.heroes,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-
-  $$ComponentsTableOrderingComposer get componentId {
-    final $$ComponentsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.componentId,
-        referencedTable: $db.components,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$ComponentsTableOrderingComposer(
-              $db: $db,
-              $table: $db.components,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HeroComponentsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HeroComponentsTable> {
-  $$HeroComponentsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get autoId =>
-      $composableBuilder(column: $table.autoId, builder: (column) => column);
-
-  GeneratedColumn<String> get category =>
-      $composableBuilder(column: $table.category, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  $$HeroesTableAnnotationComposer get heroId {
-    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.heroId,
-        referencedTable: $db.heroes,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HeroesTableAnnotationComposer(
-              $db: $db,
-              $table: $db.heroes,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-
-  $$ComponentsTableAnnotationComposer get componentId {
-    final $$ComponentsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.componentId,
-        referencedTable: $db.components,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$ComponentsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.components,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
-    return composer;
-  }
-}
-
-class $$HeroComponentsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $HeroComponentsTable,
-    HeroComponent,
-    $$HeroComponentsTableFilterComposer,
-    $$HeroComponentsTableOrderingComposer,
-    $$HeroComponentsTableAnnotationComposer,
-    $$HeroComponentsTableCreateCompanionBuilder,
-    $$HeroComponentsTableUpdateCompanionBuilder,
-    (HeroComponent, $$HeroComponentsTableReferences),
-    HeroComponent,
-    PrefetchHooks Function({bool heroId, bool componentId})> {
-  $$HeroComponentsTableTableManager(
-      _$AppDatabase db, $HeroComponentsTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HeroComponentsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HeroComponentsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$HeroComponentsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> autoId = const Value.absent(),
-            Value<String> heroId = const Value.absent(),
-            Value<String> componentId = const Value.absent(),
-            Value<String> category = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-          }) =>
-              HeroComponentsCompanion(
-            autoId: autoId,
-            heroId: heroId,
-            componentId: componentId,
-            category: category,
-            createdAt: createdAt,
-          ),
-          createCompanionCallback: ({
-            Value<int> autoId = const Value.absent(),
-            required String heroId,
-            required String componentId,
-            Value<String> category = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-          }) =>
-              HeroComponentsCompanion.insert(
-            autoId: autoId,
-            heroId: heroId,
-            componentId: componentId,
-            category: category,
-            createdAt: createdAt,
-          ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$HeroComponentsTableReferences(db, table, e)
-                  ))
-              .toList(),
-          prefetchHooksCallback: ({heroId = false, componentId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (heroId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.heroId,
-                    referencedTable:
-                        $$HeroComponentsTableReferences._heroIdTable(db),
-                    referencedColumn:
-                        $$HeroComponentsTableReferences._heroIdTable(db).id,
-                  ) as T;
-                }
-                if (componentId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.componentId,
-                    referencedTable:
-                        $$HeroComponentsTableReferences._componentIdTable(db),
-                    referencedColumn: $$HeroComponentsTableReferences
-                        ._componentIdTable(db)
-                        .id,
-                  ) as T;
-                }
-
-                return state;
-              },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
-        ));
-}
-
-typedef $$HeroComponentsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $HeroComponentsTable,
-    HeroComponent,
-    $$HeroComponentsTableFilterComposer,
-    $$HeroComponentsTableOrderingComposer,
-    $$HeroComponentsTableAnnotationComposer,
-    $$HeroComponentsTableCreateCompanionBuilder,
-    $$HeroComponentsTableUpdateCompanionBuilder,
-    (HeroComponent, $$HeroComponentsTableReferences),
-    HeroComponent,
-    PrefetchHooks Function({bool heroId, bool componentId})>;
+    PrefetchHooks Function({bool classComponentId, bool heroValuesRefs})>;
 typedef $$HeroValuesTableCreateCompanionBuilder = HeroValuesCompanion Function({
   Value<int> id,
   required String heroId,
@@ -3403,8 +2591,6 @@ class $AppDatabaseManager {
       $$ComponentsTableTableManager(_db, _db.components);
   $$HeroesTableTableManager get heroes =>
       $$HeroesTableTableManager(_db, _db.heroes);
-  $$HeroComponentsTableTableManager get heroComponents =>
-      $$HeroComponentsTableTableManager(_db, _db.heroComponents);
   $$HeroValuesTableTableManager get heroValues =>
       $$HeroValuesTableTableManager(_db, _db.heroValues);
   $$MetaEntriesTableTableManager get metaEntries =>

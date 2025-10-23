@@ -214,6 +214,60 @@ class HeroRepository {
     );
   }
 
+  Future<void> updateClassName(String heroId, String? classId) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.className,
+      textValue: classId,
+    );
+  }
+
+  Future<void> updateCoreStats(
+    String heroId, {
+    int? speed,
+    int? stability,
+    int? disengage,
+    int? size,
+  }) async {
+    Future<void> setInt(String key, int? value) async {
+      if (value == null) return;
+      await _db.upsertHeroValue(heroId: heroId, key: key, value: value);
+    }
+
+    await Future.wait([
+      setInt(_k.speed, speed),
+      setInt(_k.stability, stability),
+      setInt(_k.disengage, disengage),
+      setInt(_k.size, size),
+    ]);
+  }
+
+  Future<void> updateRecoveryValue(String heroId, int value) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.recoveriesValue,
+      value: value,
+    );
+  }
+
+  Future<void> updatePotencies(
+    String heroId, {
+    String? strong,
+    String? average,
+    String? weak,
+  }) async {
+    Future<void> setText(String key, String? value) async {
+      if (value == null) return;
+      await _db.upsertHeroValue(heroId: heroId, key: key, textValue: value);
+    }
+
+    await Future.wait([
+      setText(_k.potencyStrong, strong),
+      setText(_k.potencyAverage, average),
+      setText(_k.potencyWeak, weak),
+    ]);
+  }
+
   Future<void> setCharacteristicBase(
     String heroId, {
     required String characteristic,
@@ -335,8 +389,8 @@ class HeroRepository {
             : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
         String? nameForCategory(String category) {
           final compId = comps
-              .firstWhereOrNull((c) => c.category == category)
-              ?.componentId;
+              .firstWhereOrNull((c) => c['category'] == category)
+              ?['componentId'];
           return nameForId(compId);
         }
 
@@ -449,8 +503,8 @@ class HeroRepository {
     // Union provided language ids with existing to avoid removing languages granted elsewhere
     final currentComps = await _db.getHeroComponents(heroId);
     final existingLangs = currentComps
-        .where((c) => c.category == 'language')
-        .map((c) => c.componentId)
+        .where((c) => c['category'] == 'language')
+        .map((c) => c['componentId']!)
         .toSet();
     final langUnion = existingLangs.union(languageIds.toSet()).toList();
     await _db.setHeroComponents(
@@ -473,8 +527,8 @@ class HeroRepository {
     // Ensure selected skills are present among HeroComponents('skill') without removing others
     final currentSkillComps = await _db.getHeroComponents(heroId);
     final existingSkillIds = currentSkillComps
-        .where((c) => c.category == 'skill')
-        .map((c) => c.componentId)
+        .where((c) => c['category'] == 'skill')
+        .map((c) => c['componentId']!)
         .toSet();
     final toAdd = <String>{};
     if (environmentSkillId != null && environmentSkillId.isNotEmpty)
@@ -493,7 +547,7 @@ class HeroRepository {
   Future<CultureSelection> loadCultureSelection(String heroId) async {
     final comps = await _db.getHeroComponents(heroId);
     String? idFor(String category) =>
-        comps.firstWhereOrNull((c) => c.category == category)?.componentId;
+        comps.firstWhereOrNull((c) => c['category'] == category)?['componentId'];
     final values = await _db.getHeroValues(heroId);
     String? val(String key) =>
         values.firstWhereOrNull((v) => v.key == key)?.textValue;
@@ -551,12 +605,12 @@ class HeroRepository {
     // Merge skills and perks into HeroComponents, preserving existing
     final currentComps = await _db.getHeroComponents(heroId);
     final existingSkillIds = currentComps
-        .where((c) => c.category == 'skill')
-        .map((c) => c.componentId)
+        .where((c) => c['category'] == 'skill')
+        .map((c) => c['componentId']!)
         .toSet();
     final existingPerkIds = currentComps
-        .where((c) => c.category == 'perk')
-        .map((c) => c.componentId)
+        .where((c) => c['category'] == 'perk')
+        .map((c) => c['componentId']!)
         .toSet();
     final newSkillSet =
         existingSkillIds.union(chosenSkillIds.toSet()).union(grantedSkillIds);
@@ -618,7 +672,7 @@ class HeroRepository {
     }
 
     String? idForCategory(String category) =>
-        comps.firstWhereOrNull((e) => e.category == category)?.componentId;
+        comps.firstWhereOrNull((e) => e['category'] == category)?['componentId'];
 
     return CareerSelection(
       careerId: getText(_k.career) ?? idForCategory('career'),
@@ -680,8 +734,8 @@ class HeroRepository {
 
     // Collect components by category
     List<String> compsBy(String category) => comps
-        .where((e) => e.category == category)
-        .map((e) => e.componentId)
+        .where((e) => e['category'] == category)
+        .map((e) => e['componentId']!)
         .toList();
 
     return HeroModel(

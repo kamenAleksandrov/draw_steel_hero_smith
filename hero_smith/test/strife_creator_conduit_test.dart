@@ -7,7 +7,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Selecting Conduit does not throw', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: StrifeCreatorPage()));
+    await tester.pumpWidget(const MaterialApp(home: StrifeCreatorPage(heroId: 'TEST_HERO')));
 
     // Allow initial async work.
     await tester.pump();

@@ -160,30 +160,101 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     if (!_validateSelections()) return;
 
     final repo = ref.read(heroRepositoryProvider);
+    final classData = _selectedClass!;
+    final startingChars = classData.startingCharacteristics;
     
     try {
-      // Save level
-      await repo.updateMainStats(
-        widget.heroId,
-        level: _selectedLevel,
-      );
-
-      // Save characteristics (base values directly to DB)
       final updates = <Future>[];
       
+      // 1. Save level
+      updates.add(repo.updateMainStats(widget.heroId, level: _selectedLevel));
+
+      // 2. Save class name
+      updates.add(repo.updateClassName(widget.heroId, classData.classId));
+
+      // 3. Save characteristics (base values from assignments AND fixed values)
+      // First, save assigned characteristics from arrays
       _assignedCharacteristics.forEach((characteristic, value) {
-        // Determine which DB key to use based on characteristic name
         final charLower = characteristic.toLowerCase();
         if (charLower == 'might' || charLower == 'agility' || 
             charLower == 'reason' || charLower == 'intuition' || 
             charLower == 'presence') {
-          // Save base characteristic value directly
           updates.add(
             repo.setCharacteristicBase(widget.heroId, characteristic: charLower, value: value),
           );
         }
       });
       
+      // Then, save fixed starting characteristics from class
+      startingChars.fixedStartingCharacteristics.forEach((characteristic, value) {
+        updates.add(
+          repo.setCharacteristicBase(widget.heroId, characteristic: characteristic, value: value),
+        );
+      });
+
+      // 4. Calculate and save Stamina
+      final maxStamina = startingChars.baseStamina + 
+          (startingChars.staminaPerLevel * (_selectedLevel - 1));
+      updates.add(repo.updateVitals(
+        widget.heroId,
+        staminaMax: maxStamina,
+        staminaCurrent: maxStamina, // Start at full health
+      ));
+
+      // 5. Calculate winded and dying values (based on max stamina)
+      final windedValue = maxStamina ~/ 2; // Half of max stamina
+      final dyingValue = -(maxStamina ~/ 2); // Negative half of max stamina
+      updates.add(repo.updateVitals(
+        widget.heroId,
+        windedValue: windedValue,
+        dyingValue: dyingValue,
+      ));
+
+      // 6. Save Recoveries
+      final recoveriesMax = startingChars.baseRecoveries;
+      final recoveryValue = (maxStamina / 3).ceil(); // 1/3 of max HP, rounded up
+      updates.add(repo.updateVitals(
+        widget.heroId,
+        recoveriesMax: recoveriesMax,
+        recoveriesCurrent: recoveriesMax, // Start with all recoveries available
+      ));
+      updates.add(repo.updateRecoveryValue(widget.heroId, recoveryValue));
+
+      // 7. Save fixed stats from class
+      updates.add(repo.updateCoreStats(
+        widget.heroId,
+        speed: startingChars.baseSpeed,
+        stability: startingChars.baseStability,
+        disengage: startingChars.baseDisengage,
+      ));
+
+      // 8. Save Heroic Resource name
+      updates.add(repo.updateHeroicResourceName(
+        widget.heroId,
+        startingChars.heroicResourceName,
+      ));
+
+      // 9. Calculate and save potencies based on class progression
+      final potencyChar = startingChars.potencyProgression.characteristic;
+      final potencyModifiers = startingChars.potencyProgression.modifiers;
+      
+      // Get the characteristic value for potency calculation
+      final potencyCharValue = _assignedCharacteristics[potencyChar] ?? 
+          startingChars.fixedStartingCharacteristics[potencyChar.toLowerCase()] ?? 0;
+      
+      // Calculate potency values (characteristic + modifier)
+      final strongPotency = potencyCharValue + (potencyModifiers['strong'] ?? 0);
+      final averagePotency = potencyCharValue + (potencyModifiers['average'] ?? 0);
+      final weakPotency = potencyCharValue + (potencyModifiers['weak'] ?? 0);
+      
+      updates.add(repo.updatePotencies(
+        widget.heroId,
+        strong: '$strongPotency',
+        average: '$averagePotency',
+        weak: '$weakPotency',
+      ));
+      
+      // Execute all updates
       await Future.wait(updates);
 
       if (!mounted) return;
@@ -191,10 +262,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Saved: Level $_selectedLevel ${_selectedClass!.name}\n'
-            'Characteristics saved successfully',
+            'Saved: Level $_selectedLevel ${classData.name}\n'
+            'Stamina: $maxStamina, Recoveries: $recoveriesMax ($recoveryValue)\n'
+            'Speed: ${startingChars.baseSpeed}, Resource: ${startingChars.heroicResourceName}',
           ),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
           backgroundColor: Colors.green,
         ),
       );

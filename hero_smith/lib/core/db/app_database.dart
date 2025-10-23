@@ -33,13 +33,7 @@ class Heroes extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-class HeroComponents extends Table {
-  IntColumn get autoId => integer().autoIncrement()();
-  TextColumn get heroId => text().references(Heroes, #id)();
-  TextColumn get componentId => text().references(Components, #id)();
-  TextColumn get category => text().withDefault(const Constant('generic'))();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-}
+// HeroComponents table removed - all data now stored in HeroValues
 
 class HeroValues extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -63,7 +57,6 @@ class MetaEntries extends Table {
 @DriftDatabase(tables: [
   Components,
   Heroes,
-  HeroComponents,
   HeroValues,
   MetaEntries,
 ])
@@ -76,7 +69,86 @@ class AppDatabase extends _$AppDatabase {
   static bool databasePreexisted = false;
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (Migrator m) async {
+          await m.createAll();
+        },
+        onUpgrade: (Migrator m, int from, int to) async {
+          if (from < 2) {
+            // Migration from schema version 1 to 2
+            // Move data from HeroComponents to HeroValues
+            await _migrateHeroComponentsToValues();
+          }
+        },
+      );
+
+  /// Migrate hero components data to hero values (schema v1 -> v2)
+  Future<void> _migrateHeroComponentsToValues() async {
+    try {
+      // Check if heroComponents table exists
+      final result = await customSelect(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='hero_components'",
+      ).getSingleOrNull();
+
+      if (result != null) {
+        // Fetch all hero components
+        final components = await customSelect(
+          'SELECT hero_id, component_id, category FROM hero_components',
+        ).get();
+
+        // Group by heroId and category
+        final Map<String, Map<String, List<String>>> grouped = {};
+        for (final row in components) {
+          final heroId = row.read<String>('hero_id');
+          final componentId = row.read<String>('component_id');
+          final category = row.read<String>('category');
+
+          grouped.putIfAbsent(heroId, () => {});
+          grouped[heroId]!.putIfAbsent(category, () => []);
+          grouped[heroId]![category]!.add(componentId);
+        }
+
+        // Insert into HeroValues
+        for (final heroId in grouped.keys) {
+          for (final category in grouped[heroId]!.keys) {
+            final componentIds = grouped[heroId]![category]!;
+            
+            // For single-item categories, store as textValue
+            // For multi-item categories, store as JSON array
+            if (componentIds.length == 1 && 
+                (category == 'culture_environment' || 
+                 category == 'culture_organisation' || 
+                 category == 'culture_upbringing' ||
+                 category == 'ancestry' ||
+                 category == 'career' ||
+                 category == 'complication')) {
+              await upsertHeroValue(
+                heroId: heroId,
+                key: 'component.$category',
+                textValue: componentIds.first,
+              );
+            } else {
+              // Store as JSON array for languages, skills, etc.
+              await upsertHeroValue(
+                heroId: heroId,
+                key: 'component.$category',
+                jsonMap: {'ids': componentIds},
+              );
+            }
+          }
+        }
+
+        // Drop the old table
+        await customStatement('DROP TABLE IF EXISTS hero_components');
+      }
+    } catch (e) {
+      // If migration fails, log it but don't crash
+      print('Migration warning: $e');
+    }
+  }
 
   // CRUD helpers for components
   Future<void> upsertComponentModel({
@@ -179,26 +251,6 @@ class AppDatabase extends _$AppDatabase {
   Future<List<Heroe>> getAllHeroes() => select(heroes).get();
   Stream<List<Heroe>> watchAllHeroes() => select(heroes).watch();
 
-  Future<void> addHeroComponent({
-    required String heroId,
-    required String componentId,
-    required String category,
-  }) async {
-    // Avoid duplicate rows for the same hero+component+category
-    final exists = await (select(heroComponents)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.componentId.equals(componentId) &
-              t.category.equals(category)))
-        .getSingleOrNull();
-    if (exists != null) return;
-    await into(heroComponents).insert(HeroComponentsCompanion.insert(
-      heroId: heroId,
-      componentId: componentId,
-      category: Value(category),
-    ));
-  }
-
   Future<void> upsertHeroValue({
     required String heroId,
     required String key,
@@ -248,51 +300,158 @@ class AppDatabase extends _$AppDatabase {
     return (select(heroValues)..where((t) => t.heroId.equals(heroId))).watch();
   }
 
-  Future<List<HeroComponent>> getHeroComponents(String heroId) {
-    return (select(heroComponents)..where((t) => t.heroId.equals(heroId)))
-        .get();
+  /// Get component IDs for a specific category (replaces getHeroComponents)
+  Future<List<String>> getHeroComponentIds(String heroId, String category) async {
+    final key = 'component.$category';
+    final row = await (select(heroValues)
+          ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
+        .getSingleOrNull();
+
+    if (row == null) return [];
+
+    // Check if it's a single ID stored as textValue
+    if (row.textValue != null && row.textValue!.isNotEmpty) {
+      return [row.textValue!];
+    }
+
+    // Check if it's stored as JSON array
+    if (row.jsonValue != null) {
+      try {
+        final decoded = jsonDecode(row.jsonValue!);
+        if (decoded is Map && decoded['ids'] is List) {
+          return (decoded['ids'] as List).map((e) => e.toString()).toList();
+        }
+      } catch (_) {}
+    }
+
+    return [];
   }
 
-  /// Replace all components for a hero in a given category with the provided component IDs.
-  Future<void> setHeroComponents({
+  /// Set component IDs for a specific category (replaces setHeroComponents)
+  Future<void> setHeroComponentIds({
     required String heroId,
     required String category,
     required List<String> componentIds,
   }) async {
-    await transaction(() async {
-      final existing = await (select(heroComponents)
-            ..where(
-                (t) => t.heroId.equals(heroId) & t.category.equals(category)))
-          .get();
-      final existingIds = existing.map((e) => e.componentId).toSet();
-      final desired = componentIds.toSet();
-      final toAdd = desired.difference(existingIds);
-      final toRemove = existingIds.difference(desired);
-      if (toRemove.isNotEmpty) {
-        await (delete(heroComponents)
-              ..where((t) =>
-                  t.heroId.equals(heroId) &
-                  t.category.equals(category) &
-                  t.componentId.isIn(toRemove.toList())))
-            .go();
-      }
-      for (final compId in toAdd) {
-        await into(heroComponents).insert(HeroComponentsCompanion.insert(
-          heroId: heroId,
-          componentId: compId,
-          category: Value(category),
-        ));
-      }
-    });
+    final key = 'component.$category';
+
+    if (componentIds.isEmpty) {
+      // Remove the entry if no components
+      await (delete(heroValues)
+            ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
+          .go();
+      return;
+    }
+
+    // For single-item categories, store as textValue
+    if (componentIds.length == 1 &&
+        (category == 'culture_environment' ||
+            category == 'culture_organisation' ||
+            category == 'culture_upbringing' ||
+            category == 'ancestry' ||
+            category == 'career' ||
+            category == 'complication')) {
+      await upsertHeroValue(
+        heroId: heroId,
+        key: key,
+        textValue: componentIds.first,
+      );
+    } else {
+      // Store as JSON array for languages, skills, etc.
+      await upsertHeroValue(
+        heroId: heroId,
+        key: key,
+        jsonMap: {'ids': componentIds},
+      );
+    }
+  }
+
+  /// Add a single component ID to a category (replaces addHeroComponent)
+  Future<void> addHeroComponentId({
+    required String heroId,
+    required String componentId,
+    required String category,
+  }) async {
+    final existing = await getHeroComponentIds(heroId, category);
+    if (!existing.contains(componentId)) {
+      await setHeroComponentIds(
+        heroId: heroId,
+        category: category,
+        componentIds: [...existing, componentId],
+      );
+    }
   }
 
   Future<void> deleteHero(String heroId) async {
     await transaction(() async {
       await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();
-      await (delete(heroComponents)..where((t) => t.heroId.equals(heroId)))
-          .go();
       await (delete(heroes)..where((t) => t.id.equals(heroId))).go();
     });
+  }
+
+  // Deprecated methods - kept for backwards compatibility during transition
+  @Deprecated('Use getHeroComponentIds instead')
+  Future<List<Map<String, String>>> getHeroComponents(String heroId) async {
+    // Return all component entries as a list of maps
+    final values = await getHeroValues(heroId);
+    final result = <Map<String, String>>[];
+    
+    for (final value in values) {
+      if (value.key.startsWith('component.')) {
+        final category = value.key.substring('component.'.length);
+        
+        // Handle textValue (single component)
+        if (value.textValue != null && value.textValue!.isNotEmpty) {
+          result.add({
+            'componentId': value.textValue!,
+            'category': category,
+          });
+        }
+        
+        // Handle jsonValue (multiple components)
+        if (value.jsonValue != null) {
+          try {
+            final decoded = jsonDecode(value.jsonValue!);
+            if (decoded is Map && decoded['ids'] is List) {
+              for (final id in decoded['ids']) {
+                result.add({
+                  'componentId': id.toString(),
+                  'category': category,
+                });
+              }
+            }
+          } catch (_) {}
+        }
+      }
+    }
+    
+    return result;
+  }
+
+  @Deprecated('Use setHeroComponentIds instead')
+  Future<void> setHeroComponents({
+    required String heroId,
+    required String category,
+    required List<String> componentIds,
+  }) async {
+    await setHeroComponentIds(
+      heroId: heroId,
+      category: category,
+      componentIds: componentIds,
+    );
+  }
+
+  @Deprecated('Use addHeroComponentId instead')
+  Future<void> addHeroComponent({
+    required String heroId,
+    required String componentId,
+    required String category,
+  }) async {
+    await addHeroComponentId(
+      heroId: heroId,
+      componentId: componentId,
+      category: category,
+    );
   }
 
   // Note: seeding logic has been extracted to core/seed/asset_seeder.dart
