@@ -9,24 +9,28 @@ class StoryCreatorLoadResult {
     required this.cultureSelection,
     required this.careerSelection,
     required this.ancestryTraitIds,
+    this.complicationId,
   });
 
   final HeroModel? hero;
   final CultureSelection cultureSelection;
   final CareerSelection careerSelection;
   final List<String> ancestryTraitIds;
+  final String? complicationId;
 
   StoryCreatorLoadResult copyWith({
     HeroModel? hero,
     CultureSelection? cultureSelection,
     CareerSelection? careerSelection,
     List<String>? ancestryTraitIds,
+    String? complicationId,
   }) {
     return StoryCreatorLoadResult(
       hero: hero ?? this.hero,
       cultureSelection: cultureSelection ?? this.cultureSelection,
       careerSelection: careerSelection ?? this.careerSelection,
       ancestryTraitIds: ancestryTraitIds ?? this.ancestryTraitIds,
+      complicationId: complicationId ?? this.complicationId,
     );
   }
 
@@ -39,12 +43,13 @@ class StoryCreatorLoadResult {
         other.hero == hero &&
         other.cultureSelection == cultureSelection &&
         other.careerSelection == careerSelection &&
-        const ListEquality<String>().equals(other.ancestryTraitIds, ancestryTraitIds);
+        const ListEquality<String>().equals(other.ancestryTraitIds, ancestryTraitIds) &&
+        other.complicationId == complicationId;
   }
 
   @override
   int get hashCode => Object.hash(hero, cultureSelection, careerSelection,
-      const ListEquality<String>().hash(ancestryTraitIds));
+      const ListEquality<String>().hash(ancestryTraitIds), complicationId);
 }
 
 class StoryCultureSuggestion {
@@ -81,6 +86,7 @@ class StoryCreatorSavePayload {
     this.careerSkillIds = const <String>{},
     this.careerPerkIds = const <String>{},
     this.careerIncidentName,
+    this.complicationId,
   });
 
   final String heroId;
@@ -98,4 +104,5 @@ class StoryCreatorSavePayload {
   final Set<String> careerSkillIds;
   final Set<String> careerPerkIds;
   final String? careerIncidentName;
+  final String? complicationId;
 }

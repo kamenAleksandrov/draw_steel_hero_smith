@@ -22,6 +22,48 @@ class ModifierCard extends StatelessWidget {
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Generic bonuses - consolidated with emojis at the top
+          if (d.entries.any((entry) => _isBonusField(entry.key) && entry.value != null))
+            KitComponents.chipRow(
+              context: context,
+              items: [
+                for (final entry in d.entries)
+                  if (_isBonusField(entry.key) && entry.value != null)
+                    KitComponents.formatBonusWithEmoji(entry.key, entry.value),
+              ],
+              primaryColor: colorScheme.primary,
+            ),
+          // Damage bonuses - using new tierBonusBox
+          if (d['melee_damage_bonus'] != null && _hasNonNullValues(d['melee_damage_bonus'] as Map<String, dynamic>))
+            KitComponents.tierBonusBox(
+              context: context,
+              title: '⚔️ Melee Damage',
+              data: d['melee_damage_bonus'] as Map<String, dynamic>,
+              primaryColor: colorScheme.primary,
+            ),
+          if (d['ranged_damage_bonus'] != null && _hasNonNullValues(d['ranged_damage_bonus'] as Map<String, dynamic>))
+            KitComponents.tierBonusBox(
+              context: context,
+              title: '🏹 Ranged Damage',
+              data: d['ranged_damage_bonus'] as Map<String, dynamic>,
+              primaryColor: colorScheme.primary,
+            ),
+          // Distance bonuses - using echelonBonusBox
+          if (d['melee_distance_bonus'] != null && _hasNonNullValues(d['melee_distance_bonus'] as Map<String, dynamic>))
+            KitComponents.echelonBonusBox(
+              context: context,
+              title: '📏 Melee Distance',
+              data: d['melee_distance_bonus'] as Map<String, dynamic>,
+              primaryColor: colorScheme.primary,
+            ),
+          if (d['ranged_distance_bonus'] != null && _hasNonNullValues(d['ranged_distance_bonus'] as Map<String, dynamic>))
+            KitComponents.echelonBonusBox(
+              context: context,
+              title: '🎯 Ranged Distance',
+              data: d['ranged_distance_bonus'] as Map<String, dynamic>,
+              primaryColor: colorScheme.primary,
+            ),
+          // Description
           if (d['description'] != null)
             KitComponents.section(
               context: context,
@@ -29,6 +71,7 @@ class ModifierCard extends StatelessWidget {
               child: Text(d['description'] as String),
               primaryColor: colorScheme.primary,
             ),
+          // Keywords
           if (keywords != null && keywords.isNotEmpty)
             KitComponents.section(
               context: context,
@@ -41,46 +84,6 @@ class ModifierCard extends StatelessWidget {
                   primaryColor: colorScheme.primary,
                 )).toList(),
               ),
-              primaryColor: colorScheme.primary,
-            ),
-          // Generic bonuses if present - consolidated with emojis
-          if (d.entries.any((entry) => _isBonusField(entry.key) && entry.value != null))
-            KitComponents.chipRow(
-              context: context,
-              items: [
-                for (final entry in d.entries)
-                  if (_isBonusField(entry.key) && entry.value != null)
-                    KitComponents.formatBonusWithEmoji(entry.key, entry.value),
-              ],
-              primaryColor: colorScheme.primary,
-            ),
-          // Echelon-based bonuses (only show if they have non-null values)
-          if (d['melee_damage_bonus'] != null && _hasNonNullValues(d['melee_damage_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
-              context: context,
-              title: 'Melee Damage Bonus',
-              data: d['melee_damage_bonus'] as Map<String, dynamic>,
-              primaryColor: colorScheme.primary,
-            ),
-          if (d['ranged_damage_bonus'] != null && _hasNonNullValues(d['ranged_damage_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
-              context: context,
-              title: 'Ranged Damage Bonus',
-              data: d['ranged_damage_bonus'] as Map<String, dynamic>,
-              primaryColor: colorScheme.primary,
-            ),
-          if (d['melee_distance_bonus'] != null && _hasNonNullValues(d['melee_distance_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
-              context: context,
-              title: 'Melee Distance Bonus',
-              data: d['melee_distance_bonus'] as Map<String, dynamic>,
-              primaryColor: colorScheme.primary,
-            ),
-          if (d['ranged_distance_bonus'] != null && _hasNonNullValues(d['ranged_distance_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
-              context: context,
-              title: 'Ranged Distance Bonus',
-              data: d['ranged_distance_bonus'] as Map<String, dynamic>,
               primaryColor: colorScheme.primary,
             ),
         ],

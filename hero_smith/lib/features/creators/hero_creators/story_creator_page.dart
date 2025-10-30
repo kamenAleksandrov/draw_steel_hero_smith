@@ -8,6 +8,7 @@ import 'package:hero_smith/core/models/story_creator_models.dart';
 import 'package:hero_smith/core/services/story_creator_service.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_ancestry_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_career_section.dart';
+import 'package:hero_smith/features/creators/widgets/story_creator/story_complication_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_culture_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_name_section.dart';
 
@@ -54,6 +55,8 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
   final LinkedHashSet<String> _careerPerkIds = LinkedHashSet<String>();
   String? _careerIncidentName;
 
+  String? _complicationId;
+
   bool get isDirty => _dirty;
 
   @override
@@ -97,6 +100,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
       careerSkillIds: LinkedHashSet<String>.of(_careerSkillIds),
       careerPerkIds: LinkedHashSet<String>.of(_careerPerkIds),
       careerIncidentName: _careerIncidentName,
+      complicationId: _complicationId,
     );
 
     await service.saveStory(payload);
@@ -156,6 +160,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
           ..clear()
           ..addAll(result.careerSelection.chosenPerkIds);
         _careerIncidentName = result.careerSelection.incitingIncidentName;
+        _complicationId = result.complicationId;
         _dirty = false;
         _loading = false;
       });
@@ -316,6 +321,12 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
     });
   }
 
+  void _onComplicationChanged(String? value) {
+    setState(() {
+      _complicationId = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -385,6 +396,13 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
             onSkillSelectionChanged: _onCareerSkillsChanged,
             onPerkSelectionChanged: _onCareerPerksChanged,
             onIncidentChanged: _onIncidentChanged,
+            onDirty: _handleDirty,
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: StoryComplicationSection(
+            selectedComplicationId: _complicationId,
+            onComplicationChanged: _onComplicationChanged,
             onDirty: _handleDirty,
           ),
         ),

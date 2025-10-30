@@ -28,14 +28,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -79,14 +79,14 @@
     "speed_bonus": 2,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -130,14 +130,14 @@
     "speed_bonus": 2,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -181,14 +181,14 @@
     "speed_bonus": 2,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -232,14 +232,14 @@
     "speed_bonus": 0,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": 1,
@@ -283,14 +283,14 @@
     "speed_bonus": 3,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -334,14 +334,14 @@
     "speed_bonus": 0,
     "stability_bonus": 2,
     "melee_damage_bonus": {
-      "1st_echelon": 0,
-      "2nd_echelon": 0,
-      "3rd_echelon": 4
+      "1st_tier": 0,
+      "2nd_tier": 0,
+      "3rd_tier": 4
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -385,14 +385,14 @@
     "speed_bonus": 1,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 0,
-      "2nd_echelon": 0,
-      "3rd_echelon": 4
+      "1st_tier": 0,
+      "2nd_tier": 0,
+      "3rd_tier": 4
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -436,14 +436,14 @@
     "speed_bonus": 2,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -487,14 +487,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -538,14 +538,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -589,14 +589,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -640,14 +640,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": 1,
@@ -691,14 +691,14 @@
     "speed_bonus": 0,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -742,14 +742,14 @@
     "speed_bonus": 1,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "ranged_damage_bonus": {
-      "1st_echelon": 0,
-      "2nd_echelon": 0,
-      "3rd_echelon": 4
+      "1st_tier": 0,
+      "2nd_tier": 0,
+      "3rd_tier": 4
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -793,14 +793,14 @@
     "speed_bonus": 1,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -844,14 +844,14 @@
     "speed_bonus": 2,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": 1,
@@ -895,14 +895,14 @@
     "speed_bonus": 3,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -946,14 +946,14 @@
     "speed_bonus": 0,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 2,
-      "2nd_echelon": 2,
-      "3rd_echelon": 2
+      "1st_tier": 2,
+      "2nd_tier": 2,
+      "3rd_tier": 2
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -997,14 +997,14 @@
     "speed_bonus": 1,
     "stability_bonus": 1,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,
@@ -1048,14 +1048,14 @@
     "speed_bonus": 3,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": 1,

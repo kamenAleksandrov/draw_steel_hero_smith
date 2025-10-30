@@ -88,7 +88,7 @@ class KitComponents {
     required MaterialColor primaryColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -97,7 +97,7 @@ class KitComponents {
             label: label,
             primaryColor: primaryColor,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           child,
         ],
       ),
@@ -172,17 +172,17 @@ class KitComponents {
     );
   }
 
-  /// Creates a grouped echelon bonus box with title and connected tabs
-  static Widget echelonBonusBox({
+  /// Creates a grouped tier bonus box with title and connected tabs (for damage bonuses)
+  static Widget tierBonusBox({
     required BuildContext context,
     required String title,
     required Map<String, dynamic> data,
     required MaterialColor primaryColor,
-  }) {
+  }) {  
     final entries = [
-      MapEntry('1st echelon', data['1st_echelon']),
-      MapEntry('2nd echelon', data['2nd_echelon']),
-      MapEntry('3rd echelon', data['3rd_echelon']),
+      MapEntry('Tier 1\n(11<)', data['1st_tier']),
+      MapEntry('Tier 2\n(12-16)', data['2nd_tier']),
+      MapEntry('Tier 3\n(17+)', data['3rd_tier']),
     ];
 
     final validEntries = entries.where((e) => e.value != null).toList();
@@ -190,80 +190,181 @@ class KitComponents {
     if (validEntries.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: KitTheme.getSectionHeaderBackgroundColor(context, primaryColor),
-          borderRadius: BorderRadius.circular(8),
+          color: KitTheme.getSectionHeaderBackgroundColor(context, primaryColor).withOpacity(0.3),
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: KitTheme.getSectionHeaderBorderColor(context, primaryColor).withOpacity(0.3),
+            color: KitTheme.getSectionHeaderBorderColor(context, primaryColor).withOpacity(0.4),
             width: 1,
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Title header
             Text(
               title.toUpperCase(),
               style: KitTheme.sectionHeaderStyle.copyWith(
                 color: KitTheme.getSectionHeaderTextColor(context, primaryColor),
-                fontSize: 12,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
-            // Connected echelon boxes - centered and wider
-            Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: validEntries.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final mapEntry = entry.value;
-                  final isFirst = index == 0;
-                  final isLast = index == validEntries.length - 1;
-                  
-                  return Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: KitTheme.getEchelonInnerBoxBackgroundColor(context, primaryColor),
-                        border: Border.all(
-                          color: KitTheme.getEchelonInnerBoxBorderColor(context, primaryColor),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(isFirst ? 6 : 0),
-                          bottomLeft: Radius.circular(isFirst ? 6 : 0),
-                          topRight: Radius.circular(isLast ? 6 : 0),
-                          bottomRight: Radius.circular(isLast ? 6 : 0),
-                        ),
+            const SizedBox(height: 8),
+            // Connected tier boxes
+            Row(
+              children: validEntries.asMap().entries.map((entry) {
+                final index = entry.key;
+                final mapEntry = entry.value;
+                final isFirst = index == 0;
+                final isLast = index == validEntries.length - 1;
+                
+                return Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: KitTheme.getEchelonInnerBoxBackgroundColor(context, primaryColor),
+                      border: Border.all(
+                        color: KitTheme.getEchelonInnerBoxBorderColor(context, primaryColor),
+                        width: 1,
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            mapEntry.key,
-                            style: KitTheme.echelonLabelStyle.copyWith(
-                              color: KitTheme.getEchelonInnerLabelColor(context, primaryColor),
-                              fontSize: 10,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${mapEntry.value}',
-                            style: KitTheme.echelonValueStyle.copyWith(
-                              color: KitTheme.getEchelonInnerValueColor(context, primaryColor),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(isFirst ? 4 : 0),
+                        bottomLeft: Radius.circular(isFirst ? 4 : 0),
+                        topRight: Radius.circular(isLast ? 4 : 0),
+                        bottomRight: Radius.circular(isLast ? 4 : 0),
                       ),
                     ),
-                  );
-                }).toList(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          mapEntry.key,
+                          style: KitTheme.echelonLabelStyle.copyWith(
+                            color: KitTheme.getEchelonInnerLabelColor(context, primaryColor),
+                            fontSize: 8.5,
+                            height: 1.2,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          '+${mapEntry.value}',
+                          style: KitTheme.echelonValueStyle.copyWith(
+                            color: KitTheme.getEchelonInnerValueColor(context, primaryColor),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Creates a grouped echelon bonus box with title and connected tabs (for distance bonuses)
+  static Widget echelonBonusBox({
+    required BuildContext context,
+    required String title,
+    required Map<String, dynamic> data,
+    required MaterialColor primaryColor,
+  }) {
+    final entries = [
+      MapEntry('1st\nEchelon', data['1st_echelon']),
+      MapEntry('2nd\nEchelon', data['2nd_echelon']),
+      MapEntry('3rd\nEchelon', data['3rd_echelon']),
+    ];
+
+    final validEntries = entries.where((e) => e.value != null).toList();
+    
+    if (validEntries.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: KitTheme.getSectionHeaderBackgroundColor(context, primaryColor).withOpacity(0.3),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: KitTheme.getSectionHeaderBorderColor(context, primaryColor).withOpacity(0.4),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title header
+            Text(
+              title.toUpperCase(),
+              style: KitTheme.sectionHeaderStyle.copyWith(
+                color: KitTheme.getSectionHeaderTextColor(context, primaryColor),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
               ),
+            ),
+            const SizedBox(height: 8),
+            // Connected echelon boxes
+            Row(
+              children: validEntries.asMap().entries.map((entry) {
+                final index = entry.key;
+                final mapEntry = entry.value;
+                final isFirst = index == 0;
+                final isLast = index == validEntries.length - 1;
+                
+                return Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: KitTheme.getEchelonInnerBoxBackgroundColor(context, primaryColor),
+                      border: Border.all(
+                        color: KitTheme.getEchelonInnerBoxBorderColor(context, primaryColor),
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(isFirst ? 4 : 0),
+                        bottomLeft: Radius.circular(isFirst ? 4 : 0),
+                        topRight: Radius.circular(isLast ? 4 : 0),
+                        bottomRight: Radius.circular(isLast ? 4 : 0),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          mapEntry.key,
+                          style: KitTheme.echelonLabelStyle.copyWith(
+                            color: KitTheme.getEchelonInnerLabelColor(context, primaryColor),
+                            fontSize: 9,
+                            height: 1.2,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          '+${mapEntry.value}',
+                          style: KitTheme.echelonValueStyle.copyWith(
+                            color: KitTheme.getEchelonInnerValueColor(context, primaryColor),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -278,7 +379,7 @@ class KitComponents {
     required MaterialColor primaryColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Wrap(
         spacing: 6,
         runSpacing: 6,

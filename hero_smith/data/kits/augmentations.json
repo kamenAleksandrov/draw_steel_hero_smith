@@ -28,14 +28,14 @@
     "speed_bonus": 0,
     "stability_bonus": 0,
     "melee_damage_bonus": {
-      "1st_echelon": 1,
-      "2nd_echelon": 1,
-      "3rd_echelon": 1
+      "1st_tier": 1,
+      "2nd_tier": 1,
+      "3rd_tier": 1
     },
     "ranged_damage_bonus": {
-      "1st_echelon": null,
-      "2nd_echelon": null,
-      "3rd_echelon": null
+      "1st_tier": null,
+      "2nd_tier": null,
+      "3rd_tier": null
     },
     "melee_distance_bonus": {
       "1st_echelon": null,

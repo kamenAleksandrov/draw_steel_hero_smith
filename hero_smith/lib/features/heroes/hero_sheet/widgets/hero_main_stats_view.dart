@@ -392,7 +392,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               context,
               label: 'Level',
               field: _NumericField.level,
-              helper: '1-99',
             ),
           ],
         ),

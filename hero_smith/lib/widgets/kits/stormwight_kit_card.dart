@@ -1,20 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:hero_smith/core/models/component.dart';
+import 'package:hero_smith/core/services/ability_data_service.dart';
 import 'package:hero_smith/core/theme/kit_theme.dart';
 import 'package:hero_smith/widgets/shared/expandable_card.dart';
 import 'package:hero_smith/widgets/kits/kit_components.dart';
+import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 
-class StormwightKitCard extends StatelessWidget {
+class StormwightKitCard extends StatefulWidget {
   final Component component;
   const StormwightKitCard({super.key, required this.component});
 
   @override
+  State<StormwightKitCard> createState() => _StormwightKitCardState();
+}
+
+class _StormwightKitCardState extends State<StormwightKitCard> {
+  Component? _signatureAbility;
+  bool _loadingAbility = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSignatureAbility();
+  }
+
+  Future<void> _loadSignatureAbility() async {
+    final signatureAbilityName = widget.component.data['signature_ability'] as String?;
+    if (signatureAbilityName == null || signatureAbilityName.isEmpty) return;
+
+    setState(() => _loadingAbility = true);
+
+    try {
+      final abilityService = AbilityDataService();
+      final library = await abilityService.loadLibrary();
+      
+      // Try to find the ability by name
+      final ability = library.find(signatureAbilityName);
+      
+      if (mounted) {
+        setState(() {
+          _signatureAbility = ability;
+          _loadingAbility = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loadingAbility = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final d = component.data;
+    final d = widget.component.data;
     const primaryColor = Colors.indigo;
     
     return ExpandableCard(
-      title: component.name,
+      title: widget.component.name,
       borderColor: primaryColor.shade400,
       badge: KitComponents.themedChip(
         context: context,
@@ -25,44 +67,79 @@ class StormwightKitCard extends StatelessWidget {
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (d['stormwight_benefits'] != null)
-            KitComponents.section(context: context, label: 'Stormwight Benefits', child: Text(d['stormwight_benefits'] as String), primaryColor: primaryColor),
-          if (d['aspect_benefits'] != null)
-            KitComponents.section(context: context, label: 'Aspect Benefits', child: Text(d['aspect_benefits'] as String), primaryColor: primaryColor),
-          if (d['primordial_storm'] != null)
-            KitComponents.section(context: context, label: 'Primordial Storm', child: _stormList(d['primordial_storm'] as List), primaryColor: primaryColor),
-          if (d['equipment_description'] != null)
-            KitComponents.section(context: context, label: 'Equipment', child: Text(d['equipment_description'] as String), primaryColor: primaryColor),
-          if (d['equipment'] != null)
-            KitComponents.section(context: context, label: 'Equipment Types', child: _equip(context, d['equipment'] as Map<String, dynamic>), primaryColor: primaryColor),
+          // Compact stats row
           if ((d['stamina_bonus'] != null && d['stamina_bonus'] > 0) || 
-              (d['speed_bonus'] != null && d['speed_bonus'] > 0) || 
+              (d['speed_bonus'] != null && d['speed_bonus'] > 0) ||
+              (d['stability_bonus'] != null && d['stability_bonus'] > 0) ||
               (d['disengage_bonus'] != null && d['disengage_bonus'] > 0))
             KitComponents.chipRow(
               context: context,
               items: [
                 if (d['stamina_bonus'] != null && d['stamina_bonus'] > 0) KitComponents.formatBonusWithEmoji('stamina', d['stamina_bonus']),
                 if (d['speed_bonus'] != null && d['speed_bonus'] > 0) KitComponents.formatBonusWithEmoji('speed', d['speed_bonus']),
+                if (d['stability_bonus'] != null && d['stability_bonus'] > 0) KitComponents.formatBonusWithEmoji('stability', d['stability_bonus']),
                 if (d['disengage_bonus'] != null && d['disengage_bonus'] > 0) KitComponents.formatBonusWithEmoji('disengage', d['disengage_bonus']),
               ],
               primaryColor: primaryColor,
             ),
+          // Damage bonuses - using new tierBonusBox
           if (d['melee_damage_bonus'] != null && _hasNonNullValues(d['melee_damage_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
+            KitComponents.tierBonusBox(
               context: context,
-              title: 'Melee Damage Bonus',
+              title: '⚔️ Melee Damage',
               data: d['melee_damage_bonus'] as Map<String, dynamic>,
               primaryColor: primaryColor,
             ),
           if (d['ranged_damage_bonus'] != null && _hasNonNullValues(d['ranged_damage_bonus'] as Map<String, dynamic>))
-            KitComponents.echelonBonusBox(
+            KitComponents.tierBonusBox(
               context: context,
-              title: 'Ranged Damage Bonus',
+              title: '🏹 Ranged Damage',
               data: d['ranged_damage_bonus'] as Map<String, dynamic>,
               primaryColor: primaryColor,
             ),
-          if (d['signature_ability'] != null)
-            KitComponents.section(context: context, label: 'Signature Ability', child: Text(d['signature_ability'] as String), primaryColor: primaryColor),
+          // Stormwight benefits
+          if (d['stormwight_benefits'] != null)
+            KitComponents.section(context: context, label: 'Stormwight Benefits', child: Text(d['stormwight_benefits'] as String), primaryColor: primaryColor),
+          if (d['aspect_benefits'] != null)
+            KitComponents.section(context: context, label: 'Aspect Benefits', child: Text(d['aspect_benefits'] as String), primaryColor: primaryColor),
+          if (d['primordial_storm'] != null)
+            KitComponents.section(context: context, label: 'Primordial Storm', child: _stormList(d['primordial_storm'] as List), primaryColor: primaryColor),
+          // Equipment
+          if (d['equipment_description'] != null)
+            KitComponents.section(context: context, label: 'Equipment', child: Text(d['equipment_description'] as String), primaryColor: primaryColor),
+          if (d['equipment'] != null)
+            KitComponents.section(context: context, label: 'Equipment Types', child: _equip(context, d['equipment'] as Map<String, dynamic>), primaryColor: primaryColor),
+          // Signature ability - display full ability if loaded
+          if (_signatureAbility != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  KitComponents.sectionHeader(
+                    context: context,
+                    label: '✨ Signature Ability',
+                    primaryColor: primaryColor,
+                  ),
+                  const SizedBox(height: 8),
+                  AbilityExpandableItem(component: _signatureAbility!),
+                ],
+              ),
+            )
+          else if (_loadingAbility)
+            KitComponents.section(
+              context: context,
+              label: '✨ Signature Ability',
+              child: const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              primaryColor: primaryColor,
+            )
+          else if (d['signature_ability'] != null)
+            KitComponents.section(context: context, label: '✨ Signature Ability', child: Text(d['signature_ability'] as String, style: const TextStyle(fontWeight: FontWeight.w600)), primaryColor: primaryColor),
           if (d['feature'] != null)
             KitComponents.section(context: context, label: 'Feature', child: Text(d['feature'] as String), primaryColor: primaryColor),
         ],

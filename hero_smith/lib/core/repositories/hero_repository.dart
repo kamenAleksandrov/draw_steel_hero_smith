@@ -222,6 +222,47 @@ class HeroRepository {
     );
   }
 
+  Future<void> updateSubclass(String heroId, String? subclass) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.subclass,
+      textValue: subclass,
+    );
+  }
+
+  Future<void> updateDeity(String heroId, String? deityId) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.deity,
+      textValue: deityId,
+    );
+  }
+
+  Future<void> updateDomain(String heroId, String? domainId) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.domain,
+      textValue: domainId,
+    );
+  }
+
+  Future<void> updateKit(String heroId, String? kitId) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.kit,
+      textValue: kitId,
+    );
+  }
+
+  Future<void> updateCharacteristicArray(
+      String heroId, String? arrayName) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.characteristic_array',
+      textValue: arrayName,
+    );
+  }
+
   Future<void> updateCoreStats(
     String heroId, {
     int? speed,
@@ -293,7 +334,7 @@ class HeroRepository {
       default:
         throw ArgumentError('Unknown characteristic: $characteristic');
     }
-    
+
     await _db.upsertHeroValue(
       heroId: heroId,
       key: key,
@@ -388,9 +429,8 @@ class HeroRepository {
             ? null
             : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
         String? nameForCategory(String category) {
-          final compId = comps
-              .firstWhereOrNull((c) => c['category'] == category)
-              ?['componentId'];
+          final compId = comps.firstWhereOrNull(
+              (c) => c['category'] == category)?['componentId'];
           return nameForId(compId);
         }
 
@@ -546,8 +586,8 @@ class HeroRepository {
 
   Future<CultureSelection> loadCultureSelection(String heroId) async {
     final comps = await _db.getHeroComponents(heroId);
-    String? idFor(String category) =>
-        comps.firstWhereOrNull((c) => c['category'] == category)?['componentId'];
+    String? idFor(String category) => comps
+        .firstWhereOrNull((c) => c['category'] == category)?['componentId'];
     final values = await _db.getHeroValues(heroId);
     String? val(String key) =>
         values.firstWhereOrNull((v) => v.key == key)?.textValue;
@@ -559,6 +599,34 @@ class HeroRepository {
       organisationSkillId: val(_k.cultureOrganisationSkill),
       upbringingSkillId: val(_k.cultureUpbringingSkill),
     );
+  }
+
+  // --- Complication selection ---
+  Future<void> saveComplication({
+    required String heroId,
+    String? complicationId,
+  }) async {
+    if (complicationId == null || complicationId.trim().isEmpty) {
+      // Clear complication
+      await _db.setHeroComponents(
+        heroId: heroId,
+        category: 'complication',
+        componentIds: const <String>[],
+      );
+      return;
+    }
+
+    await _db.setHeroComponents(
+      heroId: heroId,
+      category: 'complication',
+      componentIds: [complicationId],
+    );
+  }
+
+  Future<String?> loadComplication(String heroId) async {
+    final comps = await _db.getHeroComponents(heroId);
+    return comps
+        .firstWhereOrNull((c) => c['category'] == 'complication')?['componentId'];
   }
 
   // --- Career selections (career id, chosen skills/perks, incident) ---
@@ -671,8 +739,8 @@ class HeroRepository {
       return <String>[];
     }
 
-    String? idForCategory(String category) =>
-        comps.firstWhereOrNull((e) => e['category'] == category)?['componentId'];
+    String? idForCategory(String category) => comps
+        .firstWhereOrNull((e) => e['category'] == category)?['componentId'];
 
     return CareerSelection(
       careerId: getText(_k.career) ?? idForCategory('career'),
@@ -988,6 +1056,7 @@ class _HeroKeys {
   final String level = 'basics.level';
   final String ancestry = 'basics.ancestry';
   final String career = 'basics.career';
+  final String kit = 'basics.kit';
   final String deity = 'faith.deity';
   final String domain = 'faith.domain';
   // ancestry extras

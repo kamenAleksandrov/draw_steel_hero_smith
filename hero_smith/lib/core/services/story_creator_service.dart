@@ -18,11 +18,13 @@ class StoryCreatorService {
     final culture = await _heroRepository.loadCultureSelection(heroId);
     final career = await _heroRepository.loadCareerSelection(heroId);
     final traits = await _heroRepository.getSelectedAncestryTraits(heroId);
+    final complicationId = await _heroRepository.loadComplication(heroId);
     return StoryCreatorLoadResult(
       hero: hero,
       cultureSelection: culture,
       careerSelection: career,
       ancestryTraitIds: traits,
+      complicationId: complicationId,
     );
   }
 
@@ -66,6 +68,11 @@ class StoryCreatorService {
       chosenSkillIds: payload.careerSkillIds.toList(),
       chosenPerkIds: payload.careerPerkIds.toList(),
       incitingIncidentName: payload.careerIncidentName,
+    );
+
+    await _heroRepository.saveComplication(
+      heroId: payload.heroId,
+      complicationId: payload.complicationId,
     );
   }
 

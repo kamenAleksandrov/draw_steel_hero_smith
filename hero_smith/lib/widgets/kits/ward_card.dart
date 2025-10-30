@@ -27,11 +27,9 @@ class WardCard extends StatelessWidget {
               primaryColor: colorScheme.primary,
             ),
           if (d['description'] != null)
-            KitComponents.section(
-              context: context,
-              label: 'Description',
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
               child: Text(d['description'] as String),
-              primaryColor: colorScheme.primary,
             ),
         ],
       ),
