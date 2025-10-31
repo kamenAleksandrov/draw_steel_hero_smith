@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/ability_object.md",
+                "file": "pages/home_page.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ability_object"
+              "title": "home_page"
             }
           },
           {
@@ -136,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "objects/ability_object.md",
+                "file": "pages/home_page.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -146,7 +146,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for ability_object"
+              "title": "Backlinks for home_page"
             }
           },
           {
@@ -210,11 +210,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "b156b34ca9b7604c",
+  "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "pages/gear_page.md",
+    "pages/heroes_page.md",
+    "objects/ability_object.md",
     "widgets/ability_display_widget.md",
     "widgets/summaries/ability_summary.md",
-    "objects/ability_object.md",
     "abilities and features plan/conduit.md",
     "abilities and features plan/elementalist.md",
     "abilities and features plan/censor.md",
@@ -229,7 +231,6 @@
     "objects/hero_object.md",
     "objects/downtime_projects_object.md",
     "pages/downtime_projects_page.md",
-    "pages/gear_page.md",
     "objects/item_enchantments.md",
     "objects/languages_object.md",
     "widgets/stamina/stamina_widget.md",
@@ -238,7 +239,6 @@
     "pages/strife_page.md",
     "objects/classes_object.md",
     "systems/level_up_system.md",
-    "objects/titles_object.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",
