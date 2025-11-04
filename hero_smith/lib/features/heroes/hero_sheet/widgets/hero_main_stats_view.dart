@@ -373,22 +373,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildSummaryCard(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          spacing: 16,
-          runSpacing: 16,
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNumberInput(
+            _buildCompactNumberDisplay(
               context,
               label: 'Victories',
               field: _NumericField.victories,
             ),
-            _buildNumberInput(
+            _buildCompactNumberDisplay(
               context,
-              label: 'Experience',
+              label: 'XP',
               field: _NumericField.exp,
             ),
-            _buildNumberInput(
+            _buildCompactNumberDisplay(
               context,
               label: 'Level',
               field: _NumericField.level,
@@ -402,26 +401,29 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildWealthRenownCard(BuildContext context, HeroMainStats stats) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-          spacing: 24,
-          runSpacing: 24,
+        padding: const EdgeInsets.all(12),
+        child: Row(
           children: [
-            _buildEconomyTile(
-              context,
-              title: 'Wealth',
-              baseValue: stats.wealthBase,
-              totalValue: stats.wealthTotal,
-              modKey: HeroModKeys.wealth,
-              insights: _wealthInsights(stats.wealthTotal),
+            Expanded(
+              child: _buildCompactEconomyTile(
+                context,
+                title: 'Wealth',
+                baseValue: stats.wealthBase,
+                totalValue: stats.wealthTotal,
+                modKey: HeroModKeys.wealth,
+                insights: _wealthInsights(stats.wealthTotal),
+              ),
             ),
-            _buildEconomyTile(
-              context,
-              title: 'Renown',
-              baseValue: stats.renownBase,
-              totalValue: stats.renownTotal,
-              modKey: HeroModKeys.renown,
-              insights: _renownInsights(stats.renownTotal),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildCompactEconomyTile(
+                context,
+                title: 'Renown',
+                baseValue: stats.renownBase,
+                totalValue: stats.renownTotal,
+                modKey: HeroModKeys.renown,
+                insights: _renownInsights(stats.renownTotal),
+              ),
             ),
           ],
         ),
@@ -484,32 +486,67 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   Widget _buildPrimaryStatsCard(BuildContext context, HeroMainStats stats) {
-    final data = [
-      _StatTileData(
-          'Might', stats.mightBase, stats.mightTotal, HeroModKeys.might),
-      _StatTileData('Agility', stats.agilityBase, stats.agilityTotal,
-          HeroModKeys.agility),
-      _StatTileData(
-          'Reason', stats.reasonBase, stats.reasonTotal, HeroModKeys.reason),
-      _StatTileData('Intuition', stats.intuitionBase, stats.intuitionTotal,
-          HeroModKeys.intuition),
-      _StatTileData('Presence', stats.presenceBase, stats.presenceTotal,
-          HeroModKeys.presence),
-    ];
-    return _buildStatCollection(context, 'Core Attributes', data);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Core Attributes',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildCompactStatTile(context, 'Might', stats.mightBase,
+                    stats.mightTotal, HeroModKeys.might),
+                _buildCompactStatTile(context, 'Agility', stats.agilityBase,
+                    stats.agilityTotal, HeroModKeys.agility),
+                _buildCompactStatTile(context, 'Reason', stats.reasonBase,
+                    stats.reasonTotal, HeroModKeys.reason),
+                _buildCompactStatTile(context, 'Intuition', stats.intuitionBase,
+                    stats.intuitionTotal, HeroModKeys.intuition),
+                _buildCompactStatTile(context, 'Presence', stats.presenceBase,
+                    stats.presenceTotal, HeroModKeys.presence),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSecondaryStatsCard(BuildContext context, HeroMainStats stats) {
-    final data = [
-      _StatTileData('Size', stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
-      _StatTileData(
-          'Speed', stats.speedBase, stats.speedTotal, HeroModKeys.speed),
-      _StatTileData('Disengage', stats.disengageBase, stats.disengageTotal,
-          HeroModKeys.disengage),
-      _StatTileData('Stability', stats.stabilityBase, stats.stabilityTotal,
-          HeroModKeys.stability),
-    ];
-    return _buildStatCollection(context, 'Combat Readiness', data);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Combat Readiness',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildCompactStatTile(context, 'Size', stats.sizeBase,
+                    stats.sizeTotal, HeroModKeys.size),
+                _buildCompactStatTile(context, 'Speed', stats.speedBase,
+                    stats.speedTotal, HeroModKeys.speed),
+                _buildCompactStatTile(context, 'Disengage', stats.disengageBase,
+                    stats.disengageTotal, HeroModKeys.disengage),
+                _buildCompactStatTile(context, 'Stability', stats.stabilityBase,
+                    stats.stabilityTotal, HeroModKeys.stability),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildStatCollection(
@@ -604,73 +641,103 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final theme = Theme.of(context);
     final state = _calculateStaminaState(stats);
     final effectiveMax = stats.staminaMaxEffective;
+    final staminaMaxMod = _latestStats?.modValue(HeroModKeys.staminaMax) ?? 0;
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Stamina', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 12,
+            Row(
               children: [
-                _buildNumberInput(
-                  context,
-                  label: 'Current',
-                  field: _NumericField.staminaCurrent,
-                  allowNegative: true,
-                  textAlign: TextAlign.center,
-                ),
-                _buildNumberInput(
-                  context,
-                  label: 'Temporary',
-                  field: _NumericField.staminaTemp,
-                  textAlign: TextAlign.center,
+                Text('Stamina', style: theme.textTheme.titleSmall),
+                const Spacer(),
+                Text(
+                  state.label,
+                  style: theme.textTheme.labelSmall?.copyWith(color: state.color),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
+            const SizedBox(height: 8),
+            Row(
               children: [
-                Chip(label: Text('Base max ${stats.staminaMaxBase}')),
-                Chip(
-                  label: Text(
-                    'Max mod ${_formatSigned(_latestStats?.modValue(HeroModKeys.staminaMax) ?? 0)}',
+                Expanded(
+                  child: _buildCompactVitalDisplay(
+                    context,
+                    label: 'Current',
+                    field: _NumericField.staminaCurrent,
+                    allowNegative: true,
                   ),
                 ),
-                Chip(label: Text('Effective max $effectiveMax')),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildCompactVitalDisplay(
+                    context,
+                    label: 'Temp',
+                    field: _NumericField.staminaTemp,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () => _showStatEditDialog(
+                      context,
+                      label: 'Stamina Max',
+                      modKey: HeroModKeys.staminaMax,
+                      baseValue: stats.staminaMaxBase,
+                      currentModValue: staminaMaxMod,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Text('Max', style: theme.textTheme.labelSmall),
+                          const SizedBox(height: 2),
+                          Text(
+                            effectiveMax.toString(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (staminaMaxMod != 0)
+                            Text(
+                              _formatSigned(staminaMaxMod),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: staminaMaxMod > 0 ? Colors.green : Colors.red,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(
-              'State: ${state.label}',
-              style: theme.textTheme.bodyMedium?.copyWith(color: state.color),
-            ),
-            Text(
-              'Healthy > ${effectiveMax ~/ 2} | Winded 1-${effectiveMax ~/ 2} | Dying 0 to -${effectiveMax ~/ 2} | Dead <= -${effectiveMax ~/ 2}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
+            const SizedBox(height: 8),
+            Row(
               children: [
-                OutlinedButton.icon(
-                  onPressed: () => _handleDealDamage(stats),
-                  icon: const Icon(Icons.flash_on),
-                  label: const Text('Deal Damage'),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _handleDealDamage(stats),
+                    icon: const Icon(Icons.flash_on, size: 16),
+                    label: const Text('Damage', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    ),
+                  ),
                 ),
-                OutlinedButton.icon(
-                  onPressed: () => _handleApplyHealing(stats),
-                  icon: const Icon(Icons.healing),
-                  label: const Text('Apply Healing'),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _handleApplyHealing(stats),
+                    icon: const Icon(Icons.healing, size: 16),
+                    label: const Text('Heal', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -683,53 +750,75 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildRecoveriesCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
     final healAmount = _recoveryHealAmount(stats);
+    final recoveriesMaxMod = _latestStats?.modValue(HeroModKeys.recoveriesMax) ?? 0;
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Recoveries', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 12,
+            Text('Recoveries', style: theme.textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Row(
               children: [
-                _buildNumberInput(
-                  context,
-                  label: 'Current',
-                  field: _NumericField.recoveriesCurrent,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                Chip(label: Text('Base max ${stats.recoveriesMaxBase}')),
-                Chip(
-                  label: Text(
-                    'Max mod ${_formatSigned(_latestStats?.modValue(HeroModKeys.recoveriesMax) ?? 0)}',
+                Expanded(
+                  flex: 2,
+                  child: _buildCompactVitalDisplay(
+                    context,
+                    label: 'Current',
+                    field: _NumericField.recoveriesCurrent,
                   ),
                 ),
-                Chip(
-                    label:
-                        Text('Effective max ${stats.recoveriesMaxEffective}')),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: InkWell(
+                    onTap: () => _showStatEditDialog(
+                      context,
+                      label: 'Recoveries Max',
+                      modKey: HeroModKeys.recoveriesMax,
+                      baseValue: stats.recoveriesMaxBase,
+                      currentModValue: recoveriesMaxMod,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Text('Max', style: theme.textTheme.labelSmall),
+                          const SizedBox(height: 2),
+                          Text(
+                            stats.recoveriesMaxEffective.toString(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (recoveriesMaxMod != 0)
+                            Text(
+                              _formatSigned(recoveriesMaxMod),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: recoveriesMaxMod > 0 ? Colors.green : Colors.red,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 3,
+                  child: FilledButton.icon(
+                    onPressed: () => _handleUseRecovery(stats),
+                    icon: const Icon(Icons.local_hospital, size: 16),
+                    label: Text('Use (+$healAmount)', style: const TextStyle(fontSize: 12)),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    ),
+                  ),
+                ),
               ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Stamina restored per recovery: $healAmount',
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => _handleUseRecovery(stats),
-              icon: const Icon(Icons.local_hospital),
-              label: const Text('Use Recovery'),
             ),
           ],
         ),
@@ -742,27 +831,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     HeroMainStats stats,
     AsyncValue<HeroicResourceDetails?> resourceDetails,
   ) {
-    final children = [
-      Expanded(
-          child: _buildHeroicResourceCard(context, stats, resourceDetails)),
-      const SizedBox(width: 16),
-      Expanded(child: _buildSurgesCard(context, stats)),
-    ];
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth >= 600) {
-          return Row(children: children);
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeroicResourceCard(context, stats, resourceDetails),
-            const SizedBox(height: 16),
-            _buildSurgesCard(context, stats),
-          ],
-        );
-      },
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _buildHeroicResourceCard(context, stats, resourceDetails),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildSurgesCard(context, stats),
+        ),
+      ],
     );
   }
 
@@ -771,77 +850,227 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     HeroMainStats stats,
     AsyncValue<HeroicResourceDetails?> resourceDetails,
   ) {
+    final theme = Theme.of(context);
+    
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: resourceDetails.when(
           loading: () => const SizedBox(
-            height: 72,
+            height: 60,
             child: Center(child: CircularProgressIndicator()),
           ),
-          error: (error, _) => _HeroicResourceContent(
-            name: stats.heroicResourceName ?? 'Heroic Resource',
-            description: 'Failed to load heroic resource info: $error',
-            inCombatName: null,
-            inCombatDescription: null,
-            outCombatName: null,
-            outCombatDescription: null,
-            currentField: _buildNumberInput(
-              context,
-              label: 'Current',
-              field: _NumericField.heroicResourceCurrent,
-              textAlign: TextAlign.center,
-            ),
+          error: (error, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                stats.heroicResourceName ?? 'Heroic Resource',
+                style: theme.textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8),
+              _buildCompactVitalDisplay(
+                context,
+                label: 'Current',
+                field: _NumericField.heroicResourceCurrent,
+              ),
+            ],
           ),
-          data: (details) => _HeroicResourceContent(
-            name:
-                details?.name ?? stats.heroicResourceName ?? 'Heroic Resource',
-            description: details?.description,
-            inCombatName: details?.inCombatName,
-            inCombatDescription: details?.inCombatDescription,
-            outCombatName: details?.outCombatName,
-            outCombatDescription: details?.outCombatDescription,
-            currentField: _buildNumberInput(
-              context,
-              label: 'Current',
-              field: _NumericField.heroicResourceCurrent,
-              textAlign: TextAlign.center,
-            ),
-          ),
+          data: (details) {
+            final resourceName = details?.name ?? stats.heroicResourceName ?? 'Heroic Resource';
+            final hasDetails = (details?.description ?? '').isNotEmpty ||
+                (details?.inCombatDescription ?? '').isNotEmpty ||
+                (details?.outCombatDescription ?? '').isNotEmpty;
+            
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        resourceName,
+                        style: theme.textTheme.titleSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (hasDetails)
+                      IconButton(
+                        icon: const Icon(Icons.info_outline, size: 18),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () => _showResourceDetailsDialog(
+                          context,
+                          resourceName,
+                          details,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                _buildCompactVitalDisplay(
+                  context,
+                  label: 'Current',
+                  field: _NumericField.heroicResourceCurrent,
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
+  void _showResourceDetailsDialog(
+    BuildContext context,
+    String name,
+    HeroicResourceDetails? details,
+  ) {
+    final theme = Theme.of(context);
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(name),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if ((details?.description ?? '').isNotEmpty) ...[
+                  Text(
+                    details!.description!,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if ((details?.inCombatDescription ?? '').isNotEmpty) ...[
+                  Text(
+                    details?.inCombatName ?? 'In Combat',
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    details!.inCombatDescription!,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if ((details?.outCombatDescription ?? '').isNotEmpty) ...[
+                  Text(
+                    details?.outCombatName ?? 'Out of Combat',
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    details!.outCombatDescription!,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildSurgesCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
+    
+    // Calculate surge damage based on highest attribute
+    final highestAttribute = [
+      stats.mightTotal,
+      stats.agilityTotal,
+      stats.reasonTotal,
+      stats.intuitionTotal,
+      stats.presenceTotal,
+    ].reduce((a, b) => a > b ? a : b);
+    
+    final surgeDamage = highestAttribute;
+    
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Surges', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            Text('Total: ${stats.surgesTotal}',
-                style: theme.textTheme.bodyMedium),
-            const SizedBox(height: 12),
-            _buildNumberInput(
+            Row(
+              children: [
+                Text('Surges', style: theme.textTheme.titleSmall),
+                const Spacer(),
+                Text(
+                  'Total: ${stats.surgesTotal}',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _buildCompactVitalDisplay(
               context,
               label: 'Current',
               field: _NumericField.surgesCurrent,
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
-            Text(
-              '1 Surge = Damage',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-            ),
-            Text(
-              '2 Surges = Potency + 1',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '1 Surge',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '$surgeDamage Damage',
+                          style: theme.textTheme.labelSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '2 Surges',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Potency +1',
+                          style: theme.textTheme.labelSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -940,6 +1169,404 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         ],
       ),
     );
+  }
+
+  Widget _buildCompactNumberDisplay(
+    BuildContext context, {
+    required String label,
+    required _NumericField field,
+  }) {
+    final theme = Theme.of(context);
+    final value = _latestStats != null
+        ? _numberValueFromStats(_latestStats!, field)
+        : 0;
+
+    return InkWell(
+      onTap: () => _showNumberEditDialog(context, label, field),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: theme.textTheme.labelSmall,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactEconomyTile(
+    BuildContext context, {
+    required String title,
+    required int baseValue,
+    required int totalValue,
+    required String modKey,
+    required List<String> insights,
+  }) {
+    final theme = Theme.of(context);
+    final modValue = totalValue - baseValue;
+
+    return InkWell(
+      onTap: () => _showModEditDialog(
+        context,
+        title: title,
+        modKey: modKey,
+        baseValue: baseValue,
+        currentModValue: modValue,
+        insights: insights,
+      ),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: theme.textTheme.titleSmall),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  totalValue.toString(),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (modValue != 0) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    '(${_formatSigned(modValue)})',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: modValue > 0 ? Colors.green : Colors.red,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            if (insights.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                insights.first,
+                style: theme.textTheme.bodySmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showNumberEditDialog(
+    BuildContext context,
+    String label,
+    _NumericField field,
+  ) async {
+    final controller = TextEditingController(
+      text: _numberValueFromStats(_latestStats!, field).toString(),
+    );
+
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit $label'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+            ),
+            inputFormatters: field == _NumericField.staminaCurrent
+                ? _formatters(true, 4)
+                : _formatters(false, 3),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final value = int.tryParse(controller.text);
+                if (value != null) {
+                  Navigator.of(context).pop(value);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+
+    if (result != null) {
+      await _persistNumberField(field, result.toString());
+    }
+  }
+
+  Future<void> _showModEditDialog(
+    BuildContext context, {
+    required String title,
+    required String modKey,
+    required int baseValue,
+    required int currentModValue,
+    required List<String> insights,
+  }) async {
+    final controller = TextEditingController(text: currentModValue.toString());
+
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit $title'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Base: $baseValue'),
+              const SizedBox(height: 8),
+              TextField(
+                controller: controller,
+                keyboardType: const TextInputType.numberWithOptions(signed: true),
+                autofocus: true,
+                decoration: const InputDecoration(
+                  labelText: 'Modification',
+                  border: OutlineInputBorder(),
+                  helperText: 'Enter modifier (-99 to +99)',
+                ),
+                inputFormatters: _formatters(true, 4),
+              ),
+              if (insights.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                ...insights.map((insight) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        insight,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    )),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final value = int.tryParse(controller.text);
+                if (value != null) {
+                  Navigator.of(context).pop(value);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+
+    if (result != null) {
+      await _persistModification(modKey, result.toString());
+    }
+  }
+
+  Widget _buildCompactStatTile(
+    BuildContext context,
+    String label,
+    int baseValue,
+    int totalValue,
+    String modKey,
+  ) {
+    final theme = Theme.of(context);
+    final modValue = totalValue - baseValue;
+    
+    return Expanded(
+      child: InkWell(
+        onTap: () => _showStatEditDialog(
+          context,
+          label: label,
+          modKey: modKey,
+          baseValue: baseValue,
+          currentModValue: modValue,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: theme.textTheme.labelSmall,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                totalValue.toString(),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (modValue != 0)
+                Text(
+                  _formatSigned(modValue),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: modValue > 0 ? Colors.green : Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactVitalDisplay(
+    BuildContext context, {
+    required String label,
+    required _NumericField field,
+    bool allowNegative = false,
+  }) {
+    final theme = Theme.of(context);
+    final value = _latestStats != null
+        ? _numberValueFromStats(_latestStats!, field)
+        : 0;
+
+    return InkWell(
+      onTap: () async {
+        final controller = TextEditingController(text: value.toString());
+        final result = await showDialog<String>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Edit $label'),
+              content: TextField(
+                controller: controller,
+                keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
+                autofocus: true,
+                decoration: const InputDecoration(
+                  labelText: 'Value',
+                  border: OutlineInputBorder(),
+                ),
+                inputFormatters: _formatters(allowNegative, 4),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(controller.text),
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+        controller.dispose();
+
+        if (result != null && result.isNotEmpty) {
+          await _persistNumberField(field, result);
+        }
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Text(label, style: theme.textTheme.labelSmall),
+            const SizedBox(height: 2),
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showStatEditDialog(
+    BuildContext context, {
+    required String label,
+    required String modKey,
+    required int baseValue,
+    required int currentModValue,
+  }) async {
+    final controller = TextEditingController(text: currentModValue.toString());
+
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit $label'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Base: $baseValue'),
+              const SizedBox(height: 8),
+              TextField(
+                controller: controller,
+                keyboardType: const TextInputType.numberWithOptions(signed: true),
+                autofocus: true,
+                decoration: const InputDecoration(
+                  labelText: 'Modification',
+                  border: OutlineInputBorder(),
+                  helperText: 'Enter modifier (-99 to +99)',
+                ),
+                inputFormatters: _formatters(true, 4),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final value = int.tryParse(controller.text);
+                if (value != null) {
+                  Navigator.of(context).pop(value);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+
+    if (result != null) {
+      await _persistModification(modKey, result.toString());
+    }
   }
 
   List<String> _wealthInsights(int wealth) {

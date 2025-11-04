@@ -6,12 +6,12 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/class_data.dart';
 import '../../../core/models/subclass_models.dart';
 import '../../../core/models/component.dart' as model;
+import '../../../core/models/feature.dart' as feature_model;
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/treasures/treasures.dart';
-import '../../creators/widgets/strife_creator/class_features_widget.dart';
 
 /// Highlights class features and gear.
 class SheetFeatures extends ConsumerStatefulWidget {
@@ -215,6 +215,8 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -226,7 +228,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: 16),
               Text(
                 _error!,
@@ -245,45 +247,414 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       );
     }
 
-    final summary = _buildSelectionSummary(context);
-    final domainSlugs =
-        ClassFeatureDataService.selectedDomainSlugs(_subclassSelection);
-    final subclassSlugs =
-        ClassFeatureDataService.activeSubclassSlugs(_subclassSelection);
-    final subclassLabel =
-        ClassFeatureDataService.subclassLabel(_subclassSelection);
-    final deitySlugs =
-        ClassFeatureDataService.selectedDeitySlugs(_subclassSelection);
+    // Get all the computed data
+    final domainSlugs = ClassFeatureDataService.selectedDomainSlugs(_subclassSelection);
+    final subclassSlugs = ClassFeatureDataService.activeSubclassSlugs(_subclassSelection);
+    final deitySlugs = ClassFeatureDataService.selectedDeitySlugs(_subclassSelection);
+
+    // Build list of features to display
+    final displayFeatures = <_FeatureDisplay>[];
+    
+    for (final feature in _featureData!.features) {
+      final details = _featureData!.featureDetailsById[feature.id];
+      if (details == null) continue;
+
+      // Check if feature should be shown based on subclass/domain/deity
+      if (!_shouldShowFeature(feature, details, subclassSlugs, domainSlugs, deitySlugs)) {
+        continue;
+      }
+
+      final selectedOptions = _autoSelections[feature.id] ?? {};
+      final displayOptions = _getDisplayOptions(feature, details, selectedOptions, subclassSlugs, domainSlugs, deitySlugs);
+
+      displayFeatures.add(_FeatureDisplay(
+        name: feature.name,
+        level: feature.level,
+        description: details['description'] as String? ?? '',
+        options: displayOptions,
+      ));
+    }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       children: [
-        Text(
-          '${_classData!.name} Features (Level $_level)',
-          style: AppTextStyles.title,
+        // Header with class and level
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _classData!.name,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Level $_level',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                if (_subclassSelection != null) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: _buildSelectionChips(theme),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
-        if (summary != null) ...[
-          summary,
-          const SizedBox(height: 16),
-        ],
-        ClassFeaturesWidget(
-          level: _level,
-          features: _featureData!.features,
-          featureDetailsById: _featureData!.featureDetailsById,
-          selectedOptions: _autoSelections,
-          onSelectionChanged: null, // Read-only
-          domainLinkedFeatureIds: _featureData!.domainLinkedFeatureIds,
-          selectedDomainSlugs: domainSlugs,
-          deityLinkedFeatureIds: _featureData!.deityLinkedFeatureIds,
-          selectedDeitySlugs: deitySlugs,
-          abilityDetailsById: _featureData!.abilityDetailsById,
-          abilityIdByName: _featureData!.abilityIdByName,
-          activeSubclassSlugs: subclassSlugs,
-          subclassLabel: subclassLabel,
-          subclassSelection: _subclassSelection,
-        ),
+        const SizedBox(height: 12),
+        
+        // Features list
+        ...displayFeatures.map((feature) => _buildFeatureCard(context, feature)),
       ],
+    );
+  }
+
+  List<Widget> _buildSelectionChips(ThemeData theme) {
+    final chips = <Widget>[];
+
+    final subclassName = _subclassSelection?.subclassName;
+    if (subclassName != null && subclassName.trim().isNotEmpty) {
+      chips.add(_buildCompactChip(theme, subclassName.trim(), Icons.star));
+    }
+
+    if (_selectedDomains.isNotEmpty) {
+      for (final domain in _selectedDomains) {
+        if (domain.trim().isEmpty) continue;
+        chips.add(_buildCompactChip(theme, domain.trim(), Icons.account_tree));
+      }
+    }
+
+    final deityDisplay = _selectedDeity?.name ?? _subclassSelection?.deityName;
+    if (deityDisplay != null && deityDisplay.trim().isNotEmpty) {
+      chips.add(_buildCompactChip(theme, deityDisplay.trim(), Icons.church));
+    }
+
+    if (_characteristicArrayDescription != null &&
+        _characteristicArrayDescription!.trim().isNotEmpty) {
+      chips.add(_buildCompactChip(theme, _characteristicArrayDescription!.trim(), Icons.view_module));
+    }
+
+    return chips;
+  }
+
+  Widget _buildCompactChip(ThemeData theme, String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: theme.colorScheme.onPrimaryContainer),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onPrimaryContainer,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _shouldShowFeature(
+    feature_model.Feature feature,
+    Map<String, dynamic> details,
+    Set<String> subclassSlugs,
+    Set<String> domainSlugs,
+    Set<String> deitySlugs,
+  ) {
+    // Check if feature requires subclass
+    final options = details['options'] as List<dynamic>? ?? [];
+    final requiresSubclass = options.any((opt) {
+      if (opt is! Map<String, dynamic>) return false;
+      return opt['subclass'] != null || (opt['restricts'] as List?)?.isNotEmpty == true;
+    });
+    
+    if (requiresSubclass && subclassSlugs.isEmpty) {
+      return false;
+    }
+
+    // Check if feature requires domain
+    final requiresDomain = _featureData!.domainLinkedFeatureIds.contains(feature.id);
+    if (requiresDomain && domainSlugs.isEmpty) {
+      return false;
+    }
+
+    // Check if feature requires deity
+    final requiresDeity = _featureData!.deityLinkedFeatureIds.contains(feature.id);
+    if (requiresDeity && deitySlugs.isEmpty) {
+      return false;
+    }
+
+    return true;
+  }
+
+  List<_FeatureOption> _getDisplayOptions(
+    feature_model.Feature feature,
+    Map<String, dynamic> details,
+    Set<String> selectedKeys,
+    Set<String> subclassSlugs,
+    Set<String> domainSlugs,
+    Set<String> deitySlugs,
+  ) {
+    final displayOptions = <_FeatureOption>[];
+    final options = details['options'] as List<dynamic>? ?? [];
+
+    for (final optionData in options) {
+      if (optionData is! Map<String, dynamic>) continue;
+      
+      final option = optionData;
+
+      // Check if option should be shown
+      if (option['subclass'] != null) {
+        final optionSubclassSlug = ClassFeatureDataService.slugify(option['subclass'] as String);
+        if (!subclassSlugs.contains(optionSubclassSlug)) {
+          continue;
+        }
+      }
+
+      final restricts = option['restricts'] as List<dynamic>?;
+      if (restricts?.isNotEmpty == true) {
+        final restrictStrings = restricts!.whereType<String>().toList();
+        final matchesRestriction = restrictStrings.any((r) => subclassSlugs.contains(r));
+        if (!matchesRestriction) {
+          continue;
+        }
+      }
+
+      if (option['domain'] != null) {
+        final optionDomainSlug = ClassFeatureDataService.slugify(option['domain'] as String);
+        if (!domainSlugs.contains(optionDomainSlug)) {
+          continue;
+        }
+      }
+
+      if (option['deity'] != null) {
+        final optionDeitySlug = ClassFeatureDataService.slugify(option['deity'] as String);
+        if (!deitySlugs.contains(optionDeitySlug)) {
+          continue;
+        }
+      }
+
+      // Get abilities for this option
+      final abilities = <String>[];
+      final abilityRefs = option['abilities'] as List<dynamic>?;
+      if (abilityRefs?.isNotEmpty == true) {
+        for (final abilityRef in abilityRefs!) {
+          if (abilityRef is! String) continue;
+          final abilityId = _featureData!.abilityIdByName[abilityRef] ?? abilityRef;
+          final abilityDetail = _featureData!.abilityDetailsById[abilityId];
+          if (abilityDetail != null) {
+            final abilityName = abilityDetail['name'] as String? ?? abilityRef;
+            abilities.add(abilityName);
+          }
+        }
+      }
+
+      displayOptions.add(_FeatureOption(
+        name: option['name'] as String? ?? '',
+        description: option['description'] as String? ?? '',
+        abilities: abilities,
+      ));
+    }
+
+    return displayOptions;
+  }
+
+  Widget _buildFeatureCard(BuildContext context, _FeatureDisplay feature) {
+    final theme = Theme.of(context);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        onTap: feature.description.isNotEmpty || feature.options.isNotEmpty
+            ? () => _showFeatureDetails(context, feature)
+            : null,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    '${feature.level}',
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      feature.name,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (feature.options.isNotEmpty)
+                      Text(
+                        '${feature.options.length} option${feature.options.length != 1 ? 's' : ''}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (feature.description.isNotEmpty || feature.options.isNotEmpty)
+                Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFeatureDetails(BuildContext context, _FeatureDisplay feature) {
+    final theme = Theme.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  '${feature.level}',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                feature.name,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (feature.description.isNotEmpty) ...[
+                Text(
+                  feature.description,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (feature.options.isNotEmpty) ...[
+                Text(
+                  'Options',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...feature.options.map((option) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          option.name,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (option.description.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            option.description,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                        if (option.abilities.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: option.abilities.map((ability) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.secondaryContainer.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  ability,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.onSecondaryContainer,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -344,72 +715,6 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
     }
 
     return result;
-  }
-
-  Widget? _buildSelectionSummary(BuildContext context) {
-    final chips = <Widget>[];
-    final subclassName = _subclassSelection?.subclassName;
-    if (subclassName != null && subclassName.trim().isNotEmpty) {
-      chips.add(_buildInfoChip(Icons.star, 'Subclass: $subclassName'));
-    }
-
-    if (_selectedDomains.isNotEmpty) {
-      for (final domain in _selectedDomains) {
-        if (domain.trim().isEmpty) continue;
-        chips.add(
-          _buildInfoChip(Icons.account_tree, 'Domain: ${domain.trim()}'),
-        );
-      }
-    }
-
-    final deityDisplay = _selectedDeity?.name ?? _subclassSelection?.deityName;
-    if (deityDisplay != null && deityDisplay.trim().isNotEmpty) {
-      chips.add(
-        _buildInfoChip(Icons.church, 'Deity: ${deityDisplay.trim()}'),
-      );
-    }
-
-    if (_characteristicArrayDescription != null &&
-        _characteristicArrayDescription!.trim().isNotEmpty) {
-      chips.add(
-        _buildInfoChip(
-          Icons.view_module,
-          'Characteristics: ${_characteristicArrayDescription!.trim()}',
-        ),
-      );
-    }
-
-    if (chips.isEmpty) {
-      return null;
-    }
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Selections',
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: chips,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoChip(IconData icon, String label) {
-    return Chip(
-      avatar: Icon(icon, size: 16),
-      label: Text(label),
-    );
   }
 }
 
@@ -881,4 +1186,31 @@ class _AddTreasureDialogState extends State<_AddTreasureDialog> {
         return Icons.category;
     }
   }
+}
+
+// Helper classes for feature display
+class _FeatureDisplay {
+  final String name;
+  final int level;
+  final String description;
+  final List<_FeatureOption> options;
+
+  const _FeatureDisplay({
+    required this.name,
+    required this.level,
+    required this.description,
+    required this.options,
+  });
+}
+
+class _FeatureOption {
+  final String name;
+  final String description;
+  final List<String> abilities;
+
+  const _FeatureOption({
+    required this.name,
+    required this.description,
+    required this.abilities,
+  });
 }
