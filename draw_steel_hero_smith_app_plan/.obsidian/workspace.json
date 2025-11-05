@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pages/home_page.md",
+                "file": "objects/titles_object.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "home_page"
+              "title": "titles_object"
             }
           },
           {
@@ -136,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "pages/home_page.md",
+                "file": "objects/titles_object.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -146,7 +146,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for home_page"
+              "title": "Backlinks for titles_object"
             }
           },
           {
@@ -212,6 +212,8 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "objects/downtime_projects_object.md",
+    "pages/home_page.md",
     "pages/gear_page.md",
     "pages/heroes_page.md",
     "objects/ability_object.md",
@@ -226,10 +228,8 @@
     "abilities and features plan/shadow.md",
     "abilities and features plan/null.md",
     "abilities and features plan/fury.md",
-    "pages/home_page.md",
     "abilities and features plan",
     "objects/hero_object.md",
-    "objects/downtime_projects_object.md",
     "pages/downtime_projects_page.md",
     "objects/item_enchantments.md",
     "objects/languages_object.md",

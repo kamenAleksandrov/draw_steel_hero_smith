@@ -578,12 +578,15 @@ class _EchelonNavigationCard extends StatelessWidget {
 }
 
 class DowntimeTabsScaffold extends StatelessWidget {
-  const DowntimeTabsScaffold({super.key});
+  const DowntimeTabsScaffold({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
+      initialIndex: initialIndex,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Downtime'),

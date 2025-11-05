@@ -54,11 +54,66 @@ class MetaEntries extends Table {
   Set<Column> get primaryKey => {key};
 }
 
+// Downtime tracking tables
+class HeroDowntimeProjects extends Table {
+  TextColumn get id => text()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get templateProjectId => text().nullable()();
+  TextColumn get name => text()();
+  TextColumn get description => text().withDefault(const Constant(''))();
+  IntColumn get projectGoal => integer()();
+  IntColumn get currentPoints => integer().withDefault(const Constant(0))();
+  TextColumn get prerequisitesJson => text().withDefault(const Constant('[]'))();
+  TextColumn get projectSource => text().nullable()();
+  TextColumn get sourceLanguage => text().nullable()();
+  TextColumn get guidesJson => text().withDefault(const Constant('[]'))();
+  TextColumn get rollCharacteristicsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get eventsJson => text().withDefault(const Constant('[]'))();
+  BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
+  BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class HeroFollowers extends Table {
+  TextColumn get id => text()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get name => text()();
+  TextColumn get followerType => text()();
+  IntColumn get might => integer().withDefault(const Constant(0))();
+  IntColumn get agility => integer().withDefault(const Constant(0))();
+  IntColumn get reason => integer().withDefault(const Constant(0))();
+  IntColumn get intuition => integer().withDefault(const Constant(0))();
+  IntColumn get presence => integer().withDefault(const Constant(0))();
+  TextColumn get skillsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get languagesJson => text().withDefault(const Constant('[]'))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class HeroProjectSources extends Table {
+  TextColumn get id => text()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get name => text()();
+  TextColumn get type => text()(); // 'source', 'item', 'guide'
+  TextColumn get language => text().nullable()();
+  TextColumn get description => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 @DriftDatabase(tables: [
   Components,
   Heroes,
   HeroValues,
   MetaEntries,
+  HeroDowntimeProjects,
+  HeroFollowers,
+  HeroProjectSources,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
@@ -69,7 +124,7 @@ class AppDatabase extends _$AppDatabase {
   static bool databasePreexisted = false;
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -81,6 +136,13 @@ class AppDatabase extends _$AppDatabase {
             // Migration from schema version 1 to 2
             // Move data from HeroComponents to HeroValues
             await _migrateHeroComponentsToValues();
+          }
+          if (from < 3) {
+            // Migration from schema version 2 to 3
+            // Add downtime tracking tables
+            await m.createTable(heroDowntimeProjects);
+            await m.createTable(heroFollowers);
+            await m.createTable(heroProjectSources);
           }
         },
       );

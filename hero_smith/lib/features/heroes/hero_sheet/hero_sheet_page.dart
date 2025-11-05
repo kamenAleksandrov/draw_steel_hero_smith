@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../creators/hero_creators/hero_creator_page.dart';
+import 'hero_downtime_tracking_page.dart';
 import 'sheet_abilities.dart';
 import 'sheet_features.dart';
 import 'sheet_main_stats.dart';
@@ -51,6 +52,20 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
       appBar: AppBar(
         title: Text('Hero Sheet - ${widget.heroName}'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.assignment),
+            tooltip: 'Downtime Projects',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => HeroDowntimeTrackingPage(
+                    heroId: widget.heroId,
+                    heroName: widget.heroName,
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.edit),
             tooltip: 'Edit Hero',

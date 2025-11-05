@@ -1390,6 +1390,1830 @@ class MetaEntriesCompanion extends UpdateCompanion<MetaEntry> {
   }
 }
 
+class $HeroDowntimeProjectsTable extends HeroDowntimeProjects
+    with TableInfo<$HeroDowntimeProjectsTable, HeroDowntimeProject> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroDowntimeProjectsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _templateProjectIdMeta =
+      const VerificationMeta('templateProjectId');
+  @override
+  late final GeneratedColumn<String> templateProjectId =
+      GeneratedColumn<String>('template_project_id', aliasedName, true,
+          type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _projectGoalMeta =
+      const VerificationMeta('projectGoal');
+  @override
+  late final GeneratedColumn<int> projectGoal = GeneratedColumn<int>(
+      'project_goal', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _currentPointsMeta =
+      const VerificationMeta('currentPoints');
+  @override
+  late final GeneratedColumn<int> currentPoints = GeneratedColumn<int>(
+      'current_points', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _prerequisitesJsonMeta =
+      const VerificationMeta('prerequisitesJson');
+  @override
+  late final GeneratedColumn<String> prerequisitesJson =
+      GeneratedColumn<String>('prerequisites_json', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultValue: const Constant('[]'));
+  static const VerificationMeta _projectSourceMeta =
+      const VerificationMeta('projectSource');
+  @override
+  late final GeneratedColumn<String> projectSource = GeneratedColumn<String>(
+      'project_source', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _sourceLanguageMeta =
+      const VerificationMeta('sourceLanguage');
+  @override
+  late final GeneratedColumn<String> sourceLanguage = GeneratedColumn<String>(
+      'source_language', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _guidesJsonMeta =
+      const VerificationMeta('guidesJson');
+  @override
+  late final GeneratedColumn<String> guidesJson = GeneratedColumn<String>(
+      'guides_json', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _rollCharacteristicsJsonMeta =
+      const VerificationMeta('rollCharacteristicsJson');
+  @override
+  late final GeneratedColumn<String> rollCharacteristicsJson =
+      GeneratedColumn<String>('roll_characteristics_json', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultValue: const Constant('[]'));
+  static const VerificationMeta _eventsJsonMeta =
+      const VerificationMeta('eventsJson');
+  @override
+  late final GeneratedColumn<String> eventsJson = GeneratedColumn<String>(
+      'events_json', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _isCustomMeta =
+      const VerificationMeta('isCustom');
+  @override
+  late final GeneratedColumn<bool> isCustom = GeneratedColumn<bool>(
+      'is_custom', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_custom" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _isCompletedMeta =
+      const VerificationMeta('isCompleted');
+  @override
+  late final GeneratedColumn<bool> isCompleted = GeneratedColumn<bool>(
+      'is_completed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_completed" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        heroId,
+        templateProjectId,
+        name,
+        description,
+        projectGoal,
+        currentPoints,
+        prerequisitesJson,
+        projectSource,
+        sourceLanguage,
+        guidesJson,
+        rollCharacteristicsJson,
+        eventsJson,
+        isCustom,
+        isCompleted,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_downtime_projects';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<HeroDowntimeProject> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('template_project_id')) {
+      context.handle(
+          _templateProjectIdMeta,
+          templateProjectId.isAcceptableOrUnknown(
+              data['template_project_id']!, _templateProjectIdMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    }
+    if (data.containsKey('project_goal')) {
+      context.handle(
+          _projectGoalMeta,
+          projectGoal.isAcceptableOrUnknown(
+              data['project_goal']!, _projectGoalMeta));
+    } else if (isInserting) {
+      context.missing(_projectGoalMeta);
+    }
+    if (data.containsKey('current_points')) {
+      context.handle(
+          _currentPointsMeta,
+          currentPoints.isAcceptableOrUnknown(
+              data['current_points']!, _currentPointsMeta));
+    }
+    if (data.containsKey('prerequisites_json')) {
+      context.handle(
+          _prerequisitesJsonMeta,
+          prerequisitesJson.isAcceptableOrUnknown(
+              data['prerequisites_json']!, _prerequisitesJsonMeta));
+    }
+    if (data.containsKey('project_source')) {
+      context.handle(
+          _projectSourceMeta,
+          projectSource.isAcceptableOrUnknown(
+              data['project_source']!, _projectSourceMeta));
+    }
+    if (data.containsKey('source_language')) {
+      context.handle(
+          _sourceLanguageMeta,
+          sourceLanguage.isAcceptableOrUnknown(
+              data['source_language']!, _sourceLanguageMeta));
+    }
+    if (data.containsKey('guides_json')) {
+      context.handle(
+          _guidesJsonMeta,
+          guidesJson.isAcceptableOrUnknown(
+              data['guides_json']!, _guidesJsonMeta));
+    }
+    if (data.containsKey('roll_characteristics_json')) {
+      context.handle(
+          _rollCharacteristicsJsonMeta,
+          rollCharacteristicsJson.isAcceptableOrUnknown(
+              data['roll_characteristics_json']!,
+              _rollCharacteristicsJsonMeta));
+    }
+    if (data.containsKey('events_json')) {
+      context.handle(
+          _eventsJsonMeta,
+          eventsJson.isAcceptableOrUnknown(
+              data['events_json']!, _eventsJsonMeta));
+    }
+    if (data.containsKey('is_custom')) {
+      context.handle(_isCustomMeta,
+          isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta));
+    }
+    if (data.containsKey('is_completed')) {
+      context.handle(
+          _isCompletedMeta,
+          isCompleted.isAcceptableOrUnknown(
+              data['is_completed']!, _isCompletedMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroDowntimeProject map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroDowntimeProject(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      templateProjectId: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}template_project_id']),
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      projectGoal: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}project_goal'])!,
+      currentPoints: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}current_points'])!,
+      prerequisitesJson: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}prerequisites_json'])!,
+      projectSource: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}project_source']),
+      sourceLanguage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_language']),
+      guidesJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}guides_json'])!,
+      rollCharacteristicsJson: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}roll_characteristics_json'])!,
+      eventsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}events_json'])!,
+      isCustom: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_custom'])!,
+      isCompleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_completed'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $HeroDowntimeProjectsTable createAlias(String alias) {
+    return $HeroDowntimeProjectsTable(attachedDatabase, alias);
+  }
+}
+
+class HeroDowntimeProject extends DataClass
+    implements Insertable<HeroDowntimeProject> {
+  final String id;
+  final String heroId;
+  final String? templateProjectId;
+  final String name;
+  final String description;
+  final int projectGoal;
+  final int currentPoints;
+  final String prerequisitesJson;
+  final String? projectSource;
+  final String? sourceLanguage;
+  final String guidesJson;
+  final String rollCharacteristicsJson;
+  final String eventsJson;
+  final bool isCustom;
+  final bool isCompleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const HeroDowntimeProject(
+      {required this.id,
+      required this.heroId,
+      this.templateProjectId,
+      required this.name,
+      required this.description,
+      required this.projectGoal,
+      required this.currentPoints,
+      required this.prerequisitesJson,
+      this.projectSource,
+      this.sourceLanguage,
+      required this.guidesJson,
+      required this.rollCharacteristicsJson,
+      required this.eventsJson,
+      required this.isCustom,
+      required this.isCompleted,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    if (!nullToAbsent || templateProjectId != null) {
+      map['template_project_id'] = Variable<String>(templateProjectId);
+    }
+    map['name'] = Variable<String>(name);
+    map['description'] = Variable<String>(description);
+    map['project_goal'] = Variable<int>(projectGoal);
+    map['current_points'] = Variable<int>(currentPoints);
+    map['prerequisites_json'] = Variable<String>(prerequisitesJson);
+    if (!nullToAbsent || projectSource != null) {
+      map['project_source'] = Variable<String>(projectSource);
+    }
+    if (!nullToAbsent || sourceLanguage != null) {
+      map['source_language'] = Variable<String>(sourceLanguage);
+    }
+    map['guides_json'] = Variable<String>(guidesJson);
+    map['roll_characteristics_json'] =
+        Variable<String>(rollCharacteristicsJson);
+    map['events_json'] = Variable<String>(eventsJson);
+    map['is_custom'] = Variable<bool>(isCustom);
+    map['is_completed'] = Variable<bool>(isCompleted);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  HeroDowntimeProjectsCompanion toCompanion(bool nullToAbsent) {
+    return HeroDowntimeProjectsCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      templateProjectId: templateProjectId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(templateProjectId),
+      name: Value(name),
+      description: Value(description),
+      projectGoal: Value(projectGoal),
+      currentPoints: Value(currentPoints),
+      prerequisitesJson: Value(prerequisitesJson),
+      projectSource: projectSource == null && nullToAbsent
+          ? const Value.absent()
+          : Value(projectSource),
+      sourceLanguage: sourceLanguage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceLanguage),
+      guidesJson: Value(guidesJson),
+      rollCharacteristicsJson: Value(rollCharacteristicsJson),
+      eventsJson: Value(eventsJson),
+      isCustom: Value(isCustom),
+      isCompleted: Value(isCompleted),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory HeroDowntimeProject.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroDowntimeProject(
+      id: serializer.fromJson<String>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      templateProjectId:
+          serializer.fromJson<String?>(json['templateProjectId']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String>(json['description']),
+      projectGoal: serializer.fromJson<int>(json['projectGoal']),
+      currentPoints: serializer.fromJson<int>(json['currentPoints']),
+      prerequisitesJson: serializer.fromJson<String>(json['prerequisitesJson']),
+      projectSource: serializer.fromJson<String?>(json['projectSource']),
+      sourceLanguage: serializer.fromJson<String?>(json['sourceLanguage']),
+      guidesJson: serializer.fromJson<String>(json['guidesJson']),
+      rollCharacteristicsJson:
+          serializer.fromJson<String>(json['rollCharacteristicsJson']),
+      eventsJson: serializer.fromJson<String>(json['eventsJson']),
+      isCustom: serializer.fromJson<bool>(json['isCustom']),
+      isCompleted: serializer.fromJson<bool>(json['isCompleted']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'templateProjectId': serializer.toJson<String?>(templateProjectId),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String>(description),
+      'projectGoal': serializer.toJson<int>(projectGoal),
+      'currentPoints': serializer.toJson<int>(currentPoints),
+      'prerequisitesJson': serializer.toJson<String>(prerequisitesJson),
+      'projectSource': serializer.toJson<String?>(projectSource),
+      'sourceLanguage': serializer.toJson<String?>(sourceLanguage),
+      'guidesJson': serializer.toJson<String>(guidesJson),
+      'rollCharacteristicsJson':
+          serializer.toJson<String>(rollCharacteristicsJson),
+      'eventsJson': serializer.toJson<String>(eventsJson),
+      'isCustom': serializer.toJson<bool>(isCustom),
+      'isCompleted': serializer.toJson<bool>(isCompleted),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  HeroDowntimeProject copyWith(
+          {String? id,
+          String? heroId,
+          Value<String?> templateProjectId = const Value.absent(),
+          String? name,
+          String? description,
+          int? projectGoal,
+          int? currentPoints,
+          String? prerequisitesJson,
+          Value<String?> projectSource = const Value.absent(),
+          Value<String?> sourceLanguage = const Value.absent(),
+          String? guidesJson,
+          String? rollCharacteristicsJson,
+          String? eventsJson,
+          bool? isCustom,
+          bool? isCompleted,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      HeroDowntimeProject(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        templateProjectId: templateProjectId.present
+            ? templateProjectId.value
+            : this.templateProjectId,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        projectGoal: projectGoal ?? this.projectGoal,
+        currentPoints: currentPoints ?? this.currentPoints,
+        prerequisitesJson: prerequisitesJson ?? this.prerequisitesJson,
+        projectSource:
+            projectSource.present ? projectSource.value : this.projectSource,
+        sourceLanguage:
+            sourceLanguage.present ? sourceLanguage.value : this.sourceLanguage,
+        guidesJson: guidesJson ?? this.guidesJson,
+        rollCharacteristicsJson:
+            rollCharacteristicsJson ?? this.rollCharacteristicsJson,
+        eventsJson: eventsJson ?? this.eventsJson,
+        isCustom: isCustom ?? this.isCustom,
+        isCompleted: isCompleted ?? this.isCompleted,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  HeroDowntimeProject copyWithCompanion(HeroDowntimeProjectsCompanion data) {
+    return HeroDowntimeProject(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      templateProjectId: data.templateProjectId.present
+          ? data.templateProjectId.value
+          : this.templateProjectId,
+      name: data.name.present ? data.name.value : this.name,
+      description:
+          data.description.present ? data.description.value : this.description,
+      projectGoal:
+          data.projectGoal.present ? data.projectGoal.value : this.projectGoal,
+      currentPoints: data.currentPoints.present
+          ? data.currentPoints.value
+          : this.currentPoints,
+      prerequisitesJson: data.prerequisitesJson.present
+          ? data.prerequisitesJson.value
+          : this.prerequisitesJson,
+      projectSource: data.projectSource.present
+          ? data.projectSource.value
+          : this.projectSource,
+      sourceLanguage: data.sourceLanguage.present
+          ? data.sourceLanguage.value
+          : this.sourceLanguage,
+      guidesJson:
+          data.guidesJson.present ? data.guidesJson.value : this.guidesJson,
+      rollCharacteristicsJson: data.rollCharacteristicsJson.present
+          ? data.rollCharacteristicsJson.value
+          : this.rollCharacteristicsJson,
+      eventsJson:
+          data.eventsJson.present ? data.eventsJson.value : this.eventsJson,
+      isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
+      isCompleted:
+          data.isCompleted.present ? data.isCompleted.value : this.isCompleted,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroDowntimeProject(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('templateProjectId: $templateProjectId, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('projectGoal: $projectGoal, ')
+          ..write('currentPoints: $currentPoints, ')
+          ..write('prerequisitesJson: $prerequisitesJson, ')
+          ..write('projectSource: $projectSource, ')
+          ..write('sourceLanguage: $sourceLanguage, ')
+          ..write('guidesJson: $guidesJson, ')
+          ..write('rollCharacteristicsJson: $rollCharacteristicsJson, ')
+          ..write('eventsJson: $eventsJson, ')
+          ..write('isCustom: $isCustom, ')
+          ..write('isCompleted: $isCompleted, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      heroId,
+      templateProjectId,
+      name,
+      description,
+      projectGoal,
+      currentPoints,
+      prerequisitesJson,
+      projectSource,
+      sourceLanguage,
+      guidesJson,
+      rollCharacteristicsJson,
+      eventsJson,
+      isCustom,
+      isCompleted,
+      createdAt,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroDowntimeProject &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.templateProjectId == this.templateProjectId &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.projectGoal == this.projectGoal &&
+          other.currentPoints == this.currentPoints &&
+          other.prerequisitesJson == this.prerequisitesJson &&
+          other.projectSource == this.projectSource &&
+          other.sourceLanguage == this.sourceLanguage &&
+          other.guidesJson == this.guidesJson &&
+          other.rollCharacteristicsJson == this.rollCharacteristicsJson &&
+          other.eventsJson == this.eventsJson &&
+          other.isCustom == this.isCustom &&
+          other.isCompleted == this.isCompleted &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class HeroDowntimeProjectsCompanion
+    extends UpdateCompanion<HeroDowntimeProject> {
+  final Value<String> id;
+  final Value<String> heroId;
+  final Value<String?> templateProjectId;
+  final Value<String> name;
+  final Value<String> description;
+  final Value<int> projectGoal;
+  final Value<int> currentPoints;
+  final Value<String> prerequisitesJson;
+  final Value<String?> projectSource;
+  final Value<String?> sourceLanguage;
+  final Value<String> guidesJson;
+  final Value<String> rollCharacteristicsJson;
+  final Value<String> eventsJson;
+  final Value<bool> isCustom;
+  final Value<bool> isCompleted;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const HeroDowntimeProjectsCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.templateProjectId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.projectGoal = const Value.absent(),
+    this.currentPoints = const Value.absent(),
+    this.prerequisitesJson = const Value.absent(),
+    this.projectSource = const Value.absent(),
+    this.sourceLanguage = const Value.absent(),
+    this.guidesJson = const Value.absent(),
+    this.rollCharacteristicsJson = const Value.absent(),
+    this.eventsJson = const Value.absent(),
+    this.isCustom = const Value.absent(),
+    this.isCompleted = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HeroDowntimeProjectsCompanion.insert({
+    required String id,
+    required String heroId,
+    this.templateProjectId = const Value.absent(),
+    required String name,
+    this.description = const Value.absent(),
+    required int projectGoal,
+    this.currentPoints = const Value.absent(),
+    this.prerequisitesJson = const Value.absent(),
+    this.projectSource = const Value.absent(),
+    this.sourceLanguage = const Value.absent(),
+    this.guidesJson = const Value.absent(),
+    this.rollCharacteristicsJson = const Value.absent(),
+    this.eventsJson = const Value.absent(),
+    this.isCustom = const Value.absent(),
+    this.isCompleted = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        heroId = Value(heroId),
+        name = Value(name),
+        projectGoal = Value(projectGoal);
+  static Insertable<HeroDowntimeProject> custom({
+    Expression<String>? id,
+    Expression<String>? heroId,
+    Expression<String>? templateProjectId,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<int>? projectGoal,
+    Expression<int>? currentPoints,
+    Expression<String>? prerequisitesJson,
+    Expression<String>? projectSource,
+    Expression<String>? sourceLanguage,
+    Expression<String>? guidesJson,
+    Expression<String>? rollCharacteristicsJson,
+    Expression<String>? eventsJson,
+    Expression<bool>? isCustom,
+    Expression<bool>? isCompleted,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (templateProjectId != null) 'template_project_id': templateProjectId,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (projectGoal != null) 'project_goal': projectGoal,
+      if (currentPoints != null) 'current_points': currentPoints,
+      if (prerequisitesJson != null) 'prerequisites_json': prerequisitesJson,
+      if (projectSource != null) 'project_source': projectSource,
+      if (sourceLanguage != null) 'source_language': sourceLanguage,
+      if (guidesJson != null) 'guides_json': guidesJson,
+      if (rollCharacteristicsJson != null)
+        'roll_characteristics_json': rollCharacteristicsJson,
+      if (eventsJson != null) 'events_json': eventsJson,
+      if (isCustom != null) 'is_custom': isCustom,
+      if (isCompleted != null) 'is_completed': isCompleted,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HeroDowntimeProjectsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? heroId,
+      Value<String?>? templateProjectId,
+      Value<String>? name,
+      Value<String>? description,
+      Value<int>? projectGoal,
+      Value<int>? currentPoints,
+      Value<String>? prerequisitesJson,
+      Value<String?>? projectSource,
+      Value<String?>? sourceLanguage,
+      Value<String>? guidesJson,
+      Value<String>? rollCharacteristicsJson,
+      Value<String>? eventsJson,
+      Value<bool>? isCustom,
+      Value<bool>? isCompleted,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return HeroDowntimeProjectsCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      templateProjectId: templateProjectId ?? this.templateProjectId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      projectGoal: projectGoal ?? this.projectGoal,
+      currentPoints: currentPoints ?? this.currentPoints,
+      prerequisitesJson: prerequisitesJson ?? this.prerequisitesJson,
+      projectSource: projectSource ?? this.projectSource,
+      sourceLanguage: sourceLanguage ?? this.sourceLanguage,
+      guidesJson: guidesJson ?? this.guidesJson,
+      rollCharacteristicsJson:
+          rollCharacteristicsJson ?? this.rollCharacteristicsJson,
+      eventsJson: eventsJson ?? this.eventsJson,
+      isCustom: isCustom ?? this.isCustom,
+      isCompleted: isCompleted ?? this.isCompleted,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (templateProjectId.present) {
+      map['template_project_id'] = Variable<String>(templateProjectId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (projectGoal.present) {
+      map['project_goal'] = Variable<int>(projectGoal.value);
+    }
+    if (currentPoints.present) {
+      map['current_points'] = Variable<int>(currentPoints.value);
+    }
+    if (prerequisitesJson.present) {
+      map['prerequisites_json'] = Variable<String>(prerequisitesJson.value);
+    }
+    if (projectSource.present) {
+      map['project_source'] = Variable<String>(projectSource.value);
+    }
+    if (sourceLanguage.present) {
+      map['source_language'] = Variable<String>(sourceLanguage.value);
+    }
+    if (guidesJson.present) {
+      map['guides_json'] = Variable<String>(guidesJson.value);
+    }
+    if (rollCharacteristicsJson.present) {
+      map['roll_characteristics_json'] =
+          Variable<String>(rollCharacteristicsJson.value);
+    }
+    if (eventsJson.present) {
+      map['events_json'] = Variable<String>(eventsJson.value);
+    }
+    if (isCustom.present) {
+      map['is_custom'] = Variable<bool>(isCustom.value);
+    }
+    if (isCompleted.present) {
+      map['is_completed'] = Variable<bool>(isCompleted.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroDowntimeProjectsCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('templateProjectId: $templateProjectId, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('projectGoal: $projectGoal, ')
+          ..write('currentPoints: $currentPoints, ')
+          ..write('prerequisitesJson: $prerequisitesJson, ')
+          ..write('projectSource: $projectSource, ')
+          ..write('sourceLanguage: $sourceLanguage, ')
+          ..write('guidesJson: $guidesJson, ')
+          ..write('rollCharacteristicsJson: $rollCharacteristicsJson, ')
+          ..write('eventsJson: $eventsJson, ')
+          ..write('isCustom: $isCustom, ')
+          ..write('isCompleted: $isCompleted, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $HeroFollowersTable extends HeroFollowers
+    with TableInfo<$HeroFollowersTable, HeroFollower> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroFollowersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _followerTypeMeta =
+      const VerificationMeta('followerType');
+  @override
+  late final GeneratedColumn<String> followerType = GeneratedColumn<String>(
+      'follower_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _mightMeta = const VerificationMeta('might');
+  @override
+  late final GeneratedColumn<int> might = GeneratedColumn<int>(
+      'might', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _agilityMeta =
+      const VerificationMeta('agility');
+  @override
+  late final GeneratedColumn<int> agility = GeneratedColumn<int>(
+      'agility', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<int> reason = GeneratedColumn<int>(
+      'reason', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _intuitionMeta =
+      const VerificationMeta('intuition');
+  @override
+  late final GeneratedColumn<int> intuition = GeneratedColumn<int>(
+      'intuition', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _presenceMeta =
+      const VerificationMeta('presence');
+  @override
+  late final GeneratedColumn<int> presence = GeneratedColumn<int>(
+      'presence', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _skillsJsonMeta =
+      const VerificationMeta('skillsJson');
+  @override
+  late final GeneratedColumn<String> skillsJson = GeneratedColumn<String>(
+      'skills_json', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _languagesJsonMeta =
+      const VerificationMeta('languagesJson');
+  @override
+  late final GeneratedColumn<String> languagesJson = GeneratedColumn<String>(
+      'languages_json', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('[]'));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        heroId,
+        name,
+        followerType,
+        might,
+        agility,
+        reason,
+        intuition,
+        presence,
+        skillsJson,
+        languagesJson,
+        createdAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_followers';
+  @override
+  VerificationContext validateIntegrity(Insertable<HeroFollower> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('follower_type')) {
+      context.handle(
+          _followerTypeMeta,
+          followerType.isAcceptableOrUnknown(
+              data['follower_type']!, _followerTypeMeta));
+    } else if (isInserting) {
+      context.missing(_followerTypeMeta);
+    }
+    if (data.containsKey('might')) {
+      context.handle(
+          _mightMeta, might.isAcceptableOrUnknown(data['might']!, _mightMeta));
+    }
+    if (data.containsKey('agility')) {
+      context.handle(_agilityMeta,
+          agility.isAcceptableOrUnknown(data['agility']!, _agilityMeta));
+    }
+    if (data.containsKey('reason')) {
+      context.handle(_reasonMeta,
+          reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta));
+    }
+    if (data.containsKey('intuition')) {
+      context.handle(_intuitionMeta,
+          intuition.isAcceptableOrUnknown(data['intuition']!, _intuitionMeta));
+    }
+    if (data.containsKey('presence')) {
+      context.handle(_presenceMeta,
+          presence.isAcceptableOrUnknown(data['presence']!, _presenceMeta));
+    }
+    if (data.containsKey('skills_json')) {
+      context.handle(
+          _skillsJsonMeta,
+          skillsJson.isAcceptableOrUnknown(
+              data['skills_json']!, _skillsJsonMeta));
+    }
+    if (data.containsKey('languages_json')) {
+      context.handle(
+          _languagesJsonMeta,
+          languagesJson.isAcceptableOrUnknown(
+              data['languages_json']!, _languagesJsonMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroFollower map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroFollower(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      followerType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}follower_type'])!,
+      might: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}might'])!,
+      agility: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}agility'])!,
+      reason: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}reason'])!,
+      intuition: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}intuition'])!,
+      presence: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}presence'])!,
+      skillsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}skills_json'])!,
+      languagesJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}languages_json'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $HeroFollowersTable createAlias(String alias) {
+    return $HeroFollowersTable(attachedDatabase, alias);
+  }
+}
+
+class HeroFollower extends DataClass implements Insertable<HeroFollower> {
+  final String id;
+  final String heroId;
+  final String name;
+  final String followerType;
+  final int might;
+  final int agility;
+  final int reason;
+  final int intuition;
+  final int presence;
+  final String skillsJson;
+  final String languagesJson;
+  final DateTime createdAt;
+  const HeroFollower(
+      {required this.id,
+      required this.heroId,
+      required this.name,
+      required this.followerType,
+      required this.might,
+      required this.agility,
+      required this.reason,
+      required this.intuition,
+      required this.presence,
+      required this.skillsJson,
+      required this.languagesJson,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    map['name'] = Variable<String>(name);
+    map['follower_type'] = Variable<String>(followerType);
+    map['might'] = Variable<int>(might);
+    map['agility'] = Variable<int>(agility);
+    map['reason'] = Variable<int>(reason);
+    map['intuition'] = Variable<int>(intuition);
+    map['presence'] = Variable<int>(presence);
+    map['skills_json'] = Variable<String>(skillsJson);
+    map['languages_json'] = Variable<String>(languagesJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  HeroFollowersCompanion toCompanion(bool nullToAbsent) {
+    return HeroFollowersCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      name: Value(name),
+      followerType: Value(followerType),
+      might: Value(might),
+      agility: Value(agility),
+      reason: Value(reason),
+      intuition: Value(intuition),
+      presence: Value(presence),
+      skillsJson: Value(skillsJson),
+      languagesJson: Value(languagesJson),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory HeroFollower.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroFollower(
+      id: serializer.fromJson<String>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      name: serializer.fromJson<String>(json['name']),
+      followerType: serializer.fromJson<String>(json['followerType']),
+      might: serializer.fromJson<int>(json['might']),
+      agility: serializer.fromJson<int>(json['agility']),
+      reason: serializer.fromJson<int>(json['reason']),
+      intuition: serializer.fromJson<int>(json['intuition']),
+      presence: serializer.fromJson<int>(json['presence']),
+      skillsJson: serializer.fromJson<String>(json['skillsJson']),
+      languagesJson: serializer.fromJson<String>(json['languagesJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'name': serializer.toJson<String>(name),
+      'followerType': serializer.toJson<String>(followerType),
+      'might': serializer.toJson<int>(might),
+      'agility': serializer.toJson<int>(agility),
+      'reason': serializer.toJson<int>(reason),
+      'intuition': serializer.toJson<int>(intuition),
+      'presence': serializer.toJson<int>(presence),
+      'skillsJson': serializer.toJson<String>(skillsJson),
+      'languagesJson': serializer.toJson<String>(languagesJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  HeroFollower copyWith(
+          {String? id,
+          String? heroId,
+          String? name,
+          String? followerType,
+          int? might,
+          int? agility,
+          int? reason,
+          int? intuition,
+          int? presence,
+          String? skillsJson,
+          String? languagesJson,
+          DateTime? createdAt}) =>
+      HeroFollower(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        name: name ?? this.name,
+        followerType: followerType ?? this.followerType,
+        might: might ?? this.might,
+        agility: agility ?? this.agility,
+        reason: reason ?? this.reason,
+        intuition: intuition ?? this.intuition,
+        presence: presence ?? this.presence,
+        skillsJson: skillsJson ?? this.skillsJson,
+        languagesJson: languagesJson ?? this.languagesJson,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  HeroFollower copyWithCompanion(HeroFollowersCompanion data) {
+    return HeroFollower(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      name: data.name.present ? data.name.value : this.name,
+      followerType: data.followerType.present
+          ? data.followerType.value
+          : this.followerType,
+      might: data.might.present ? data.might.value : this.might,
+      agility: data.agility.present ? data.agility.value : this.agility,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      intuition: data.intuition.present ? data.intuition.value : this.intuition,
+      presence: data.presence.present ? data.presence.value : this.presence,
+      skillsJson:
+          data.skillsJson.present ? data.skillsJson.value : this.skillsJson,
+      languagesJson: data.languagesJson.present
+          ? data.languagesJson.value
+          : this.languagesJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroFollower(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('name: $name, ')
+          ..write('followerType: $followerType, ')
+          ..write('might: $might, ')
+          ..write('agility: $agility, ')
+          ..write('reason: $reason, ')
+          ..write('intuition: $intuition, ')
+          ..write('presence: $presence, ')
+          ..write('skillsJson: $skillsJson, ')
+          ..write('languagesJson: $languagesJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      heroId,
+      name,
+      followerType,
+      might,
+      agility,
+      reason,
+      intuition,
+      presence,
+      skillsJson,
+      languagesJson,
+      createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroFollower &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.name == this.name &&
+          other.followerType == this.followerType &&
+          other.might == this.might &&
+          other.agility == this.agility &&
+          other.reason == this.reason &&
+          other.intuition == this.intuition &&
+          other.presence == this.presence &&
+          other.skillsJson == this.skillsJson &&
+          other.languagesJson == this.languagesJson &&
+          other.createdAt == this.createdAt);
+}
+
+class HeroFollowersCompanion extends UpdateCompanion<HeroFollower> {
+  final Value<String> id;
+  final Value<String> heroId;
+  final Value<String> name;
+  final Value<String> followerType;
+  final Value<int> might;
+  final Value<int> agility;
+  final Value<int> reason;
+  final Value<int> intuition;
+  final Value<int> presence;
+  final Value<String> skillsJson;
+  final Value<String> languagesJson;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const HeroFollowersCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.followerType = const Value.absent(),
+    this.might = const Value.absent(),
+    this.agility = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.intuition = const Value.absent(),
+    this.presence = const Value.absent(),
+    this.skillsJson = const Value.absent(),
+    this.languagesJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HeroFollowersCompanion.insert({
+    required String id,
+    required String heroId,
+    required String name,
+    required String followerType,
+    this.might = const Value.absent(),
+    this.agility = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.intuition = const Value.absent(),
+    this.presence = const Value.absent(),
+    this.skillsJson = const Value.absent(),
+    this.languagesJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        heroId = Value(heroId),
+        name = Value(name),
+        followerType = Value(followerType);
+  static Insertable<HeroFollower> custom({
+    Expression<String>? id,
+    Expression<String>? heroId,
+    Expression<String>? name,
+    Expression<String>? followerType,
+    Expression<int>? might,
+    Expression<int>? agility,
+    Expression<int>? reason,
+    Expression<int>? intuition,
+    Expression<int>? presence,
+    Expression<String>? skillsJson,
+    Expression<String>? languagesJson,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (name != null) 'name': name,
+      if (followerType != null) 'follower_type': followerType,
+      if (might != null) 'might': might,
+      if (agility != null) 'agility': agility,
+      if (reason != null) 'reason': reason,
+      if (intuition != null) 'intuition': intuition,
+      if (presence != null) 'presence': presence,
+      if (skillsJson != null) 'skills_json': skillsJson,
+      if (languagesJson != null) 'languages_json': languagesJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HeroFollowersCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? heroId,
+      Value<String>? name,
+      Value<String>? followerType,
+      Value<int>? might,
+      Value<int>? agility,
+      Value<int>? reason,
+      Value<int>? intuition,
+      Value<int>? presence,
+      Value<String>? skillsJson,
+      Value<String>? languagesJson,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return HeroFollowersCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      name: name ?? this.name,
+      followerType: followerType ?? this.followerType,
+      might: might ?? this.might,
+      agility: agility ?? this.agility,
+      reason: reason ?? this.reason,
+      intuition: intuition ?? this.intuition,
+      presence: presence ?? this.presence,
+      skillsJson: skillsJson ?? this.skillsJson,
+      languagesJson: languagesJson ?? this.languagesJson,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (followerType.present) {
+      map['follower_type'] = Variable<String>(followerType.value);
+    }
+    if (might.present) {
+      map['might'] = Variable<int>(might.value);
+    }
+    if (agility.present) {
+      map['agility'] = Variable<int>(agility.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<int>(reason.value);
+    }
+    if (intuition.present) {
+      map['intuition'] = Variable<int>(intuition.value);
+    }
+    if (presence.present) {
+      map['presence'] = Variable<int>(presence.value);
+    }
+    if (skillsJson.present) {
+      map['skills_json'] = Variable<String>(skillsJson.value);
+    }
+    if (languagesJson.present) {
+      map['languages_json'] = Variable<String>(languagesJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroFollowersCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('name: $name, ')
+          ..write('followerType: $followerType, ')
+          ..write('might: $might, ')
+          ..write('agility: $agility, ')
+          ..write('reason: $reason, ')
+          ..write('intuition: $intuition, ')
+          ..write('presence: $presence, ')
+          ..write('skillsJson: $skillsJson, ')
+          ..write('languagesJson: $languagesJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $HeroProjectSourcesTable extends HeroProjectSources
+    with TableInfo<$HeroProjectSourcesTable, HeroProjectSource> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroProjectSourcesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+      'type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _languageMeta =
+      const VerificationMeta('language');
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+      'language', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, heroId, name, type, language, description, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_project_sources';
+  @override
+  VerificationContext validateIntegrity(Insertable<HeroProjectSource> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('language')) {
+      context.handle(_languageMeta,
+          language.isAcceptableOrUnknown(data['language']!, _languageMeta));
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroProjectSource map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroProjectSource(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      type: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
+      language: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}language']),
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $HeroProjectSourcesTable createAlias(String alias) {
+    return $HeroProjectSourcesTable(attachedDatabase, alias);
+  }
+}
+
+class HeroProjectSource extends DataClass
+    implements Insertable<HeroProjectSource> {
+  final String id;
+  final String heroId;
+  final String name;
+  final String type;
+  final String? language;
+  final String? description;
+  final DateTime createdAt;
+  const HeroProjectSource(
+      {required this.id,
+      required this.heroId,
+      required this.name,
+      required this.type,
+      this.language,
+      this.description,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    map['name'] = Variable<String>(name);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || language != null) {
+      map['language'] = Variable<String>(language);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  HeroProjectSourcesCompanion toCompanion(bool nullToAbsent) {
+    return HeroProjectSourcesCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      name: Value(name),
+      type: Value(type),
+      language: language == null && nullToAbsent
+          ? const Value.absent()
+          : Value(language),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory HeroProjectSource.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroProjectSource(
+      id: serializer.fromJson<String>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      name: serializer.fromJson<String>(json['name']),
+      type: serializer.fromJson<String>(json['type']),
+      language: serializer.fromJson<String?>(json['language']),
+      description: serializer.fromJson<String?>(json['description']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'name': serializer.toJson<String>(name),
+      'type': serializer.toJson<String>(type),
+      'language': serializer.toJson<String?>(language),
+      'description': serializer.toJson<String?>(description),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  HeroProjectSource copyWith(
+          {String? id,
+          String? heroId,
+          String? name,
+          String? type,
+          Value<String?> language = const Value.absent(),
+          Value<String?> description = const Value.absent(),
+          DateTime? createdAt}) =>
+      HeroProjectSource(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        name: name ?? this.name,
+        type: type ?? this.type,
+        language: language.present ? language.value : this.language,
+        description: description.present ? description.value : this.description,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  HeroProjectSource copyWithCompanion(HeroProjectSourcesCompanion data) {
+    return HeroProjectSource(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      name: data.name.present ? data.name.value : this.name,
+      type: data.type.present ? data.type.value : this.type,
+      language: data.language.present ? data.language.value : this.language,
+      description:
+          data.description.present ? data.description.value : this.description,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroProjectSource(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('language: $language, ')
+          ..write('description: $description, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, heroId, name, type, language, description, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroProjectSource &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.name == this.name &&
+          other.type == this.type &&
+          other.language == this.language &&
+          other.description == this.description &&
+          other.createdAt == this.createdAt);
+}
+
+class HeroProjectSourcesCompanion extends UpdateCompanion<HeroProjectSource> {
+  final Value<String> id;
+  final Value<String> heroId;
+  final Value<String> name;
+  final Value<String> type;
+  final Value<String?> language;
+  final Value<String?> description;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const HeroProjectSourcesCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.type = const Value.absent(),
+    this.language = const Value.absent(),
+    this.description = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HeroProjectSourcesCompanion.insert({
+    required String id,
+    required String heroId,
+    required String name,
+    required String type,
+    this.language = const Value.absent(),
+    this.description = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        heroId = Value(heroId),
+        name = Value(name),
+        type = Value(type);
+  static Insertable<HeroProjectSource> custom({
+    Expression<String>? id,
+    Expression<String>? heroId,
+    Expression<String>? name,
+    Expression<String>? type,
+    Expression<String>? language,
+    Expression<String>? description,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (name != null) 'name': name,
+      if (type != null) 'type': type,
+      if (language != null) 'language': language,
+      if (description != null) 'description': description,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HeroProjectSourcesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? heroId,
+      Value<String>? name,
+      Value<String>? type,
+      Value<String?>? language,
+      Value<String?>? description,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return HeroProjectSourcesCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      language: language ?? this.language,
+      description: description ?? this.description,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroProjectSourcesCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('name: $name, ')
+          ..write('type: $type, ')
+          ..write('language: $language, ')
+          ..write('description: $description, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1397,12 +3221,24 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HeroesTable heroes = $HeroesTable(this);
   late final $HeroValuesTable heroValues = $HeroValuesTable(this);
   late final $MetaEntriesTable metaEntries = $MetaEntriesTable(this);
+  late final $HeroDowntimeProjectsTable heroDowntimeProjects =
+      $HeroDowntimeProjectsTable(this);
+  late final $HeroFollowersTable heroFollowers = $HeroFollowersTable(this);
+  late final $HeroProjectSourcesTable heroProjectSources =
+      $HeroProjectSourcesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [components, heroes, heroValues, metaEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        components,
+        heroes,
+        heroValues,
+        metaEntries,
+        heroDowntimeProjects,
+        heroFollowers,
+        heroProjectSources
+      ];
 }
 
 typedef $$ComponentsTableCreateCompanionBuilder = ComponentsCompanion Function({
@@ -1843,6 +3679,57 @@ final class $$HeroesTableReferences
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$HeroDowntimeProjectsTable,
+      List<HeroDowntimeProject>> _heroDowntimeProjectsRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.heroDowntimeProjects,
+          aliasName: $_aliasNameGenerator(
+              db.heroes.id, db.heroDowntimeProjects.heroId));
+
+  $$HeroDowntimeProjectsTableProcessedTableManager
+      get heroDowntimeProjectsRefs {
+    final manager =
+        $$HeroDowntimeProjectsTableTableManager($_db, $_db.heroDowntimeProjects)
+            .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_heroDowntimeProjectsRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$HeroFollowersTable, List<HeroFollower>>
+      _heroFollowersRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.heroFollowers,
+              aliasName:
+                  $_aliasNameGenerator(db.heroes.id, db.heroFollowers.heroId));
+
+  $$HeroFollowersTableProcessedTableManager get heroFollowersRefs {
+    final manager = $$HeroFollowersTableTableManager($_db, $_db.heroFollowers)
+        .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_heroFollowersRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$HeroProjectSourcesTable, List<HeroProjectSource>>
+      _heroProjectSourcesRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.heroProjectSources,
+              aliasName: $_aliasNameGenerator(
+                  db.heroes.id, db.heroProjectSources.heroId));
+
+  $$HeroProjectSourcesTableProcessedTableManager get heroProjectSourcesRefs {
+    final manager =
+        $$HeroProjectSourcesTableTableManager($_db, $_db.heroProjectSources)
+            .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache =
+        $_typedResult.readTableOrNull(_heroProjectSourcesRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$HeroesTableFilterComposer
@@ -1899,6 +3786,70 @@ class $$HeroesTableFilterComposer
             $$HeroValuesTableFilterComposer(
               $db: $db,
               $table: $db.heroValues,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroDowntimeProjectsRefs(
+      Expression<bool> Function($$HeroDowntimeProjectsTableFilterComposer f)
+          f) {
+    final $$HeroDowntimeProjectsTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroDowntimeProjects,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroDowntimeProjectsTableFilterComposer(
+              $db: $db,
+              $table: $db.heroDowntimeProjects,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroFollowersRefs(
+      Expression<bool> Function($$HeroFollowersTableFilterComposer f) f) {
+    final $$HeroFollowersTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroFollowers,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroFollowersTableFilterComposer(
+              $db: $db,
+              $table: $db.heroFollowers,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroProjectSourcesRefs(
+      Expression<bool> Function($$HeroProjectSourcesTableFilterComposer f) f) {
+    final $$HeroProjectSourcesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroProjectSources,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroProjectSourcesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroProjectSources,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -2011,6 +3962,72 @@ class $$HeroesTableAnnotationComposer
             ));
     return f(composer);
   }
+
+  Expression<T> heroDowntimeProjectsRefs<T extends Object>(
+      Expression<T> Function($$HeroDowntimeProjectsTableAnnotationComposer a)
+          f) {
+    final $$HeroDowntimeProjectsTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.heroDowntimeProjects,
+            getReferencedColumn: (t) => t.heroId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$HeroDowntimeProjectsTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.heroDowntimeProjects,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
+
+  Expression<T> heroFollowersRefs<T extends Object>(
+      Expression<T> Function($$HeroFollowersTableAnnotationComposer a) f) {
+    final $$HeroFollowersTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroFollowers,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroFollowersTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroFollowers,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> heroProjectSourcesRefs<T extends Object>(
+      Expression<T> Function($$HeroProjectSourcesTableAnnotationComposer a) f) {
+    final $$HeroProjectSourcesTableAnnotationComposer composer =
+        $composerBuilder(
+            composer: this,
+            getCurrentColumn: (t) => t.id,
+            referencedTable: $db.heroProjectSources,
+            getReferencedColumn: (t) => t.heroId,
+            builder: (joinBuilder,
+                    {$addJoinBuilderToRootComposer,
+                    $removeJoinBuilderFromRootComposer}) =>
+                $$HeroProjectSourcesTableAnnotationComposer(
+                  $db: $db,
+                  $table: $db.heroProjectSources,
+                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                  joinBuilder: joinBuilder,
+                  $removeJoinBuilderFromRootComposer:
+                      $removeJoinBuilderFromRootComposer,
+                ));
+    return f(composer);
+  }
 }
 
 class $$HeroesTableTableManager extends RootTableManager<
@@ -2024,7 +4041,12 @@ class $$HeroesTableTableManager extends RootTableManager<
     $$HeroesTableUpdateCompanionBuilder,
     (Heroe, $$HeroesTableReferences),
     Heroe,
-    PrefetchHooks Function({bool classComponentId, bool heroValuesRefs})> {
+    PrefetchHooks Function(
+        {bool classComponentId,
+        bool heroValuesRefs,
+        bool heroDowntimeProjectsRefs,
+        bool heroFollowersRefs,
+        bool heroProjectSourcesRefs})> {
   $$HeroesTableTableManager(_$AppDatabase db, $HeroesTable table)
       : super(TableManagerState(
           db: db,
@@ -2072,10 +4094,19 @@ class $$HeroesTableTableManager extends RootTableManager<
                   (e.readTable(table), $$HeroesTableReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: (
-              {classComponentId = false, heroValuesRefs = false}) {
+              {classComponentId = false,
+              heroValuesRefs = false,
+              heroDowntimeProjectsRefs = false,
+              heroFollowersRefs = false,
+              heroProjectSourcesRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (heroValuesRefs) db.heroValues],
+              explicitlyWatchedTables: [
+                if (heroValuesRefs) db.heroValues,
+                if (heroDowntimeProjectsRefs) db.heroDowntimeProjects,
+                if (heroFollowersRefs) db.heroFollowers,
+                if (heroProjectSourcesRefs) db.heroProjectSources
+              ],
               addJoins: <
                   T extends TableManagerState<
                       dynamic,
@@ -2115,6 +4146,45 @@ class $$HeroesTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroDowntimeProjectsRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable,
+                            HeroDowntimeProject>(
+                        currentTable: table,
+                        referencedTable: $$HeroesTableReferences
+                            ._heroDowntimeProjectsRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroDowntimeProjectsRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroFollowersRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable,
+                            HeroFollower>(
+                        currentTable: table,
+                        referencedTable:
+                            $$HeroesTableReferences._heroFollowersRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroFollowersRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroProjectSourcesRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable,
+                            HeroProjectSource>(
+                        currentTable: table,
+                        referencedTable: $$HeroesTableReferences
+                            ._heroProjectSourcesRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroProjectSourcesRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
                         typedResults: items)
                 ];
               },
@@ -2134,7 +4204,12 @@ typedef $$HeroesTableProcessedTableManager = ProcessedTableManager<
     $$HeroesTableUpdateCompanionBuilder,
     (Heroe, $$HeroesTableReferences),
     Heroe,
-    PrefetchHooks Function({bool classComponentId, bool heroValuesRefs})>;
+    PrefetchHooks Function(
+        {bool classComponentId,
+        bool heroValuesRefs,
+        bool heroDowntimeProjectsRefs,
+        bool heroFollowersRefs,
+        bool heroProjectSourcesRefs})>;
 typedef $$HeroValuesTableCreateCompanionBuilder = HeroValuesCompanion Function({
   Value<int> id,
   required String heroId,
@@ -2583,6 +4658,1165 @@ typedef $$MetaEntriesTableProcessedTableManager = ProcessedTableManager<
     (MetaEntry, BaseReferences<_$AppDatabase, $MetaEntriesTable, MetaEntry>),
     MetaEntry,
     PrefetchHooks Function()>;
+typedef $$HeroDowntimeProjectsTableCreateCompanionBuilder
+    = HeroDowntimeProjectsCompanion Function({
+  required String id,
+  required String heroId,
+  Value<String?> templateProjectId,
+  required String name,
+  Value<String> description,
+  required int projectGoal,
+  Value<int> currentPoints,
+  Value<String> prerequisitesJson,
+  Value<String?> projectSource,
+  Value<String?> sourceLanguage,
+  Value<String> guidesJson,
+  Value<String> rollCharacteristicsJson,
+  Value<String> eventsJson,
+  Value<bool> isCustom,
+  Value<bool> isCompleted,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+typedef $$HeroDowntimeProjectsTableUpdateCompanionBuilder
+    = HeroDowntimeProjectsCompanion Function({
+  Value<String> id,
+  Value<String> heroId,
+  Value<String?> templateProjectId,
+  Value<String> name,
+  Value<String> description,
+  Value<int> projectGoal,
+  Value<int> currentPoints,
+  Value<String> prerequisitesJson,
+  Value<String?> projectSource,
+  Value<String?> sourceLanguage,
+  Value<String> guidesJson,
+  Value<String> rollCharacteristicsJson,
+  Value<String> eventsJson,
+  Value<bool> isCustom,
+  Value<bool> isCompleted,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+final class $$HeroDowntimeProjectsTableReferences extends BaseReferences<
+    _$AppDatabase, $HeroDowntimeProjectsTable, HeroDowntimeProject> {
+  $$HeroDowntimeProjectsTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes.createAlias(
+      $_aliasNameGenerator(db.heroDowntimeProjects.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroDowntimeProjectsTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroDowntimeProjectsTable> {
+  $$HeroDowntimeProjectsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get templateProjectId => $composableBuilder(
+      column: $table.templateProjectId,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get projectGoal => $composableBuilder(
+      column: $table.projectGoal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get currentPoints => $composableBuilder(
+      column: $table.currentPoints, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get prerequisitesJson => $composableBuilder(
+      column: $table.prerequisitesJson,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get projectSource => $composableBuilder(
+      column: $table.projectSource, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sourceLanguage => $composableBuilder(
+      column: $table.sourceLanguage,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get guidesJson => $composableBuilder(
+      column: $table.guidesJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get rollCharacteristicsJson => $composableBuilder(
+      column: $table.rollCharacteristicsJson,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get eventsJson => $composableBuilder(
+      column: $table.eventsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isCustom => $composableBuilder(
+      column: $table.isCustom, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroDowntimeProjectsTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroDowntimeProjectsTable> {
+  $$HeroDowntimeProjectsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get templateProjectId => $composableBuilder(
+      column: $table.templateProjectId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get projectGoal => $composableBuilder(
+      column: $table.projectGoal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get currentPoints => $composableBuilder(
+      column: $table.currentPoints,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get prerequisitesJson => $composableBuilder(
+      column: $table.prerequisitesJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get projectSource => $composableBuilder(
+      column: $table.projectSource,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sourceLanguage => $composableBuilder(
+      column: $table.sourceLanguage,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get guidesJson => $composableBuilder(
+      column: $table.guidesJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get rollCharacteristicsJson => $composableBuilder(
+      column: $table.rollCharacteristicsJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get eventsJson => $composableBuilder(
+      column: $table.eventsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isCustom => $composableBuilder(
+      column: $table.isCustom, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroDowntimeProjectsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroDowntimeProjectsTable> {
+  $$HeroDowntimeProjectsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get templateProjectId => $composableBuilder(
+      column: $table.templateProjectId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<int> get projectGoal => $composableBuilder(
+      column: $table.projectGoal, builder: (column) => column);
+
+  GeneratedColumn<int> get currentPoints => $composableBuilder(
+      column: $table.currentPoints, builder: (column) => column);
+
+  GeneratedColumn<String> get prerequisitesJson => $composableBuilder(
+      column: $table.prerequisitesJson, builder: (column) => column);
+
+  GeneratedColumn<String> get projectSource => $composableBuilder(
+      column: $table.projectSource, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceLanguage => $composableBuilder(
+      column: $table.sourceLanguage, builder: (column) => column);
+
+  GeneratedColumn<String> get guidesJson => $composableBuilder(
+      column: $table.guidesJson, builder: (column) => column);
+
+  GeneratedColumn<String> get rollCharacteristicsJson => $composableBuilder(
+      column: $table.rollCharacteristicsJson, builder: (column) => column);
+
+  GeneratedColumn<String> get eventsJson => $composableBuilder(
+      column: $table.eventsJson, builder: (column) => column);
+
+  GeneratedColumn<bool> get isCustom =>
+      $composableBuilder(column: $table.isCustom, builder: (column) => column);
+
+  GeneratedColumn<bool> get isCompleted => $composableBuilder(
+      column: $table.isCompleted, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroDowntimeProjectsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroDowntimeProjectsTable,
+    HeroDowntimeProject,
+    $$HeroDowntimeProjectsTableFilterComposer,
+    $$HeroDowntimeProjectsTableOrderingComposer,
+    $$HeroDowntimeProjectsTableAnnotationComposer,
+    $$HeroDowntimeProjectsTableCreateCompanionBuilder,
+    $$HeroDowntimeProjectsTableUpdateCompanionBuilder,
+    (HeroDowntimeProject, $$HeroDowntimeProjectsTableReferences),
+    HeroDowntimeProject,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroDowntimeProjectsTableTableManager(
+      _$AppDatabase db, $HeroDowntimeProjectsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroDowntimeProjectsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroDowntimeProjectsTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroDowntimeProjectsTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String?> templateProjectId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<int> projectGoal = const Value.absent(),
+            Value<int> currentPoints = const Value.absent(),
+            Value<String> prerequisitesJson = const Value.absent(),
+            Value<String?> projectSource = const Value.absent(),
+            Value<String?> sourceLanguage = const Value.absent(),
+            Value<String> guidesJson = const Value.absent(),
+            Value<String> rollCharacteristicsJson = const Value.absent(),
+            Value<String> eventsJson = const Value.absent(),
+            Value<bool> isCustom = const Value.absent(),
+            Value<bool> isCompleted = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroDowntimeProjectsCompanion(
+            id: id,
+            heroId: heroId,
+            templateProjectId: templateProjectId,
+            name: name,
+            description: description,
+            projectGoal: projectGoal,
+            currentPoints: currentPoints,
+            prerequisitesJson: prerequisitesJson,
+            projectSource: projectSource,
+            sourceLanguage: sourceLanguage,
+            guidesJson: guidesJson,
+            rollCharacteristicsJson: rollCharacteristicsJson,
+            eventsJson: eventsJson,
+            isCustom: isCustom,
+            isCompleted: isCompleted,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String heroId,
+            Value<String?> templateProjectId = const Value.absent(),
+            required String name,
+            Value<String> description = const Value.absent(),
+            required int projectGoal,
+            Value<int> currentPoints = const Value.absent(),
+            Value<String> prerequisitesJson = const Value.absent(),
+            Value<String?> projectSource = const Value.absent(),
+            Value<String?> sourceLanguage = const Value.absent(),
+            Value<String> guidesJson = const Value.absent(),
+            Value<String> rollCharacteristicsJson = const Value.absent(),
+            Value<String> eventsJson = const Value.absent(),
+            Value<bool> isCustom = const Value.absent(),
+            Value<bool> isCompleted = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroDowntimeProjectsCompanion.insert(
+            id: id,
+            heroId: heroId,
+            templateProjectId: templateProjectId,
+            name: name,
+            description: description,
+            projectGoal: projectGoal,
+            currentPoints: currentPoints,
+            prerequisitesJson: prerequisitesJson,
+            projectSource: projectSource,
+            sourceLanguage: sourceLanguage,
+            guidesJson: guidesJson,
+            rollCharacteristicsJson: rollCharacteristicsJson,
+            eventsJson: eventsJson,
+            isCustom: isCustom,
+            isCompleted: isCompleted,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroDowntimeProjectsTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroDowntimeProjectsTableReferences._heroIdTable(db),
+                    referencedColumn: $$HeroDowntimeProjectsTableReferences
+                        ._heroIdTable(db)
+                        .id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroDowntimeProjectsTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $HeroDowntimeProjectsTable,
+        HeroDowntimeProject,
+        $$HeroDowntimeProjectsTableFilterComposer,
+        $$HeroDowntimeProjectsTableOrderingComposer,
+        $$HeroDowntimeProjectsTableAnnotationComposer,
+        $$HeroDowntimeProjectsTableCreateCompanionBuilder,
+        $$HeroDowntimeProjectsTableUpdateCompanionBuilder,
+        (HeroDowntimeProject, $$HeroDowntimeProjectsTableReferences),
+        HeroDowntimeProject,
+        PrefetchHooks Function({bool heroId})>;
+typedef $$HeroFollowersTableCreateCompanionBuilder = HeroFollowersCompanion
+    Function({
+  required String id,
+  required String heroId,
+  required String name,
+  required String followerType,
+  Value<int> might,
+  Value<int> agility,
+  Value<int> reason,
+  Value<int> intuition,
+  Value<int> presence,
+  Value<String> skillsJson,
+  Value<String> languagesJson,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+typedef $$HeroFollowersTableUpdateCompanionBuilder = HeroFollowersCompanion
+    Function({
+  Value<String> id,
+  Value<String> heroId,
+  Value<String> name,
+  Value<String> followerType,
+  Value<int> might,
+  Value<int> agility,
+  Value<int> reason,
+  Value<int> intuition,
+  Value<int> presence,
+  Value<String> skillsJson,
+  Value<String> languagesJson,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+final class $$HeroFollowersTableReferences
+    extends BaseReferences<_$AppDatabase, $HeroFollowersTable, HeroFollower> {
+  $$HeroFollowersTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes
+      .createAlias($_aliasNameGenerator(db.heroFollowers.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroFollowersTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroFollowersTable> {
+  $$HeroFollowersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get followerType => $composableBuilder(
+      column: $table.followerType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get might => $composableBuilder(
+      column: $table.might, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get agility => $composableBuilder(
+      column: $table.agility, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get reason => $composableBuilder(
+      column: $table.reason, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get intuition => $composableBuilder(
+      column: $table.intuition, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get presence => $composableBuilder(
+      column: $table.presence, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get skillsJson => $composableBuilder(
+      column: $table.skillsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get languagesJson => $composableBuilder(
+      column: $table.languagesJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroFollowersTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroFollowersTable> {
+  $$HeroFollowersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get followerType => $composableBuilder(
+      column: $table.followerType,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get might => $composableBuilder(
+      column: $table.might, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get agility => $composableBuilder(
+      column: $table.agility, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get reason => $composableBuilder(
+      column: $table.reason, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get intuition => $composableBuilder(
+      column: $table.intuition, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get presence => $composableBuilder(
+      column: $table.presence, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get skillsJson => $composableBuilder(
+      column: $table.skillsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get languagesJson => $composableBuilder(
+      column: $table.languagesJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroFollowersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroFollowersTable> {
+  $$HeroFollowersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get followerType => $composableBuilder(
+      column: $table.followerType, builder: (column) => column);
+
+  GeneratedColumn<int> get might =>
+      $composableBuilder(column: $table.might, builder: (column) => column);
+
+  GeneratedColumn<int> get agility =>
+      $composableBuilder(column: $table.agility, builder: (column) => column);
+
+  GeneratedColumn<int> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<int> get intuition =>
+      $composableBuilder(column: $table.intuition, builder: (column) => column);
+
+  GeneratedColumn<int> get presence =>
+      $composableBuilder(column: $table.presence, builder: (column) => column);
+
+  GeneratedColumn<String> get skillsJson => $composableBuilder(
+      column: $table.skillsJson, builder: (column) => column);
+
+  GeneratedColumn<String> get languagesJson => $composableBuilder(
+      column: $table.languagesJson, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroFollowersTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroFollowersTable,
+    HeroFollower,
+    $$HeroFollowersTableFilterComposer,
+    $$HeroFollowersTableOrderingComposer,
+    $$HeroFollowersTableAnnotationComposer,
+    $$HeroFollowersTableCreateCompanionBuilder,
+    $$HeroFollowersTableUpdateCompanionBuilder,
+    (HeroFollower, $$HeroFollowersTableReferences),
+    HeroFollower,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroFollowersTableTableManager(_$AppDatabase db, $HeroFollowersTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroFollowersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroFollowersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroFollowersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> followerType = const Value.absent(),
+            Value<int> might = const Value.absent(),
+            Value<int> agility = const Value.absent(),
+            Value<int> reason = const Value.absent(),
+            Value<int> intuition = const Value.absent(),
+            Value<int> presence = const Value.absent(),
+            Value<String> skillsJson = const Value.absent(),
+            Value<String> languagesJson = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroFollowersCompanion(
+            id: id,
+            heroId: heroId,
+            name: name,
+            followerType: followerType,
+            might: might,
+            agility: agility,
+            reason: reason,
+            intuition: intuition,
+            presence: presence,
+            skillsJson: skillsJson,
+            languagesJson: languagesJson,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String heroId,
+            required String name,
+            required String followerType,
+            Value<int> might = const Value.absent(),
+            Value<int> agility = const Value.absent(),
+            Value<int> reason = const Value.absent(),
+            Value<int> intuition = const Value.absent(),
+            Value<int> presence = const Value.absent(),
+            Value<String> skillsJson = const Value.absent(),
+            Value<String> languagesJson = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroFollowersCompanion.insert(
+            id: id,
+            heroId: heroId,
+            name: name,
+            followerType: followerType,
+            might: might,
+            agility: agility,
+            reason: reason,
+            intuition: intuition,
+            presence: presence,
+            skillsJson: skillsJson,
+            languagesJson: languagesJson,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroFollowersTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroFollowersTableReferences._heroIdTable(db),
+                    referencedColumn:
+                        $$HeroFollowersTableReferences._heroIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroFollowersTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $HeroFollowersTable,
+    HeroFollower,
+    $$HeroFollowersTableFilterComposer,
+    $$HeroFollowersTableOrderingComposer,
+    $$HeroFollowersTableAnnotationComposer,
+    $$HeroFollowersTableCreateCompanionBuilder,
+    $$HeroFollowersTableUpdateCompanionBuilder,
+    (HeroFollower, $$HeroFollowersTableReferences),
+    HeroFollower,
+    PrefetchHooks Function({bool heroId})>;
+typedef $$HeroProjectSourcesTableCreateCompanionBuilder
+    = HeroProjectSourcesCompanion Function({
+  required String id,
+  required String heroId,
+  required String name,
+  required String type,
+  Value<String?> language,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+typedef $$HeroProjectSourcesTableUpdateCompanionBuilder
+    = HeroProjectSourcesCompanion Function({
+  Value<String> id,
+  Value<String> heroId,
+  Value<String> name,
+  Value<String> type,
+  Value<String?> language,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+final class $$HeroProjectSourcesTableReferences extends BaseReferences<
+    _$AppDatabase, $HeroProjectSourcesTable, HeroProjectSource> {
+  $$HeroProjectSourcesTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes.createAlias(
+      $_aliasNameGenerator(db.heroProjectSources.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroProjectSourcesTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroProjectSourcesTable> {
+  $$HeroProjectSourcesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get language => $composableBuilder(
+      column: $table.language, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroProjectSourcesTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroProjectSourcesTable> {
+  $$HeroProjectSourcesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get type => $composableBuilder(
+      column: $table.type, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get language => $composableBuilder(
+      column: $table.language, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroProjectSourcesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroProjectSourcesTable> {
+  $$HeroProjectSourcesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroProjectSourcesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroProjectSourcesTable,
+    HeroProjectSource,
+    $$HeroProjectSourcesTableFilterComposer,
+    $$HeroProjectSourcesTableOrderingComposer,
+    $$HeroProjectSourcesTableAnnotationComposer,
+    $$HeroProjectSourcesTableCreateCompanionBuilder,
+    $$HeroProjectSourcesTableUpdateCompanionBuilder,
+    (HeroProjectSource, $$HeroProjectSourcesTableReferences),
+    HeroProjectSource,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroProjectSourcesTableTableManager(
+      _$AppDatabase db, $HeroProjectSourcesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroProjectSourcesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroProjectSourcesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroProjectSourcesTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> type = const Value.absent(),
+            Value<String?> language = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroProjectSourcesCompanion(
+            id: id,
+            heroId: heroId,
+            name: name,
+            type: type,
+            language: language,
+            description: description,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String heroId,
+            required String name,
+            required String type,
+            Value<String?> language = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroProjectSourcesCompanion.insert(
+            id: id,
+            heroId: heroId,
+            name: name,
+            type: type,
+            language: language,
+            description: description,
+            createdAt: createdAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroProjectSourcesTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroProjectSourcesTableReferences._heroIdTable(db),
+                    referencedColumn:
+                        $$HeroProjectSourcesTableReferences._heroIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroProjectSourcesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $HeroProjectSourcesTable,
+    HeroProjectSource,
+    $$HeroProjectSourcesTableFilterComposer,
+    $$HeroProjectSourcesTableOrderingComposer,
+    $$HeroProjectSourcesTableAnnotationComposer,
+    $$HeroProjectSourcesTableCreateCompanionBuilder,
+    $$HeroProjectSourcesTableUpdateCompanionBuilder,
+    (HeroProjectSource, $$HeroProjectSourcesTableReferences),
+    HeroProjectSource,
+    PrefetchHooks Function({bool heroId})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2595,4 +5829,10 @@ class $AppDatabaseManager {
       $$HeroValuesTableTableManager(_db, _db.heroValues);
   $$MetaEntriesTableTableManager get metaEntries =>
       $$MetaEntriesTableTableManager(_db, _db.metaEntries);
+  $$HeroDowntimeProjectsTableTableManager get heroDowntimeProjects =>
+      $$HeroDowntimeProjectsTableTableManager(_db, _db.heroDowntimeProjects);
+  $$HeroFollowersTableTableManager get heroFollowers =>
+      $$HeroFollowersTableTableManager(_db, _db.heroFollowers);
+  $$HeroProjectSourcesTableTableManager get heroProjectSources =>
+      $$HeroProjectSourcesTableTableManager(_db, _db.heroProjectSources);
 }

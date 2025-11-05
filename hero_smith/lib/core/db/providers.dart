@@ -4,6 +4,7 @@ import 'app_database.dart';
 import '../seed/asset_seeder.dart';
 import '../repositories/component_drift_repository.dart';
 import '../repositories/hero_repository.dart';
+import '../repositories/downtime_repository.dart';
 import '../models/component.dart' as model;
 
 // Core singletons
@@ -16,6 +17,11 @@ final componentRepositoryProvider = Provider<ComponentDriftRepository>((ref) {
 final heroRepositoryProvider = Provider<HeroRepository>((ref) {
   final db = ref.read(appDatabaseProvider);
   return HeroRepository(db);
+});
+
+final downtimeRepositoryProvider = Provider<DowntimeRepository>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return DowntimeRepository(db);
 });
 
 // Toggle for auto-seeding on startup. Tests can override this to false.
