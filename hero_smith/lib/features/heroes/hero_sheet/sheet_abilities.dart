@@ -851,7 +851,9 @@ class _CommonAbilitiesView extends StatelessWidget {
 
     for (final component in library.components) {
       final path = component.data['ability_source_path'] as String? ?? '';
-      if (path.contains('class_abilities_new/Common/')) {
+      final normalizedPath = path.toLowerCase();
+      if (normalizedPath.contains('class_abilities_new/common/') ||
+          normalizedPath.contains('class_abilities_simplified/common_abilities')) {
         components.add(component);
       }
     }

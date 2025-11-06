@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import '../models/component.dart';
 import '../models/characteristics_models.dart';
+import '../models/ability_simplified.dart';
 
 class AbilityLibrary {
   AbilityLibrary(this._index, this._componentsById);
@@ -36,6 +37,7 @@ class AbilityDataService {
 
   AbilityLibrary? _cachedLibrary;
   final Map<String, List<Component>> _classAbilityCache = {};
+  final Map<String, List<AbilitySimplified>> _simplifiedAbilityCache = {};
 
   static const List<String> _abilityAssetPaths = [
     'data/abilities/abilities.json',
@@ -47,8 +49,10 @@ class AbilityDataService {
     'data/abilities/titles_abilities.json',
     'data/abilities/treasure_abilities.json',
   ];
-  static const String _classAbilityAssetPrefix =
-      'data/abilities/class_abilities_new/';
+  static const List<String> _classAbilityAssetPrefixes = [
+    'data/abilities/class_abilities_new/',
+    'data/abilities/class_abilities_simplified/',
+  ];
 
   Future<AbilityLibrary> loadLibrary() async {
     if (_cachedLibrary != null) {
@@ -92,13 +96,16 @@ class AbilityDataService {
         return true;
       }
       final path = component.data['ability_source_path'];
-      if (path is String &&
-          path.startsWith(_classAbilityAssetPrefix) &&
-          path
-              .substring(_classAbilityAssetPrefix.length)
-              .toLowerCase()
-              .startsWith('$normalizedSlug/')) {
-        return true;
+      if (path is String && _isClassAbilityAssetPath(path)) {
+        final relative = _relativeClassAbilityPath(path);
+        if (relative != null &&
+            relative.toLowerCase().startsWith('$normalizedSlug/')) {
+          return true;
+        }
+        final inferredSlug = _inferSlugFromRelativePath(relative);
+        if (inferredSlug != null && inferredSlug == normalizedSlug) {
+          return true;
+        }
       }
       return false;
     }).toList(growable: false);
@@ -115,6 +122,56 @@ class AbilityDataService {
     final result = List<Component>.unmodifiable(components);
     _classAbilityCache[normalizedSlug] = result;
     return result;
+  }
+
+  /// Load simplified abilities for a class from the class_abilities_simplified folder
+  Future<List<AbilitySimplified>> loadClassAbilitiesSimplified(String classSlug) async {
+    final normalizedSlug = classSlug.trim().toLowerCase();
+    if (normalizedSlug.isEmpty) return const [];
+
+    final cached = _simplifiedAbilityCache[normalizedSlug];
+    if (cached != null) {
+      return cached;
+    }
+
+    final path = 'data/abilities/class_abilities_simplified/${normalizedSlug}_abilities.json';
+    
+    try {
+      final raw = await rootBundle.loadString(path);
+      final decoded = jsonDecode(raw);
+      
+      if (decoded is! List) {
+        return const [];
+      }
+
+      final abilities = <AbilitySimplified>[];
+      for (final item in decoded) {
+        if (item is Map<String, dynamic>) {
+          try {
+            final ability = AbilitySimplified.fromJson(item);
+            abilities.add(ability);
+          } catch (e) {
+            // Skip malformed abilities
+            continue;
+          }
+        }
+      }
+
+      // Sort by level then name
+      abilities.sort((a, b) {
+        if (a.level != b.level) {
+          return a.level.compareTo(b.level);
+        }
+        return a.name.compareTo(b.name);
+      });
+
+      final result = List<AbilitySimplified>.unmodifiable(abilities);
+      _simplifiedAbilityCache[normalizedSlug] = result;
+      return result;
+    } catch (error) {
+      // If the simplified abilities don't exist, return empty list
+      return const [];
+    }
   }
 
   int? componentLevel(Component component) {
@@ -164,7 +221,12 @@ class AbilityDataService {
         }
       }
     } catch (error) {
-      // Surface the asset path to simplify debugging without failing silently.
+      final message = error.toString();
+      if (message.contains('Unable to load asset')) {
+        // Asset is missing from the bundle; skip without crashing.
+        return;
+      }
+      // Surface other errors to simplify debugging without failing silently.
       throw Exception('Failed to load ability asset "$path": $error');
     }
   }
@@ -211,9 +273,10 @@ class AbilityDataService {
 
       void addPath(dynamic candidate) {
         if (candidate is! String) return;
-        if (!candidate.startsWith(_classAbilityAssetPrefix)) return;
-        if (!candidate.endsWith('.json')) return;
-        paths.add(candidate);
+        final normalized = candidate.replaceAll('\\', '/');
+        if (!_isClassAbilityAssetPath(normalized)) return;
+        if (!normalized.endsWith('.json')) return;
+        paths.add(normalized);
       }
 
       if (decoded is Map) {
@@ -251,20 +314,41 @@ class AbilityDataService {
 
     String resolvedId = baseId;
 
-    if (normalizedPath.startsWith(_classAbilityAssetPrefix)) {
-      final relative =
-          normalizedPath.substring(_classAbilityAssetPrefix.length);
-      final segments = relative.split('/');
-      final classSegment = segments.isNotEmpty ? segments.first.trim() : null;
-      final levelSegment = segments.length >= 2 ? segments[1].trim() : null;
+    if (_isClassAbilityAssetPath(normalizedPath)) {
+      final relative = _relativeClassAbilityPath(normalizedPath);
+      final classSegment = _classSegmentFromRelative(relative);
+      final levelSegment = _levelSegmentFromRelative(relative);
 
-      final classSlug = classSegment != null ? _slugify(classSegment) : null;
+      final classSlug =
+          classSegment != null ? _slugify(classSegment) : _inferSlugFromRelativePath(relative);
       if (classSlug != null && classSlug.isNotEmpty) {
         augmented['class_slug'] ??= classSlug;
-        augmented['class_name'] ??= classSegment;
+        augmented['class_name'] ??= classSegment ?? classSlug;
       }
       if (levelSegment != null && levelSegment.isNotEmpty) {
         augmented['level_band'] ??= levelSegment;
+      } else if (!augmented.containsKey('level_band') &&
+          augmented['level'] != null) {
+        augmented['level_band'] = 'level_${augmented['level']}';
+      }
+
+      final existingLevel = _parseLevelNumber(augmented['level']);
+      if (existingLevel != null) {
+        augmented['level'] = existingLevel;
+      } else {
+        final inferredLevel =
+            _parseLevelNumber(levelSegment) ?? _parseLevelNumber(relative);
+        if (inferredLevel != null) {
+          augmented['level'] = inferredLevel;
+        }
+      }
+
+      // Inject costs metadata for simplified assets if missing
+      if (!augmented.containsKey('costs')) {
+        final inferredCosts = _buildCostsFromSimplifiedData(augmented);
+        if (inferredCosts != null) {
+          augmented['costs'] = inferredCosts;
+        }
       }
 
       final costs = augmented['costs'];
@@ -301,6 +385,146 @@ class AbilityDataService {
       id: resolvedId,
       data: augmented,
     );
+  }
+
+  bool _isClassAbilityAssetPath(String path) {
+    final normalized = path.replaceAll('\\', '/');
+    for (final prefix in _classAbilityAssetPrefixes) {
+      if (normalized.startsWith(prefix)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  String? _relativeClassAbilityPath(String path) {
+    final normalized = path.replaceAll('\\', '/');
+    for (final prefix in _classAbilityAssetPrefixes) {
+      if (normalized.startsWith(prefix)) {
+        return normalized.substring(prefix.length);
+      }
+    }
+    return null;
+  }
+
+  String? _classSegmentFromRelative(String? relative) {
+    if (relative == null || relative.isEmpty) return null;
+    final segments = relative.split('/');
+    if (segments.isEmpty) return null;
+    final first = segments.first.trim();
+    if (first.isEmpty) return null;
+    if (first.endsWith('.json')) {
+      final name = first.substring(0, first.length - 5);
+      if (name.endsWith('_abilities')) {
+        final base = name.substring(0, name.length - '_abilities'.length);
+        return base;
+      }
+      return name;
+    }
+    return first;
+  }
+
+  String? _levelSegmentFromRelative(String? relative) {
+    if (relative == null || relative.isEmpty) return null;
+    final segments = relative.split('/');
+    if (segments.length >= 2) {
+      final second = segments[1].trim();
+      if (second.endsWith('.json')) {
+        return second.substring(0, second.length - 5);
+      }
+      return second.isEmpty ? null : second;
+    }
+    return null;
+  }
+
+  String? _inferSlugFromRelativePath(String? relative) {
+    final segment = _classSegmentFromRelative(relative);
+    if (segment == null || segment.isEmpty) return null;
+    return _slugify(segment);
+  }
+
+  int? _parseLevelNumber(dynamic value) {
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      final match = RegExp(r'(\d+)').firstMatch(value);
+      if (match != null) {
+        final parsed = int.tryParse(match.group(1)!);
+        if (parsed != null) {
+          return parsed;
+        }
+      }
+    }
+    return null;
+  }
+
+  Map<String, dynamic>? _buildCostsFromSimplifiedData(
+    Map<String, dynamic> augmented,
+  ) {
+    int? parseInt(dynamic value) {
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value.trim());
+      return null;
+    }
+
+    final resourceRaw = augmented['resource'];
+    final resourceName = resourceRaw is String ? resourceRaw.trim() : '';
+    final resourceValue = parseInt(augmented['resource_value']);
+
+    if (resourceName.isEmpty && resourceValue == null) {
+      return null;
+    }
+
+    final normalizedName = resourceName;
+    if (normalizedName.toLowerCase() == 'signature') {
+      final result = <String, dynamic>{
+        'signature': true,
+      };
+      if (normalizedName.isNotEmpty) {
+        result['resource'] = normalizedName;
+      }
+      return result;
+    }
+
+    if (resourceValue != null && resourceValue > 0) {
+      final result = <String, dynamic>{};
+      if (normalizedName.isNotEmpty) {
+        result['resource'] = normalizedName;
+      }
+      result['amount'] = resourceValue;
+      return result;
+    }
+
+    if (normalizedName.isEmpty) {
+      return null;
+    }
+
+    final parts = normalizedName.split(RegExp(r'\s+'));
+    final trailing = parts.isNotEmpty ? parts.last : '';
+    final parsedAmount = int.tryParse(trailing);
+    if (parsedAmount != null) {
+      final resourceOnly = parts.length > 1
+          ? parts.sublist(0, parts.length - 1).join(' ').trim()
+          : '';
+      if (resourceOnly.toLowerCase() == 'signature') {
+        return {
+          'resource': resourceOnly,
+          'signature': true,
+        };
+      }
+      final result = <String, dynamic>{
+        'amount': parsedAmount,
+      };
+      if (resourceOnly.isNotEmpty) {
+        result['resource'] = resourceOnly;
+      }
+      return result;
+    }
+
+    return {
+      'resource': normalizedName,
+    };
   }
 
   void _registerComponent(

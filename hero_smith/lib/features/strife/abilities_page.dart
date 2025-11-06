@@ -33,25 +33,173 @@ class AbilitiesPage extends ConsumerWidget {
   }
 }
 
-class _AbilitiesView extends StatelessWidget {
+class _AbilitiesView extends StatefulWidget {
   const _AbilitiesView({required this.items});
 
   final List<Component> items;
 
   @override
+  State<_AbilitiesView> createState() => _AbilitiesViewState();
+}
+
+class _AbilitiesViewState extends State<_AbilitiesView> {
+  String _searchQuery = '';
+  String? _resourceFilter;
+  String? _costFilter;
+  String? _actionTypeFilter;
+  String? _distanceFilter;
+  String? _targetsFilter;
+
+  List<Component> get _filteredItems {
+    var filtered = widget.items;
+
+    // Search by name
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      filtered = filtered
+          .where((item) => item.name.toLowerCase().contains(query))
+          .toList();
+    }
+
+    // Filter by resource type
+    if (_resourceFilter != null) {
+      filtered = filtered.where((item) {
+        final abilityData = AbilityData.fromComponent(item);
+        final resourceLabel = abilityData.resourceLabel?.toLowerCase();
+        return resourceLabel == _resourceFilter!.toLowerCase();
+      }).toList();
+    }
+
+    // Filter by cost
+    if (_costFilter != null) {
+      filtered = filtered.where((item) {
+        final abilityData = AbilityData.fromComponent(item);
+        if (_costFilter == 'signature') {
+          return abilityData.isSignature;
+        }
+        final cost = abilityData.costAmount;
+        if (cost == null) return false;
+        return cost.toString() == _costFilter;
+      }).toList();
+    }
+
+    // Filter by action type
+    if (_actionTypeFilter != null) {
+      filtered = filtered.where((item) {
+        final abilityData = AbilityData.fromComponent(item);
+        final actionType = abilityData.actionType?.toLowerCase();
+        return actionType == _actionTypeFilter!.toLowerCase();
+      }).toList();
+    }
+
+    // Filter by distance
+    if (_distanceFilter != null) {
+      filtered = filtered.where((item) {
+        final abilityData = AbilityData.fromComponent(item);
+        final distance = abilityData.rangeSummary?.toLowerCase();
+        return distance?.contains(_distanceFilter!.toLowerCase()) ?? false;
+      }).toList();
+    }
+
+    // Filter by targets
+    if (_targetsFilter != null) {
+      filtered = filtered.where((item) {
+        final abilityData = AbilityData.fromComponent(item);
+        final targets = abilityData.targets?.toLowerCase();
+        return targets?.contains(_targetsFilter!.toLowerCase()) ?? false;
+      }).toList();
+    }
+
+    return filtered..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _searchQuery = '';
+      _resourceFilter = null;
+      _costFilter = null;
+      _actionTypeFilter = null;
+      _distanceFilter = null;
+      _targetsFilter = null;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final decoration = _abilitiesBackground(context);
-    final sorted = List<Component>.from(items)
-      ..sort((a, b) => a.name.compareTo(b.name));
+    final filtered = _filteredItems;
+    final stats = _AbilitySummaryStats.fromComponents(widget.items);
 
-    if (sorted.isEmpty) {
+    if (widget.items.isEmpty) {
       return DecoratedBox(
         decoration: decoration,
         child: const _AbilitiesEmptyState(),
       );
     }
 
-    final stats = _AbilitySummaryStats.fromComponents(sorted);
+    // Extract unique filter options
+    final resourceOptions = widget.items
+        .map((item) => AbilityData.fromComponent(item).resourceLabel)
+        .where((type) => type != null && type.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList()
+      ..sort();
+
+    final costSet = <String>{};
+    for (final item in widget.items) {
+      final ability = AbilityData.fromComponent(item);
+      if (ability.isSignature) {
+        costSet.add('signature');
+      }
+      final amount = ability.costAmount;
+      if (amount != null && amount > 0) {
+        costSet.add(amount.toString());
+      }
+    }
+    final costOptions = costSet.toList()
+      ..sort((a, b) {
+        if (a == 'signature' && b == 'signature') return 0;
+        if (a == 'signature') return -1;
+        if (b == 'signature') return 1;
+        final aInt = int.tryParse(a);
+        final bInt = int.tryParse(b);
+        if (aInt != null && bInt != null) {
+          return aInt.compareTo(bInt);
+        }
+        return a.compareTo(b);
+      });
+
+    final actionTypeOptions = widget.items
+        .map((item) => AbilityData.fromComponent(item).actionType)
+        .where((type) => type != null && type.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList()
+      ..sort();
+
+    final distanceOptions = widget.items
+        .map((item) => AbilityData.fromComponent(item).rangeSummary)
+        .where((dist) => dist != null && dist.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList()
+      ..sort();
+
+    final targetsOptions = widget.items
+        .map((item) => AbilityData.fromComponent(item).targets)
+        .where((targets) => targets != null && targets.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList()
+      ..sort();
+
+    final hasActiveFilters = _searchQuery.isNotEmpty ||
+        _resourceFilter != null ||
+        _costFilter != null ||
+        _actionTypeFilter != null ||
+        _distanceFilter != null ||
+        _targetsFilter != null;
 
     return DecoratedBox(
       decoration: decoration,
@@ -64,20 +212,328 @@ class _AbilitiesView extends StatelessWidget {
               child: _AbilitiesSummaryCard(stats: stats),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.only(bottom: 24),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: AbilityExpandableItem(component: sorted[index]),
-                ),
-                childCount: sorted.length,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: _buildSearchAndFilters(
+                context,
+                resourceOptions: resourceOptions,
+                costOptions: costOptions,
+                actionTypeOptions: actionTypeOptions,
+                distanceOptions: distanceOptions,
+                targetsOptions: targetsOptions,
               ),
             ),
           ),
+          if (hasActiveFilters)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: _buildActiveFiltersChips(context),
+              ),
+            ),
+          if (filtered.isEmpty)
+            SliverFillRemaining(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No abilities match your filters',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: _clearFilters,
+                        icon: const Icon(Icons.clear),
+                        label: const Text('Clear Filters'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.only(bottom: 24),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: AbilityExpandableItem(component: filtered[index]),
+                  ),
+                  childCount: filtered.length,
+                ),
+              ),
+            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSearchAndFilters(
+    BuildContext context, {
+    required List<String> resourceOptions,
+    required List<String> costOptions,
+    required List<String> actionTypeOptions,
+    required List<String> distanceOptions,
+    required List<String> targetsOptions,
+  }) {
+    final theme = Theme.of(context);
+    final accent = StrifeTheme.abilitiesAccent;
+
+    return Card(
+      elevation: StrifeTheme.cardElevation,
+      shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Search field
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search abilities by name...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () => setState(() => _searchQuery = ''),
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: accent, width: 2),
+                ),
+              ),
+              onChanged: (value) => setState(() => _searchQuery = value),
+            ),
+            const SizedBox(height: 16),
+            // Filters
+            Text(
+              'Filters',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildFilterDropdown(
+                  context,
+                  label: 'Resource',
+                  value: _resourceFilter,
+                  options: resourceOptions,
+                  onChanged: (value) => setState(() => _resourceFilter = value),
+                ),
+                _buildFilterDropdown(
+                  context,
+                  label: 'Cost',
+          value: _costFilter == null
+            ? null
+            : (_costFilter == 'signature'
+              ? 'Signature'
+              : _costFilter),
+                  options: costOptions
+                      .map((c) => c == 'signature' ? 'Signature' : c)
+                      .toList(),
+                  onChanged: (value) => setState(() {
+                    if (value == null) {
+                      _costFilter = null;
+                    } else if (value.toLowerCase() == 'signature') {
+                      _costFilter = 'signature';
+                    } else {
+                      _costFilter = value;
+                    }
+                  }),
+                ),
+                _buildFilterDropdown(
+                  context,
+                  label: 'Action',
+                  value: _actionTypeFilter,
+                  options: actionTypeOptions,
+                  onChanged: (value) => setState(() => _actionTypeFilter = value),
+                ),
+                _buildFilterDropdown(
+                  context,
+                  label: 'Distance',
+                  value: _distanceFilter,
+                  options: distanceOptions,
+                  onChanged: (value) => setState(() => _distanceFilter = value),
+                ),
+                _buildFilterDropdown(
+                  context,
+                  label: 'Targets',
+                  value: _targetsFilter,
+                  options: targetsOptions,
+                  onChanged: (value) => setState(() => _targetsFilter = value),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown(
+    BuildContext context, {
+    required String label,
+    required String? value,
+    required List<String> options,
+    required void Function(String?) onChanged,
+  }) {
+    final theme = Theme.of(context);
+    final accent = StrifeTheme.abilitiesAccent;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: value != null ? accent : theme.colorScheme.outline,
+          width: value != null ? 2 : 1,
+        ),
+      ),
+      child: DropdownButton<String>(
+        value: value,
+        hint: Text(label),
+        underline: const SizedBox.shrink(),
+        isDense: true,
+        items: [
+          DropdownMenuItem<String>(
+            value: null,
+            child: Text('All $label'),
+          ),
+          ...options.map((option) => DropdownMenuItem<String>(
+                value: option,
+                child: Text(option),
+              )),
+        ],
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildActiveFiltersChips(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final chips = <Widget>[];
+
+    if (_searchQuery.isNotEmpty) {
+      chips.add(_buildFilterChip(
+        context,
+        label: 'Name: "$_searchQuery"',
+        onRemove: () => setState(() => _searchQuery = ''),
+      ));
+    }
+
+    if (_resourceFilter != null) {
+      chips.add(_buildFilterChip(
+        context,
+        label: 'Resource: $_resourceFilter',
+        onRemove: () => setState(() => _resourceFilter = null),
+      ));
+    }
+
+    if (_costFilter != null) {
+      chips.add(_buildFilterChip(
+        context,
+        label: _costFilter == 'signature'
+            ? 'Cost: Signature'
+            : 'Cost: $_costFilter',
+        onRemove: () => setState(() => _costFilter = null),
+      ));
+    }
+
+    if (_actionTypeFilter != null) {
+      chips.add(_buildFilterChip(
+        context,
+        label: 'Action: $_actionTypeFilter',
+        onRemove: () => setState(() => _actionTypeFilter = null),
+      ));
+    }
+
+    if (_distanceFilter != null) {
+      chips.add(_buildFilterChip(
+        context,
+        label: 'Distance: $_distanceFilter',
+        onRemove: () => setState(() => _distanceFilter = null),
+      ));
+    }
+
+    if (_targetsFilter != null) {
+      chips.add(_buildFilterChip(
+        context,
+        label: 'Targets: $_targetsFilter',
+        onRemove: () => setState(() => _targetsFilter = null),
+      ));
+    }
+
+    if (chips.isEmpty) return const SizedBox.shrink();
+
+    return Card(
+      elevation: StrifeTheme.cardElevation,
+      shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Active Filters',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: _clearFilters,
+                  icon: const Icon(Icons.clear_all, size: 16),
+                  label: const Text('Clear All'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: chips,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onRemove,
+  }) {
+    final accent = StrifeTheme.abilitiesAccent;
+
+    return Chip(
+      label: Text(label),
+      deleteIcon: const Icon(Icons.close, size: 18),
+      onDeleted: onRemove,
+      backgroundColor: accent.withValues(alpha: 0.1),
+      side: BorderSide(color: accent.withValues(alpha: 0.3)),
     );
   }
 }
@@ -315,10 +771,10 @@ class _AbilitySummaryStats {
     final resourceTypes = <String>{};
 
     for (final component in components) {
-      final abilityData = AbilityData(component);
-      final cost = _resolveCost(component);
+      final abilityData = AbilityData.fromComponent(component);
+      final cost = abilityData.costAmount;
 
-      if (cost == null || cost <= 0) {
+      if (abilityData.isSignature || cost == null || cost <= 0) {
         signature += 1;
       } else {
         costed += 1;
@@ -327,9 +783,9 @@ class _AbilitySummaryStats {
         }
       }
 
-      final resourceType = abilityData.resourceType;
-      if (resourceType != null && resourceType.isNotEmpty) {
-        resourceTypes.add(resourceType);
+      final resourceLabel = abilityData.resourceLabel;
+      if (resourceLabel != null && resourceLabel.isNotEmpty) {
+        resourceTypes.add(resourceLabel);
       }
     }
 
@@ -340,33 +796,6 @@ class _AbilitySummaryStats {
       highestCost: highestCost,
       resourceTypeCount: resourceTypes.length,
     );
-  }
-
-  static int? _resolveCost(Component ability) {
-    final data = ability.data;
-    final direct = _toInt(data['cost']);
-    if (direct != null) return direct;
-
-    final costs = data['costs'];
-    if (costs is Map) {
-      return _toInt(costs['amount']);
-    }
-
-    return null;
-  }
-
-  static int? _toInt(dynamic value) {
-    if (value == null) return null;
-    if (value is int) return value;
-    if (value is double) return value.round();
-    if (value is num) return value.toInt();
-    if (value is String) {
-      final match = RegExp(r'^-?\\d+').firstMatch(value.trim());
-      if (match != null) {
-        return int.tryParse(match.group(0)!);
-      }
-    }
-    return null;
   }
 
   final int total;

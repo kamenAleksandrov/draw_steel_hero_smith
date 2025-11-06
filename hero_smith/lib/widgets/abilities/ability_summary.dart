@@ -16,7 +16,7 @@ class AbilitySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ability = abilityData ?? AbilityData(component);
+    final ability = abilityData ?? AbilityData.fromComponent(component);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
@@ -24,6 +24,8 @@ class AbilitySummary extends StatelessWidget {
         ? HeroicResourceTokens.color(ability.resourceType!)
         : scheme.primary;
     final metadataColor = scheme.onSurfaceVariant;
+    final resourceLabel = ability.resourceLabel;
+    final costAmount = ability.costAmount;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +45,7 @@ class AbilitySummary extends StatelessWidget {
                         color: scheme.onSurface,
                       ),
                       children: [
-                        if (ability.costString != null)
+                        if (ability.costString != null && resourceLabel == null)
                           TextSpan(
                             text: ' (${ability.costString})',
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -77,6 +79,18 @@ class AbilitySummary extends StatelessWidget {
                     'Level ${ability.level}',
                     scheme.secondary,
                     scheme.onSecondary,
+                  ),
+                if (resourceLabel != null)
+                  Padding(
+                    padding: EdgeInsets.only(top: ability.level != null ? 6 : 0),
+                    child: _buildBadge(
+                      context,
+                      costAmount != null && costAmount > 0
+                          ? '$resourceLabel $costAmount'
+                          : resourceLabel,
+                      resourceColor,
+                      Colors.white,
+                    ),
                   ),
                 if (ability.actionType != null)
                   Padding(

@@ -16,20 +16,22 @@ class AbilityFullView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ability = abilityData ?? AbilityData(component);
+    final ability = abilityData ?? AbilityData.fromComponent(component);
     final sections = <Widget>[];
 
+    // Only show power roll section if ability has a power roll
     if (ability.hasPowerRoll) {
       sections.add(_buildPowerRollSection(context, ability));
     }
 
-    if (ability.effect != null) {
+    // Show effect text (non-tier based effects)
+    if (ability.effect != null && ability.effect!.isNotEmpty) {
       sections.add(_buildLabeledText(context, 'Effect', ability.effect!));
     }
 
-    if (ability.specialEffect != null) {
-      sections
-          .add(_buildLabeledText(context, 'Special', ability.specialEffect!));
+    // Show special effect text
+    if (ability.specialEffect != null && ability.specialEffect!.isNotEmpty) {
+      sections.add(_buildLabeledText(context, 'Special', ability.specialEffect!));
     }
 
     if (sections.isEmpty) {

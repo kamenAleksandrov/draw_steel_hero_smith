@@ -49,6 +49,13 @@ class AssetSeeder {
       Iterable<String> assetPaths) async {
     final batchOps = <ComponentsCompanion>[];
     for (final path in assetPaths) {
+      // Skip legacy class_abilities folder - only load simplified format
+      if (path.contains('data/abilities/class_abilities/') &&
+          !path.contains('class_abilities_simplified') &&
+          !path.contains('class_abilities_dynamic')) {
+        continue;
+      }
+      
       final raw = await rootBundle.loadString(path);
       final decoded = jsonDecode(raw);
       Iterable<Map<String, dynamic>> items;

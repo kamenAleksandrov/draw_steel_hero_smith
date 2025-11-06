@@ -20,27 +20,30 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
 
   @override
   Widget build(BuildContext context) {
-    final ability = AbilityData(widget.component);
+    final ability = AbilityData.fromComponent(widget.component);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    final resourceColor = ability.resourceType != null
-        ? HeroicResourceTokens.color(ability.resourceType!)
+    // Use action type color for border, fallback to primary if no action type
+    final borderColor = ability.actionType != null
+        ? ActionTokens.color(ability.actionType!)
         : scheme.primary;
-    final borderColor =
-        resourceColor.withValues(alpha: _expanded ? 0.75 : 0.45);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-        color: resourceColor.withValues(alpha: 0.06),
+        // Use app background color (dark grey/bluish)
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor, width: 1.5),
+        border: Border.all(
+          color: borderColor,
+          width: _expanded ? 2.5 : 2.0,
+        ),
         boxShadow: [
           BoxShadow(
-            color: borderColor.withValues(alpha: 0.22),
+            color: borderColor.withValues(alpha: _expanded ? 0.35 : 0.25),
             blurRadius: _expanded ? 16 : 10,
             offset: const Offset(0, 6),
           ),

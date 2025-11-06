@@ -162,6 +162,7 @@ class _CareerContentState extends State<_CareerContent> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final selectedCareer = _careers.firstWhere(
       (c) => c.id == widget.careerId,
       orElse: () => _careers.isNotEmpty
@@ -198,7 +199,6 @@ class _CareerContentState extends State<_CareerContent> {
             .map((e) => Map<String, dynamic>.from(e as Map))
             .toList();
 
-    final chosenCareerSkills = widget.chosenSkillIds;
     final neededFromGroups = (skillsNumber - grantedSkills.length).clamp(0, 99);
 
     return Column(
@@ -235,8 +235,10 @@ class _CareerContentState extends State<_CareerContent> {
         if (widget.careerId != null && selectedCareer.id.isNotEmpty) ...[
           const SizedBox(height: 8),
           if ((data['description'] as String?)?.isNotEmpty == true) ...[
-            Text(data['description'] as String,
-                style: TextStyle(height: 1.3, color: Colors.grey.shade800)),
+            Text(
+              data['description'] as String,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.3),
+            ),
             const SizedBox(height: 12),
           ],
           Wrap(
@@ -318,51 +320,175 @@ class _CareerContentState extends State<_CareerContent> {
               }).toList();
               eligible.sort((a, b) => a.name.compareTo(b.name));
 
-              final selectedCount = chosenCareerSkills.length;
-              final remaining = (neededFromGroups - selectedCount).clamp(0, 99);
+              final picksNeeded = neededFromGroups;
+              if (picksNeeded <= 0) {
+                return const SizedBox.shrink();
+              }
+
+              final skillMap = {
+                for (final skill in eligible) skill.id: skill,
+              };
+              final currentSelections =
+                  widget.chosenSkillIds.where(skillMap.containsKey).toList();
+
+              final grouped = <String, List<model.Component>>{};
+              final ungrouped = <model.Component>[];
+              for (final skill in eligible) {
+                final group = skill.data['group']?.toString();
+                if (group != null && group.isNotEmpty) {
+                  grouped.putIfAbsent(group, () => []).add(skill);
+                } else {
+                  ungrouped.add(skill);
+                }
+              }
+              final sortedGroups = grouped.keys.toList()..sort();
+              for (final list in grouped.values) {
+                list.sort((a, b) => a.name.compareTo(b.name));
+              }
+              ungrouped.sort((a, b) => a.name.compareTo(b.name));
+
+              List<DropdownMenuItem<String?>> buildDropdownItems() {
+                final items = <DropdownMenuItem<String?>>[
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('— Choose skill —'),
+                  ),
+                ];
+
+                for (final groupKey in sortedGroups) {
+                  items.add(
+                    DropdownMenuItem<String?>(
+                      value: '__group_$groupKey',
+                      enabled: false,
+                      child: Text(
+                        groupKey,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  );
+                  for (final skill in grouped[groupKey]!) {
+                    items.add(
+                      DropdownMenuItem<String?>(
+                        value: skill.id,
+                        enabled: true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(skill.name),
+                        ),
+                      ),
+                    );
+                  }
+                }
+
+                if (ungrouped.isNotEmpty) {
+                  items.add(
+                    DropdownMenuItem<String?>(
+                      value: '__group_other',
+                      enabled: false,
+                      child: Text(
+                        'Other',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  );
+                  for (final skill in ungrouped) {
+                    items.add(
+                      DropdownMenuItem<String?>(
+                        value: skill.id,
+                        enabled: true,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(skill.name),
+                        ),
+                      ),
+                    );
+                  }
+                }
+
+                return items;
+              }
+
+              List<String?> currentSlots() {
+                final slots = List<String?>.filled(picksNeeded, null);
+                for (var i = 0;
+                    i < picksNeeded && i < currentSelections.length;
+                    i++) {
+                  slots[i] = currentSelections[i];
+                }
+                return slots;
+              }
+
+              final accent = Theme.of(context).colorScheme.primary;
+              final border = OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide:
+                    BorderSide(color: accent.withOpacity(0.6), width: 1.4),
+              );
+              final focusedBorder = OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: accent, width: 2),
+              );
+
+              final slots = currentSlots();
+              final remaining = slots.where((value) => value == null).length;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (neededFromGroups > 0)
-                    Text(
-                      'Choose $neededFromGroups skill${neededFromGroups == 1 ? '' : 's'} from the groups below.',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      for (final skill in eligible)
-                        FilterChip(
-                          label: Text(skill.name),
-                          selected: widget.chosenSkillIds.contains(skill.id),
-                          onSelected: (value) {
-                            final updated =
-                                LinkedHashSet<String>.of(widget.chosenSkillIds);
-                            if (value) {
-                              if (neededFromGroups <= 0) return;
-                              if (!updated.contains(skill.id)) {
-                                updated.add(skill.id);
-                                if (updated.length > neededFromGroups) {
-                                  updated.remove(updated.first);
-                                }
-                              }
-                            } else {
-                              updated.remove(skill.id);
-                            }
-                            widget.onSkillSelectionChanged(updated);
-                            widget.onDirty();
-                          },
-                        ),
-                    ],
+                  Text(
+                    'Choose $picksNeeded skill${picksNeeded == 1 ? '' : 's'} from the approved list.',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  if (remaining > 0) ...[
+                  const SizedBox(height: 6),
+                  for (var index = 0; index < picksNeeded; index++) ...[
+                    DropdownButtonFormField<String?>(
+                      value: slots[index],
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Skill pick ${index + 1}',
+                        border: border,
+                        enabledBorder: border,
+                        focusedBorder: focusedBorder,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                      items: buildDropdownItems(),
+                      onChanged: (value) {
+                        if (value != null && value.startsWith('__group_')) {
+                          return;
+                        }
+                        final updated = currentSlots();
+                        updated[index] = value;
+                        if (value != null) {
+                          for (var i = 0; i < updated.length; i++) {
+                            if (i != index && updated[i] == value) {
+                              updated[i] = null;
+                            }
+                          }
+                        }
+                        final next = LinkedHashSet<String>();
+                        for (final pick in updated) {
+                          if (pick != null) {
+                            next.add(pick);
+                          }
+                        }
+                        widget.onSkillSelectionChanged(next);
+                        widget.onDirty();
+                      },
+                    ),
                     const SizedBox(height: 8),
+                  ],
+                  if (remaining > 0)
                     Text(
                         '$remaining pick${remaining == 1 ? '' : 's'} remaining.'),
-                  ],
                 ],
               );
             },
@@ -372,56 +498,233 @@ class _CareerContentState extends State<_CareerContent> {
             loading: () => const LinearProgressIndicator(),
             error: (e, _) => Text('Failed to load perks: $e'),
             data: (perks) {
-              final filtered = perks.where((perk) {
-                final type = perk.data['perk_type']?.toString().toLowerCase();
-                return perkType.isEmpty ||
-                    (type != null && perkType.toLowerCase().contains(type));
+              String? normalizePerkType(String? value) {
+                if (value == null) return null;
+                final cleaned = value
+                    .toLowerCase()
+                    .replaceAll('perk', '')
+                    .replaceAll(RegExp(r'[^a-z0-9]+'), ' ')
+                    .trim();
+                return cleaned.isEmpty ? null : cleaned;
+              }
+
+              String formatGroupLabel(String? raw) {
+                final value = raw?.trim();
+                if (value == null || value.isEmpty) {
+                  return 'General';
+                }
+                return value
+                    .replaceAll('_', ' ')
+                    .replaceAll('-', ' ')
+                    .split(RegExp(r'\s+'))
+                    .where((segment) => segment.isNotEmpty)
+                    .map((segment) =>
+                        '${segment[0].toUpperCase()}${segment.substring(1).toLowerCase()}')
+                    .join(' ');
+              }
+
+              final requiredType = normalizePerkType(perkType);
+
+              var filtered = perks.where((perk) {
+                final rawType = (perk.data['perk_type'] ??
+                        perk.data['perkType'] ??
+                        perk.data['group'])
+                    ?.toString();
+                final normalizedType = normalizePerkType(rawType);
+                if (requiredType == null || requiredType.isEmpty) {
+                  return true;
+                }
+                if (normalizedType == null || normalizedType.isEmpty) {
+                  return false;
+                }
+                return normalizedType == requiredType ||
+                    normalizedType.contains(requiredType) ||
+                    requiredType.contains(normalizedType);
               }).toList()
                 ..sort((a, b) => a.name.compareTo(b.name));
-              final remaining =
-                  (perksNumber - widget.chosenPerkIds.length).clamp(0, 99);
+
+              if (filtered.isEmpty &&
+                  requiredType != null &&
+                  requiredType.isNotEmpty) {
+                filtered = perks.toList()
+                  ..sort((a, b) => a.name.compareTo(b.name));
+              }
+              if (perksNumber <= 0) {
+                return const SizedBox.shrink();
+              }
+
+              final perkMap = {
+                for (final perk in filtered) perk.id: perk,
+              };
+              final currentSelections =
+                  widget.chosenPerkIds.where(perkMap.containsKey).toList();
+
+              final grouped = <String, List<model.Component>>{};
+              for (final perk in filtered) {
+                final rawType = (perk.data['group'] ??
+                        perk.data['perk_type'] ??
+                        perk.data['perkType'])
+                    ?.toString();
+                final key = formatGroupLabel(rawType);
+                grouped.putIfAbsent(key, () => []).add(perk);
+              }
+
+              final sortedGroupKeys = grouped.keys.toList()..sort();
+              for (final list in grouped.values) {
+                list.sort((a, b) => a.name.compareTo(b.name));
+              }
+
+              final borderColor = Theme.of(context).colorScheme.tertiary;
+              final border = OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide:
+                    BorderSide(color: borderColor.withOpacity(0.6), width: 1.4),
+              );
+              final focusedBorder = OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: borderColor, width: 2),
+              );
+
+              List<String?> currentSlots() {
+                final slots = List<String?>.filled(perksNumber, null);
+                for (var i = 0;
+                    i < perksNumber && i < currentSelections.length;
+                    i++) {
+                  slots[i] = currentSelections[i];
+                }
+                return slots;
+              }
+
+              List<DropdownMenuItem<String?>> buildItems() {
+                final items = <DropdownMenuItem<String?>>[
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('— Choose perk —'),
+                  ),
+                ];
+                for (final key in sortedGroupKeys) {
+                  items.add(
+                    DropdownMenuItem<String?>(
+                      value: '__group_$key',
+                      enabled: false,
+                      child: Text(
+                        key,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  );
+                  for (final perk in grouped[key]!) {
+                    items.add(
+                      DropdownMenuItem<String?>(
+                        value: perk.id,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Text(perk.name),
+                        ),
+                      ),
+                    );
+                  }
+                }
+                return items;
+              }
+
+              final slots = currentSlots();
+              final remaining = slots.where((value) => value == null).length;
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (perksNumber > 0)
-                    Text(
-                      'Choose $perksNumber perk${perksNumber == 1 ? '' : 's'} of type $perkType.',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      for (final perk in filtered)
-                        FilterChip(
-                          label: Text(perk.name),
-                          selected: widget.chosenPerkIds.contains(perk.id),
-                          onSelected: (value) {
-                            final updated =
-                                LinkedHashSet<String>.of(widget.chosenPerkIds);
-                            if (value) {
-                              if (perksNumber <= 0) return;
-                              if (!updated.contains(perk.id)) {
-                                updated.add(perk.id);
-                                if (updated.length > perksNumber) {
-                                  updated.remove(updated.first);
-                                }
-                              }
-                            } else {
-                              updated.remove(perk.id);
-                            }
-                            widget.onPerkSelectionChanged(updated);
-                            widget.onDirty();
-                          },
-                        ),
-                    ],
+                  Text(
+                    'Choose $perksNumber perk${perksNumber == 1 ? '' : 's'}${perkType.isNotEmpty ? ' of type $perkType' : ''}.',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  if (remaining > 0) ...[
-                    const SizedBox(height: 8),
+                  const SizedBox(height: 8),
+                  for (var index = 0; index < perksNumber; index++) ...[
+                    DropdownButtonFormField<String?>(
+                      value: slots[index],
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Perk pick ${index + 1}',
+                        border: border,
+                        enabledBorder: border,
+                        focusedBorder: focusedBorder,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                      items: buildItems(),
+                      onChanged: (value) {
+                        if (value != null && value.startsWith('__group_')) {
+                          return;
+                        }
+                        final updated = currentSlots();
+                        updated[index] = value;
+                        if (value != null) {
+                          for (var i = 0; i < updated.length; i++) {
+                            if (i != index && updated[i] == value) {
+                              updated[i] = null;
+                            }
+                          }
+                        }
+                        final next = LinkedHashSet<String>();
+                        for (final pick in updated) {
+                          if (pick != null) {
+                            next.add(pick);
+                          }
+                        }
+                        widget.onPerkSelectionChanged(next);
+                        widget.onDirty();
+                      },
+                    ),
+                    if (slots[index] != null) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: borderColor.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: borderColor.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              perkMap[slots[index]]!.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: borderColor,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              perkMap[slots[index]]!
+                                      .data['description']
+                                      ?.toString() ??
+                                  'No description available',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                  ],
+                  if (remaining > 0)
                     Text(
                         '$remaining pick${remaining == 1 ? '' : 's'} remaining.'),
-                  ],
+                  const SizedBox(height: 8),
                 ],
               );
             },
@@ -467,7 +770,11 @@ class _CareerContentState extends State<_CareerContent> {
                         )['description']
                         ?.toString() ??
                     '',
-                style: TextStyle(color: Colors.grey.shade700, height: 1.3),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  height: 1.35,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
         ],

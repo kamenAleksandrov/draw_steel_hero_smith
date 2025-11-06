@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/models/abilities_models.dart';
 import '../../core/models/component.dart';
+import '../../core/models/ability_simplified.dart';
 import '../../core/theme/semantic/semantic_tokens.dart';
 
 class AbilityTierLine {
@@ -102,37 +103,201 @@ class AbilityTextHighlighter {
 }
 
 class AbilityData {
-  AbilityData(Component source)
-      : component = source,
-        detail = AbilityDetail.fromComponent(source);
+  AbilityData._({
+    required this.component,
+    required this.simplified,
+    required this.detail,
+  });
 
-  final Component component;
-  final AbilityDetail detail;
+  factory AbilityData.fromComponent(Component source) {
+    final simplified = _tryParseAsSimplified(source);
+    final detail = simplified == null ? AbilityDetail.fromComponent(source) : null;
+    return AbilityData._(
+      component: source,
+      simplified: simplified,
+      detail: detail,
+    );
+  }
+
+  AbilityData.fromSimplified(AbilitySimplified source)
+      : component = null,
+        simplified = source,
+        detail = null;
+
+  final Component? component;
+  final AbilitySimplified? simplified;
+  final AbilityDetail? detail;
+
+  bool get isSimplified => simplified != null;
+
+  /// Try to parse a Component as simplified format
+  /// Detects simplified format by checking for simplified-specific fields
+  static AbilitySimplified? _tryParseAsSimplified(Component component) {
+    final data = component.data;
+    final hasNewResource = data.containsKey('resource_value');
+    final hasNewRoll = data['power_roll'] is String;
+    final hasNewEffects = data['tier_effects'] is List;
+    final hasLegacySimplifiedResource = data['resource'] is String;
+    final hasLegacySimplifiedRoll = data['roll'] is String;
+    final hasLegacySimplifiedEffects = data['effects'] is List;
+
+    if (hasNewResource || hasNewRoll || hasNewEffects || hasLegacySimplifiedResource || hasLegacySimplifiedRoll || hasLegacySimplifiedEffects) {
+      try {
+        final json = {
+          'id': component.id,
+          'name': component.name,
+          'level': data['level'] ?? 1,
+          ...data,
+        };
+        return AbilitySimplified.fromJson(json);
+      } catch (e) {
+        // If parsing fails, return null to fall back to legacy format
+        return null;
+      }
+    }
+    
+    return null;
+  }
 
   // Basics
-  String get name => detail.name;
-  String? get flavor => detail.storyText;
-  int? get level => detail.level;
-  String? get triggerText => detail.triggerText;
+  String get name => isSimplified ? simplified!.name : detail!.name;
+  
+  String? get flavor {
+    if (isSimplified) {
+      final story = simplified!.storyText;
+      if (story == null || story.isEmpty) return null;
+      return story;
+    }
+    return detail!.storyText;
+  }
+  
+  int? get level => isSimplified ? simplified!.level : detail!.level;
+  
+  String? get triggerText {
+    if (isSimplified) {
+      final trigger = simplified!.triggerText;
+      if (trigger == null || trigger.isEmpty) return null;
+      return trigger;
+    }
+    return detail!.triggerText;
+  }
 
   // Costs
   String? get costString {
-    final cost = detail.cost;
-    if (cost == null) return null;
-    final resource = _formatResource(cost.resource);
-    return '${cost.amount} $resource';
+    final resourceLabel = this.resourceLabel;
+    final amount = costAmount;
+
+    if (resourceLabel == null || resourceLabel.isEmpty) {
+      if (amount == null || amount <= 0) {
+        return isSignature ? 'Signature' : null;
+      }
+      return 'Cost $amount';
+    }
+
+    if (amount == null || amount <= 0) {
+      return resourceLabel;
+    }
+
+    return '$resourceLabel $amount';
   }
 
-  String? get resourceType => detail.resourceType;
+  int? get costAmount {
+    if (isSimplified) {
+      final amount = simplified!.resourceAmount;
+      if (amount != null) {
+        return amount;
+      }
+      if (simplified!.isSignature) {
+        return 0;
+      }
+      return null;
+    }
+
+    final cost = detail?.cost;
+    if (cost != null) {
+      return cost.amount;
+    }
+
+    final rawCosts = detail?.rawData['costs'];
+    if (rawCosts is Map) {
+      final amount = rawCosts['amount'];
+      if (amount != null) {
+        final parsed = int.tryParse(amount.toString());
+        if (parsed != null) {
+          return parsed;
+        }
+      }
+      if (rawCosts['signature'] == true) {
+        return 0;
+      }
+    } else if (rawCosts is String && rawCosts.toLowerCase() == 'signature') {
+      return 0;
+    }
+
+    return null;
+  }
+
+  String? get resourceType {
+    if (isSimplified) {
+      return simplified!.resourceType;
+    }
+    return detail!.resourceType;
+  }
+
+  String? get resourceLabel {
+    final resource = resourceType;
+    if (resource == null || resource.isEmpty) return null;
+    return _formatResource(resource);
+  }
+
+  bool get isSignature {
+    if (isSimplified) {
+      return simplified!.isSignature;
+    }
+
+    final rawCosts = detail?.rawData['costs'];
+    if (rawCosts is Map && rawCosts['signature'] == true) {
+      return true;
+    } else if (rawCosts is String && rawCosts.toLowerCase() == 'signature') {
+      return true;
+    }
+
+    final resource = resourceType?.toLowerCase();
+    if (resource == 'signature') {
+      return true;
+    }
+
+    return false;
+  }
 
   // Keywords
-  List<String> get keywords => detail.keywords;
+  List<String> get keywords {
+    if (isSimplified) {
+      return simplified!.keywordsList;
+    }
+    return detail!.keywords;
+  }
 
   // Action / Range / Targeting
-  String? get actionType => detail.actionType;
+  String? get actionType {
+    if (isSimplified) {
+      final action = simplified!.actionType;
+      if (action == null || action.isEmpty) return null;
+      // Capitalize first letter of each word
+      return action.split(' ')
+          .map((w) => w.isEmpty ? w : w[0].toUpperCase() + w.substring(1))
+          .join(' ');
+    }
+    return detail!.actionType;
+  }
 
   String? get rangeSummary {
-    final range = detail.range;
+    if (isSimplified) {
+      final distance = simplified!.distance;
+      if (distance == null || distance.isEmpty) return null;
+      return distance;
+    }
+    final range = detail!.range;
     if (range == null) return null;
 
     final distance = range.distance;
@@ -148,19 +313,47 @@ class AbilityData {
     return parts.join(' ');
   }
 
-  String? get targets => detail.targets;
+  String? get targets {
+    if (isSimplified) {
+      final t = simplified!.targets;
+      if (t == null || t.isEmpty) return null;
+      return t;
+    }
+    return detail!.targets;
+  }
 
   // Power roll
-  AbilityPowerRoll? get _powerRoll => detail.powerRoll;
+  AbilityPowerRoll? get _powerRoll => isSimplified ? null : detail!.powerRoll;
 
-  bool get hasPowerRoll => _powerRoll != null;
+  bool get hasPowerRoll {
+    if (isSimplified) {
+      return simplified!.hasPowerRoll;
+    }
+    return _powerRoll != null;
+  }
 
   String? get powerRollLabel {
+    if (isSimplified) {
+      final roll = simplified!.powerRoll;
+      if (roll == null || roll.isEmpty) return null;
+      // Extract just "Power Roll" part (before the +)
+      final parts = roll.split('+');
+      if (parts.isEmpty) return null;
+      return parts[0].trim();
+    }
     final label = _powerRoll?.label;
     return label ?? (_powerRoll != null ? 'Power roll' : null);
   }
 
   String? get characteristicSummary {
+    if (isSimplified) {
+      final roll = simplified!.powerRoll;
+      if (roll == null || roll.isEmpty) return null;
+      // Extract characteristic part (after the +)
+      final parts = roll.split('+');
+      if (parts.length < 2) return null;
+      return parts.sublist(1).join('+').trim();
+    }
     final characteristics = _powerRoll?.characteristics;
     final trimmed = characteristics?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
@@ -176,6 +369,40 @@ class AbilityData {
   }
 
   List<AbilityTierLine> get tiers {
+    if (isSimplified) {
+      final effects = simplified!.tierEffects;
+      if (effects.isEmpty) return const [];
+
+      const labels = {
+        'tier1': '<=11',
+        'tier2': '12-16',
+        'tier3': '17+',
+      };
+
+      final results = <AbilityTierLine>[];
+
+      for (final entry in labels.entries) {
+        String? tierText;
+        for (final tier in effects) {
+          final candidate = tier.getTier(entry.key);
+          if (candidate != null && candidate.isNotEmpty) {
+            tierText = candidate;
+            break;
+          }
+        }
+        if (tierText == null || tierText.isEmpty) continue;
+        results.add(
+          AbilityTierLine(
+            label: entry.value,
+            primaryText: tierText,
+            secondaryText: null,
+          ),
+        );
+      }
+
+      return results;
+    }
+
     final powerRoll = _powerRoll;
     if (powerRoll == null) return const [];
 
@@ -196,32 +423,56 @@ class AbilityData {
       final damageTypes = detail.damageTypes;
       final potencies = detail.potencies;
       final conditions = detail.conditions;
+      final damageExpression = detail.damageExpression;
+      final secondaryDamage = detail.secondaryDamageExpression;
+      final descriptiveText = detail.descriptiveText;
+      final allText = detail.allText;
 
-      final damageParts = <String>[];
-      if (baseDamage != null) {
-        damageParts.add(baseDamage.toString());
+      final primaryParts = <String>[];
+      if (damageExpression != null && damageExpression.isNotEmpty) {
+        primaryParts.add(damageExpression);
+      } else {
+        if (baseDamage != null) {
+          primaryParts.add(baseDamage.toString());
+        }
+        if (characteristicDamage != null && characteristicDamage.isNotEmpty) {
+          primaryParts.add(primaryParts.isEmpty
+              ? characteristicDamage
+              : '+ $characteristicDamage');
+        }
+        if (damageTypes != null && damageTypes.isNotEmpty) {
+          final suffix = damageTypes.toLowerCase().contains('damage')
+              ? damageTypes
+              : '$damageTypes damage';
+          primaryParts.add(suffix);
+        }
       }
-      if (characteristicDamage != null && characteristicDamage.isNotEmpty) {
-        damageParts.add(damageParts.isEmpty
-            ? characteristicDamage
-            : '+ $characteristicDamage');
-      }
-      if (damageTypes != null && damageTypes.isNotEmpty) {
-        final suffix = damageTypes.toLowerCase().contains('damage')
-            ? damageTypes
-            : '$damageTypes damage';
-        damageParts.add(suffix);
-      }
-      final primary = damageParts.join(' ').trim();
+
+      var primary = primaryParts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
 
       final detailParts = <String>[];
+      if (secondaryDamage != null && secondaryDamage.isNotEmpty) {
+        detailParts.add(secondaryDamage);
+      }
+      if (descriptiveText != null && descriptiveText.isNotEmpty) {
+        detailParts.add(descriptiveText);
+      }
       if (potencies != null && potencies.isNotEmpty) {
         detailParts.add(potencies);
       }
       if (conditions != null && conditions.isNotEmpty) {
         detailParts.add(conditions);
       }
-      final secondary = detailParts.isEmpty ? null : detailParts.join(', ');
+
+      var secondary = detailParts.isEmpty ? null : detailParts.join(', ');
+
+      if ((primary.isEmpty || primary == '+') && allText != null && allText.isNotEmpty) {
+        primary = allText;
+        secondary = null;
+      } else if (primary.isEmpty && secondary != null && secondary.isNotEmpty) {
+        primary = secondary;
+        secondary = null;
+      }
 
       if (primary.isEmpty && (secondary == null || secondary.isEmpty)) {
         continue;
@@ -230,8 +481,8 @@ class AbilityData {
       results.add(
         AbilityTierLine(
           label: entry.value,
-          primaryText: primary.isNotEmpty ? primary : (secondary ?? ''),
-          secondaryText: primary.isNotEmpty ? secondary : null,
+          primaryText: primary,
+          secondaryText: secondary,
         ),
       );
     }
@@ -239,8 +490,23 @@ class AbilityData {
     return results;
   }
 
-  String? get effect => detail.effect;
-  String? get specialEffect => detail.specialEffect;
+  String? get effect {
+    if (isSimplified) {
+      final e = simplified!.effect;
+      if (e == null || e.isEmpty) return null;
+      return e;
+    }
+    return detail!.effect;
+  }
+  
+  String? get specialEffect {
+    if (isSimplified) {
+      final se = simplified!.specialEffect;
+      if (se == null || se.isEmpty) return null;
+      return se;
+    }
+    return detail!.specialEffect;
+  }
 
   String metaSummary() {
     final parts = <String>[];
@@ -249,6 +515,11 @@ class AbilityData {
     if (rangeSummary != null) parts.add(rangeSummary!);
     if (characteristicSummary != null) {
       parts.add('Power roll + $characteristicSummary');
+    }
+    if (resourceLabel != null && costAmount != null && costAmount! > 0) {
+      parts.add('${resourceLabel!} $costAmount');
+    } else if (isSignature && resourceLabel != null) {
+      parts.add(resourceLabel!);
     }
     return parts.join(' • ');
   }

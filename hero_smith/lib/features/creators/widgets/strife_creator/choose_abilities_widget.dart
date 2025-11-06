@@ -9,6 +9,7 @@ import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
+import '../../../../widgets/abilities/abilities_shared.dart';
 
 typedef AbilitySelectionChanged = void Function(
     StartingAbilitySelectionResult result);
@@ -112,34 +113,13 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
   AbilityOption _mapComponentToOption(Component component) {
     try {
       final data = component.data;
-      final costsRaw = data['costs'];
-      
-      // Check if this is a signature ability
-      // New format: costs == "signature" (string)
-      // Old format: costs['signature'] == true (boolean in map)
-      final bool isSignature;
-      if (costsRaw is String) {
-        isSignature = costsRaw.toLowerCase() == 'signature';
-      } else if (costsRaw is Map) {
-        isSignature = costsRaw['signature'] == true;
-      } else {
-        isSignature = false;
-      }
-      
-      // Extract cost amount and resource (only applicable for non-signature abilities)
-      final int? costAmount;
-      final String? resource;
-      if (costsRaw is Map) {
-        final amountRaw = costsRaw['amount'];
-        costAmount = amountRaw is num ? amountRaw.toInt() : null;
-        resource = costsRaw['resource']?.toString();
-      } else {
-        costAmount = null;
-        resource = null;
-      }
-      final level = data['level'] is num
-          ? (data['level'] as num).toInt()
-          : CharacteristicUtils.toIntOrNull(data['level']) ?? 0;
+      final abilityData = AbilityData.fromComponent(component);
+
+      final bool isSignature = abilityData.isSignature;
+      final int? costAmount = abilityData.costAmount;
+      final String? resource = abilityData.resourceLabel ?? abilityData.resourceType;
+
+      final level = _resolveAbilityLevel(component);
       final subclassRaw = data['subclass']?.toString().trim();
       final subclass =
           subclassRaw == null || subclassRaw.isEmpty ? null : subclassRaw;
@@ -541,14 +521,17 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
 
   String _abilityOptionLabel(AbilityOption option) {
     final buffer = StringBuffer(option.name);
-    if (option.costAmount != null) {
-      buffer.write(' (Cost ${option.costAmount}');
-      if (option.resource != null && option.resource!.isNotEmpty) {
-        buffer.write(' ${option.resource}');
-      }
-      buffer.write(')');
-    } else if (option.isSignature) {
+    if (option.isSignature) {
       buffer.write(' (Signature)');
+    } else if (option.costAmount != null && option.costAmount! > 0) {
+      final resource = option.resource;
+      if (resource != null && resource.isNotEmpty) {
+        buffer.write(' ($resource ${option.costAmount})');
+      } else {
+        buffer.write(' (Cost ${option.costAmount})');
+      }
+    } else if (option.resource != null && option.resource!.isNotEmpty) {
+      buffer.write(' (${option.resource})');
     }
     if (option.subclass != null && option.subclass!.isNotEmpty) {
       buffer.write(' - ${option.subclass}');
@@ -590,5 +573,75 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
       return normalized.substring('class_'.length);
     }
     return normalized;
+  }
+
+  int _resolveAbilityLevel(Component component) {
+    final data = component.data;
+    final level = CharacteristicUtils.toIntOrNull(data['level']);
+    if (level != null && level > 0) {
+      return level;
+    }
+
+    final levelBand = data['level_band'];
+    final levelFromBand = _parseLevel(dynamicValue: levelBand);
+    if (levelFromBand != null) {
+      return levelFromBand;
+    }
+
+    final path = data['ability_source_path'];
+    final levelFromPath = _parseLevelFromPath(path);
+    if (levelFromPath != null) {
+      return levelFromPath;
+    }
+
+    return 0;
+  }
+
+  int? _parseLevel({dynamic dynamicValue}) {
+    if (dynamicValue == null) return null;
+    if (dynamicValue is num) {
+      final numeric = dynamicValue.toInt();
+      return numeric > 0 ? numeric : null;
+    }
+    final value = dynamicValue.toString().trim();
+    if (value.isEmpty) return null;
+
+    final normalized = value.toLowerCase();
+    final levelMatch =
+        RegExp(r'(?:level|lvl)[\s_:-]*([0-9]{1,2})').firstMatch(normalized);
+    if (levelMatch != null) {
+      return int.tryParse(levelMatch.group(1)!);
+    }
+
+    if (RegExp(r'^[0-9]{1,2}$').hasMatch(value)) {
+      return int.tryParse(value);
+    }
+
+    return null;
+  }
+
+  int? _parseLevelFromPath(dynamic pathValue) {
+    if (pathValue == null) return null;
+    final path = pathValue.toString().trim();
+    if (path.isEmpty) return null;
+
+    final segments = path
+        .replaceAll('\\', '/')
+        .split('/')
+        .where((segment) => segment.isNotEmpty)
+        .toList();
+
+    for (final segment in segments) {
+      final normalizedSegment = segment.toLowerCase();
+      if (normalizedSegment.contains('level') ||
+          normalizedSegment.contains('lvl')) {
+        final level = _parseLevel(dynamicValue: normalizedSegment);
+        if (level != null) {
+          return level;
+        }
+      }
+    }
+
+    return null;
   }
 }

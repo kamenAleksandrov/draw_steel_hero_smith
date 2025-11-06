@@ -30,115 +30,22 @@ flutter:
     # General data files
     - data/
     - data/abilities/
-    - data/abilities/class_abilities/
-    
+    # - data/abilities/class_abilities/
+    # - data/abilities/class_abilities_dynamic/
+
     # New class abilities structure - must include all subdirectories explicitly
-    - data/abilities/class_abilities_new/
-    - data/abilities/class_abilities_new/Censor/
-    - data/abilities/class_abilities_new/Censor/1st-Level Features/
-    - data/abilities/class_abilities_new/Censor/2nd-Level Features/
-    - data/abilities/class_abilities_new/Censor/3rd-Level Features/
-    - data/abilities/class_abilities_new/Censor/4th-Level Features/
-    - data/abilities/class_abilities_new/Censor/5th-Level Features/
-    - data/abilities/class_abilities_new/Censor/6th-Level Features/
-    - data/abilities/class_abilities_new/Censor/7th-Level Features/
-    - data/abilities/class_abilities_new/Censor/8th-Level Features/
-    - data/abilities/class_abilities_new/Censor/9th-Level Features/
-    - data/abilities/class_abilities_new/Common/
-    - data/abilities/class_abilities_new/Common/Main Actions/
-    - data/abilities/class_abilities_new/Common/Maneuvers/
-    - data/abilities/class_abilities_new/Common/Move Actions/
-    - data/abilities/class_abilities_new/Conduit/
-    - data/abilities/class_abilities_new/Conduit/1st-Level Features/
-    - data/abilities/class_abilities_new/Conduit/2nd-Level Features/
-    - data/abilities/class_abilities_new/Conduit/3rd-Level Features/
-    - data/abilities/class_abilities_new/Conduit/4th-Level Features/
-    - data/abilities/class_abilities_new/Conduit/5th-Level Features/
-    - data/abilities/class_abilities_new/Conduit/6th-Level Features/
-    - data/abilities/class_abilities_new/Conduit/7th-Level Features/
-    - data/abilities/class_abilities_new/Conduit/8th-Level Features/
-    - data/abilities/class_abilities_new/Conduit/9th-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/
-    - data/abilities/class_abilities_new/Elementalist/1st-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/2nd-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/3rd-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/4th-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/5th-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/6th-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/8th-Level Features/
-    - data/abilities/class_abilities_new/Elementalist/9th-Level Features/
-    - data/abilities/class_abilities_new/Fury/
-    - data/abilities/class_abilities_new/Fury/1st-Level Features/
-    - data/abilities/class_abilities_new/Fury/3rd-Level Features/
-    - data/abilities/class_abilities_new/Fury/5th-Level Features/
-    - data/abilities/class_abilities_new/Fury/6th-Level Features/
-    - data/abilities/class_abilities_new/Fury/8th-Level Features/
-    - data/abilities/class_abilities_new/Fury/9th-Level Features/
-    - data/abilities/class_abilities_new/Kits/
-    - data/abilities/class_abilities_new/Kits/Arcane Archer/
-    - data/abilities/class_abilities_new/Kits/Battlemind/
-    - data/abilities/class_abilities_new/Kits/Cloak and Dagger/
-    - data/abilities/class_abilities_new/Kits/Dual Wielder/
-    - data/abilities/class_abilities_new/Kits/Guisarmier/
-    - data/abilities/class_abilities_new/Kits/Martial Artist/
-    - data/abilities/class_abilities_new/Kits/Mountain/
-    - data/abilities/class_abilities_new/Kits/Panther/
-    - data/abilities/class_abilities_new/Kits/Pugilist/
-    - data/abilities/class_abilities_new/Kits/Raider/
-    - data/abilities/class_abilities_new/Kits/Ranger/
-    - data/abilities/class_abilities_new/Kits/Rapid Fire/
-    - data/abilities/class_abilities_new/Kits/Retiarius/
-    - data/abilities/class_abilities_new/Kits/Shining Armor/
-    - data/abilities/class_abilities_new/Kits/Sniper/
-    - data/abilities/class_abilities_new/Kits/Spellsword/
-    - data/abilities/class_abilities_new/Kits/Stick and Robe/
-    - data/abilities/class_abilities_new/Kits/Swashbuckler/
-    - data/abilities/class_abilities_new/Kits/Sword and Board/
-    - data/abilities/class_abilities_new/Kits/Warrior Priest/
-    - data/abilities/class_abilities_new/Kits/Whirlwind/
-    - data/abilities/class_abilities_new/Null/
-    - data/abilities/class_abilities_new/Null/1st-Level Features/
-    - data/abilities/class_abilities_new/Null/2nd-Level Features/
-    - data/abilities/class_abilities_new/Null/3rd-Level Features/
-    - data/abilities/class_abilities_new/Null/5th-Level Features/
-    - data/abilities/class_abilities_new/Null/6th-Level Features/
-    - data/abilities/class_abilities_new/Null/7th-Level Features/
-    - data/abilities/class_abilities_new/Null/8th-Level Features/
-    - data/abilities/class_abilities_new/Null/9th-Level Features/
-    - data/abilities/class_abilities_new/Shadow/
-    - data/abilities/class_abilities_new/Shadow/1st-Level Features/
-    - data/abilities/class_abilities_new/Shadow/2nd-Level Features/
-    - data/abilities/class_abilities_new/Shadow/3rd-Level Features/
-    - data/abilities/class_abilities_new/Shadow/4th-Level Features/
-    - data/abilities/class_abilities_new/Shadow/5th-Level Features/
-    - data/abilities/class_abilities_new/Shadow/6th-Level Features/
-    - data/abilities/class_abilities_new/Shadow/8th-Level Features/
-    - data/abilities/class_abilities_new/Shadow/9th-Level Features/
-    - data/abilities/class_abilities_new/Tactician/
-    - data/abilities/class_abilities_new/Tactician/1st-Level Features/
-    - data/abilities/class_abilities_new/Tactician/2nd-Level Features/
-    - data/abilities/class_abilities_new/Tactician/3rd-Level Features/
-    - data/abilities/class_abilities_new/Tactician/5th-Level Features/
-    - data/abilities/class_abilities_new/Tactician/6th-Level Features/
-    - data/abilities/class_abilities_new/Tactician/8th-Level Features/
-    - data/abilities/class_abilities_new/Tactician/9th-Level Features/
-    - data/abilities/class_abilities_new/Talent/
-    - data/abilities/class_abilities_new/Talent/1st-Level Features/
-    - data/abilities/class_abilities_new/Talent/2nd-Level Features/
-    - data/abilities/class_abilities_new/Talent/3rd-Level Features/
-    - data/abilities/class_abilities_new/Talent/5th-Level Features/
-    - data/abilities/class_abilities_new/Talent/6th-Level Features/
-    - data/abilities/class_abilities_new/Talent/8th-Level Features/
-    - data/abilities/class_abilities_new/Talent/9th-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/
-    - data/abilities/class_abilities_new/Troubadour/1st-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/2nd-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/3rd-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/5th-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/6th-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/8th-Level Features/
-    - data/abilities/class_abilities_new/Troubadour/9th-Level Features/
-    
+    - data/abilities/class_abilities_simplified/
+    - data/abilities/class_abilities_simplified/censor_abilities.json
+    - data/abilities/class_abilities_simplified/common_abilities.json
+    - data/abilities/class_abilities_simplified/conduit_abilities.json
+    - data/abilities/class_abilities_simplified/elementalist_abilities.json
+    - data/abilities/class_abilities_simplified/fury_abilities.json
+    - data/abilities/class_abilities_simplified/kits_abilities.json
+    - data/abilities/class_abilities_simplified/null_abilities.json
+    - data/abilities/class_abilities_simplified/shadow_abilities.json
+    - data/abilities/class_abilities_simplified/tactician_abilities.json
+    - data/abilities/class_abilities_simplified/talent_abilities.json
+    - data/abilities/class_abilities_simplified/troubadour_abilities.json
     - data/classes_levels_and_stats/
     # Story data (languages, titles, etc.)
     - data/story/

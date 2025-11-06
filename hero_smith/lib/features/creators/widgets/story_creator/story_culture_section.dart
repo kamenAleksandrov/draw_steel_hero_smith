@@ -49,7 +49,8 @@ class StoryCultureSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final envAsync = ref.watch(componentsByTypeProvider('culture_environment'));
-    final orgAsync = ref.watch(componentsByTypeProvider('culture_organisation'));
+    final orgAsync =
+        ref.watch(componentsByTypeProvider('culture_organisation'));
     final upAsync = ref.watch(componentsByTypeProvider('culture_upbringing'));
     final langsAsync = ref.watch(componentsByTypeProvider('language'));
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
@@ -60,7 +61,8 @@ class StoryCultureSection extends ConsumerWidget {
       data: (ancestries) {
         final ancestry = ancestries.firstWhere(
           (a) => a.id == selectedAncestryId,
-          orElse: () => const model.Component(id: '', type: 'ancestry', name: ''),
+          orElse: () =>
+              const model.Component(id: '', type: 'ancestry', name: ''),
         );
         if (ancestry.id.isNotEmpty) {
           final service = ref.read(storyCreatorServiceProvider);
@@ -125,99 +127,153 @@ class StoryCultureSection extends ConsumerWidget {
                       },
                     ),
                   ),
-                  _CultureDropdown(
-                    label: 'Environment',
-                    icon: Icons.park,
-                    asyncList: envAsync,
-                    selectedId: environmentId,
-                    onChanged: (value) {
-                      onEnvironmentChanged(value);
-                      onEnvironmentSkillChanged(null);
-                      onDirty();
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  skillsAsync.when(
-                    loading: () => const SizedBox.shrink(),
-                    error: (_, __) => const SizedBox.shrink(),
-                    data: (skills) => envAsync.when(
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
-                      data: (envs) => _CultureSkillChooser(
-                        label: 'Environment Skill',
-                        selectedCultureId: environmentId,
-                        cultureItems: envs,
-                        selectedSkillId: environmentSkillId,
-                        allSkills: skills,
-                        onChanged: (value) {
-                          onEnvironmentSkillChanged(value);
-                          onDirty();
-                        },
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color:
+                              HeroTheme.getCultureSubsectionColor('environment')
+                                  .withOpacity(0.5),
+                          width: 3,
+                        ),
                       ),
+                    ),
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _CultureDropdown(
+                          label: 'Environment',
+                          icon: Icons.park,
+                          asyncList: envAsync,
+                          selectedId: environmentId,
+                          onChanged: (value) {
+                            onEnvironmentChanged(value);
+                            onEnvironmentSkillChanged(null);
+                            onDirty();
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        skillsAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (skills) => envAsync.when(
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                            data: (envs) => _CultureSkillChooser(
+                              label: 'Environment Skill',
+                              selectedCultureId: environmentId,
+                              cultureItems: envs,
+                              selectedSkillId: environmentSkillId,
+                              allSkills: skills,
+                              onChanged: (value) {
+                                onEnvironmentSkillChanged(value);
+                                onDirty();
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _CultureDropdown(
-                    label: 'Organization',
-                    icon: Icons.apartment,
-                    asyncList: orgAsync,
-                    selectedId: organisationId,
-                    onChanged: (value) {
-                      onOrganisationChanged(value);
-                      onOrganisationSkillChanged(null);
-                      onDirty();
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  skillsAsync.when(
-                    loading: () => const SizedBox.shrink(),
-                    error: (_, __) => const SizedBox.shrink(),
-                    data: (skills) => orgAsync.when(
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
-                      data: (orgs) => _CultureSkillChooser(
-                        label: 'Organization Skill',
-                        selectedCultureId: organisationId,
-                        cultureItems: orgs,
-                        selectedSkillId: organisationSkillId,
-                        allSkills: skills,
-                        onChanged: (value) {
-                          onOrganisationSkillChanged(value);
-                          onDirty();
-                        },
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: HeroTheme.getCultureSubsectionColor(
+                                  'organisation')
+                              .withOpacity(0.5),
+                          width: 3,
+                        ),
                       ),
+                    ),
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _CultureDropdown(
+                          label: 'Organization',
+                          icon: Icons.apartment,
+                          asyncList: orgAsync,
+                          selectedId: organisationId,
+                          onChanged: (value) {
+                            onOrganisationChanged(value);
+                            onOrganisationSkillChanged(null);
+                            onDirty();
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        skillsAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (skills) => orgAsync.when(
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                            data: (orgs) => _CultureSkillChooser(
+                              label: 'Organization Skill',
+                              selectedCultureId: organisationId,
+                              cultureItems: orgs,
+                              selectedSkillId: organisationSkillId,
+                              allSkills: skills,
+                              onChanged: (value) {
+                                onOrganisationSkillChanged(value);
+                                onDirty();
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _CultureDropdown(
-                    label: 'Upbringing',
-                    icon: Icons.family_restroom,
-                    asyncList: upAsync,
-                    selectedId: upbringingId,
-                    onChanged: (value) {
-                      onUpbringingChanged(value);
-                      onUpbringingSkillChanged(null);
-                      onDirty();
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  skillsAsync.when(
-                    loading: () => const SizedBox.shrink(),
-                    error: (_, __) => const SizedBox.shrink(),
-                    data: (skills) => upAsync.when(
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
-                      data: (ups) => _CultureSkillChooser(
-                        label: 'Upbringing Skill',
-                        selectedCultureId: upbringingId,
-                        cultureItems: ups,
-                        selectedSkillId: upbringingSkillId,
-                        allSkills: skills,
-                        onChanged: (value) {
-                          onUpbringingSkillChanged(value);
-                          onDirty();
-                        },
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color:
+                              HeroTheme.getCultureSubsectionColor('upbringing')
+                                  .withOpacity(0.5),
+                          width: 3,
+                        ),
                       ),
+                    ),
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _CultureDropdown(
+                          label: 'Upbringing',
+                          icon: Icons.family_restroom,
+                          asyncList: upAsync,
+                          selectedId: upbringingId,
+                          onChanged: (value) {
+                            onUpbringingChanged(value);
+                            onUpbringingSkillChanged(null);
+                            onDirty();
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        skillsAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (skills) => upAsync.when(
+                            loading: () => const SizedBox.shrink(),
+                            error: (_, __) => const SizedBox.shrink(),
+                            data: (ups) => _CultureSkillChooser(
+                              label: 'Upbringing Skill',
+                              selectedCultureId: upbringingId,
+                              cultureItems: ups,
+                              selectedSkillId: upbringingSkillId,
+                              allSkills: skills,
+                              onChanged: (value) {
+                                onUpbringingSkillChanged(value);
+                                onDirty();
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -409,90 +465,80 @@ class _LanguageDropdown extends StatelessWidget {
         ? selectedLanguageId
         : null;
 
-    final theme = Theme.of(context);
     const languageColor = Color(0xFF9C27B0);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: languageColor.withOpacity(0.3), width: 1.5),
-        color: languageColor.withOpacity(0.05),
+    final enabledBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: languageColor, width: 1.4),
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: languageColor.withOpacity(0.9), width: 2),
+    );
+
+    final items = <DropdownMenuItem<String?>>[
+      const DropdownMenuItem<String?>(
+        value: null,
+        child: Text('— Choose language —'),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
-              color: languageColor.withOpacity(0.1),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.language, color: languageColor, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Language',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: languageColor,
-                  ),
-                ),
-              ],
+    ];
+
+    for (final key in ['human', 'ancestral', 'dead']) {
+      final grouped = groups[key]!;
+      if (grouped.isEmpty) {
+        continue;
+      }
+      items.add(
+        DropdownMenuItem<String?>(
+          enabled: false,
+          value: '__group_$key',
+          child: Text(
+            _languageGroupTitle(key),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: InputDecorator(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                isDense: true,
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String?> (
-                  isExpanded: true,
-                  hint: const Text('Select Language'),
-                  value: selected,
-                  items: [
-                    const DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text('— Choose language —'),
-                    ),
-                    for (final key in ['human', 'ancestral', 'dead'])
-                      if (groups[key]!.isNotEmpty) ...[
-                        DropdownMenuItem<String?>(
-                          enabled: false,
-                          value: '__group_$key',
-                          child: Text(
-                            _languageGroupTitle(key),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                        ),
-                        for (final lang in groups[key]!)
-                          DropdownMenuItem<String?>(
-                            value: lang.id,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16),
-                              child: Text(lang.name),
-                            ),
-                          ),
-                      ],
-                  ],
-                  onChanged: (value) {
-                    if (value != null && value.startsWith('__group_')) return;
-                    onChanged(value);
-                  },
-                ),
-              ),
+        ),
+      );
+      for (final lang in grouped) {
+        items.add(
+          DropdownMenuItem<String?>(
+            value: lang.id,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(lang.name),
             ),
           ),
-        ],
+        );
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: DropdownButtonFormField<String?>(
+        value: selected,
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: 'Language',
+          labelStyle: const TextStyle(
+            color: languageColor,
+            fontWeight: FontWeight.w600,
+          ),
+          prefixIcon: const Icon(Icons.language, color: languageColor),
+          border: enabledBorder,
+          enabledBorder: enabledBorder,
+          focusedBorder: focusedBorder,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        items: items,
+        onChanged: (value) {
+          if (value != null && value.startsWith('__group_')) {
+            return;
+          }
+          onChanged(value);
+        },
       ),
     );
   }
@@ -535,93 +581,69 @@ class _CultureDropdown extends StatelessWidget {
           style: TextStyle(color: theme.colorScheme.error)),
       data: (items) {
         items = List.of(items)..sort((a, b) => a.name.compareTo(b.name));
-        final validSelected = selectedId != null &&
-                items.any((item) => item.id == selectedId)
-            ? selectedId
-            : null;
+        final validSelected =
+            selectedId != null && items.any((item) => item.id == selectedId)
+                ? selectedId
+                : null;
         final selectedItem = validSelected == null
             ? null
             : items.firstWhere((item) => item.id == validSelected,
                 orElse: () => items.first);
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: sectionColor.withOpacity(0.3), width: 1.5),
-            color: sectionColor.withOpacity(0.05),
-          ),
+        final border = OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide:
+              BorderSide(color: sectionColor.withOpacity(0.65), width: 1.4),
+        );
+        final focusedBorder = OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: sectionColor, width: 2),
+        );
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(11)),
-                  color: sectionColor.withOpacity(0.1),
+              DropdownButtonFormField<String?>(
+                value: validSelected,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: label,
+                  labelStyle: TextStyle(
+                    color: sectionColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  prefixIcon: Icon(icon, color: sectionColor),
+                  border: border,
+                  enabledBorder: border,
+                  focusedBorder: focusedBorder,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
-                child: Row(
-                  children: [
-                    Icon(icon, color: sectionColor, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      label,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: sectionColor,
-                      ),
+                items: [
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('— Choose —'),
+                  ),
+                  ...items.map(
+                    (item) => DropdownMenuItem<String?>(
+                      value: item.id,
+                      child: Text(item.name),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+                onChanged: onChanged,
               ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    InputDecorator(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        isDense: true,
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String?> (
-                          value: validSelected,
-                          isExpanded: true,
-                          hint: Text('Choose $label'),
-                          items: [
-                            const DropdownMenuItem<String?>(
-                              value: null,
-                              child: Text('— Choose —'),
-                            ),
-                            ...items.map(
-                              (item) => DropdownMenuItem<String?>(
-                                value: item.id,
-                                child: Text(item.name),
-                              ),
-                            ),
-                          ],
-                          onChanged: onChanged,
-                        ),
-                      ),
-                    ),
-                    if (selectedItem != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        (selectedItem.data['description'] as String?) ?? '',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
+              if (selectedItem != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  (selectedItem.data['description'] as String?) ?? '',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         );
@@ -700,20 +722,103 @@ class _CultureSkillChooser extends StatelessWidget {
     }
     ungrouped.sort((a, b) => a.name.compareTo(b.name));
 
-    final validSelected = selectedSkillId != null &&
-            eligible.any((s) => s.id == selectedSkillId)
-        ? selectedSkillId
-        : null;
+    final validSelected =
+        selectedSkillId != null && eligible.any((s) => s.id == selectedSkillId)
+            ? selectedSkillId
+            : null;
+
+    final dropdownItems = <DropdownMenuItem<String?>>[
+      const DropdownMenuItem<String?>(
+        value: null,
+        child: Text('— Choose skill —'),
+      ),
+    ];
+
+    for (final groupKey in sortedGroupKeys) {
+      dropdownItems.add(
+        DropdownMenuItem<String?>(
+          value: '__group_$groupKey',
+          enabled: false,
+          child: Text(
+            groupKey,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+      );
+      for (final skill in skillGroups[groupKey]!) {
+        dropdownItems.add(
+          DropdownMenuItem<String?>(
+            value: skill.id,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(skill.name),
+            ),
+          ),
+        );
+      }
+    }
+
+    if (ungrouped.isNotEmpty) {
+      dropdownItems.add(
+        DropdownMenuItem<String?>(
+          value: '__group_other',
+          enabled: false,
+          child: Text(
+            'Other',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+      );
+      for (final skill in ungrouped) {
+        dropdownItems.add(
+          DropdownMenuItem<String?>(
+            value: skill.id,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(skill.name),
+            ),
+          ),
+        );
+      }
+    }
+
+    final accent = Theme.of(context).colorScheme.secondary;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: accent.withOpacity(0.6), width: 1.4),
+    );
+    final focusedBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: accent, width: 2),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            const Icon(Icons.school_outlined, size: 18),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          ],
+        DropdownButtonFormField<String?>(
+          value: validSelected,
+          isExpanded: true,
+          decoration: InputDecoration(
+            labelText: label,
+            border: border,
+            enabledBorder: border,
+            focusedBorder: focusedBorder,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
+          items: dropdownItems,
+          onChanged: (value) {
+            if (value != null && value.startsWith('__group_')) {
+              return;
+            }
+            onChanged(value);
+          },
         ),
         if (helper.isNotEmpty) ...[
           const SizedBox(height: 4),
@@ -725,58 +830,6 @@ class _CultureSkillChooser extends StatelessWidget {
               height: 1.3,
             ),
             softWrap: true,
-          ),
-        ],
-        const SizedBox(height: 8),
-        if (sortedGroupKeys.isNotEmpty)
-          ...sortedGroupKeys.map(
-            (groupKey) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  groupKey,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    for (final skill in skillGroups[groupKey]! )
-                      FilterChip(
-                        selected: validSelected == skill.id,
-                        onSelected: (sel) => onChanged(sel ? skill.id : null),
-                        label: Text(skill.name),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
-        if (ungrouped.isNotEmpty) ...[
-          Text(
-            'Other',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final skill in ungrouped)
-                FilterChip(
-                  selected: validSelected == skill.id,
-                  onSelected: (sel) => onChanged(sel ? skill.id : null),
-                  label: Text(skill.name),
-                ),
-            ],
           ),
         ],
       ],

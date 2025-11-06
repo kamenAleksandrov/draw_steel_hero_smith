@@ -115,39 +115,79 @@ class AbilityRange {
 
 class AbilityTierDetail {
   const AbilityTierDetail({
+    this.damageExpression,
     this.baseDamageValue,
     this.characteristicDamageOptions,
     this.damageTypes,
+    this.secondaryDamageExpression,
+    this.descriptiveText,
     this.potencies,
     this.conditions,
+    this.allText,
   });
 
+  final String? damageExpression;
   final int? baseDamageValue;
   final String? characteristicDamageOptions;
   final String? damageTypes;
+  final String? secondaryDamageExpression;
+  final String? descriptiveText;
   final String? potencies;
   final String? conditions;
+  final String? allText;
 
   static AbilityTierDetail? tryParse(dynamic raw) {
     if (raw is! Map) return null;
+
+    String? text(dynamic value, {String separator = ', '}) {
+      if (value == null) return null;
+      if (value is List) {
+        final parts = <String>[];
+        for (final entry in value) {
+          final parsed = _string(entry);
+          if (parsed != null && parsed.isNotEmpty) {
+            parts.add(parsed);
+          }
+        }
+        if (parts.isEmpty) return null;
+        return parts.join(separator);
+      }
+      return _string(value);
+    }
+
+    final damageExpression = text(raw['damage_expression']);
     final baseDamage = _toInt(raw['base_damage_value']);
-    final characteristic = _string(raw['characteristic_damage_options']);
-    final damageTypes = _string(raw['damage_types']);
-    final potencies = _string(raw['potencies']);
-    final conditions = _string(raw['conditions']);
-    if (baseDamage == null &&
+    final characteristic =
+        text(raw['characteristic_damage_options'], separator: ' / ');
+    final damageTypes = text(raw['damage_types'], separator: ' / ');
+    final secondaryDamage = text(raw['secondary_damage_expression']);
+    final descriptiveText = text(raw['descriptive_text']);
+    final potencies = text(raw['potencies'], separator: '; ');
+    final conditions = text(raw['conditions'], separator: '; ');
+    final allText = text(raw['all_text']);
+
+    if (damageExpression == null &&
+        baseDamage == null &&
         characteristic == null &&
         damageTypes == null &&
+        secondaryDamage == null &&
+        descriptiveText == null &&
         potencies == null &&
-        conditions == null) {
+        conditions == null &&
+        allText == null) {
       return null;
     }
+
     return AbilityTierDetail(
+      damageExpression: damageExpression,
       baseDamageValue: baseDamage,
       characteristicDamageOptions: characteristic,
       damageTypes: damageTypes,
+      secondaryDamageExpression: secondaryDamage,
+      descriptiveText: descriptiveText,
       potencies: potencies,
       conditions: conditions,
+      allText: allText,
     );
   }
 }
