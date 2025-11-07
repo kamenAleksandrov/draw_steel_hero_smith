@@ -3,6 +3,122 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showModalBottomSheet<_PickerSelection<T>>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            final normalizedQuery = query.trim().toLowerCase();
+            final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+                ? options
+                : options
+                    .where(
+                      (option) =>
+                          option.label.toLowerCase().contains(normalizedQuery) ||
+                          (option.subtitle?.toLowerCase().contains(
+                                normalizedQuery,
+                              ) ??
+                              false),
+                    )
+                    .toList();
+
+            return SafeArea(
+              child: SizedBox(
+                height: MediaQuery.of(sheetContext).size.height * 0.75,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            query = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('No matches found'))
+                          : ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final option = filtered[index];
+                                final isSelected = option.value == selected ||
+                                    (option.value == null && selected == null);
+                                return ListTile(
+                                  title: Text(option.label),
+                                  subtitle: option.subtitle != null
+                                      ? Text(option.subtitle!)
+                                      : null,
+                                  trailing: isSelected
+                                      ? const Icon(Icons.check)
+                                      : null,
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+}
+
 class StoryComplicationSection extends ConsumerStatefulWidget {
   const StoryComplicationSection({
     super.key,
@@ -82,31 +198,53 @@ class _StoryComplicationSectionState
                       )
                     : null;
 
+                Future<void> openSearch() async {
+                  final options = <_SearchOption<String?>>[
+                    const _SearchOption<String?>(
+                      label: 'None',
+                      value: null,
+                    ),
+                    ...sorted.map(
+                      (comp) => _SearchOption<String?>(
+                        label: comp.name,
+                        value: comp.id,
+                      ),
+                    ),
+                  ];
+
+                  final result = await _showSearchablePicker<String?>(
+                    context: context,
+                    title: 'Select Complication',
+                    options: options,
+                    selected: widget.selectedComplicationId,
+                  );
+
+                  if (result == null) return;
+                  widget.onComplicationChanged(result.value);
+                  widget.onDirty();
+                }
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    DropdownButtonFormField<String>(
-                      value: widget.selectedComplicationId,
-                      decoration: const InputDecoration(
-                        labelText: 'Select Complication',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: [
-                        const DropdownMenuItem<String>(
-                          value: null,
-                          child: Text('None'),
+                    InkWell(
+                      onTap: openSearch,
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Select Complication',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.search),
                         ),
-                        ...sorted.map((comp) {
-                          return DropdownMenuItem<String>(
-                            value: comp.id,
-                            child: Text(comp.name),
-                          );
-                        }),
-                      ],
-                      onChanged: (value) {
-                        widget.onComplicationChanged(value);
-                        widget.onDirty();
-                      },
+                        child: Text(
+                          selectedComp != null ? selectedComp.name : 'None',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: selectedComp != null
+                                ? theme.textTheme.bodyLarge?.color
+                                : theme.hintColor,
+                          ),
+                        ),
+                      ),
                     ),
                     if (selectedComp != null) ...[
                       const SizedBox(height: 24),

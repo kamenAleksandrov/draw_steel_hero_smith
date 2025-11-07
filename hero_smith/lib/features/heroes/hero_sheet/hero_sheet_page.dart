@@ -70,7 +70,7 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
             icon: const Icon(Icons.edit),
             tooltip: 'Edit Hero',
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (_) => HeroCreatorPage(heroId: widget.heroId),
                 ),

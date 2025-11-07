@@ -28,9 +28,16 @@ import '../widgets/strife_creator/starting_characteristics_widget.dart';
 
 /// Demo page for the new Strife Creator (Level, Class, and Starting Characteristics)
 class StrifeCreatorPage extends ConsumerStatefulWidget {
-  const StrifeCreatorPage({super.key, required this.heroId});
+  const StrifeCreatorPage({
+    super.key,
+    required this.heroId,
+    this.onDirtyChanged,
+    this.onSaveRequested,
+  });
 
   final String heroId;
+  final ValueChanged<bool>? onDirtyChanged;
+  final VoidCallback? onSaveRequested;
 
   @override
   ConsumerState<StrifeCreatorPage> createState() => _StrifeCreatorPageState();
@@ -70,6 +77,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
   bool _isLoading = true;
   String? _errorMessage;
+  bool _isDirty = false;
 
   // State variables
   int _selectedLevel = 1;
@@ -85,7 +93,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Map<String, Set<String>> _featureSelections = {};
   String? _selectedKitId;
   List<String> _allowedKitTypes = const [];
-  
+
   @override
   void initState() {
     super.initState();
@@ -566,10 +574,20 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return normalized;
   }
 
+  void _markDirty() {
+    if (!_isDirty) {
+      setState(() {
+        _isDirty = true;
+      });
+      widget.onDirtyChanged?.call(true);
+    }
+  }
+
   void _handleLevelChanged(int level) {
     setState(() {
       _selectedLevel = level;
     });
+    _markDirty();
   }
 
   void _handleClassChanged(ClassData classData) {
@@ -587,6 +605,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _selectedKitId = null;
       _allowedKitTypes = allowedTypes;
     });
+    _markDirty();
   }
 
   void _handleArrayChanged(CharacteristicArray? array) {
@@ -594,48 +613,56 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _selectedArray = array;
       _assignedCharacteristics = {};
     });
+    _markDirty();
   }
 
   void _handleAssignmentsChanged(Map<String, int> assignments) {
     setState(() {
       _assignedCharacteristics = assignments;
     });
+    _markDirty();
   }
 
   void _handleFinalTotalsChanged(Map<String, int> totals) {
     setState(() {
       _finalCharacteristics = totals;
     });
+    _markDirty();
   }
 
   void _handleSkillSelectionsChanged(StartingSkillSelectionResult result) {
     setState(() {
       _selectedSkills = result.selectionsBySlot;
     });
+    _markDirty();
   }
 
   void _handlePerkSelectionsChanged(StartingPerkSelectionResult result) {
     setState(() {
       _selectedPerks = result.selectionsBySlot;
     });
+    _markDirty();
   }
 
   void _handleAbilitySelectionsChanged(StartingAbilitySelectionResult result) {
     setState(() {
       _selectedAbilities = result.selectionsBySlot;
     });
+    _markDirty();
   }
 
   void _handleSubclassSelectionChanged(SubclassSelectionResult result) {
     setState(() {
       _selectedSubclass = result;
     });
+    _markDirty();
   }
 
   void _handleKitChanged(String? kitId) {
     setState(() {
       _selectedKitId = kitId;
     });
+    _markDirty();
   }
 
   List<String> _determineAllowedKitTypes(ClassData classData) {
@@ -701,6 +728,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
 
     return true;
+  }
+
+  Future<void> handleSave() async {
+    await _handleSave();
   }
 
   Future<void> _handleSave() async {
@@ -901,6 +932,12 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       if (!mounted) return;
 
+      setState(() {
+        _isDirty = false;
+      });
+      widget.onDirtyChanged?.call(false);
+      widget.onSaveRequested?.call();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -965,16 +1002,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hero Strife'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _handleSave,
-            tooltip: 'Save',
-          ),
-        ],
-      ),
       body: ListView(
         children: [
           // Level Selector

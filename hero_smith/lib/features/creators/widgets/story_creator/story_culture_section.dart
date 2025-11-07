@@ -7,6 +7,122 @@ import '../../../../core/models/story_creator_models.dart';
 import '../../../../core/services/story_creator_service.dart';
 import '../../../../core/theme/hero_theme.dart';
 
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showModalBottomSheet<_PickerSelection<T>>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            final normalizedQuery = query.trim().toLowerCase();
+            final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+                ? options
+                : options
+                    .where(
+                      (option) =>
+                          option.label.toLowerCase().contains(normalizedQuery) ||
+                          (option.subtitle?.toLowerCase().contains(
+                                normalizedQuery,
+                              ) ??
+                              false),
+                    )
+                    .toList();
+
+            return SafeArea(
+              child: SizedBox(
+                height: MediaQuery.of(sheetContext).size.height * 0.75,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            query = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('No matches found'))
+                          : ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final option = filtered[index];
+                                final isSelected = option.value == selected ||
+                                    (option.value == null && selected == null);
+                                return ListTile(
+                                  title: Text(option.label),
+                                  subtitle: option.subtitle != null
+                                      ? Text(option.subtitle!)
+                                      : null,
+                                  trailing: isSelected
+                                      ? const Icon(Icons.check)
+                                      : null,
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+}
+
 class StoryCultureSection extends ConsumerWidget {
   const StoryCultureSection({
     super.key,
@@ -471,74 +587,68 @@ class _LanguageDropdown extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       borderSide: const BorderSide(color: languageColor, width: 1.4),
     );
-    final focusedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: languageColor.withOpacity(0.9), width: 2),
-    );
 
-    final items = <DropdownMenuItem<String?>>[
-      const DropdownMenuItem<String?>(
-        value: null,
-        child: Text('— Choose language —'),
-      ),
-    ];
-
-    for (final key in ['human', 'ancestral', 'dead']) {
-      final grouped = groups[key]!;
-      if (grouped.isEmpty) {
-        continue;
-      }
-      items.add(
-        DropdownMenuItem<String?>(
-          enabled: false,
-          value: '__group_$key',
-          child: Text(
-            _languageGroupTitle(key),
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
-          ),
+    Future<void> openSearch() async {
+      final options = <_SearchOption<String?>>[
+        const _SearchOption<String?>(
+          label: '— Choose language —',
+          value: null,
         ),
-      );
-      for (final lang in grouped) {
-        items.add(
-          DropdownMenuItem<String?>(
-            value: lang.id,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(lang.name),
+      ];
+
+      for (final key in ['human', 'ancestral', 'dead']) {
+        for (final lang in groups[key]!) {
+          options.add(
+            _SearchOption<String?>(
+              label: lang.name,
+              value: lang.id,
+              subtitle: _languageGroupTitle(key),
             ),
-          ),
-        );
+          );
+        }
       }
+
+      final result = await _showSearchablePicker<String?>(
+        context: context,
+        title: 'Select Language',
+        options: options,
+        selected: selected,
+      );
+
+      if (result == null) return;
+      onChanged(result.value);
     }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: DropdownButtonFormField<String?>(
-        value: selected,
-        isExpanded: true,
-        decoration: InputDecoration(
-          labelText: 'Language',
-          labelStyle: const TextStyle(
-            color: languageColor,
-            fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: openSearch,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Language',
+            labelStyle: const TextStyle(
+              color: languageColor,
+              fontWeight: FontWeight.w600,
+            ),
+            prefixIcon: const Icon(Icons.language, color: languageColor),
+            suffixIcon: const Icon(Icons.search, color: languageColor),
+            border: enabledBorder,
+            enabledBorder: enabledBorder,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           ),
-          prefixIcon: const Icon(Icons.language, color: languageColor),
-          border: enabledBorder,
-          enabledBorder: enabledBorder,
-          focusedBorder: focusedBorder,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Text(
+            selected != null
+                ? languages.firstWhere((l) => l.id == selected).name
+                : '— Choose language —',
+            style: TextStyle(
+              fontSize: 16,
+              color: selected != null
+                  ? Theme.of(context).textTheme.bodyLarge?.color
+                  : Theme.of(context).hintColor,
+            ),
+          ),
         ),
-        items: items,
-        onChanged: (value) {
-          if (value != null && value.startsWith('__group_')) {
-            return;
-          }
-          onChanged(value);
-        },
       ),
     );
   }
@@ -595,45 +705,63 @@ class _CultureDropdown extends StatelessWidget {
           borderSide:
               BorderSide(color: sectionColor.withOpacity(0.65), width: 1.4),
         );
-        final focusedBorder = OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: sectionColor, width: 2),
-        );
+
+        Future<void> openSearch() async {
+          final options = <_SearchOption<String?>>[
+            const _SearchOption<String?>(
+              label: '— Choose —',
+              value: null,
+            ),
+            ...items.map(
+              (item) => _SearchOption<String?>(
+                label: item.name,
+                value: item.id,
+              ),
+            ),
+          ];
+
+          final result = await _showSearchablePicker<String?>(
+            context: context,
+            title: 'Select $label',
+            options: options,
+            selected: validSelected,
+          );
+
+          if (result == null) return;
+          onChanged(result.value);
+        }
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonFormField<String?>(
-                value: validSelected,
-                isExpanded: true,
-                decoration: InputDecoration(
-                  labelText: label,
-                  labelStyle: TextStyle(
-                    color: sectionColor,
-                    fontWeight: FontWeight.w600,
+              InkWell(
+                onTap: openSearch,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: label,
+                    labelStyle: TextStyle(
+                      color: sectionColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    prefixIcon: Icon(icon, color: sectionColor),
+                    suffixIcon: Icon(Icons.search, color: sectionColor),
+                    border: border,
+                    enabledBorder: border,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
                   ),
-                  prefixIcon: Icon(icon, color: sectionColor),
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: focusedBorder,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
-                items: [
-                  const DropdownMenuItem<String?>(
-                    value: null,
-                    child: Text('— Choose —'),
-                  ),
-                  ...items.map(
-                    (item) => DropdownMenuItem<String?>(
-                      value: item.id,
-                      child: Text(item.name),
+                  child: Text(
+                    selectedItem != null ? selectedItem.name : '— Choose —',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: selectedItem != null
+                          ? theme.textTheme.bodyLarge?.color
+                          : theme.hintColor,
                     ),
                   ),
-                ],
-                onChanged: onChanged,
+                ),
               ),
               if (selectedItem != null) ...[
                 const SizedBox(height: 6),
@@ -727,98 +855,81 @@ class _CultureSkillChooser extends StatelessWidget {
             ? selectedSkillId
             : null;
 
-    final dropdownItems = <DropdownMenuItem<String?>>[
-      const DropdownMenuItem<String?>(
-        value: null,
-        child: Text('— Choose skill —'),
-      ),
-    ];
-
-    for (final groupKey in sortedGroupKeys) {
-      dropdownItems.add(
-        DropdownMenuItem<String?>(
-          value: '__group_$groupKey',
-          enabled: false,
-          child: Text(
-            groupKey,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
-          ),
-        ),
-      );
-      for (final skill in skillGroups[groupKey]!) {
-        dropdownItems.add(
-          DropdownMenuItem<String?>(
-            value: skill.id,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(skill.name),
-            ),
-          ),
-        );
-      }
-    }
-
-    if (ungrouped.isNotEmpty) {
-      dropdownItems.add(
-        DropdownMenuItem<String?>(
-          value: '__group_other',
-          enabled: false,
-          child: Text(
-            'Other',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
-          ),
-        ),
-      );
-      for (final skill in ungrouped) {
-        dropdownItems.add(
-          DropdownMenuItem<String?>(
-            value: skill.id,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(skill.name),
-            ),
-          ),
-        );
-      }
-    }
-
     final accent = Theme.of(context).colorScheme.secondary;
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: accent.withOpacity(0.6), width: 1.4),
     );
-    final focusedBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: accent, width: 2),
-    );
+
+    Future<void> openSearch() async {
+      final options = <_SearchOption<String?>>[
+        const _SearchOption<String?>(
+          label: '— Choose skill —',
+          value: null,
+        ),
+      ];
+
+      for (final groupKey in sortedGroupKeys) {
+        for (final skill in skillGroups[groupKey]!) {
+          options.add(
+            _SearchOption<String?>(
+              label: skill.name,
+              value: skill.id,
+              subtitle: groupKey,
+            ),
+          );
+        }
+      }
+
+      for (final skill in ungrouped) {
+        options.add(
+          _SearchOption<String?>(
+            label: skill.name,
+            value: skill.id,
+            subtitle: 'Other',
+          ),
+        );
+      }
+
+      final result = await _showSearchablePicker<String?>(
+        context: context,
+        title: label,
+        options: options,
+        selected: validSelected,
+      );
+
+      if (result == null) return;
+      onChanged(result.value);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DropdownButtonFormField<String?>(
-          value: validSelected,
-          isExpanded: true,
-          decoration: InputDecoration(
-            labelText: label,
-            border: border,
-            enabledBorder: border,
-            focusedBorder: focusedBorder,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        InkWell(
+          onTap: openSearch,
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: label,
+              border: border,
+              enabledBorder: border,
+              suffixIcon: const Icon(Icons.search),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            ),
+            child: Text(
+              validSelected != null
+                  ? eligible
+                      .firstWhere((s) => s.id == validSelected)
+                      .name
+                  : '— Choose skill —',
+              style: TextStyle(
+                fontSize: 16,
+                color: validSelected != null
+                    ? Theme.of(context).textTheme.bodyLarge?.color
+                    : Theme.of(context).hintColor,
+              ),
+            ),
           ),
-          items: dropdownItems,
-          onChanged: (value) {
-            if (value != null && value.startsWith('__group_')) {
-              return;
-            }
-            onChanged(value);
-          },
         ),
         if (helper.isNotEmpty) ...[
           const SizedBox(height: 4),

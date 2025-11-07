@@ -5,6 +5,7 @@ import 'package:hero_smith/core/theme/hero_theme.dart';
 import 'package:hero_smith/core/theme/strife_theme.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
+import 'package:hero_smith/features/heroes/hero_sheet/hero_sheet_page.dart';
 
 class HeroCreatorPage extends ConsumerStatefulWidget {
   const HeroCreatorPage({super.key, required this.heroId});
@@ -26,15 +27,91 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
   bool _storyDirty = false;
   bool _strifeDirty = false;
   String _heroTitle = 'Hero Creator';
+  String? _heroName;
+  bool _suppressTabNotification = false;
+  bool _handlingTabPrompt = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(() {
-      if (!mounted) return;
+    _tabController.addListener(_handleTabChange);
+  }
+
+  Future<void> _handleTabChange() async {
+    if (_suppressTabNotification || _handlingTabPrompt) {
+      _suppressTabNotification = false;
+      return;
+    }
+    if (!mounted) return;
+
+    // Check if trying to leave a dirty tab
+    final oldIndex = _tabController.previousIndex;
+    final newIndex = _tabController.index;
+
+    if (oldIndex == newIndex) {
       setState(() {});
-    });
+      return;
+    }
+
+    // Check if the old tab has unsaved changes
+    final bool hasUnsavedChanges =
+        (oldIndex == 0 && _storyDirty) || (oldIndex == 1 && _strifeDirty);
+
+    if (hasUnsavedChanges) {
+      _handlingTabPrompt = true;
+      // Temporarily block the tab change
+      _suppressTabNotification = true;
+      _tabController.index = oldIndex;
+
+      final result = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Unsaved changes'),
+          content: Text(
+              'You have unsaved changes in the ${oldIndex == 0 ? 'Story' : 'Strife'} tab. '
+              'Do you want to save before switching?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop('cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop('discard'),
+              child: const Text('Discard'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(ctx).pop('save'),
+              icon: const Icon(Icons.save),
+              label: const Text('Save'),
+            ),
+          ],
+        ),
+      );
+
+      if (result == 'save') {
+        if (oldIndex == 0) {
+          await _saveStory();
+        } else if (oldIndex == 1) {
+          await _saveStrife();
+        }
+        if (mounted) {
+          _suppressTabNotification = true;
+          _tabController.index = newIndex;
+        }
+      } else if (result == 'discard') {
+        if (mounted) {
+          _suppressTabNotification = true;
+          _tabController.index = newIndex;
+        }
+      }
+      // If 'cancel' or dialog dismissed, stay on current tab (already set above)
+      _handlingTabPrompt = false;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -55,6 +132,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
     if (_heroTitle == normalized) return;
     setState(() {
       _heroTitle = normalized;
+      _heroName = title.trim().isNotEmpty ? title.trim() : null;
     });
   }
 
@@ -172,6 +250,20 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => HeroSheetPage(
+                      heroId: widget.heroId,
+                      heroName: _heroName ?? _heroTitle,
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.visibility),
+              tooltip: 'View Hero Sheet',
+            ),
             if (_tabController.index == 0 && _storyDirty)
               IconButton(
                 onPressed: _saveStory,
@@ -231,11 +323,21 @@ class StrifeCreatorTab extends StatefulWidget {
 
 class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
   bool _dirty = false;
+  StrifeCreatorPage? _strifeWidget;
 
   bool get isDirty => _dirty;
 
+  void _handleDirtyChanged(bool dirty) {
+    if (_dirty == dirty) return;
+    setState(() {
+      _dirty = dirty;
+    });
+    widget.onDirtyChanged(dirty);
+  }
+
   Future<void> save() async {
-    if (!_dirty) return;
+    // The save will be triggered through the StrifeCreatorPage's internal save button
+    // or we can expose a save method through a callback
     setState(() {
       _dirty = false;
     });
@@ -244,7 +346,16 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Integrate Strife creator state changes with dirty tracking.
-    return StrifeCreatorPage(heroId: widget.heroId);
+    _strifeWidget = StrifeCreatorPage(
+      heroId: widget.heroId,
+      onDirtyChanged: _handleDirtyChanged,
+      onSaveRequested: () async {
+        setState(() {
+          _dirty = false;
+        });
+        widget.onDirtyChanged(false);
+      },
+    );
+    return _strifeWidget!;
   }
 }

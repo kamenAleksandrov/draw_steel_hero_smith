@@ -160,6 +160,37 @@ class _CareerContentState extends State<_CareerContent> {
     }
   }
 
+  List<String> _extractSkillGroups(Map<String, dynamic> data) {
+    final results = <String>[];
+
+    void addAll(dynamic value) {
+      final parsed = _parseStringList(value);
+      if (parsed.isEmpty) return;
+      results.addAll(parsed);
+    }
+
+    addAll(data['skill_groups']);
+    for (final entry in data.entries) {
+      final key = entry.key.toString().toLowerCase();
+      if (key.startsWith('skill_groups') && key != 'skill_groups') {
+        addAll(entry.value);
+      }
+    }
+
+    return results;
+  }
+
+  List<String> _parseStringList(dynamic value) {
+    if (value is List) {
+      return value.map((e) => e.toString()).toList();
+    }
+    if (value is String) {
+      final tokens = value.split(RegExp(r',|/|\bor\b', caseSensitive: false));
+      return tokens.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    }
+    return const [];
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -172,9 +203,11 @@ class _CareerContentState extends State<_CareerContent> {
 
     final data = selectedCareer.data;
     final skillsNumber = (data['skills_number'] as int?) ?? 0;
-    final skillGroups = ((data['skill_groups'] as List?) ?? const <dynamic>[])
-        .map((e) => e.toString())
-        .toList();
+    final skillGroups = _extractSkillGroups(data);
+    final normalizedSkillGroups = skillGroups
+        .map((e) => e.trim().toLowerCase())
+        .where((e) => e.isNotEmpty)
+        .toSet();
     final grantedSkills =
         ((data['granted_skills'] as List?) ?? const <dynamic>[])
             .map((e) => e.toString())
@@ -204,31 +237,46 @@ class _CareerContentState extends State<_CareerContent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InputDecorator(
-          decoration: const InputDecoration(
-            labelText: 'Career',
-            prefixIcon: Icon(Icons.work_outline),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String?>(
-              value: widget.careerId,
-              isExpanded: true,
-              items: [
-                const DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text('— Choose career —'),
+        InkWell(
+          onTap: () async {
+            final options = <_SearchOption<String?>>[
+              const _SearchOption<String?>(
+                label: '— Choose career —',
+                value: null,
+              ),
+              ..._careers.map(
+                (c) => _SearchOption<String?>(
+                  label: c.name,
+                  value: c.id,
                 ),
-                ..._careers.map(
-                  (c) => DropdownMenuItem<String?>(
-                    value: c.id,
-                    child: Text(c.name),
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                widget.onCareerChanged(value);
-                widget.onDirty();
-              },
+              ),
+            ];
+            final result = await _showSearchablePicker<String?>(
+              context: context,
+              title: 'Select Career',
+              options: options,
+              selected: widget.careerId,
+            );
+            if (result == null) return;
+            widget.onCareerChanged(result.value);
+            widget.onDirty();
+          },
+          child: InputDecorator(
+            decoration: const InputDecoration(
+              labelText: 'Career',
+              prefixIcon: Icon(Icons.work_outline),
+              suffixIcon: Icon(Icons.search),
+            ),
+            child: Text(
+              widget.careerId != null
+                  ? selectedCareer.name
+                  : '— Choose career —',
+              style: TextStyle(
+                fontSize: 16,
+                color: widget.careerId != null
+                    ? theme.textTheme.bodyLarge?.color
+                    : theme.hintColor,
+              ),
             ),
           ),
         ),
@@ -314,9 +362,12 @@ class _CareerContentState extends State<_CareerContent> {
             error: (e, _) => Text('Failed to load skills: $e'),
             data: (skills) {
               final eligible = skills.where((skill) {
-                final group = skill.data['group']?.toString();
-                return skillGroups.contains(group) ||
-                    skillGroups.contains(skill.name);
+                if (normalizedSkillGroups.isEmpty) return true;
+                final group =
+                    skill.data['group']?.toString().trim().toLowerCase();
+                final nameKey = skill.name.trim().toLowerCase();
+                return normalizedSkillGroups.contains(group) ||
+                    normalizedSkillGroups.contains(nameKey);
               }).toList();
               eligible.sort((a, b) => a.name.compareTo(b.name));
 
@@ -347,73 +398,6 @@ class _CareerContentState extends State<_CareerContent> {
               }
               ungrouped.sort((a, b) => a.name.compareTo(b.name));
 
-              List<DropdownMenuItem<String?>> buildDropdownItems() {
-                final items = <DropdownMenuItem<String?>>[
-                  const DropdownMenuItem<String?>(
-                    value: null,
-                    child: Text('— Choose skill —'),
-                  ),
-                ];
-
-                for (final groupKey in sortedGroups) {
-                  items.add(
-                    DropdownMenuItem<String?>(
-                      value: '__group_$groupKey',
-                      enabled: false,
-                      child: Text(
-                        groupKey,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                    ),
-                  );
-                  for (final skill in grouped[groupKey]!) {
-                    items.add(
-                      DropdownMenuItem<String?>(
-                        value: skill.id,
-                        enabled: true,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Text(skill.name),
-                        ),
-                      ),
-                    );
-                  }
-                }
-
-                if (ungrouped.isNotEmpty) {
-                  items.add(
-                    DropdownMenuItem<String?>(
-                      value: '__group_other',
-                      enabled: false,
-                      child: Text(
-                        'Other',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                    ),
-                  );
-                  for (final skill in ungrouped) {
-                    items.add(
-                      DropdownMenuItem<String?>(
-                        value: skill.id,
-                        enabled: true,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Text(skill.name),
-                        ),
-                      ),
-                    );
-                  }
-                }
-
-                return items;
-              }
-
               List<String?> currentSlots() {
                 final slots = List<String?>.filled(picksNeeded, null);
                 for (var i = 0;
@@ -424,15 +408,94 @@ class _CareerContentState extends State<_CareerContent> {
                 return slots;
               }
 
+              void applySelection(int index, String? value) {
+                final updated = currentSlots();
+                updated[index] = value;
+                if (value != null) {
+                  for (var i = 0; i < updated.length; i++) {
+                    if (i != index && updated[i] == value) {
+                      updated[i] = null;
+                    }
+                  }
+                }
+                final next = LinkedHashSet<String>();
+                for (final pick in updated) {
+                  if (pick != null) {
+                    next.add(pick);
+                  }
+                }
+                widget.onSkillSelectionChanged(next);
+                widget.onDirty();
+              }
+
+              List<_SearchOption<String?>> buildSearchOptionsForIndex(
+                  int currentIndex, List<String?> slots) {
+                final options = <_SearchOption<String?>>[
+                  const _SearchOption<String?>(
+                    label: '— Choose skill —',
+                    value: null,
+                  ),
+                ];
+
+                final excludedIds = <String>{};
+                for (var i = 0; i < slots.length; i++) {
+                  if (i == currentIndex) continue;
+                  final pick = slots[i];
+                  if (pick != null) {
+                    excludedIds.add(pick);
+                  }
+                }
+
+                for (final groupKey in sortedGroups) {
+                  for (final skill in grouped[groupKey]!) {
+                    final isCurrent = slots[currentIndex] == skill.id;
+                    if (!isCurrent && excludedIds.contains(skill.id)) {
+                      continue;
+                    }
+                    options.add(
+                      _SearchOption<String?>(
+                        label: skill.name,
+                        value: skill.id,
+                        subtitle: groupKey,
+                      ),
+                    );
+                  }
+                }
+
+                for (final skill in ungrouped) {
+                  final isCurrent = slots[currentIndex] == skill.id;
+                  if (!isCurrent && excludedIds.contains(skill.id)) {
+                    continue;
+                  }
+                  options.add(
+                    _SearchOption<String?>(
+                      label: skill.name,
+                      value: skill.id,
+                      subtitle: 'Other',
+                    ),
+                  );
+                }
+
+                return options;
+              }
+
+              Future<void> openSearchForIndex(int index) async {
+                final latestSlots = currentSlots();
+                final result = await _showSearchablePicker<String?>(
+                  context: context,
+                  title: 'Select Skill',
+                  options: buildSearchOptionsForIndex(index, latestSlots),
+                  selected: latestSlots[index],
+                );
+                if (result == null) return;
+                applySelection(index, result.value);
+              }
+
               final accent = Theme.of(context).colorScheme.primary;
               final border = OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide:
                     BorderSide(color: accent.withOpacity(0.6), width: 1.4),
-              );
-              final focusedBorder = OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: accent, width: 2),
               );
 
               final slots = currentSlots();
@@ -447,42 +510,31 @@ class _CareerContentState extends State<_CareerContent> {
                   ),
                   const SizedBox(height: 6),
                   for (var index = 0; index < picksNeeded; index++) ...[
-                    DropdownButtonFormField<String?>(
-                      value: slots[index],
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: 'Skill pick ${index + 1}',
-                        border: border,
-                        enabledBorder: border,
-                        focusedBorder: focusedBorder,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                    InkWell(
+                      onTap: () => openSearchForIndex(index),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Skill pick ${index + 1}',
+                          border: border,
+                          enabledBorder: border,
+                          suffixIcon: const Icon(Icons.search),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: Text(
+                          slots[index] != null
+                              ? skillMap[slots[index]]!.name
+                              : '— Choose skill —',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: slots[index] != null
+                                ? Theme.of(context).textTheme.bodyLarge?.color
+                                : Theme.of(context).hintColor,
+                          ),
                         ),
                       ),
-                      items: buildDropdownItems(),
-                      onChanged: (value) {
-                        if (value != null && value.startsWith('__group_')) {
-                          return;
-                        }
-                        final updated = currentSlots();
-                        updated[index] = value;
-                        if (value != null) {
-                          for (var i = 0; i < updated.length; i++) {
-                            if (i != index && updated[i] == value) {
-                              updated[i] = null;
-                            }
-                          }
-                        }
-                        final next = LinkedHashSet<String>();
-                        for (final pick in updated) {
-                          if (pick != null) {
-                            next.add(pick);
-                          }
-                        }
-                        widget.onSkillSelectionChanged(next);
-                        widget.onDirty();
-                      },
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -580,10 +632,6 @@ class _CareerContentState extends State<_CareerContent> {
                 borderSide:
                     BorderSide(color: borderColor.withOpacity(0.6), width: 1.4),
               );
-              final focusedBorder = OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: borderColor, width: 2),
-              );
 
               List<String?> currentSlots() {
                 final slots = List<String?>.filled(perksNumber, null);
@@ -595,40 +643,70 @@ class _CareerContentState extends State<_CareerContent> {
                 return slots;
               }
 
-              List<DropdownMenuItem<String?>> buildItems() {
-                final items = <DropdownMenuItem<String?>>[
-                  const DropdownMenuItem<String?>(
+              List<_SearchOption<String?>> buildSearchOptionsForPerkIndex(
+                  int currentIndex, List<String?> slots) {
+                final options = <_SearchOption<String?>>[
+                  const _SearchOption<String?>(
+                    label: '— Choose perk —',
                     value: null,
-                    child: Text('— Choose perk —'),
                   ),
                 ];
+
+                final excludedIds = <String>{};
+                for (var i = 0; i < slots.length; i++) {
+                  if (i == currentIndex) continue;
+                  final pick = slots[i];
+                  if (pick != null) {
+                    excludedIds.add(pick);
+                  }
+                }
+
                 for (final key in sortedGroupKeys) {
-                  items.add(
-                    DropdownMenuItem<String?>(
-                      value: '__group_$key',
-                      enabled: false,
-                      child: Text(
-                        key,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                    ),
-                  );
                   for (final perk in grouped[key]!) {
-                    items.add(
-                      DropdownMenuItem<String?>(
+                    final isCurrent = slots[currentIndex] == perk.id;
+                    if (!isCurrent && excludedIds.contains(perk.id)) {
+                      continue;
+                    }
+                    options.add(
+                      _SearchOption<String?>(
+                        label: perk.name,
                         value: perk.id,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Text(perk.name),
-                        ),
+                        subtitle: key,
                       ),
                     );
                   }
                 }
-                return items;
+
+                return options;
+              }
+
+              Future<void> openSearchForPerkIndex(int index) async {
+                final latestSlots = currentSlots();
+                final result = await _showSearchablePicker<String?>(
+                  context: context,
+                  title: 'Select Perk',
+                  options: buildSearchOptionsForPerkIndex(index, latestSlots),
+                  selected: latestSlots[index],
+                );
+                if (result == null) return;
+
+                final updated = currentSlots();
+                updated[index] = result.value;
+                if (result.value != null) {
+                  for (var i = 0; i < updated.length; i++) {
+                    if (i != index && updated[i] == result.value) {
+                      updated[i] = null;
+                    }
+                  }
+                }
+                final next = LinkedHashSet<String>();
+                for (final pick in updated) {
+                  if (pick != null) {
+                    next.add(pick);
+                  }
+                }
+                widget.onPerkSelectionChanged(next);
+                widget.onDirty();
               }
 
               final slots = currentSlots();
@@ -644,42 +722,31 @@ class _CareerContentState extends State<_CareerContent> {
                   ),
                   const SizedBox(height: 8),
                   for (var index = 0; index < perksNumber; index++) ...[
-                    DropdownButtonFormField<String?>(
-                      value: slots[index],
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: 'Perk pick ${index + 1}',
-                        border: border,
-                        enabledBorder: border,
-                        focusedBorder: focusedBorder,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                    InkWell(
+                      onTap: () => openSearchForPerkIndex(index),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Perk pick ${index + 1}',
+                          border: border,
+                          enabledBorder: border,
+                          suffixIcon: const Icon(Icons.search),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: Text(
+                          slots[index] != null
+                              ? perkMap[slots[index]]!.name
+                              : '— Choose perk —',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: slots[index] != null
+                                ? Theme.of(context).textTheme.bodyLarge?.color
+                                : Theme.of(context).hintColor,
+                          ),
                         ),
                       ),
-                      items: buildItems(),
-                      onChanged: (value) {
-                        if (value != null && value.startsWith('__group_')) {
-                          return;
-                        }
-                        final updated = currentSlots();
-                        updated[index] = value;
-                        if (value != null) {
-                          for (var i = 0; i < updated.length; i++) {
-                            if (i != index && updated[i] == value) {
-                              updated[i] = null;
-                            }
-                          }
-                        }
-                        final next = LinkedHashSet<String>();
-                        for (final pick in updated) {
-                          if (pick != null) {
-                            next.add(pick);
-                          }
-                        }
-                        widget.onPerkSelectionChanged(next);
-                        widget.onDirty();
-                      },
                     ),
                     if (slots[index] != null) ...[
                       const SizedBox(height: 6),
@@ -731,31 +798,44 @@ class _CareerContentState extends State<_CareerContent> {
           ),
           const SizedBox(height: 12),
           if (incidents.isNotEmpty)
-            InputDecorator(
-              decoration: const InputDecoration(
-                labelText: 'Inciting Incident',
-                prefixIcon: Icon(Icons.auto_fix_high_outlined),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String?>(
-                  value: widget.incidentName,
-                  isExpanded: true,
-                  items: [
-                    const DropdownMenuItem<String?>(
-                      value: null,
-                      child: Text('— Choose incident —'),
+            InkWell(
+              onTap: () async {
+                final options = <_SearchOption<String?>>[
+                  const _SearchOption<String?>(
+                    label: '— Choose incident —',
+                    value: null,
+                  ),
+                  ...incidents.map(
+                    (incident) => _SearchOption<String?>(
+                      label: incident['name']?.toString() ?? 'Unknown',
+                      value: incident['name']?.toString(),
                     ),
-                    ...incidents.map(
-                      (incident) => DropdownMenuItem<String?>(
-                        value: incident['name']?.toString(),
-                        child: Text(incident['name']?.toString() ?? 'Unknown'),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    widget.onIncidentChanged(value);
-                    widget.onDirty();
-                  },
+                  ),
+                ];
+                final result = await _showSearchablePicker<String?>(
+                  context: context,
+                  title: 'Select Inciting Incident',
+                  options: options,
+                  selected: widget.incidentName,
+                );
+                if (result == null) return;
+                widget.onIncidentChanged(result.value);
+                widget.onDirty();
+              },
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Inciting Incident',
+                  prefixIcon: Icon(Icons.auto_fix_high_outlined),
+                  suffixIcon: Icon(Icons.search),
+                ),
+                child: Text(
+                  widget.incidentName ?? '— Choose incident —',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: widget.incidentName != null
+                        ? theme.textTheme.bodyLarge?.color
+                        : theme.hintColor,
+                  ),
                 ),
               ),
             ),
@@ -820,49 +900,58 @@ class _CareerLanguageDropdown extends StatelessWidget {
             ? value
             : null;
 
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String?>(
-          isExpanded: true,
-          value: validValue,
-          items: [
-            const DropdownMenuItem<String?>(
-              value: null,
-              child: Text('— Choose language —'),
+    Future<void> openSearch() async {
+      final options = <_SearchOption<String?>>[
+        const _SearchOption<String?>(
+          label: '— Choose language —',
+          value: null,
+        ),
+      ];
+
+      for (final key in ['human', 'ancestral', 'dead']) {
+        for (final lang in groups[key]!) {
+          final isCurrent = lang.id == validValue;
+          if (!isCurrent && exclude.contains(lang.id)) continue;
+          options.add(
+            _SearchOption<String?>(
+              label: lang.name,
+              value: lang.id,
+              subtitle: _titleForGroup(key),
             ),
-            for (final key in ['human', 'ancestral', 'dead'])
-              if (groups[key]!.isNotEmpty) ...[
-                DropdownMenuItem<String?>(
-                  enabled: false,
-                  value: '__group_$key',
-                  child: Text(
-                    _titleForGroup(key),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                ),
-                for (final lang in groups[key]!)
-                  if (!exclude.contains(lang.id))
-                    DropdownMenuItem<String?>(
-                      value: lang.id,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: Text(lang.name),
-                      ),
-                    ),
-              ],
-          ],
-          onChanged: (value) {
-            if (value != null && value.startsWith('__group_')) return;
-            onChanged(value);
-          },
+          );
+        }
+      }
+
+      final selected = await _showSearchablePicker<String?>(
+        context: context,
+        title: label,
+        options: options,
+        selected: validValue,
+      );
+
+      if (selected == null) return;
+      onChanged(selected.value);
+    }
+
+    return InkWell(
+      onTap: openSearch,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          suffixIcon: const Icon(Icons.search),
+        ),
+        child: Text(
+          validValue != null
+              ? languages.firstWhere((l) => l.id == validValue).name
+              : '— Choose language —',
+          style: TextStyle(
+            fontSize: 16,
+            color: validValue != null
+                ? Theme.of(context).textTheme.bodyLarge?.color
+                : Theme.of(context).hintColor,
+          ),
         ),
       ),
     );
@@ -878,4 +967,120 @@ class _CareerLanguageDropdown extends StatelessWidget {
         return 'Human Languages';
     }
   }
+}
+
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showModalBottomSheet<_PickerSelection<T>>(
+    context: context,
+    isScrollControlled: true,
+    builder: (sheetContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+        ),
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            final normalizedQuery = query.trim().toLowerCase();
+            final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+                ? options
+                : options
+                    .where(
+                      (option) =>
+                          option.label.toLowerCase().contains(normalizedQuery) ||
+                          (option.subtitle?.toLowerCase().contains(
+                                normalizedQuery,
+                              ) ??
+                              false),
+                    )
+                    .toList();
+
+            return SafeArea(
+              child: SizedBox(
+                height: MediaQuery.of(sheetContext).size.height * 0.75,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            query = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('No matches found'))
+                          : ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final option = filtered[index];
+                                final isSelected = option.value == selected ||
+                                    (option.value == null && selected == null);
+                                return ListTile(
+                                  title: Text(option.label),
+                                  subtitle: option.subtitle != null
+                                      ? Text(option.subtitle!)
+                                      : null,
+                                  trailing: isSelected
+                                      ? const Icon(Icons.check)
+                                      : null,
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
 }
