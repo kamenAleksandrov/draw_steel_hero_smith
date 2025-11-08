@@ -27,93 +27,103 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required List<_SearchOption<T>> options,
   T? selected,
 }) {
-  return showModalBottomSheet<_PickerSelection<T>>(
+  return showDialog<_PickerSelection<T>>(
     context: context,
-    isScrollControlled: true,
-    builder: (sheetContext) {
+    builder: (dialogContext) {
       final controller = TextEditingController();
       var query = '';
 
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
-        ),
-        child: StatefulBuilder(
-          builder: (context, setState) {
-            final normalizedQuery = query.trim().toLowerCase();
-            final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
-                ? options
-                : options
-                    .where(
-                      (option) =>
-                          option.label.toLowerCase().contains(normalizedQuery) ||
-                          (option.subtitle?.toLowerCase().contains(
-                                normalizedQuery,
-                              ) ??
-                              false),
-                    )
-                    .toList();
+      return StatefulBuilder(
+        builder: (context, setState) {
+          final normalizedQuery = query.trim().toLowerCase();
+          final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+              ? options
+              : options
+                  .where(
+                    (option) =>
+                        option.label.toLowerCase().contains(normalizedQuery) ||
+                        (option.subtitle?.toLowerCase().contains(
+                              normalizedQuery,
+                            ) ??
+                            false),
+                  )
+                  .toList();
 
-            return SafeArea(
-              child: SizedBox(
-                height: MediaQuery.of(sheetContext).size.height * 0.75,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          hintText: 'Search...',
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            query = value;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: filtered.isEmpty
-                          ? const Center(child: Text('No matches found'))
-                          : ListView.builder(
-                              itemCount: filtered.length,
-                              itemBuilder: (context, index) {
-                                final option = filtered[index];
-                                final isSelected = option.value == selected ||
-                                    (option.value == null && selected == null);
-                                return ListTile(
-                                  title: Text(option.label),
-                                  subtitle: option.subtitle != null
-                                      ? Text(option.subtitle!)
-                                      : null,
-                                  trailing: isSelected
-                                      ? const Icon(Icons.check)
-                                      : null,
-                                  onTap: () => Navigator.of(context).pop(
-                                    _PickerSelection<T>(value: option.value),
-                                  ),
-                                );
-                              },
-                            ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+          return Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: 500,
               ),
-            );
-          },
-        ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: TextField(
+                      controller: controller,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          query = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: filtered.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Center(child: Text('No matches found')),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final option = filtered[index];
+                              final isSelected = option.value == selected ||
+                                  (option.value == null && selected == null);
+                              return ListTile(
+                                title: Text(option.label),
+                                subtitle: option.subtitle != null
+                                    ? Text(option.subtitle!)
+                                    : null,
+                                trailing: isSelected
+                                    ? const Icon(Icons.check)
+                                    : null,
+                                onTap: () => Navigator.of(context).pop(
+                                  _PickerSelection<T>(value: option.value),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       );
     },
   );
