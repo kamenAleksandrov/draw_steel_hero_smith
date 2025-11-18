@@ -4,10 +4,12 @@ import 'package:hero_smith/widgets/shared/expandable_card.dart';
 
 class ConditionCard extends StatelessWidget {
   final Component condition;
+  final VoidCallback? onDelete;
 
   const ConditionCard({
     super.key,
     required this.condition,
+    this.onDelete,
   });
 
   @override
@@ -20,19 +22,33 @@ class ConditionCard extends StatelessWidget {
     return ExpandableCard(
       title: name,
       borderColor: Colors.red.shade400,
-      badge: Chip(
-        label: const Text(
-          '⚠️ Condition',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+      badge: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Chip(
+            label: const Text(
+              '⚠️ Condition',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            backgroundColor: Colors.red.shade400.withOpacity(0.1),
+            side: BorderSide(color: Colors.red.shade400, width: 1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
-        ),
-        backgroundColor: Colors.red.shade400.withOpacity(0.1),
-        side: BorderSide(color: Colors.red.shade400, width: 1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+          if (onDelete != null && condition.source == 'user') ...[
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.delete, size: 18),
+              tooltip: 'Delete custom condition',
+              color: Colors.red,
+              onPressed: onDelete,
+            ),
+          ],
+        ],
       ),
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

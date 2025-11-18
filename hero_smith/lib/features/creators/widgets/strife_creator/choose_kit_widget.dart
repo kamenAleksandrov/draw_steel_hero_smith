@@ -95,11 +95,13 @@ class ChooseKitWidget extends ConsumerWidget {
     required this.selectedKitId,
     required this.onKitChanged,
     this.allowedKitTypes = const [],
+    this.label,
   });
 
   final String? selectedKitId;
   final ValueChanged<String?> onKitChanged;
   final List<String> allowedKitTypes;
+  final String? label;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -126,7 +128,7 @@ class ChooseKitWidget extends ConsumerWidget {
           children: [
             HeroTheme.buildSectionHeader(
               context,
-              title: 'Kit',
+              title: label ?? 'Kit',
               subtitle: 'Choose your fighting style and equipment',
               icon: Icons.inventory_2,
               color: HeroTheme.getStepColor('kit'),

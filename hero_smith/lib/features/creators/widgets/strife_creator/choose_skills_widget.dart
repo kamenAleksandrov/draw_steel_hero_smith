@@ -8,6 +8,132 @@ import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showDialog<_PickerSelection<T>>(
+    context: context,
+    builder: (dialogContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          final normalizedQuery = query.trim().toLowerCase();
+          final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+              ? options
+              : options
+                  .where(
+                    (option) =>
+                        option.label.toLowerCase().contains(normalizedQuery) ||
+                        (option.subtitle?.toLowerCase().contains(
+                              normalizedQuery,
+                            ) ??
+                            false),
+                  )
+                  .toList();
+
+          return Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: 500,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: TextField(
+                      controller: controller,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          query = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: filtered.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Center(child: Text('No matches found')),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final option = filtered[index];
+                              final isSelected = option.value == selected ||
+                                  (option.value == null && selected == null);
+                              return ListTile(
+                                title: Text(option.label),
+                                subtitle: option.subtitle != null
+                                    ? Text(option.subtitle!)
+                                    : null,
+                                trailing: isSelected
+                                    ? const Icon(Icons.check)
+                                    : null,
+                                onTap: () => Navigator.of(context).pop(
+                                  _PickerSelection<T>(value: option.value),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 typedef SkillSelectionChanged = void Function(
     StartingSkillSelectionResult result);
 
@@ -282,12 +408,42 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
   }
 
   List<SkillOption> _optionsForAllowance(SkillAllowance allowance) {
-    if (allowance.allowedGroups.isEmpty) {
+    // If no restrictions, allow all skills
+    if (allowance.allowedGroups.isEmpty && 
+        allowance.individualSkillChoices.isEmpty) {
       return _skillOptions;
     }
-    return _skillOptions
-        .where((option) => allowance.allowedGroups.contains(option.group))
-        .toList();
+
+    final options = <SkillOption>[];
+    
+    // Add skills from allowed groups
+    if (allowance.allowedGroups.isNotEmpty) {
+      options.addAll(
+        _skillOptions.where(
+          (option) => allowance.allowedGroups.contains(option.group),
+        ),
+      );
+    }
+    
+    // Add individual skill choices by name
+    if (allowance.individualSkillChoices.isNotEmpty) {
+      for (final skillName in allowance.individualSkillChoices) {
+        final normalizedName = skillName.trim().toLowerCase();
+        final matchingSkill = _skillOptions.firstWhereOrNull(
+          (option) => option.name.toLowerCase() == normalizedName,
+        );
+        if (matchingSkill != null && !options.contains(matchingSkill)) {
+          options.add(matchingSkill);
+        }
+      }
+    }
+    
+    // If only individual choices (no groups), return just those
+    if (allowance.allowedGroups.isEmpty) {
+      return options;
+    }
+    
+    return options;
   }
 
   String _slotKey(String allowanceId, int index) => '$allowanceId#$index';
@@ -488,31 +644,72 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
             final current = slots[index];
+            final selectedOption = current != null
+                ? options.firstWhere(
+                    (opt) => opt.id == current,
+                    orElse: () => options.firstOrNull ??
+                        SkillOption(
+                          id: current,
+                          name: 'Unknown',
+                          group: '',
+                          description: '',
+                        ),
+                  )
+                : null;
+
+            Future<void> openSearch() async {
+              final searchOptions = <_SearchOption<String?>>[
+                const _SearchOption<String?>(
+                  label: 'Unassigned',
+                  value: null,
+                ),
+                ...options.map(
+                  (option) => _SearchOption<String?>(
+                    label: option.name,
+                    value: option.id,
+                    subtitle: option.group,
+                  ),
+                ),
+              ];
+
+              final result = await _showSearchablePicker<String?>(
+                context: context,
+                title: '${allowance.label} - Choice ${index + 1}',
+                options: searchOptions,
+                selected: current,
+              );
+
+              if (result == null) return;
+              _handleSkillSelection(allowance, index, result.value);
+            }
+
             return Padding(
               padding:
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
-              child: DropdownButtonFormField<String?>(
-                initialValue: current,
-                decoration: InputDecoration(
-                  labelText: 'Choice ${index + 1}',
-                  border: const OutlineInputBorder(),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
-                items: [
-                  const DropdownMenuItem<String?>(
-                    value: null,
-                    child: Text('Unassigned'),
-                  ),
-                  ...options.map(
-                    (option) => DropdownMenuItem<String?>(
-                      value: option.id,
-                      child: Text('${option.name} (${option.group})'),
+              child: InkWell(
+                onTap: openSearch,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Choice ${index + 1}',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: const Icon(Icons.search),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
                     ),
                   ),
-                ],
-                onChanged: (value) =>
-                    _handleSkillSelection(allowance, index, value),
+                  child: Text(
+                    selectedOption != null
+                        ? '${selectedOption.name} (${selectedOption.group})'
+                        : 'Unassigned',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: selectedOption != null
+                          ? null
+                          : Theme.of(context).hintColor,
+                    ),
+                  ),
+                ),
               ),
             );
           }),

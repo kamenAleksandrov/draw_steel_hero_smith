@@ -153,7 +153,7 @@ class _StartingCharacteristicsWidgetState
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -161,47 +161,42 @@ class _StartingCharacteristicsWidgetState
               'Starting Characteristics',
               style: AppTextStyles.title,
             ),
-            const SizedBox(height: 4),
-            const Text(
-              'Review your fixed scores, choose an array, and distribute the remaining values.',
-              style: AppTextStyles.caption,
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             if (_controller.lockedStats.isNotEmpty) ...[
               _buildFixedStatsRow(summary),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
             ],
             _buildArrayPicker(),
             if (selectedArray == null &&
                 _controller.classData.startingCharacteristics
                     .startingCharacteristicsArrays.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Row(
                 children: [
                   const Icon(Icons.info_outline,
-                      size: 16, color: Colors.orangeAccent),
-                  const SizedBox(width: 6),
+                      size: 14, color: Colors.orangeAccent),
+                  const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       'Select an array to unlock assignable values.',
                       style: AppTextStyles.caption
-                          .copyWith(color: Colors.orangeAccent),
+                          .copyWith(color: Colors.orangeAccent, fontSize: 11),
                     ),
                   ),
                 ],
               ),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             _buildAssignableSection(summary),
             _buildAssignmentStatus(assignmentsComplete, choicesComplete),
             if (selectedArray != null) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               _buildAvailableTokensSection(),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             _buildPotencySection(potencyValues),
             if (_controller.levelChoices.isNotEmpty) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               _buildLevelChoicesSection(),
             ],
           ],
@@ -235,10 +230,10 @@ class _StartingCharacteristicsWidgetState
     final levelBonus = summary.levelBonuses[stat] ?? 0;
     final total = summary.totals[stat] ?? 0;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.45), width: 1.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.45), width: 1),
         color: color.withOpacity(0.12),
       ),
       child: Column(
@@ -246,34 +241,38 @@ class _StartingCharacteristicsWidgetState
         children: [
           Row(
             children: [
-              Icon(Icons.lock, size: 16, color: color),
-              const SizedBox(width: 6),
-              Text(
-                _displayName(stat),
-                style: AppTextStyles.subtitle.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.bold,
+              Icon(Icons.lock, size: 12, color: color),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  _displayName(stat),
+                  style: AppTextStyles.subtitle.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             total.toString(),
             style: AppTextStyles.title.copyWith(
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Wrap(
-            spacing: 6,
-            runSpacing: 6,
+            spacing: 3,
+            runSpacing: 3,
             children: [
-              _buildValueTag('Fixed ${_formatSigned(fixed)}', color),
+              _buildValueTag('${_formatSigned(fixed)}', color),
               if (levelBonus != 0)
-                _buildValueTag('Level ${_formatSigned(levelBonus)}', color),
+                _buildValueTag('+${levelBonus}', color),
             ],
           ),
         ],
@@ -352,9 +351,9 @@ class _StartingCharacteristicsWidgetState
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        const spacing = 12.0;
-        const runSpacing = 12.0;
-        const minTileWidth = 260.0;
+        const spacing = 8.0;
+        const runSpacing = 8.0;
+        const minTileWidth = 140.0;
 
         final availableWidth = constraints.maxWidth.isFinite
             ? constraints.maxWidth
@@ -409,12 +408,12 @@ class _StartingCharacteristicsWidgetState
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: borderColor,
-              width: isPending ? 1.6 : 1.2,
+              width: isPending ? 1.5 : 1,
             ),
             color: backgroundColor,
           ),
@@ -430,39 +429,37 @@ class _StartingCharacteristicsWidgetState
                       style: AppTextStyles.subtitle.copyWith(
                         color: color,
                         fontWeight: FontWeight.bold,
+                        fontSize: 11,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 2),
                     Text(
                       total.toString(),
                       style: AppTextStyles.title.copyWith(
-                        fontSize: 26,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
+                      spacing: 3,
+                      runSpacing: 3,
                       children: [
                         if (fixed != 0)
-                          _buildValueTag(
-                              'Fixed ${_formatSigned(fixed)}', color),
+                          _buildValueTag('${_formatSigned(fixed)}', color),
                         if (assignedToken != null)
-                          _buildValueTag(
-                              'Array ${_formatSigned(arrayValue)}', color)
+                          _buildValueTag('${_formatSigned(arrayValue)}', color)
                         else
-                          _buildValueOutlineTag('Array pending', color),
+                          _buildValueOutlineTag('?', color),
                         if (levelBonus != 0)
-                          _buildValueTag(
-                              'Level ${_formatSigned(levelBonus)}', color),
+                          _buildValueTag('+$levelBonus', color),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 6),
               _buildAssignmentSlot(stat, color, assignedToken, isActive),
             ],
           ),
@@ -482,7 +479,7 @@ class _StartingCharacteristicsWidgetState
         : _buildDropHint(color, highlight: isActive);
 
     return SizedBox(
-      width: 120,
+      width: 60,
       child: Align(
         alignment: Alignment.topRight,
         child: slotChild,
@@ -495,12 +492,12 @@ class _StartingCharacteristicsWidgetState
     final backgroundColor =
         highlight ? color.withOpacity(0.18) : color.withOpacity(0.1);
     final message =
-        _controller.selectedArray == null ? 'Select array' : 'Drop value';
+        _controller.selectedArray == null ? '?' : 'Drop';
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: borderColor),
         color: backgroundColor,
       ),
@@ -509,6 +506,7 @@ class _StartingCharacteristicsWidgetState
         style: AppTextStyles.caption.copyWith(
           color: AppColors.textPrimary,
           fontStyle: FontStyle.italic,
+          fontSize: 10,
         ),
       ),
     );
@@ -526,9 +524,9 @@ class _StartingCharacteristicsWidgetState
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(6),
         color: background,
-        border: Border.all(color: borderColor, width: 1.2),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: isFeedback
             ? [
                 BoxShadow(
@@ -540,11 +538,11 @@ class _StartingCharacteristicsWidgetState
             : const [],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Text(
           _formatSigned(token.value),
           style: AppTextStyles.caption.copyWith(
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: FontWeight.w600,
             color: textColor,
           ),
@@ -799,28 +797,34 @@ class _StartingCharacteristicsWidgetState
 
   Widget _buildValueTag(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(4),
         color: color.withOpacity(0.18),
       ),
       child: Text(
         label,
-        style: AppTextStyles.caption.copyWith(color: AppColors.textPrimary),
+        style: AppTextStyles.caption.copyWith(
+          color: AppColors.textPrimary,
+          fontSize: 10,
+        ),
       ),
     );
   }
 
   Widget _buildValueOutlineTag(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.6)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color.withOpacity(0.6), width: 0.8),
       ),
       child: Text(
         label,
-        style: AppTextStyles.caption.copyWith(color: color),
+        style: AppTextStyles.caption.copyWith(
+          color: color,
+          fontSize: 10,
+        ),
       ),
     );
   }

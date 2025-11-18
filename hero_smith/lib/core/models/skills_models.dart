@@ -19,6 +19,7 @@ class SkillAllowance {
     required this.label,
     required this.pickCount,
     required this.allowedGroups,
+    this.individualSkillChoices = const <String>[],
     this.isStarting = false,
     this.grantedSkillNames = const <String>[],
   });
@@ -28,6 +29,7 @@ class SkillAllowance {
   final String label;
   final int pickCount;
   final Set<String> allowedGroups;
+  final List<String> individualSkillChoices;
   final bool isStarting;
   final List<String> grantedSkillNames;
 }

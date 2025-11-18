@@ -24,10 +24,12 @@
     "starting_skills": {
       "granted_skills": ["Hide", "Sneak"],
       "skill_groups": [
-        "Criminal Underworld",
         "Exploration",
         "Interpersonal",
-        "Intrigue"
+        "Intrigue",
+        {
+          "individual_skill_choices": ["Criminal Underworld"]
+        }
       ],
       "skill_count": 5,
       "quick_build": [

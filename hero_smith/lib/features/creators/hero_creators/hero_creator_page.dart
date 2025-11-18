@@ -323,7 +323,8 @@ class StrifeCreatorTab extends StatefulWidget {
 
 class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
   bool _dirty = false;
-  StrifeCreatorPage? _strifeWidget;
+  final GlobalKey<StrifeCreatorPageState> _pageKey =
+    GlobalKey<StrifeCreatorPageState>();
 
   bool get isDirty => _dirty;
 
@@ -336,17 +337,15 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
   }
 
   Future<void> save() async {
-    // The save will be triggered through the StrifeCreatorPage's internal save button
-    // or we can expose a save method through a callback
-    setState(() {
-      _dirty = false;
-    });
-    widget.onDirtyChanged(false);
+    final state = _pageKey.currentState;
+    if (state == null) return;
+    await state.handleSave();
   }
 
   @override
   Widget build(BuildContext context) {
-    _strifeWidget = StrifeCreatorPage(
+    return StrifeCreatorPage(
+      key: _pageKey,
       heroId: widget.heroId,
       onDirtyChanged: _handleDirtyChanged,
       onSaveRequested: () async {
@@ -356,6 +355,5 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
         widget.onDirtyChanged(false);
       },
     );
-    return _strifeWidget!;
   }
 }

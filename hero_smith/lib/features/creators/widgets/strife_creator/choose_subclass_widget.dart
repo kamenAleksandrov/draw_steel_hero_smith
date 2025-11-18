@@ -7,6 +7,132 @@ import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/services/subclass_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showDialog<_PickerSelection<T>>(
+    context: context,
+    builder: (dialogContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          final normalizedQuery = query.trim().toLowerCase();
+          final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+              ? options
+              : options
+                  .where(
+                    (option) =>
+                        option.label.toLowerCase().contains(normalizedQuery) ||
+                        (option.subtitle?.toLowerCase().contains(
+                              normalizedQuery,
+                            ) ??
+                            false),
+                  )
+                  .toList();
+
+          return Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: 500,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: TextField(
+                      controller: controller,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          query = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: filtered.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Center(child: Text('No matches found')),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final option = filtered[index];
+                              final isSelected = option.value == selected ||
+                                  (option.value == null && selected == null);
+                              return ListTile(
+                                title: Text(option.label),
+                                subtitle: option.subtitle != null
+                                    ? Text(option.subtitle!)
+                                    : null,
+                                trailing: isSelected
+                                    ? const Icon(Icons.check)
+                                    : null,
+                                onTap: () => Navigator.of(context).pop(
+                                  _PickerSelection<T>(value: option.value),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 typedef SubclassSelectionChanged = void Function(
     SubclassSelectionResult result);
 
@@ -387,19 +513,6 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     final featureData = _featureData;
     final options = featureData?.options ?? const <SubclassOption>[];
 
-    final dropdownItems = <DropdownMenuItem<String?>>[
-      const DropdownMenuItem<String?>(
-        value: null,
-        child: Text('-- Choose subclass --'),
-      ),
-      ...options.map(
-        (option) => DropdownMenuItem<String?>(
-          value: option.key,
-          child: Text(option.name),
-        ),
-      ),
-    ];
-
     final selectedOption = _selectedSubclassKey == null
         ? null
         : _optionsByKey[_selectedSubclassKey!];
@@ -410,15 +523,51 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         ? _selectedSubclassKey
         : null;
 
-    return [
-      DropdownButtonFormField<String?>(
-        value: validatedValue,
-        decoration: const InputDecoration(
-          labelText: 'Subclass',
-          border: OutlineInputBorder(),
+    Future<void> openSearch() async {
+      final searchOptions = <_SearchOption<String?>>[
+        const _SearchOption<String?>(
+          label: '-- Choose subclass --',
+          value: null,
         ),
-        items: dropdownItems,
-        onChanged: (value) => _handleSubclassChanged(value),
+        ...options.map(
+          (option) => _SearchOption<String?>(
+            label: option.name,
+            value: option.key,
+            subtitle: option.description,
+          ),
+        ),
+      ];
+
+      final result = await _showSearchablePicker<String?>(
+        context: context,
+        title: 'Select Subclass',
+        options: searchOptions,
+        selected: validatedValue,
+      );
+
+      if (result == null) return;
+      _handleSubclassChanged(result.value);
+    }
+
+    return [
+      InkWell(
+        onTap: openSearch,
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            labelText: 'Subclass',
+            border: OutlineInputBorder(),
+            suffixIcon: Icon(Icons.search),
+          ),
+          child: Text(
+            selectedOption != null ? selectedOption.name : '-- Choose subclass --',
+            style: TextStyle(
+              fontSize: 16,
+              color: selectedOption != null
+                  ? null
+                  : Theme.of(context).hintColor,
+            ),
+          ),
+        ),
       ),
       if (selectedOption != null) ...[
         const SizedBox(height: 12),
@@ -483,28 +632,65 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
   }
 
   List<Widget> _buildDeityPickerSection() {
-    final items = <DropdownMenuItem<String?>>[
-      const DropdownMenuItem<String?>(
-        value: null,
-        child: Text('-- Choose deity --'),
-      ),
-      ..._deities.map(
-        (deity) => DropdownMenuItem<String?>(
-          value: deity.id,
-          child: Text('${deity.name} (${deity.category})'),
+    Future<void> openSearch() async {
+      final searchOptions = <_SearchOption<String?>>[
+        const _SearchOption<String?>(
+          label: '-- Choose deity --',
+          value: null,
         ),
-      ),
-    ];
+        ..._deities.map(
+          (deity) => _SearchOption<String?>(
+            label: deity.name,
+            value: deity.id,
+            subtitle: deity.category,
+          ),
+        ),
+      ];
+
+      final result = await _showSearchablePicker<String?>(
+        context: context,
+        title: 'Select Deity',
+        options: searchOptions,
+        selected: _selectedDeityId,
+      );
+
+      if (result == null) return;
+      _handleDeityChanged(result.value);
+    }
+
+    final selectedDeity = _selectedDeityId != null
+        ? _deities.firstWhere(
+            (deity) => deity.id == _selectedDeityId,
+            orElse: () => DeityOption(
+              id: _selectedDeityId!,
+              name: 'Unknown',
+              category: '',
+              domains: const [],
+            ),
+          )
+        : null;
 
     return [
-      DropdownButtonFormField<String?>(
-        value: _selectedDeityId,
-        decoration: const InputDecoration(
-          labelText: 'Deity',
-          border: OutlineInputBorder(),
+      InkWell(
+        onTap: openSearch,
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            labelText: 'Deity',
+            border: OutlineInputBorder(),
+            suffixIcon: Icon(Icons.search),
+          ),
+          child: Text(
+            selectedDeity != null
+                ? '${selectedDeity.name} (${selectedDeity.category})'
+                : '-- Choose deity --',
+            style: TextStyle(
+              fontSize: 16,
+              color: selectedDeity != null
+                  ? null
+                  : Theme.of(context).hintColor,
+            ),
+          ),
         ),
-        items: items,
-        onChanged: _handleDeityChanged,
       ),
     ];
   }

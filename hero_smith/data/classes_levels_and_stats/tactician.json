@@ -24,7 +24,22 @@
     "starting_skills": {
       "granted_skills": ["Lead"],
       "skill_groups": [
-        "Alertness, Architecture, Blacksmithing, Brag, Culture, Empathize, Fletching, Mechanics, Monsters, Search, Strategy, or any Exploration skill"
+        "Exploration",
+        {
+          "individual_skill_choices": [
+            "Alertness",
+            "Architecture",
+            "Blacksmithing",
+            "Brag",
+            "Culture",
+            "Empathize",
+            "Fletching",
+            "Mechanics",
+            "Monsters",
+            "Search",
+            "Strategy"
+          ]
+        }
       ],
       "skill_count": 2,
       "quick_build": ["Lead", "Monsters", "Strategy"]

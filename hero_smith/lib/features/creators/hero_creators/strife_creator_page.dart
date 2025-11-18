@@ -18,7 +18,7 @@ import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/skills_service.dart';
 import '../widgets/strife_creator/class_features_section.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
-import '../widgets/strife_creator/choose_kit_widget.dart';
+import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';
 import '../widgets/strife_creator/choose_skills_widget.dart';
 import '../widgets/strife_creator/choose_subclass_widget.dart';
@@ -91,8 +91,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Map<String, String?> _selectedPerks = {};
   SubclassSelectionResult? _selectedSubclass;
   Map<String, Set<String>> _featureSelections = {};
-  String? _selectedKitId;
-  List<String> _allowedKitTypes = const [];
+  List<String?> _selectedKitIds = [];
 
   @override
   void initState() {
@@ -138,7 +137,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             (c) => c.classId == hero.className,
             orElse: () => _classDataService.getAllClasses().first);
         _selectedClass = classData;
-        _allowedKitTypes = _determineAllowedKitTypes(classData);
 
         // Load characteristic array if available
         final values = await db.getHeroValues(widget.heroId);
@@ -161,8 +159,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             _selectedArray = matchingArray;
           }
         }
-      } else {
-        _allowedKitTypes = const [];
       }
 
       // Load subclass
@@ -176,7 +172,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       }
 
-      // Load kit
+      // Load kit (legacy single kit support)
       if (_selectedClass != null) {
         final values = await db.getHeroValues(widget.heroId);
         final kitRow = values.firstWhere(
@@ -184,7 +180,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           orElse: () => values.first,
         );
         if (kitRow.textValue != null && kitRow.textValue!.isNotEmpty) {
-          _selectedKitId = kitRow.textValue;
+          _selectedKitIds = [kitRow.textValue];
         }
       }
 
@@ -591,7 +587,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleClassChanged(ClassData classData) {
-    final allowedTypes = _determineAllowedKitTypes(classData);
     setState(() {
       _selectedClass = classData;
       // Reset characteristic and skill selections when class changes
@@ -602,8 +597,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _selectedPerks = {};
       _selectedSubclass = null;
       _featureSelections = {};
-      _selectedKitId = null;
-      _allowedKitTypes = allowedTypes;
+      _selectedKitIds = [];
     });
     _markDirty();
   }
@@ -658,31 +652,157 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     _markDirty();
   }
 
-  void _handleKitChanged(String? kitId) {
+  void _handleKitChangedAtSlot(int slotIndex, String? kitId) {
     setState(() {
-      _selectedKitId = kitId;
+      while (_selectedKitIds.length <= slotIndex) {
+        _selectedKitIds.add(null);
+      }
+      _selectedKitIds[slotIndex] = kitId;
     });
     _markDirty();
   }
 
-  List<String> _determineAllowedKitTypes(ClassData classData) {
-    final types = <String>{};
+  List<Widget> _buildKitWidgets() {
+    if (_selectedClass == null) return [];
 
+    final slots = _determineKitSlots(_selectedClass!);
+    if (slots.isEmpty) return [];
+
+    final totalSlots = slots.fold<int>(0, (sum, slot) => sum + slot.count);
+    while (_selectedKitIds.length < totalSlots) {
+      _selectedKitIds.add(null);
+    }
+
+    final equipmentSlots = <EquipmentSlot>[];
+    var kitIndex = 0;
+
+    for (final slot in slots) {
+      for (var i = 0; i < slot.count; i++) {
+        final currentIndex = kitIndex;
+        final label = _buildEquipmentSlotLabel(
+          allowedTypes: slot.allowedTypes,
+          groupCount: slot.count,
+          indexWithinGroup: i,
+          globalIndex: kitIndex,
+        );
+        final helperText = slot.allowedTypes.length > 1
+            ? 'Allowed types: ${slot.allowedTypes.map(_formatKitTypeName).join(', ')}'
+            : null;
+
+        equipmentSlots.add(
+          EquipmentSlot(
+            label: label,
+            allowedTypes: slot.allowedTypes,
+            selectedItemId: currentIndex < _selectedKitIds.length
+                ? _selectedKitIds[currentIndex]
+                : null,
+            onChanged: (kitId) => _handleKitChangedAtSlot(currentIndex, kitId),
+            helperText: helperText,
+          ),
+        );
+        kitIndex++;
+      }
+    }
+
+    return [
+      EquipmentAndModificationsWidget(slots: equipmentSlots),
+    ];
+  }
+
+  String _buildEquipmentSlotLabel({
+    required List<String> allowedTypes,
+    required int groupCount,
+    required int indexWithinGroup,
+    required int globalIndex,
+  }) {
+    if (allowedTypes.length == 1) {
+      final base = _formatKitTypeName(allowedTypes.first);
+      if (groupCount > 1) {
+        return '$base ${indexWithinGroup + 1}';
+      }
+      return base;
+    }
+    return 'Equipment ${globalIndex + 1}';
+  }
+
+  String _formatKitTypeName(String type) {
+    switch (type) {
+      case 'psionic_augmentation':
+        return 'Psionic Augmentation';
+      case 'stormwight_kit':
+        return 'Stormwight Kit';
+      default:
+        return type[0].toUpperCase() + type.substring(1);
+    }
+  }
+
+  /// Determines kit slots and allowed types for each slot
+  /// Returns list of (count, [allowed types]) pairs
+  List<({int count, List<String> allowedTypes})> _determineKitSlots(
+    ClassData classData,
+  ) {
+    // Special case: Stormwight Fury - only stormwight kits
+    final subclassName = _selectedSubclass?.subclassName?.toLowerCase() ?? '';
+    if (classData.classId == 'class_fury' && subclassName == 'stormwight') {
+      return [
+        (count: 1, allowedTypes: ['stormwight_kit'])
+      ];
+    }
+
+    final kitFeatures = <Map<String, dynamic>>[];
+    final typesList = <String>[];
+
+    // Collect all kit-related features
     for (final level in classData.levels) {
       for (final feature in level.features) {
-        final key = feature.name.trim().toLowerCase();
-        final mapped = _kitFeatureTypeMappings[key];
-        if (mapped != null) {
-          types.addAll(mapped);
+        final name = feature.name.trim().toLowerCase();
+        if (name == 'kit' || _kitFeatureTypeMappings.containsKey(name)) {
+          kitFeatures.add({
+            'name': name,
+            'count': feature.count ?? 1,
+          });
+
+          final mapped = _kitFeatureTypeMappings[name];
+          if (mapped != null) {
+            typesList.addAll(mapped);
+          } else if (name == 'kit') {
+            typesList.add('kit');
+          }
         }
       }
     }
 
-    if (types.isEmpty) {
-      types.add('kit');
+    if (kitFeatures.isEmpty) {
+      return [];
     }
 
-    return _sortKitTypesByPriority(types);
+    // Remove duplicates while preserving order
+    final uniqueTypes = <String>[];
+    final seen = <String>{};
+    for (final type in typesList) {
+      if (seen.add(type)) {
+        uniqueTypes.add(type);
+      }
+    }
+
+    // Calculate total count needed
+    var totalCount = 0;
+    for (final feature in kitFeatures) {
+      totalCount += feature['count'] as int;
+    }
+
+    // If we have multiple types and count > 1, create one slot per type
+    if (uniqueTypes.length > 1 && totalCount >= uniqueTypes.length) {
+      return uniqueTypes
+          .map((type) => (count: 1, allowedTypes: [type]))
+          .toList();
+    }
+
+    // Otherwise, create slots of the same type
+    final sortedTypes = _sortKitTypesByPriority(uniqueTypes);
+    return [
+      (count: totalCount, allowedTypes: sortedTypes),
+    ];
   }
 
   List<String> _sortKitTypesByPriority(Iterable<String> types) {
@@ -774,9 +894,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         }
       }
 
-      // 3.5. Save kit
-      if (_selectedKitId != null) {
-        updates.add(repo.updateKit(widget.heroId, _selectedKitId));
+      // 3.5. Save kit (first non-null kit for now, legacy support)
+      if (_selectedKitIds.isNotEmpty && _selectedKitIds.first != null) {
+        updates.add(repo.updateKit(widget.heroId, _selectedKitIds.first));
       }
 
       // 4. Save selected characteristic array name
@@ -1034,11 +1154,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               selectedSubclass: _selectedSubclass,
               onSelectionChanged: _handleSubclassSelectionChanged,
             ),
-            ChooseKitWidget(
-              selectedKitId: _selectedKitId,
-              onKitChanged: _handleKitChanged,
-              allowedKitTypes: _allowedKitTypes,
-            ),
+            ..._buildKitWidgets(),
             StartingAbilitiesWidget(
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
@@ -1077,3 +1193,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     );
   }
 }
+
+// Public type alias for accessing the internal state from parent widgets.
+typedef StrifeCreatorPageState = _StrifeCreatorPageState;

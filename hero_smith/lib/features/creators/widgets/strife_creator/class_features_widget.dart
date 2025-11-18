@@ -29,6 +29,7 @@ class ClassFeaturesWidget extends StatelessWidget {
     this.activeSubclassSlugs = const {},
     this.subclassLabel,
     this.subclassSelection,
+    this.grantTypeByFeatureName = const {},
   });
 
   final int level;
@@ -45,6 +46,7 @@ class ClassFeaturesWidget extends StatelessWidget {
   final Set<String> activeSubclassSlugs;
   final String? subclassLabel;
   final SubclassSelectionResult? subclassSelection;
+  final Map<String, String> grantTypeByFeatureName;
 
   static const List<String> _widgetSubclassOptionKeys = [
     'subclass',
@@ -144,13 +146,48 @@ class ClassFeaturesWidget extends StatelessWidget {
     final isDomainLinked = domainLinkedFeatureIds.contains(feature.id);
     final isDeityLinked = deityLinkedFeatureIds.contains(feature.id);
 
+    // Resolve grant_type from class.json metadata
+    final grantType = _resolveGrantType(feature);
+    final isGrantedFeature = grantType == 'granted';
+    final isPickFeature = grantType == 'pick';
+    final isAbilityFeature = grantType == 'ability';
+
     final optionsContext = _prepareFeatureOptions(
       feature: feature,
       allOptions: allOptions,
       currentSelections: originalSelections,
     );
+    final isAutoAppliedSelection = _isAutoAppliedSelection(optionsContext);
 
     final tags = <Widget>[];
+    
+    // Grant type indicator - most important tag
+    if (isGrantedFeature) {
+      tags.add(
+        _buildTagChip(
+          context,
+          'Granted Feature',
+          leading: const Icon(Icons.check_circle, size: 16, color: Colors.green),
+        ),
+      );
+    } else if (isPickFeature) {
+      tags.add(
+        _buildTagChip(
+          context,
+          'Choice Required',
+          leading: const Icon(Icons.touch_app, size: 16, color: Colors.orange),
+        ),
+      );
+    } else if (isAbilityFeature) {
+      tags.add(
+        _buildTagChip(
+          context,
+          'Ability Granted',
+          leading: const Icon(Icons.auto_awesome, size: 16, color: Colors.blue),
+        ),
+      );
+    }
+
     final typeLabel = feature.type.trim();
     if (typeLabel.isNotEmpty &&
         typeLabel.toLowerCase() != 'feature' &&
@@ -208,7 +245,9 @@ class ClassFeaturesWidget extends StatelessWidget {
     final children = <Widget>[
       Text(
         feature.name,
-        style: theme.textTheme.titleMedium,
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
       ),
     ];
 
@@ -223,7 +262,28 @@ class ClassFeaturesWidget extends StatelessWidget {
       );
     }
 
-    if (selectedLabels.isNotEmpty) {
+    if (description != null && description.isNotEmpty) {
+      children.add(const SizedBox(height: 12));
+      children.add(
+        Text(
+          description,
+          style: theme.textTheme.bodyMedium,
+        ),
+      );
+    }
+
+    // Show full ability card for ability features
+    if (isAbilityFeature) {
+      final ability = _resolveAbilityForFeature(feature, details);
+      if (ability != null) {
+        children.add(const SizedBox(height: 12));
+        children.add(_buildAbilityPreview(context, ability));
+      }
+    }
+
+    children.addAll(_buildDetailSections(context, details));
+
+    if (!isAutoAppliedSelection && selectedLabels.isNotEmpty) {
       children.add(const SizedBox(height: 8));
       children.add(
         Wrap(
@@ -240,18 +300,6 @@ class ClassFeaturesWidget extends StatelessWidget {
         ),
       );
     }
-
-    if (description != null && description.isNotEmpty) {
-      children.add(const SizedBox(height: 12));
-      children.add(
-        Text(
-          description,
-          style: theme.textTheme.bodyMedium,
-        ),
-      );
-    }
-
-    children.addAll(_buildDetailSections(context, details));
 
     if (allOptions.isNotEmpty || optionsContext.messages.isNotEmpty) {
       children.add(const SizedBox(height: 12));
@@ -275,6 +323,44 @@ class ClassFeaturesWidget extends StatelessWidget {
     );
   }
 
+  String _resolveGrantType(Feature feature) {
+    // Try to find grant_type from class.json metadata
+    final featureKey = feature.name.toLowerCase().trim();
+    return grantTypeByFeatureName[featureKey] ?? '';
+  }
+
+  Map<String, dynamic>? _resolveAbilityForFeature(
+    Feature feature,
+    Map<String, dynamic>? details,
+  ) {
+    // First try to find ability referenced in feature details
+    if (details != null) {
+      final abilityRef = details['ability'];
+      if (abilityRef is String && abilityRef.trim().isNotEmpty) {
+        final ability = _resolveAbilityByName(abilityRef);
+        if (ability != null) return ability;
+      }
+      final abilityId = details['ability_id'];
+      if (abilityId is String && abilityId.trim().isNotEmpty) {
+        final ability = abilityDetailsById[abilityId];
+        if (ability != null) return ability;
+      }
+    }
+    
+    // Try feature name as ability name
+    final ability = _resolveAbilityByName(feature.name);
+    if (ability != null) return ability;
+    
+    return null;
+  }
+
+  Map<String, dynamic>? _resolveAbilityByName(String name) {
+    final slug = ClassFeatureDataService.slugify(name);
+    final resolvedId = abilityIdByName[slug] ?? slug;
+    return abilityDetailsById[resolvedId];
+  }
+
+
   Widget _buildOptionsSection({
     required BuildContext context,
     required Feature feature,
@@ -290,6 +376,13 @@ class ClassFeaturesWidget extends StatelessWidget {
     final groupValue = allowMultiple || effectiveSelections.isEmpty
         ? null
         : effectiveSelections.first;
+
+    // Determine if this is a pick feature that needs user selection
+    final grantType = _resolveGrantType(feature);
+    final isPickFeature = grantType == 'pick';
+    final hasOptions = optionsContext.options.isNotEmpty;
+    final needsSelection = isPickFeature && hasOptions && effectiveSelections.isEmpty;
+    final isAutoApplied = _isAutoAppliedSelection(optionsContext);
 
     final optionTiles = <Widget>[];
     for (final option in optionsContext.options) {
@@ -315,7 +408,12 @@ class ClassFeaturesWidget extends StatelessWidget {
                   onSelectionChanged?.call(feature.id, updated);
                 }
               : null,
-          title: Text(label),
+          title: Text(
+            label,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           subtitle: subtitleWidgets.isEmpty
               ? null
               : Column(
@@ -340,7 +438,12 @@ class ClassFeaturesWidget extends StatelessWidget {
                   onSelectionChanged?.call(feature.id, {value});
                 }
               : null,
-          title: Text(label),
+          title: Text(
+            label,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           subtitle: subtitleWidgets.isEmpty
               ? null
               : Column(
@@ -353,26 +456,66 @@ class ClassFeaturesWidget extends StatelessWidget {
         );
       }
 
-      optionTiles.add(
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          decoration: BoxDecoration(
-            color: recommended
-                ? theme.colorScheme.secondaryContainer.withOpacity(0.35)
-                : theme.colorScheme.surfaceVariant.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.outlineVariant,
+      if (!isAutoApplied) {
+        optionTiles.add(
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
+              color: recommended
+                  ? theme.colorScheme.secondaryContainer.withOpacity(0.35)
+                  : theme.colorScheme.surfaceVariant.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: selected
+                    ? theme.colorScheme.primary
+                    : needsSelection
+                        ? Colors.orange.withOpacity(0.5)
+                        : theme.colorScheme.outlineVariant,
+                width: needsSelection ? 2 : 1,
+              ),
             ),
+            child: tile,
           ),
-          child: tile,
-        ),
-      );
+        );
+      }
     }
 
     final content = <Widget>[];
+
+    // Add prominent selection prompt for pick features
+    if (needsSelection && !isAutoApplied) {
+      content.add(
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.orange,
+              width: 2,
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.touch_app, color: Colors.orange, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  allowMultiple
+                      ? 'Please select one or more options below'
+                      : 'Please choose one option below',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: Colors.orange[900],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      content.add(const SizedBox(height: 12));
+    }
 
     for (var i = 0; i < optionsContext.messages.length; i++) {
       content.add(_buildInfoMessage(context, optionsContext.messages[i]));
@@ -381,11 +524,31 @@ class ClassFeaturesWidget extends StatelessWidget {
       }
     }
 
-    if (optionTiles.isNotEmpty) {
+    if (isAutoApplied && optionsContext.options.isNotEmpty) {
+      final autoWidgets = _buildAutoAppliedDetails(context, optionsContext);
+      if (autoWidgets.isNotEmpty) {
+        if (content.isNotEmpty) {
+          content.add(const SizedBox(height: 12));
+        }
+        content.add(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: autoWidgets,
+          ),
+        );
+      }
+    } else if (optionTiles.isNotEmpty) {
       if (content.isNotEmpty) {
         content.add(const SizedBox(height: 12));
       }
-      content.add(Text('Options', style: theme.textTheme.titleSmall));
+      content.add(
+        Text(
+          allowMultiple ? 'Select Options' : 'Select One Option',
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
       content.add(const SizedBox(height: 8));
       content.add(Column(children: optionTiles));
     }
@@ -398,6 +561,41 @@ class ClassFeaturesWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: content,
     );
+  }
+
+  bool _isAutoAppliedSelection(_FeatureOptionsContext context) {
+    if (context.allowEditing) return false;
+    if (context.requiresExternalSelection) return false;
+    if (context.options.length != 1) return false;
+    return true;
+  }
+
+  List<Widget> _buildAutoAppliedDetails(
+    BuildContext context,
+    _FeatureOptionsContext optionsContext,
+  ) {
+    if (optionsContext.options.isEmpty) {
+      return const [];
+    }
+
+    final option = optionsContext.options.first;
+    final ability = _resolveAbility(option);
+    final detailWidgets = _buildOptionDetails(context, option, ability);
+    if (detailWidgets.isNotEmpty) {
+      return _withSpacing(detailWidgets);
+    }
+
+    final description = option['description']?.toString().trim();
+    if (description != null && description.isNotEmpty) {
+      return <Widget>[
+        Text(
+          description,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ];
+    }
+
+    return const [];
   }
 
   _FeatureOptionsContext _prepareFeatureOptions({

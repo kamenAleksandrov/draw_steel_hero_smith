@@ -11,6 +11,7 @@ import '../../../../core/models/hero_mod_keys.dart';
 import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../state/hero_main_stats_providers.dart';
+import 'conditions_tracker_widget.dart';
 
 class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
@@ -364,6 +365,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           _buildStaminaAndRecoveries(context, stats),
           const SizedBox(height: 16),
           _buildResourceAndSurges(context, stats, resourceDetails),
+          const SizedBox(height: 16),
+          ConditionsTrackerWidget(heroId: widget.heroId),
           const SizedBox(height: 24),
         ],
       ),
@@ -371,6 +374,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   Widget _buildSummaryCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final level = _latestStats?.level ?? 1;
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -387,10 +393,25 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               label: 'XP',
               field: _NumericField.exp,
             ),
-            _buildCompactNumberDisplay(
-              context,
-              label: 'Level',
-              field: _NumericField.level,
+            // Level - read-only display
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Level',
+                    style: theme.textTheme.labelSmall,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    level.toString(),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

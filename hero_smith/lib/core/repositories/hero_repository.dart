@@ -117,8 +117,12 @@ class HeroRepository {
   // Keys mapping for HeroValues
   static const _k = _HeroKeys._();
 
-  Future<String> createHero({required String name}) =>
-      _db.createHero(name: name);
+  Future<String> createHero({required String name}) async {
+    final id = await _db.createHero(name: name);
+    // Initialize saveEnds with default value of 6
+    await _db.upsertHeroValue(heroId: id, key: _k.saveEnds, value: 6);
+    return id;
+  }
 
   Stream<List<db.Heroe>> watchAllHeroes() => _db.watchAllHeroes();
   Future<List<db.Heroe>> getAllHeroes() => _db.getAllHeroes();
@@ -287,6 +291,14 @@ class HeroRepository {
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _k.recoveriesValue,
+      value: value,
+    );
+  }
+
+  Future<void> updateSaveEnds(String heroId, int value) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.saveEnds,
       value: value,
     );
   }
@@ -1100,6 +1112,7 @@ class _HeroKeys {
   final String potencyWeak = 'potency.weak';
 
   final String conditions = 'conditions.list';
+  final String saveEnds = 'conditions.save_ends';
 
   final String projectPoints = 'projects.points';
 

@@ -58,6 +58,7 @@ class StartingSkillsService {
     void addAllowance({
       required int count,
       required Iterable<String> groups,
+      List<String> individualChoices = const <String>[],
       bool includeGranted = false,
     }) {
       if (count <= 0) return;
@@ -72,6 +73,7 @@ class StartingSkillsService {
           label: label,
           pickCount: count,
           allowedGroups: normalizedGroups,
+          individualSkillChoices: individualChoices,
           isStarting: true,
           grantedSkillNames: includeGranted ? granted : const <String>[],
         ),
@@ -79,9 +81,15 @@ class StartingSkillsService {
       allowanceIndex++;
     }
 
+    // Extract individual skill choices from skill_groups raw data
+    final individualChoices = _extractIndividualSkillChoices(
+      raw['skill_groups'],
+    );
+
     addAllowance(
       count: startingSkills.skillCount,
       groups: startingSkills.skillGroups,
+      individualChoices: individualChoices,
       includeGranted: true,
     );
 
@@ -212,6 +220,29 @@ class StartingSkillsService {
       }
     }
     return allowAny ? <String>{} : normalized;
+  }
+
+  List<String> _extractIndividualSkillChoices(dynamic skillGroupsRaw) {
+    final choices = <String>[];
+    
+    if (skillGroupsRaw is! List) {
+      return choices;
+    }
+
+    for (final item in skillGroupsRaw) {
+      if (item is Map<String, dynamic>) {
+        final individualChoicesRaw = item['individual_skill_choices'];
+        if (individualChoicesRaw is List) {
+          for (final choice in individualChoicesRaw) {
+            if (choice is String && choice.trim().isNotEmpty) {
+              choices.add(choice.trim());
+            }
+          }
+        }
+      }
+    }
+    
+    return choices;
   }
 
   List<String> _extractStringList(dynamic value) {

@@ -313,6 +313,9 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     final deitySlugs =
         ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
 
+    // Extract grant_type metadata from class levels
+    final grantTypeMap = _buildGrantTypeMap();
+
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: double.infinity),
@@ -331,8 +334,23 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
           activeSubclassSlugs: subclassSlugs,
           subclassLabel: subclassLabel,
           subclassSelection: widget.selectedSubclass,
+          grantTypeByFeatureName: grantTypeMap,
         ),
       ),
     );
   }
+
+  Map<String, String> _buildGrantTypeMap() {
+    final map = <String, String>{};
+    for (final levelData in widget.classData.levels) {
+      if (levelData.level > widget.selectedLevel) continue;
+      for (final feature in levelData.features) {
+        if (feature.grantType != null && feature.grantType!.isNotEmpty) {
+          map[feature.name.toLowerCase().trim()] = feature.grantType!;
+        }
+      }
+    }
+    return map;
+  }
 }
+
