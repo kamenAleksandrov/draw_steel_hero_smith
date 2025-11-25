@@ -69,6 +69,7 @@ class HeroDowntimeProjects extends Table {
   TextColumn get guidesJson => text().withDefault(const Constant('[]'))();
   TextColumn get rollCharacteristicsJson => text().withDefault(const Constant('[]'))();
   TextColumn get eventsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get notes => text().withDefault(const Constant(''))();
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
   BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -106,6 +107,22 @@ class HeroProjectSources extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// Hero notes for character journals, session notes, etc.
+class HeroNotes extends Table {
+  TextColumn get id => text()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get title => text()();
+  TextColumn get content => text().withDefault(const Constant(''))();
+  // folderId: null = root level, or references another HeroNote with isFolder=true
+  TextColumn get folderId => text().nullable()();
+  BoolColumn get isFolder => boolean().withDefault(const Constant(false))();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 @DriftDatabase(tables: [
   Components,
   Heroes,
@@ -114,6 +131,7 @@ class HeroProjectSources extends Table {
   HeroDowntimeProjects,
   HeroFollowers,
   HeroProjectSources,
+  HeroNotes,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
@@ -124,7 +142,7 @@ class AppDatabase extends _$AppDatabase {
   static bool databasePreexisted = false;
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -143,6 +161,18 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(heroDowntimeProjects);
             await m.createTable(heroFollowers);
             await m.createTable(heroProjectSources);
+          }
+          if (from < 4) {
+            // Migration from schema version 3 to 4
+            // Add hero notes table
+            await m.createTable(heroNotes);
+          }
+          if (from < 5) {
+            // Migration from schema version 4 to 5
+            // Add notes column to hero_downtime_projects
+            await customStatement(
+              "ALTER TABLE hero_downtime_projects ADD COLUMN notes TEXT NOT NULL DEFAULT ''",
+            );
           }
         },
       );
@@ -446,6 +476,11 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteHero(String heroId) async {
     await transaction(() async {
+      // Delete all per-hero data (order matters: children first, then parent)
+      await (delete(heroNotes)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroDowntimeProjects)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroFollowers)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroProjectSources)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroes)..where((t) => t.id.equals(heroId))).go();
     });

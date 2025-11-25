@@ -860,6 +860,23 @@ class _EventTableCard extends StatelessWidget {
   }
 }
 
+/// Standalone scaffold for the Events page, navigable without bottom nav
+/// Used when navigating from hero downtime tracking
+class EventsPageScaffold extends StatelessWidget {
+  const EventsPageScaffold({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Downtime Events'),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+      ),
+      body: const EventsTab(),
+    );
+  }
+}
+
 class _EventTableDetailPage extends StatelessWidget {
   final EventTable table;
 

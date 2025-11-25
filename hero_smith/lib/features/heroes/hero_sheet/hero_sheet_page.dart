@@ -5,6 +5,7 @@ import 'hero_downtime_tracking_page.dart';
 import 'sheet_abilities.dart';
 import 'sheet_features.dart';
 import 'sheet_main_stats.dart';
+import 'sheet_notes.dart';
 import 'sheet_story.dart';
 
 /// Top-level hero sheet that hosts all hero information.
@@ -39,6 +40,7 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
         heroName: widget.heroName,
         isEmbedded: true,
       ),
+      SheetNotes(heroId: widget.heroId),
     ];
   }
 
@@ -98,6 +100,10 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
             label: 'Downtime',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.sticky_note_2),
+            label: 'Notes',
           ),
         ],
       ),

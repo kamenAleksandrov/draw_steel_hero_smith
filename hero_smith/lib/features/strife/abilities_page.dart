@@ -50,6 +50,14 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
   String? _distanceFilter;
   String? _targetsFilter;
 
+  // Cache filter options
+  List<String>? _cachedResourceOptions;
+  List<String>? _cachedCostOptions;
+  List<String>? _cachedActionTypeOptions;
+  List<String>? _cachedDistanceOptions;
+  List<String>? _cachedTargetsOptions;
+  List<Component>? _cachedItems;
+
   List<Component> get _filteredItems {
     var filtered = widget.items;
 
@@ -124,8 +132,64 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
     });
   }
 
+  void _computeFilterOptions() {
+    if (_cachedItems == widget.items) return;
+    
+    _cachedItems = widget.items;
+    
+    final resourceSet = <String>{};
+    final costSet = <String>{};
+    final actionTypeSet = <String>{};
+    final distanceSet = <String>{};
+    final targetsSet = <String>{};
+
+    for (final item in widget.items) {
+      final ability = AbilityData.fromComponent(item);
+      
+      if (ability.resourceLabel?.isNotEmpty ?? false) {
+        resourceSet.add(ability.resourceLabel!);
+      }
+      
+      if (ability.isSignature) {
+        costSet.add('signature');
+      }
+      final amount = ability.costAmount;
+      if (amount != null && amount > 0) {
+        costSet.add(amount.toString());
+      }
+      
+      if (ability.actionType?.isNotEmpty ?? false) {
+        actionTypeSet.add(ability.actionType!);
+      }
+      
+      if (ability.rangeSummary?.isNotEmpty ?? false) {
+        distanceSet.add(ability.rangeSummary!);
+      }
+      
+      if (ability.targets?.isNotEmpty ?? false) {
+        targetsSet.add(ability.targets!);
+      }
+    }
+
+    _cachedResourceOptions = resourceSet.toList()..sort();
+    _cachedCostOptions = costSet.toList()..sort((a, b) {
+      if (a == 'signature' && b == 'signature') return 0;
+      if (a == 'signature') return -1;
+      if (b == 'signature') return 1;
+      final aInt = int.tryParse(a);
+      final bInt = int.tryParse(b);
+      if (aInt != null && bInt != null) return aInt.compareTo(bInt);
+      return a.compareTo(b);
+    });
+    _cachedActionTypeOptions = actionTypeSet.toList()..sort();
+    _cachedDistanceOptions = distanceSet.toList()..sort();
+    _cachedTargetsOptions = targetsSet.toList()..sort();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _computeFilterOptions();
+    
     final decoration = _abilitiesBackground(context);
     final filtered = _filteredItems;
     final stats = _AbilitySummaryStats.fromComponents(widget.items);
@@ -136,63 +200,6 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
         child: const _AbilitiesEmptyState(),
       );
     }
-
-    // Extract unique filter options
-    final resourceOptions = widget.items
-        .map((item) => AbilityData.fromComponent(item).resourceLabel)
-        .where((type) => type != null && type.isNotEmpty)
-        .cast<String>()
-        .toSet()
-        .toList()
-      ..sort();
-
-    final costSet = <String>{};
-    for (final item in widget.items) {
-      final ability = AbilityData.fromComponent(item);
-      if (ability.isSignature) {
-        costSet.add('signature');
-      }
-      final amount = ability.costAmount;
-      if (amount != null && amount > 0) {
-        costSet.add(amount.toString());
-      }
-    }
-    final costOptions = costSet.toList()
-      ..sort((a, b) {
-        if (a == 'signature' && b == 'signature') return 0;
-        if (a == 'signature') return -1;
-        if (b == 'signature') return 1;
-        final aInt = int.tryParse(a);
-        final bInt = int.tryParse(b);
-        if (aInt != null && bInt != null) {
-          return aInt.compareTo(bInt);
-        }
-        return a.compareTo(b);
-      });
-
-    final actionTypeOptions = widget.items
-        .map((item) => AbilityData.fromComponent(item).actionType)
-        .where((type) => type != null && type.isNotEmpty)
-        .cast<String>()
-        .toSet()
-        .toList()
-      ..sort();
-
-    final distanceOptions = widget.items
-        .map((item) => AbilityData.fromComponent(item).rangeSummary)
-        .where((dist) => dist != null && dist.isNotEmpty)
-        .cast<String>()
-        .toSet()
-        .toList()
-      ..sort();
-
-    final targetsOptions = widget.items
-        .map((item) => AbilityData.fromComponent(item).targets)
-        .where((targets) => targets != null && targets.isNotEmpty)
-        .cast<String>()
-        .toSet()
-        .toList()
-      ..sort();
 
     final hasActiveFilters = _searchQuery.isNotEmpty ||
         _resourceFilter != null ||
@@ -217,11 +224,11 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
               child: _buildSearchAndFilters(
                 context,
-                resourceOptions: resourceOptions,
-                costOptions: costOptions,
-                actionTypeOptions: actionTypeOptions,
-                distanceOptions: distanceOptions,
-                targetsOptions: targetsOptions,
+                resourceOptions: _cachedResourceOptions ?? [],
+                costOptions: _cachedCostOptions ?? [],
+                actionTypeOptions: _cachedActionTypeOptions ?? [],
+                distanceOptions: _cachedDistanceOptions ?? [],
+                targetsOptions: _cachedTargetsOptions ?? [],
               ),
             ),
           ),

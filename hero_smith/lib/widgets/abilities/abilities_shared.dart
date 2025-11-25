@@ -17,17 +17,72 @@ class AbilityTierLine {
 
 /// Utility class for highlighting game mechanics in ability text
 class AbilityTextHighlighter {
+  // Damage types to match
+  static const _damageTypes = [
+    'acid',
+    'poison',
+    'fire',
+    'cold',
+    'sonic',
+    'holy',
+    'corruption',
+    'psychic',
+    'lightning',
+  ];
+
+  // Potency strength keywords
+  static const _potencyStrengths = [
+    'weak',
+    'average',
+    'strong',
+    'w',
+    'a',
+    's',
+    'WEAK',
+    'AVERAGE',
+    'STRONG',
+    'W',
+    'A',
+    'S',
+  ];
+
   /// Creates a RichText widget with highlighted characteristics, potencies, and damage types
-  static Widget highlightGameMechanics(String text, BuildContext context,
-      {TextStyle? baseStyle}) {
+  static Widget highlightGameMechanics(
+    String text,
+    BuildContext context, {
+    TextStyle? baseStyle,
+  }) {
     final theme = Theme.of(context);
     baseStyle ??= theme.textTheme.bodyMedium ?? const TextStyle();
 
     final spans = <TextSpan>[];
-    // Enhanced regex to include damage types
+
+    // Build damage types pattern
+    final damageTypesPattern = _damageTypes.join('|');
+
+    // Build potency strengths pattern
+    final potencyPattern = _potencyStrengths.join('|');
+
+    // Comprehensive regex for game mechanics:
+    // 1. Potency: M<weak, A < AVERAGE, etc. (characteristic + < + strength)
+    // 2. Characteristic after +: "5 + M", "3 + A damage"
+    // 3. Characteristic before <: "M < WEAK", "A < AVERAGE"
+    // 4. Characteristic at start followed by < (for tier text): "^A < WEAK"
+    // 5. Damage types: fire, cold, etc.
     final regex = RegExp(
-        r'([MARIP])<(weak|average|strong|w|a|s)\b|\b([MARIP])\b|\b(acid|poison|fire|cold|sonic|holy|corruption|psychic|lightning)\b',
-        caseSensitive: false);
+      // Group 1-2: Potency with no space: M<weak
+      r'([MARIP])<(' + potencyPattern + r')\b'
+      // Group 3-4: Potency with spaces: M < WEAK
+      r'|([MARIP])\s*<\s*(' + potencyPattern + r')\b'
+      // Group 5: Characteristic after + (with optional space): "5 + M" or "5 +M"
+      r'|(?<=\+\s?)([MARIP])(?=\s|$|[,;]|\s+(?:' + damageTypesPattern + r')|(?:\s+damage))'
+      // Group 6: Characteristic before damage keyword: "3 + A damage" or "A fire damage"
+      r'|(?<=\+\s?)([MARIP])(?=\s+(?:' + damageTypesPattern + r')?\s*damage)'
+      // Group 7: Standalone damage types
+      r'|\b(' + damageTypesPattern + r')\b(?=\s+damage|\s+immunity|\))',
+      caseSensitive: false,
+    );
+
     int lastEnd = 0;
 
     for (final match in regex.allMatches(text)) {
@@ -39,43 +94,75 @@ class AbilityTextHighlighter {
         ));
       }
 
-      final potencyChar = match.group(1); // Characteristic with potency
-      final potencyStrength =
-          match.group(2); // Potency strength (weak, average, strong, w, a, s)
-      final characteristic =
-          match.group(3); // Single characteristic (M, A, R, I, P)
-      final damageType = match.group(4); // Damage type (acid, fire, etc.)
+      // Potency without space: M<weak (groups 1-2)
+      final potencyCharNoSpace = match.group(1);
+      final potencyStrengthNoSpace = match.group(2);
 
-      if (potencyChar != null && potencyStrength != null) {
-        // Potency highlighting (e.g., "M<w", "P<strong")
+      // Potency with space: M < WEAK (groups 3-4)
+      final potencyCharWithSpace = match.group(3);
+      final potencyStrengthWithSpace = match.group(4);
+
+      // Characteristic after + (groups 5-6)
+      final charAfterPlus = match.group(5) ?? match.group(6);
+
+      // Damage type (group 7)
+      final damageType = match.group(7);
+
+      if (potencyCharNoSpace != null && potencyStrengthNoSpace != null) {
+        // Potency highlighting without space (e.g., "M<weak")
+        _addPotencySpans(
+          spans,
+          baseStyle,
+          potencyCharNoSpace,
+          '<$potencyStrengthNoSpace',
+          potencyStrengthNoSpace,
+        );
+      } else if (potencyCharWithSpace != null && potencyStrengthWithSpace != null) {
+        // Potency highlighting with space (e.g., "M < WEAK")
+        // We need to reconstruct the matched text with its original spacing
+        final matchedText = text.substring(match.start, match.end);
+        final charPart = potencyCharWithSpace;
+        final strengthPart = potencyStrengthWithSpace;
+        
+        // Find the separator (everything between char and strength)
+        final charIndex = matchedText.indexOf(charPart);
+        final strengthIndex = matchedText.toLowerCase().indexOf(strengthPart.toLowerCase());
+        final separator = matchedText.substring(charIndex + 1, strengthIndex);
+
         spans.add(TextSpan(
-          text: potencyChar,
+          text: charPart,
           style: baseStyle.copyWith(
-            color: CharacteristicTokens.color(potencyChar),
+            color: CharacteristicTokens.color(charPart.toUpperCase()),
             fontWeight: FontWeight.bold,
           ),
         ));
         spans.add(TextSpan(
-          text: '<$potencyStrength',
+          text: separator,
+          style: baseStyle,
+        ));
+        spans.add(TextSpan(
+          text: strengthPart,
           style: baseStyle.copyWith(
-            color: PotencyTokens.color(potencyStrength),
+            color: PotencyTokens.color(strengthPart.toLowerCase()),
             fontWeight: FontWeight.bold,
           ),
         ));
-      } else if (characteristic != null) {
-        // Single characteristic highlighting
+      } else if (charAfterPlus != null) {
+        // Characteristic after + sign (damage expression context)
         spans.add(TextSpan(
-          text: characteristic,
+          text: charAfterPlus,
           style: baseStyle.copyWith(
-            color: CharacteristicTokens.color(characteristic),
+            color: CharacteristicTokens.color(charAfterPlus.toUpperCase()),
             fontWeight: FontWeight.bold,
           ),
         ));
       } else if (damageType != null) {
         // Damage type highlighting with emoji and color
-        final emoji = DamageTokens.emoji(damageType);
-        final color = DamageTokens.color(damageType);
+        final normalizedType = damageType.toLowerCase();
+        final emoji = DamageTokens.emoji(normalizedType);
+        final color = DamageTokens.color(normalizedType);
 
+        // Keep original case but add styling
         spans.add(TextSpan(
           text: emoji.isNotEmpty ? '$emoji $damageType' : damageType,
           style: baseStyle.copyWith(
@@ -99,6 +186,29 @@ class AbilityTextHighlighter {
     return RichText(
       text: TextSpan(children: spans),
     );
+  }
+
+  static void _addPotencySpans(
+    List<TextSpan> spans,
+    TextStyle baseStyle,
+    String characteristic,
+    String potencyText,
+    String strength,
+  ) {
+    spans.add(TextSpan(
+      text: characteristic,
+      style: baseStyle.copyWith(
+        color: CharacteristicTokens.color(characteristic.toUpperCase()),
+        fontWeight: FontWeight.bold,
+      ),
+    ));
+    spans.add(TextSpan(
+      text: potencyText,
+      style: baseStyle.copyWith(
+        color: PotencyTokens.color(strength.toLowerCase()),
+        fontWeight: FontWeight.bold,
+      ),
+    ));
   }
 }
 

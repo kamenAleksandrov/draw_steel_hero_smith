@@ -1486,6 +1486,13 @@ class $HeroDowntimeProjectsTable extends HeroDowntimeProjects
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant('[]'));
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
   static const VerificationMeta _isCustomMeta =
       const VerificationMeta('isCustom');
   @override
@@ -1537,6 +1544,7 @@ class $HeroDowntimeProjectsTable extends HeroDowntimeProjects
         guidesJson,
         rollCharacteristicsJson,
         eventsJson,
+        notes,
         isCustom,
         isCompleted,
         createdAt,
@@ -1633,6 +1641,10 @@ class $HeroDowntimeProjectsTable extends HeroDowntimeProjects
           eventsJson.isAcceptableOrUnknown(
               data['events_json']!, _eventsJsonMeta));
     }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
     if (data.containsKey('is_custom')) {
       context.handle(_isCustomMeta,
           isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta));
@@ -1687,6 +1699,8 @@ class $HeroDowntimeProjectsTable extends HeroDowntimeProjects
           data['${effectivePrefix}roll_characteristics_json'])!,
       eventsJson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}events_json'])!,
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes'])!,
       isCustom: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_custom'])!,
       isCompleted: attachedDatabase.typeMapping
@@ -1719,6 +1733,7 @@ class HeroDowntimeProject extends DataClass
   final String guidesJson;
   final String rollCharacteristicsJson;
   final String eventsJson;
+  final String notes;
   final bool isCustom;
   final bool isCompleted;
   final DateTime createdAt;
@@ -1737,6 +1752,7 @@ class HeroDowntimeProject extends DataClass
       required this.guidesJson,
       required this.rollCharacteristicsJson,
       required this.eventsJson,
+      required this.notes,
       required this.isCustom,
       required this.isCompleted,
       required this.createdAt,
@@ -1764,6 +1780,7 @@ class HeroDowntimeProject extends DataClass
     map['roll_characteristics_json'] =
         Variable<String>(rollCharacteristicsJson);
     map['events_json'] = Variable<String>(eventsJson);
+    map['notes'] = Variable<String>(notes);
     map['is_custom'] = Variable<bool>(isCustom);
     map['is_completed'] = Variable<bool>(isCompleted);
     map['created_at'] = Variable<DateTime>(createdAt);
@@ -1792,6 +1809,7 @@ class HeroDowntimeProject extends DataClass
       guidesJson: Value(guidesJson),
       rollCharacteristicsJson: Value(rollCharacteristicsJson),
       eventsJson: Value(eventsJson),
+      notes: Value(notes),
       isCustom: Value(isCustom),
       isCompleted: Value(isCompleted),
       createdAt: Value(createdAt),
@@ -1818,6 +1836,7 @@ class HeroDowntimeProject extends DataClass
       rollCharacteristicsJson:
           serializer.fromJson<String>(json['rollCharacteristicsJson']),
       eventsJson: serializer.fromJson<String>(json['eventsJson']),
+      notes: serializer.fromJson<String>(json['notes']),
       isCustom: serializer.fromJson<bool>(json['isCustom']),
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -1842,6 +1861,7 @@ class HeroDowntimeProject extends DataClass
       'rollCharacteristicsJson':
           serializer.toJson<String>(rollCharacteristicsJson),
       'eventsJson': serializer.toJson<String>(eventsJson),
+      'notes': serializer.toJson<String>(notes),
       'isCustom': serializer.toJson<bool>(isCustom),
       'isCompleted': serializer.toJson<bool>(isCompleted),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -1863,6 +1883,7 @@ class HeroDowntimeProject extends DataClass
           String? guidesJson,
           String? rollCharacteristicsJson,
           String? eventsJson,
+          String? notes,
           bool? isCustom,
           bool? isCompleted,
           DateTime? createdAt,
@@ -1886,6 +1907,7 @@ class HeroDowntimeProject extends DataClass
         rollCharacteristicsJson:
             rollCharacteristicsJson ?? this.rollCharacteristicsJson,
         eventsJson: eventsJson ?? this.eventsJson,
+        notes: notes ?? this.notes,
         isCustom: isCustom ?? this.isCustom,
         isCompleted: isCompleted ?? this.isCompleted,
         createdAt: createdAt ?? this.createdAt,
@@ -1922,6 +1944,7 @@ class HeroDowntimeProject extends DataClass
           : this.rollCharacteristicsJson,
       eventsJson:
           data.eventsJson.present ? data.eventsJson.value : this.eventsJson,
+      notes: data.notes.present ? data.notes.value : this.notes,
       isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
       isCompleted:
           data.isCompleted.present ? data.isCompleted.value : this.isCompleted,
@@ -1946,6 +1969,7 @@ class HeroDowntimeProject extends DataClass
           ..write('guidesJson: $guidesJson, ')
           ..write('rollCharacteristicsJson: $rollCharacteristicsJson, ')
           ..write('eventsJson: $eventsJson, ')
+          ..write('notes: $notes, ')
           ..write('isCustom: $isCustom, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('createdAt: $createdAt, ')
@@ -1969,6 +1993,7 @@ class HeroDowntimeProject extends DataClass
       guidesJson,
       rollCharacteristicsJson,
       eventsJson,
+      notes,
       isCustom,
       isCompleted,
       createdAt,
@@ -1990,6 +2015,7 @@ class HeroDowntimeProject extends DataClass
           other.guidesJson == this.guidesJson &&
           other.rollCharacteristicsJson == this.rollCharacteristicsJson &&
           other.eventsJson == this.eventsJson &&
+          other.notes == this.notes &&
           other.isCustom == this.isCustom &&
           other.isCompleted == this.isCompleted &&
           other.createdAt == this.createdAt &&
@@ -2011,6 +2037,7 @@ class HeroDowntimeProjectsCompanion
   final Value<String> guidesJson;
   final Value<String> rollCharacteristicsJson;
   final Value<String> eventsJson;
+  final Value<String> notes;
   final Value<bool> isCustom;
   final Value<bool> isCompleted;
   final Value<DateTime> createdAt;
@@ -2030,6 +2057,7 @@ class HeroDowntimeProjectsCompanion
     this.guidesJson = const Value.absent(),
     this.rollCharacteristicsJson = const Value.absent(),
     this.eventsJson = const Value.absent(),
+    this.notes = const Value.absent(),
     this.isCustom = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2050,6 +2078,7 @@ class HeroDowntimeProjectsCompanion
     this.guidesJson = const Value.absent(),
     this.rollCharacteristicsJson = const Value.absent(),
     this.eventsJson = const Value.absent(),
+    this.notes = const Value.absent(),
     this.isCustom = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2073,6 +2102,7 @@ class HeroDowntimeProjectsCompanion
     Expression<String>? guidesJson,
     Expression<String>? rollCharacteristicsJson,
     Expression<String>? eventsJson,
+    Expression<String>? notes,
     Expression<bool>? isCustom,
     Expression<bool>? isCompleted,
     Expression<DateTime>? createdAt,
@@ -2094,6 +2124,7 @@ class HeroDowntimeProjectsCompanion
       if (rollCharacteristicsJson != null)
         'roll_characteristics_json': rollCharacteristicsJson,
       if (eventsJson != null) 'events_json': eventsJson,
+      if (notes != null) 'notes': notes,
       if (isCustom != null) 'is_custom': isCustom,
       if (isCompleted != null) 'is_completed': isCompleted,
       if (createdAt != null) 'created_at': createdAt,
@@ -2116,6 +2147,7 @@ class HeroDowntimeProjectsCompanion
       Value<String>? guidesJson,
       Value<String>? rollCharacteristicsJson,
       Value<String>? eventsJson,
+      Value<String>? notes,
       Value<bool>? isCustom,
       Value<bool>? isCompleted,
       Value<DateTime>? createdAt,
@@ -2136,6 +2168,7 @@ class HeroDowntimeProjectsCompanion
       rollCharacteristicsJson:
           rollCharacteristicsJson ?? this.rollCharacteristicsJson,
       eventsJson: eventsJson ?? this.eventsJson,
+      notes: notes ?? this.notes,
       isCustom: isCustom ?? this.isCustom,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
@@ -2187,6 +2220,9 @@ class HeroDowntimeProjectsCompanion
     if (eventsJson.present) {
       map['events_json'] = Variable<String>(eventsJson.value);
     }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
     if (isCustom.present) {
       map['is_custom'] = Variable<bool>(isCustom.value);
     }
@@ -2221,6 +2257,7 @@ class HeroDowntimeProjectsCompanion
           ..write('guidesJson: $guidesJson, ')
           ..write('rollCharacteristicsJson: $rollCharacteristicsJson, ')
           ..write('eventsJson: $eventsJson, ')
+          ..write('notes: $notes, ')
           ..write('isCustom: $isCustom, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('createdAt: $createdAt, ')
@@ -3214,6 +3251,472 @@ class HeroProjectSourcesCompanion extends UpdateCompanion<HeroProjectSource> {
   }
 }
 
+class $HeroNotesTable extends HeroNotes
+    with TableInfo<$HeroNotesTable, HeroNote> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroNotesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _contentMeta =
+      const VerificationMeta('content');
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+      'content', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _folderIdMeta =
+      const VerificationMeta('folderId');
+  @override
+  late final GeneratedColumn<String> folderId = GeneratedColumn<String>(
+      'folder_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _isFolderMeta =
+      const VerificationMeta('isFolder');
+  @override
+  late final GeneratedColumn<bool> isFolder = GeneratedColumn<bool>(
+      'is_folder', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_folder" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _sortOrderMeta =
+      const VerificationMeta('sortOrder');
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+      'sort_order', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        heroId,
+        title,
+        content,
+        folderId,
+        isFolder,
+        sortOrder,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_notes';
+  @override
+  VerificationContext validateIntegrity(Insertable<HeroNote> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(_contentMeta,
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
+    }
+    if (data.containsKey('folder_id')) {
+      context.handle(_folderIdMeta,
+          folderId.isAcceptableOrUnknown(data['folder_id']!, _folderIdMeta));
+    }
+    if (data.containsKey('is_folder')) {
+      context.handle(_isFolderMeta,
+          isFolder.isAcceptableOrUnknown(data['is_folder']!, _isFolderMeta));
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(_sortOrderMeta,
+          sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroNote map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroNote(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      content: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}content'])!,
+      folderId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}folder_id']),
+      isFolder: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_folder'])!,
+      sortOrder: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}sort_order'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $HeroNotesTable createAlias(String alias) {
+    return $HeroNotesTable(attachedDatabase, alias);
+  }
+}
+
+class HeroNote extends DataClass implements Insertable<HeroNote> {
+  final String id;
+  final String heroId;
+  final String title;
+  final String content;
+  final String? folderId;
+  final bool isFolder;
+  final int sortOrder;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const HeroNote(
+      {required this.id,
+      required this.heroId,
+      required this.title,
+      required this.content,
+      this.folderId,
+      required this.isFolder,
+      required this.sortOrder,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    map['title'] = Variable<String>(title);
+    map['content'] = Variable<String>(content);
+    if (!nullToAbsent || folderId != null) {
+      map['folder_id'] = Variable<String>(folderId);
+    }
+    map['is_folder'] = Variable<bool>(isFolder);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  HeroNotesCompanion toCompanion(bool nullToAbsent) {
+    return HeroNotesCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      title: Value(title),
+      content: Value(content),
+      folderId: folderId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(folderId),
+      isFolder: Value(isFolder),
+      sortOrder: Value(sortOrder),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory HeroNote.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroNote(
+      id: serializer.fromJson<String>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      title: serializer.fromJson<String>(json['title']),
+      content: serializer.fromJson<String>(json['content']),
+      folderId: serializer.fromJson<String?>(json['folderId']),
+      isFolder: serializer.fromJson<bool>(json['isFolder']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'title': serializer.toJson<String>(title),
+      'content': serializer.toJson<String>(content),
+      'folderId': serializer.toJson<String?>(folderId),
+      'isFolder': serializer.toJson<bool>(isFolder),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  HeroNote copyWith(
+          {String? id,
+          String? heroId,
+          String? title,
+          String? content,
+          Value<String?> folderId = const Value.absent(),
+          bool? isFolder,
+          int? sortOrder,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      HeroNote(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        title: title ?? this.title,
+        content: content ?? this.content,
+        folderId: folderId.present ? folderId.value : this.folderId,
+        isFolder: isFolder ?? this.isFolder,
+        sortOrder: sortOrder ?? this.sortOrder,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  HeroNote copyWithCompanion(HeroNotesCompanion data) {
+    return HeroNote(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      title: data.title.present ? data.title.value : this.title,
+      content: data.content.present ? data.content.value : this.content,
+      folderId: data.folderId.present ? data.folderId.value : this.folderId,
+      isFolder: data.isFolder.present ? data.isFolder.value : this.isFolder,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroNote(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('folderId: $folderId, ')
+          ..write('isFolder: $isFolder, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, heroId, title, content, folderId,
+      isFolder, sortOrder, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroNote &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.title == this.title &&
+          other.content == this.content &&
+          other.folderId == this.folderId &&
+          other.isFolder == this.isFolder &&
+          other.sortOrder == this.sortOrder &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class HeroNotesCompanion extends UpdateCompanion<HeroNote> {
+  final Value<String> id;
+  final Value<String> heroId;
+  final Value<String> title;
+  final Value<String> content;
+  final Value<String?> folderId;
+  final Value<bool> isFolder;
+  final Value<int> sortOrder;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const HeroNotesCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.folderId = const Value.absent(),
+    this.isFolder = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  HeroNotesCompanion.insert({
+    required String id,
+    required String heroId,
+    required String title,
+    this.content = const Value.absent(),
+    this.folderId = const Value.absent(),
+    this.isFolder = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        heroId = Value(heroId),
+        title = Value(title);
+  static Insertable<HeroNote> custom({
+    Expression<String>? id,
+    Expression<String>? heroId,
+    Expression<String>? title,
+    Expression<String>? content,
+    Expression<String>? folderId,
+    Expression<bool>? isFolder,
+    Expression<int>? sortOrder,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (folderId != null) 'folder_id': folderId,
+      if (isFolder != null) 'is_folder': isFolder,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  HeroNotesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? heroId,
+      Value<String>? title,
+      Value<String>? content,
+      Value<String?>? folderId,
+      Value<bool>? isFolder,
+      Value<int>? sortOrder,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return HeroNotesCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      folderId: folderId ?? this.folderId,
+      isFolder: isFolder ?? this.isFolder,
+      sortOrder: sortOrder ?? this.sortOrder,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (folderId.present) {
+      map['folder_id'] = Variable<String>(folderId.value);
+    }
+    if (isFolder.present) {
+      map['is_folder'] = Variable<bool>(isFolder.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroNotesCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('folderId: $folderId, ')
+          ..write('isFolder: $isFolder, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3226,6 +3729,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HeroFollowersTable heroFollowers = $HeroFollowersTable(this);
   late final $HeroProjectSourcesTable heroProjectSources =
       $HeroProjectSourcesTable(this);
+  late final $HeroNotesTable heroNotes = $HeroNotesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3237,7 +3741,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         metaEntries,
         heroDowntimeProjects,
         heroFollowers,
-        heroProjectSources
+        heroProjectSources,
+        heroNotes
       ];
 }
 
@@ -3730,6 +4235,20 @@ final class $$HeroesTableReferences
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$HeroNotesTable, List<HeroNote>>
+      _heroNotesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.heroNotes,
+          aliasName: $_aliasNameGenerator(db.heroes.id, db.heroNotes.heroId));
+
+  $$HeroNotesTableProcessedTableManager get heroNotesRefs {
+    final manager = $$HeroNotesTableTableManager($_db, $_db.heroNotes)
+        .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_heroNotesRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$HeroesTableFilterComposer
@@ -3850,6 +4369,27 @@ class $$HeroesTableFilterComposer
             $$HeroProjectSourcesTableFilterComposer(
               $db: $db,
               $table: $db.heroProjectSources,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroNotesRefs(
+      Expression<bool> Function($$HeroNotesTableFilterComposer f) f) {
+    final $$HeroNotesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroNotes,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroNotesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroNotes,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -4028,6 +4568,27 @@ class $$HeroesTableAnnotationComposer
                 ));
     return f(composer);
   }
+
+  Expression<T> heroNotesRefs<T extends Object>(
+      Expression<T> Function($$HeroNotesTableAnnotationComposer a) f) {
+    final $$HeroNotesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroNotes,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroNotesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroNotes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$HeroesTableTableManager extends RootTableManager<
@@ -4046,7 +4607,8 @@ class $$HeroesTableTableManager extends RootTableManager<
         bool heroValuesRefs,
         bool heroDowntimeProjectsRefs,
         bool heroFollowersRefs,
-        bool heroProjectSourcesRefs})> {
+        bool heroProjectSourcesRefs,
+        bool heroNotesRefs})> {
   $$HeroesTableTableManager(_$AppDatabase db, $HeroesTable table)
       : super(TableManagerState(
           db: db,
@@ -4098,14 +4660,16 @@ class $$HeroesTableTableManager extends RootTableManager<
               heroValuesRefs = false,
               heroDowntimeProjectsRefs = false,
               heroFollowersRefs = false,
-              heroProjectSourcesRefs = false}) {
+              heroProjectSourcesRefs = false,
+              heroNotesRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
                 if (heroValuesRefs) db.heroValues,
                 if (heroDowntimeProjectsRefs) db.heroDowntimeProjects,
                 if (heroFollowersRefs) db.heroFollowers,
-                if (heroProjectSourcesRefs) db.heroProjectSources
+                if (heroProjectSourcesRefs) db.heroProjectSources,
+                if (heroNotesRefs) db.heroNotes
               ],
               addJoins: <
                   T extends TableManagerState<
@@ -4185,6 +4749,18 @@ class $$HeroesTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroNotesRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable, HeroNote>(
+                        currentTable: table,
+                        referencedTable:
+                            $$HeroesTableReferences._heroNotesRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroNotesRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
                         typedResults: items)
                 ];
               },
@@ -4209,7 +4785,8 @@ typedef $$HeroesTableProcessedTableManager = ProcessedTableManager<
         bool heroValuesRefs,
         bool heroDowntimeProjectsRefs,
         bool heroFollowersRefs,
-        bool heroProjectSourcesRefs})>;
+        bool heroProjectSourcesRefs,
+        bool heroNotesRefs})>;
 typedef $$HeroValuesTableCreateCompanionBuilder = HeroValuesCompanion Function({
   Value<int> id,
   required String heroId,
@@ -4673,6 +5250,7 @@ typedef $$HeroDowntimeProjectsTableCreateCompanionBuilder
   Value<String> guidesJson,
   Value<String> rollCharacteristicsJson,
   Value<String> eventsJson,
+  Value<String> notes,
   Value<bool> isCustom,
   Value<bool> isCompleted,
   Value<DateTime> createdAt,
@@ -4694,6 +5272,7 @@ typedef $$HeroDowntimeProjectsTableUpdateCompanionBuilder
   Value<String> guidesJson,
   Value<String> rollCharacteristicsJson,
   Value<String> eventsJson,
+  Value<String> notes,
   Value<bool> isCustom,
   Value<bool> isCompleted,
   Value<DateTime> createdAt,
@@ -4769,6 +5348,9 @@ class $$HeroDowntimeProjectsTableFilterComposer
 
   ColumnFilters<String> get eventsJson => $composableBuilder(
       column: $table.eventsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get isCustom => $composableBuilder(
       column: $table.isCustom, builder: (column) => ColumnFilters(column));
@@ -4854,6 +5436,9 @@ class $$HeroDowntimeProjectsTableOrderingComposer
   ColumnOrderings<String> get eventsJson => $composableBuilder(
       column: $table.eventsJson, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<bool> get isCustom => $composableBuilder(
       column: $table.isCustom, builder: (column) => ColumnOrderings(column));
 
@@ -4932,6 +5517,9 @@ class $$HeroDowntimeProjectsTableAnnotationComposer
   GeneratedColumn<String> get eventsJson => $composableBuilder(
       column: $table.eventsJson, builder: (column) => column);
 
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
   GeneratedColumn<bool> get isCustom =>
       $composableBuilder(column: $table.isCustom, builder: (column) => column);
 
@@ -5004,6 +5592,7 @@ class $$HeroDowntimeProjectsTableTableManager extends RootTableManager<
             Value<String> guidesJson = const Value.absent(),
             Value<String> rollCharacteristicsJson = const Value.absent(),
             Value<String> eventsJson = const Value.absent(),
+            Value<String> notes = const Value.absent(),
             Value<bool> isCustom = const Value.absent(),
             Value<bool> isCompleted = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5024,6 +5613,7 @@ class $$HeroDowntimeProjectsTableTableManager extends RootTableManager<
             guidesJson: guidesJson,
             rollCharacteristicsJson: rollCharacteristicsJson,
             eventsJson: eventsJson,
+            notes: notes,
             isCustom: isCustom,
             isCompleted: isCompleted,
             createdAt: createdAt,
@@ -5044,6 +5634,7 @@ class $$HeroDowntimeProjectsTableTableManager extends RootTableManager<
             Value<String> guidesJson = const Value.absent(),
             Value<String> rollCharacteristicsJson = const Value.absent(),
             Value<String> eventsJson = const Value.absent(),
+            Value<String> notes = const Value.absent(),
             Value<bool> isCustom = const Value.absent(),
             Value<bool> isCompleted = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -5064,6 +5655,7 @@ class $$HeroDowntimeProjectsTableTableManager extends RootTableManager<
             guidesJson: guidesJson,
             rollCharacteristicsJson: rollCharacteristicsJson,
             eventsJson: eventsJson,
+            notes: notes,
             isCustom: isCustom,
             isCompleted: isCompleted,
             createdAt: createdAt,
@@ -5817,6 +6409,338 @@ typedef $$HeroProjectSourcesTableProcessedTableManager = ProcessedTableManager<
     (HeroProjectSource, $$HeroProjectSourcesTableReferences),
     HeroProjectSource,
     PrefetchHooks Function({bool heroId})>;
+typedef $$HeroNotesTableCreateCompanionBuilder = HeroNotesCompanion Function({
+  required String id,
+  required String heroId,
+  required String title,
+  Value<String> content,
+  Value<String?> folderId,
+  Value<bool> isFolder,
+  Value<int> sortOrder,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+typedef $$HeroNotesTableUpdateCompanionBuilder = HeroNotesCompanion Function({
+  Value<String> id,
+  Value<String> heroId,
+  Value<String> title,
+  Value<String> content,
+  Value<String?> folderId,
+  Value<bool> isFolder,
+  Value<int> sortOrder,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+final class $$HeroNotesTableReferences
+    extends BaseReferences<_$AppDatabase, $HeroNotesTable, HeroNote> {
+  $$HeroNotesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes
+      .createAlias($_aliasNameGenerator(db.heroNotes.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroNotesTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroNotesTable> {
+  $$HeroNotesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get folderId => $composableBuilder(
+      column: $table.folderId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isFolder => $composableBuilder(
+      column: $table.isFolder, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+      column: $table.sortOrder, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroNotesTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroNotesTable> {
+  $$HeroNotesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get folderId => $composableBuilder(
+      column: $table.folderId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isFolder => $composableBuilder(
+      column: $table.isFolder, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+      column: $table.sortOrder, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroNotesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroNotesTable> {
+  $$HeroNotesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get folderId =>
+      $composableBuilder(column: $table.folderId, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFolder =>
+      $composableBuilder(column: $table.isFolder, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroNotesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroNotesTable,
+    HeroNote,
+    $$HeroNotesTableFilterComposer,
+    $$HeroNotesTableOrderingComposer,
+    $$HeroNotesTableAnnotationComposer,
+    $$HeroNotesTableCreateCompanionBuilder,
+    $$HeroNotesTableUpdateCompanionBuilder,
+    (HeroNote, $$HeroNotesTableReferences),
+    HeroNote,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroNotesTableTableManager(_$AppDatabase db, $HeroNotesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroNotesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroNotesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroNotesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> content = const Value.absent(),
+            Value<String?> folderId = const Value.absent(),
+            Value<bool> isFolder = const Value.absent(),
+            Value<int> sortOrder = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroNotesCompanion(
+            id: id,
+            heroId: heroId,
+            title: title,
+            content: content,
+            folderId: folderId,
+            isFolder: isFolder,
+            sortOrder: sortOrder,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String heroId,
+            required String title,
+            Value<String> content = const Value.absent(),
+            Value<String?> folderId = const Value.absent(),
+            Value<bool> isFolder = const Value.absent(),
+            Value<int> sortOrder = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              HeroNotesCompanion.insert(
+            id: id,
+            heroId: heroId,
+            title: title,
+            content: content,
+            folderId: folderId,
+            isFolder: isFolder,
+            sortOrder: sortOrder,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroNotesTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroNotesTableReferences._heroIdTable(db),
+                    referencedColumn:
+                        $$HeroNotesTableReferences._heroIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroNotesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $HeroNotesTable,
+    HeroNote,
+    $$HeroNotesTableFilterComposer,
+    $$HeroNotesTableOrderingComposer,
+    $$HeroNotesTableAnnotationComposer,
+    $$HeroNotesTableCreateCompanionBuilder,
+    $$HeroNotesTableUpdateCompanionBuilder,
+    (HeroNote, $$HeroNotesTableReferences),
+    HeroNote,
+    PrefetchHooks Function({bool heroId})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5835,4 +6759,6 @@ class $AppDatabaseManager {
       $$HeroFollowersTableTableManager(_db, _db.heroFollowers);
   $$HeroProjectSourcesTableTableManager get heroProjectSources =>
       $$HeroProjectSourcesTableTableManager(_db, _db.heroProjectSources);
+  $$HeroNotesTableTableManager get heroNotes =>
+      $$HeroNotesTableTableManager(_db, _db.heroNotes);
 }

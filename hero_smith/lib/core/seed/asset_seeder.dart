@@ -48,6 +48,7 @@ class AssetSeeder {
   static Future<List<ComponentsCompanion>> _buildSeedBatch(
       Iterable<String> assetPaths) async {
     final batchOps = <ComponentsCompanion>[];
+    final seenIds = <String>{}; // Track IDs to prevent duplicates
     for (final path in assetPaths) {
       // Skip legacy class_abilities folder - only load simplified format
       if (path.contains('data/abilities/class_abilities/') &&
@@ -71,6 +72,10 @@ class AssetSeeder {
         final work = Map<String, dynamic>.from(map);
         final id = _popComponentId(work);
         if (id == null || id.isEmpty) continue;
+        
+        // Skip if we've already seen this ID (prevents duplicates)
+        if (seenIds.contains(id)) continue;
+        seenIds.add(id);
 
         String type;
         if (path.contains('/abilities/') ||

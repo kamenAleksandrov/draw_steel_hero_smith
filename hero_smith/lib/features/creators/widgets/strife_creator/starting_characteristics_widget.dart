@@ -443,16 +443,27 @@ class _StartingCharacteristicsWidgetState
     Color color, {
     bool filled = false,
     bool isFeedback = false,
+    bool expanded = false,
   }) {
     final background = filled ? color : color.withOpacity(0.18);
     final borderColor = color.withOpacity(filled ? 0.9 : 0.45);
     final textColor = filled ? AppColors.textPrimary : color;
 
-    return DecoratedBox(
+    final content = Text(
+      _formatSigned(token.value),
+      style: AppTextStyles.caption.copyWith(
+        fontSize: expanded ? 16 : 11,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      textAlign: TextAlign.center,
+    );
+
+    return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(expanded ? 8 : 6),
         color: background,
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(color: borderColor, width: expanded ? 2 : 1),
         boxShadow: isFeedback
             ? [
                 BoxShadow(
@@ -463,30 +474,30 @@ class _StartingCharacteristicsWidgetState
               ]
             : const [],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Text(
-          _formatSigned(token.value),
-          style: AppTextStyles.caption.copyWith(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
-        ),
+      padding: EdgeInsets.symmetric(
+        horizontal: expanded ? 16 : 8,
+        vertical: expanded ? 14 : 4,
       ),
+      child: expanded ? Center(child: content) : content,
     );
   }
 
   Widget _buildDraggableTokenChip(CharacteristicValueToken token) {
     final color = AppColors.secondary;
-    final chip = _buildTokenVisual(token, color);
+    final chip = _buildTokenVisual(token, color, expanded: true);
+    final feedbackWidget = _buildTokenVisual(token, color, filled: true, isFeedback: true);
+
+    // Fixed chip dimensions: width = 60, height = 60
+    const estimatedWidth = 60.0;
+    const estimatedHeight = 60.0;
 
     return Draggable<CharacteristicValueToken>(
       data: token,
       feedback: Material(
         color: Colors.transparent,
-        child: _buildTokenVisual(token, color, filled: true, isFeedback: true),
+        child: feedbackWidget,
       ),
+      feedbackOffset: Offset(-estimatedWidth / 2, -estimatedHeight / 2),
       childWhenDragging: Opacity(
         opacity: 0.25,
         child: chip,
@@ -500,13 +511,20 @@ class _StartingCharacteristicsWidgetState
     Color color,
   ) {
     final chip = _buildTokenVisual(token, color, filled: true);
+    final feedbackWidget = _buildTokenVisual(token, color, filled: true, isFeedback: true);
+
+    // Smaller chip dimensions: horizontal padding = 8*2 = 16, vertical padding = 4*2 = 8
+    // Text width is roughly 25-30px for typical values, so total ~45px wide, ~25px tall
+    const estimatedWidth = 45.0;
+    const estimatedHeight = 25.0;
 
     return Draggable<CharacteristicValueToken>(
       data: token,
       feedback: Material(
         color: Colors.transparent,
-        child: _buildTokenVisual(token, color, filled: true, isFeedback: true),
+        child: feedbackWidget,
       ),
+      feedbackOffset: Offset(-estimatedWidth / 2, -estimatedHeight / 2),
       childWhenDragging: Opacity(
         opacity: 0.25,
         child: chip,
@@ -582,12 +600,30 @@ class _StartingCharacteristicsWidgetState
                       : 'All values assigned. Drag a chip here to clear it.',
                   style: AppTextStyles.caption,
                 )
-              else
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: available.map(_buildDraggableTokenChip).toList(),
+              else ...[
+                Text(
+                  'Hold and drag to assign',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < available.length; i++) ...[
+                      SizedBox(
+                        width: 60,
+                        height: 60,
+                        child: Center(
+                          child: _buildDraggableTokenChip(available[i]),
+                        ),
+                      ),
+                      if (i < available.length - 1) const SizedBox(width: 8),
+                    ],
+                  ],
+                ),
+              ],
               if (isActive) ...[
                 const SizedBox(height: 8),
                 Text(

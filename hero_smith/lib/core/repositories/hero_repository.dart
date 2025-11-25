@@ -14,6 +14,7 @@ class HeroSummary {
   final String? ancestryName;
   final String? careerName;
   final String? complicationName;
+  final String? heroicResourceName;
 
   const HeroSummary({
     required this.id,
@@ -23,6 +24,7 @@ class HeroSummary {
     required this.ancestryName,
     required this.careerName,
     required this.complicationName,
+    required this.heroicResourceName,
   });
 }
 
@@ -458,6 +460,7 @@ class HeroRepository {
           ancestryName: nameForId(ancestryId),
           careerName: nameForId(careerId),
           complicationName: nameForCategory('complication'),
+          heroicResourceName: getText(_k.heroicResource),
         ));
       }
       yield summaries;

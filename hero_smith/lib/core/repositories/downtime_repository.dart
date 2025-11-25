@@ -48,6 +48,7 @@ class DowntimeRepository {
     String? sourceLanguage,
     List<String>? guides,
     List<String>? rollCharacteristics,
+    String notes = '',
     bool isCustom = true,
   }) async {
     final id = _generateId();
@@ -70,6 +71,7 @@ class DowntimeRepository {
             rollCharacteristicsJson:
                 Value(jsonEncode(rollCharacteristics ?? [])),
             eventsJson: Value(jsonEncode(events.map((e) => e.toJson()).toList())),
+            notes: Value(notes),
             isCustom: Value(isCustom),
             isCompleted: const Value(false),
             createdAt: Value(now),
@@ -132,6 +134,7 @@ class DowntimeRepository {
         guidesJson: Value(jsonEncode(project.guides)),
         rollCharacteristicsJson: Value(jsonEncode(project.rollCharacteristics)),
         eventsJson: Value(jsonEncode(project.events.map((e) => e.toJson()).toList())),
+        notes: Value(project.notes),
         isCompleted: Value(project.isCompleted),
         updatedAt: Value(DateTime.now()),
       ),
@@ -162,6 +165,7 @@ class DowntimeRepository {
       events: (jsonDecode(row.eventsJson) as List)
           .map((e) => ProjectEvent.fromJson(e as Map<String, dynamic>))
           .toList(),
+      notes: row.notes,
       isCustom: row.isCustom,
       isCompleted: row.isCompleted,
       createdAt: row.createdAt,

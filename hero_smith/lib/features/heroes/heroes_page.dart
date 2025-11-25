@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
+import '../../core/theme/ability_colors.dart';
 import '../../core/theme/hero_theme.dart';
 import '../creators/hero_creators/hero_creator_page.dart';
 import 'hero_sheet/hero_sheet_page.dart';
@@ -132,85 +133,30 @@ class HeroesPage extends ConsumerWidget {
 
   Widget _buildHeroCard(BuildContext context, WidgetRef ref, dynamic hero) {
     final theme = Theme.of(context);
-    final subtitleParts = <String>[];
+    final chips = <Widget>[];
     
+    // Add chips only if values exist and are not empty
     if (hero.className != null && hero.className!.isNotEmpty) {
-      subtitleParts.add('Class: ${hero.className}');
+      final resourceColor = hero.heroicResourceName != null
+          ? AbilityColors.getHeroicResourceColor(hero.heroicResourceName!)
+          : HeroTheme.primarySection;
+      chips.add(_buildChip(context, hero.className!, resourceColor));
     }
-    subtitleParts.add('Level: ${hero.level}');
     if (hero.ancestryName != null && hero.ancestryName!.isNotEmpty) {
-      subtitleParts.add('Ancestry: ${hero.ancestryName}');
+      chips.add(_buildChip(context, hero.ancestryName!, HeroTheme.ancestryStep));
     }
     if (hero.careerName != null && hero.careerName!.isNotEmpty) {
-      subtitleParts.add('Career: ${hero.careerName}');
+      chips.add(_buildChip(context, hero.careerName!, HeroTheme.careerStep));
     }
     if (hero.complicationName != null && hero.complicationName!.isNotEmpty) {
-      subtitleParts.add('Complication: ${hero.complicationName}');
+      chips.add(_buildChip(context, hero.complicationName!, theme.colorScheme.error));
     }
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: HeroTheme.cardElevation,
       shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: CircleAvatar(
-          backgroundColor: HeroTheme.getHeroStatusColor('draft').withValues(alpha: 0.2),
-          child: Icon(
-            Icons.person,
-            color: HeroTheme.getHeroStatusColor('draft'),
-          ),
-        ),
-        title: Text(
-          hero.name,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: subtitleParts.isNotEmpty 
-          ? Text(
-              subtitleParts.join(' • '),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            )
-          : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              tooltip: 'Edit Hero',
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => HeroCreatorPage(heroId: hero.id),
-                  ),
-                );
-              },
-            ),
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
-              onSelected: (value) async {
-                if (value == 'delete') {
-                  await _deleteHero(context, ref, hero);
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete_outline, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Delete'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      child: InkWell(
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -221,6 +167,103 @@ class HeroesPage extends ConsumerWidget {
             ),
           );
         },
+        borderRadius: HeroTheme.cardRadius,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildChip(context, 'Lvl ${hero.level}', HeroTheme.primarySection),
+                  const SizedBox(height: 6),
+                  CircleAvatar(
+                    backgroundColor: HeroTheme.getHeroStatusColor('draft').withValues(alpha: 0.2),
+                    child: Icon(
+                      Icons.person,
+                      color: HeroTheme.getHeroStatusColor('draft'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hero.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (chips.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: chips,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                tooltip: 'Edit Hero',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => HeroCreatorPage(heroId: hero.id),
+                    ),
+                  );
+                },
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) async {
+                  if (value == 'delete') {
+                    await _deleteHero(context, ref, hero);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('Delete'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChip(BuildContext context, String label, Color color) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        label,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: color,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

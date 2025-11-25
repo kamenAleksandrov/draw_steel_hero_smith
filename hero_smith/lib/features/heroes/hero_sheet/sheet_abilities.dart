@@ -140,67 +140,329 @@ class SheetAbilities extends ConsumerStatefulWidget {
   ConsumerState<SheetAbilities> createState() => _SheetAbilitiesState();
 }
 
+/// Equipment slot configuration for the hero sheet
+class _EquipmentSlotConfig {
+  const _EquipmentSlotConfig({
+    required this.label,
+    required this.allowedTypes,
+    required this.index,
+  });
+  
+  final String label;
+  final List<String> allowedTypes;
+  final int index;
+}
+
 class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
-  String? _selectedKitId;
-  bool _isLoadingKit = true;
+  static const Map<String, List<String>> _kitFeatureTypeMappings = {
+    'kit': ['kit'],
+    'psionic augmentation': ['psionic_augmentation'],
+    'enchantment': ['enchantment'],
+    'prayer': ['prayer'],
+    'elementalist ward': ['ward'],
+    'talent ward': ['ward'],
+    'conduit ward': ['ward'],
+    'ward': ['ward'],
+  };
+
+  static const List<String> _kitTypePriority = [
+    'kit',
+    'psionic_augmentation',
+    'enchantment',
+    'prayer',
+    'ward',
+    'stormwight_kit',
+  ];
+
+  static const Map<String, IconData> _equipmentTypeIcons = {
+    'kit': Icons.backpack_outlined,
+    'psionic_augmentation': Icons.auto_awesome,
+    'enchantment': Icons.auto_fix_high,
+    'prayer': Icons.self_improvement,
+    'ward': Icons.shield_outlined,
+    'stormwight_kit': Icons.pets_outlined,
+  };
+
+  List<String?> _selectedEquipmentIds = [];
+  List<_EquipmentSlotConfig> _equipmentSlots = [];
+  bool _isLoadingEquipment = true;
 
   @override
   void initState() {
     super.initState();
-    _loadKit();
+    _loadEquipment();
   }
 
-  Future<void> _loadKit() async {
+  Future<void> _loadEquipment() async {
     try {
       final db = ref.read(appDatabaseProvider);
       final values = await db.getHeroValues(widget.heroId);
-      final kitRow = values.cast<dynamic>().firstWhere(
-        (v) => v.key == 'basics.kit',
-        orElse: () => null,
-      );
+      
+      // Get class and subclass info
+      String? className;
+      String? subclassName;
+      String? legacyKitId; // For backwards compatibility with single kit storage
+      List<String?>? equipmentList;
+      
+      for (final value in values) {
+        if (value.key == 'basics.className') {
+          className = value.textValue;
+        } else if (value.key == 'basics.subclass') {
+          subclassName = value.textValue;
+        } else if (value.key == 'basics.kit') {
+          legacyKitId = value.textValue;
+        } else if (value.key == 'basics.equipment') {
+          // Load equipment list from JSON
+          if (value.jsonValue != null) {
+            try {
+              final decoded = jsonDecode(value.jsonValue!);
+              if (decoded is Map && decoded['ids'] is List) {
+                equipmentList = (decoded['ids'] as List)
+                    .map((e) => e?.toString())
+                    .toList();
+              }
+            } catch (_) {}
+          }
+        }
+      }
+      
+      // Load class data to determine equipment slots
+      final classDataService = ClassDataService();
+      await classDataService.initialize();
+      final classData = className != null ? classDataService.getClassById(className) : null;
+      
+      // Build equipment slots based on class
+      final slots = _determineEquipmentSlots(classData, subclassName);
+      final equipmentIds = <String?>[];
+      
+      // Use equipment list if available, otherwise fall back to legacy single kit
+      if (equipmentList != null && equipmentList.isNotEmpty) {
+        equipmentIds.addAll(equipmentList);
+      } else if (legacyKitId != null && slots.isNotEmpty) {
+        equipmentIds.add(legacyKitId);
+      }
+      
+      // Fill remaining slots with null
+      while (equipmentIds.length < slots.length) {
+        equipmentIds.add(null);
+      }
       
       if (mounted) {
         setState(() {
-          _selectedKitId = kitRow?.textValue;
-          _isLoadingKit = false;
+          _equipmentSlots = slots;
+          _selectedEquipmentIds = equipmentIds;
+          _isLoadingEquipment = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoadingKit = false;
+          _isLoadingEquipment = false;
         });
       }
     }
   }
 
-  Future<void> _changeKit() async {
-    // Load all kit types
-    final kits = await ref.read(componentsByTypeProvider('kit').future);
-    final stormwightKits =
-        await ref.read(componentsByTypeProvider('stormwight_kit').future);
-    final wards = await ref.read(componentsByTypeProvider('ward').future);
+  List<_EquipmentSlotConfig> _determineEquipmentSlots(dynamic classData, String? subclassName) {
+    if (classData == null) {
+      return [_EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0)];
+    }
+    
+    // Special case: Stormwight Fury - only stormwight kits
+    final subclass = subclassName?.toLowerCase() ?? '';
+    if (classData.classId == 'class_fury' && subclass == 'stormwight') {
+      return [_EquipmentSlotConfig(label: 'Stormwight Kit', allowedTypes: ['stormwight_kit'], index: 0)];
+    }
+    
+    final kitFeatures = <Map<String, dynamic>>[];
+    final typesList = <String>[];
+    
+    // Collect all kit-related features
+    for (final level in classData.levels) {
+      for (final feature in level.features) {
+        final name = feature.name.trim().toLowerCase();
+        if (name == 'kit' || _kitFeatureTypeMappings.containsKey(name)) {
+          kitFeatures.add({
+            'name': name,
+            'count': feature.count ?? 1,
+          });
+          
+          final mapped = _kitFeatureTypeMappings[name];
+          if (mapped != null) {
+            typesList.addAll(mapped);
+          } else if (name == 'kit') {
+            typesList.add('kit');
+          }
+        }
+      }
+    }
+    
+    if (kitFeatures.isEmpty) {
+      return [_EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0)];
+    }
+    
+    // Remove duplicates while preserving order
+    final uniqueTypes = <String>[];
+    final seen = <String>{};
+    for (final type in typesList) {
+      if (seen.add(type)) {
+        uniqueTypes.add(type);
+      }
+    }
+    
+    // Calculate total count needed
+    var totalCount = 0;
+    for (final feature in kitFeatures) {
+      totalCount += feature['count'] as int;
+    }
+    
+    // Build slot configs
+    final configs = <_EquipmentSlotConfig>[];
+    var index = 0;
+    
+    // If we have multiple types and count >= uniqueTypes.length, create one slot per type
+    if (uniqueTypes.length > 1 && totalCount >= uniqueTypes.length) {
+      for (final type in uniqueTypes) {
+        configs.add(_EquipmentSlotConfig(
+          label: _formatTypeName(type),
+          allowedTypes: [type],
+          index: index++,
+        ));
+      }
+    } else {
+      // Otherwise, create slots with all allowed types
+      final sortedTypes = _sortKitTypesByPriority(uniqueTypes);
+      for (var i = 0; i < totalCount; i++) {
+        final label = totalCount > 1 
+            ? '${_formatTypeName(sortedTypes.first)} ${i + 1}'
+            : _formatTypeName(sortedTypes.first);
+        configs.add(_EquipmentSlotConfig(
+          label: label,
+          allowedTypes: sortedTypes,
+          index: index++,
+        ));
+      }
+    }
+    
+    return configs.isEmpty 
+        ? [_EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0)]
+        : configs;
+  }
+  
+  String _formatTypeName(String type) {
+    switch (type) {
+      case 'psionic_augmentation':
+        return 'Augmentation';
+      case 'stormwight_kit':
+        return 'Stormwight Kit';
+      default:
+        return type[0].toUpperCase() + type.substring(1);
+    }
+  }
+  
+  List<String> _sortKitTypesByPriority(Iterable<String> types) {
+    final seen = <String>{};
+    final sorted = <String>[];
+    
+    for (final type in _kitTypePriority) {
+      if (types.contains(type) && seen.add(type)) {
+        sorted.add(type);
+      }
+    }
+    
+    for (final type in types) {
+      if (seen.add(type)) {
+        sorted.add(type);
+      }
+    }
+    
+    return sorted;
+  }
 
-    if (!mounted) return;
-
-    final allKits = [...kits, ...stormwightKits, ...wards];
-
-    // Show dialog
-    final selected = await showDialog<String?>(
+  Future<void> _changeEquipment() async {
+    if (_equipmentSlots.isEmpty) return;
+    
+    // If only one slot, open selection directly
+    if (_equipmentSlots.length == 1) {
+      await _showEquipmentSelectionForSlot(_equipmentSlots.first);
+      return;
+    }
+    
+    // If 2 or more slots, show a menu to choose which to change
+    final slot = await showDialog<_EquipmentSlotConfig>(
       context: context,
-      builder: (context) => _KitSelectionDialog(
-        currentKitId: _selectedKitId,
-        allKits: allKits,
+      builder: (context) => _EquipmentSlotMenuDialog(
+        slots: _equipmentSlots,
+        selectedIds: _selectedEquipmentIds,
+        onFindItem: _findItemById,
       ),
     );
-
-    if (selected != null && mounted) {
-      // Save the new kit
-      final repo = ref.read(heroRepositoryProvider);
-      await repo.updateKit(widget.heroId, selected);
+    
+    if (slot != null && mounted) {
+      await _showEquipmentSelectionForSlot(slot);
+    }
+  }
+  
+  Future<void> _showEquipmentSelectionForSlot(_EquipmentSlotConfig slot) async {
+    final currentId = slot.index < _selectedEquipmentIds.length 
+        ? _selectedEquipmentIds[slot.index] 
+        : null;
+    
+    final selected = await showDialog<String?>(
+      context: context,
+      builder: (context) => _SheetEquipmentSelectionDialog(
+        slotLabel: slot.label,
+        allowedTypes: slot.allowedTypes,
+        currentItemId: currentId,
+        canRemove: currentId != null,
+      ),
+    );
+    
+    // Only proceed if user selected something (not cancelled)
+    if (selected == null || !mounted) return;
+    
+    // Update the selection
+    setState(() {
+      while (_selectedEquipmentIds.length <= slot.index) {
+        _selectedEquipmentIds.add(null);
+      }
+      if (selected == '__remove_item__') {
+        _selectedEquipmentIds[slot.index] = null;
+      } else {
+        _selectedEquipmentIds[slot.index] = selected;
+      }
+    });
+    
+    // Save all equipment to database
+    await _saveEquipmentToDatabase();
+  }
+  
+  Future<void> _saveEquipmentToDatabase() async {
+    try {
+      final db = ref.read(appDatabaseProvider);
       
-      // Reload
-      _loadKit();
+      // Save the equipment list as JSON
+      final jsonData = {'ids': _selectedEquipmentIds};
+      await db.upsertHeroValue(
+        heroId: widget.heroId,
+        key: 'basics.equipment',
+        jsonMap: jsonData,
+      );
+      
+      // Also update the legacy kit field for backwards compatibility
+      // Use the first non-null equipment
+      final repo = ref.read(heroRepositoryProvider);
+      final firstSelected = _selectedEquipmentIds.firstWhere(
+        (id) => id != null,
+        orElse: () => null,
+      );
+      await repo.updateKit(widget.heroId, firstSelected);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save equipment: $e')),
+        );
+      }
     }
   }
 
@@ -279,284 +541,716 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
 
   @override
   Widget build(BuildContext context) {
-    // Watch the ability IDs streamz
+    // Watch the ability IDs stream
     final abilityIdsAsync = ref.watch(heroAbilityIdsProvider(widget.heroId));
+    final theme = Theme.of(context);
 
-    return Column(
+    return Stack(
       children: [
-        // Kit display section
-        if (_isLoadingKit)
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(child: CircularProgressIndicator()),
-          )
-        else
-          _buildKitSection(context),
-        
-        const Divider(height: 1),
-        
-        // Add Ability button
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () => _showAddAbilityDialog(context),
-              icon: const Icon(Icons.add),
-              label: const Text('Add Ability'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
-        ),
-        
-        // Abilities tabs
-        Expanded(
-          child: DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                const TabBar(
-                  tabs: [
-                    Tab(
-                      icon: Icon(Icons.star_outline),
-                      text: 'Hero Abilities',
+        Column(
+          children: [
+            // Compact equipment bar
+            if (!_isLoadingEquipment) _buildCompactEquipmentBar(context),
+            
+            // Abilities tabs - takes all remaining space
+            Expanded(
+              child: DefaultTabController(
+                length: 2,
+                child: Column(
+                  children: [
+                    // Compact tab bar
+                    TabBar(
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      tabs: const [
+                        Tab(text: 'Hero Abilities'),
+                        Tab(text: 'Common Abilities'),
+                      ],
                     ),
-                    Tab(
-                      icon: Icon(Icons.all_inclusive),
-                      text: 'Common Abilities',
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      // Hero-specific abilities tab
-                      abilityIdsAsync.when(
-                        data: (abilityIds) {
-                          if (abilityIds.isEmpty) {
-                            return const Center(
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          // Hero-specific abilities tab
+                          abilityIdsAsync.when(
+                            data: (abilityIds) {
+                              if (abilityIds.isEmpty) {
+                                return Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.bolt_outlined,
+                                            size: 48, color: theme.colorScheme.outline),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          'No Abilities Yet',
+                                          style: theme.textTheme.titleMedium?.copyWith(
+                                            color: theme.colorScheme.outline,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Tap + to add abilities',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            color: theme.colorScheme.outline,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return _AbilityListView(
+                                abilityIds: abilityIds,
+                                heroId: widget.heroId,
+                              );
+                            },
+                            loading: () =>
+                                const Center(child: CircularProgressIndicator()),
+                            error: (error, stack) => Center(
                               child: Padding(
-                                padding: EdgeInsets.all(24.0),
+                                padding: const EdgeInsets.all(24.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.bolt_outlined,
-                                        size: 64, color: Colors.grey),
-                                    SizedBox(height: 16),
+                                    const Icon(Icons.error_outline,
+                                        size: 48, color: Colors.red),
+                                    const SizedBox(height: 12),
                                     Text(
-                                      'No Abilities',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.grey,
-                                      ),
+                                      'Error loading abilities',
+                                      style: theme.textTheme.titleMedium,
                                     ),
-                                    SizedBox(height: 8),
+                                    const SizedBox(height: 4),
                                     Text(
-                                      'This hero has not learned any abilities yet.',
-                                      style: TextStyle(color: Colors.grey),
+                                      error.toString(),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.outline,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
                               ),
-                            );
-                          }
-
-                          return _AbilityListView(
-                            abilityIds: abilityIds,
-                            heroId: widget.heroId,
-                          );
-                        },
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
-                        error: (error, stack) => Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.error_outline,
-                                    size: 64, color: Colors.red),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Error loading abilities',
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  error.toString(),
-                                  style: const TextStyle(color: Colors.grey),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
                             ),
                           ),
-                        ),
+                          // Common abilities tab
+                          const _CommonAbilitiesView(),
+                        ],
                       ),
-                      // Common abilities tab
-                      const _CommonAbilitiesView(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+          ],
+        ),
+        // Floating Action Button for adding abilities
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton(
+            onPressed: () => _showAddAbilityDialog(context),
+            tooltip: 'Add Ability',
+            child: const Icon(Icons.add),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildKitSection(BuildContext context) {
+  /// Compact equipment bar - single row with chips and edit button
+  Widget _buildCompactEquipmentBar(BuildContext context) {
     final theme = Theme.of(context);
-
+    
     return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '🎒 Equipped Kit',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: _changeKit,
-                icon: const Icon(Icons.swap_horiz, size: 18),
-                label: Text(_selectedKitId == null ? 'Select Kit' : 'Change'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-            ],
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.outlineVariant,
+            width: 1,
           ),
-          if (_selectedKitId != null) ...[
-            const SizedBox(height: 12),
-            FutureBuilder<Component?>(
-              future: _findKitById(_selectedKitId!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                final kit = snapshot.data;
-                if (kit == null) {
-                  return Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.errorContainer,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: theme.colorScheme.error,
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.error_outline, color: theme.colorScheme.error),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Kit not found',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.error,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) => _KitPreviewDialog(item: kit),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: _getBorderColorForType(kit.type),
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            kit.name,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.visibility_outlined,
-                          color: _getBorderColorForType(kit.type),
-                          size: 20,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+        ),
+      ),
+      child: Row(
+        children: [
+          // Equipment chips in a scrollable row
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (var i = 0; i < _equipmentSlots.length; i++) ...[
+                    _buildCompactEquipmentChip(context, i),
+                    if (i < _equipmentSlots.length - 1) const SizedBox(width: 6),
+                  ],
+                ],
+              ),
             ),
-          ],
+          ),
+          const SizedBox(width: 8),
+          // Compact edit button
+          IconButton(
+            onPressed: _changeEquipment,
+            icon: const Icon(Icons.edit_outlined, size: 20),
+            tooltip: 'Change Equipment',
+            style: IconButton.styleFrom(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              foregroundColor: theme.colorScheme.onPrimaryContainer,
+              minimumSize: const Size(36, 36),
+              padding: EdgeInsets.zero,
+            ),
+          ),
         ],
       ),
     );
   }
 
+  /// Compact equipment chip for the bar
+  Widget _buildCompactEquipmentChip(BuildContext context, int slotIndex) {
+    final theme = Theme.of(context);
+    final slot = _equipmentSlots[slotIndex];
+    final selectedId = slotIndex < _selectedEquipmentIds.length 
+        ? _selectedEquipmentIds[slotIndex] 
+        : null;
+    
+    if (selectedId == null) {
+      // Empty slot - minimal placeholder
+      return InkWell(
+        onTap: () async {
+          await _showEquipmentSelectionForSlot(slot);
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: theme.colorScheme.outline.withOpacity(0.4),
+              style: BorderStyle.solid,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _equipmentTypeIcons[slot.allowedTypes.first] ?? Icons.inventory_2_outlined,
+                size: 14,
+                color: theme.colorScheme.outline,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                slot.label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    // Selected equipment - show name
+    return FutureBuilder<Component?>(
+      future: _findItemById(selectedId),
+      builder: (context, snapshot) {
+        final item = snapshot.data;
+        final isLoading = snapshot.connectionState == ConnectionState.waiting;
+        
+        if (isLoading) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: theme.colorScheme.surfaceContainerHighest,
+            ),
+            child: const SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 1.5),
+            ),
+          );
+        }
+        
+        if (item == null) {
+          return InkWell(
+            onTap: () async {
+              await _showEquipmentSelectionForSlot(slot);
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: theme.colorScheme.errorContainer.withOpacity(0.5),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline, size: 14, color: theme.colorScheme.error),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Missing',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        
+        final borderColor = _getBorderColorForType(item.type);
+        return InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (dialogContext) => _KitPreviewDialog(item: item),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: borderColor.withOpacity(0.15),
+              border: Border.all(color: borderColor, width: 1),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _equipmentTypeIcons[item.type] ?? Icons.inventory_2_outlined,
+                  size: 14,
+                  color: borderColor,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  item.name,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Color _getBorderColorForType(String type) {
-    // Import KitTheme at the top of the file
     final colorScheme = KitTheme.getColorScheme(type);
     return colorScheme.borderColor;
   }
 
-  Future<Component?> _findKitById(String kitId) async {
-    // Try all kit types
-    final kits = await ref.read(componentsByTypeProvider('kit').future);
-    final found = kits.cast<Component?>().firstWhere(
-          (k) => k?.id == kitId,
-          orElse: () => null,
-        );
-    if (found != null) return found;
+  Future<Component?> _findItemById(String itemId) async {
+    // Try all equipment types
+    const allTypes = ['kit', 'stormwight_kit', 'ward', 'psionic_augmentation', 'enchantment', 'prayer'];
+    for (final type in allTypes) {
+      final components = await ref.read(componentsByTypeProvider(type).future);
+      for (final component in components) {
+        if (component.id == itemId) {
+          return component;
+        }
+      }
+    }
+    return null;
+  }
+}
 
-    final stormwightKits =
-        await ref.read(componentsByTypeProvider('stormwight_kit').future);
-    final foundStormwight = stormwightKits.cast<Component?>().firstWhere(
-          (k) => k?.id == kitId,
-          orElse: () => null,
-        );
-    if (foundStormwight != null) return foundStormwight;
+/// Dialog for selecting which equipment slot to change when hero has multiple slots
+class _EquipmentSlotMenuDialog extends StatelessWidget {
+  const _EquipmentSlotMenuDialog({
+    required this.slots,
+    required this.selectedIds,
+    required this.onFindItem,
+  });
 
-    final wards = await ref.read(componentsByTypeProvider('ward').future);
-    final foundWard = wards.cast<Component?>().firstWhere(
-          (k) => k?.id == kitId,
-          orElse: () => null,
+  final List<_EquipmentSlotConfig> slots;
+  final List<String?> selectedIds;
+  final Future<Component?> Function(String) onFindItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Equipment to Change'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < slots.length; i++)
+            _buildSlotOption(context, slots[i], i),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildSlotOption(BuildContext context, _EquipmentSlotConfig slot, int index) {
+    final theme = Theme.of(context);
+    final selectedId = index < selectedIds.length ? selectedIds[index] : null;
+    
+    return ListTile(
+      leading: Icon(
+        _SheetAbilitiesState._equipmentTypeIcons[slot.allowedTypes.first] ?? Icons.inventory_2_outlined,
+      ),
+      title: Text(slot.label),
+      subtitle: selectedId == null 
+          ? Text('Not selected', style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5)))
+          : FutureBuilder<Component?>(
+              future: onFindItem(selectedId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text('Loading...');
+                }
+                return Text(snapshot.data?.name ?? 'Unknown');
+              },
+            ),
+      onTap: () => Navigator.of(context).pop(slot),
+    );
+  }
+}
+
+/// Equipment selection dialog for the hero sheet (similar to creator but adapted)
+class _SheetEquipmentSelectionDialog extends ConsumerStatefulWidget {
+  const _SheetEquipmentSelectionDialog({
+    required this.slotLabel,
+    required this.allowedTypes,
+    required this.currentItemId,
+    required this.canRemove,
+  });
+
+  final String slotLabel;
+  final List<String> allowedTypes;
+  final String? currentItemId;
+  final bool canRemove;
+
+  @override
+  ConsumerState<_SheetEquipmentSelectionDialog> createState() => _SheetEquipmentSelectionDialogState();
+}
+
+class _SheetEquipmentSelectionDialogState extends ConsumerState<_SheetEquipmentSelectionDialog> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  static const List<String> _allEquipmentTypes = [
+    'kit', 'psionic_augmentation', 'enchantment', 'prayer', 'ward', 'stormwight_kit',
+  ];
+
+  static const Map<String, String> _equipmentTypeTitles = {
+    'kit': 'Standard Kits',
+    'psionic_augmentation': 'Psionic Augmentations',
+    'enchantment': 'Enchantments',
+    'prayer': 'Prayers',
+    'ward': 'Wards',
+    'stormwight_kit': 'Stormwight Kits',
+  };
+
+  static const Map<String, IconData> _equipmentTypeIcons = {
+    'kit': Icons.backpack_outlined,
+    'psionic_augmentation': Icons.auto_awesome,
+    'enchantment': Icons.auto_fix_high,
+    'prayer': Icons.self_improvement,
+    'ward': Icons.shield_outlined,
+    'stormwight_kit': Icons.pets_outlined,
+  };
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<String> _normalizeAllowedTypes() {
+    final normalized = <String>{};
+    for (final type in widget.allowedTypes) {
+      final trimmed = type.trim().toLowerCase();
+      if (trimmed.isNotEmpty) {
+        normalized.add(trimmed);
+      }
+    }
+    if (normalized.isEmpty) {
+      normalized.addAll(_allEquipmentTypes);
+    }
+    return normalized.toList();
+  }
+
+  List<String> _sortEquipmentTypes(Iterable<String> types) {
+    final seen = <String>{};
+    final sorted = <String>[];
+    for (final type in _allEquipmentTypes) {
+      if (types.contains(type) && seen.add(type)) {
+        sorted.add(type);
+      }
+    }
+    for (final type in types) {
+      if (seen.add(type)) {
+        sorted.add(type);
+      }
+    }
+    return sorted;
+  }
+
+  String _titleize(String value) {
+    if (value.isEmpty) return value;
+    return value
+        .split(RegExp(r'[_\s]+'))
+        .where((segment) => segment.isNotEmpty)
+        .map((segment) => '${segment[0].toUpperCase()}${segment.substring(1).toLowerCase()}')
+        .join(' ');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final normalized = _normalizeAllowedTypes();
+    final sorted = _sortEquipmentTypes(normalized);
+    
+    final categories = <({String type, String label, IconData icon, AsyncValue<List<Component>> data})>[];
+    for (final type in sorted) {
+      categories.add((
+        type: type,
+        label: _equipmentTypeTitles[type] ?? _titleize(type),
+        icon: _equipmentTypeIcons[type] ?? Icons.inventory_2_outlined,
+        data: ref.watch(componentsByTypeProvider(type)),
+      ));
+    }
+    
+    final navigator = Navigator.of(context);
+    final hasMultipleCategories = categories.length > 1;
+
+    if (categories.isEmpty) {
+      return Dialog(
+        child: SizedBox(
+          width: 400,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                title: Text('Select ${widget.slotLabel}'),
+                automaticallyImplyLeading: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => navigator.pop(),
+                  ),
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Text('No items available'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return DefaultTabController(
+      length: categories.length,
+      child: Dialog(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.85,
+          child: Column(
+            children: [
+              AppBar(
+                title: Text('Select ${widget.slotLabel}'),
+                automaticallyImplyLeading: false,
+                actions: [
+                  if (widget.canRemove)
+                    TextButton.icon(
+                      onPressed: () => navigator.pop('__remove_item__'),
+                      icon: const Icon(Icons.clear, color: Colors.white),
+                      label: const Text('Remove', style: TextStyle(color: Colors.white)),
+                    ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => navigator.pop(),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search equipment...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchQuery.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _searchController.clear();
+                              });
+                            },
+                          ),
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value.trim().toLowerCase();
+                    });
+                  },
+                ),
+              ),
+              if (hasMultipleCategories)
+                Material(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: TabBar(
+                    isScrollable: true,
+                    tabs: categories.map((cat) {
+                      final count = cat.data.maybeWhen(
+                        data: (items) => items.length,
+                        orElse: () => null,
+                      );
+                      final label = count == null ? cat.label : '${cat.label} ($count)';
+                      return Tab(text: label, icon: Icon(cat.icon, size: 18));
+                    }).toList(),
+                  ),
+                ),
+              Expanded(
+                child: hasMultipleCategories
+                    ? TabBarView(
+                        children: [
+                          for (final category in categories)
+                            _buildCategoryList(context, category.type, category.label, category.data),
+                        ],
+                      )
+                    : _buildCategoryList(context, categories.first.type, categories.first.label, categories.first.data),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryList(
+    BuildContext context,
+    String type,
+    String label,
+    AsyncValue<List<Component>> data,
+  ) {
+    final query = _searchQuery;
+    final theme = Theme.of(context);
+
+    return data.when(
+      data: (items) {
+        final filtered = query.isEmpty
+            ? items
+            : items.where((item) {
+                final name = item.name.toLowerCase();
+                final description = (item.data['description'] as String?)?.toLowerCase() ?? '';
+                return name.contains(query) || description.contains(query);
+              }).toList();
+
+        if (filtered.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Text(
+                query.isEmpty
+                    ? 'No ${label.toLowerCase()} available'
+                    : 'No results for "${_searchController.text}"',
+              ),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: filtered.length,
+          itemBuilder: (context, index) {
+            final item = filtered[index];
+            final isSelected = item.id == widget.currentItemId;
+            final description = item.data['description'] as String?;
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: InkWell(
+                onTap: () => Navigator.of(context).pop(item.id),
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                        : theme.colorScheme.surface,
+                    border: Border.all(
+                      color: isSelected
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.outline.withOpacity(0.5),
+                      width: isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          if (isSelected)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Icon(
+                                Icons.check_circle,
+                                color: theme.colorScheme.primary,
+                                size: 20,
+                              ),
+                            ),
+                          Expanded(
+                            child: Text(
+                              item.name,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isSelected ? theme.colorScheme.primary : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (description != null && description.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          description,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
-    return foundWard;
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Text('Error loading ${label.toLowerCase()}: $error'),
+        ),
+      ),
+    );
   }
 }
 
@@ -614,175 +1308,6 @@ class _KitPreviewDialog extends StatelessWidget {
       default:
         return KitCard(component: item, initiallyExpanded: true);
     }
-  }
-}
-
-class _KitSelectionDialog extends StatelessWidget {
-  const _KitSelectionDialog({
-    required this.currentKitId,
-    required this.allKits,
-  });
-
-  final String? currentKitId;
-  final List<Component> allKits;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    // Group by type
-    final standardKits = allKits.where((k) => k.type == 'kit').toList();
-    final stormwightKits =
-        allKits.where((k) => k.type == 'stormwight_kit').toList();
-    final wards = allKits.where((k) => k.type == 'ward').toList();
-    final other = allKits
-        .where((k) =>
-            k.type != 'kit' && k.type != 'stormwight_kit' && k.type != 'ward')
-        .toList();
-
-    return Dialog(
-      child: Container(
-        constraints: const BoxConstraints(
-          maxWidth: 800,
-          maxHeight: 700,
-        ),
-        child: Column(
-          children: [
-            AppBar(
-              title: const Text('Change Kit'),
-              automaticallyImplyLeading: false,
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(null),
-                  child: Text(
-                    'Remove Kit',
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            Expanded(
-              child: DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: [
-                    TabBar(
-                      tabs: [
-                        Tab(
-                            text:
-                                'Standard (${standardKits.length})'),
-                        Tab(
-                            text:
-                                'Stormwight (${stormwightKits.length})'),
-                        Tab(text: 'Wards (${wards.length})'),
-                        Tab(text: 'Other (${other.length})'),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          _buildKitList(context, standardKits),
-                          _buildKitList(context, stormwightKits),
-                          _buildKitList(context, wards),
-                          _buildKitList(context, other),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildKitList(BuildContext context, List<Component> kits) {
-    if (kits.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('No kits in this category'),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: kits.length,
-      itemBuilder: (context, index) {
-        final kit = kits[index];
-        final isSelected = kit.id == currentKitId;
-        
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: InkWell(
-            onTap: () => Navigator.of(context).pop(kit.id),
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3)
-                    : Theme.of(context).colorScheme.surface,
-                border: Border.all(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.outline.withOpacity(0.5),
-                  width: isSelected ? 2 : 1,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      if (isSelected)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 20,
-                          ),
-                        ),
-                      Expanded(
-                        child: Text(
-                          kit.name,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: isSelected
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (kit.data['description'] != null && kit.data['description'].toString().isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      kit.data['description'].toString(),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 }
 

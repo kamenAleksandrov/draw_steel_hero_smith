@@ -212,6 +212,7 @@ class HeroDowntimeProject {
   final List<String> guides;
   final List<String> rollCharacteristics; // 'might', 'agility', etc.
   final List<ProjectEvent> events;
+  final String notes; // User notes for tracking progress, ideas, etc.
   final bool isCustom; // User-created vs template-based
   final bool isCompleted;
   final DateTime createdAt;
@@ -231,6 +232,7 @@ class HeroDowntimeProject {
     required this.guides,
     required this.rollCharacteristics,
     required this.events,
+    this.notes = '',
     required this.isCustom,
     required this.isCompleted,
     required this.createdAt,
@@ -293,6 +295,7 @@ class HeroDowntimeProject {
       'guides': guides,
       'rollCharacteristics': rollCharacteristics,
       'events': events.map((e) => e.toJson()).toList(),
+      'notes': notes,
       'isCustom': isCustom,
       'isCompleted': isCompleted,
       'createdAt': createdAt.toIso8601String(),
@@ -317,6 +320,7 @@ class HeroDowntimeProject {
       events: (json['events'] as List)
           .map((e) => ProjectEvent.fromJson(e as Map<String, dynamic>))
           .toList(),
+      notes: json['notes'] as String? ?? '',
       isCustom: json['isCustom'] as bool,
       isCompleted: json['isCompleted'] as bool,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -338,6 +342,7 @@ class HeroDowntimeProject {
     List<String>? guides,
     List<String>? rollCharacteristics,
     List<ProjectEvent>? events,
+    String? notes,
     bool? isCustom,
     bool? isCompleted,
     DateTime? createdAt,
@@ -357,6 +362,7 @@ class HeroDowntimeProject {
       guides: guides ?? this.guides,
       rollCharacteristics: rollCharacteristics ?? this.rollCharacteristics,
       events: events ?? this.events,
+      notes: notes ?? this.notes,
       isCustom: isCustom ?? this.isCustom,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,

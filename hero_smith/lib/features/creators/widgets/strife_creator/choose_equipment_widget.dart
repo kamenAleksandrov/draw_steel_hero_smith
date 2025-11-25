@@ -205,40 +205,43 @@ class _EquipmentSlotTile extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton.icon(
-              onPressed: () async {
-                final result = await showDialog<String?>(
-                  context: context,
-                  builder: (dialogContext) => _EquipmentSelectionDialog(
-                    slotLabel: slot.label,
-                    allowedTypes: allowedTypes,
-                    currentItemId: slot.selectedItemId,
-                    canRemove: slot.selectedItemId != null,
-                  ),
-                );
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await showDialog<String?>(
+                    context: context,
+                    builder: (dialogContext) => _EquipmentSelectionDialog(
+                      slotLabel: slot.label,
+                      allowedTypes: allowedTypes,
+                      currentItemId: slot.selectedItemId,
+                      canRemove: slot.selectedItemId != null,
+                    ),
+                  );
 
-                if (result == null) {
-                  return;
-                }
-                if (result == EquipmentAndModificationsWidget._removeSignal) {
-                  slot.onChanged(null);
-                } else {
-                  slot.onChanged(result);
-                }
-              },
-              icon: const Icon(Icons.add_shopping_cart),
-              label: Text(
-                isLoading
-                    ? 'Loading...'
-                    : (selectedItem == null
-                        ? 'Select ${slot.label}'
-                        : 'Change ${slot.label}'),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  if (result == null) {
+                    return;
+                  }
+                  if (result == EquipmentAndModificationsWidget._removeSignal) {
+                    slot.onChanged(null);
+                  } else {
+                    slot.onChanged(result);
+                  }
+                },
+                icon: const Icon(Icons.add_shopping_cart),
+                label: Text(
+                  isLoading
+                      ? 'Loading...'
+                      : (selectedItem == null
+                          ? 'Select ${slot.label}'
+                          : 'Change ${slot.label}'),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),

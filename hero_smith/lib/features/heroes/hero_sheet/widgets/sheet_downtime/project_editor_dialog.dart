@@ -27,6 +27,8 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
   late final TextEditingController _sourceLanguageController;
   late final TextEditingController _guidesController;
   late final TextEditingController _characteristicsController;
+  late final TextEditingController _notesController;
+  late List<ProjectEvent> _events;
   
   final _formKey = GlobalKey<FormState>();
 
@@ -50,6 +52,8 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
     _characteristicsController = TextEditingController(
       text: project?.rollCharacteristics.join(', ') ?? '',
     );
+    _notesController = TextEditingController(text: project?.notes ?? '');
+    _events = List<ProjectEvent>.from(project?.events ?? []);
   }
 
   @override
@@ -63,6 +67,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
     _sourceLanguageController.dispose();
     _guidesController.dispose();
     _characteristicsController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -179,6 +184,51 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 24),
+              
+              // Events Section
+              if (widget.existingProject != null && _events.isNotEmpty) ...[
+                Text(
+                  'Event Milestones',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: _events.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final event = entry.value;
+                      return _EventEditorTile(
+                        event: event,
+                        onDescriptionChanged: (description) {
+                          setState(() {
+                            _events[index] = event.copyWith(eventDescription: description);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+              
+              // Notes Section
+              TextFormField(
+                controller: _notesController,
+                decoration: const InputDecoration(
+                  labelText: 'Notes',
+                  hintText: 'Personal notes, ideas, progress tracking...',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                maxLines: 4,
+              ),
             ],
           ),
         ),
@@ -211,6 +261,8 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
           : _sourceLanguageController.text,
       guides: _parseCommaSeparated(_guidesController.text),
       rollCharacteristics: _parseCommaSeparated(_characteristicsController.text),
+      events: _events,
+      notes: _notesController.text,
       updatedAt: DateTime.now(),
     ) ?? HeroDowntimeProject(
       id: '',
@@ -229,6 +281,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
       events: HeroDowntimeProject.calculateEventThresholds(
         int.parse(_goalController.text),
       ),
+      notes: _notesController.text,
       isCustom: true,
       isCompleted: false,
       createdAt: DateTime.now(),
@@ -244,5 +297,85 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty)
         .toList();
+  }
+}
+
+/// Widget for editing a single event's description
+class _EventEditorTile extends StatelessWidget {
+  const _EventEditorTile({
+    required this.event,
+    required this.onDescriptionChanged,
+  });
+
+  final ProjectEvent event;
+  final ValueChanged<String> onDescriptionChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                event.triggered ? Icons.check_circle : Icons.circle_outlined,
+                size: 18,
+                color: event.triggered ? Colors.amber : theme.colorScheme.outline,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Event at ${event.pointThreshold} points',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: event.triggered ? Colors.amber.shade800 : null,
+                ),
+              ),
+              if (event.triggered) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'Triggered',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.amber.shade800,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            initialValue: event.eventDescription ?? '',
+            decoration: InputDecoration(
+              hintText: 'Add event notes or outcome...',
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            ),
+            style: theme.textTheme.bodySmall,
+            maxLines: 2,
+            onChanged: onDescriptionChanged,
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,27 +1,15 @@
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db
 
-complications and other traits should have the implemented feature to grant items example - Betrothed
-
-add an add ability to the abilities page
-
-the abilities display uses regex and colors the A and a in text wrongfully
-
 abilities should show all abilities that the hero gains including ones gained by class or a feature ex: judgment, my life for yours and etc. - i think is fixed
 
-i don't think all skills and languages are being properly saved
+complications and other traits should have the implemented feature to grant items example - Betrothed
 
-i need to add notes page to the hero
-
-the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
+perks in codex should display the abilities they grant
 
 maybe add treasures that have downtime projects stats to the downtime projects
 
-the select a kit button in the creator should take the whoel row
-
-events link is missing form downtime and project points from background should be availavable
-
-the abilities are loaded 3 times each in the db or just the display, this is bad.
+project points from background should be availavable?
 
 the heading of the codex pages should be removed and keep only the navigation name at the top
 
@@ -29,13 +17,10 @@ growing ferocity tabels are not implemented
 
 need to add a loading screen noting that this is not an official product and is working on their rules.
 
-hero cards have small question marks, the display needs fixing
+i don't think all skills and languages are being properly saved
 
-perks in codex should display the abilities they grant
-
-kits do not swap for wads, ench end else in the sheet
-
-in the abilities page i should probably have a navigation tab going to kits disply as there ins enough space
+the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
 
 need to add an icon.
 
+clicking on the vuew sheet icon at the top of the creator should check if changes were maede and promp the user
