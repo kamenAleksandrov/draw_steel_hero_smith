@@ -8,7 +8,13 @@ import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 
 class KitCard extends StatefulWidget {
   final Component component;
-  const KitCard({super.key, required this.component});
+  final bool initiallyExpanded;
+  
+  const KitCard({
+    super.key, 
+    required this.component,
+    this.initiallyExpanded = false,
+  });
 
   @override
   State<KitCard> createState() => _KitCardState();
@@ -66,6 +72,7 @@ class _KitCardState extends State<KitCard> {
       title: widget.component.name,
       borderColor: colorScheme.borderColor,
       badge: KitComponents.kitBadge(kitType: 'kit', displayName: 'Kit'),
+      initiallyExpanded: widget.initiallyExpanded,
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

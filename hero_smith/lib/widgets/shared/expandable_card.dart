@@ -7,6 +7,7 @@ class ExpandableCard extends StatefulWidget {
   final Widget expandedContent;
   final Color borderColor;
   final Widget? preview;
+  final bool initiallyExpanded;
 
   const ExpandableCard({
     super.key,
@@ -15,6 +16,7 @@ class ExpandableCard extends StatefulWidget {
     required this.expandedContent,
     required this.borderColor,
     this.preview,
+    this.initiallyExpanded = false,
   });
 
   @override
@@ -30,9 +32,11 @@ class _ExpandableCardState extends State<ExpandableCard>
   @override
   void initState() {
     super.initState();
+    _isExpanded = widget.initiallyExpanded;
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
+      value: widget.initiallyExpanded ? 1.0 : 0.0,
     );
     _expandAnimation = CurvedAnimation(
       parent: _animationController,

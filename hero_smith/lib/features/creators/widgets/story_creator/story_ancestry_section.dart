@@ -244,7 +244,17 @@ class _AncestryDetails extends StatelessWidget {
                   }
                 : null,
             title: Text(name),
-            subtitle: Text(desc),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  desc,
+                  softWrap: true,
+                ),
+              ],
+            ),
+            isThreeLine: true,
             secondary: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(

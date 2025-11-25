@@ -8,7 +8,13 @@ import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 
 class StormwightKitCard extends StatefulWidget {
   final Component component;
-  const StormwightKitCard({super.key, required this.component});
+  final bool initiallyExpanded;
+  
+  const StormwightKitCard({
+    super.key, 
+    required this.component,
+    this.initiallyExpanded = false,
+  });
 
   @override
   State<StormwightKitCard> createState() => _StormwightKitCardState();
@@ -64,6 +70,7 @@ class _StormwightKitCardState extends State<StormwightKitCard> {
         primaryColor: primaryColor,
         isBold: true,
       ),
+      initiallyExpanded: widget.initiallyExpanded,
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

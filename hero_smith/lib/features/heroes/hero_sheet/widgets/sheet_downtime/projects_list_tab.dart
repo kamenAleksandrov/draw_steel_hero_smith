@@ -44,11 +44,6 @@ class ProjectsListTab extends ConsumerWidget {
   ) {
     return CustomScrollView(
       slivers: [
-        // Header
-        SliverToBoxAdapter(
-          child: _buildHeader(context),
-        ),
-
         // Add project button
         SliverToBoxAdapter(
           child: _buildAddProjectButton(context, ref),
@@ -128,47 +123,6 @@ class ProjectsListTab extends ConsumerWidget {
           child: SizedBox(height: 24),
         ),
       ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: HeroTheme.heroCardRadius,
-        gradient: HeroTheme.headerGradient(context),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.assignment,
-            size: 40,
-            color: HeroTheme.primarySection,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Downtime Projects',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: HeroTheme.primarySection,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Track your hero\'s long-term projects and goals',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 

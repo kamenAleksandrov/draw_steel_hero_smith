@@ -175,92 +175,83 @@ class _ConditionsTrackerWidgetState
   }
 
   Future<void> _showSaveEndsEditDialog() async {
-    final baseController = TextEditingController(text: _saveEndsBase.toString());
     final modController = TextEditingController(text: _saveEndsMod.toString());
 
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Edit Save Ends'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Total: ${_saveEndsBase + (int.tryParse(modController.text) ?? _saveEndsMod)}',
-                style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 16),
-              TextField(
-                controller: baseController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Base Value',
-                  border: OutlineInputBorder(),
-                  helperText: 'From class/features',
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(2),
-                ],
-                readOnly: true, // Base value should be set by class/features
-                enabled: false,
+    try {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Edit Save Ends Modifier'),
+            content: StatefulBuilder(
+              builder: (context, setState) {
+                final currentMod = int.tryParse(modController.text) ?? _saveEndsMod;
+                final total = _saveEndsBase + currentMod;
+                
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Base: $_saveEndsBase',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Total: $total',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: modController,
+                      autofocus: true,
+                      keyboardType: const TextInputType.numberWithOptions(signed: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Modifier',
+                        border: OutlineInputBorder(),
+                        helperText: 'Adjustments (-99 to +99)',
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
+                        LengthLimitingTextInputFormatter(3),
+                      ],
+                      onChanged: (value) {
+                        setState(() {}); // Update total display
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
               ),
-              const SizedBox(height: 12),
-              StatefulBuilder(
-                builder: (context, setState) {
-                  return Column(
-                    children: [
-                      TextField(
-                        controller: modController,
-                        keyboardType: const TextInputType.numberWithOptions(signed: true),
-                        decoration: const InputDecoration(
-                          labelText: 'Modifier',
-                          border: OutlineInputBorder(),
-                          helperText: 'Adjustments (-99 to +99)',
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
-                          LengthLimitingTextInputFormatter(3),
-                        ],
-                        onChanged: (value) {
-                          setState(() {}); // Update total display
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Total: ${_saveEndsBase + (int.tryParse(modController.text) ?? _saveEndsMod)}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  );
-                },
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Save'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+          );
+        },
+      );
 
-    if (result == true && mounted) {
-      final newMod = int.tryParse(modController.text) ?? 0;
-      setState(() {
-        _saveEndsMod = newMod.clamp(-99, 99);
-      });
-      _saveTrackedConditions();
+      if (result == true && mounted) {
+        final newMod = int.tryParse(modController.text) ?? 0;
+        setState(() {
+          _saveEndsMod = newMod.clamp(-99, 99);
+        });
+        _saveTrackedConditions();
+      }
+    } finally {
+      // Brief delay to ensure dialog animation completes and IME handles focus change
+      await Future.delayed(const Duration(milliseconds: 100));
+      modController.dispose();
     }
-
-    baseController.dispose();
-    modController.dispose();
   }
 
   void _addCondition(Component condition) {
@@ -363,110 +354,113 @@ class _ConditionsTrackerWidgetState
     final shortDescController = TextEditingController();
     final longDescController = TextEditingController();
 
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Create Custom Condition'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Condition Name *',
-                    border: OutlineInputBorder(),
+    try {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Create Custom Condition'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Condition Name *',
+                      border: OutlineInputBorder(),
+                    ),
+                    textCapitalization: TextCapitalization.words,
                   ),
-                  textCapitalization: TextCapitalization.words,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: shortDescController,
-                  decoration: const InputDecoration(
-                    labelText: 'Short Description',
-                    border: OutlineInputBorder(),
-                    hintText: 'Brief summary of the condition',
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: shortDescController,
+                    decoration: const InputDecoration(
+                      labelText: 'Short Description',
+                      border: OutlineInputBorder(),
+                      hintText: 'Brief summary of the condition',
+                    ),
+                    maxLines: 2,
                   ),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: longDescController,
-                  decoration: const InputDecoration(
-                    labelText: 'Detailed Description',
-                    border: OutlineInputBorder(),
-                    hintText: 'Full details and effects',
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: longDescController,
+                    decoration: const InputDecoration(
+                      labelText: 'Detailed Description',
+                      border: OutlineInputBorder(),
+                      hintText: 'Full details and effects',
+                    ),
+                    maxLines: 4,
                   ),
-                  maxLines: 4,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (nameController.text.trim().isNotEmpty) {
-                  Navigator.of(context).pop(true);
-                }
-              },
-              child: const Text('Create'),
-            ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  if (nameController.text.trim().isNotEmpty) {
+                    Navigator.of(context).pop(true);
+                  }
+                },
+                child: const Text('Create'),
+              ),
+            ],
+          );
+        },
+      );
 
-    if (result == true && nameController.text.trim().isNotEmpty) {
-      try {
-        final repo = ref.read(componentRepositoryProvider);
-        final customCondition = await repo.createCustom(
-          type: 'condition',
-          name: nameController.text.trim(),
-          data: {
-            'short_description': shortDescController.text.trim(),
-            'long_description': longDescController.text.trim(),
-          },
-        );
+      if (result == true && nameController.text.trim().isNotEmpty) {
+        try {
+          final repo = ref.read(componentRepositoryProvider);
+          final customCondition = await repo.createCustom(
+            type: 'condition',
+            name: nameController.text.trim(),
+            data: {
+              'short_description': shortDescController.text.trim(),
+              'long_description': longDescController.text.trim(),
+            },
+          );
 
-        if (mounted) {
-          setState(() {
-            _trackedConditions.add(
-              TrackedCondition(
-                conditionId: customCondition.id,
-                conditionName: customCondition.name,
-                endType: ConditionEndType.saveEnds,
+          if (mounted) {
+            setState(() {
+              _trackedConditions.add(
+                TrackedCondition(
+                  conditionId: customCondition.id,
+                  conditionName: customCondition.name,
+                  endType: ConditionEndType.saveEnds,
+                ),
+              );
+            });
+            _saveTrackedConditions();
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Custom condition "${customCondition.name}" created'),
+                backgroundColor: Colors.green,
               ),
             );
-          });
-          _saveTrackedConditions();
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Custom condition "${customCondition.name}" created'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error creating condition: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error creating condition: $e'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       }
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 100));
+      nameController.dispose();
+      shortDescController.dispose();
+      longDescController.dispose();
     }
-
-    nameController.dispose();
-    shortDescController.dispose();
-    longDescController.dispose();
   }
 
   void _showConditionDetails(TrackedCondition trackedCondition) {
@@ -561,16 +555,17 @@ class _ConditionsTrackerWidgetState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with Save Ends threshold
+            // Header
+            Text(
+              'Conditions',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Save Ends threshold
             Row(
               children: [
-                Text(
-                  'Conditions',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
                 const Text('Save Ends = '),
                 InkWell(
                   onTap: _showSaveEndsEditDialog,

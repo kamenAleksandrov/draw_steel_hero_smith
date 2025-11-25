@@ -7,7 +7,14 @@ import 'package:hero_smith/widgets/kits/kit_components.dart';
 class ModifierCard extends StatelessWidget {
   final Component component;
   final String badgeLabel; // Augmentation / Enchantment / Prayer
-  const ModifierCard({super.key, required this.component, required this.badgeLabel});
+  final bool initiallyExpanded;
+  
+  const ModifierCard({
+    super.key, 
+    required this.component, 
+    required this.badgeLabel,
+    this.initiallyExpanded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +26,7 @@ class ModifierCard extends StatelessWidget {
       title: component.name,
       borderColor: colorScheme.borderColor,
       badge: KitComponents.kitBadge(kitType: 'modifier', displayName: badgeLabel),
+      initiallyExpanded: initiallyExpanded,
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

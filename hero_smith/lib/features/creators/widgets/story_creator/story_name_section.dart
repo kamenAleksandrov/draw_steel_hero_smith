@@ -27,13 +27,6 @@ class StoryNameSection extends ConsumerWidget {
         shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
         child: Column(
           children: [
-            HeroTheme.buildSectionHeader(
-              context,
-              title: 'Hero Identity',
-              subtitle: 'Give your hero a name',
-              icon: Icons.person,
-              color: HeroTheme.getStepColor('identity'),
-            ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(

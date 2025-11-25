@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/models/feature.dart';
+import '../../core/models/component.dart';
+import '../../core/models/class_data.dart' as class_data;
+import '../../core/services/class_data_service.dart';
+import '../../core/services/ability_data_service.dart';
 import '../../core/theme/feature_tokens.dart';
 import 'feature_card.dart';
 
@@ -26,6 +30,8 @@ class _FeatureDropdownSectionState extends State<FeatureDropdownSection>
   bool _isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+  Map<String, List<Component>> _featureGrantedAbilities = {};
+  bool _abilitiesLoaded = false;
 
   @override
   void initState() {
@@ -38,6 +44,55 @@ class _FeatureDropdownSectionState extends State<FeatureDropdownSection>
       parent: _animationController,
       curve: Curves.easeInOut,
     );
+    _loadGrantedAbilities();
+  }
+
+  Future<void> _loadGrantedAbilities() async {
+    try {
+      final classDataService = ClassDataService();
+      final abilityDataService = AbilityDataService();
+      
+      // Load class data and ability library
+      final classData = await classDataService.getClassById(widget.className);
+      if (classData == null) {
+        setState(() => _abilitiesLoaded = true);
+        return;
+      }
+      
+      final abilityLibrary = await abilityDataService.loadLibrary();
+      final grantedAbilitiesMap = <String, List<Component>>{};
+      
+      // Get the level progression for this level
+      final levelData = classData.levels.firstWhere(
+        (lp) => lp.level == widget.level,
+        orElse: () => class_data.LevelProgression(level: widget.level, features: []),
+      );
+      
+      // For each feature in the level data that grants an ability
+      for (final classFeature in levelData.features) {
+        if (classFeature.grantType == 'ability') {
+          // Find the corresponding Feature from widget.features
+          final matchingFeature = widget.features.firstWhere(
+            (f) => f.name.toLowerCase() == classFeature.name.toLowerCase(),
+            orElse: () => widget.features.first, // fallback, shouldn't happen
+          );
+          
+          // Resolve the ability component
+          final abilityComponent = abilityLibrary.find(classFeature.name);
+          if (abilityComponent != null) {
+            grantedAbilitiesMap.putIfAbsent(matchingFeature.name, () => []).add(abilityComponent);
+          }
+        }
+      }
+      
+      setState(() {
+        _featureGrantedAbilities = grantedAbilitiesMap;
+        _abilitiesLoaded = true;
+      });
+    } catch (e) {
+      // Silently fail if abilities can't be loaded
+      setState(() => _abilitiesLoaded = true);
+    }
   }
 
   @override
@@ -153,10 +208,14 @@ class _FeatureDropdownSectionState extends State<FeatureDropdownSection>
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: widget.features.map((feature) {
+                    final grantedAbilities = _abilitiesLoaded 
+                        ? _featureGrantedAbilities[feature.name]
+                        : null;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: FeatureCard(
                         feature: feature,
+                        grantedAbilities: grantedAbilities,
                       ),
                     );
                   }).toList(),

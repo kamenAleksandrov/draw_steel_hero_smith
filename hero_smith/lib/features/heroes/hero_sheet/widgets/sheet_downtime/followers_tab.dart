@@ -36,9 +36,6 @@ class FollowersTab extends ConsumerWidget {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: _buildHeader(context),
-        ),
-        SliverToBoxAdapter(
           child: _buildAddButton(context, ref),
         ),
         if (followers.isEmpty)
@@ -58,46 +55,6 @@ class FollowersTab extends ConsumerWidget {
           ),
         const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: HeroTheme.heroCardRadius,
-        gradient: HeroTheme.headerGradient(context),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.people,
-            size: 40,
-            color: HeroTheme.primarySection,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Followers',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: HeroTheme.primarySection,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'NPCs who can help with your downtime projects',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 

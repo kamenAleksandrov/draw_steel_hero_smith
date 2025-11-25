@@ -12,10 +12,12 @@ class HeroDowntimeTrackingPage extends ConsumerStatefulWidget {
     super.key,
     required this.heroId,
     required this.heroName,
+    this.isEmbedded = false,
   });
 
   final String heroId;
   final String heroName;
+  final bool isEmbedded;
 
   @override
   ConsumerState<HeroDowntimeTrackingPage> createState() =>
@@ -28,6 +30,49 @@ class _HeroDowntimeTrackingPageState
 
   @override
   Widget build(BuildContext context) {
+    // If embedded, return content with top tab navigation
+    if (widget.isEmbedded) {
+      return DefaultTabController(
+        length: 3,
+        child: Column(
+          children: [
+            Material(
+              color: Theme.of(context).colorScheme.surface,
+              elevation: 1,
+              child: TabBar(
+                labelColor: HeroTheme.primarySection,
+                unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                indicatorColor: HeroTheme.primarySection,
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.assignment),
+                    text: 'Projects',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.people),
+                    text: 'Followers',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.book),
+                    text: 'Sources',
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  ProjectsListTab(heroId: widget.heroId),
+                  FollowersTab(heroId: widget.heroId),
+                  SourcesTab(heroId: widget.heroId),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.heroName} - Downtime Projects'),

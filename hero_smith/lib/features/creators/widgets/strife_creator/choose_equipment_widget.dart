@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/kit_theme.dart';
 import '../../../../widgets/kits/kit_card.dart';
 import '../../../../widgets/kits/modifier_card.dart';
 import '../../../../widgets/kits/stormwight_kit_card.dart';
@@ -125,15 +126,6 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
     return null;
   }
 
-  static String _placeholderForAllowedTypes(List<String> allowedTypes) {
-    if (allowedTypes.length == 1) {
-      final type = allowedTypes.first;
-      final title = _equipmentTypeTitles[type] ?? _titleize(type);
-      return 'Select one of the ${title.toLowerCase()}';
-    }
-    return 'Select one of the available options';
-  }
-
   static List<String> _normalizeAllowedTypes(List<String> types) {
     final normalized = <String>{};
     for (final type in types) {
@@ -185,13 +177,16 @@ class _EquipmentSlotTile extends ConsumerWidget {
 
   final EquipmentSlot slot;
 
+  Color _getBorderColorForType(String type) {
+    final colorScheme = KitTheme.getColorScheme(type);
+    return colorScheme.borderColor;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final allowedTypes =
         EquipmentAndModificationsWidget._normalizeAllowedTypes(slot.allowedTypes);
-    final placeholder =
-        EquipmentAndModificationsWidget._placeholderForAllowedTypes(allowedTypes);
 
     final future = slot.selectedItemId == null
         ? Future<Component?>.value(null)
@@ -210,8 +205,8 @@ class _EquipmentSlotTile extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InkWell(
-              onTap: () async {
+            ElevatedButton.icon(
+              onPressed: () async {
                 final result = await showDialog<String?>(
                   context: context,
                   builder: (dialogContext) => _EquipmentSelectionDialog(
@@ -231,46 +226,19 @@ class _EquipmentSlotTile extends ConsumerWidget {
                   slot.onChanged(result);
                 }
               },
-              borderRadius: BorderRadius.circular(12),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: slot.label,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: isLoading
-                          ? Row(
-                              children: const [
-                                SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                ),
-                                SizedBox(width: 12),
-                                Text('Loading selection...'),
-                              ],
-                            )
-                          : Text(
-                              selectedItem?.name ?? placeholder,
-                              style: selectedItem == null
-                                  ? theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface
-                                          .withOpacity(0.6),
-                                    )
-                                  : theme.textTheme.bodyMedium,
-                            ),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: theme.iconTheme.color,
-                    ),
-                  ],
+              icon: const Icon(Icons.add_shopping_cart),
+              label: Text(
+                isLoading
+                    ? 'Loading...'
+                    : (selectedItem == null
+                        ? 'Select ${slot.label}'
+                        : 'Change ${slot.label}'),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
@@ -283,7 +251,48 @@ class _EquipmentSlotTile extends ConsumerWidget {
                 ),
               ),
             ],
-            if (snapshot.hasError) ...[
+            if (selectedItem != null && !isLoading) ...[
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (dialogContext) => _KitPreviewDialog(
+                      item: selectedItem,
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _getBorderColorForType(selectedItem.type),
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          selectedItem.name,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.visibility_outlined,
+                        color: _getBorderColorForType(selectedItem.type),
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ] else if (snapshot.hasError) ...[
               const SizedBox(height: 8),
               Text(
                 'Unable to load selected item',
@@ -291,13 +300,6 @@ class _EquipmentSlotTile extends ConsumerWidget {
                   color: theme.colorScheme.error,
                 ),
               ),
-            ] else if (selectedItem != null && !isLoading) ...[
-              const SizedBox(height: 12),
-              _SelectedItemPreview(
-                item: selectedItem,
-                allowedTypes: allowedTypes,
-              ),
-             
             ],
           ],
         );
@@ -306,76 +308,59 @@ class _EquipmentSlotTile extends ConsumerWidget {
   }
 }
 
-class _SelectedItemPreview extends StatelessWidget {
-  const _SelectedItemPreview({
+class _KitPreviewDialog extends StatelessWidget {
+  const _KitPreviewDialog({
     required this.item,
-    required this.allowedTypes,
   });
 
   final Component item;
-  final List<String> allowedTypes;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final allowedSet = allowedTypes.map((e) => e.toLowerCase()).toSet();
-    final isAllowed = allowedSet.contains(item.type.toLowerCase());
-
-    // Show full equipment card
-    final card = _buildCardForComponent(item);
-
-    if (!isAllowed) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          card,
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.errorContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.warning_amber_outlined,
-                  color: theme.colorScheme.error,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'This selection is not allowed for this slot. '
-                    'Please choose an option that matches the required type.',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.error,
-                    ),
-                  ),
+    return Dialog(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 600,
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              title: Text(item.name),
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
-          ),
-        ],
-      );
-    }
-
-    return card;
+            Flexible(
+              child: SingleChildScrollView(
+                child: _buildCardForComponent(item),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildCardForComponent(Component item) {
     switch (item.type) {
       case 'kit':
-        return KitCard(component: item);
+        return KitCard(component: item, initiallyExpanded: true);
       case 'stormwight_kit':
-        return StormwightKitCard(component: item);
+        return StormwightKitCard(component: item, initiallyExpanded: true);
       case 'ward':
-        return WardCard(component: item);
+        return WardCard(component: item, initiallyExpanded: true);
       case 'psionic_augmentation':
       case 'enchantment':
       case 'prayer':
-        return ModifierCard(component: item, badgeLabel: item.type);
+        return ModifierCard(component: item, badgeLabel: item.type, initiallyExpanded: true);
       default:
-        return KitCard(component: item);
+        return KitCard(component: item, initiallyExpanded: true);
     }
   }
 }

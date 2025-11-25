@@ -779,7 +779,9 @@ class _CareerContentState extends State<_CareerContent> {
                                   'No description available',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey.shade700,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
                               ),
                             ),
                           ],

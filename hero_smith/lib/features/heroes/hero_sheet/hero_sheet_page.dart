@@ -34,6 +34,11 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
       SheetAbilities(heroId: widget.heroId),
       SheetFeatures(heroId: widget.heroId),
       SheetStory(heroId: widget.heroId),
+      HeroDowntimeTrackingPage(
+        heroId: widget.heroId,
+        heroName: widget.heroName,
+        isEmbedded: true,
+      ),
     ];
   }
 
@@ -52,20 +57,6 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
       appBar: AppBar(
         title: Text('Hero Sheet - ${widget.heroName}'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.assignment),
-            tooltip: 'Downtime Projects',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => HeroDowntimeTrackingPage(
-                    heroId: widget.heroId,
-                    heroName: widget.heroName,
-                  ),
-                ),
-              );
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.edit),
             tooltip: 'Edit Hero',
@@ -103,6 +94,10 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
             label: 'Story',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Downtime',
           ),
         ],
       ),

@@ -153,7 +153,7 @@ class _StartingCharacteristicsWidgetState
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -161,12 +161,8 @@ class _StartingCharacteristicsWidgetState
               'Starting Characteristics',
               style: AppTextStyles.title,
             ),
-            const SizedBox(height: 8),
-            if (_controller.lockedStats.isNotEmpty) ...[
-              _buildFixedStatsRow(summary),
-              const SizedBox(height: 8),
-            ],
-            _buildArrayPicker(),
+            const SizedBox(height: 4),
+            _buildAllCharacteristicsRow(summary),
             if (selectedArray == null &&
                 _controller.classData.startingCharacteristics
                     .startingCharacteristicsArrays.isNotEmpty) ...[
@@ -186,17 +182,20 @@ class _StartingCharacteristicsWidgetState
                 ],
               ),
             ],
-            const SizedBox(height: 8),
-            _buildAssignableSection(summary),
             _buildAssignmentStatus(assignmentsComplete, choicesComplete),
             if (selectedArray != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
+              _buildArrayPicker(),
+              const SizedBox(height: 4),
               _buildAvailableTokensSection(),
+            ] else ...[
+              const SizedBox(height: 4),
+              _buildArrayPicker(),
             ],
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             _buildPotencySection(potencyValues),
             if (_controller.levelChoices.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               _buildLevelChoicesSection(),
             ],
           ],
@@ -205,78 +204,163 @@ class _StartingCharacteristicsWidgetState
     );
   }
 
-  Widget _buildFixedStatsRow(CharacteristicSummary summary) {
-    final stats = CharacteristicUtils.characteristicOrder
-        .where((stat) => _controller.lockedStats.contains(stat))
-        .toList();
-    if (stats.isEmpty) return const SizedBox.shrink();
+  Widget _buildAllCharacteristicsRow(CharacteristicSummary summary) {
+    // Desired order: Might, Agility, Reason, Intuition, Presence
+    const desiredOrder = ['might', 'agility', 'reason', 'intuition', 'presence'];
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (var i = 0; i < stats.length; i++)
+        for (var i = 0; i < desiredOrder.length; i++)
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: i == stats.length - 1 ? 0 : 12),
-              child: _buildFixedTile(stats[i], summary),
+              padding: EdgeInsets.only(right: i == desiredOrder.length - 1 ? 0 : 3),
+              child: _buildCompactCharacteristicTile(desiredOrder[i], summary),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildFixedTile(String stat, CharacteristicSummary summary) {
+  Widget _buildCompactCharacteristicTile(String stat, CharacteristicSummary summary) {
     final color = AppColors.getCharacteristicColor(stat);
+    final isLocked = _controller.lockedStats.contains(stat);
     final fixed = summary.fixed[stat] ?? 0;
+    final arrayValue = summary.array[stat] ?? 0;
     final levelBonus = summary.levelBonuses[stat] ?? 0;
     final total = summary.totals[stat] ?? 0;
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.45), width: 1),
-        color: color.withOpacity(0.12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.lock, size: 12, color: color),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  _displayName(stat),
-                  style: AppTextStyles.subtitle.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
+    final assignedToken = _controller.assignments[stat];
+    final isPending = _controller.selectedArray != null && assignedToken == null && !isLocked;
+
+    if (isLocked) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: color.withOpacity(0.45), width: 1),
+          color: color.withOpacity(0.12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.lock, size: 10, color: color),
+                const SizedBox(width: 2),
+                Expanded(
+                  child: Text(
+                    _displayName(stat),
+                    style: AppTextStyles.subtitle.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 9,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
+              ],
+            ),
+            const SizedBox(height: 2),
+            Text(
+              total.toString(),
+              style: AppTextStyles.title.copyWith(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Wrap(
+              spacing: 2,
+              runSpacing: 2,
+              children: [
+                _buildValueTag('${_formatSigned(fixed)}', color),
+                if (levelBonus != 0)
+                  _buildValueTag('+${levelBonus}', color),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    return DragTarget<CharacteristicValueToken>(
+      onWillAcceptWithDetails: (_) => true,
+      onAcceptWithDetails: (details) =>
+          _controller.assignToken(stat, details.data),
+      builder: (context, candidateData, rejectedData) {
+        final isActive = candidateData.isNotEmpty;
+        final backgroundColor =
+            isActive ? color.withOpacity(0.18) : color.withOpacity(0.08);
+        final borderColor = isPending
+            ? Colors.orangeAccent
+            : color.withOpacity(isActive ? 0.6 : 0.35);
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: borderColor,
+              width: isPending ? 1.5 : 1,
+            ),
+            color: backgroundColor,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _displayName(stat),
+                style: AppTextStyles.subtitle.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 9,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    total.toString(),
+                    style: AppTextStyles.title.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  if (assignedToken != null)
+                    _buildAssignedTokenChip(assignedToken, color)
+                  else
+                    _buildDropHint(color, highlight: isActive),
+                ],
+              ),
+              const SizedBox(height: 2),
+              Wrap(
+                spacing: 2,
+                runSpacing: 2,
+                children: [
+                  if (fixed != 0)
+                    _buildValueTag('${_formatSigned(fixed)}', color),
+                  if (assignedToken != null)
+                    _buildValueTag('${_formatSigned(arrayValue)}', color)
+                  else
+                    _buildValueOutlineTag('?', color),
+                  if (levelBonus != 0)
+                    _buildValueTag('+$levelBonus', color),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            total.toString(),
-            style: AppTextStyles.title.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Wrap(
-            spacing: 3,
-            runSpacing: 3,
-            children: [
-              _buildValueTag('${_formatSigned(fixed)}', color),
-              if (levelBonus != 0)
-                _buildValueTag('+${levelBonus}', color),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -326,164 +410,6 @@ class _StartingCharacteristicsWidgetState
         _controller.updateArray(array);
         widget.onArrayChanged(array);
       },
-    );
-  }
-
-  Widget _buildAssignableSection(CharacteristicSummary summary) {
-    final stats = CharacteristicUtils.characteristicOrder
-        .where((stat) => !_controller.lockedStats.contains(stat))
-        .toList();
-    if (stats.isEmpty) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.withOpacity(0.4)),
-          color: Colors.grey.withOpacity(0.12),
-        ),
-        child: const Text(
-          'No flexible characteristics remain to assign.',
-          style: AppTextStyles.caption,
-        ),
-      );
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const spacing = 8.0;
-        const runSpacing = 8.0;
-        const minTileWidth = 140.0;
-
-        final availableWidth = constraints.maxWidth.isFinite
-            ? constraints.maxWidth
-            : MediaQuery.sizeOf(context).width;
-
-        var columns = (availableWidth / (minTileWidth + spacing)).floor();
-        if (columns < 1) {
-          columns = 1;
-        }
-        columns = columns.clamp(1, stats.length).toInt();
-
-        final totalSpacing = spacing * (columns - 1);
-        final usableWidth = availableWidth - totalSpacing;
-        final tileWidth = usableWidth / columns;
-
-        return Wrap(
-          spacing: spacing,
-          runSpacing: runSpacing,
-          children: [
-            for (final stat in stats)
-              SizedBox(
-                width: tileWidth,
-                child: _buildAssignableTile(stat, summary),
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildAssignableTile(String stat, CharacteristicSummary summary) {
-    final color = AppColors.getCharacteristicColor(stat);
-    final fixed = summary.fixed[stat] ?? 0;
-    final arrayValue = summary.array[stat] ?? 0;
-    final levelBonus = summary.levelBonuses[stat] ?? 0;
-    final total = summary.totals[stat] ?? 0;
-    final assignedToken = _controller.assignments[stat];
-    final isPending =
-        _controller.selectedArray != null && assignedToken == null;
-
-    return DragTarget<CharacteristicValueToken>(
-      onWillAcceptWithDetails: (_) => true,
-      onAcceptWithDetails: (details) =>
-          _controller.assignToken(stat, details.data),
-      builder: (context, candidateData, rejectedData) {
-        final isActive = candidateData.isNotEmpty;
-        final backgroundColor =
-            isActive ? color.withOpacity(0.18) : color.withOpacity(0.08);
-        final borderColor = isPending
-            ? Colors.orangeAccent
-            : color.withOpacity(isActive ? 0.6 : 0.35);
-
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: borderColor,
-              width: isPending ? 1.5 : 1,
-            ),
-            color: backgroundColor,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _displayName(stat),
-                      style: AppTextStyles.subtitle.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      total.toString(),
-                      style: AppTextStyles.title.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Wrap(
-                      spacing: 3,
-                      runSpacing: 3,
-                      children: [
-                        if (fixed != 0)
-                          _buildValueTag('${_formatSigned(fixed)}', color),
-                        if (assignedToken != null)
-                          _buildValueTag('${_formatSigned(arrayValue)}', color)
-                        else
-                          _buildValueOutlineTag('?', color),
-                        if (levelBonus != 0)
-                          _buildValueTag('+$levelBonus', color),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              _buildAssignmentSlot(stat, color, assignedToken, isActive),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAssignmentSlot(
-    String stat,
-    Color color,
-    CharacteristicValueToken? token,
-    bool isActive,
-  ) {
-    final slotChild = token != null
-        ? _buildAssignedTokenChip(token, color)
-        : _buildDropHint(color, highlight: isActive);
-
-    return SizedBox(
-      width: 60,
-      child: Align(
-        alignment: Alignment.topRight,
-        child: slotChild,
-      ),
     );
   }
 

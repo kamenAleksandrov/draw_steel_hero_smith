@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "objects/hero_object.md",
+                "file": "bugs/Identified bugs and QoL to be fixed.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "hero_object"
+              "title": "Identified bugs and QoL to be fixed"
             }
           },
           {
@@ -136,7 +136,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "objects/hero_object.md",
+                "file": "bugs/Identified bugs and QoL to be fixed.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -146,7 +146,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for hero_object"
+              "title": "Backlinks for Identified bugs and QoL to be fixed"
             }
           },
           {
@@ -212,6 +212,11 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "objects/hero_object.md",
+    "bugs/Identified bugs and QoL to be fixed.md",
+    "features",
+    "Untitled.md",
+    "bugs",
     "objects/titles_object.md",
     "objects/downtime_projects_object.md",
     "pages/home_page.md",
@@ -230,15 +235,12 @@
     "abilities and features plan/null.md",
     "abilities and features plan/fury.md",
     "abilities and features plan",
-    "objects/hero_object.md",
     "pages/downtime_projects_page.md",
     "objects/item_enchantments.md",
     "objects/languages_object.md",
     "widgets/stamina/stamina_widget.md",
     "systems/power_rolls_system.md",
     "widgets/tables/damage_immunites_weaknesses_widget.md",
-    "pages/strife_page.md",
-    "objects/classes_object.md",
     "widgets/stamina",
     "widgets/tables",
     "classes_object.canvas",
@@ -255,8 +257,6 @@
     "pages/creator_pages",
     "widgets",
     "systems",
-    "objects",
-    "creators/items",
-    "creators/story"
+    "objects"
   ]
 }

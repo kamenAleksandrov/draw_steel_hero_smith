@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 /// Widget for selecting hero level (1-10)
@@ -23,23 +22,13 @@ class LevelSelectorWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Hero Level',
-              style: AppTextStyles.title,
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Select your hero\'s level',
-              style: AppTextStyles.caption,
-            ),
-            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
                     value: selectedLevel,
                     decoration: const InputDecoration(
-                      labelText: 'Level',
+                      labelText: 'Hero Level',
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 12,
@@ -62,36 +51,7 @@ class LevelSelectorWidget extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        selectedLevel.toString(),
-                        style: AppTextStyles.title.copyWith(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      Text(
-                        'Level',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(width: 16)
               ],
             ),
           ],

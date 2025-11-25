@@ -49,7 +49,27 @@ class KitTheme {
       badgeBackground: Color(0xFF3F51B5), // indigo.shade500
       borderColor: Color(0xFF5C6BC0), // indigo.shade400
     ),
+    'stormwight_kit': KitColorScheme(
+      primary: Colors.indigo,
+      badgeBackground: Color(0xFF3F51B5), // indigo.shade500
+      borderColor: Color(0xFF5C6BC0), // indigo.shade400
+    ),
     'modifier': KitColorScheme(
+      primary: Colors.orange,
+      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
+      borderColor: Color(0xFFFFB74D), // orange.shade400
+    ),
+    'enchantment': KitColorScheme(
+      primary: Colors.orange,
+      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
+      borderColor: Color(0xFFFFB74D), // orange.shade400
+    ),
+    'psionic_augmentation': KitColorScheme(
+      primary: Colors.orange,
+      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
+      borderColor: Color(0xFFFFB74D), // orange.shade400
+    ),
+    'prayer': KitColorScheme(
       primary: Colors.orange,
       badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
       borderColor: Color(0xFFFFB74D), // orange.shade400

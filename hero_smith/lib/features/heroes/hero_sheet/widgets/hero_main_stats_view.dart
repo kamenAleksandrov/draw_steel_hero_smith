@@ -63,6 +63,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   final Map<_NumericField, TextEditingController> _numberControllers = {
     for (final field in _NumericField.values) field: TextEditingController(),
   };
+  ProviderSubscription<AsyncValue<HeroMainStats>>? _statsSub;
 
   final Map<_NumericField, FocusNode> _numberFocusNodes = {
     for (final field in _NumericField.values) field: FocusNode(),
@@ -103,6 +104,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   @override
   void initState() {
     super.initState();
+    _statsSub = ref.listenManual<AsyncValue<HeroMainStats>>(
+      heroMainStatsProvider(widget.heroId),
+      _handleStatsChanged,
+      fireImmediately: true,
+    );
     for (final entry in _numberControllers.entries) {
       entry.value.addListener(() => _handleNumberChanged(entry.key));
     }
@@ -112,7 +118,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   @override
+  void didUpdateWidget(covariant HeroMainStatsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.heroId != widget.heroId) {
+      _statsSub?.close();
+      _statsSub = ref.listenManual<AsyncValue<HeroMainStats>>(
+        heroMainStatsProvider(widget.heroId),
+        _handleStatsChanged,
+        fireImmediately: true,
+      );
+    }
+  }
+
+  @override
   void dispose() {
+    _statsSub?.close();
     for (final timer in _numberDebounce.values) {
       timer?.cancel();
     }
@@ -136,6 +156,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   void _applyStats(HeroMainStats stats) {
+    if (!mounted) return;
     _latestStats = stats;
     _isApplying = true;
 
@@ -171,6 +192,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     }
 
     _isApplying = false;
+  }
+
+  void _handleStatsChanged(
+    AsyncValue<HeroMainStats>? previous,
+    AsyncValue<HeroMainStats> next,
+  ) {
+    next.whenData(_applyStats);
   }
 
   void _handleNumberChanged(_NumericField field) {
@@ -278,25 +306,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   @override
   Widget build(BuildContext context) {
     final statsAsync = ref.watch(heroMainStatsProvider(widget.heroId));
-    
-    // Listen for changes and apply them to controllers
-    ref.listen<AsyncValue<HeroMainStats>>(
-      heroMainStatsProvider(widget.heroId),
-      (previous, next) {
-        next.whenData(_applyStats);
-      },
-    );
-    
+
     return statsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => _buildErrorState(context, error),
       data: (stats) {
-        // Apply stats when data becomes available
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_latestStats != stats) {
-            _applyStats(stats);
-          }
-        });
+        if (_latestStats == null) {
+          _applyStats(stats);
+        }
         
         final resourceDetailsAsync = ref.watch(
           _heroicResourceDetailsProvider(
@@ -702,13 +719,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: InkWell(
-                    onTap: () => _showStatEditDialog(
-                      context,
-                      label: 'Stamina Max',
-                      modKey: HeroModKeys.staminaMax,
-                      baseValue: stats.staminaMaxBase,
-                      currentModValue: staminaMaxMod,
-                    ),
+                    onTap: () async {
+                      if (!mounted) return;
+                      await _showStatEditDialog(
+                        context,
+                        label: 'Stamina Max',
+                        modKey: HeroModKeys.staminaMax,
+                        baseValue: stats.staminaMaxBase,
+                        currentModValue: staminaMaxMod,
+                      );
+                    },
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
                       padding: const EdgeInsets.all(8),
@@ -795,13 +815,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Expanded(
                   flex: 2,
                   child: InkWell(
-                    onTap: () => _showStatEditDialog(
-                      context,
-                      label: 'Recoveries Max',
-                      modKey: HeroModKeys.recoveriesMax,
-                      baseValue: stats.recoveriesMaxBase,
-                      currentModValue: recoveriesMaxMod,
-                    ),
+                    onTap: () async {
+                      if (!mounted) return;
+                      await _showStatEditDialog(
+                        context,
+                        label: 'Recoveries Max',
+                        modKey: HeroModKeys.recoveriesMax,
+                        baseValue: stats.recoveriesMaxBase,
+                        currentModValue: recoveriesMaxMod,
+                      );
+                    },
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
                       padding: const EdgeInsets.all(8),
@@ -951,7 +974,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text(name),
           content: SingleChildScrollView(
@@ -994,7 +1017,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('Close'),
             ),
           ],
@@ -1120,46 +1143,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     }
   }
 
-  Widget _buildNumberInput(
-    BuildContext context, {
-    required String label,
-    required _NumericField field,
-    String? helper,
-    bool allowNegative = false,
-    TextAlign textAlign = TextAlign.start,
-  }) {
-    final theme = Theme.of(context);
-    final controller = _numberControllers[field]!;
-    final focusNode = _numberFocusNodes[field]!;
-    final maxLength = allowNegative ? 4 : 3;
-
-    return SizedBox(
-      width: 88,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: theme.textTheme.labelLarge),
-          const SizedBox(height: 6),
-          TextField(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardType: TextInputType.number,
-            textAlign: textAlign,
-            maxLength: maxLength,
-            buildCounter: (_,
-                    {int? currentLength, bool? isFocused, int? maxLength}) =>
-                null,
-            inputFormatters: _formatters(allowNegative, maxLength),
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              helperText: helper,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildModificationInput(
     BuildContext context, {
     required String label,
@@ -1203,7 +1186,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         : 0;
 
     return InkWell(
-      onTap: () => _showNumberEditDialog(context, label, field),
+      onTap: () async {
+        if (!mounted) return;
+        await _showNumberEditDialog(context, label, field);
+      },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -1239,14 +1225,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final modValue = totalValue - baseValue;
 
     return InkWell(
-      onTap: () => _showModEditDialog(
-        context,
-        title: title,
-        modKey: modKey,
-        baseValue: baseValue,
-        currentModValue: modValue,
-        insights: insights,
-      ),
+      onTap: () async {
+        if (!mounted) return;
+        await _showModEditDialog(
+          context,
+          title: title,
+          modKey: modKey,
+          baseValue: baseValue,
+          currentModValue: modValue,
+          insights: insights,
+        );
+      },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -1294,50 +1283,60 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     String label,
     _NumericField field,
   ) async {
+    if (!mounted) return;
+    
     final controller = TextEditingController(
       text: _numberValueFromStats(_latestStats!, field).toString(),
     );
 
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Edit $label'),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            autofocus: true,
-            decoration: InputDecoration(
-              labelText: label,
-              border: const OutlineInputBorder(),
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text('Edit $label'),
+            content: TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: label,
+                border: const OutlineInputBorder(),
+              ),
+              inputFormatters: field == _NumericField.staminaCurrent
+                  ? _formatters(true, 4)
+                  : _formatters(false, 3),
             ),
-            inputFormatters: field == _NumericField.staminaCurrent
-                ? _formatters(true, 4)
-                : _formatters(false, 3),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text);
-                if (value != null) {
-                  Navigator.of(context).pop(value);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text);
+                  if (value != null) {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      );
 
-    controller.dispose();
-
-    if (result != null) {
-      await _persistNumberField(field, result.toString());
+      // Ensure dialog is fully dismissed before persisting
+      if (result != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _persistNumberField(field, result.toString());
+        });
+      }
+    } finally {
+      // Brief delay to ensure dialog animation completes
+      await Future.delayed(const Duration(milliseconds: 50));
+      controller.dispose();
     }
   }
 
@@ -1349,65 +1348,74 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int currentModValue,
     required List<String> insights,
   }) async {
+    if (!mounted) return;
+    
     final controller = TextEditingController(text: currentModValue.toString());
 
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Edit $title'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Base: $baseValue'),
-              const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(signed: true),
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Modification',
-                  border: OutlineInputBorder(),
-                  helperText: 'Enter modifier (-99 to +99)',
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text('Edit $title'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Base: $baseValue'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Modification',
+                    border: OutlineInputBorder(),
+                    helperText: 'Enter modifier (-99 to +99)',
+                  ),
+                  inputFormatters: _formatters(true, 4),
                 ),
-                inputFormatters: _formatters(true, 4),
-              ),
-              if (insights.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                ...insights.map((insight) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        insight,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    )),
+                if (insights.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  ...insights.map((insight) => Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          insight,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      )),
+                ],
               ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text);
+                  if (value != null) {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Save'),
+              ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text);
-                if (value != null) {
-                  Navigator.of(context).pop(value);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+          );
+        },
+      );
 
-    controller.dispose();
-
-    if (result != null) {
-      await _persistModification(modKey, result.toString());
+      // Ensure dialog is fully dismissed before persisting
+      if (result != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _persistModification(modKey, result.toString());
+        });
+      }
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 50));
+      controller.dispose();
     }
   }
 
@@ -1423,13 +1431,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     
     return Expanded(
       child: InkWell(
-        onTap: () => _showStatEditDialog(
-          context,
-          label: label,
-          modKey: modKey,
-          baseValue: baseValue,
-          currentModValue: modValue,
-        ),
+        onTap: () async {
+          if (!mounted) return;
+          await _showStatEditDialog(
+            context,
+            label: label,
+            modKey: modKey,
+            baseValue: baseValue,
+            currentModValue: modValue,
+          );
+        },
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -1477,39 +1488,50 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     return InkWell(
       onTap: () async {
+        if (!mounted) return;
+        
         final controller = TextEditingController(text: value.toString());
-        final result = await showDialog<String>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Edit $label'),
-              content: TextField(
-                controller: controller,
-                keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Value',
-                  border: OutlineInputBorder(),
+        
+        try {
+          final result = await showDialog<String>(
+            context: context,
+            builder: (dialogContext) {
+              return AlertDialog(
+                title: Text('Edit $label'),
+                content: TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Value',
+                    border: OutlineInputBorder(),
+                  ),
+                  inputFormatters: _formatters(allowNegative, 4),
                 ),
-                inputFormatters: _formatters(allowNegative, 4),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(controller.text),
-                  child: const Text('Save'),
-                ),
-              ],
-            );
-          },
-        );
-        controller.dispose();
-
-        if (result != null && result.isNotEmpty) {
-          await _persistNumberField(field, result);
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+                    child: const Text('Save'),
+                  ),
+                ],
+              );
+            },
+          );
+          
+          // Ensure dialog is fully dismissed before persisting
+          if (result != null && result.isNotEmpty && mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (!mounted) return;
+              await _persistNumberField(field, result);
+            });
+          }
+        } finally {
+          await Future.delayed(const Duration(milliseconds: 50));
+          controller.dispose();
         }
       },
       borderRadius: BorderRadius.circular(8),
@@ -1538,55 +1560,64 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int baseValue,
     required int currentModValue,
   }) async {
+    if (!mounted) return;
+    
     final controller = TextEditingController(text: currentModValue.toString());
 
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Edit $label'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Base: $baseValue'),
-              const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(signed: true),
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Modification',
-                  border: OutlineInputBorder(),
-                  helperText: 'Enter modifier (-99 to +99)',
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text('Edit $label'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Base: $baseValue'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Modification',
+                    border: OutlineInputBorder(),
+                    helperText: 'Enter modifier (-99 to +99)',
+                  ),
+                  inputFormatters: _formatters(true, 4),
                 ),
-                inputFormatters: _formatters(true, 4),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text);
+                  if (value != null) {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Save'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text);
-                if (value != null) {
-                  Navigator.of(context).pop(value);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
+          );
+        },
+      );
 
-    controller.dispose();
-
-    if (result != null) {
-      await _persistModification(modKey, result.toString());
+      // Ensure dialog is fully dismissed before persisting
+      if (result != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _persistModification(modKey, result.toString());
+        });
+      }
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 50));
+      controller.dispose();
     }
   }
 
@@ -1658,6 +1689,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   Future<void> _handleUseRecovery(HeroMainStats stats) async {
+    if (!mounted) return;
     if (stats.recoveriesCurrent <= 0) {
       _showSnack('No recoveries remaining.');
       return;
@@ -1690,6 +1722,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       description: 'Temporary stamina is removed before current stamina.',
     );
     if (amount == null || amount <= 0) return;
+    if (!mounted) return;
 
     var temp = stats.staminaTemp;
     var current = stats.staminaCurrent;
@@ -1720,6 +1753,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       description: 'Healing restores current stamina up to its effective max.',
     );
     if (amount == null || amount <= 0) return;
+    if (!mounted) return;
 
     final newCurrent = math.min(
       stats.staminaCurrent + amount,
@@ -1741,54 +1775,67 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required String title,
     String? description,
   }) async {
+    if (!mounted) return null;
+    
     final controller = TextEditingController(text: '1');
-    final result = await showDialog<int>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (description != null) ...[
-                Text(description),
-                const SizedBox(height: 12),
-              ],
-              TextField(
-                controller: controller,
-                autofocus: true,
-                keyboardType: TextInputType.number,
-                inputFormatters: _formatters(false, 3),
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(),
+    
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (description != null) ...[
+                  Text(description),
+                  const SizedBox(height: 12),
+                ],
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: _formatters(false, 3),
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text.trim());
+                  if (value == null || value <= 0) {
+                    Navigator.of(dialogContext).pop();
+                  } else {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Apply'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text.trim());
-                if (value == null || value <= 0) {
-                  Navigator.of(context).pop();
-                } else {
-                  Navigator.of(context).pop(value);
-                }
-              },
-              child: const Text('Apply'),
-            ),
-          ],
-        );
-      },
-    );
-    controller.dispose();
-    return result;
+          );
+        },
+      );
+      
+      // Wait for dialog animation to complete before returning result
+      if (result != null) {
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+      
+      return result;
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 100));
+      controller.dispose();
+    }
   }
 
   List<TextInputFormatter> _formatters(bool allowNegative, int maxLength) {
@@ -1810,71 +1857,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   String _formatSigned(int value) {
     if (value > 0) return '+$value';
     return value.toString();
-  }
-}
-
-class _HeroicResourceContent extends StatelessWidget {
-  const _HeroicResourceContent({
-    required this.name,
-    required this.description,
-    required this.inCombatName,
-    required this.inCombatDescription,
-    required this.outCombatName,
-    required this.outCombatDescription,
-    required this.currentField,
-  });
-
-  final String name;
-  final String? description;
-  final String? inCombatName;
-  final String? inCombatDescription;
-  final String? outCombatName;
-  final String? outCombatDescription;
-  final Widget currentField;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(name, style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        currentField,
-        if ((description ?? '').isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text(
-            description!,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-        if ((inCombatDescription ?? '').isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text(inCombatName ?? 'In Combat', style: theme.textTheme.labelLarge),
-          const SizedBox(height: 4),
-          Text(
-            inCombatDescription!,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-        if ((outCombatDescription ?? '').isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Text(outCombatName ?? 'Out of Combat',
-              style: theme.textTheme.labelLarge),
-          const SizedBox(height: 4),
-          Text(
-            outCombatDescription!,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ],
-    );
   }
 }
 

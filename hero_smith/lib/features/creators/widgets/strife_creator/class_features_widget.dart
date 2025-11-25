@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:hero_smith/core/models/feature.dart';
+import 'package:hero_smith/core/models/component.dart';
 import 'package:hero_smith/core/models/subclass_models.dart';
 import 'package:hero_smith/core/repositories/feature_repository.dart';
 import 'package:hero_smith/core/services/class_feature_data_service.dart';
+import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 
 typedef FeatureSelectionChanged = void Function(
   String featureId,
@@ -276,8 +278,9 @@ class ClassFeaturesWidget extends StatelessWidget {
     if (isAbilityFeature) {
       final ability = _resolveAbilityForFeature(feature, details);
       if (ability != null) {
+        final component = _abilityMapToComponent(ability);
         children.add(const SizedBox(height: 12));
-        children.add(_buildAbilityPreview(context, ability));
+        children.add(AbilityExpandableItem(component: component));
       }
     }
 
@@ -358,6 +361,22 @@ class ClassFeaturesWidget extends StatelessWidget {
     final slug = ClassFeatureDataService.slugify(name);
     final resolvedId = abilityIdByName[slug] ?? slug;
     return abilityDetailsById[resolvedId];
+  }
+
+  Component _abilityMapToComponent(Map<String, dynamic> abilityData) {
+    final id = abilityData['id']?.toString() ?? 
+              abilityData['resolved_id']?.toString() ?? 
+              '';
+    final name = abilityData['name']?.toString() ?? '';
+    final type = abilityData['type']?.toString() ?? 'ability';
+    
+    return Component(
+      id: id,
+      type: type,
+      name: name,
+      data: abilityData,
+      source: 'seed',
+    );
   }
 
 
@@ -1105,7 +1124,8 @@ class ClassFeaturesWidget extends StatelessWidget {
     }
 
     if (ability != null) {
-      details.add(_buildAbilityPreview(context, ability));
+      final component = _abilityMapToComponent(ability);
+      details.add(AbilityExpandableItem(component: component));
     } else {
       final abilityName = option['ability']?.toString().trim();
       if (abilityName != null && abilityName.isNotEmpty) {
@@ -1147,120 +1167,6 @@ class ClassFeaturesWidget extends StatelessWidget {
       if (ability != null) return ability;
     }
     return null;
-  }
-
-  Widget _buildAbilityPreview(
-    BuildContext context,
-    Map<String, dynamic> ability,
-  ) {
-    final theme = Theme.of(context);
-    final name = ability['name']?.toString().trim();
-    final actionType = ability['action_type']?.toString().trim();
-    final targets = ability['targets']?.toString().trim();
-    final effect = ability['effect']?.toString().trim();
-    final story = ability['story_text']?.toString().trim();
-
-    String? range;
-    final rangeValue = ability['range'];
-    if (rangeValue is Map) {
-      final map = rangeValue.cast<String, dynamic>();
-      final pieces = <String>[];
-      final distance = map['distance']?.toString().trim();
-      final area = map['area']?.toString().trim();
-      if (distance != null && distance.isNotEmpty) pieces.add(distance);
-      if (area != null && area.isNotEmpty) pieces.add(area);
-      if (pieces.isNotEmpty) {
-        range = pieces.join(' · ');
-      }
-    } else if (rangeValue != null) {
-      range = rangeValue.toString();
-    }
-
-    final keywords = ability['keywords'] is List
-        ? (ability['keywords'] as List)
-            .whereType<String>()
-            .map((keyword) => keyword.trim())
-            .where((keyword) => keyword.isNotEmpty)
-            .toList()
-        : const <String>[];
-
-    final costs = ability['costs'];
-    String? costDescription;
-    if (costs is Map) {
-      final map = costs.cast<String, dynamic>();
-      final signature = map['signature'] == true ? 'Signature' : null;
-      final resource = map['resource']?.toString().trim();
-      final amount = map['amount'];
-      final pieces = <String>[];
-      if (signature != null) pieces.add(signature);
-      if (resource != null && resource.isNotEmpty) {
-        if (amount is num) {
-          pieces.add('$amount $resource');
-        } else {
-          pieces.add(resource);
-        }
-      }
-      if (pieces.isNotEmpty) {
-        costDescription = pieces.join(' · ');
-      }
-    }
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondaryContainer.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name?.isNotEmpty == true
-                ? name!
-                : (ability['resolved_id']?.toString() ?? 'Ability'),
-            style: theme.textTheme.titleSmall,
-          ),
-          if (keywords.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: keywords
-                  .map(
-                    (keyword) => Chip(
-                      label: Text(keyword),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ],
-          if (actionType != null && actionType.isNotEmpty)
-            Text('Action: $actionType', style: theme.textTheme.bodySmall),
-          if (range != null && range.isNotEmpty)
-            Text('Range: $range', style: theme.textTheme.bodySmall),
-          if (targets != null && targets.isNotEmpty)
-            Text('Targets: $targets', style: theme.textTheme.bodySmall),
-          if (costDescription != null && costDescription.isNotEmpty)
-            Text('Cost: $costDescription', style: theme.textTheme.bodySmall),
-          if (effect != null && effect.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(effect, style: theme.textTheme.bodyMedium),
-          ],
-          if (story != null && story.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              story,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
   }
 
   bool _optionMatchesActiveSubclass(Map<String, dynamic> option) {

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:hero_smith/core/theme/hero_theme.dart';
-import 'package:hero_smith/core/theme/strife_theme.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
 import 'package:hero_smith/features/heroes/hero_sheet/hero_sheet_page.dart';
@@ -202,28 +200,6 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
     return false;
   }
 
-  Widget? _buildFloatingActionButton() {
-    if (_tabController.index == 0) {
-      if (!_storyDirty) return null;
-      return FloatingActionButton.extended(
-        onPressed: _saveStory,
-        icon: const Icon(Icons.save),
-        label: const Text('Save'),
-        backgroundColor: HeroTheme.primarySection,
-      );
-    }
-    if (_tabController.index == 1) {
-      if (!_strifeDirty) return null;
-      return FloatingActionButton.extended(
-        onPressed: _saveStrife,
-        icon: const Icon(Icons.save),
-        label: const Text('Save Strife'),
-        backgroundColor: StrifeTheme.levelAccent,
-      );
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -301,7 +277,6 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
             ),
           ],
         ),
-        floatingActionButton: _buildFloatingActionButton(),
       ),
     );
   }

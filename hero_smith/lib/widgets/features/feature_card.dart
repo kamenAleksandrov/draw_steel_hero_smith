@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../core/models/feature.dart';
+import '../../core/models/component.dart';
 import '../../core/theme/feature_tokens.dart';
 import '../abilities/abilities_shared.dart';
+import '../abilities/ability_expandable_item.dart';
 
 class FeatureCard extends StatelessWidget {
   final Feature feature;
   final VoidCallback? onTap;
+  final List<Component>? grantedAbilities;
 
   const FeatureCard({
     super.key,
     required this.feature,
     this.onTap,
+    this.grantedAbilities,
   });
 
   @override
@@ -77,6 +81,22 @@ class FeatureCard extends StatelessWidget {
                   color: scheme.onSurfaceVariant,
                 ),
               ),
+
+              // Display granted abilities if any
+              if (grantedAbilities != null && grantedAbilities!.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text(
+                  'Granted Abilities',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...grantedAbilities!.map((component) => 
+                  AbilityExpandableItem(component: component)
+                ),
+              ],
             ],
           ),
         ),

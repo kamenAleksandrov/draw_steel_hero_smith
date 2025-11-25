@@ -6,7 +6,13 @@ import 'package:hero_smith/widgets/kits/kit_components.dart';
 
 class WardCard extends StatelessWidget {
   final Component component;
-  const WardCard({super.key, required this.component});
+  final bool initiallyExpanded;
+  
+  const WardCard({
+    super.key, 
+    required this.component,
+    this.initiallyExpanded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class WardCard extends StatelessWidget {
       title: component.name,
       borderColor: colorScheme.borderColor,
       badge: KitComponents.kitBadge(kitType: 'ward', displayName: 'Ward'),
+      initiallyExpanded: initiallyExpanded,
       expandedContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

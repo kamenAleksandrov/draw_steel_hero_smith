@@ -19,7 +19,7 @@ class PerkCard extends StatelessWidget {
     final ds = DsTheme.of(context);
     final scheme = Theme.of(context).colorScheme;
     final borderColor = ds.perkGroupBorder[group] ?? scheme.outlineVariant;
-    final neutralText = scheme.onSurface.withOpacity(0.9);
+    final neutralText = scheme.onSurface;
 
     return ExpandableCard(
       title: perk.name,
@@ -36,7 +36,7 @@ class PerkCard extends StatelessWidget {
           style: TextStyle(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: borderColor.withOpacity(0.8),
+            color: borderColor,
           ),
         ),
       ),

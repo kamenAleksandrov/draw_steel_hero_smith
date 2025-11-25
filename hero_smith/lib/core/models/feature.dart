@@ -10,6 +10,7 @@ class Feature {
   final String? subclassName;
   final int level;
   final String description;
+  final List<String> grantedAbilityNames;
 
   const Feature({
     required this.id,
@@ -20,6 +21,7 @@ class Feature {
     this.subclassName,
     required this.level,
     required this.description,
+    this.grantedAbilityNames = const [],
   });
 
   factory Feature.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,26 @@ class Feature {
           normalized == 'true' || normalized == '1' || normalized == 'yes';
     }
 
+    // Extract granted abilities from the grants/features list
+    // The JSON can have a 'grants' field (array of grant objects) or other patterns
+    final grantedAbilityNames = <String>[];
+    
+    // Check for 'grants' array (common pattern)
+    final grants = json['grants'];
+    if (grants is List) {
+      for (final grant in grants) {
+        if (grant is Map<String, dynamic>) {
+          final grantType = grant['grant_type']?.toString();
+          if (grantType == 'ability') {
+            final abilityName = grant['name']?.toString();
+            if (abilityName != null && abilityName.isNotEmpty) {
+              grantedAbilityNames.add(abilityName);
+            }
+          }
+        }
+      }
+    }
+
     return Feature(
       id: id,
       type: type,
@@ -56,6 +78,7 @@ class Feature {
       subclassName: subclassName,
       level: level,
       description: description,
+      grantedAbilityNames: grantedAbilityNames,
     );
   }
 
@@ -69,6 +92,7 @@ class Feature {
       'subclass_name': subclassName,
       'level': level,
       'description': description,
+      'granted_ability_names': grantedAbilityNames,
     };
   }
 
