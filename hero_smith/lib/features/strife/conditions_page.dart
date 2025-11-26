@@ -78,8 +78,10 @@ class ConditionsPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Conditions (${conditions.length})',
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  '${conditions.length} conditions available',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Expanded(

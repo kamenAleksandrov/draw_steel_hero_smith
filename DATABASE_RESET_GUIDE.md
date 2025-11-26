@@ -61,6 +61,20 @@ await DatabaseMaintenance.clearAndReseed(db);
 **Empty Fields:**
 - All empty fields (`""` or missing) are now handled gracefully - components won't display if the data is missing
 
+## Automatic Reseeding
+
+**Perks** are now automatically reseeded on every app startup to ensure all perks are available. This fixes issues where the perks.json file was updated after the initial database creation.
+
+If you need to manually reseed perks:
+
+```dart
+import 'package:hero_smith/core/db/database_maintenance.dart';
+import 'package:hero_smith/core/db/app_database.dart';
+
+final db = AppDatabase.instance;
+await DatabaseMaintenance.reseedPerks(db);
+```
+
 ## Verification
 
 After resetting:
@@ -79,6 +93,10 @@ After resetting:
 **Missing abilities?**
 - Verify the simplified JSON files exist in `data/abilities/class_abilities_simplified/`
 - Check the console for any parsing errors
+
+**Missing perks?**
+- Perks are automatically reseeded on startup, so this should not happen
+- If you still see missing perks, try restarting the app
 
 **Data not displaying?**
 - Empty fields are intentionally hidden - this is correct behavior

@@ -7,4 +7,5 @@ class AppIcons {
   static const IconData enhancements = Icons.build;
   static const IconData event = Icons.event_note;
   static const IconData dice = Icons.casino;
+  static const IconData treasures = Icons.diamond;
 }

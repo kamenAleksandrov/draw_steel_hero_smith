@@ -12,13 +12,6 @@ class GearPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 8.0),
-          child: Text(
-            'Gear Page',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
         _NavCard(
           title: 'Kits',
           subtitle: 'Preset equipment bundles by role',

@@ -7,8 +7,6 @@ complications and other traits should have the implemented feature to grant item
 
 perks in codex should display the abilities they grant
 
-maybe add treasures that have downtime projects stats to the downtime projects
-
 project points from background should be availavable?
 
 the heading of the codex pages should be removed and keep only the navigation name at the top
@@ -23,4 +21,4 @@ the notifications of saving and or the random displays that pop out of the botto
 
 need to add an icon.
 
-clicking on the vuew sheet icon at the top of the creator should check if changes were maede and promp the user
+some treasure have abilities that need to be added

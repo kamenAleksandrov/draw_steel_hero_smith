@@ -5,6 +5,7 @@ import '../../core/data/downtime_data_source.dart';
 import '../shared/expandable_card.dart';
 import '../../features/downtime/project_category_detail_page.dart';
 import '../../features/downtime/enhancement_echelon_detail_page.dart';
+import '../../features/downtime/craftable_treasure_type_detail_page.dart';
 
 class ProjectsTab extends StatefulWidget {
   const ProjectsTab({super.key});
@@ -247,7 +248,7 @@ class _ProjectCategoryCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(category).withOpacity(0.2),
+                  color: _getCategoryColor(category).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -476,7 +477,7 @@ class _EchelonNavigationCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: _getEchelonColor(echelonLevel).withOpacity(0.3),
+          color: _getEchelonColor(echelonLevel).withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -501,7 +502,7 @@ class _EchelonNavigationCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: _getEchelonColor(echelonLevel).withOpacity(0.15),
+                  color: _getEchelonColor(echelonLevel).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -577,6 +578,288 @@ class _EchelonNavigationCard extends StatelessWidget {
   }
 }
 
+// ========== Treasures Tab ==========
+
+class TreasuresTab extends StatefulWidget {
+  const TreasuresTab({super.key});
+
+  @override
+  State<TreasuresTab> createState() => _TreasuresTabState();
+}
+
+class _TreasuresTabState extends State<TreasuresTab> {
+  final _ds = DowntimeDataSource();
+
+  Color _getTreasureTypeColor(String type) {
+    switch (type) {
+      case 'consumable':
+        return Colors.teal;
+      case 'trinket':
+        return Colors.amber.shade700;
+      case 'leveled_treasure':
+        return Colors.deepPurple;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
+  IconData _getTreasureTypeIcon(String type) {
+    switch (type) {
+      case 'consumable':
+        return Icons.local_drink;
+      case 'trinket':
+        return Icons.auto_awesome;
+      case 'leveled_treasure':
+        return Icons.shield;
+      default:
+        return Icons.diamond;
+    }
+  }
+
+  String _getTreasureTypeDescription(String type) {
+    switch (type) {
+      case 'consumable':
+        return 'Single-use items like potions, scrolls, and oils';
+      case 'trinket':
+        return 'Reusable magical items and accessories';
+      case 'leveled_treasure':
+        return 'Powerful equipment that grows with your hero';
+      default:
+        return 'Craftable treasure items';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, List<CraftableTreasure>>>(
+      future: _ds.loadCraftableTreasuresByType(),
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final treasuresByType = snap.data ?? <String, List<CraftableTreasure>>{};
+        if (treasuresByType.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    AppIcons.treasures,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No craftable treasures found',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Order types: consumable, trinket, leveled_treasure
+        final typeOrder = ['consumable', 'trinket', 'leveled_treasure'];
+        final sortedTypes = treasuresByType.keys.toList()
+          ..sort((a, b) {
+            final indexA = typeOrder.indexOf(a);
+            final indexB = typeOrder.indexOf(b);
+            if (indexA == -1 && indexB == -1) return a.compareTo(b);
+            if (indexA == -1) return 1;
+            if (indexB == -1) return -1;
+            return indexA.compareTo(indexB);
+          });
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Craftable Treasures',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Choose a treasure type to browse craftable items',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              const SizedBox(height: 24),
+              ...sortedTypes.map((type) {
+                final treasures = treasuresByType[type]!;
+                return _TreasureTypeCard(
+                  type: type,
+                  treasures: treasures,
+                  color: _getTreasureTypeColor(type),
+                  icon: _getTreasureTypeIcon(type),
+                  description: _getTreasureTypeDescription(type),
+                  dataSource: _ds,
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TreasureTypeCard extends StatelessWidget {
+  final String type;
+  final List<CraftableTreasure> treasures;
+  final Color color;
+  final IconData icon;
+  final String description;
+  final DowntimeDataSource dataSource;
+
+  const _TreasureTypeCard({
+    required this.type,
+    required this.treasures,
+    required this.color,
+    required this.icon,
+    required this.description,
+    required this.dataSource,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Count by echelon for non-leveled, by equipment type for leveled
+    final bool isLeveled = type == 'leveled_treasure';
+    final Map<String, int> subcategoryCounts = {};
+    
+    if (isLeveled) {
+      for (final t in treasures) {
+        final equipType = t.leveledType ?? 'other';
+        subcategoryCounts[equipType] = (subcategoryCounts[equipType] ?? 0) + 1;
+      }
+    } else {
+      for (final t in treasures) {
+        final echelon = t.echelon ?? 0;
+        final key = dataSource.getEchelonName(echelon);
+        subcategoryCounts[key] = (subcategoryCounts[key] ?? 0) + 1;
+      }
+    }
+
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: color.withValues(alpha: 0.3),
+          width: 2,
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CraftableTreasureTypeDetailPage(
+                type: type,
+                treasures: treasures,
+                color: color,
+                dataSource: dataSource,
+              ),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dataSource.getTreasureTypeName(type),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: color,
+                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.inventory_2,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${treasures.length} items',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(
+                          isLeveled ? Icons.category : Icons.layers,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          isLeveled 
+                              ? '${subcategoryCounts.length} equipment types'
+                              : '${subcategoryCounts.length} echelons',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: color,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class DowntimeTabsScaffold extends StatelessWidget {
   const DowntimeTabsScaffold({super.key, this.initialIndex = 0});
 
@@ -585,26 +868,31 @@ class DowntimeTabsScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       initialIndex: initialIndex,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Downtime'),
-          bottom: const TabBar(
-            tabs: [
+      child: Column(
+        children: [
+          TabBar(
+            isScrollable: false,
+            tabAlignment: TabAlignment.fill,
+            tabs: const [
               Tab(icon: Icon(AppIcons.projects), text: 'Projects'),
               Tab(icon: Icon(AppIcons.enhancements), text: 'Enhancements'),
+              Tab(icon: Icon(AppIcons.treasures), text: 'Treasures'),
               Tab(icon: Icon(Icons.event_note), text: 'Events'),
             ],
           ),
-        ),
-        body: const TabBarView(
-          children: [
-            ProjectsTab(),
-            EnhancementsTab(),
-            EventsTab(),
-          ],
-        ),
+          const Expanded(
+            child: TabBarView(
+              children: [
+                ProjectsTab(),
+                EnhancementsTab(),
+                TreasuresTab(),
+                EventsTab(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

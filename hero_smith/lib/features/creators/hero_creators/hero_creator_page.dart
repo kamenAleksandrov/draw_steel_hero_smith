@@ -227,7 +227,37 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
           elevation: 0,
           actions: [
             IconButton(
-              onPressed: () {
+              onPressed: () async {
+                if (_storyDirty || _strifeDirty) {
+                  final result = await showDialog<String>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Unsaved changes'),
+                      content: const Text(
+                          'You have unsaved changes. Do you want to save before viewing the hero sheet?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop('cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop('discard'),
+                          child: const Text('Discard'),
+                        ),
+                        FilledButton.icon(
+                          onPressed: () => Navigator.of(ctx).pop('save'),
+                          icon: const Icon(Icons.save),
+                          label: const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (result == 'cancel' || result == null) return;
+                  if (result == 'save') {
+                    await _saveAll();
+                  }
+                }
+                if (!mounted) return;
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (_) => HeroSheetPage(

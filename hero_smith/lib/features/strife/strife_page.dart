@@ -13,12 +13,6 @@ class StrifePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'Strife',
-            style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.left,
-          ),
-          const SizedBox(height: 16),
           _NavCard(
             icon: Icons.bolt,
             title: 'Abilities',

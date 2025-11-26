@@ -12,6 +12,8 @@ class ProjectDetailCard extends StatelessWidget {
     this.onTap,
     this.onAddPoints,
     this.onDelete,
+    this.onAddToGear,
+    this.isTreasureProject = false,
   });
 
   final HeroDowntimeProject project;
@@ -19,6 +21,8 @@ class ProjectDetailCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onAddPoints;
   final VoidCallback? onDelete;
+  final VoidCallback? onAddToGear;
+  final bool isTreasureProject;
 
   @override
   Widget build(BuildContext context) {
@@ -141,10 +145,10 @@ class ProjectDetailCard extends StatelessWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.amber.withOpacity(0.1),
+                              color: Colors.amber.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Colors.amber.withOpacity(0.3),
+                                color: Colors.amber.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -190,10 +194,10 @@ class ProjectDetailCard extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -250,8 +254,8 @@ class ProjectDetailCard extends StatelessWidget {
                 ),
               ],
 
-              // Add Points button
-              if (!isCompleted && onAddPoints != null) ...[
+              // Add Points button (show if not completed and goal not yet reached)
+              if (!isCompleted && onAddPoints != null && onAddToGear == null) ...[
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -261,6 +265,23 @@ class ProjectDetailCard extends StatelessWidget {
                     label: const Text('Add Points'),
                     style: FilledButton.styleFrom(
                       backgroundColor: HeroTheme.primarySection,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+              ],
+
+              // Add to Gear button for treasure projects that reached their goal
+              if (isTreasureProject && onAddToGear != null) ...[
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: onAddToGear,
+                    icon: const Icon(Icons.backpack, size: 20),
+                    label: const Text('Add Crafted Item to Gear'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
                   ),

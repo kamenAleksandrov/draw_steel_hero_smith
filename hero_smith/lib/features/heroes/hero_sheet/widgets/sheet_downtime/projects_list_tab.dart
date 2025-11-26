@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/db/providers.dart';
 import '../../../../../core/models/downtime_tracking.dart';
 import '../../../../../core/theme/hero_theme.dart';
+import '../../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';
-import 'project_template_browser.dart';
+import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider
 
 /// Provider for hero's downtime projects
 final heroProjectsProvider =
@@ -37,11 +38,38 @@ class ProjectsListTab extends ConsumerWidget {
     );
   }
 
+  /// Try to find the matching treasure for a project (by templateProjectId or name)
+  CraftableTreasure? _findMatchingTreasure(
+    HeroDowntimeProject project, 
+    List<CraftableTreasure> treasures,
+  ) {
+    // First try by templateProjectId
+    if (project.templateProjectId != null) {
+      for (final t in treasures) {
+        if (t.id == project.templateProjectId) {
+          return t;
+        }
+      }
+    }
+    // Fall back to name matching (case-insensitive)
+    final nameLower = project.name.toLowerCase();
+    for (final t in treasures) {
+      if (t.name.toLowerCase() == nameLower) {
+        return t;
+      }
+    }
+    return null;
+  }
+
   Widget _buildContent(
     BuildContext context,
     WidgetRef ref,
     List<HeroDowntimeProject> projects,
   ) {
+    // Use the same provider that project_template_browser uses for treasures
+    final treasuresAsync = ref.watch(craftableTreasuresProvider);
+    final treasures = treasuresAsync.valueOrNull ?? <CraftableTreasure>[];
+    
     return CustomScrollView(
       slivers: [
         // Add project button
@@ -67,12 +95,20 @@ class ProjectsListTab extends ConsumerWidget {
               (context, index) {
                 final activeProjects =
                     projects.where((p) => !p.isCompleted).toList();
+                final project = activeProjects[index];
+                final hasReachedGoal = project.currentPoints >= project.projectGoal;
+                final matchingTreasure = _findMatchingTreasure(project, treasures);
+                final isTreasureProject = matchingTreasure != null;
                 return ProjectDetailCard(
-                  project: activeProjects[index],
+                  project: project,
                   heroId: heroId,
-                  onTap: () => _editProject(context, ref, activeProjects[index]),
-                  onAddPoints: () => _addPointsToProject(context, ref, activeProjects[index]),
-                  onDelete: () => _deleteProject(context, ref, activeProjects[index]),
+                  onTap: () => _editProject(context, ref, project),
+                  onAddPoints: () => _addPointsToProject(context, ref, project),
+                  onDelete: () => _deleteProject(context, ref, project),
+                  isTreasureProject: isTreasureProject,
+                  onAddToGear: (isTreasureProject && hasReachedGoal)
+                      ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
+                      : null,
                 );
               },
               childCount: projects.where((p) => !p.isCompleted).length,
@@ -99,12 +135,18 @@ class ProjectsListTab extends ConsumerWidget {
               (context, index) {
                 final completedProjects =
                     projects.where((p) => p.isCompleted).toList();
+                final project = completedProjects[index];
+                final matchingTreasure = _findMatchingTreasure(project, treasures);
+                final isTreasureProject = matchingTreasure != null;
                 return ProjectDetailCard(
-                  project: completedProjects[index],
+                  project: project,
                   heroId: heroId,
-                  onTap: () =>
-                      _editProject(context, ref, completedProjects[index]),
-                  onDelete: () => _deleteProject(context, ref, completedProjects[index]),
+                  onTap: () => _editProject(context, ref, project),
+                  onDelete: () => _deleteProject(context, ref, project),
+                  isTreasureProject: isTreasureProject,
+                  onAddToGear: isTreasureProject
+                      ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
+                      : null,
                 );
               },
               childCount: projects.where((p) => p.isCompleted).length,
@@ -387,5 +429,58 @@ class ProjectsListTab extends ConsumerWidget {
       context: context,
       builder: (context) => ProjectTemplateBrowser(heroId: heroId),
     );
+  }
+
+  void _addTreasureToGear(
+    BuildContext context,
+    WidgetRef ref,
+    HeroDowntimeProject project,
+    CraftableTreasure treasure,
+  ) async {
+    final treasureId = treasure.id;
+    
+    // Get current hero treasures
+    final db = ref.read(appDatabaseProvider);
+    final existingTreasures = await db.getHeroComponentIds(heroId, 'treasure');
+    
+    // Check if already added
+    if (existingTreasures.contains(treasureId)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('"${treasure.name}" is already in your gear!'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Add treasure to hero's gear
+    try {
+      await db.addHeroComponentId(
+        heroId: heroId,
+        componentId: treasureId,
+        category: 'treasure',
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added "${treasure.name}" to your gear!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add treasure: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

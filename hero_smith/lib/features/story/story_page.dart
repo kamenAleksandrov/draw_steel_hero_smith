@@ -16,12 +16,6 @@ class StoryPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        Text(
-          'Story Page',
-          style: Theme.of(context).textTheme.headlineSmall,
-          textAlign: TextAlign.left,
-        ),
-        const SizedBox(height: 16),
         _NavCard(
           icon: Icons.groups,
           title: 'Ancestries',
