@@ -489,6 +489,30 @@ class HeroRepository {
       }
     }
 
+    // Read from complication stat mods and merge
+    final complicationModsEntry = values.firstWhereOrNull(
+      (e) => e.key == 'complication.stat_mods',
+    );
+    if (complicationModsEntry != null) {
+      final raw = complicationModsEntry.jsonValue ?? complicationModsEntry.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is Map) {
+            decoded.forEach((key, value) {
+              final modKey = _ancestryStatToModKey(key.toString());
+              if (modKey != null) {
+                final intValue = _extractAncestryStatValue(value);
+                if (intValue != 0) {
+                  map[modKey] = (map[modKey] ?? 0) + intValue;
+                }
+              }
+            });
+          }
+        } catch (_) {}
+      }
+    }
+
     return map.isEmpty ? const {} : Map.unmodifiable(map);
   }
 

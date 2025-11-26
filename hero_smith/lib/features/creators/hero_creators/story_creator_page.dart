@@ -57,6 +57,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
   String? _careerIncidentName;
 
   String? _complicationId;
+  final Map<String, String> _complicationChoices = {};
 
   bool get isDirty => _dirty;
 
@@ -103,6 +104,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
       careerPerkIds: LinkedHashSet<String>.of(_careerPerkIds),
       careerIncidentName: _careerIncidentName,
       complicationId: _complicationId,
+      complicationChoices: Map<String, String>.from(_complicationChoices),
     );
 
     await service.saveStory(payload);
@@ -166,6 +168,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
           ..addAll(result.careerSelection.chosenPerkIds);
         _careerIncidentName = result.careerSelection.incitingIncidentName;
         _complicationId = result.complicationId;
+        _complicationChoices
+          ..clear()
+          ..addAll(result.complicationChoices);
         _dirty = false;
         _loading = false;
       });
@@ -338,6 +343,16 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
   void _onComplicationChanged(String? value) {
     setState(() {
       _complicationId = value;
+      // Clear choices when complication changes
+      _complicationChoices.clear();
+    });
+  }
+
+  void _onComplicationChoicesChanged(Map<String, String> choices) {
+    setState(() {
+      _complicationChoices
+        ..clear()
+        ..addAll(choices);
     });
   }
 
@@ -418,7 +433,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
         SliverToBoxAdapter(
           child: StoryComplicationSection(
             selectedComplicationId: _complicationId,
+            complicationChoices: _complicationChoices,
             onComplicationChanged: _onComplicationChanged,
+            onChoicesChanged: _onComplicationChoicesChanged,
             onDirty: _handleDirty,
           ),
         ),

@@ -217,6 +217,27 @@
     "description": "If you want to track the location of a lost treasure, decipher a ritual, or trace the lineage of a royal family to find the next heir to the throne, you can start a downtime project to find out whatever mysteries you seek to unravel. You might start a project to discover lore because the information can't be discovered through a single test, or you could do so because you failed a test to recall information and now want to learn it through research.\n\nWhen you start a downtime project to discover lore, you choose the lore you want investigated and the questions you want answered. The Director tells you if the lore you seek amounts to common, obscure, lost, or forbidden knowledge. The more esoteric the knowledge, the more project points are required to find the answers you seek.\n\nForbidden knowledge is lore that a powerful individual or organization is attempting to keep secret. Those who know the secrets speak of them in whispered codes after passwords are exchanged, and texts are written only with ciphers. Hunting down leads and making sense of them typically takes weeks. The location of the dagger that lit the throat of the god of death is hidden behind layers of encoded text and written in a dead language known only to that god's most devout followers."
   },
   {
+    "id": "study_lore",
+    "type": "downtime_project",
+    "name": "Study Lore",
+    "prerequisites": {
+      "item_prerequisite": [],
+      "project_source": [
+        {
+          "name": "A significant source of information on the topic of your obsession, such as a major library or a world-renowned sage."
+        }
+      ]
+    },
+    "project_roll_characteristic": [
+      {
+        "name": "Reason"
+      }
+    ],
+    "project_goal": [120, 150, 180],
+    "project_guides": [],
+    "description": "Each time you complete this project, your knowledge of your chosen field expands, and the bonus to tests provided by your chosen skill increases by 1."
+  },
+  {
     "id": "hone_career_skills",
     "type": "downtime_project",
     "name": "Hone Career Skills",

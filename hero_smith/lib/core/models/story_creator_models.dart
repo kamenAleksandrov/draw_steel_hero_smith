@@ -11,6 +11,7 @@ class StoryCreatorLoadResult {
     required this.ancestryTraitIds,
     this.ancestryTraitChoices = const {},
     this.complicationId,
+    this.complicationChoices = const {},
   });
 
   final HeroModel? hero;
@@ -19,6 +20,7 @@ class StoryCreatorLoadResult {
   final List<String> ancestryTraitIds;
   final Map<String, String> ancestryTraitChoices;
   final String? complicationId;
+  final Map<String, String> complicationChoices;
 
   StoryCreatorLoadResult copyWith({
     HeroModel? hero,
@@ -27,6 +29,7 @@ class StoryCreatorLoadResult {
     List<String>? ancestryTraitIds,
     Map<String, String>? ancestryTraitChoices,
     String? complicationId,
+    Map<String, String>? complicationChoices,
   }) {
     return StoryCreatorLoadResult(
       hero: hero ?? this.hero,
@@ -35,6 +38,7 @@ class StoryCreatorLoadResult {
       ancestryTraitIds: ancestryTraitIds ?? this.ancestryTraitIds,
       ancestryTraitChoices: ancestryTraitChoices ?? this.ancestryTraitChoices,
       complicationId: complicationId ?? this.complicationId,
+      complicationChoices: complicationChoices ?? this.complicationChoices,
     );
   }
 
@@ -49,14 +53,16 @@ class StoryCreatorLoadResult {
         other.careerSelection == careerSelection &&
         const ListEquality<String>().equals(other.ancestryTraitIds, ancestryTraitIds) &&
         const MapEquality<String, String>().equals(other.ancestryTraitChoices, ancestryTraitChoices) &&
-        other.complicationId == complicationId;
+        other.complicationId == complicationId &&
+        const MapEquality<String, String>().equals(other.complicationChoices, complicationChoices);
   }
 
   @override
   int get hashCode => Object.hash(hero, cultureSelection, careerSelection,
       const ListEquality<String>().hash(ancestryTraitIds), 
       const MapEquality<String, String>().hash(ancestryTraitChoices),
-      complicationId);
+      complicationId,
+      const MapEquality<String, String>().hash(complicationChoices));
 }
 
 class StoryCultureSuggestion {
@@ -95,6 +101,7 @@ class StoryCreatorSavePayload {
     this.careerPerkIds = const <String>{},
     this.careerIncidentName,
     this.complicationId,
+    this.complicationChoices = const <String, String>{},
   });
 
   final String heroId;
@@ -115,4 +122,6 @@ class StoryCreatorSavePayload {
   final Set<String> careerPerkIds;
   final String? careerIncidentName;
   final String? complicationId;
+  /// Map of complication choice key to chosen value (e.g., skill, treasure, pick_one selection)
+  final Map<String, String> complicationChoices;
 }

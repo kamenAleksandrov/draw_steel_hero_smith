@@ -64,3 +64,10 @@ Relentless
 Shadowmeld Reactive Tumble
 Vengeance Mark Detonate Sigil
 Beyondsight Foresight Psionic Gift
+
+abilities page should separate them into types of actions.
+
+maybe add a gauge to the hero resurce for style to track abilities 
+
+potency needs to be shown in the sheet
+

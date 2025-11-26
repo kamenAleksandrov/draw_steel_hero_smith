@@ -7,12 +7,18 @@ import '../db/providers.dart';
 import '../models/story_creator_models.dart';
 import '../repositories/hero_repository.dart';
 import 'ancestry_bonus_service.dart';
+import 'complication_grants_service.dart';
 
 class StoryCreatorService {
-  StoryCreatorService(this._heroRepository, this._ancestryBonusService);
+  StoryCreatorService(
+    this._heroRepository,
+    this._ancestryBonusService,
+    this._complicationGrantsService,
+  );
 
   final HeroRepository _heroRepository;
   final AncestryBonusService _ancestryBonusService;
+  final ComplicationGrantsService _complicationGrantsService;
   Map<String, StoryCultureSuggestion>? _suggestionsCache;
 
   Future<StoryCreatorLoadResult> loadInitialData(String heroId) async {
@@ -22,6 +28,7 @@ class StoryCreatorService {
     final traits = await _heroRepository.getSelectedAncestryTraits(heroId);
     final traitChoices = await _heroRepository.getAncestryTraitChoices(heroId);
     final complicationId = await _heroRepository.loadComplication(heroId);
+    final complicationChoices = await _complicationGrantsService.loadComplicationChoices(heroId);
     return StoryCreatorLoadResult(
       hero: hero,
       cultureSelection: culture,
@@ -29,6 +36,7 @@ class StoryCreatorService {
       ancestryTraitIds: traits,
       ancestryTraitChoices: traitChoices,
       complicationId: complicationId,
+      complicationChoices: complicationChoices,
     );
   }
 
@@ -49,6 +57,17 @@ class StoryCreatorService {
     // Remove old bonuses if ancestry, traits, or choices changed
     if (ancestryChanged || traitsChanged || choicesChanged) {
       await _ancestryBonusService.removeBonuses(payload.heroId);
+    }
+
+    // Check if complication or its choices have changed
+    final oldComplicationId = await _heroRepository.loadComplication(payload.heroId);
+    final oldComplicationChoices = await _complicationGrantsService.loadComplicationChoices(payload.heroId);
+    final complicationChanged = oldComplicationId != payload.complicationId;
+    final complicationChoicesChanged = !_mapEquals(oldComplicationChoices, payload.complicationChoices);
+
+    // Remove old complication grants if complication or choices changed
+    if (complicationChanged || complicationChoicesChanged) {
+      await _complicationGrantsService.removeGrants(payload.heroId);
     }
 
     hero.name = payload.name;
@@ -112,6 +131,26 @@ class StoryCreatorService {
       heroId: payload.heroId,
       complicationId: payload.complicationId,
     );
+
+    // Save complication choices
+    await _complicationGrantsService.saveComplicationChoices(
+      heroId: payload.heroId,
+      choices: payload.complicationChoices,
+    );
+
+    // Apply new complication grants if complication or choices changed
+    if (complicationChanged || complicationChoicesChanged) {
+      final grants = await _complicationGrantsService.parseComplicationGrants(
+        complicationId: payload.complicationId,
+        choices: payload.complicationChoices,
+      );
+      final heroLevel = await _heroRepository.getHeroLevel(payload.heroId);
+      await _complicationGrantsService.applyGrants(
+        heroId: payload.heroId,
+        grants: grants,
+        heroLevel: heroLevel,
+      );
+    }
   }
 
   Future<StoryCultureSuggestion?> suggestionForAncestry(String? ancestryName) async {
@@ -175,5 +214,6 @@ class StoryCreatorService {
 final storyCreatorServiceProvider = Provider<StoryCreatorService>((ref) {
   final repo = ref.read(heroRepositoryProvider);
   final ancestryBonusService = ref.read(ancestryBonusServiceProvider);
-  return StoryCreatorService(repo, ancestryBonusService);
+  final complicationGrantsService = ref.read(complicationGrantsServiceProvider);
+  return StoryCreatorService(repo, ancestryBonusService, complicationGrantsService);
 });
