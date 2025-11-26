@@ -396,9 +396,15 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
             ),
           );
 
+    // Get the skill from the selected subclass option
+    final selectedOption = _selectedSubclassKey == null
+        ? null
+        : _optionsByKey[_selectedSubclassKey];
+
     final result = SubclassSelectionResult(
       subclassKey: _selectedSubclassKey,
       subclassName: _selectedSubclassName,
+      skill: selectedOption?.skill,
       deityId: deity?.id,
       deityName: deity?.name,
       domainNames: List<String>.from(_selectedDomains),

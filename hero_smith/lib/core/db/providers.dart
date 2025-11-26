@@ -61,3 +61,15 @@ final heroSummariesProvider = StreamProvider<List<HeroSummary>>((ref) {
   final repo = ref.read(heroRepositoryProvider);
   return repo.watchSummaries();
 });
+
+// Provider to fetch an ability by name (used for perk grants lookup)
+final abilityByNameProvider = FutureProvider.family<model.Component?, String>((ref, name) async {
+  final abilities = await ref.read(componentsByTypeProvider('ability').future);
+  // Try exact match first
+  final exactMatch = abilities.where((c) => c.name == name).firstOrNull;
+  if (exactMatch != null) return exactMatch;
+  
+  // Try case-insensitive match
+  final lowerName = name.toLowerCase();
+  return abilities.where((c) => c.name.toLowerCase() == lowerName).firstOrNull;
+});

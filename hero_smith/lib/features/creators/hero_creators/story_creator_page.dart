@@ -38,6 +38,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
 
   String? _selectedAncestryId;
   final LinkedHashSet<String> _selectedTraitIds = LinkedHashSet<String>();
+  final Map<String, String> _ancestryTraitChoices = {};
 
   String? _environmentId;
   String? _organisationId;
@@ -89,6 +90,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
       name: _nameCtrl.text.trim(),
       ancestryId: _selectedAncestryId,
       ancestryTraitIds: LinkedHashSet<String>.of(_selectedTraitIds),
+      ancestryTraitChoices: Map<String, String>.from(_ancestryTraitChoices),
       environmentId: _environmentId,
       organisationId: _organisationId,
       upbringingId: _upbringingId,
@@ -143,6 +145,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
         _selectedTraitIds
           ..clear()
           ..addAll(result.ancestryTraitIds);
+        _ancestryTraitChoices
+          ..clear()
+          ..addAll(result.ancestryTraitChoices);
         _environmentId = result.cultureSelection.environmentId;
         _organisationId = result.cultureSelection.organisationId;
         _upbringingId = result.cultureSelection.upbringingId;
@@ -193,6 +198,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
     setState(() {
       _selectedAncestryId = value;
       _selectedTraitIds.clear();
+      _ancestryTraitChoices.clear();
     });
   }
 
@@ -202,7 +208,15 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
         _selectedTraitIds.add(traitId);
       } else {
         _selectedTraitIds.remove(traitId);
+        // Remove any choice associated with this trait
+        _ancestryTraitChoices.remove(traitId);
       }
+    });
+  }
+
+  void _onTraitChoiceChanged(String traitOrSignatureId, String choiceValue) {
+    setState(() {
+      _ancestryTraitChoices[traitOrSignatureId] = choiceValue;
     });
   }
 
@@ -357,8 +371,10 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
           child: StoryAncestrySection(
             selectedAncestryId: _selectedAncestryId,
             selectedTraitIds: _selectedTraitIds,
+            traitChoices: _ancestryTraitChoices,
             onAncestryChanged: _onAncestryChanged,
             onTraitSelectionChanged: _onTraitSelectionChanged,
+            onTraitChoiceChanged: _onTraitChoiceChanged,
             onDirty: _handleDirty,
           ),
         ),

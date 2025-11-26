@@ -131,6 +131,13 @@ class HeroRepository {
 
   Future<void> deleteHero(String heroId) => _db.deleteHero(heroId);
 
+  /// Get the current level of a hero.
+  Future<int> getHeroLevel(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final levelValue = values.firstWhereOrNull((v) => v.key == _k.level);
+    return levelValue?.value ?? 1;
+  }
+
   Stream<HeroMainStats> watchMainStats(String heroId) async* {
     yield await fetchMainStats(heroId);
     yield* _db.watchHeroValues(heroId).map(_mapValuesToMainStats);
@@ -236,6 +243,23 @@ class HeroRepository {
     );
   }
 
+  /// Save the subclass key (used for matching the subclass option in the UI)
+  Future<void> saveSubclassKey(String heroId, String? subclassKey) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.subclass_key',
+      textValue: subclassKey,
+    );
+  }
+
+  /// Load the subclass key
+  Future<String?> getSubclassKey(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row =
+        values.firstWhereOrNull((v) => v.key == 'strife.subclass_key');
+    return row?.textValue;
+  }
+
   Future<void> updateDeity(String heroId, String? deityId) async {
     await _db.upsertHeroValue(
       heroId: heroId,
@@ -267,6 +291,28 @@ class HeroRepository {
       key: 'strife.characteristic_array',
       textValue: arrayName,
     );
+  }
+
+  /// Save the user's characteristic assignment choices (which stat gets which value)
+  Future<void> saveCharacteristicAssignments(
+    String heroId,
+    Map<String, int> assignments,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.characteristic_assignments',
+      jsonMap: assignments.map((k, v) => MapEntry(k, v)),
+    );
+  }
+
+  /// Load the user's characteristic assignment choices
+  Future<Map<String, int>> getCharacteristicAssignments(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull(
+        (v) => v.key == 'strife.characteristic_assignments');
+    if (row?.jsonValue == null) return {};
+    final decoded = jsonDecode(row!.jsonValue!) as Map<String, dynamic>;
+    return decoded.map((k, v) => MapEntry(k, (v as num).toInt()));
   }
 
   Future<void> updateCoreStats(
@@ -401,21 +447,100 @@ class HeroRepository {
   }
 
   Map<String, int> _extractModifications(List<db.HeroValue> values) {
-    final entry = values.firstWhereOrNull((e) => e.key == _k.modifications);
-    if (entry == null) return const {};
-    final raw = entry.jsonValue ?? entry.textValue;
-    if (raw == null || raw.isEmpty) return const {};
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map) {
-        final map = <String, int>{};
-        decoded.forEach((key, value) {
-          map[key.toString()] = _toInt(value) ?? 0;
-        });
-        return Map.unmodifiable(map);
+    final map = <String, int>{};
+    
+    // Read from regular modifications (mods.map)
+    final modsEntry = values.firstWhereOrNull((e) => e.key == _k.modifications);
+    if (modsEntry != null) {
+      final raw = modsEntry.jsonValue ?? modsEntry.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is Map) {
+            decoded.forEach((key, value) {
+              map[key.toString()] = _toInt(value) ?? 0;
+            });
+          }
+        } catch (_) {}
       }
-    } catch (_) {}
-    return const {};
+    }
+
+    // Read from ancestry stat mods and merge
+    final ancestryModsEntry = values.firstWhereOrNull(
+      (e) => e.key == 'ancestry.stat_mods',
+    );
+    if (ancestryModsEntry != null) {
+      final raw = ancestryModsEntry.jsonValue ?? ancestryModsEntry.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is Map) {
+            decoded.forEach((key, value) {
+              final modKey = _ancestryStatToModKey(key.toString());
+              if (modKey != null) {
+                final intValue = _extractAncestryStatValue(value);
+                if (intValue != 0) {
+                  map[modKey] = (map[modKey] ?? 0) + intValue;
+                }
+              }
+            });
+          }
+        } catch (_) {}
+      }
+    }
+
+    return map.isEmpty ? const {} : Map.unmodifiable(map);
+  }
+
+  /// Extracts the total value from ancestry stat mod entries.
+  /// Supports both old format (plain int) and new format (list of {value, source}).
+  int _extractAncestryStatValue(dynamic value) {
+    if (value is int) return value;
+    if (value is double) return value.round();
+    if (value is List) {
+      // New format: list of modifications with value and source
+      int total = 0;
+      for (final mod in value) {
+        if (mod is Map) {
+          final v = mod['value'];
+          if (v is int) {
+            total += v;
+          } else if (v is double) {
+            total += v.round();
+          }
+        }
+      }
+      return total;
+    }
+    if (value is Map) {
+      // Single modification object
+      final v = value['value'];
+      if (v is int) return v;
+      if (v is double) return v.round();
+    }
+    return 0;
+  }
+
+  /// Maps ancestry stat names to HeroModKeys.
+  String? _ancestryStatToModKey(String stat) {
+    final normalized = stat.toLowerCase().replaceAll(' ', '_');
+    return switch (normalized) {
+      'might' => HeroModKeys.might,
+      'agility' => HeroModKeys.agility,
+      'reason' => HeroModKeys.reason,
+      'intuition' => HeroModKeys.intuition,
+      'presence' => HeroModKeys.presence,
+      'size' => HeroModKeys.size,
+      'speed' => HeroModKeys.speed,
+      'disengage' => HeroModKeys.disengage,
+      'stability' => HeroModKeys.stability,
+      'stamina' => HeroModKeys.staminaMax,
+      'recoveries' => HeroModKeys.recoveriesMax,
+      'surges' => HeroModKeys.surges,
+      'wealth' => HeroModKeys.wealth,
+      'renown' => HeroModKeys.renown,
+      _ => null,
+    };
   }
 
   int? _toInt(dynamic value) {
@@ -524,6 +649,35 @@ class HeroRepository {
       if (decoded is List) return decoded.map((e) => e.toString()).toList();
     } catch (_) {}
     return <String>[];
+  }
+
+  /// Get the choices the hero has made for ancestry traits that require picking
+  /// (e.g., immunity type for Wyrmplate, ability for Psionic Gift)
+  Future<Map<String, String>> getAncestryTraitChoices(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final v = values.firstWhereOrNull((e) => e.key == _k.ancestryTraitChoices);
+    if (v == null) return <String, String>{};
+    try {
+      final raw = v.jsonValue ?? v.textValue;
+      if (raw == null) return <String, String>{};
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        return decoded.map((k, v) => MapEntry(k.toString(), v.toString()));
+      }
+    } catch (_) {}
+    return <String, String>{};
+  }
+
+  /// Save the choices the hero has made for ancestry traits that require picking
+  Future<void> saveAncestryTraitChoices(
+    String heroId,
+    Map<String, String> choices,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.ancestryTraitChoices,
+      textValue: jsonEncode(choices),
+    );
   }
 
   // --- Culture selections (environment, organisation, upbringing, languages) ---
@@ -1077,6 +1231,14 @@ class _HeroKeys {
   // ancestry extras
   final String ancestrySelectedTraits = 'ancestry.selected_traits';
   final String ancestrySignature = 'ancestry.signature_name';
+  final String ancestryTraitChoices = 'ancestry.trait_choices';
+  // ancestry bonuses (managed by AncestryBonusService)
+  final String ancestryAppliedBonuses = 'ancestry.applied_bonuses';
+  final String ancestryStatMods = 'ancestry.stat_mods';
+  final String ancestryConditionImmunities = 'ancestry.condition_immunities';
+  final String ancestryGrantedAbilities = 'ancestry.granted_abilities';
+  // damage resistances
+  final String damageResistances = 'resistances.damage';
 
   final String victories = 'score.victories';
   final String exp = 'score.exp';

@@ -54,6 +54,17 @@ class AbilitySimplified {
       return null;
     }
 
+    int _parseLevel(dynamic value) {
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isEmpty) return 1; // Default level for signature abilities
+        return int.tryParse(trimmed) ?? 1;
+      }
+      return 1;
+    }
+
     final tierEffects = parseTierEffects(
       json.containsKey('tier_effects') ? json['tier_effects'] : json['effects'],
     );
@@ -73,7 +84,7 @@ class AbilitySimplified {
     return AbilitySimplified(
       id: json['id'] as String,
       name: json['name'] as String,
-      level: json['level'] as int,
+      level: _parseLevel(json['level']),
       resource: safeString('resource'),
       resourceValue: resourceValue,
       storyText: safeString('story_text'),

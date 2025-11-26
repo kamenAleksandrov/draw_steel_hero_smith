@@ -57,14 +57,20 @@ final heroAbilityIdsProvider =
       }
     }
 
-    // Get feature-granted abilities
+    // Get feature-granted abilities (from class features)
     final grantedAbilityNames = await _getFeatureGrantedAbilities(values);
+    
+    // Get ancestry-granted abilities
+    final ancestryAbilityNames = _getAncestryGrantedAbilities(values);
+    
+    // Combine all granted ability names
+    final allGrantedNames = <String>{...grantedAbilityNames, ...ancestryAbilityNames};
     
     // Load ability library and resolve granted ability names to IDs
     final library = await AbilityDataService().loadLibrary();
     final grantedAbilityIds = <String>[];
     
-    for (final abilityName in grantedAbilityNames) {
+    for (final abilityName in allGrantedNames) {
       final component = library.components.cast<Component?>().firstWhere(
         (c) => c?.name.toLowerCase() == abilityName.toLowerCase(),
         orElse: () => null,
@@ -80,6 +86,33 @@ final heroAbilityIdsProvider =
     return allAbilityIds;
   });
 });
+
+/// Helper function to extract granted ability names from ancestry traits
+List<String> _getAncestryGrantedAbilities(List<dynamic> heroValues) {
+  final abilityNames = <String>[];
+  
+  for (final value in heroValues) {
+    if (value.key == 'ancestry.granted_abilities') {
+      final raw = value.jsonValue ?? value.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is Map) {
+            // Format: {"Barbed Tail": "Barbed Tail trait", ...}
+            abilityNames.addAll(decoded.keys.map((e) => e.toString()));
+          } else if (decoded is List) {
+            abilityNames.addAll(decoded.map((e) => e.toString()));
+          }
+        } catch (_) {
+          // Ignore parsing errors
+        }
+      }
+      break;
+    }
+  }
+  
+  return abilityNames;
+}
 
 /// Helper function to extract granted ability names from class features
 Future<List<String>> _getFeatureGrantedAbilities(List<dynamic> heroValues) async {

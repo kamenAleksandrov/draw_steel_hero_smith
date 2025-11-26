@@ -6,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../db/providers.dart';
 import '../models/story_creator_models.dart';
 import '../repositories/hero_repository.dart';
+import 'ancestry_bonus_service.dart';
 
 class StoryCreatorService {
-  StoryCreatorService(this._heroRepository);
+  StoryCreatorService(this._heroRepository, this._ancestryBonusService);
 
   final HeroRepository _heroRepository;
+  final AncestryBonusService _ancestryBonusService;
   Map<String, StoryCultureSuggestion>? _suggestionsCache;
 
   Future<StoryCreatorLoadResult> loadInitialData(String heroId) async {
@@ -18,12 +20,14 @@ class StoryCreatorService {
     final culture = await _heroRepository.loadCultureSelection(heroId);
     final career = await _heroRepository.loadCareerSelection(heroId);
     final traits = await _heroRepository.getSelectedAncestryTraits(heroId);
+    final traitChoices = await _heroRepository.getAncestryTraitChoices(heroId);
     final complicationId = await _heroRepository.loadComplication(heroId);
     return StoryCreatorLoadResult(
       hero: hero,
       cultureSelection: culture,
       careerSelection: career,
       ancestryTraitIds: traits,
+      ancestryTraitChoices: traitChoices,
       complicationId: complicationId,
     );
   }
@@ -32,6 +36,19 @@ class StoryCreatorService {
     final hero = await _heroRepository.load(payload.heroId);
     if (hero == null) {
       throw Exception('Hero with id ${payload.heroId} not found.');
+    }
+
+    // Check if ancestry or traits have changed
+    final oldAncestryId = hero.ancestry;
+    final oldTraitIds = await _heroRepository.getSelectedAncestryTraits(payload.heroId);
+    final oldTraitChoices = await _heroRepository.getAncestryTraitChoices(payload.heroId);
+    final ancestryChanged = oldAncestryId != payload.ancestryId;
+    final traitsChanged = !_listEquals(oldTraitIds, payload.ancestryTraitIds.toList());
+    final choicesChanged = !_mapEquals(oldTraitChoices, payload.ancestryTraitChoices);
+
+    // Remove old bonuses if ancestry, traits, or choices changed
+    if (ancestryChanged || traitsChanged || choicesChanged) {
+      await _ancestryBonusService.removeBonuses(payload.heroId);
     }
 
     hero.name = payload.name;
@@ -45,6 +62,27 @@ class StoryCreatorService {
       ancestryId: payload.ancestryId,
       selectedTraitIds: payload.ancestryTraitIds.toList(),
     );
+
+    // Save trait choices (immunity type, ability selection, etc.)
+    await _heroRepository.saveAncestryTraitChoices(
+      payload.heroId,
+      payload.ancestryTraitChoices,
+    );
+
+    // Apply new ancestry bonuses if ancestry, traits, or choices changed
+    if (ancestryChanged || traitsChanged || choicesChanged) {
+      final bonuses = await _ancestryBonusService.parseAncestryBonuses(
+        ancestryId: payload.ancestryId,
+        selectedTraitIds: payload.ancestryTraitIds.toList(),
+        traitChoices: payload.ancestryTraitChoices,
+      );
+      final heroLevel = await _heroRepository.getHeroLevel(payload.heroId);
+      await _ancestryBonusService.applyBonuses(
+        heroId: payload.heroId,
+        bonuses: bonuses,
+        heroLevel: heroLevel,
+      );
+    }
 
     final languageIds = payload.languageIds
         .where((id) => id.trim().isNotEmpty)
@@ -116,9 +154,26 @@ class StoryCreatorService {
     final text = value.toString().trim();
     return text.isEmpty ? null : text;
   }
+
+  bool _listEquals(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  bool _mapEquals(Map<String, String> a, Map<String, String> b) {
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (a[key] != b[key]) return false;
+    }
+    return true;
+  }
 }
 
 final storyCreatorServiceProvider = Provider<StoryCreatorService>((ref) {
   final repo = ref.read(heroRepositoryProvider);
-  return StoryCreatorService(repo);
+  final ancestryBonusService = ref.read(ancestryBonusServiceProvider);
+  return StoryCreatorService(repo, ancestryBonusService);
 });

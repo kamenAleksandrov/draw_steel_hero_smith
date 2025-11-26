@@ -82,6 +82,7 @@ class SubclassSelectionResult {
   const SubclassSelectionResult({
     this.subclassKey,
     this.subclassName,
+    this.skill,
     this.deityId,
     this.deityName,
     this.domainNames = const <String>[],
@@ -89,6 +90,7 @@ class SubclassSelectionResult {
 
   final String? subclassKey;
   final String? subclassName;
+  final String? skill;
   final String? deityId;
   final String? deityName;
   final List<String> domainNames;
@@ -96,6 +98,7 @@ class SubclassSelectionResult {
   SubclassSelectionResult copyWith({
     String? subclassKey,
     String? subclassName,
+    String? skill,
     String? deityId,
     String? deityName,
     List<String>? domainNames,
@@ -103,6 +106,7 @@ class SubclassSelectionResult {
     return SubclassSelectionResult(
       subclassKey: subclassKey ?? this.subclassKey,
       subclassName: subclassName ?? this.subclassName,
+      skill: skill ?? this.skill,
       deityId: deityId ?? this.deityId,
       deityName: deityName ?? this.deityName,
       domainNames: domainNames ?? this.domainNames,
@@ -113,6 +117,7 @@ class SubclassSelectionResult {
   int get hashCode => Object.hash(
         subclassKey,
         subclassName,
+        skill,
         deityId,
         deityName,
         Object.hashAll(domainNames),
@@ -124,6 +129,7 @@ class SubclassSelectionResult {
         listEquals(other.domainNames, domainNames) &&
         other.subclassKey == subclassKey &&
         other.subclassName == subclassName &&
+        other.skill == skill &&
         other.deityId == deityId &&
         other.deityName == deityName;
   }

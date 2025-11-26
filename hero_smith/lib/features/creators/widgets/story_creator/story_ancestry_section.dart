@@ -10,15 +10,19 @@ class StoryAncestrySection extends ConsumerWidget {
     super.key,
     required this.selectedAncestryId,
     required this.selectedTraitIds,
+    required this.traitChoices,
     required this.onAncestryChanged,
-  required this.onTraitSelectionChanged,
+    required this.onTraitSelectionChanged,
+    required this.onTraitChoiceChanged,
     required this.onDirty,
   });
 
   final String? selectedAncestryId;
   final Set<String> selectedTraitIds;
+  final Map<String, String> traitChoices;
   final ValueChanged<String?> onAncestryChanged;
   final void Function(String traitId, bool isSelected) onTraitSelectionChanged;
+  final void Function(String traitOrSignatureId, String choiceValue) onTraitChoiceChanged;
   final VoidCallback onDirty;
 
   @override
@@ -132,7 +136,9 @@ class StoryAncestrySection extends ConsumerWidget {
                 ancestry: selectedAncestry,
                 traitsComp: traitsForSelected,
                 selectedTraitIds: selectedTraitIds,
+                traitChoices: traitChoices,
                 onTraitSelectionChanged: onTraitSelectionChanged,
+                onTraitChoiceChanged: onTraitChoiceChanged,
                 onDirty: onDirty,
               );
             },
@@ -147,15 +153,19 @@ class _AncestryDetails extends StatelessWidget {
   const _AncestryDetails({
     required this.ancestry,
     required this.traitsComp,
-  required this.selectedTraitIds,
-  required this.onTraitSelectionChanged,
+    required this.selectedTraitIds,
+    required this.traitChoices,
+    required this.onTraitSelectionChanged,
+    required this.onTraitChoiceChanged,
     required this.onDirty,
   });
 
   final model.Component ancestry;
   final model.Component traitsComp;
   final Set<String> selectedTraitIds;
+  final Map<String, String> traitChoices;
   final void Function(String traitId, bool isSelected) onTraitSelectionChanged;
+  final void Function(String traitOrSignatureId, String choiceValue) onTraitChoiceChanged;
   final VoidCallback onDirty;
 
   @override
@@ -217,6 +227,20 @@ class _AncestryDetails extends StatelessWidget {
             Text(signature['description'] as String,
                 style: const TextStyle(height: 1.3)),
           ],
+          // Show dropdown for signature immunity choice (e.g., Wyrmplate)
+          if (_signatureHasImmunityChoice(signature)) ...[
+            const SizedBox(height: 8),
+            _buildImmunityDropdown(
+              signatureId: 'signature_immunity',
+              currentValue: traitChoices['signature_immunity'],
+              onChanged: (value) {
+                if (value != null) {
+                  onTraitChoiceChanged('signature_immunity', value);
+                  onDirty();
+                }
+              },
+            ),
+          ],
           const SizedBox(height: 12),
         ],
         Row(
@@ -228,45 +252,180 @@ class _AncestryDetails extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         ...traitsList.map((t) {
-          final id = (t['id'] ?? t['name']).toString();
-          final name = (t['name'] ?? id).toString();
-          final desc = (t['description'] ?? '').toString();
-          final cost = (t['cost'] as int?) ?? 0;
+          final traitData = t.cast<String, dynamic>();
+          final id = (traitData['id'] ?? traitData['name']).toString();
+          final name = (traitData['name'] ?? id).toString();
+          final desc = (traitData['description'] ?? '').toString();
+          final cost = (traitData['cost'] as int?) ?? 0;
           final selected = selectedTraitIds.contains(id);
           final canSelect = selected || remaining - cost >= 0;
-          return CheckboxListTile(
-            value: selected,
-            onChanged: canSelect
-                ? (value) {
-                    if (value == null) return;
-                    onTraitSelectionChanged(id, value);
-                    onDirty();
-                  }
-                : null,
-            title: Text(name),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 4),
-                Text(
-                  desc,
-                  softWrap: true,
+          
+          // Check if this trait has choices
+          final hasImmunityChoice = _traitHasImmunityChoice(traitData);
+          final abilityOptions = _getAbilityOptions(traitData);
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CheckboxListTile(
+                value: selected,
+                onChanged: canSelect
+                    ? (value) {
+                        if (value == null) return;
+                        onTraitSelectionChanged(id, value);
+                        onDirty();
+                      }
+                    : null,
+                title: Text(name),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    Text(
+                      desc,
+                      softWrap: true,
+                    ),
+                  ],
+                ),
+                isThreeLine: true,
+                secondary: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('$cost'),
+                ),
+                contentPadding: EdgeInsets.zero,
+              ),
+              // Show immunity dropdown for traits like Prismatic Scales
+              if (selected && hasImmunityChoice) ...[
+                Padding(
+                  padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
+                  child: _buildImmunityDropdown(
+                    signatureId: id,
+                    currentValue: traitChoices[id],
+                    onChanged: (value) {
+                      if (value != null) {
+                        onTraitChoiceChanged(id, value);
+                        onDirty();
+                      }
+                    },
+                  ),
                 ),
               ],
-            ),
-            isThreeLine: true,
-            secondary: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text('$cost'),
-            ),
-            contentPadding: EdgeInsets.zero,
+              // Show ability dropdown for traits like Psionic Gift
+              if (selected && abilityOptions.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
+                  child: _buildAbilityDropdown(
+                    traitId: id,
+                    options: abilityOptions,
+                    currentValue: traitChoices[id],
+                    onChanged: (value) {
+                      if (value != null) {
+                        onTraitChoiceChanged(id, value);
+                        onDirty();
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ],
           );
         }),
       ],
+    );
+  }
+
+  /// Check if signature has immunity choice (type: "pick_one")
+  bool _signatureHasImmunityChoice(Map<String, dynamic> signature) {
+    final increaseTotal = signature['increase_total'] as Map?;
+    if (increaseTotal == null) return false;
+    return increaseTotal['type'] == 'pick_one' && increaseTotal['stat'] == 'immunity';
+  }
+
+  /// Check if trait has immunity choice
+  bool _traitHasImmunityChoice(Map<String, dynamic> trait) {
+    final increaseTotal = trait['increase_total'] as Map?;
+    if (increaseTotal == null) return false;
+    return increaseTotal['type'] == 'pick_one' && increaseTotal['stat'] == 'immunity';
+  }
+
+  /// Get ability options for pick_ability_name traits
+  List<String> _getAbilityOptions(Map<String, dynamic> trait) {
+    final options = trait['pick_ability_name'] as List?;
+    if (options == null) return [];
+    return options.cast<String>();
+  }
+
+  static const _immunityTypes = [
+    'acid',
+    'cold',
+    'corruption',
+    'fire',
+    'lightning',
+    'poison',
+  ];
+
+  Widget _buildImmunityDropdown({
+    required String signatureId,
+    required String? currentValue,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      decoration: InputDecoration(
+        labelText: 'Choose Immunity Type',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        filled: true,
+        fillColor: Colors.deepPurple.withOpacity(0.05),
+      ),
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('— Select immunity —'),
+        ),
+        ..._immunityTypes.map(
+          (type) => DropdownMenuItem<String>(
+            value: type,
+            child: Text(type[0].toUpperCase() + type.substring(1)),
+          ),
+        ),
+      ],
+      onChanged: onChanged,
+    );
+  }
+
+  Widget _buildAbilityDropdown({
+    required String traitId,
+    required List<String> options,
+    required String? currentValue,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      decoration: InputDecoration(
+        labelText: 'Choose Ability',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        filled: true,
+        fillColor: Colors.teal.withOpacity(0.05),
+      ),
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('— Select ability —'),
+        ),
+        ...options.map(
+          (ability) => DropdownMenuItem<String>(
+            value: ability,
+            child: Text(ability),
+          ),
+        ),
+      ],
+      onChanged: onChanged,
     );
   }
 

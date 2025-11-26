@@ -8,10 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/hero_mod_keys.dart';
+import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
+import 'damage_resistance_tracker_widget.dart';
 
 class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
@@ -99,6 +101,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   final Map<String, Timer?> _modDebounce = {};
 
   HeroMainStats? _latestStats;
+  HeroStatModifications _ancestryMods = const HeroStatModifications.empty();
   bool _isApplying = false;
 
   @override
@@ -306,6 +309,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   @override
   Widget build(BuildContext context) {
     final statsAsync = ref.watch(heroMainStatsProvider(widget.heroId));
+    final ancestryModsAsync = ref.watch(heroAncestryStatModsProvider(widget.heroId));
+    
+    // Update ancestry mods state
+    _ancestryMods = ancestryModsAsync.valueOrNull ?? const HeroStatModifications.empty();
 
     return statsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -384,6 +391,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           _buildResourceAndSurges(context, stats, resourceDetails),
           const SizedBox(height: 16),
           ConditionsTrackerWidget(heroId: widget.heroId),
+          const SizedBox(height: 16),
+          DamageResistanceTrackerWidget(heroId: widget.heroId),
           const SizedBox(height: 24),
         ],
       ),
@@ -742,13 +751,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (staminaMaxMod != 0)
-                            Text(
-                              _formatSigned(staminaMaxMod),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: staminaMaxMod > 0 ? Colors.green : Colors.red,
-                              ),
-                            ),
+                          _buildModValueWithSources(
+                            modValue: staminaMaxMod,
+                            modKey: HeroModKeys.staminaMax,
+                            ancestryMods: _ancestryMods,
+                            theme: theme,
+                          ),
                         ],
                       ),
                     ),
@@ -838,13 +846,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (recoveriesMaxMod != 0)
-                            Text(
-                              _formatSigned(recoveriesMaxMod),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: recoveriesMaxMod > 0 ? Colors.green : Colors.red,
-                              ),
-                            ),
+                          _buildModValueWithSources(
+                            modValue: recoveriesMaxMod,
+                            modKey: HeroModKeys.recoveriesMax,
+                            ancestryMods: _ancestryMods,
+                            theme: theme,
+                          ),
                         ],
                       ),
                     ),
@@ -1254,11 +1261,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
                 if (modValue != 0) ...[
                   const SizedBox(width: 4),
-                  Text(
-                    '(${_formatSigned(modValue)})',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: modValue > 0 ? Colors.green : Colors.red,
-                    ),
+                  _buildModValueWithSources(
+                    modValue: modValue,
+                    modKey: modKey,
+                    ancestryMods: _ancestryMods,
+                    theme: theme,
                   ),
                 ],
               ],
@@ -1351,6 +1358,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (!mounted) return;
     
     final controller = TextEditingController(text: currentModValue.toString());
+    final sourcesDesc = _getModSourceDescription(modKey, _ancestryMods);
 
     try {
       final result = await showDialog<int>(
@@ -1363,6 +1371,35 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Base: $baseValue'),
+                if (sourcesDesc.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          size: 16,
+                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            sourcesDesc,
+                            style: TextStyle(
+                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
@@ -1461,13 +1498,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (modValue != 0)
-                Text(
-                  _formatSigned(modValue),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: modValue > 0 ? Colors.green : Colors.red,
-                  ),
-                ),
+              _buildModValueWithSources(
+                modValue: modValue,
+                modKey: modKey,
+                ancestryMods: _ancestryMods,
+                theme: theme,
+              ),
             ],
           ),
         ),
@@ -1563,6 +1599,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (!mounted) return;
     
     final controller = TextEditingController(text: currentModValue.toString());
+    final sourcesDesc = _getModSourceDescription(modKey, _ancestryMods);
 
     try {
       final result = await showDialog<int>(
@@ -1575,6 +1612,35 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Base: $baseValue'),
+                if (sourcesDesc.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          size: 16,
+                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            sourcesDesc,
+                            style: TextStyle(
+                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
@@ -1857,6 +1923,54 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   String _formatSigned(int value) {
     if (value > 0) return '+$value';
     return value.toString();
+  }
+
+  /// Maps HeroModKeys to ancestry stat names for looking up sources.
+  String? _modKeyToAncestryStatName(String modKey) {
+    return switch (modKey) {
+      HeroModKeys.might => 'might',
+      HeroModKeys.agility => 'agility',
+      HeroModKeys.reason => 'reason',
+      HeroModKeys.intuition => 'intuition',
+      HeroModKeys.presence => 'presence',
+      HeroModKeys.size => 'size',
+      HeroModKeys.speed => 'speed',
+      HeroModKeys.disengage => 'disengage',
+      HeroModKeys.stability => 'stability',
+      HeroModKeys.staminaMax => 'stamina',
+      HeroModKeys.recoveriesMax => 'recoveries',
+      HeroModKeys.surges => 'surges',
+      HeroModKeys.wealth => 'wealth',
+      HeroModKeys.renown => 'renown',
+      _ => null,
+    };
+  }
+
+  /// Gets the source description for a given modification key.
+  String _getModSourceDescription(
+    String modKey,
+    HeroStatModifications ancestryMods,
+  ) {
+    final statName = _modKeyToAncestryStatName(modKey);
+    if (statName == null) return '';
+    return ancestryMods.getSourcesDescription(statName);
+  }
+
+  /// Builds a widget showing the modification value.
+  Widget _buildModValueWithSources({
+    required int modValue,
+    required String modKey,
+    required HeroStatModifications ancestryMods,
+    required ThemeData theme,
+  }) {
+    if (modValue == 0) return const SizedBox.shrink();
+    
+    return Text(
+      _formatSigned(modValue),
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: modValue > 0 ? Colors.green : Colors.red,
+      ),
+    );
   }
 }
 

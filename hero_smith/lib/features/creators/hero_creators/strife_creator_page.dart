@@ -163,7 +163,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Load subclass
       if (hero.subclass != null && hero.subclass!.isNotEmpty) {
+        // Try to load the subclass key for proper selection matching
+        final subclassKey = await repo.getSubclassKey(widget.heroId);
         _selectedSubclass = SubclassSelectionResult(
+          subclassKey: subclassKey,
           subclassName: hero.subclass,
           deityId: hero.deityId,
           domainNames: hero.domain != null
@@ -184,14 +187,17 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         }
       }
 
-      // Load characteristics (assigned values)
-      // Note: We can't fully restore the array selection and assignments
-      // without storing that metadata, but we can at least show the values
-      if (hero.might != 0 ||
+      // Load characteristics (assigned values from stored assignments)
+      final savedAssignments =
+          await repo.getCharacteristicAssignments(widget.heroId);
+      if (savedAssignments.isNotEmpty) {
+        _assignedCharacteristics = savedAssignments;
+      } else if (hero.might != 0 ||
           hero.agility != 0 ||
           hero.reason != 0 ||
           hero.intuition != 0 ||
           hero.presence != 0) {
+        // Fallback: use hero base values if no assignments saved
         _assignedCharacteristics = {
           'Might': hero.might,
           'Agility': hero.agility,
@@ -877,6 +883,14 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           _selectedSubclass!.subclassName,
         ));
 
+        // Save subclass key for proper restoration
+        if (_selectedSubclass!.subclassKey != null) {
+          updates.add(repo.saveSubclassKey(
+            widget.heroId,
+            _selectedSubclass!.subclassKey,
+          ));
+        }
+
         // Save deity if selected
         if (_selectedSubclass!.deityId != null) {
           updates.add(repo.updateDeity(
@@ -904,6 +918,14 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         updates.add(repo.updateCharacteristicArray(
           widget.heroId,
           _selectedArray!.description,
+        ));
+      }
+
+      // 4.5. Save characteristic assignments (the mapping of stat to value)
+      if (_assignedCharacteristics.isNotEmpty) {
+        updates.add(repo.saveCharacteristicAssignments(
+          widget.heroId,
+          _assignedCharacteristics,
         ));
       }
 
@@ -1015,35 +1037,70 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       }
 
-      // 11. Save selected skills to database
-      final selectedSkillIds = _selectedSkills.values
+      // 11. Save selected skills to database (merge with existing story skills)
+      // Get existing skills from database
+      final db = ref.read(appDatabaseProvider);
+      final existingComponents = await db.getHeroComponents(widget.heroId);
+      final existingSkillIds = existingComponents
+          .where((c) => c['category'] == 'skill')
+          .map((c) => c['componentId'] as String)
+          .toSet();
+
+      // Collect strife-selected skills
+      final strifeSkillIds = _selectedSkills.values
           .whereType<String>()
           .where((id) => id.isNotEmpty)
-          .toList();
+          .toSet();
 
-      if (selectedSkillIds.isNotEmpty) {
+      // Add subclass skill if present
+      if (_selectedSubclass?.skill != null &&
+          _selectedSubclass!.skill!.isNotEmpty) {
+        // The skill field contains the skill name, we need to find the skill ID
+        final allComponents = await db.getAllComponents();
+        final subclassSkillName = _selectedSubclass!.skill!;
+        final subclassSkillComponent = allComponents.where(
+          (c) =>
+              c.type == 'skill' &&
+              (c.name == subclassSkillName || c.id == subclassSkillName),
+        ).firstOrNull;
+        if (subclassSkillComponent != null) {
+          strifeSkillIds.add(subclassSkillComponent.id);
+        }
+      }
+
+      // Merge: keep existing story skills + new strife skills
+      final mergedSkillIds = existingSkillIds.union(strifeSkillIds);
+
+      if (mergedSkillIds.isNotEmpty) {
         updates.add(
-          ref.read(appDatabaseProvider).setHeroComponentIds(
-                heroId: widget.heroId,
-                category: 'skill',
-                componentIds: selectedSkillIds,
-              ),
+          db.setHeroComponentIds(
+            heroId: widget.heroId,
+            category: 'skill',
+            componentIds: mergedSkillIds.toList(),
+          ),
         );
       }
 
-      // 12. Save selected perks to database
-      final selectedPerkIds = _selectedPerks.values
+      // 12. Save selected perks to database (merge with existing story perks)
+      final existingPerkIds = existingComponents
+          .where((c) => c['category'] == 'perk')
+          .map((c) => c['componentId'] as String)
+          .toSet();
+
+      final strifePerkIds = _selectedPerks.values
           .whereType<String>()
           .where((id) => id.isNotEmpty)
-          .toList();
+          .toSet();
 
-      if (selectedPerkIds.isNotEmpty) {
+      final mergedPerkIds = existingPerkIds.union(strifePerkIds);
+
+      if (mergedPerkIds.isNotEmpty) {
         updates.add(
-          ref.read(appDatabaseProvider).setHeroComponentIds(
-                heroId: widget.heroId,
-                category: 'perk',
-                componentIds: selectedPerkIds,
-              ),
+          db.setHeroComponentIds(
+            heroId: widget.heroId,
+            category: 'perk',
+            componentIds: mergedPerkIds.toList(),
+          ),
         );
       }
 

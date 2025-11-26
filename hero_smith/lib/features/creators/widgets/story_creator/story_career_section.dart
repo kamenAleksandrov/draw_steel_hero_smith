@@ -750,42 +750,63 @@ class _CareerContentState extends State<_CareerContent> {
                     ),
                     if (slots[index] != null) ...[
                       const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: borderColor.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: borderColor.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              perkMap[slots[index]]!.name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: borderColor,
-                                fontSize: 15,
+                      Builder(
+                        builder: (context) {
+                          final perk = perkMap[slots[index]]!;
+                          final grants = perk.data['grants'] as List?;
+                          
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: borderColor.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: borderColor.withOpacity(0.3),
+                                width: 1,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              perkMap[slots[index]]!
-                                      .data['description']
-                                      ?.toString() ??
-                                  'No description available',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  perk.name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: borderColor,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  perk.data['description']?.toString() ??
+                                      'No description available',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                  ),
+                                ),
+                                // Display granted abilities if any
+                                if (grants != null && grants.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Grants:',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: borderColor,
+                                    ),
+                                  ),
+                                  _PerkGrantsDisplay(
+                                    grants: grants,
+                                    accentColor: borderColor,
+                                  ),
+                                ],
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ],
                     const SizedBox(height: 12),
@@ -1095,4 +1116,203 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
       );
     },
   );
+}
+
+/// A widget that displays the granted abilities for a perk.
+/// This is a ConsumerWidget so it can access the abilityByNameProvider.
+class _PerkGrantsDisplay extends ConsumerWidget {
+  const _PerkGrantsDisplay({
+    required this.grants,
+    required this.accentColor,
+  });
+
+  final List<dynamic> grants;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scheme = Theme.of(context).colorScheme;
+    final textColor = scheme.onSurface;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final grant in grants)
+          _buildGrantItem(context, ref, grant, textColor),
+      ],
+    );
+  }
+
+  Widget _buildGrantItem(BuildContext context, WidgetRef ref, dynamic grant, Color textColor) {
+    if (grant is! Map) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text('• ${grant.toString()}', style: TextStyle(fontSize: 12, color: textColor)),
+      );
+    }
+
+    final abilityName = grant['ability'] as String?;
+    if (abilityName == null) {
+      final formatted = grant.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text('• $formatted', style: TextStyle(fontSize: 12, color: textColor)),
+      );
+    }
+
+    final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
+
+    return abilityAsync.when(
+      data: (ability) {
+        if (ability == null) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text('• Ability: $abilityName', style: TextStyle(fontSize: 12, color: textColor)),
+          );
+        }
+        return _buildAbilityCard(context, ability, textColor);
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+            ),
+            const SizedBox(width: 8),
+            Text('Loading $abilityName...', style: TextStyle(fontSize: 12, color: textColor)),
+          ],
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text('• Ability: $abilityName', style: TextStyle(fontSize: 12, color: textColor)),
+      ),
+    );
+  }
+
+  Widget _buildAbilityCard(BuildContext context, model.Component ability, Color textColor) {
+    final data = ability.data;
+    final actionType = data['action_type'] as String?;
+    final keywords = (data['keywords'] as List?)?.cast<String>() ?? [];
+    final range = data['range'] as Map?;
+    final targets = data['targets'] as String?;
+    final effect = data['effect'] as String?;
+    final storyText = data['story_text'] as String?;
+    final scheme = Theme.of(context).colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 4),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: accentColor.withOpacity(0.08),
+        border: Border.all(color: accentColor.withOpacity(0.4), width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row with name and action type
+          Row(
+            children: [
+              Text(
+                '⚡ ${ability.name}',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: accentColor,
+                ),
+              ),
+              if (actionType != null) ...[
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: scheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    actionType,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+          // Keywords
+          if (keywords.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 4,
+              runSpacing: 2,
+              children: keywords.map((k) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(
+                  color: scheme.tertiaryContainer.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Text(
+                  k,
+                  style: TextStyle(fontSize: 9, color: scheme.onTertiaryContainer),
+                ),
+              )).toList(),
+            ),
+          ],
+          // Story text / flavor
+          if (storyText != null && storyText.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              storyText,
+              style: TextStyle(
+                fontSize: 11,
+                fontStyle: FontStyle.italic,
+                color: textColor.withOpacity(0.8),
+              ),
+            ),
+          ],
+          // Range and Targets
+          if (range != null || targets != null) ...[
+            const SizedBox(height: 6),
+            if (range != null && range['distance'] != null)
+              _buildDetail('Range', range['distance'].toString(), textColor),
+            if (targets != null)
+              _buildDetail('Targets', targets, textColor),
+          ],
+          // Effect
+          if (effect != null && effect.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Effect:',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
+            ),
+            const SizedBox(height: 2),
+            Text(effect, style: TextStyle(fontSize: 11, color: textColor)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetail(String label, String value, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: '$label: ',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
+            ),
+            TextSpan(text: value, style: TextStyle(fontSize: 11, color: textColor)),
+          ],
+        ),
+      ),
+    );
+  }
 }

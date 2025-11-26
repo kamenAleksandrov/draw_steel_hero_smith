@@ -96,6 +96,12 @@ class AbilityRange {
   final String? value;
 
   static AbilityRange? tryParse(dynamic raw) {
+    // Handle simple string format (e.g., "3 cube within 1" or "Ranged 5")
+    if (raw is String) {
+      final trimmed = raw.trim();
+      if (trimmed.isEmpty) return null;
+      return AbilityRange(distance: trimmed);
+    }
     if (raw is! Map) return null;
     final distance = _string(raw['distance']);
     final area = _string(raw['area']);
@@ -251,6 +257,11 @@ class AbilityDetail {
 
   factory AbilityDetail.fromComponent(Component component) {
     final data = component.data;
+    // Try to parse range object first, then fall back to direct distance string
+    AbilityRange? range = AbilityRange.tryParse(data['range']);
+    if (range == null && data['distance'] != null) {
+      range = AbilityRange.tryParse(data['distance']);
+    }
     return AbilityDetail(
       id: component.id,
       name: component.name,
@@ -260,7 +271,7 @@ class AbilityDetail {
       keywords: _stringList(data['keywords']),
       actionType: _string(data['action_type']),
       triggerText: _string(data['trigger_text']),
-      range: AbilityRange.tryParse(data['range']),
+      range: range,
       targets: _string(data['targets']),
       powerRoll: AbilityPowerRoll.tryParse(data['power_roll']),
       effect: _string(data['effect']),

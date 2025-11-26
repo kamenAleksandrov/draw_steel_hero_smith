@@ -9,6 +9,7 @@ class StoryCreatorLoadResult {
     required this.cultureSelection,
     required this.careerSelection,
     required this.ancestryTraitIds,
+    this.ancestryTraitChoices = const {},
     this.complicationId,
   });
 
@@ -16,6 +17,7 @@ class StoryCreatorLoadResult {
   final CultureSelection cultureSelection;
   final CareerSelection careerSelection;
   final List<String> ancestryTraitIds;
+  final Map<String, String> ancestryTraitChoices;
   final String? complicationId;
 
   StoryCreatorLoadResult copyWith({
@@ -23,6 +25,7 @@ class StoryCreatorLoadResult {
     CultureSelection? cultureSelection,
     CareerSelection? careerSelection,
     List<String>? ancestryTraitIds,
+    Map<String, String>? ancestryTraitChoices,
     String? complicationId,
   }) {
     return StoryCreatorLoadResult(
@@ -30,6 +33,7 @@ class StoryCreatorLoadResult {
       cultureSelection: cultureSelection ?? this.cultureSelection,
       careerSelection: careerSelection ?? this.careerSelection,
       ancestryTraitIds: ancestryTraitIds ?? this.ancestryTraitIds,
+      ancestryTraitChoices: ancestryTraitChoices ?? this.ancestryTraitChoices,
       complicationId: complicationId ?? this.complicationId,
     );
   }
@@ -44,12 +48,15 @@ class StoryCreatorLoadResult {
         other.cultureSelection == cultureSelection &&
         other.careerSelection == careerSelection &&
         const ListEquality<String>().equals(other.ancestryTraitIds, ancestryTraitIds) &&
+        const MapEquality<String, String>().equals(other.ancestryTraitChoices, ancestryTraitChoices) &&
         other.complicationId == complicationId;
   }
 
   @override
   int get hashCode => Object.hash(hero, cultureSelection, careerSelection,
-      const ListEquality<String>().hash(ancestryTraitIds), complicationId);
+      const ListEquality<String>().hash(ancestryTraitIds), 
+      const MapEquality<String, String>().hash(ancestryTraitChoices),
+      complicationId);
 }
 
 class StoryCultureSuggestion {
@@ -75,6 +82,7 @@ class StoryCreatorSavePayload {
     required this.name,
     this.ancestryId,
     this.ancestryTraitIds = const <String>{},
+    this.ancestryTraitChoices = const <String, String>{},
     this.environmentId,
     this.organisationId,
     this.upbringingId,
@@ -93,6 +101,8 @@ class StoryCreatorSavePayload {
   final String name;
   final String? ancestryId;
   final Set<String> ancestryTraitIds;
+  /// Map of trait ID to chosen value (e.g., immunity type or ability name)
+  final Map<String, String> ancestryTraitChoices;
   final String? environmentId;
   final String? organisationId;
   final String? upbringingId;
