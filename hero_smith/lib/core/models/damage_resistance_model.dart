@@ -251,6 +251,8 @@ class DamageTypes {
   static const String poison = 'poison';
   static const String psychic = 'psychic';
   static const String sonic = 'sonic';
+  /// Generic "all damage" type - applies to all damage
+  static const String damage = 'damage';
 
   static const List<String> all = [
     acid,
@@ -262,9 +264,11 @@ class DamageTypes {
     poison,
     psychic,
     sonic,
+    damage, // Generic "all damage" type
   ];
 
   static String displayName(String type) {
+    if (type == damage) return 'All Damage';
     return type.substring(0, 1).toUpperCase() + type.substring(1);
   }
 }

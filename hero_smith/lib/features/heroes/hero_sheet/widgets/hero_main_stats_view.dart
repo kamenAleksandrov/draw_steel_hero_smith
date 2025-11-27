@@ -1749,9 +1749,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   int _recoveryHealAmount(HeroMainStats stats) {
-    final max = stats.staminaMaxEffective;
-    if (max <= 0) return 0;
-    return math.max(max ~/ 3, 1);
+    return stats.recoveryValueEffective;
   }
 
   Future<void> _handleUseRecovery(HeroMainStats stats) async {

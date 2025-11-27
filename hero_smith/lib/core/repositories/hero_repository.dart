@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 
 import '../db/app_database.dart' as db;
+import '../models/dynamic_modifier_model.dart';
 import '../models/hero_model.dart';
 import '../models/hero_mod_keys.dart';
 
@@ -53,6 +54,7 @@ class HeroMainStats {
 
   final int recoveriesCurrent;
   final int recoveriesMaxBase;
+  final int recoveryValueBonus; // Legacy static bonus (for backward compatibility)
 
   final int surgesCurrent;
 
@@ -61,6 +63,9 @@ class HeroMainStats {
   final int heroicResourceCurrent;
 
   final Map<String, int> modifications;
+  
+  /// Dynamic modifiers that recalculate based on current stats
+  final DynamicModifierList dynamicModifiers;
 
   const HeroMainStats({
     required this.victories,
@@ -82,11 +87,13 @@ class HeroMainStats {
     required this.staminaTemp,
     required this.recoveriesCurrent,
     required this.recoveriesMaxBase,
+    this.recoveryValueBonus = 0,
     required this.surgesCurrent,
     required this.classId,
     required this.heroicResourceName,
     required this.heroicResourceCurrent,
     required this.modifications,
+    this.dynamicModifiers = const DynamicModifierList([]),
   });
 
   int modValue(String key) => modifications[key] ?? 0;
@@ -110,6 +117,43 @@ class HeroMainStats {
   int get recoveriesMaxEffective =>
       recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax);
   int get surgesTotal => surgesCurrent + modValue(HeroModKeys.surges);
+
+  /// Create a context for dynamic modifier calculations
+  HeroStatsContext get _statsContext => HeroStatsContext(
+        level: level,
+        might: mightTotal,
+        agility: agilityTotal,
+        reason: reasonTotal,
+        intuition: intuitionTotal,
+        presence: presenceTotal,
+      );
+
+  /// Calculate recovery value: (staminaMax / 3) + dynamic bonuses
+  int get recoveryValueEffective {
+    final max = staminaMaxEffective;
+    if (max <= 0) return 0;
+    final base = max ~/ 3;
+    if (base <= 0) return 0;
+    
+    // Calculate dynamic bonus from formulas
+    final dynamicBonus = dynamicModifiers.calculateTotal(
+      'recovery_value',
+      _statsContext,
+    );
+    
+    // Also include legacy static bonus for backward compatibility
+    return base + dynamicBonus + recoveryValueBonus;
+  }
+
+  /// Calculate dynamic bonus for any stat
+  int dynamicBonusFor(String stat) {
+    return dynamicModifiers.calculateTotal(stat, _statsContext);
+  }
+
+  /// Calculate dynamic bonus for typed stats (immunity, weakness)
+  int dynamicTypedBonusFor(String stat, String type) {
+    return dynamicModifiers.calculateTypedTotal(stat, type, _statsContext);
+  }
 }
 
 class HeroRepository {
@@ -438,11 +482,15 @@ class HeroRepository {
       staminaTemp: readInt(_k.staminaTemp),
       recoveriesCurrent: readInt(_k.recoveriesCurrent),
       recoveriesMaxBase: readInt(_k.recoveriesMax),
+      recoveryValueBonus: readInt('complication.recovery_bonus'),
       surgesCurrent: readInt(_k.surgesCurrent),
       classId: classId,
       heroicResourceName: readText(_k.heroicResource),
       heroicResourceCurrent: readInt(_k.heroicResourceCurrent),
       modifications: modifications,
+      dynamicModifiers: DynamicModifierList.fromJsonString(
+        readText('dynamic_modifiers'),
+      ),
     );
   }
 

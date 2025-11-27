@@ -437,6 +437,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
             onComplicationChanged: _onComplicationChanged,
             onChoicesChanged: _onComplicationChoicesChanged,
             onDirty: _handleDirty,
+            heroAncestryTraitIds: _selectedTraitIds,
           ),
         ),
         const SliverToBoxAdapter(

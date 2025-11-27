@@ -350,6 +350,7 @@ class _DamageResistanceTrackerWidgetState
       'corruption' => Icons.warning,
       'holy' => Icons.star,
       'sonic' => Icons.volume_up,
+      'damage' => Icons.dangerous,
       _ => Icons.shield,
     };
   }
@@ -365,6 +366,7 @@ class _DamageResistanceTrackerWidgetState
       'corruption' => Colors.deepPurple,
       'holy' => Colors.amber,
       'sonic' => Colors.cyan,
+      'damage' => Colors.red,
       _ => Colors.grey,
     };
   }

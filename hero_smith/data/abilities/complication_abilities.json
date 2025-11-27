@@ -49,8 +49,8 @@
   },
   {
     "type": "ability",
-    "id": "power_pack",
-    "name": "Power Pack",
+    "id": "crash_landed_power_pack",
+    "name": "Crash Landed: Power Pack",
     "level": "",
     "resource": "Signature",
     "resource_value": 0,
@@ -73,56 +73,8 @@
   },
   {
     "type": "ability",
-    "id": "statue_form",
-    "name": "Statue Form",
-    "level": "",
-    "resource": "Signature",
-    "resource_value": 0,
-    "story_text": "",
-    "keywords": "",
-    "action_type": "free maneuver",
-    "trigger_text": "",
-    "distance": "Self",
-    "targets": "Self",
-    "power_roll": "",
-    "tier_effects": [
-      {
-        "tier1": "",
-        "tier2": "",
-        "tier3": ""
-      }
-    ],
-    "effect": "Cause your body, gear, and any held items to take on the appearance of stone, making you appear to be a mundane statue while you remain unmoving.",
-    "special_effect": ""
-  },
-  {
-    "type": "ability",
-    "id": "summon_relative",
-    "name": "Summon Relative",
-    "level": "",
-    "resource": "Signature",
-    "resource_value": 0,
-    "story_text": "",
-    "keywords": "Magic",
-    "action_type": "maneuver",
-    "trigger_text": "",
-    "distance": "Self",
-    "targets": "Self",
-    "power_roll": "",
-    "tier_effects": [
-      {
-        "tier1": "",
-        "tier2": "",
-        "tier3": ""
-      }
-    ],
-    "effect": "Use a piece of magic jewelry to summon a relative to your aid. The relative starts with Renown 10 and otherwise has your statistics. They make power rolls with an edge but gain no benefit from your treasures. They assist until the current peril is resolved or 1 hour passes, then disappear. You cannot summon your relative again until you gain a level.",
-    "special_effect": ""
-  },
-  {
-    "type": "ability",
-    "id": "rally_to_the_fallen",
-    "name": "Rally to the Fallen",
+    "id": "gnoll_mauled",
+    "name": "Gnoll-Mauled",
     "level": "",
     "resource": "Signature",
     "resource_value": 0,
@@ -145,8 +97,74 @@
   },
   {
     "type": "ability",
-    "id": "refuse_to_fall",
-    "name": "Refuse to Fall",
+    "id": "motivate-earth",
+    "name": "Motivate Earth",
+    "level": 1,
+    "resource": "",
+    "resource_value": 0,
+    "story_text": "The earth rises, falls, or opens up at your command.",
+    "keywords": "Earth/Magic/Melee",
+    "action_type": "main action",
+    "trigger_text": "",
+    "distance": "Melee 1",
+    "targets": "Special",
+    "power_roll": "",
+    "tier_effects": [],
+    "effect": "You touch a square containing mundane dirt, stone, or metal and create a 5 wall of the same material, which rises up out of the ground and must include the square you touched.\nAlternatively, you touch a structure made of mundane dirt, stone, or metal that occupies 2 or more squares. You can open a 1-square opening in the structure where you touched it. You can instead touch an existing doorway or other opening that is 1 square or smaller in a mundane dirt, stone, or metal surface. The opening is sealed by the same material that makes up the surface.",
+    "special_effect": ""
+  },
+  {
+    "type": "ability",
+    "id": "curse_of_stone",
+    "name": "Curse of Stone",
+    "level": "",
+    "resource": "Signature",
+    "resource_value": 0,
+    "story_text": "",
+    "keywords": "",
+    "action_type": "free maneuver",
+    "trigger_text": "",
+    "distance": "Self",
+    "targets": "Self",
+    "power_roll": "",
+    "tier_effects": [
+      {
+        "tier1": "",
+        "tier2": "",
+        "tier3": ""
+      }
+    ],
+    "effect": "Cause your body, gear, and any held items to take on the appearance of stone, making you appear to be a mundane statue while you remain unmoving.",
+    "special_effect": ""
+  },
+  {
+    "type": "ability",
+    "id": "famous_relative",
+    "name": "Famous Relative",
+    "level": "",
+    "resource": "Signature",
+    "resource_value": 0,
+    "story_text": "",
+    "keywords": "Magic",
+    "action_type": "maneuver",
+    "trigger_text": "",
+    "distance": "Self",
+    "targets": "Self",
+    "power_roll": "",
+    "tier_effects": [
+      {
+        "tier1": "",
+        "tier2": "",
+        "tier3": ""
+      }
+    ],
+    "effect": "Use a piece of magic jewelry to summon a relative to your aid. The relative starts with Renown 10 and otherwise has your statistics. They make power rolls with an edge but gain no benefit from your treasures. They assist until the current peril is resolved or 1 hour passes, then disappear. You cannot summon your relative again until you gain a level.",
+    "special_effect": ""
+  },
+  {
+    "type": "ability",
+    "id": "guilty_conscience",
+    "name": "Guilty Conscience",
     "level": "",
     "resource": "Signature",
     "resource_value": 0,
@@ -169,8 +187,8 @@
   },
   {
     "type": "ability",
-    "id": "body_hijack",
-    "name": "Body Hijack",
+    "id": "host_body",
+    "name": "Host Body",
     "level": "",
     "resource": "Signature",
     "resource_value": 0,

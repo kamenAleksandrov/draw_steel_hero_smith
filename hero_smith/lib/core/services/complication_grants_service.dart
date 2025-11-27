@@ -7,14 +7,17 @@ import '../db/app_database.dart' as db;
 import '../db/providers.dart';
 import '../models/complication_grant_models.dart';
 import '../models/damage_resistance_model.dart';
+import '../models/dynamic_modifier_model.dart';
 import '../models/stat_modification_model.dart';
+import 'dynamic_modifiers_service.dart';
 
 /// Service for managing complication grants.
 /// Handles parsing complications, applying grants to heroes, and removing them when complications change.
 class ComplicationGrantsService {
-  ComplicationGrantsService(this._db);
+  ComplicationGrantsService(this._db) : _dynamicModifiers = DynamicModifiersService(_db);
 
   final db.AppDatabase _db;
+  final DynamicModifiersService _dynamicModifiers;
 
   /// Parse all grants from a complication's data.
   Future<AppliedComplicationGrants> parseComplicationGrants({
@@ -122,8 +125,14 @@ class ComplicationGrantsService {
     // Clear skill grants
     await _clearSkillGrants(heroId);
 
-    // Clear recovery grants
+    // Clear recovery grants (legacy static storage)
     await _clearRecoveryGrants(heroId);
+
+    // Clear dynamic modifiers from this complication
+    await _dynamicModifiers.removeModifiersFromSource(
+      heroId,
+      'complication_${currentGrants.complicationId}',
+    );
 
     // Clear treasure grants
     await _clearTreasureGrants(heroId);
@@ -231,6 +240,26 @@ class ComplicationGrantsService {
       }
     } catch (_) {}
     return [];
+  }
+
+  /// Ensure that any previously granted skills are synced into the hero's skill list.
+  Future<void> syncSkillGrants(String heroId) async {
+    final storedValues = await loadSkillGrants(heroId);
+    if (storedValues.isEmpty) return;
+
+    final lookup = await _loadSkillLookup();
+    final resolvedSkillIds = _resolveSkillIdentifiers(storedValues, lookup);
+    if (resolvedSkillIds.isEmpty) return;
+
+    if (!const ListEquality<String>().equals(resolvedSkillIds, storedValues)) {
+      await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _kComplicationSkills,
+        textValue: jsonEncode(resolvedSkillIds),
+      );
+    }
+
+    await _ensureHeroHasSkillComponents(heroId, resolvedSkillIds);
   }
 
   /// Load complication stat modifications.
@@ -367,64 +396,87 @@ class ComplicationGrantsService {
     String heroId,
     AppliedComplicationGrants grants,
   ) async {
-    final skills = <String>[];
+    final lookup = await _loadSkillLookup();
+    final collectedSkillIds = <String>[];
 
     for (final grant in grants.grants) {
       switch (grant) {
         case SkillGrant():
-          skills.add(grant.skillName);
+          final skillId = lookup.nameToId[grant.skillName.toLowerCase()];
+          if (skillId != null) {
+            collectedSkillIds.add(skillId);
+          }
         case SkillFromGroupGrant():
-          skills.addAll(grant.selectedSkillIds);
+          collectedSkillIds.addAll(grant.selectedSkillIds);
         case SkillFromOptionsGrant():
           if (grant.selectedSkillId != null) {
-            skills.add(grant.selectedSkillId!);
+            collectedSkillIds.add(grant.selectedSkillId!);
           }
         default:
           break;
       }
     }
 
-    if (skills.isEmpty) return;
+    final skillIds = _dedupeSkillIds(collectedSkillIds);
+    if (skillIds.isEmpty) return;
 
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kComplicationSkills,
-      textValue: jsonEncode(skills),
+      textValue: jsonEncode(skillIds),
     );
+
+    await _ensureHeroHasSkillComponents(heroId, skillIds);
   }
 
   Future<void> _applyRecoveryGrants(
     String heroId,
     AppliedComplicationGrants grants,
   ) async {
-    int recoveryBonus = 0;
-
-    final values = await _db.getHeroValues(heroId);
+    final dynamicMods = <DynamicModifier>[];
 
     for (final grant in grants.grants) {
       if (grant is IncreaseRecoveryGrant) {
-        if (grant.value == 'highest_characteristic') {
-          // Get highest characteristic
-          final stats = ['might', 'agility', 'reason', 'intuition', 'presence'];
-          int highest = 0;
-          for (final stat in stats) {
-            final val = _getStatValue(values, stat);
-            if (val > highest) highest = val;
-          }
-          recoveryBonus += highest;
-        } else {
-          recoveryBonus += int.tryParse(grant.value) ?? 0;
-        }
+        final formula = _parseFormulaType(grant.value);
+        dynamicMods.add(DynamicModifier(
+          stat: DynamicModifierStats.recoveryValue,
+          formulaType: formula.type,
+          formulaParam: formula.param,
+          operation: ModifierOperation.add,
+          source: 'complication_${grants.complicationId}',
+        ));
       }
     }
 
-    if (recoveryBonus == 0) return;
+    if (dynamicMods.isEmpty) return;
 
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: _kComplicationRecoveryBonus,
-      value: recoveryBonus,
+    // Store as dynamic modifiers for automatic recalculation
+    await _dynamicModifiers.addModifiers(
+      heroId,
+      'complication_${grants.complicationId}',
+      dynamicMods,
     );
+  }
+
+  /// Parse a value string into a FormulaType
+  ({FormulaType type, String? param}) _parseFormulaType(String value) {
+    switch (value.toLowerCase()) {
+      case 'highest_characteristic':
+        return (type: FormulaType.highestCharacteristic, param: null);
+      case 'level':
+        return (type: FormulaType.level, param: null);
+      case 'half_level':
+        return (type: FormulaType.halfLevel, param: null);
+      case 'might':
+      case 'agility':
+      case 'reason':
+      case 'intuition':
+      case 'presence':
+        return (type: FormulaType.characteristic, param: value.toLowerCase());
+      default:
+        // Assume it's a fixed number
+        return (type: FormulaType.fixed, param: value);
+    }
   }
 
   Future<void> _clearComplicationStatMods(String heroId) async {
@@ -452,6 +504,36 @@ class ComplicationGrantsService {
   }
 
   Future<void> _clearSkillGrants(String heroId) async {
+    // First, get the skills that were granted by the complication
+    final values = await _db.getHeroValues(heroId);
+    final value = values.firstWhereOrNull((v) => v.key == _kComplicationSkills);
+
+    if (value?.textValue != null || value?.jsonValue != null) {
+      try {
+        final json = jsonDecode(value!.jsonValue ?? value.textValue!);
+        if (json is List) {
+          final rawValues = json.map((e) => e.toString()).toList();
+          if (rawValues.isNotEmpty) {
+            final lookup = await _loadSkillLookup();
+            final skillIds = _resolveSkillIdentifiers(rawValues, lookup).toSet();
+
+            if (skillIds.isNotEmpty) {
+              final currentSkills = await _db.getHeroComponentIds(heroId, 'skill');
+              final updatedSkills = currentSkills
+                  .where((id) => !skillIds.contains(id))
+                  .toList();
+              await _db.setHeroComponentIds(
+                heroId: heroId,
+                category: 'skill',
+                componentIds: updatedSkills,
+              );
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    // Clear the tracking key
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kComplicationSkills,
@@ -467,6 +549,20 @@ class ComplicationGrantsService {
     );
   }
 
+  // All known damage types - "damage" type applies to all these
+  static const _allDamageTypes = [
+    'acid',
+    'cold',
+    'corruption',
+    'fire',
+    'holy',
+    'lightning',
+    'poison',
+    'psychic',
+    'sonic',
+    'untyped',
+  ];
+
   Future<void> _applyDamageResistanceGrants(
     String heroId,
     AppliedComplicationGrants grants,
@@ -475,18 +571,29 @@ class ComplicationGrantsService {
     // Collect all resistance bonuses
     final resistanceBonuses = <String, DamageResistanceBonus>{};
 
+    void addResistance(String stat, String damageType, int value, String sourceName) {
+      // "damage" type applies to all damage types
+      final typesToApply = damageType.toLowerCase() == 'damage' 
+          ? _allDamageTypes 
+          : [damageType.toLowerCase()];
+      
+      for (final type in typesToApply) {
+        resistanceBonuses[type] ??= DamageResistanceBonus(damageType: type);
+        if (stat == 'immunity') {
+          resistanceBonuses[type]!.addImmunity(value, sourceName);
+        } else {
+          resistanceBonuses[type]!.addWeakness(value, sourceName);
+        }
+      }
+    }
+
     for (final grant in grants.grants) {
       if (grant is IncreaseTotalGrant) {
         final stat = grant.stat.toLowerCase();
         if (stat == 'immunity' || stat == 'weakness') {
           final damageType = grant.damageType ?? 'untyped';
-          final key = damageType.toLowerCase();
-          resistanceBonuses[key] ??= DamageResistanceBonus(damageType: damageType);
-          if (stat == 'immunity') {
-            resistanceBonuses[key]!.addImmunity(grant.value, grant.sourceComplicationName);
-          } else {
-            resistanceBonuses[key]!.addWeakness(grant.value, grant.sourceComplicationName);
-          }
+          final value = grant.dynamicValue == 'level' ? heroLevel : grant.value;
+          addResistance(stat, damageType, value, grant.sourceComplicationName);
         }
       } else if (grant is IncreaseTotalPerEchelonGrant) {
         final stat = grant.stat.toLowerCase();
@@ -494,13 +601,7 @@ class ComplicationGrantsService {
           final echelon = ((heroLevel - 1) ~/ 3) + 1;
           final value = grant.valuePerEchelon * echelon;
           final damageType = grant.damageType ?? 'untyped';
-          final key = damageType.toLowerCase();
-          resistanceBonuses[key] ??= DamageResistanceBonus(damageType: damageType);
-          if (stat == 'immunity') {
-            resistanceBonuses[key]!.addImmunity(value, grant.sourceComplicationName);
-          } else {
-            resistanceBonuses[key]!.addWeakness(value, grant.sourceComplicationName);
-          }
+          addResistance(stat, damageType, value, grant.sourceComplicationName);
         }
       }
     }
@@ -550,7 +651,7 @@ class ComplicationGrantsService {
 
   Future<Map<String, dynamic>> _loadDamageResistancesJson(String heroId) async {
     final values = await _db.getHeroValues(heroId);
-    final value = values.firstWhereOrNull((v) => v.key == 'hero.damage_resistances');
+    final value = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
     if (value?.jsonValue == null && value?.textValue == null) {
       return {'resistances': []};
     }
@@ -564,7 +665,7 @@ class ComplicationGrantsService {
   Future<void> _saveDamageResistancesJson(String heroId, Map<String, dynamic> json) async {
     await _db.upsertHeroValue(
       heroId: heroId,
-      key: 'hero.damage_resistances',
+      key: 'resistances.damage',
       textValue: jsonEncode(json),
     );
   }
@@ -712,6 +813,86 @@ class ComplicationGrantsService {
     );
   }
 
+  Future<void> _ensureHeroHasSkillComponents(
+    String heroId,
+    List<String> skillIds,
+  ) async {
+    if (skillIds.isEmpty) return;
+
+    final currentSkills = await _db.getHeroComponentIds(heroId, 'skill');
+    final missing = skillIds.where((id) => !currentSkills.contains(id)).toList();
+    if (missing.isEmpty) return;
+
+    final updatedSkills = {...currentSkills, ...skillIds}.toList();
+    await _db.setHeroComponentIds(
+      heroId: heroId,
+      category: 'skill',
+      componentIds: updatedSkills,
+    );
+  }
+
+  Future<_SkillLookup> _loadSkillLookup() async {
+    final allComponents = await _db.getAllComponents();
+    final skillComponents = allComponents.where((c) => c.type == 'skill');
+
+    final skillIds = <String>{};
+    final nameToId = <String, String>{};
+
+    for (final skill in skillComponents) {
+      skillIds.add(skill.id);
+
+      try {
+        final data = jsonDecode(skill.dataJson) as Map<String, dynamic>;
+        final name = (data['name'] as String?) ?? skill.name;
+        if (name.isNotEmpty) {
+          nameToId[name.toLowerCase()] = skill.id;
+        }
+      } catch (_) {
+        if (skill.name.isNotEmpty) {
+          nameToId[skill.name.toLowerCase()] = skill.id;
+        }
+      }
+    }
+
+    return _SkillLookup(skillIds: skillIds, nameToId: nameToId);
+  }
+
+  List<String> _resolveSkillIdentifiers(
+    Iterable<String> rawIdentifiers,
+    _SkillLookup lookup,
+  ) {
+    final seen = <String>{};
+    final resolved = <String>[];
+
+    for (final raw in rawIdentifiers) {
+      final trimmed = raw.trim();
+      if (trimmed.isEmpty) continue;
+      String? id;
+      if (lookup.skillIds.contains(trimmed)) {
+        id = trimmed;
+      } else {
+        id = lookup.nameToId[trimmed.toLowerCase()];
+      }
+
+      if (id != null && seen.add(id)) {
+        resolved.add(id);
+      }
+    }
+
+    return resolved;
+  }
+
+  List<String> _dedupeSkillIds(Iterable<String> skillIds) {
+    final seen = <String>{};
+    final result = <String>[];
+    for (final id in skillIds) {
+      if (id.isEmpty) continue;
+      if (seen.add(id)) {
+        result.add(id);
+      }
+    }
+    return result;
+  }
   /// Load languages granted by complication.
   Future<List<String>> loadLanguageGrants(String heroId) async {
     final values = await _db.getHeroValues(heroId);
@@ -911,11 +1092,56 @@ class ComplicationGrantsService {
     };
   }
 
+  // ============================================================
+  // Token Tracking (current values during play)
+  // ============================================================
+
+  /// Load current token values (how many the hero currently has).
+  /// These can be different from max values (grant values) during play.
+  Future<Map<String, int>> loadCurrentTokenValues(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final value = values.firstWhereOrNull((v) => v.key == _kComplicationTokensCurrent);
+    if (value?.textValue == null && value?.jsonValue == null) {
+      // If no current values saved, return the max values (grant values)
+      return loadTokenGrants(heroId);
+    }
+    try {
+      final json = jsonDecode(value!.jsonValue ?? value.textValue!);
+      if (json is Map) {
+        return json.map((k, v) => MapEntry(k.toString(), (v as num).toInt()));
+      }
+    } catch (_) {}
+    return loadTokenGrants(heroId);
+  }
+
+  /// Save current token values.
+  Future<void> saveCurrentTokenValues(String heroId, Map<String, int> tokens) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _kComplicationTokensCurrent,
+      textValue: jsonEncode(tokens),
+    );
+  }
+
+  /// Update a single token's current value.
+  Future<void> updateTokenValue(String heroId, String tokenType, int newValue) async {
+    final current = await loadCurrentTokenValues(heroId);
+    current[tokenType] = newValue;
+    await saveCurrentTokenValues(heroId, current);
+  }
+
+  /// Reset all tokens to their max values.
+  Future<void> resetTokensToMax(String heroId) async {
+    final maxValues = await loadTokenGrants(heroId);
+    await saveCurrentTokenValues(heroId, maxValues);
+  }
+
   // Storage keys
   static const _kComplicationGrants = 'complication.applied_grants';
   static const _kComplicationChoices = 'complication.choices';
   static const _kComplicationStatMods = 'complication.stat_mods';
   static const _kComplicationTokens = 'complication.tokens';
+  static const _kComplicationTokensCurrent = 'complication.tokens_current';
   static const _kComplicationAbilities = 'complication.abilities';
   static const _kComplicationSkills = 'complication.skills';
   static const _kComplicationRecoveryBonus = 'complication.recovery_bonus';
@@ -924,6 +1150,16 @@ class ComplicationGrantsService {
   static const _kComplicationLanguages = 'complication.languages';
   static const _kComplicationFeatures = 'complication.features';
 }
+
+  class _SkillLookup {
+    const _SkillLookup({
+      required this.skillIds,
+      required this.nameToId,
+    });
+
+    final Set<String> skillIds;
+    final Map<String, String> nameToId;
+  }
 
 /// Provider for the complication grants service.
 final complicationGrantsServiceProvider = Provider<ComplicationGrantsService>((ref) {

@@ -71,3 +71,8 @@ maybe add a gauge to the hero resurce for style to track abilities
 
 potency needs to be shown in the sheet
 
+weakness does not have damage all
+
+recoveries must better show their value
+
+the storing of equasion and calculation must be applied accross the board. not just the woadwalker recovery bonus

@@ -460,7 +460,8 @@ sealed class ComplicationGrant {
         if (treasure is Map) {
           final type = (treasure['type'] as String?) ?? 'treasure';
           final echelon = (treasure['echelon'] as num?)?.toInt();
-          final choice = treasure['choice'] == true;
+          // Default to requiring choice - user must pick a specific treasure
+          final requiresChoice = treasure['choice'] != false;
           final selectedId = choices['${complicationId}_treasure_$i'];
 
           if (type == 'leveled' || type.startsWith('leveled_')) {
@@ -483,7 +484,7 @@ sealed class ComplicationGrant {
               sourceComplicationName: complicationName,
               treasureType: type,
               echelon: echelon,
-              requiresChoice: choice,
+              requiresChoice: requiresChoice,
               selectedTreasureId: selectedId,
             ));
           }
@@ -530,15 +531,45 @@ sealed class ComplicationGrant {
     final grants = <ComplicationGrant>[];
 
     if (tokensData is Map) {
-      tokensData.forEach((key, value) {
-        final count = (value is num) ? value.toInt() : (int.tryParse(value.toString()) ?? 0);
+      // Format: { "name": "antihero", "count": 3 }
+      final name = tokensData['name']?.toString();
+      final count = (tokensData['count'] as num?)?.toInt() ?? 0;
+      if (name != null && name.isNotEmpty && count > 0) {
         grants.add(TokenGrant(
           sourceComplicationId: complicationId,
           sourceComplicationName: complicationName,
-          tokenType: key.toString(),
+          tokenType: name,
           count: count,
         ));
-      });
+      } else {
+        // Fallback: old format { "tokenType": count }
+        tokensData.forEach((key, value) {
+          if (key == 'name' || key == 'count') return;
+          final c = (value is num) ? value.toInt() : (int.tryParse(value.toString()) ?? 0);
+          grants.add(TokenGrant(
+            sourceComplicationId: complicationId,
+            sourceComplicationName: complicationName,
+            tokenType: key.toString(),
+            count: c,
+          ));
+        });
+      }
+    } else if (tokensData is List) {
+      // Format: [{ "name": "antihero", "count": 3 }]
+      for (final token in tokensData) {
+        if (token is Map) {
+          final name = token['name']?.toString();
+          final count = (token['count'] as num?)?.toInt() ?? 0;
+          if (name != null && name.isNotEmpty && count > 0) {
+            grants.add(TokenGrant(
+              sourceComplicationId: complicationId,
+              sourceComplicationName: complicationName,
+              tokenType: name,
+              count: count,
+            ));
+          }
+        }
+      }
     }
 
     return grants;
@@ -672,9 +703,24 @@ sealed class ComplicationGrant {
     String complicationName,
   ) {
     final stat = (data['stat'] as String?) ?? '';
-    final value = (data['value'] as num?)?.toInt() ?? 0;
+    final rawValue = data['value'];
     final damageType = data['type']?.toString();
     final perEchelon = data['per_echelon'] == true;
+
+    // Handle dynamic values like "level"
+    int value = 0;
+    String? dynamicValue;
+    if (rawValue is num) {
+      value = rawValue.toInt();
+    } else if (rawValue is String) {
+      // Check if it's a dynamic value like "level"
+      final parsed = int.tryParse(rawValue);
+      if (parsed != null) {
+        value = parsed;
+      } else {
+        dynamicValue = rawValue; // e.g., "level"
+      }
+    }
 
     if (perEchelon) {
       return IncreaseTotalPerEchelonGrant(
@@ -691,6 +737,7 @@ sealed class ComplicationGrant {
       sourceComplicationName: complicationName,
       stat: stat,
       value: value,
+      dynamicValue: dynamicValue,
       damageType: damageType,
     );
   }
@@ -1075,13 +1122,23 @@ class IncreaseTotalGrant extends ComplicationGrant {
     required super.sourceComplicationId,
     required super.sourceComplicationName,
     required this.stat,
-    required this.value,
+    this.value = 0,
+    this.dynamicValue,
     this.damageType,
   });
 
   final String stat;
   final int value;
+  final String? dynamicValue; // For values like "level" that scale
   final String? damageType; // For immunity/weakness
+
+  /// Get the actual value, potentially based on hero level
+  int getActualValue(int heroLevel) {
+    if (dynamicValue == 'level') {
+      return heroLevel;
+    }
+    return value;
+  }
 
   @override
   ComplicationGrantType get type => ComplicationGrantType.increaseTotal;
@@ -1093,6 +1150,7 @@ class IncreaseTotalGrant extends ComplicationGrant {
         'sourceComplicationName': sourceComplicationName,
         'stat': stat,
         'value': value,
+        'dynamicValue': dynamicValue,
         'damageType': damageType,
       };
 
@@ -1101,7 +1159,8 @@ class IncreaseTotalGrant extends ComplicationGrant {
         sourceComplicationId: json['sourceComplicationId'] as String,
         sourceComplicationName: json['sourceComplicationName'] as String,
         stat: json['stat'] as String,
-        value: json['value'] as int,
+        value: (json['value'] as num?)?.toInt() ?? 0,
+        dynamicValue: json['dynamicValue'] as String?,
         damageType: json['damageType'] as String?,
       );
 }

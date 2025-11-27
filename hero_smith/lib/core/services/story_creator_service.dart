@@ -29,6 +29,9 @@ class StoryCreatorService {
     final traitChoices = await _heroRepository.getAncestryTraitChoices(heroId);
     final complicationId = await _heroRepository.loadComplication(heroId);
     final complicationChoices = await _complicationGrantsService.loadComplicationChoices(heroId);
+
+    await _complicationGrantsService.syncSkillGrants(heroId);
+
     return StoryCreatorLoadResult(
       hero: hero,
       cultureSelection: culture,

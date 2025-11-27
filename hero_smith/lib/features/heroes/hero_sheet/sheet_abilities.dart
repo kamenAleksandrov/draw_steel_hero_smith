@@ -63,8 +63,15 @@ final heroAbilityIdsProvider =
     // Get ancestry-granted abilities
     final ancestryAbilityNames = _getAncestryGrantedAbilities(values);
     
+    // Get complication-granted abilities
+    final complicationAbilityNames = _getComplicationGrantedAbilities(values);
+    
     // Combine all granted ability names
-    final allGrantedNames = <String>{...grantedAbilityNames, ...ancestryAbilityNames};
+    final allGrantedNames = <String>{
+      ...grantedAbilityNames,
+      ...ancestryAbilityNames,
+      ...complicationAbilityNames,
+    };
     
     // Load ability library and resolve granted ability names to IDs
     final library = await AbilityDataService().loadLibrary();
@@ -99,6 +106,35 @@ List<String> _getAncestryGrantedAbilities(List<dynamic> heroValues) {
           final decoded = jsonDecode(raw);
           if (decoded is Map) {
             // Format: {"Barbed Tail": "Barbed Tail trait", ...}
+            abilityNames.addAll(decoded.keys.map((e) => e.toString()));
+          } else if (decoded is List) {
+            abilityNames.addAll(decoded.map((e) => e.toString()));
+          }
+        } catch (_) {
+          // Ignore parsing errors
+        }
+      }
+      break;
+    }
+  }
+  
+  return abilityNames;
+}
+
+/// Helper function to extract granted ability names from complication
+List<String> _getComplicationGrantedAbilities(List<dynamic> heroValues) {
+  final abilityNames = <String>[];
+  
+  for (final value in heroValues) {
+    // Key used by complication_grants_service.dart
+    if (value.key == 'complication.abilities') {
+      final raw = value.jsonValue ?? value.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(raw);
+          if (decoded is Map) {
+            // Format: {"Posthumous Retirement": "War Dog Collar", ...}
+            // Keys are ability names, values are source complication names
             abilityNames.addAll(decoded.keys.map((e) => e.toString()));
           } else if (decoded is List) {
             abilityNames.addAll(decoded.map((e) => e.toString()));

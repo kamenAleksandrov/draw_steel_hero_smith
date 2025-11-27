@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
+import '../../../core/services/complication_grants_service.dart';
 import '../../../core/services/story_creator_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import 'widgets/token_tracker_widget.dart';
 
 // Provider to fetch a single component by ID
 final componentByIdProvider =
@@ -615,6 +617,8 @@ class _SheetStoryState extends ConsumerState<SheetStory>
   Widget _buildComplicationDetails(BuildContext context, dynamic complication) {
     final theme = Theme.of(context);
     final data = complication.data;
+    final complicationId = complication.id as String;
+    final choices = (_storyData.complicationChoices as Map<String, String>?) ?? {};
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -646,8 +650,11 @@ class _SheetStoryState extends ConsumerState<SheetStory>
             _buildEffects(context, data['effects']),
             const SizedBox(height: 12),
           ],
+          // Token tracker widget for complication tokens
+          TokenTrackerWidget(heroId: widget.heroId),
+          const SizedBox(height: 12),
           if (data['grants'] != null) ...[
-            _buildGrants(context, data['grants']),
+            _buildGrants(context, data['grants'], complicationId, choices),
             const SizedBox(height: 12),
           ],
           if (data['ability'] != null) ...[
@@ -758,7 +765,12 @@ class _SheetStoryState extends ConsumerState<SheetStory>
     );
   }
 
-  Widget _buildGrants(BuildContext context, dynamic grants) {
+  Widget _buildGrants(
+    BuildContext context,
+    dynamic grants,
+    String complicationId,
+    Map<String, String> choices,
+  ) {
     final theme = Theme.of(context);
     final grantsData = grants as Map<String, dynamic>?;
     if (grantsData == null || grantsData.isEmpty) {
@@ -797,6 +809,73 @@ class _SheetStoryState extends ConsumerState<SheetStory>
       });
     }
 
+    // Languages
+    if (grantsData['languages'] != null) {
+      final count = grantsData['languages'] as int? ?? 1;
+      items.add(_buildLanguageGrantsDisplay(context, complicationId, choices, count));
+    }
+
+    // Dead Languages
+    if (grantsData['dead_language'] != null) {
+      final count = grantsData['dead_language'] as int? ?? 1;
+      items.add(_buildDeadLanguageGrantsDisplay(context, complicationId, choices, count));
+    }
+
+    // Skill from options
+    if (grantsData['skill_from_options'] != null) {
+      items.add(_buildSkillChoiceDisplay(context, complicationId, choices, 'skill_option'));
+    }
+
+    // Skill from group
+    if (grantsData['skill_from_group'] != null) {
+      items.add(_buildSkillChoiceDisplay(context, complicationId, choices, 'skill_group'));
+    }
+
+    // Ancestry traits (e.g., Dragon Dreams)
+    if (grantsData['ancestry_traits'] != null) {
+      items.add(_buildAncestryTraitsDisplay(context, complicationId, choices, grantsData['ancestry_traits']));
+    }
+
+    // Pick one grants
+    if (grantsData['pick_one'] != null) {
+      items.add(_buildPickOneDisplay(context, complicationId, choices, grantsData['pick_one']));
+    }
+
+    // Increase total grants
+    if (grantsData['increase_total'] is List) {
+      final increases = grantsData['increase_total'] as List;
+      for (final inc in increases) {
+        if (inc is Map) {
+          final stat = inc['stat']?.toString() ?? '';
+          final value = inc['value'];
+          final perEchelon = inc['per_echelon'] == true;
+          final text = perEchelon
+              ? '+$value ${stat.replaceAll('_', ' ')} per echelon'
+              : '+$value ${stat.replaceAll('_', ' ')}';
+          items.add(_buildGrantItem(context, text, Icons.trending_up_outlined));
+        }
+      }
+    }
+
+    // Abilities
+    if (grantsData['abilities'] is List) {
+      final abilities = grantsData['abilities'] as List;
+      for (final ability in abilities) {
+        items.add(_buildGrantItem(context, 'Ability: $ability', Icons.auto_awesome_outlined));
+      }
+    }
+    if (grantsData['ability'] != null) {
+      items.add(_buildGrantItem(context, 'Ability: ${grantsData['ability']}', Icons.auto_awesome_outlined));
+    }
+
+    // Skills (direct grants)
+    if (grantsData['skills'] is List) {
+      final skills = grantsData['skills'] as List;
+      for (final skill in skills) {
+        items.add(_buildGrantItem(context, 'Skill: $skill', Icons.psychology_outlined));
+      }
+    }
+
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -812,6 +891,299 @@ class _SheetStoryState extends ConsumerState<SheetStory>
         ...items,
       ],
     );
+  }
+
+  Widget _buildLanguageGrantsDisplay(
+    BuildContext context,
+    String complicationId,
+    Map<String, String> choices,
+    int count,
+  ) {
+    final languagesAsync = ref.watch(componentsByTypeProvider('language'));
+    
+    return languagesAsync.when(
+      loading: () => _buildGrantItem(context, 'Languages: Loading...', Icons.translate_outlined),
+      error: (e, _) => _buildGrantItem(context, 'Languages: Error loading', Icons.translate_outlined),
+      data: (allLanguages) {
+        final selectedNames = <String>[];
+        for (int i = 0; i < count; i++) {
+          final choiceKey = '${complicationId}_language_$i';
+          final selectedId = choices[choiceKey];
+          if (selectedId != null && selectedId.isNotEmpty) {
+            final lang = allLanguages.firstWhere(
+              (l) => l.id == selectedId,
+              orElse: () => model.Component(id: '', type: '', name: selectedId, data: const {}),
+            );
+            selectedNames.add(lang.name);
+          }
+        }
+        
+        if (selectedNames.isEmpty) {
+          return _buildGrantItem(context, 'Choose $count language${count == 1 ? '' : 's'}', Icons.translate_outlined);
+        }
+        
+        return _buildGrantItem(
+          context,
+          'Language${selectedNames.length == 1 ? '' : 's'}: ${selectedNames.join(', ')}',
+          Icons.translate_outlined,
+        );
+      },
+    );
+  }
+
+  Widget _buildDeadLanguageGrantsDisplay(
+    BuildContext context,
+    String complicationId,
+    Map<String, String> choices,
+    int count,
+  ) {
+    final languagesAsync = ref.watch(componentsByTypeProvider('language'));
+    
+    return languagesAsync.when(
+      loading: () => _buildGrantItem(context, 'Dead Languages: Loading...', Icons.history_edu_outlined),
+      error: (e, _) => _buildGrantItem(context, 'Dead Languages: Error loading', Icons.history_edu_outlined),
+      data: (allLanguages) {
+        final selectedNames = <String>[];
+        for (int i = 0; i < count; i++) {
+          final choiceKey = '${complicationId}_dead_language_$i';
+          final selectedId = choices[choiceKey];
+          if (selectedId != null && selectedId.isNotEmpty) {
+            final lang = allLanguages.firstWhere(
+              (l) => l.id == selectedId,
+              orElse: () => model.Component(id: '', type: '', name: selectedId, data: const {}),
+            );
+            selectedNames.add(lang.name);
+          }
+        }
+        
+        if (selectedNames.isEmpty) {
+          return _buildGrantItem(context, 'Choose $count dead language${count == 1 ? '' : 's'}', Icons.history_edu_outlined);
+        }
+        
+        return _buildGrantItem(
+          context,
+          'Dead Language${selectedNames.length == 1 ? '' : 's'}: ${selectedNames.join(', ')}',
+          Icons.history_edu_outlined,
+        );
+      },
+    );
+  }
+
+  Widget _buildSkillChoiceDisplay(
+    BuildContext context,
+    String complicationId,
+    Map<String, String> choices,
+    String choiceType,
+  ) {
+    final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
+    final choiceKey = '${complicationId}_$choiceType';
+    final selectedId = choices[choiceKey];
+    
+    return skillsAsync.when(
+      loading: () => _buildGrantItem(context, 'Skill: Loading...', Icons.psychology_outlined),
+      error: (e, _) => _buildGrantItem(context, 'Skill: Error loading', Icons.psychology_outlined),
+      data: (allSkills) {
+        if (selectedId == null || selectedId.isEmpty) {
+          return _buildGrantItem(context, 'Choose a skill', Icons.psychology_outlined);
+        }
+        
+        final skill = allSkills.firstWhere(
+          (s) => s.id == selectedId,
+          orElse: () => model.Component(id: '', type: '', name: selectedId, data: const {}),
+        );
+        
+        return _buildGrantItem(context, 'Skill: ${skill.name}', Icons.psychology_outlined);
+      },
+    );
+  }
+
+  Widget _buildAncestryTraitsDisplay(
+    BuildContext context,
+    String complicationId,
+    Map<String, String> choices,
+    dynamic ancestryTraitsData,
+  ) {
+    final theme = Theme.of(context);
+    final ancestry = ancestryTraitsData['ancestry'] as String? ?? '';
+    final points = ancestryTraitsData['ancestry_points'] as int? ?? 0;
+    final ancestryTraitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
+    
+    final choiceKey = '${complicationId}_ancestry_traits';
+    final selectedIdsStr = choices[choiceKey] ?? '';
+    final selectedIds = selectedIdsStr.isNotEmpty ? selectedIdsStr.split(',').toSet() : <String>{};
+    
+    if (selectedIds.isEmpty) {
+      return _buildGrantItem(
+        context,
+        'Choose $points ${_formatAncestryName(ancestry)} ancestry trait point${points == 1 ? '' : 's'}',
+        Icons.person_outline,
+      );
+    }
+    
+    return ancestryTraitsAsync.when(
+      loading: () => _buildGrantItem(context, 'Ancestry Traits: Loading...', Icons.person_outline),
+      error: (e, _) => _buildGrantItem(context, 'Ancestry Traits: ${selectedIds.length} selected', Icons.person_outline),
+      data: (allAncestryTraits) {
+        // Find the ancestry traits component
+        final targetAncestryId = 'ancestry_$ancestry';
+        final traitsComp = allAncestryTraits.cast<model.Component>().firstWhere(
+          (t) => t.data['ancestry_id'] == targetAncestryId,
+          orElse: () => model.Component(id: '', type: '', name: '', data: const {}),
+        );
+        
+        final traitsList = (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
+        final selectedTraits = <Map<String, dynamic>>[];
+        
+        for (final id in selectedIds) {
+          final trait = traitsList.firstWhere(
+            (t) => (t['id'] ?? t['name']).toString() == id,
+            orElse: () => const {},
+          );
+          if (trait.isNotEmpty) {
+            selectedTraits.add(trait.cast<String, dynamic>());
+          }
+        }
+        
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.person_outline, size: 18, color: theme.colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${_formatAncestryName(ancestry)} Traits',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              ...selectedTraits.map((trait) {
+                final name = trait['name']?.toString() ?? '';
+                final description = trait['description']?.toString() ?? '';
+                final cost = trait['cost'] as int? ?? 0;
+                
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: theme.colorScheme.outlineVariant),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                name,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '$cost pt${cost == 1 ? '' : 's'}',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (description.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            description,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPickOneDisplay(
+    BuildContext context,
+    String complicationId,
+    Map<String, String> choices,
+    dynamic pickOneData,
+  ) {
+    final theme = Theme.of(context);
+    final choiceKey = '${complicationId}_pick_one';
+    final selectedIndexStr = choices[choiceKey];
+    final selectedIndex = selectedIndexStr != null ? int.tryParse(selectedIndexStr) : null;
+    
+    if (pickOneData is! List || pickOneData.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
+    if (selectedIndex == null || selectedIndex < 0 || selectedIndex >= pickOneData.length) {
+      return _buildGrantItem(context, 'Choose one option', Icons.check_circle_outline);
+    }
+    
+    final selectedOption = pickOneData[selectedIndex] as Map<String, dynamic>;
+    final description = selectedOption['description'] as String? ?? 'Option ${selectedIndex + 1}';
+    
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.check_circle, size: 16, color: theme.colorScheme.secondary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              description,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatAncestryName(String ancestry) {
+    // Convert "dragon_knight" to "Dragon Knight"
+    return ancestry.split('_').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
   }
 
   Widget _buildGrantItem(BuildContext context, String text, IconData icon) {
@@ -1182,6 +1554,9 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
           description: skill.description,
         );
       }).toList();
+
+      final grantsService = ref.read(complicationGrantsServiceProvider);
+      await grantsService.syncSkillGrants(widget.heroId);
 
       // Load selected skills for this hero
       final db = ref.read(appDatabaseProvider);

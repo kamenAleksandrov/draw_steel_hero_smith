@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/complication_grant_models.dart';
 import '../../../../core/models/component.dart' as model;
+import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/treasures/treasures.dart';
 
 class _SearchOption<T> {
@@ -141,6 +142,7 @@ class StoryComplicationSection extends ConsumerStatefulWidget {
     required this.onComplicationChanged,
     required this.onChoicesChanged,
     required this.onDirty,
+    this.heroAncestryTraitIds = const {},
   });
 
   final String? selectedComplicationId;
@@ -148,6 +150,8 @@ class StoryComplicationSection extends ConsumerStatefulWidget {
   final ValueChanged<String?> onComplicationChanged;
   final ValueChanged<Map<String, String>> onChoicesChanged;
   final VoidCallback onDirty;
+  /// Ancestry trait IDs already selected by the hero (to exclude from complication trait picks)
+  final Set<String> heroAncestryTraitIds;
 
   @override
   ConsumerState<StoryComplicationSection> createState() =>
@@ -273,6 +277,7 @@ class _StoryComplicationSectionState
                           widget.onChoicesChanged(choices);
                           widget.onDirty();
                         },
+                        heroAncestryTraitIds: widget.heroAncestryTraitIds,
                       ),
                     ],
                   ],
@@ -291,11 +296,14 @@ class _ComplicationDetails extends ConsumerWidget {
     required this.complication,
     required this.choices,
     required this.onChoicesChanged,
+    this.heroAncestryTraitIds = const {},
   });
 
   final dynamic complication;
   final Map<String, String> choices;
   final ValueChanged<Map<String, String>> onChoicesChanged;
+  /// Ancestry trait IDs already selected by the hero (to exclude from complication trait picks)
+  final Set<String> heroAncestryTraitIds;
 
   void _updateChoice(String key, String? value) {
     final newChoices = Map<String, String>.from(choices);
@@ -469,9 +477,30 @@ class _ComplicationDetails extends ConsumerWidget {
     if (grants.isEmpty) return const SizedBox.shrink();
 
     final items = <Widget>[];
+    
+    // Track treasure index for both TreasureGrant and LeveledTreasureGrant
+    // They share the same index since they're parsed from the same "treasures" array
+    int treasureIndex = 0;
 
     for (final grant in grants) {
-      final widget = _buildGrantWidget(context, ref, grant, complicationId);
+      Widget? widget;
+      
+      // Pass appropriate index for treasure grants
+      if (grant is TreasureGrant) {
+        if (grant.requiresChoice) {
+          widget = _buildTreasureChoiceGrant(context, ref, grant, complicationId, treasureIndex);
+        } else {
+          final echelonStr = grant.echelon != null ? ' (echelon ${grant.echelon})' : '';
+          widget = _buildGrantItem(context, '${grant.treasureType.replaceAll('_', ' ')}$echelonStr', Icons.diamond_outlined);
+        }
+        treasureIndex++;
+      } else if (grant is LeveledTreasureGrant) {
+        widget = _buildLeveledTreasureGrant(context, ref, grant, complicationId, treasureIndex);
+        treasureIndex++;
+      } else {
+        widget = _buildGrantWidget(context, ref, grant, complicationId);
+      }
+      
       if (widget != null) {
         items.add(widget);
         items.add(const SizedBox(height: 8));
@@ -512,17 +541,14 @@ class _ComplicationDetails extends ConsumerWidget {
         return _buildSkillFromOptionsGrant(context, ref, grant, complicationId);
       
       case AbilityGrant():
-        return _buildGrantItem(context, 'Ability: ${grant.abilityName}', Icons.auto_awesome_outlined);
+        return _buildAbilityGrant(context, ref, grant.abilityName);
       
+      // TreasureGrant and LeveledTreasureGrant are handled in _buildGrantsSection with indices
       case TreasureGrant():
-        if (grant.requiresChoice) {
-          return _buildTreasureChoiceGrant(context, ref, grant, complicationId);
-        }
-        final echelonStr = grant.echelon != null ? ' (echelon ${grant.echelon})' : '';
-        return _buildGrantItem(context, '${grant.treasureType.replaceAll('_', ' ')}$echelonStr', Icons.diamond_outlined);
+        return null;
       
       case LeveledTreasureGrant():
-        return _buildLeveledTreasureGrant(context, ref, grant, complicationId);
+        return null;
       
       case TokenGrant():
         return _buildGrantItem(
@@ -535,11 +561,7 @@ class _ComplicationDetails extends ConsumerWidget {
         return _buildLanguageGrant(context, ref, grant, complicationId);
       
       case DeadLanguageGrant():
-        return _buildGrantItem(
-          context,
-          '${grant.count} dead language${grant.count == 1 ? '' : 's'}',
-          Icons.translate_outlined,
-        );
+        return _buildDeadLanguageGrant(context, ref, grant, complicationId);
       
       case IncreaseTotalGrant():
         final typeStr = grant.damageType != null ? ' (${grant.damageType})' : '';
@@ -571,11 +593,7 @@ class _ComplicationDetails extends ConsumerWidget {
         );
       
       case AncestryTraitsGrant():
-        return _buildGrantItem(
-          context,
-          '${grant.ancestryPoints} ${grant.ancestry} ancestry trait point${grant.ancestryPoints == 1 ? '' : 's'}',
-          Icons.person_outline,
-        );
+        return _buildAncestryTraitsGrant(context, ref, grant, complicationId);
       
       case PickOneGrant():
         return _buildPickOneGrant(context, ref, grant, complicationId);
@@ -608,8 +626,8 @@ class _ComplicationDetails extends ConsumerWidget {
   ) {
     final theme = Theme.of(context);
     final groupsStr = grant.groups.join(', ');
+    final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
     
-    // For now, just show what's needed - full skill picker can be added later
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -634,16 +652,111 @@ class _ComplicationDetails extends ConsumerWidget {
               ),
             ],
           ),
-          if (grant.selectedSkillIds.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: grant.selectedSkillIds.map((id) => Chip(
-                label: Text(id),
-                backgroundColor: theme.colorScheme.secondaryContainer,
-              )).toList(),
+          const SizedBox(height: 8),
+          skillsAsync.when(
+            loading: () => const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             ),
-          ],
+            error: (e, _) => Text('Error loading skills: $e'),
+            data: (allSkills) {
+              // Filter skills by groups - 'any' means all groups
+              final isAnyGroup = grant.groups.contains('any');
+              final filteredSkills = allSkills.where((skill) {
+                final skillGroup = (skill.data['group'] as String?)?.toLowerCase() ?? '';
+                if (isAnyGroup) return true;
+                return grant.groups.any((g) => g.toLowerCase() == skillGroup);
+              }).toList()
+                ..sort((a, b) => a.name.compareTo(b.name));
+
+              if (filteredSkills.isEmpty) {
+                return Text(
+                  'No skills available for: $groupsStr',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              // Build picker slots for each skill choice
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(grant.count, (index) {
+                  final choiceKey = '${complicationId}_skill_$index';
+                  final selectedId = index < grant.selectedSkillIds.length 
+                      ? grant.selectedSkillIds[index] 
+                      : null;
+                  final selectedSkill = selectedId != null
+                      ? filteredSkills.firstWhereOrNull((s) => s.id == selectedId)
+                      : null;
+
+                  // Exclude already selected skills from options
+                  final alreadySelected = grant.selectedSkillIds.where((id) => id != selectedId).toSet();
+                  final availableSkills = filteredSkills.where((s) => !alreadySelected.contains(s.id)).toList();
+
+                  return Padding(
+                    padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
+                    child: InkWell(
+                      onTap: () async {
+                        final options = availableSkills.map((s) {
+                          final group = s.data['group'] as String? ?? '';
+                          final description = s.data['description'] as String? ?? '';
+                          return _SearchOption<String>(
+                            label: s.name,
+                            value: s.id,
+                            subtitle: '[$group] $description',
+                          );
+                        }).toList();
+
+                        final result = await _showSearchablePicker<String>(
+                          context: context,
+                          title: 'Select Skill ${index + 1}',
+                          options: options,
+                          selected: selectedId,
+                        );
+
+                        if (result != null) {
+                          _updateChoice(choiceKey, result.value);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: selectedSkill != null
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.outline.withOpacity(0.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
+                              size: 20,
+                              color: selectedSkill != null
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outline,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                selectedSkill?.name ?? 'Tap to select skill ${index + 1}...',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: selectedSkill != null ? null : theme.colorScheme.outline,
+                                  fontStyle: selectedSkill != null ? null : FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -656,6 +769,8 @@ class _ComplicationDetails extends ConsumerWidget {
     String complicationId,
   ) {
     final theme = Theme.of(context);
+    final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
+    final choiceKey = '${complicationId}_skill_option';
     
     return Container(
       padding: const EdgeInsets.all(12),
@@ -681,13 +796,92 @@ class _ComplicationDetails extends ConsumerWidget {
               ),
             ],
           ),
-          if (grant.selectedSkillId != null) ...[
-            const SizedBox(height: 8),
-            Chip(
-              label: Text(grant.selectedSkillId!),
-              backgroundColor: theme.colorScheme.secondaryContainer,
+          const SizedBox(height: 8),
+          skillsAsync.when(
+            loading: () => const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             ),
-          ],
+            error: (e, _) => Text('Error loading skills: $e'),
+            data: (allSkills) {
+              // Filter skills by options - match by name (case-insensitive)
+              final optionNamesLower = grant.options.map((o) => o.toLowerCase()).toSet();
+              final filteredSkills = allSkills.where((skill) {
+                return optionNamesLower.contains(skill.name.toLowerCase());
+              }).toList()
+                ..sort((a, b) => a.name.compareTo(b.name));
+
+              if (filteredSkills.isEmpty) {
+                return Text(
+                  'No matching skills found for: ${grant.options.join(', ')}',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              final selectedSkill = grant.selectedSkillId != null
+                  ? filteredSkills.firstWhereOrNull((s) => s.id == grant.selectedSkillId)
+                  : null;
+
+              return InkWell(
+                onTap: () async {
+                  final options = filteredSkills.map((s) {
+                    final group = s.data['group'] as String? ?? '';
+                    final description = s.data['description'] as String? ?? '';
+                    return _SearchOption<String>(
+                      label: s.name,
+                      value: s.id,
+                      subtitle: '[$group] $description',
+                    );
+                  }).toList();
+
+                  final result = await _showSearchablePicker<String>(
+                    context: context,
+                    title: 'Select Skill',
+                    options: options,
+                    selected: grant.selectedSkillId,
+                  );
+
+                  if (result != null) {
+                    _updateChoice(choiceKey, result.value);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: selectedSkill != null
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.outline.withOpacity(0.5),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
+                        size: 20,
+                        color: selectedSkill != null
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.outline,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          selectedSkill?.name ?? 'Tap to select skill...',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: selectedSkill != null ? null : theme.colorScheme.outline,
+                            fontStyle: selectedSkill != null ? null : FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -698,6 +892,7 @@ class _ComplicationDetails extends ConsumerWidget {
     WidgetRef ref,
     TreasureGrant grant,
     String complicationId,
+    int treasureIndex,
   ) {
     final theme = Theme.of(context);
     final componentsAsync = ref.watch(allComponentsProvider);
@@ -758,9 +953,8 @@ class _ComplicationDetails extends ConsumerWidget {
                 );
               }
 
-              // Find the choice key - we need to track the index of this treasure grant
-              // For simplicity, use treasure_0 for the first one
-              final choiceKey = '${complicationId}_treasure_0';
+              // Use the proper index for the choice key
+              final choiceKey = '${complicationId}_treasure_$treasureIndex';
               final selectedId = grant.selectedTreasureId;
               final selectedTreasure = selectedId != null 
                   ? treasures.firstWhereOrNull((t) => t.id == selectedId)
@@ -852,6 +1046,7 @@ class _ComplicationDetails extends ConsumerWidget {
     WidgetRef ref,
     LeveledTreasureGrant grant,
     String complicationId,
+    int leveledTreasureIndex,
   ) {
     final theme = Theme.of(context);
     final componentsAsync = ref.watch(allComponentsProvider);
@@ -913,8 +1108,8 @@ class _ComplicationDetails extends ConsumerWidget {
                 );
               }
 
-              // Find the choice key - use leveled_treasure_0 for the first one
-              final choiceKey = '${complicationId}_treasure_0';
+              // Use the proper index for the choice key
+              final choiceKey = '${complicationId}_treasure_$leveledTreasureIndex';
               final selectedId = grant.selectedTreasureId;
               final selectedTreasure = selectedId != null 
                   ? treasures.firstWhereOrNull((t) => t.id == selectedId)
@@ -1008,6 +1203,7 @@ class _ComplicationDetails extends ConsumerWidget {
     String complicationId,
   ) {
     final theme = Theme.of(context);
+    final languagesAsync = ref.watch(componentsByTypeProvider('language'));
     
     return Container(
       padding: const EdgeInsets.all(12),
@@ -1033,16 +1229,260 @@ class _ComplicationDetails extends ConsumerWidget {
               ),
             ],
           ),
-          if (grant.selectedLanguageIds.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: grant.selectedLanguageIds.map((id) => Chip(
-                label: Text(id),
-                backgroundColor: theme.colorScheme.secondaryContainer,
-              )).toList(),
+          const SizedBox(height: 8),
+          languagesAsync.when(
+            loading: () => const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             ),
-          ],
+            error: (e, _) => Text('Error loading languages: $e'),
+            data: (allLanguages) {
+              // Filter out dead languages - this is for living languages only
+              final livingLanguages = allLanguages.where((lang) {
+                final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
+                return langType != 'dead';
+              }).toList()
+                ..sort((a, b) => a.name.compareTo(b.name));
+
+              if (livingLanguages.isEmpty) {
+                return Text(
+                  'No languages available',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              // Build picker slots for each language choice
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(grant.count, (index) {
+                  final choiceKey = '${complicationId}_language_$index';
+                  final selectedId = index < grant.selectedLanguageIds.length 
+                      ? grant.selectedLanguageIds[index] 
+                      : null;
+                  final selectedLanguage = selectedId != null
+                      ? livingLanguages.firstWhereOrNull((l) => l.id == selectedId)
+                      : null;
+
+                  // Exclude already selected languages from options
+                  final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
+                  final availableLanguages = livingLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
+
+                  return Padding(
+                    padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
+                    child: InkWell(
+                      onTap: () async {
+                        final options = availableLanguages.map((l) {
+                          final langType = l.data['type'] as String? ?? '';
+                          final region = l.data['region'] as String?;
+                          final ancestry = l.data['ancestry'] as String?;
+                          final subtitle = region != null 
+                              ? '[$langType] Region: $region' 
+                              : ancestry != null 
+                                  ? '[$langType] Ancestry: $ancestry' 
+                                  : '[$langType]';
+                          return _SearchOption<String>(
+                            label: l.name,
+                            value: l.id,
+                            subtitle: subtitle,
+                          );
+                        }).toList();
+
+                        final result = await _showSearchablePicker<String>(
+                          context: context,
+                          title: 'Select Language ${index + 1}',
+                          options: options,
+                          selected: selectedId,
+                        );
+
+                        if (result != null) {
+                          _updateChoice(choiceKey, result.value);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: selectedLanguage != null
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.outline.withOpacity(0.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
+                              size: 20,
+                              color: selectedLanguage != null
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outline,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                selectedLanguage?.name ?? 'Tap to select language ${index + 1}...',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: selectedLanguage != null ? null : theme.colorScheme.outline,
+                                  fontStyle: selectedLanguage != null ? null : FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeadLanguageGrant(
+    BuildContext context,
+    WidgetRef ref,
+    DeadLanguageGrant grant,
+    String complicationId,
+  ) {
+    final theme = Theme.of(context);
+    final languagesAsync = ref.watch(componentsByTypeProvider('language'));
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.translate_outlined, size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Choose ${grant.count} dead language${grant.count > 1 ? 's' : ''}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          languagesAsync.when(
+            loading: () => const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
+            error: (e, _) => Text('Error loading languages: $e'),
+            data: (allLanguages) {
+              // Filter for dead languages only
+              final deadLanguages = allLanguages.where((lang) {
+                final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
+                return langType == 'dead';
+              }).toList()
+                ..sort((a, b) => a.name.compareTo(b.name));
+
+              if (deadLanguages.isEmpty) {
+                return Text(
+                  'No dead languages available',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              // Build picker slots for each language choice
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(grant.count, (index) {
+                  final choiceKey = '${complicationId}_dead_language_$index';
+                  final selectedId = index < grant.selectedLanguageIds.length 
+                      ? grant.selectedLanguageIds[index] 
+                      : null;
+                  final selectedLanguage = selectedId != null
+                      ? deadLanguages.firstWhereOrNull((l) => l.id == selectedId)
+                      : null;
+
+                  // Exclude already selected languages from options
+                  final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
+                  final availableLanguages = deadLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
+
+                  return Padding(
+                    padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
+                    child: InkWell(
+                      onTap: () async {
+                        final options = availableLanguages.map((l) {
+                          final ancestry = l.data['ancestry'] as String? ?? '';
+                          final commonTopics = l.data['common_topics'] as List?;
+                          final topicsStr = commonTopics != null ? commonTopics.join(', ') : '';
+                          final subtitle = topicsStr.isNotEmpty 
+                              ? 'Ancestry: $ancestry • Topics: $topicsStr' 
+                              : 'Ancestry: $ancestry';
+                          return _SearchOption<String>(
+                            label: l.name,
+                            value: l.id,
+                            subtitle: subtitle,
+                          );
+                        }).toList();
+
+                        final result = await _showSearchablePicker<String>(
+                          context: context,
+                          title: 'Select Dead Language ${index + 1}',
+                          options: options,
+                          selected: selectedId,
+                        );
+
+                        if (result != null) {
+                          _updateChoice(choiceKey, result.value);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: selectedLanguage != null
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.outline.withOpacity(0.5),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
+                              size: 20,
+                              color: selectedLanguage != null
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outline,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                selectedLanguage?.name ?? 'Tap to select dead language ${index + 1}...',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: selectedLanguage != null ? null : theme.colorScheme.outline,
+                                  fontStyle: selectedLanguage != null ? null : FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -1124,6 +1564,204 @@ class _ComplicationDetails extends ConsumerWidget {
     );
   }
 
+  /// Builds an ancestry traits picker for AncestryTraitsGrant (e.g., Dragon Dreams complication)
+  Widget _buildAncestryTraitsGrant(
+    BuildContext context,
+    WidgetRef ref,
+    AncestryTraitsGrant grant,
+    String complicationId,
+  ) {
+    final theme = Theme.of(context);
+    final ancestryTraitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.person_outline, size: 18, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '${grant.ancestryPoints} ${_formatAncestryName(grant.ancestry)} ancestry trait point${grant.ancestryPoints == 1 ? '' : 's'}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ancestryTraitsAsync.when(
+            loading: () => const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
+            error: (e, _) => Text('Error loading ancestry traits: $e'),
+            data: (allAncestryTraits) {
+              // Find the ancestry traits component that matches the grant's ancestry
+              // e.g., "dragon_knight" matches "ancestry_dragon_knight" in ancestry_id
+              final targetAncestryId = 'ancestry_${grant.ancestry}';
+              final traitsComp = allAncestryTraits.firstWhereOrNull(
+                (t) => t.data['ancestry_id'] == targetAncestryId,
+              );
+
+              if (traitsComp == null) {
+                return Text(
+                  'No traits found for ${grant.ancestry}',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              final traitsList = (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
+              
+              if (traitsList.isEmpty) {
+                return Text(
+                  'No traits available for ${grant.ancestry}',
+                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                );
+              }
+
+              // Get selected traits from complication choices
+              // Stored as comma-separated list: "complicationId_ancestry_traits" -> "dk_draconian_guard,dk_wings"
+              final choiceKey = '${complicationId}_ancestry_traits';
+              final selectedIdsStr = choices[choiceKey] ?? '';
+              final selectedIds = selectedIdsStr.isNotEmpty
+                  ? selectedIdsStr.split(',').toSet()
+                  : <String>{};
+
+              // Calculate spent points from selected traits
+              final spent = selectedIds.fold<int>(0, (sum, id) {
+                final match = traitsList.firstWhere(
+                  (t) => (t['id'] ?? t['name']).toString() == id,
+                  orElse: () => const {},
+                );
+                return sum + (match.cast<String, dynamic>()['cost'] as int? ?? 0);
+              });
+              final remaining = grant.ancestryPoints - spent;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Chip(label: Text('Points: ${grant.ancestryPoints}')),
+                      const SizedBox(width: 8),
+                      Chip(
+                        label: Text('Remaining: $remaining'),
+                        backgroundColor: remaining < 0
+                            ? theme.colorScheme.errorContainer
+                            : null,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ...traitsList.map((t) {
+                    final traitData = t.cast<String, dynamic>();
+                    final id = (traitData['id'] ?? traitData['name']).toString();
+                    final name = (traitData['name'] ?? id).toString();
+                    final desc = (traitData['description'] ?? '').toString();
+                    final cost = (traitData['cost'] as int?) ?? 0;
+                    final selected = selectedIds.contains(id);
+                    final canSelect = selected || remaining - cost >= 0;
+                    
+                    // Exclude traits already selected by hero in ancestry section
+                    final alreadyPickedByHero = heroAncestryTraitIds.contains(id);
+                    if (alreadyPickedByHero) {
+                      // Show as disabled/already picked
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          enabled: false,
+                          leading: Icon(Icons.check_circle, color: theme.colorScheme.outline),
+                          title: Text(
+                            name,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                          subtitle: Text(
+                            '(Already selected in ancestry)',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontStyle: FontStyle.italic,
+                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            ),
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text('$cost'),
+                          ),
+                        ),
+                      );
+                    }
+
+                    return CheckboxListTile(
+                      value: selected,
+                      onChanged: canSelect
+                          ? (value) {
+                              if (value == null) return;
+                              final newSelected = Set<String>.from(selectedIds);
+                              if (value) {
+                                newSelected.add(id);
+                              } else {
+                                newSelected.remove(id);
+                              }
+                              _updateChoice(choiceKey, newSelected.join(','));
+                            }
+                          : null,
+                      title: Text(name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(
+                            desc,
+                            softWrap: true,
+                          ),
+                        ],
+                      ),
+                      isThreeLine: true,
+                      secondary: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text('$cost'),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    );
+                  }),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatAncestryName(String ancestry) {
+    // Convert "dragon_knight" to "Dragon Knight"
+    return ancestry.split('_').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
+  }
+
   Widget _buildGrantItem(BuildContext context, String text, IconData icon) {
     final theme = Theme.of(context);
     return Padding(
@@ -1146,6 +1784,46 @@ class _ComplicationDetails extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Builds an ability grant widget that looks up and displays the full ability details.
+  Widget _buildAbilityGrant(BuildContext context, WidgetRef ref, String abilityName) {
+    final theme = Theme.of(context);
+    final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
+
+    return abilityAsync.when(
+      data: (ability) {
+        if (ability == null) {
+          // Ability not found in library - just show the name
+          return _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined);
+        }
+        // Reuse existing AbilityExpandableItem widget for full ability display
+        return AbilityExpandableItem(component: ability);
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.5,
+                color: theme.colorScheme.secondary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Loading $abilityName...',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+      error: (e, _) => _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined),
     );
   }
 
