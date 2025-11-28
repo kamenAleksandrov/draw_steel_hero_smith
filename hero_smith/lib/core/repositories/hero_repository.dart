@@ -7,6 +7,10 @@ import '../models/dynamic_modifier_model.dart';
 import '../models/hero_model.dart';
 import '../models/hero_mod_keys.dart';
 
+/// All valid sizes in order: 1T, 1S, 1M, 1L, 2, 3, 4, 5
+/// Each step is +1/-1 from the previous
+const List<String> _sizeProgression = ['1T', '1S', '1M', '1L', '2', '3', '4', '5'];
+
 /// Represents the parsed components of a size string (e.g., "1M" -> number: 1, category: "M")
 class SizeParts {
   final int number;
@@ -16,6 +20,33 @@ class SizeParts {
   
   @override
   String toString() => number >= 2 ? number.toString() : '$number$category';
+  
+  /// Get the index in the size progression (0-7)
+  int get progressionIndex {
+    final sizeStr = toString();
+    final idx = _sizeProgression.indexOf(sizeStr);
+    return idx >= 0 ? idx : 2; // Default to 1M (index 2) if not found
+  }
+  
+  /// Create SizeParts from a progression index
+  static SizeParts fromIndex(int index) {
+    final clampedIndex = index.clamp(0, _sizeProgression.length - 1);
+    return _parseSize(_sizeProgression[clampedIndex]);
+  }
+  
+  /// Parse a size string into SizeParts
+  static SizeParts _parseSize(String size) {
+    if (size.isEmpty) return const SizeParts(1, 'M');
+    
+    final lastChar = size[size.length - 1].toUpperCase();
+    if ('TSML'.contains(lastChar)) {
+      final numPart = size.substring(0, size.length - 1);
+      return SizeParts(int.tryParse(numPart) ?? 1, lastChar);
+    }
+    
+    // No category letter, just a number (e.g., "2", "3")
+    return SizeParts(int.tryParse(size) ?? 2, '');
+  }
 }
 
 class HeroSummary {
@@ -119,38 +150,37 @@ class HeroMainStats {
   int get presenceTotal => presenceBase + modValue(HeroModKeys.presence);
 
   /// Returns the size as a formatted string (e.g., "1M", "2", "1L")
-  /// Size modifications affect the numeric portion only
+  /// Size modifications move along the progression: 1T → 1S → 1M → 1L → 2 → 3 → 4 → 5
   String get sizeTotal {
     final mod = modValue(HeroModKeys.size);
     if (mod == 0) return sizeBase;
     
-    // Parse the base size
+    // Parse the base size and get its index in the progression
     final parsed = parseSize(sizeBase);
-    final newNumber = parsed.number + mod;
+    final baseIndex = parsed.progressionIndex;
+    final newIndex = (baseIndex + mod).clamp(0, _sizeProgression.length - 1);
     
-    // For sizes >= 2, don't include category
-    if (newNumber >= 2) return newNumber.toString();
-    
-    // Keep the category for size 1
-    return '$newNumber${parsed.category}';
+    return _sizeProgression[newIndex];
   }
   
   /// Parse a size string into its numeric and category components
   static SizeParts parseSize(String size) {
-    if (size.isEmpty) return const SizeParts(1, 'M');
-    
-    final lastChar = size[size.length - 1].toUpperCase();
-    if ('TSML'.contains(lastChar)) {
-      final numPart = size.substring(0, size.length - 1);
-      return SizeParts(int.tryParse(numPart) ?? 1, lastChar);
-    }
-    
-    // No category letter, just a number (e.g., "2", "3")
-    return SizeParts(int.tryParse(size) ?? 1, '');
+    return SizeParts._parseSize(size);
   }
   
-  /// Get the numeric portion of the size for calculations
-  int get sizeNumber => parseSize(sizeBase).number + modValue(HeroModKeys.size);
+  /// Get the progression index for a size string (0 = 1T, 7 = 5)
+  static int sizeToIndex(String size) {
+    final idx = _sizeProgression.indexOf(size.toUpperCase());
+    return idx >= 0 ? idx : 2; // Default to 1M (index 2)
+  }
+  
+  /// Get size string from progression index
+  static String indexToSize(int index) {
+    return _sizeProgression[index.clamp(0, _sizeProgression.length - 1)];
+  }
+  
+  /// Get the progression index of the total size (for calculations)
+  int get sizeIndex => sizeToIndex(sizeTotal);
   
   int get speedTotal => speedBase + modValue(HeroModKeys.speed);
   int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage);

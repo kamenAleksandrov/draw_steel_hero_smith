@@ -11,6 +11,8 @@ import '../../../../core/models/hero_mod_keys.dart';
 import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
+import '../../../../core/services/class_data_service.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
@@ -374,29 +376,1256 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     AsyncValue<HeroicResourceDetails?> resourceDetails,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSummaryCard(context),
-          const SizedBox(height: 16),
-          _buildWealthRenownCard(context, stats),
-          const SizedBox(height: 16),
-          _buildPrimaryStatsCard(context, stats),
-          const SizedBox(height: 16),
-          _buildSecondaryStatsCard(context, stats),
-          const SizedBox(height: 16),
-          _buildStaminaAndRecoveries(context, stats),
-          const SizedBox(height: 16),
-          _buildResourceAndSurges(context, stats, resourceDetails),
-          const SizedBox(height: 16),
+          _buildProgressionRow(context),
+          const SizedBox(height: 12),
+          _buildCombinedStatsCard(context, stats),
+          const SizedBox(height: 12),
+          _buildVitalsCard(context, stats, resourceDetails),
+          const SizedBox(height: 12),
           ConditionsTrackerWidget(heroId: widget.heroId),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           DamageResistanceTrackerWidget(heroId: widget.heroId),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
         ],
       ),
     );
+  }
+
+  /// Compact horizontal row for Level, XP, Victories, Wealth, Renown
+  Widget _buildProgressionRow(BuildContext context) {
+    final theme = Theme.of(context);
+    final stats = _latestStats;
+    final level = stats?.level ?? 1;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        child: Row(
+          children: [
+            // Level - prominent display
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'LVL',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    level.toString(),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // XP and Victories
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildProgressionItem(
+                    context,
+                    icon: Icons.star_outline,
+                    label: 'XP',
+                    field: _NumericField.exp,
+                  ),
+                  _buildProgressionItem(
+                    context,
+                    icon: Icons.emoji_events_outlined,
+                    label: 'Victories',
+                    field: _NumericField.victories,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 1,
+              height: 40,
+              color: theme.colorScheme.outlineVariant,
+            ),
+            // Wealth and Renown
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildEconomyItem(
+                    context,
+                    icon: Icons.paid_outlined,
+                    label: 'Wealth',
+                    baseValue: stats?.wealthBase ?? 0,
+                    totalValue: stats?.wealthTotal ?? 0,
+                    modKey: HeroModKeys.wealth,
+                    insights: _wealthInsights(stats?.wealthTotal ?? 0),
+                  ),
+                  _buildEconomyItem(
+                    context,
+                    icon: Icons.military_tech_outlined,
+                    label: 'Renown',
+                    baseValue: stats?.renownBase ?? 0,
+                    totalValue: stats?.renownTotal ?? 0,
+                    modKey: HeroModKeys.renown,
+                    insights: _renownInsights(stats?.renownTotal ?? 0),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressionItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required _NumericField field,
+  }) {
+    final theme = Theme.of(context);
+    final value = _latestStats != null
+        ? _numberValueFromStats(_latestStats!, field)
+        : 0;
+
+    return InkWell(
+      onTap: () => _showNumberEditDialog(context, label, field),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: theme.colorScheme.primary),
+            const SizedBox(height: 2),
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEconomyItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required int baseValue,
+    required int totalValue,
+    required String modKey,
+    required List<String> insights,
+  }) {
+    final theme = Theme.of(context);
+    final modValue = totalValue - baseValue;
+
+    return InkWell(
+      onTap: () => _showModEditDialog(
+        context,
+        title: label,
+        modKey: modKey,
+        baseValue: baseValue,
+        currentModValue: modValue,
+        insights: insights,
+      ),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: theme.colorScheme.secondary),
+            const SizedBox(height: 2),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  totalValue.toString(),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (modValue != 0)
+                  Text(
+                    modValue > 0 ? '+$modValue' : modValue.toString(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: modValue > 0
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.error,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Combined attributes and combat stats card with grid layout
+  Widget _buildCombinedStatsCard(BuildContext context, HeroMainStats stats) {
+    final theme = Theme.of(context);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Characteristics section header (M/A/R/I/P)
+            Row(
+              children: [
+                Icon(Icons.person_outline, size: 16, color: theme.colorScheme.primary),
+                const SizedBox(width: 6),
+                Text(
+                  'Characteristics',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // 5-column characteristic grid
+            Row(
+              children: [
+                _buildGridStatItem(context, 'M', stats.mightBase, stats.mightTotal, HeroModKeys.might, 'Might'),
+                _buildGridStatItem(context, 'A', stats.agilityBase, stats.agilityTotal, HeroModKeys.agility, 'Agility'),
+                _buildGridStatItem(context, 'R', stats.reasonBase, stats.reasonTotal, HeroModKeys.reason, 'Reason'),
+                _buildGridStatItem(context, 'I', stats.intuitionBase, stats.intuitionTotal, HeroModKeys.intuition, 'Intuition'),
+                _buildGridStatItem(context, 'P', stats.presenceBase, stats.presenceTotal, HeroModKeys.presence, 'Presence'),
+              ],
+            ),
+            // Potency section
+            _buildPotencyRow(context, stats),
+            const Divider(height: 20),
+            // Attributes section header (Size, Speed, Disengage, Stability)
+            Row(
+              children: [
+                Icon(Icons.shield_outlined, size: 16, color: theme.colorScheme.secondary),
+                const SizedBox(width: 6),
+                Text(
+                  'Attributes',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // 4-column attributes grid
+            Row(
+              children: [
+                _buildGridSizeItem(context, stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
+                _buildGridStatItem(context, 'SPD', stats.speedBase, stats.speedTotal, HeroModKeys.speed, 'Speed'),
+                _buildGridStatItem(context, 'DIS', stats.disengageBase, stats.disengageTotal, HeroModKeys.disengage, 'Disengage'),
+                _buildGridStatItem(context, 'STB', stats.stabilityBase, stats.stabilityTotal, HeroModKeys.stability, 'Stability'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build potency row based on class data
+  Widget _buildPotencyRow(BuildContext context, HeroMainStats stats) {
+    final theme = Theme.of(context);
+    final classId = stats.classId;
+    
+    if (classId == null || classId.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    // Calculate potency based on highest characteristic
+    final totals = {
+      'might': stats.mightTotal,
+      'agility': stats.agilityTotal,
+      'reason': stats.reasonTotal,
+      'intuition': stats.intuitionTotal,
+      'presence': stats.presenceTotal,
+    };
+
+    return FutureBuilder<Map<String, int>?>(
+      future: _computePotencyForClass(classId, totals),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+
+        final potencyValues = snapshot.data!;
+        const order = ['strong', 'average', 'weak'];
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: order.map((strength) {
+              final value = potencyValues[strength] ?? 0;
+              final label = strength[0].toUpperCase();
+              final color = AppColors.getPotencyColor(strength);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: color.withOpacity(0.6)),
+                    color: color.withOpacity(0.15),
+                  ),
+                  child: Text(
+                    '$label ${_formatSigned(value)}',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<Map<String, int>?> _computePotencyForClass(
+    String classId,
+    Map<String, int> totals,
+  ) async {
+    try {
+      final classDataService = ClassDataService();
+      await classDataService.initialize();
+      final classData = classDataService.getClassById(classId);
+      if (classData == null) return null;
+
+      final progression = classData.startingCharacteristics.potencyProgression;
+      final baseKey = progression.characteristic.toLowerCase();
+      final baseScore = totals[baseKey] ?? 0;
+      final result = <String, int>{};
+      progression.modifiers.forEach((strength, modifier) {
+        result[strength.toLowerCase()] = baseScore + modifier;
+      });
+      return result;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildGridStatItem(
+    BuildContext context,
+    String shortLabel,
+    int baseValue,
+    int totalValue,
+    String modKey,
+    String fullLabel,
+  ) {
+    final theme = Theme.of(context);
+    final modValue = totalValue - baseValue;
+    final isPositive = totalValue >= 0;
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _showStatEditDialog(
+          context,
+          label: fullLabel,
+          modKey: modKey,
+          baseValue: baseValue,
+          currentModValue: modValue,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                shortLabel,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isPositive
+                      ? theme.colorScheme.surfaceContainerHighest
+                      : theme.colorScheme.errorContainer.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _formatSigned(totalValue),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isPositive
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.error,
+                      ),
+                    ),
+                    if (modValue != 0)
+                      Text(
+                        modValue > 0 ? ' +$modValue' : ' $modValue',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 9,
+                          color: modValue > 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.error,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGridSizeItem(
+    BuildContext context,
+    String sizeBase,
+    String sizeTotal,
+    String modKey,
+  ) {
+    final theme = Theme.of(context);
+    // Use progression index difference to calculate mod value
+    final baseIndex = HeroMainStats.sizeToIndex(sizeBase);
+    final totalIndex = HeroMainStats.sizeToIndex(sizeTotal);
+    final modValue = totalIndex - baseIndex;
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _showSizeEditDialog(
+          context,
+          sizeBase: sizeBase,
+          currentModValue: modValue,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'SIZE',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      sizeTotal,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (modValue != 0)
+                      Text(
+                        modValue > 0 ? ' +$modValue' : ' $modValue',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 9,
+                          color: modValue > 0
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.error,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Combined vitals card: Stamina, Recoveries, Heroic Resource, Surges
+  Widget _buildVitalsCard(
+    BuildContext context,
+    HeroMainStats stats,
+    AsyncValue<HeroicResourceDetails?> resourceDetails,
+  ) {
+    final theme = Theme.of(context);
+    final staminaState = _calculateStaminaState(stats);
+    final healAmount = _recoveryHealAmount(stats);
+    final staminaMaxMod = _latestStats?.modValue(HeroModKeys.staminaMax) ?? 0;
+    final recoveriesMaxMod = _latestStats?.modValue(HeroModKeys.recoveriesMax) ?? 0;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Stamina Section with visual bar
+            Row(
+              children: [
+                Icon(Icons.favorite_outline, size: 16, color: staminaState.color),
+                const SizedBox(width: 6),
+                Text(
+                  'Stamina',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: staminaState.color,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  staminaState.label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: staminaState.color,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Stamina bar and values
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Custom stamina bar showing -halfMax to max with temp HP
+                      _buildStaminaBar(context, stats, staminaState),
+                      const SizedBox(height: 6),
+                      // Current / Temp / Max row
+                      Row(
+                        children: [
+                          _buildVitalItem(
+                            context,
+                            label: 'Current',
+                            value: stats.staminaCurrent,
+                            field: _NumericField.staminaCurrent,
+                            allowNegative: true,
+                          ),
+                          const SizedBox(width: 12),
+                          _buildVitalItem(
+                            context,
+                            label: 'Temp',
+                            value: stats.staminaTemp,
+                            field: _NumericField.staminaTemp,
+                          ),
+                          const SizedBox(width: 12),
+                          _buildMaxVitalItem(
+                            context,
+                            label: 'Max',
+                            value: stats.staminaMaxEffective,
+                            modKey: HeroModKeys.staminaMax,
+                            modValue: staminaMaxMod,
+                            baseValue: stats.staminaMaxBase,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Action buttons
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildCompactActionButton(
+                      context,
+                      icon: Icons.flash_on,
+                      label: 'Dmg',
+                      onPressed: () => _handleDealDamage(stats),
+                      color: theme.colorScheme.error,
+                    ),
+                    const SizedBox(height: 4),
+                    _buildCompactActionButton(
+                      context,
+                      icon: Icons.healing,
+                      label: 'Heal',
+                      onPressed: () => _handleApplyHealing(stats),
+                      color: Colors.green,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(height: 20),
+            // Recoveries row
+            Row(
+              children: [
+                Icon(Icons.local_hospital_outlined, size: 16, color: theme.colorScheme.tertiary),
+                const SizedBox(width: 6),
+                Text(
+                  'Recoveries',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.tertiary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _buildVitalItem(
+                  context,
+                  label: 'Current',
+                  value: stats.recoveriesCurrent,
+                  field: _NumericField.recoveriesCurrent,
+                ),
+                const SizedBox(width: 12),
+                _buildMaxVitalItem(
+                  context,
+                  label: 'Max',
+                  value: stats.recoveriesMaxEffective,
+                  modKey: HeroModKeys.recoveriesMax,
+                  modValue: recoveriesMaxMod,
+                  baseValue: stats.recoveriesMaxBase,
+                ),
+                const Spacer(),
+                FilledButton.tonal(
+                  onPressed: () => _handleUseRecovery(stats),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add_circle_outline, size: 16),
+                      const SizedBox(width: 4),
+                      Text('Use (+$healAmount)', style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 20),
+            // Heroic Resource and Surges row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _buildHeroicResourceSection(context, stats, resourceDetails),
+                ),
+                Container(
+                  width: 1,
+                  height: 60,
+                  color: theme.colorScheme.outlineVariant,
+                ),
+                Expanded(
+                  child: _buildSurgesSection(context, stats),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Custom stamina bar with two independent overlapping tracks:
+  /// - Stamina bar: ranges from -halfMax to maxStamina
+  /// - Temp HP bar: ranges from -halfMax to maxStamina (independent track, shown semi-transparent)
+  /// Both bars are visible simultaneously with the temp HP bar slightly offset/transparent
+  Widget _buildStaminaBar(BuildContext context, HeroMainStats stats, _StaminaState staminaState) {
+    final theme = Theme.of(context);
+    final maxStamina = stats.staminaMaxEffective;
+    final currentStamina = stats.staminaCurrent;
+    final tempHp = stats.staminaTemp;
+    
+    if (maxStamina <= 0) {
+      return const SizedBox(height: 16);
+    }
+    
+    // Range: -halfMax to max (total range = 1.5 * max)
+    final halfMax = maxStamina ~/ 2;
+    final totalRange = maxStamina + halfMax;
+    
+    // The "zero point" (stamina = 0) is at halfMax / totalRange
+    final zeroPointRatio = halfMax / totalRange;
+    
+    // Stamina position: from -halfMax to maxStamina
+    // When current = -halfMax, position = 0
+    // When current = 0, position = zeroPointRatio  
+    // When current = max, position = 1
+    final clampedCurrent = currentStamina.clamp(-halfMax, maxStamina);
+    final staminaPosition = (clampedCurrent + halfMax) / totalRange;
+    
+    // Temp HP position: independent track from -halfMax to maxStamina (same as stamina)
+    // Temp HP of 0 = starts at left edge (position 0)
+    // Temp HP of maxStamina + halfMax = fills to right edge (position 1.0)
+    final clampedTemp = tempHp.clamp(0, maxStamina + halfMax);
+    final tempPosition = clampedTemp / totalRange;
+    
+    return SizedBox(
+      height: 16,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final zeroX = width * zeroPointRatio;
+          final staminaX = width * staminaPosition;
+          final tempX = width * tempPosition;
+          
+          return Stack(
+            children: [
+              // Background bar
+              Container(
+                height: 16,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              // Negative zone background (red tint from left to zero point)
+              Positioned(
+                left: 0,
+                width: zeroX,
+                child: Container(
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.error.withOpacity(0.1),
+                    borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                  ),
+                ),
+              ),
+              // Temp HP bar (bottom layer, cyan, from left edge)
+              // This is the independent temp HP track starting from -halfMax
+              if (tempHp > 0)
+                Positioned(
+                  left: 0,
+                  width: tempX.clamp(0, width),
+                  top: 8, // Offset to bottom half
+                  height: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.cyan.withOpacity(0.8),
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(4),
+                        right: Radius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+              // Stamina bar (top layer, from left edge)
+              if (staminaX > 0)
+                Positioned(
+                  left: 0,
+                  width: staminaX,
+                  top: 0,
+                  height: 8,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: currentStamina >= 0 
+                          ? staminaState.color 
+                          : theme.colorScheme.error.withOpacity(0.8),
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(4),
+                        right: Radius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+              // Zero point marker (vertical line)
+              Positioned(
+                left: zeroX - 1,
+                child: Container(
+                  width: 2,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.outline,
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ),
+              // Labels overlay
+              Positioned.fill(
+                child: Row(
+                  children: [
+                    // Negative zone label
+                    SizedBox(
+                      width: zeroX,
+                      child: Center(
+                        child: Text(
+                          '-${halfMax}',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Positive zone - show stamina and temp if both present
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '0',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                            ),
+                            Text(
+                              '$maxStamina',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildVitalItem(
+    BuildContext context, {
+    required String label,
+    required int value,
+    required _NumericField field,
+    bool allowNegative = false,
+  }) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: () async {
+        final controller = TextEditingController(text: value.toString());
+        try {
+          final result = await showDialog<String>(
+            context: context,
+            builder: (dialogContext) {
+              return AlertDialog(
+                title: Text('Edit $label'),
+                content: TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Value',
+                    border: OutlineInputBorder(),
+                  ),
+                  inputFormatters: _formatters(allowNegative, 4),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+                    child: const Text('Save'),
+                  ),
+                ],
+              );
+            },
+          );
+          if (result != null && result.isNotEmpty && mounted) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (!mounted) return;
+              await _persistNumberField(field, result);
+            });
+          }
+        } finally {
+          await Future.delayed(const Duration(milliseconds: 50));
+          controller.dispose();
+        }
+      },
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label, style: theme.textTheme.labelSmall),
+            Text(
+              value.toString(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMaxVitalItem(
+    BuildContext context, {
+    required String label,
+    required int value,
+    required String modKey,
+    required int modValue,
+    required int baseValue,
+  }) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: () async {
+        await _showStatEditDialog(
+          context,
+          label: '$label Modifier',
+          modKey: modKey,
+          baseValue: baseValue,
+          currentModValue: modValue,
+        );
+      },
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label, style: theme.textTheme.labelSmall),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value.toString(),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (modValue != 0)
+                  Text(
+                    modValue > 0 ? '+$modValue' : modValue.toString(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: modValue > 0
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.error,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required Color color,
+  }) {
+    return SizedBox(
+      width: 56,
+      height: 32,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          side: BorderSide(color: color.withOpacity(0.5)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 2),
+            Text(
+              label,
+              style: TextStyle(fontSize: 10, color: color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroicResourceSection(
+    BuildContext context,
+    HeroMainStats stats,
+    AsyncValue<HeroicResourceDetails?> resourceDetails,
+  ) {
+    final theme = Theme.of(context);
+    final value = stats.heroicResourceCurrent;
+
+    return resourceDetails.when(
+      loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      error: (_, __) => _buildResourceDisplay(context, stats.heroicResourceName ?? 'Resource', value),
+      data: (details) {
+        final resourceName = details?.name ?? stats.heroicResourceName ?? 'Resource';
+        final hasDetails = (details?.description ?? '').isNotEmpty ||
+            (details?.inCombatDescription ?? '').isNotEmpty ||
+            (details?.outCombatDescription ?? '').isNotEmpty;
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.bolt_outlined, size: 14, color: theme.colorScheme.primary),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      resourceName,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (hasDetails)
+                    InkWell(
+                      onTap: () => _showResourceDetailsDialog(context, resourceName, details),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: Icon(Icons.info_outline, size: 14, color: theme.colorScheme.primary),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              InkWell(
+                onTap: () => _showNumberEditDialog(context, resourceName, _NumericField.heroicResourceCurrent),
+                borderRadius: BorderRadius.circular(6),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: Text(
+                    value.toString(),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildResourceDisplay(BuildContext context, String name, int value) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.bolt_outlined, size: 14, color: theme.colorScheme.primary),
+              const SizedBox(width: 4),
+              Text(
+                name,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          InkWell(
+            onTap: () => _showNumberEditDialog(context, name, _NumericField.heroicResourceCurrent),
+            borderRadius: BorderRadius.circular(6),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Text(
+                value.toString(),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurgesSection(BuildContext context, HeroMainStats stats) {
+    final theme = Theme.of(context);
+    final value = stats.surgesCurrent;
+
+    // Calculate surge damage based on highest attribute
+    final highestAttribute = [
+      stats.mightTotal,
+      stats.agilityTotal,
+      stats.reasonTotal,
+      stats.intuitionTotal,
+      stats.presenceTotal,
+    ].reduce((a, b) => a > b ? a : b);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.electric_bolt_outlined, size: 14, color: theme.colorScheme.tertiary),
+              const SizedBox(width: 4),
+              Text(
+                'Surges',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          InkWell(
+            onTap: () => _showNumberEditDialog(context, 'Surges', _NumericField.surgesCurrent),
+            borderRadius: BorderRadius.circular(6),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Text(
+                value.toString(),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSurgeButton(
+                  context,
+                  cost: 1,
+                  label: '+$highestAttribute dmg',
+                  enabled: value >= 1,
+                  onPressed: () => _spendSurges(1),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                child: _buildSurgeButton(
+                  context,
+                  cost: 2,
+                  label: '+1 potency',
+                  enabled: value >= 2,
+                  onPressed: () => _spendSurges(2),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurgeButton(
+    BuildContext context, {
+    required int cost,
+    required String label,
+    required bool enabled,
+    required VoidCallback onPressed,
+  }) {
+    final theme = Theme.of(context);
+    
+    return InkWell(
+      onTap: enabled ? onPressed : null,
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: enabled 
+                ? theme.colorScheme.tertiary.withOpacity(0.5)
+                : theme.colorScheme.outline.withOpacity(0.3),
+          ),
+          color: enabled
+              ? theme.colorScheme.tertiary.withOpacity(0.1)
+              : theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '$cost→',
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: enabled
+                    ? theme.colorScheme.tertiary
+                    : theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+              ),
+            ),
+            Flexible(
+              child: Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontSize: 9,
+                  color: enabled
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _spendSurges(int amount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+    
+    final current = stats.surgesCurrent;
+    if (current < amount) return;
+    
+    final newValue = current - amount;
+    await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
   }
 
   Widget _buildSummaryCard(BuildContext context) {
@@ -1519,9 +2748,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     String modKey,
   ) {
     final theme = Theme.of(context);
-    final parsed = HeroMainStats.parseSize(sizeBase);
-    final parsedTotal = HeroMainStats.parseSize(sizeTotal);
-    final modValue = parsedTotal.number - parsed.number;
+    // Use progression index difference to calculate mod value
+    final baseIndex = HeroMainStats.sizeToIndex(sizeBase);
+    final totalIndex = HeroMainStats.sizeToIndex(sizeTotal);
+    final modValue = totalIndex - baseIndex;
     
     return Expanded(
       child: InkWell(

@@ -421,40 +421,20 @@ class _DamageResistanceTrackerWidgetState
             if (_resistances.resistances.isEmpty)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
                     'No damage resistances tracked',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
               )
             else
-              Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(2), // Type
-                  1: FlexColumnWidth(2), // Net Value
-                  2: FixedColumnWidth(40), // Delete
-                },
-                children: [
-                  TableRow(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Colors.grey.shade300,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    children: [
-                      _buildTableHeader('Type'),
-                      _buildTableHeader('Net Value'),
-                      const SizedBox.shrink(),
-                    ],
-                  ),
-                  ..._resistances.resistances.map(_buildResistanceRow),
-                ],
+              Column(
+                children: _resistances.resistances
+                    .map((r) => _buildResistanceTile(context, r))
+                    .toList(),
               ),
           ],
         ),
@@ -462,100 +442,94 @@ class _DamageResistanceTrackerWidgetState
     );
   }
 
-  Widget _buildTableHeader(String text) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
-
-  TableRow _buildResistanceRow(DamageResistance resistance) {
+  Widget _buildResistanceTile(BuildContext context, DamageResistance resistance) {
+    final theme = Theme.of(context);
     final net = resistance.netValue;
     final color = net > 0 ? Colors.green : net < 0 ? Colors.red : null;
+    final typeColor = _getDamageTypeColor(resistance.damageType);
 
-    return TableRow(
-      children: [
-        // Type with icon
-        InkWell(
-          onTap: () => _showEditResistanceDialog(resistance),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _getDamageTypeIcon(resistance.damageType),
-                  size: 16,
-                  color: _getDamageTypeColor(resistance.damageType),
-                ),
-                const SizedBox(width: 6),
-                Text(DamageTypes.displayName(resistance.damageType)),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: InkWell(
+        onTap: () => _showEditResistanceDialog(resistance),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withOpacity(0.5),
             ),
           ),
-        ),
-        // Net value (clickable)
-        InkWell(
-          onTap: () => _showEditResistanceDialog(resistance),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color?.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                    border: color != null
-                        ? Border.all(color: color.withValues(alpha: 0.3))
-                        : null,
-                  ),
-                  child: Text(
-                    _formatNetValue(net),
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.w500,
-                    ),
+          child: Row(
+            children: [
+              // Type icon
+              Icon(
+                _getDamageTypeIcon(resistance.damageType),
+                size: 18,
+                color: typeColor,
+              ),
+              const SizedBox(width: 8),
+              // Type name
+              Expanded(
+                child: Text(
+                  DamageTypes.displayName(resistance.damageType),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (resistance.sources.isNotEmpty) ...[
-                  const SizedBox(width: 4),
-                  Tooltip(
-                    message: 'From: ${resistance.sources.join(", ")}',
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 14,
-                      color: Colors.grey.shade500,
+              ),
+              // Net value chip with fixed min width for alignment
+              Container(
+                constraints: const BoxConstraints(minWidth: 90),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color?.withOpacity(0.15) ?? theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(6),
+                  border: color != null
+                      ? Border.all(color: color.withOpacity(0.4))
+                      : null,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _formatNetValue(net),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: color ?? theme.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
-              ],
-            ),
+                    if (resistance.sources.isNotEmpty) ...[
+                      const SizedBox(width: 4),
+                      Tooltip(
+                        message: 'From: ${resistance.sources.join(", ")}',
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 12,
+                          color: color?.withOpacity(0.7) ?? theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Delete button
+              const SizedBox(width: 4),
+              IconButton(
+                icon: Icon(Icons.close, size: 18, color: theme.colorScheme.onSurfaceVariant),
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
+                onPressed: () => _removeDamageType(resistance.damageType),
+                tooltip: 'Remove',
+              ),
+            ],
           ),
         ),
-        // Delete button
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Center(
-            child: IconButton(
-              icon: const Icon(Icons.delete, size: 18),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: () => _removeDamageType(resistance.damageType),
-              tooltip: 'Remove',
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

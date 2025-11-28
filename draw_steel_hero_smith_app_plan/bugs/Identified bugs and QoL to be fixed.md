@@ -27,6 +27,9 @@ recoveries must better show their value
 
 maybe add a gauge to the hero resurce for style to track abilities 
 
+surges must have buttons to spend them
+
+stamina gauge temp hp bar reaches the max hp 5 hp sooner
 ## medium
 
 growing ferocity tabels are not implemented
@@ -40,6 +43,8 @@ when changing class the app should make sure to override the previous values
 most popouts should be wider
 
 abilities cards inside should strech the whole width, example: kits
+
+add an item page to gear
 ## hard
 
 perks in codex should display the abilities they grant
@@ -47,6 +52,8 @@ perks in codex should display the abilities they grant
 on my phone some elements do not update on time
 
 the storing of equasion and calculation must be applied accross the board. not just the woadwalker recovery bonus
+
+heroic resourse should have buttons for each type of resource gain.
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

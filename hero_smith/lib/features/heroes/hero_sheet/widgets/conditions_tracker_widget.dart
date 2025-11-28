@@ -548,71 +548,77 @@ class _ConditionsTrackerWidgetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // For save ends, lower is better, so invert colors
+    final modColor = _saveEndsMod < 0 
+        ? Colors.green 
+        : _saveEndsMod > 0 
+            ? Colors.red 
+            : null;
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Text(
-              'Conditions',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Save Ends threshold
+            // Header row with save ends
             Row(
               children: [
-                const Text('Save Ends = '),
+                Icon(Icons.warning_amber_rounded, size: 18, color: theme.colorScheme.error),
+                const SizedBox(width: 6),
+                Text(
+                  'Conditions',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                // Save Ends compact display
                 InkWell(
                   onTap: _showSaveEndsEditDialog,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(6),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: theme.colorScheme.outline,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _saveEndsTotal.toString(),
-                          style: theme.textTheme.titleMedium?.copyWith(
+                          'Save ',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        Text(
+                          '$_saveEndsTotal+',
+                          style: theme.textTheme.labelMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        if (_saveEndsMod != 0) ...[
-                          const SizedBox(width: 4),
+                        if (_saveEndsMod != 0)
                           Text(
-                            '(${_saveEndsMod > 0 ? '+' : ''}$_saveEndsMod)',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: _saveEndsMod > 0 ? Colors.green : Colors.red,
+                            ' (${_saveEndsMod > 0 ? '+' : ''}$_saveEndsMod)',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: modColor,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
                       ],
                     ),
                   ),
                 ),
-                const Text(' or higher on 1d10'),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             
-            // Conditions table
+            // Conditions list
             if (_trackedConditions.isEmpty)
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
                     'No active conditions',
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -622,45 +628,20 @@ class _ConditionsTrackerWidgetState
                 ),
               )
             else
-              Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(2),
-                  1: FlexColumnWidth(1),
-                  2: FlexColumnWidth(1),
-                  3: FlexColumnWidth(1),
-                  4: FixedColumnWidth(48),
-                },
-                border: TableBorder.all(
-                  color: theme.colorScheme.outlineVariant,
-                  width: 1,
-                ),
+              Column(
                 children: [
-                  // Header row
-                  TableRow(
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                    ),
-                    children: [
-                      _buildTableHeader('Condition'),
-                      _buildTableHeader('End of\nTurn'),
-                      _buildTableHeader('Save\nEnds'),
-                      _buildTableHeader('End of\nEncounter'),
-                      _buildTableHeader(''),
-                    ],
-                  ),
-                  // Condition rows
                   for (int i = 0; i < _trackedConditions.length; i++)
-                    _buildConditionRow(i, _trackedConditions[i]),
+                    _buildConditionTile(context, i, _trackedConditions[i]),
                 ],
               ),
             
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             
             // Add button
             Center(
-              child: OutlinedButton.icon(
+              child: TextButton.icon(
                 onPressed: _showAddConditionDialog,
-                icon: const Icon(Icons.add),
+                icon: const Icon(Icons.add, size: 18),
                 label: const Text('Add Condition'),
               ),
             ),
@@ -670,86 +651,89 @@ class _ConditionsTrackerWidgetState
     );
   }
 
-  Widget _buildTableHeader(String text) {
+  Widget _buildConditionTile(BuildContext context, int index, TrackedCondition condition) {
+    final theme = Theme.of(context);
+    
     return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            // Condition name (clickable, expands)
+            Expanded(
+              child: InkWell(
+                onTap: () => _showConditionDetails(condition),
+                borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  child: Text(
+                    condition.conditionName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // End type selector (segmented style)
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              padding: const EdgeInsets.all(2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildEndTypeChip(context, index, ConditionEndType.endOfTurn, 'EoT'),
+                  _buildEndTypeChip(context, index, ConditionEndType.saveEnds, 'Save'),
+                  _buildEndTypeChip(context, index, ConditionEndType.endOfEncounter, 'EoE'),
+                ],
+              ),
+            ),
+            // Delete button
+            IconButton(
+              icon: Icon(Icons.close, size: 18, color: theme.colorScheme.onSurfaceVariant),
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => _removeCondition(index),
+              tooltip: 'Remove',
+            ),
+          ],
         ),
       ),
     );
   }
 
-  TableRow _buildConditionRow(int index, TrackedCondition condition) {
-    return TableRow(
-      children: [
-        // Condition name (clickable)
-        InkWell(
-          onTap: () => _showConditionDetails(condition),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              condition.conditionName,
-            ),
+  Widget _buildEndTypeChip(BuildContext context, int index, ConditionEndType type, String label) {
+    final theme = Theme.of(context);
+    final isSelected = _trackedConditions[index].endType == type;
+    
+    return GestureDetector(
+      onTap: () => _updateConditionEndType(index, type),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: isSelected 
+                ? theme.colorScheme.onPrimary 
+                : theme.colorScheme.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
-        // End of Turn radio
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: _buildRadioCell(
-            index,
-            ConditionEndType.endOfTurn,
-            condition.endType == ConditionEndType.endOfTurn,
-          ),
-        ),
-        // Save Ends radio
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: _buildRadioCell(
-            index,
-            ConditionEndType.saveEnds,
-            condition.endType == ConditionEndType.saveEnds,
-          ),
-        ),
-        // End of Encounter radio
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: _buildRadioCell(
-            index,
-            ConditionEndType.endOfEncounter,
-            condition.endType == ConditionEndType.endOfEncounter,
-          ),
-        ),
-        // Delete button
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Center(
-            child: IconButton(
-              icon: const Icon(Icons.delete, size: 18),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: () => _removeCondition(index),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRadioCell(int index, ConditionEndType type, bool isSelected) {
-    return Center(
-      child: Radio<ConditionEndType>(
-        value: type,
-        groupValue: _trackedConditions[index].endType,
-        onChanged: (value) {
-          if (value != null) {
-            _updateConditionEndType(index, value);
-          }
-        },
       ),
     );
   }
