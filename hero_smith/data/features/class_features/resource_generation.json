@@ -1,0 +1,57 @@
+{
+  "amount_presets": [
+    { "key": "victories", "label": "+X" },
+    { "key": "plus_1", "label": "+1" },
+    { "key": "plus_2", "label": "+2" },
+    { "key": "plus_1d3", "label": "+1d3" }
+  ],
+
+  "heroic_resources": [
+    {
+      "class_key": "censor",
+      "resource_key": "wrath",
+      "generation_options": ["victories", "plus_1", "plus_2"]
+    },
+    {
+      "class_key": "conduit",
+      "resource_key": "piety",
+      "generation_options": ["victories", "plus_1", "plus_2", "plus_1d3"],
+      "domains": []
+    },
+    {
+      "class_key": "elementalist",
+      "resource_key": "essence",
+      "generation_options": ["victories", "plus_1", "plus_2"]
+    },
+    {
+      "class_key": "fury",
+      "resource_key": "ferocity",
+      "generation_options": ["victories", "plus_1", "plus_1d3"]
+    },
+    {
+      "class_key": "null",
+      "resource_key": "discipline",
+      "generation_options": ["victories", "plus_1", "plus_2"]
+    },
+    {
+      "class_key": "shadow",
+      "resource_key": "insight",
+      "generation_options": ["victories", "plus_1", "plus_1d3"]
+    },
+    {
+      "class_key": "tactician",
+      "resource_key": "focus",
+      "generation_options": ["victories", "plus_1", "plus_2"]
+    },
+    {
+      "class_key": "talent",
+      "resource_key": "clarity",
+      "generation_options": ["victories", "plus_1", "plus_1d3"]
+    },
+    {
+      "class_key": "troubadour",
+      "resource_key": "drama",
+      "generation_options": ["victories", "plus_1", "plus_1d3", "plus_2"]
+    }
+  ]
+}

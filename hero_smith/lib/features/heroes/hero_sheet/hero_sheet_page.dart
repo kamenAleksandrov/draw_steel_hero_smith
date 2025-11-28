@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../creators/hero_creators/hero_creator_page.dart';
-import 'hero_downtime_tracking_page.dart';
 import 'sheet_abilities.dart';
 import 'sheet_gear.dart';
 import 'sheet_main_stats.dart';
@@ -31,15 +30,10 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
   void initState() {
     super.initState();
     _sections = [
-      SheetMainStats(heroId: widget.heroId),
+      SheetMainStats(heroId: widget.heroId, heroName: widget.heroName),
       SheetAbilities(heroId: widget.heroId),
       SheetGear(heroId: widget.heroId),
       SheetStory(heroId: widget.heroId),
-      HeroDowntimeTrackingPage(
-        heroId: widget.heroId,
-        heroName: widget.heroName,
-        isEmbedded: true,
-      ),
       SheetNotes(heroId: widget.heroId),
     ];
   }
@@ -96,10 +90,6 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.auto_awesome),
             label: 'Features',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Downtime',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sticky_note_2),

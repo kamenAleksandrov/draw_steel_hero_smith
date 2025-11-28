@@ -12,7 +12,9 @@ import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/class_data_service.dart';
+import '../../../../core/services/resource_generation_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../hero_downtime_tracking_page.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
@@ -21,9 +23,11 @@ class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
     super.key,
     required this.heroId,
+    required this.heroName,
   });
 
   final String heroId;
+  final String heroName;
 
   @override
   ConsumerState<HeroMainStatsView> createState() => _HeroMainStatsViewState();
@@ -381,6 +385,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildProgressionRow(context),
+          const SizedBox(height: 8),
+          _buildRespiteDowntimeRow(context, stats),
           const SizedBox(height: 12),
           _buildCombinedStatsCard(context, stats),
           const SizedBox(height: 12),
@@ -491,6 +497,170 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  /// Row with Respite and Downtime buttons
+  Widget _buildRespiteDowntimeRow(BuildContext context, HeroMainStats stats) {
+    final theme = Theme.of(context);
+    
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _showRespiteConfirmDialog(context, stats),
+            icon: const Icon(Icons.bedtime_outlined, size: 18),
+            label: const Text('Take Respite'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+              side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _navigateToDowntime(context),
+            icon: const Icon(Icons.assignment_outlined, size: 18),
+            label: const Text('Downtime'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: theme.colorScheme.secondary,
+              side: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.5)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _navigateToDowntime(BuildContext context) {
+    // Navigate to the downtime page
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => HeroDowntimeTrackingPage(
+          heroId: widget.heroId,
+          heroName: widget.heroName,
+          isEmbedded: false,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showRespiteConfirmDialog(BuildContext context, HeroMainStats stats) async {
+    final victories = stats.victories;
+    final currentXp = stats.exp;
+    final newXp = currentXp + victories;
+    final recoveriesMax = stats.recoveriesMaxEffective;
+    
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.bedtime_outlined),
+              SizedBox(width: 8),
+              Text('Take Respite'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Taking a respite will:'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.emoji_events, size: 16, color: theme.colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Convert $victories ${victories == 1 ? 'victory' : 'victories'} to XP',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.star, size: 16, color: theme.colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'XP: $currentXp → $newXp',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.favorite, size: 16, color: theme.colorScheme.tertiary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Regain all recoveries (→ $recoveriesMax)',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Take Respite'),
+            ),
+          ],
+        );
+      },
+    );
+    
+    if (confirmed == true && mounted) {
+      await _handleTakeRespite(stats);
+    }
+  }
+
+  Future<void> _handleTakeRespite(HeroMainStats stats) async {
+    // Convert victories to XP
+    final victories = stats.victories;
+    final currentXp = stats.exp;
+    final newXp = currentXp + victories;
+    
+    // Regain all recoveries
+    final recoveriesMax = stats.recoveriesMaxEffective;
+    
+    // Apply changes
+    await _persistNumberField(_NumericField.exp, newXp.toString());
+    await _persistNumberField(_NumericField.victories, '0');
+    await _persistNumberField(_NumericField.recoveriesCurrent, recoveriesMax.toString());
+    
+    if (mounted) {
+      _showSnack('Respite complete: +$victories XP, recoveries restored');
+    }
+  }
+
   Widget _buildProgressionItem(
     BuildContext context, {
     required IconData icon,
@@ -503,7 +673,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         : 0;
 
     return InkWell(
-      onTap: () => _showNumberEditDialog(context, label, field),
+      onTap: () {
+        if (field == _NumericField.exp) {
+          _showXpEditDialog(context, value);
+        } else {
+          _showNumberEditDialog(context, label, field);
+        }
+      },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.all(6),
@@ -1043,13 +1219,26 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
                 Container(
                   width: 1,
-                  height: 60,
+                  height: 80,
                   color: theme.colorScheme.outlineVariant,
                 ),
                 Expanded(
                   child: _buildSurgesSection(context, stats),
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            // End of Combat button
+            Center(
+              child: OutlinedButton.icon(
+                onPressed: () => _handleEndOfCombat(stats),
+                icon: const Icon(Icons.flag_outlined, size: 16),
+                label: const Text('End of Combat'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: theme.colorScheme.error,
+                  side: BorderSide(color: theme.colorScheme.error.withOpacity(0.5)),
+                ),
+              ),
             ),
           ],
         ),
@@ -1391,7 +1580,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     return resourceDetails.when(
       loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      error: (_, __) => _buildResourceDisplay(context, stats.heroicResourceName ?? 'Resource', value),
+      error: (_, __) => _buildResourceDisplay(context, stats, stats.heroicResourceName ?? 'Resource', value),
       data: (details) {
         final resourceName = details?.name ?? stats.heroicResourceName ?? 'Resource';
         final hasDetails = (details?.description ?? '').isNotEmpty ||
@@ -1442,6 +1631,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   ),
                 ),
               ),
+              const SizedBox(height: 4),
+              _buildResourceGenerationButtons(context, stats),
             ],
           ),
         );
@@ -1449,7 +1640,178 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Widget _buildResourceDisplay(BuildContext context, String name, int value) {
+  /// Builds the resource generation buttons based on class
+  Widget _buildResourceGenerationButtons(BuildContext context, HeroMainStats stats) {
+    return FutureBuilder<List<GenerationPreset>>(
+      future: _getResourceGenerationOptions(stats.classId),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final options = snapshot.data!;
+        final theme = Theme.of(context);
+
+        return Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: options.map((option) {
+            final label = ResourceGenerationService.instance.getDisplayLabel(
+              option.key,
+              stats.victories,
+            );
+
+            return InkWell(
+              onTap: () => _handleResourceGeneration(context, stats, option.key),
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity(0.5),
+                  ),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
+                ),
+                child: Text(
+                  label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Future<List<GenerationPreset>> _getResourceGenerationOptions(String? classId) async {
+    await ResourceGenerationService.instance.initialize();
+    return ResourceGenerationService.instance.getGenerationOptionsForClass(classId);
+  }
+
+  Future<void> _handleResourceGeneration(
+    BuildContext context,
+    HeroMainStats stats,
+    String optionKey,
+  ) async {
+    final result = ResourceGenerationService.instance.calculateGeneration(
+      optionKey: optionKey,
+      victories: stats.victories,
+    );
+
+    if (result.requiresConfirmation && result.alternativeValues != null) {
+      // Show dice roll confirmation dialog
+      final selectedValue = await _showDiceRollDialog(
+        context,
+        rolledValue: result.value,
+        alternatives: result.alternativeValues!,
+        diceType: '1d3',
+      );
+
+      if (selectedValue != null && mounted) {
+        await _applyResourceGeneration(stats, selectedValue);
+      }
+    } else {
+      // Apply directly
+      await _applyResourceGeneration(stats, result.value);
+    }
+  }
+
+  Future<int?> _showDiceRollDialog(
+    BuildContext context, {
+    required int rolledValue,
+    required List<int> alternatives,
+    required String diceType,
+  }) async {
+    final theme = Theme.of(context);
+
+    return showDialog<int>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.casino, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text('$diceType Roll'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'You rolled: $rolledValue',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Accept this roll or choose a different value:',
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: alternatives.map((value) {
+                  final isRolled = value == rolledValue;
+                  return ActionChip(
+                    label: Text(
+                      '+$value',
+                      style: TextStyle(
+                        fontWeight: isRolled ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    backgroundColor: isRolled
+                        ? theme.colorScheme.primaryContainer
+                        : null,
+                    side: isRolled
+                        ? BorderSide(color: theme.colorScheme.primary, width: 2)
+                        : null,
+                    onPressed: () => Navigator.of(dialogContext).pop(value),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(null),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(rolledValue),
+              child: Text('Accept +$rolledValue'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _applyResourceGeneration(HeroMainStats stats, int amount) async {
+    if (!mounted || amount <= 0) return;
+
+    final newValue = stats.heroicResourceCurrent + amount;
+
+    try {
+      await ref.read(heroRepositoryProvider).updateVitals(
+            widget.heroId,
+            heroicResourceCurrent: newValue,
+          );
+      _showSnack('+$amount resource');
+    } catch (err) {
+      if (!mounted) return;
+      _showSnack('Failed to add resource: $err');
+    }
+  }
+
+  Widget _buildResourceDisplay(BuildContext context, HeroMainStats stats, String name, int value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 12),
@@ -1482,6 +1844,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               ),
             ),
           ),
+          const SizedBox(height: 4),
+          _buildResourceGenerationButtons(context, stats),
         ],
       ),
     );
@@ -1532,6 +1896,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             ),
           ),
           const SizedBox(height: 4),
+          // Add surges buttons (+1, +2)
+          Row(
+            children: [
+              _buildAddSurgeButton(context, 1),
+              const SizedBox(width: 4),
+              _buildAddSurgeButton(context, 2),
+            ],
+          ),
+          const SizedBox(height: 4),
+          // Spend surges buttons
           Row(
             children: [
               Expanded(
@@ -1556,6 +1930,32 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddSurgeButton(BuildContext context, int amount) {
+    final theme = Theme.of(context);
+    
+    return InkWell(
+      onTap: () => _addSurges(amount),
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.tertiaryContainer.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: theme.colorScheme.tertiary.withOpacity(0.3),
+          ),
+        ),
+        child: Text(
+          '+$amount',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.tertiary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
@@ -1626,6 +2026,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     
     final newValue = current - amount;
     await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
+  }
+
+  Future<void> _addSurges(int amount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+    
+    final current = stats.surgesCurrent;
+    final newValue = current + amount;
+    await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
+  }
+
+  Future<void> _handleEndOfCombat(HeroMainStats stats) async {
+    // Reset heroic resource and surges to 0
+    await _persistNumberField(_NumericField.heroicResourceCurrent, '0');
+    await _persistNumberField(_NumericField.surgesCurrent, '0');
   }
 
   Widget _buildSummaryCard(BuildContext context) {
@@ -2576,6 +2991,108 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     }
   }
 
+  Future<void> _showXpEditDialog(BuildContext context, int currentXp) async {
+    if (!mounted) return;
+    
+    final controller = TextEditingController(text: currentXp.toString());
+    final currentLevel = _latestStats?.level ?? 1;
+    final insights = _xpInsights(currentXp, currentLevel);
+
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Edit XP'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Current Level: $currentLevel'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Experience Points',
+                    border: OutlineInputBorder(),
+                  ),
+                  inputFormatters: _formatters(false, 3),
+                ),
+                if (insights.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.auto_graph,
+                              size: 16,
+                              color: Theme.of(dialogContext).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Heroic Advancement',
+                              style: Theme.of(dialogContext).textTheme.labelMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ...insights.map((insight) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            insight,
+                            style: Theme.of(dialogContext).textTheme.bodySmall,
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text);
+                  if (value != null) {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      );
+
+      // Ensure dialog is fully dismissed before persisting
+      if (result != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _persistNumberField(_NumericField.exp, result.toString());
+        });
+      }
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 50));
+      controller.dispose();
+    }
+  }
+
   Future<void> _showModEditDialog(
     BuildContext context, {
     required String title,
@@ -3124,6 +3641,35 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     return lines;
   }
 
+  List<String> _xpInsights(int xp, int currentLevel) {
+    final currentTier = _xpAdvancementTiers.firstWhereOrNull(
+      (tier) => tier.level == currentLevel,
+    );
+    final nextTier = _xpAdvancementTiers.firstWhereOrNull(
+      (tier) => tier.level == currentLevel + 1,
+    );
+    
+    final lines = <String>[];
+    if (currentTier != null) {
+      if (currentTier.maxXp == -1) {
+        lines.add('Level ${currentTier.level}: ${currentTier.minXp}+ XP');
+      } else {
+        lines.add('Level ${currentTier.level}: ${currentTier.minXp}-${currentTier.maxXp} XP');
+      }
+    }
+    if (nextTier != null) {
+      final xpNeeded = nextTier.minXp - xp;
+      if (xpNeeded > 0) {
+        lines.add('Next level at ${nextTier.minXp} XP ($xpNeeded more needed)');
+      } else {
+        lines.add('Ready to level up! (${nextTier.minXp} XP threshold reached)');
+      }
+    } else if (currentLevel >= 10) {
+      lines.add('Maximum level reached!');
+    }
+    return lines;
+  }
+
   _StaminaState _calculateStaminaState(HeroMainStats stats) {
     final max = stats.staminaMaxEffective;
     final half = (max / 2).floor();
@@ -3542,4 +4088,25 @@ const List<_RenownImpressionTier> _impressionTiers = [
   _RenownImpressionTier(10, 'Demon lord, monarch'),
   _RenownImpressionTier(11, 'Archdevil, archfey, demigod'),
   _RenownImpressionTier(12, 'Deity, titan'),
+];
+
+class _XpAdvancement {
+  const _XpAdvancement(this.level, this.minXp, this.maxXp);
+
+  final int level;
+  final int minXp;
+  final int maxXp;
+}
+
+const List<_XpAdvancement> _xpAdvancementTiers = [
+  _XpAdvancement(1, 0, 15),
+  _XpAdvancement(2, 16, 31),
+  _XpAdvancement(3, 32, 47),
+  _XpAdvancement(4, 48, 63),
+  _XpAdvancement(5, 64, 79),
+  _XpAdvancement(6, 80, 95),
+  _XpAdvancement(7, 96, 111),
+  _XpAdvancement(8, 112, 127),
+  _XpAdvancement(9, 128, 143),
+  _XpAdvancement(10, 144, -1), // -1 means no max
 ];

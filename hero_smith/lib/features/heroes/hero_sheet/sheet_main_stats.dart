@@ -7,12 +7,14 @@ class SheetMainStats extends ConsumerWidget {
   const SheetMainStats({
     super.key,
     required this.heroId,
+    required this.heroName,
   });
 
   final String heroId;
+  final String heroName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return HeroMainStatsView(heroId: heroId);
+    return HeroMainStatsView(heroId: heroId, heroName: heroName);
   }
 }
