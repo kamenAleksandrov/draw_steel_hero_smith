@@ -1390,10 +1390,86 @@ class _AbilityListView extends ConsumerStatefulWidget {
   ConsumerState<_AbilityListView> createState() => _AbilityListViewState();
 }
 
-class _AbilityListViewState extends ConsumerState<_AbilityListView> {
+/// Enum for action type categories
+enum _ActionCategory {
+  actions,
+  maneuvers,
+  triggered,
+}
+
+extension _ActionCategoryLabel on _ActionCategory {
+  String get label {
+    switch (this) {
+      case _ActionCategory.actions:
+        return 'Actions';
+      case _ActionCategory.maneuvers:
+        return 'Maneuvers';
+      case _ActionCategory.triggered:
+        return 'Triggered';
+    }
+  }
+  
+  IconData get icon {
+    switch (this) {
+      case _ActionCategory.actions:
+        return Icons.flash_on;
+      case _ActionCategory.maneuvers:
+        return Icons.directions_run;
+      case _ActionCategory.triggered:
+        return Icons.bolt;
+    }
+  }
+}
+
+class _AbilityListViewState extends ConsumerState<_AbilityListView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _ActionCategory.values.length, vsync: this);
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  /// Categorize an ability into an action category based on action_type
+  _ActionCategory _categorizeAbility(Component ability) {
+    final data = ability.data;
+    final actionType = (data['action_type']?.toString().toLowerCase() ?? '').trim();
+    
+    // Categorize by action_type
+    if (actionType.contains('triggered')) {
+      return _ActionCategory.triggered;
+    }
+    if (actionType.contains('maneuver')) {
+      return _ActionCategory.maneuvers;
+    }
+    if (actionType.contains('action')) {
+      return _ActionCategory.actions;
+    }
+    
+    // Fallback: check trigger field for older data format
+    final trigger = data['trigger']?.toString().toLowerCase() ?? '';
+    if (trigger == 'triggered' || trigger == 'free triggered') {
+      return _ActionCategory.triggered;
+    }
+    if (trigger == 'maneuver' || trigger == 'free maneuver') {
+      return _ActionCategory.maneuvers;
+    }
+    
+    // Default to actions
+    return _ActionCategory.actions;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return FutureBuilder<List<Component>>(
       future: _loadAbilityComponents(widget.abilityIds),
       builder: (context, snapshot) {
@@ -1440,67 +1516,118 @@ class _AbilityListViewState extends ConsumerState<_AbilityListView> {
           );
         }
 
-        // Group abilities by type
-        final signature = <Component>[];
-        final active = <Component>[];
-        final passive = <Component>[];
-        final other = <Component>[];
-
+        // Group abilities by action category
+        final grouped = <_ActionCategory, List<Component>>{};
+        for (final category in _ActionCategory.values) {
+          grouped[category] = [];
+        }
+        
         for (final ability in abilities) {
-          final data = ability.data;
-          final costs = data['costs'];
-
-          // Check if signature
-          if (costs is String && costs.toLowerCase() == 'signature') {
-            signature.add(ability);
-          } else if (costs is Map && costs['signature'] == true) {
-            signature.add(ability);
-          } else {
-            // Check trigger type
-            final trigger = data['trigger']?.toString().toLowerCase();
-            if (trigger == 'passive' ||
-                trigger == 'triggered' ||
-                trigger == 'perk') {
-              passive.add(ability);
-            } else if (trigger == 'action' ||
-                trigger == 'maneuver' ||
-                costs != null) {
-              active.add(ability);
-            } else {
-              other.add(ability);
-            }
-          }
+          final category = _categorizeAbility(ability);
+          grouped[category]!.add(ability);
+        }
+        
+        // Sort each category by cost (resource_value)
+        for (final category in _ActionCategory.values) {
+          grouped[category]!.sort((a, b) {
+            final costA = (a.data['resource_value'] as num?)?.toInt() ?? 0;
+            final costB = (b.data['resource_value'] as num?)?.toInt() ?? 0;
+            return costA.compareTo(costB);
+          });
         }
 
-        return ListView(
-          padding: const EdgeInsets.all(16),
+        return Column(
           children: [
-            if (signature.isNotEmpty) ...[
-              _buildSectionHeader(
-                  context, 'Signature Abilities', signature.length),
-              ...signature
-                  .map((ability) => _buildAbilityWithRemove(ability)),
-              const SizedBox(height: 24),
-            ],
-            if (active.isNotEmpty) ...[
-              _buildSectionHeader(context, 'Active Abilities', active.length),
-              ...active
-                  .map((ability) => _buildAbilityWithRemove(ability)),
-              const SizedBox(height: 24),
-            ],
-            if (passive.isNotEmpty) ...[
-              _buildSectionHeader(context, 'Passive Abilities', passive.length),
-              ...passive
-                  .map((ability) => _buildAbilityWithRemove(ability)),
-              const SizedBox(height: 24),
-            ],
-            if (other.isNotEmpty) ...[
-              _buildSectionHeader(context, 'Other Abilities', other.length),
-              ...other
-                  .map((ability) => _buildAbilityWithRemove(ability)),
-            ],
+            // Tab bar for action types
+            TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabAlignment: TabAlignment.center,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 12),
+              tabs: [
+                for (final category in _ActionCategory.values)
+                  Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(category.icon, size: 16),
+                        const SizedBox(width: 4),
+                        Text(category.label),
+                        if (grouped[category]!.isNotEmpty) ...[
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              grouped[category]!.length.toString(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            // Tab views
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  for (final category in _ActionCategory.values)
+                    _buildCategoryList(grouped[category]!, category),
+                ],
+              ),
+            ),
           ],
         );
+      },
+    );
+  }
+  
+  Widget _buildCategoryList(List<Component> abilities, _ActionCategory category) {
+    final theme = Theme.of(context);
+    
+    if (abilities.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(category.icon, size: 48, color: theme.colorScheme.outline),
+              const SizedBox(height: 12),
+              Text(
+                'No ${category.label}',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Abilities of this type will appear here',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.outline,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: abilities.length,
+      itemBuilder: (context, index) {
+        return _buildAbilityWithRemove(abilities[index]);
       },
     );
   }

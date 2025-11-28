@@ -419,6 +419,34 @@ class AppDatabase extends _$AppDatabase {
     return [];
   }
 
+  /// Watch component IDs for a specific category (stream for real-time updates)
+  Stream<List<String>> watchHeroComponentIds(String heroId, String category) {
+    final key = 'component.$category';
+    return (select(heroValues)
+          ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
+        .watchSingleOrNull()
+        .map((row) {
+      if (row == null) return <String>[];
+
+      // Check if it's a single ID stored as textValue
+      if (row.textValue != null && row.textValue!.isNotEmpty) {
+        return [row.textValue!];
+      }
+
+      // Check if it's stored as JSON array
+      if (row.jsonValue != null) {
+        try {
+          final decoded = jsonDecode(row.jsonValue!);
+          if (decoded is Map && decoded['ids'] is List) {
+            return (decoded['ids'] as List).map((e) => e.toString()).toList();
+          }
+        } catch (_) {}
+      }
+
+      return <String>[];
+    });
+  }
+
   /// Set component IDs for a specific category (replaces setHeroComponents)
   Future<void> setHeroComponentIds({
     required String heroId,

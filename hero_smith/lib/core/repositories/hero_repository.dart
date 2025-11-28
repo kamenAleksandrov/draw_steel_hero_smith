@@ -7,6 +7,17 @@ import '../models/dynamic_modifier_model.dart';
 import '../models/hero_model.dart';
 import '../models/hero_mod_keys.dart';
 
+/// Represents the parsed components of a size string (e.g., "1M" -> number: 1, category: "M")
+class SizeParts {
+  final int number;
+  final String category; // T, S, M, L, or empty for sizes >= 2
+  
+  const SizeParts(this.number, this.category);
+  
+  @override
+  String toString() => number >= 2 ? number.toString() : '$number$category';
+}
+
 class HeroSummary {
   final String id;
   final String name;
@@ -43,7 +54,7 @@ class HeroMainStats {
   final int intuitionBase;
   final int presenceBase;
 
-  final int sizeBase;
+  final String sizeBase;
   final int speedBase;
   final int disengageBase;
   final int stabilityBase;
@@ -107,7 +118,40 @@ class HeroMainStats {
   int get intuitionTotal => intuitionBase + modValue(HeroModKeys.intuition);
   int get presenceTotal => presenceBase + modValue(HeroModKeys.presence);
 
-  int get sizeTotal => sizeBase + modValue(HeroModKeys.size);
+  /// Returns the size as a formatted string (e.g., "1M", "2", "1L")
+  /// Size modifications affect the numeric portion only
+  String get sizeTotal {
+    final mod = modValue(HeroModKeys.size);
+    if (mod == 0) return sizeBase;
+    
+    // Parse the base size
+    final parsed = parseSize(sizeBase);
+    final newNumber = parsed.number + mod;
+    
+    // For sizes >= 2, don't include category
+    if (newNumber >= 2) return newNumber.toString();
+    
+    // Keep the category for size 1
+    return '$newNumber${parsed.category}';
+  }
+  
+  /// Parse a size string into its numeric and category components
+  static SizeParts parseSize(String size) {
+    if (size.isEmpty) return const SizeParts(1, 'M');
+    
+    final lastChar = size[size.length - 1].toUpperCase();
+    if ('TSML'.contains(lastChar)) {
+      final numPart = size.substring(0, size.length - 1);
+      return SizeParts(int.tryParse(numPart) ?? 1, lastChar);
+    }
+    
+    // No category letter, just a number (e.g., "2", "3")
+    return SizeParts(int.tryParse(size) ?? 1, '');
+  }
+  
+  /// Get the numeric portion of the size for calculations
+  int get sizeNumber => parseSize(sizeBase).number + modValue(HeroModKeys.size);
+  
   int get speedTotal => speedBase + modValue(HeroModKeys.speed);
   int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage);
   int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability);
@@ -167,6 +211,12 @@ class HeroRepository {
     final id = await _db.createHero(name: name);
     // Initialize saveEnds with default value of 6
     await _db.upsertHeroValue(heroId: id, key: _k.saveEnds, value: 6);
+    // Initialize default base stats for a new hero
+    await _db.upsertHeroValue(heroId: id, key: _k.wealth, value: 1);
+    await _db.upsertHeroValue(heroId: id, key: _k.disengage, value: 1);
+    await _db.upsertHeroValue(heroId: id, key: _k.speed, value: 5);
+    await _db.upsertHeroValue(heroId: id, key: _k.stability, value: 0);
+    await _db.upsertHeroValue(heroId: id, key: _k.size, textValue: '1M'); // 1M (Medium)
     return id;
   }
 
@@ -364,7 +414,7 @@ class HeroRepository {
     int? speed,
     int? stability,
     int? disengage,
-    int? size,
+    String? size,
   }) async {
     Future<void> setInt(String key, int? value) async {
       if (value == null) return;
@@ -375,7 +425,8 @@ class HeroRepository {
       setInt(_k.speed, speed),
       setInt(_k.stability, stability),
       setInt(_k.disengage, disengage),
-      setInt(_k.size, size),
+      if (size != null)
+        _db.upsertHeroValue(heroId: heroId, key: _k.size, textValue: size),
     ]);
   }
 
@@ -473,7 +524,7 @@ class HeroRepository {
       reasonBase: readInt(_k.reason),
       intuitionBase: readInt(_k.intuition),
       presenceBase: readInt(_k.presence),
-      sizeBase: readInt(_k.size),
+      sizeBase: readText(_k.size) ?? '1M',
       speedBase: readInt(_k.speed),
       disengageBase: readInt(_k.disengage),
       stabilityBase: readInt(_k.stability),

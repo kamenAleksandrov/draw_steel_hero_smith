@@ -580,7 +580,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildCompactStatTile(context, 'Size', stats.sizeBase,
+                _buildCompactSizeTile(context, stats.sizeBase,
                     stats.sizeTotal, HeroModKeys.size),
                 _buildCompactStatTile(context, 'Speed', stats.speedBase,
                     stats.speedTotal, HeroModKeys.speed),
@@ -1511,6 +1511,61 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  /// Builds a compact tile for Size which uses string values (e.g., "1M", "2")
+  Widget _buildCompactSizeTile(
+    BuildContext context,
+    String sizeBase,
+    String sizeTotal,
+    String modKey,
+  ) {
+    final theme = Theme.of(context);
+    final parsed = HeroMainStats.parseSize(sizeBase);
+    final parsedTotal = HeroMainStats.parseSize(sizeTotal);
+    final modValue = parsedTotal.number - parsed.number;
+    
+    return Expanded(
+      child: InkWell(
+        onTap: () async {
+          if (!mounted) return;
+          await _showSizeEditDialog(
+            context,
+            sizeBase: sizeBase,
+            currentModValue: modValue,
+          );
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Size',
+                style: theme.textTheme.labelSmall,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                sizeTotal,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              _buildModValueWithSources(
+                modValue: modValue,
+                modKey: modKey,
+                ancestryMods: _ancestryMods,
+                theme: theme,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCompactVitalDisplay(
     BuildContext context, {
     required String label,
@@ -1679,6 +1734,113 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (!mounted) return;
           await _persistModification(modKey, result.toString());
+        });
+      }
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 50));
+      controller.dispose();
+    }
+  }
+
+  Future<void> _showSizeEditDialog(
+    BuildContext context, {
+    required String sizeBase,
+    required int currentModValue,
+  }) async {
+    if (!mounted) return;
+    
+    final controller = TextEditingController(text: currentModValue.toString());
+    final sourcesDesc = _getModSourceDescription(HeroModKeys.size, _ancestryMods);
+    final parsed = HeroMainStats.parseSize(sizeBase);
+    final categoryName = switch (parsed.category) {
+      'T' => 'Tiny',
+      'S' => 'Small',
+      'M' => 'Medium',
+      'L' => 'Large',
+      _ => '',
+    };
+    final baseDisplay = categoryName.isNotEmpty 
+        ? '$sizeBase ($categoryName)'
+        : sizeBase;
+
+    try {
+      final result = await showDialog<int>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Edit Size'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Base: $baseDisplay'),
+                if (sourcesDesc.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          size: 16,
+                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            sourcesDesc,
+                            style: TextStyle(
+                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Size Modification',
+                    border: OutlineInputBorder(),
+                    helperText: 'Enter modifier (affects numeric portion)',
+                  ),
+                  inputFormatters: _formatters(true, 4),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text);
+                  if (value != null) {
+                    Navigator.of(dialogContext).pop(value);
+                  }
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      );
+
+      // Ensure dialog is fully dismissed before persisting
+      if (result != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _persistModification(HeroModKeys.size, result.toString());
         });
       }
     } finally {

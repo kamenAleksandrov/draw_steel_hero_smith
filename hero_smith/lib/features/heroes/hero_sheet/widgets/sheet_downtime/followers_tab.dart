@@ -72,62 +72,185 @@ class FollowersTab extends ConsumerWidget {
 
   Widget _buildFollowerCard(BuildContext context, WidgetRef ref, Follower follower) {
     final theme = Theme.of(context);
+    
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: HeroTheme.primarySection.withValues(alpha: 0.2),
-          child: const Icon(Icons.person, color: HeroTheme.primarySection),
-        ),
-        title: Text(
-          follower.name,
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Column(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(follower.followerType),
-            const SizedBox(height: 4),
-            Text(
-              'M:${follower.might} A:${follower.agility} R:${follower.reason} '
-              'I:${follower.intuition} P:${follower.presence}',
-              style: theme.textTheme.bodySmall,
+            // Header row: Name, Type, and menu
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: HeroTheme.primarySection.withValues(alpha: 0.2),
+                  child: const Icon(Icons.person, size: 20, color: HeroTheme.primarySection),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        follower.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        follower.followerType,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuButton(
+                  iconSize: 20,
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 18),
+                          SizedBox(width: 8),
+                          Text('Edit'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: Colors.red, size: 18),
+                          SizedBox(width: 8),
+                          Text('Delete'),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      _editFollower(context, ref, follower);
+                    } else if (value == 'delete') {
+                      _deleteFollower(context, ref, follower);
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-        trailing: PopupMenuButton(
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'edit',
+            
+            const SizedBox(height: 12),
+            
+            // Characteristics row - all 5 in one compact row
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Icon(Icons.edit),
-                  SizedBox(width: 8),
-                  Text('Edit'),
+                  _buildCharacteristicChip(theme, 'M', follower.might),
+                  _buildCharacteristicChip(theme, 'A', follower.agility),
+                  _buildCharacteristicChip(theme, 'R', follower.reason),
+                  _buildCharacteristicChip(theme, 'I', follower.intuition),
+                  _buildCharacteristicChip(theme, 'P', follower.presence),
                 ],
               ),
             ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
+            
+            // Skills section
+            if (follower.skills.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.delete, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Delete'),
+                  Icon(Icons.build_outlined, size: 16, color: theme.colorScheme.primary),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: follower.skills.map((skill) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          skill,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      )).toList(),
+                    ),
+                  ),
                 ],
               ),
-            ),
+            ],
+            
+            // Languages section
+            if (follower.languages.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.translate, size: 16, color: theme.colorScheme.secondary),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: follower.languages.map((lang) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          lang,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      )).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-          onSelected: (value) {
-            if (value == 'edit') {
-              _editFollower(context, ref, follower);
-            } else if (value == 'delete') {
-              _deleteFollower(context, ref, follower);
-            }
-          },
         ),
-        isThreeLine: true,
       ),
+    );
+  }
+
+  Widget _buildCharacteristicChip(ThemeData theme, String label, int value) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value.toString(),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: HeroTheme.primarySection,
+          ),
+        ),
+      ],
     );
   }
 

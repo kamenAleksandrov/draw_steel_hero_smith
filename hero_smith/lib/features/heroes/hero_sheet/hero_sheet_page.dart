@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../creators/hero_creators/hero_creator_page.dart';
 import 'hero_downtime_tracking_page.dart';
 import 'sheet_abilities.dart';
-import 'sheet_features.dart';
+import 'sheet_gear.dart';
 import 'sheet_main_stats.dart';
 import 'sheet_notes.dart';
 import 'sheet_story.dart';
@@ -33,7 +33,7 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
     _sections = [
       SheetMainStats(heroId: widget.heroId),
       SheetAbilities(heroId: widget.heroId),
-      SheetFeatures(heroId: widget.heroId),
+      SheetGear(heroId: widget.heroId),
       SheetStory(heroId: widget.heroId),
       HeroDowntimeTrackingPage(
         heroId: widget.heroId,
@@ -90,12 +90,12 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
             label: 'Abilities',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome),
-            label: 'Features',
+            icon: Icon(Icons.backpack),
+            label: 'Gear',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: 'Story',
+            icon: Icon(Icons.auto_awesome),
+            label: 'Features',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),

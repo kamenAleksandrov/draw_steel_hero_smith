@@ -297,10 +297,16 @@ class AncestryBonusService {
       switch (bonus) {
         case SetBaseStatBonus():
           // Handle setting base stat if not higher
-          final currentValue = _getStatValue(values, bonus.stat);
-          final newValue = _parseStatValue(bonus.value);
-          if (newValue > currentValue) {
-            await _setBaseStat(heroId, bonus.stat, newValue);
+          final stat = bonus.stat.toLowerCase();
+          if (stat == 'size') {
+            // Size is stored as a string (e.g., "1M", "1L", "2")
+            await _setBaseSizeIfNotHigher(heroId, bonus.value, values);
+          } else {
+            final currentValue = _getStatValue(values, bonus.stat);
+            final newValue = _parseStatValue(bonus.value);
+            if (newValue > currentValue) {
+              await _setBaseStat(heroId, bonus.stat, newValue);
+            }
           }
           
         case IncreaseTotalBonus():
@@ -458,6 +464,59 @@ class AncestryBonusService {
       key: key,
       value: value,
     );
+  }
+
+  /// Sets the base size from ancestry if not already higher.
+  /// Size is stored as a string (e.g., "1M", "1L", "2").
+  Future<void> _setBaseSizeIfNotHigher(
+    String heroId,
+    String newSize,
+    List<db.HeroValue> values,
+  ) async {
+    final sizeValue = values.firstWhereOrNull((v) => v.key == 'stats.size');
+    final currentSize = sizeValue?.textValue ?? '1M';
+    
+    // Parse both sizes to compare numeric portions
+    final currentParsed = _parseSizeString(currentSize);
+    final newParsed = _parseSizeString(newSize);
+    
+    // Compare: larger number wins; if equal, category order is T < S < M < L
+    final shouldUpdate = _compareSizes(newParsed, currentParsed) > 0;
+    
+    if (shouldUpdate) {
+      await _db.upsertHeroValue(
+        heroId: heroId,
+        key: 'stats.size',
+        textValue: newSize,
+      );
+    }
+  }
+
+  /// Parse a size string (e.g., "1M", "2") into number and category.
+  ({int number, String category}) _parseSizeString(String size) {
+    if (size.isEmpty) return (number: 1, category: 'M');
+    
+    final lastChar = size[size.length - 1].toUpperCase();
+    if ('TSML'.contains(lastChar)) {
+      final numPart = size.substring(0, size.length - 1);
+      return (number: int.tryParse(numPart) ?? 1, category: lastChar);
+    }
+    
+    return (number: int.tryParse(size) ?? 1, category: '');
+  }
+
+  /// Compare two sizes. Returns >0 if a > b, <0 if a < b, 0 if equal.
+  int _compareSizes(
+    ({int number, String category}) a,
+    ({int number, String category}) b,
+  ) {
+    if (a.number != b.number) return a.number - b.number;
+    
+    // Category order: T < S < M < L < '' (empty means size >= 2)
+    const order = ['T', 'S', 'M', 'L', ''];
+    final aIdx = order.indexOf(a.category);
+    final bIdx = order.indexOf(b.category);
+    return aIdx - bIdx;
   }
 
   int _getStatValue(List<db.HeroValue> values, String stat) {

@@ -97,20 +97,15 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
                 
                 Row(
                   children: [
-                    Expanded(child: _buildStatField('Might', _mightController)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _buildStatField('Agility', _agilityController)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _buildStatField('Reason', _reasonController)),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                
-                Row(
-                  children: [
-                    Expanded(child: _buildStatField('Intuition', _intuitionController)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _buildStatField('Presence', _presenceController)),
+                    Expanded(child: _buildStatField('M', _mightController)),
+                    const SizedBox(width: 6),
+                    Expanded(child: _buildStatField('A', _agilityController)),
+                    const SizedBox(width: 6),
+                    Expanded(child: _buildStatField('R', _reasonController)),
+                    const SizedBox(width: 6),
+                    Expanded(child: _buildStatField('I', _intuitionController)),
+                    const SizedBox(width: 6),
+                    Expanded(child: _buildStatField('P', _presenceController)),
                   ],
                 ),
                 const SizedBox(height: 16),
