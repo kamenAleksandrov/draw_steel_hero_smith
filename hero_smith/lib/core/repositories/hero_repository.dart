@@ -6,6 +6,7 @@ import '../db/app_database.dart' as db;
 import '../models/dynamic_modifier_model.dart';
 import '../models/hero_model.dart';
 import '../models/hero_mod_keys.dart';
+import '../models/stat_modification_model.dart';
 
 /// All valid sizes in order: 1T, 1S, 1M, 1L, 2, 3, 4, 5
 /// Each step is +1/-1 from the previous
@@ -105,6 +106,9 @@ class HeroMainStats {
   final int heroicResourceCurrent;
 
   final Map<String, int> modifications;
+  final Map<String, int> userModifications;
+  final Map<String, int> choiceModifications;
+  final Map<String, int> equipmentBonuses;
   
   /// Dynamic modifiers that recalculate based on current stats
   final DynamicModifierList dynamicModifiers;
@@ -135,10 +139,24 @@ class HeroMainStats {
     required this.heroicResourceName,
     required this.heroicResourceCurrent,
     required this.modifications,
+    this.userModifications = const {},
+    this.choiceModifications = const {},
+    this.equipmentBonuses = const {},
     this.dynamicModifiers = const DynamicModifierList([]),
   });
 
   int modValue(String key) => modifications[key] ?? 0;
+  int userModValue(String key) => userModifications[key] ?? 0;
+  int choiceModValue(String key) => choiceModifications[key] ?? 0;
+  int equipmentBonusFor(String key) {
+    return switch (key) {
+      HeroModKeys.speed => equipmentBonuses['speed'] ?? 0,
+      HeroModKeys.disengage => equipmentBonuses['disengage'] ?? 0,
+      HeroModKeys.stability => equipmentBonuses['stability'] ?? 0,
+      HeroModKeys.staminaMax => equipmentBonuses['stamina'] ?? 0,
+      _ => 0,
+    };
+  }
 
   int get wealthTotal => wealthBase + modValue(HeroModKeys.wealth);
   int get renownTotal => renownBase + modValue(HeroModKeys.renown);
@@ -300,7 +318,7 @@ class HeroRepository {
     required int value,
   }) async {
     final values = await _db.getHeroValues(heroId);
-    final current = Map<String, int>.from(_extractModifications(values));
+    final current = Map<String, int>.from(_extractUserModifications(values));
     if (value == 0) {
       current.remove(key);
     } else {
@@ -406,6 +424,136 @@ class HeroRepository {
       key: _k.kit,
       textValue: kitId,
     );
+  }
+
+  /// Save all equipment IDs (kits, augmentations, prayers, etc.)
+  Future<void> saveEquipmentIds(
+    String heroId,
+    List<String?> equipmentIds,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.equipment_ids',
+      jsonMap: {'ids': equipmentIds},
+    );
+
+    // Also update legacy kit field for backwards compatibility
+    final primaryKit = equipmentIds.firstWhereOrNull(
+      (id) => id != null && id.isNotEmpty,
+    );
+    await updateKit(heroId, primaryKit);
+  }
+
+  /// Load equipment IDs
+  Future<List<String?>> getEquipmentIds(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull((v) => v.key == 'strife.equipment_ids');
+    if (row?.jsonValue == null) {
+      // Fallback to legacy kit field
+      final kitRow = values.firstWhereOrNull((v) => v.key == _k.kit);
+      if (kitRow?.textValue != null && kitRow!.textValue!.isNotEmpty) {
+        return [kitRow.textValue!];
+      }
+      return [];
+    }
+    final decoded = jsonDecode(row!.jsonValue!) as Map<String, dynamic>;
+    final ids = decoded['ids'];
+    if (ids is List) {
+      return ids.map((e) => e == null ? null : e.toString()).toList();
+    }
+    return [];
+  }
+
+  /// Save equipment bonuses that have been applied to the hero
+  Future<void> saveEquipmentBonuses(
+    String heroId, {
+    required int staminaBonus,
+    required int speedBonus,
+    required int stabilityBonus,
+    required int disengageBonus,
+    required int meleeDamageBonus,
+    required int rangedDamageBonus,
+    required int meleeDistanceBonus,
+    required int rangedDistanceBonus,
+  }) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.equipment_bonuses',
+      jsonMap: {
+        'stamina': staminaBonus,
+        'speed': speedBonus,
+        'stability': stabilityBonus,
+        'disengage': disengageBonus,
+        'melee_damage': meleeDamageBonus,
+        'ranged_damage': rangedDamageBonus,
+        'melee_distance': meleeDistanceBonus,
+        'ranged_distance': rangedDistanceBonus,
+      },
+    );
+  }
+
+  /// Load equipment bonuses
+  Future<Map<String, int>> getEquipmentBonuses(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    return _parseEquipmentBonuses(values);
+  }
+
+  // ===========================================================================
+  // FAVORITE KITS
+  // ===========================================================================
+
+  /// Save favorite kit IDs for quick swapping
+  Future<void> saveFavoriteKitIds(String heroId, List<String> kitIds) async {
+    final nonEmpty = kitIds.where((id) => id.isNotEmpty).toList();
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'gear.favorite_kits',
+      jsonMap: {'ids': nonEmpty},
+    );
+  }
+
+  /// Load favorite kit IDs
+  Future<List<String>> getFavoriteKitIds(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull((v) => v.key == 'gear.favorite_kits');
+    if (row?.jsonValue == null) return [];
+    final decoded = jsonDecode(row!.jsonValue!) as Map<String, dynamic>;
+    final ids = decoded['ids'];
+    if (ids is List) {
+      return ids.map((e) => e.toString()).toList();
+    }
+    return [];
+  }
+
+  // ===========================================================================
+  // INVENTORY CONTAINERS
+  // ===========================================================================
+
+  /// Save inventory containers (folders with items)
+  Future<void> saveInventoryContainers(
+    String heroId,
+    List<Map<String, dynamic>> containers,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'gear.inventory_containers',
+      jsonMap: {'containers': containers},
+    );
+  }
+
+  /// Load inventory containers
+  Future<List<Map<String, dynamic>>> getInventoryContainers(
+      String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row =
+        values.firstWhereOrNull((v) => v.key == 'gear.inventory_containers');
+    if (row?.jsonValue == null) return [];
+    final decoded = jsonDecode(row!.jsonValue!) as Map<String, dynamic>;
+    final containers = decoded['containers'];
+    if (containers is List) {
+      return containers.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    }
+    return [];
   }
 
   Future<void> updateCharacteristicArray(
@@ -539,7 +687,12 @@ class HeroRepository {
       return v?.textValue;
     }
 
-    final modifications = _extractModifications(values);
+    final equipmentBonuses = _parseEquipmentBonuses(values);
+    final userModifications = _extractUserModifications(values);
+    final choiceModifications =
+        _extractChoiceModifications(values, equipmentBonuses);
+    final modifications =
+        _combineModificationMaps(choiceModifications, userModifications);
 
     final classId = readText(_k.className);
 
@@ -569,15 +722,18 @@ class HeroRepository {
       heroicResourceName: readText(_k.heroicResource),
       heroicResourceCurrent: readInt(_k.heroicResourceCurrent),
       modifications: modifications,
+      userModifications: userModifications,
+      choiceModifications: choiceModifications,
+      equipmentBonuses: equipmentBonuses,
       dynamicModifiers: DynamicModifierList.fromJsonString(
         readText('dynamic_modifiers'),
       ),
     );
   }
 
-  Map<String, int> _extractModifications(List<db.HeroValue> values) {
+  Map<String, int> _extractUserModifications(List<db.HeroValue> values) {
     final map = <String, int>{};
-    
+
     // Read from regular modifications (mods.map)
     final modsEntry = values.firstWhereOrNull((e) => e.key == _k.modifications);
     if (modsEntry != null) {
@@ -587,91 +743,116 @@ class HeroRepository {
           final decoded = jsonDecode(raw);
           if (decoded is Map) {
             decoded.forEach((key, value) {
-              map[key.toString()] = _toInt(value) ?? 0;
-            });
-          }
-        } catch (_) {}
-      }
-    }
-
-    // Read from ancestry stat mods and merge
-    final ancestryModsEntry = values.firstWhereOrNull(
-      (e) => e.key == 'ancestry.stat_mods',
-    );
-    if (ancestryModsEntry != null) {
-      final raw = ancestryModsEntry.jsonValue ?? ancestryModsEntry.textValue;
-      if (raw != null && raw.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(raw);
-          if (decoded is Map) {
-            decoded.forEach((key, value) {
-              final modKey = _ancestryStatToModKey(key.toString());
-              if (modKey != null) {
-                final intValue = _extractAncestryStatValue(value);
-                if (intValue != 0) {
-                  map[modKey] = (map[modKey] ?? 0) + intValue;
-                }
+              final parsed = _toInt(value) ?? 0;
+              if (parsed != 0) {
+                map[key.toString()] = parsed;
               }
             });
           }
         } catch (_) {}
       }
     }
+    return map.isEmpty ? const {} : Map.unmodifiable(map);
+  }
 
-    // Read from complication stat mods and merge
-    final complicationModsEntry = values.firstWhereOrNull(
-      (e) => e.key == 'complication.stat_mods',
-    );
-    if (complicationModsEntry != null) {
-      final raw = complicationModsEntry.jsonValue ?? complicationModsEntry.textValue;
-      if (raw != null && raw.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(raw);
-          if (decoded is Map) {
-            decoded.forEach((key, value) {
-              final modKey = _ancestryStatToModKey(key.toString());
-              if (modKey != null) {
-                final intValue = _extractAncestryStatValue(value);
-                if (intValue != 0) {
-                  map[modKey] = (map[modKey] ?? 0) + intValue;
-                }
-              }
-            });
-          }
-        } catch (_) {}
-      }
+  Map<String, int> _extractChoiceModifications(
+    List<db.HeroValue> values,
+    Map<String, int> equipmentBonuses,
+  ) {
+    final map = <String, int>{};
+
+    void merge(Map<String, int> source) {
+      source.forEach((key, value) {
+        if (value == 0) return;
+        map[key] = (map[key] ?? 0) + value;
+      });
+    }
+
+    // Merge ancestry and complication stat mods (with sources)
+    final ancestryModsEntry =
+        values.firstWhereOrNull((e) => e.key == 'ancestry.stat_mods');
+    final complicationModsEntry =
+        values.firstWhereOrNull((e) => e.key == 'complication.stat_mods');
+
+    merge(_parseStatModifications(ancestryModsEntry));
+    merge(_parseStatModifications(complicationModsEntry));
+
+    // Merge equipment bonuses as choice mods
+    if (equipmentBonuses.isNotEmpty) {
+      merge(_equipmentModsFromBonuses(equipmentBonuses));
     }
 
     return map.isEmpty ? const {} : Map.unmodifiable(map);
   }
 
-  /// Extracts the total value from ancestry stat mod entries.
-  /// Supports both old format (plain int) and new format (list of {value, source}).
-  int _extractAncestryStatValue(dynamic value) {
-    if (value is int) return value;
-    if (value is double) return value.round();
-    if (value is List) {
-      // New format: list of modifications with value and source
-      int total = 0;
-      for (final mod in value) {
-        if (mod is Map) {
-          final v = mod['value'];
-          if (v is int) {
-            total += v;
-          } else if (v is double) {
-            total += v.round();
-          }
+  Map<String, int> _parseStatModifications(db.HeroValue? entry) {
+    if (entry == null) return const {};
+    final raw = entry.jsonValue ?? entry.textValue;
+    if (raw == null || raw.isEmpty) return const {};
+
+    try {
+      final mods = HeroStatModifications.fromJsonString(raw);
+      final totals = <String, int>{};
+      for (final entry in mods.modifications.entries) {
+        final modKey = _ancestryStatToModKey(entry.key);
+        if (modKey == null) continue;
+        final total = entry.value.fold<int>(0, (sum, mod) => sum + mod.value);
+        if (total != 0) {
+          totals[modKey] = (totals[modKey] ?? 0) + total;
         }
       }
-      return total;
+      return totals;
+    } catch (_) {
+      return const {};
     }
-    if (value is Map) {
-      // Single modification object
-      final v = value['value'];
-      if (v is int) return v;
-      if (v is double) return v.round();
+  }
+
+  Map<String, int> _equipmentModsFromBonuses(Map<String, int> bonuses) {
+    final map = <String, int>{};
+    void add(String key, int? value) {
+      if (value == null || value == 0) return;
+      map[key] = value;
     }
-    return 0;
+
+    add(HeroModKeys.staminaMax, bonuses['stamina']);
+    add(HeroModKeys.speed, bonuses['speed']);
+    add(HeroModKeys.stability, bonuses['stability']);
+    add(HeroModKeys.disengage, bonuses['disengage']);
+
+    return map;
+  }
+
+  Map<String, int> _combineModificationMaps(
+    Map<String, int> choiceMods,
+    Map<String, int> userMods,
+  ) {
+    if (choiceMods.isEmpty && userMods.isEmpty) return const {};
+    final result = <String, int>{};
+    void merge(Map<String, int> source) {
+      source.forEach((key, value) {
+        if (value == 0) return;
+        result[key] = (result[key] ?? 0) + value;
+      });
+    }
+
+    merge(choiceMods);
+    merge(userMods);
+    return Map.unmodifiable(result);
+  }
+
+  Map<String, int> _parseEquipmentBonuses(List<db.HeroValue> values) {
+    final row =
+        values.firstWhereOrNull((v) => v.key == 'strife.equipment_bonuses');
+    final raw = row?.jsonValue ?? row?.textValue;
+    if (raw == null) return const {};
+    try {
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      return decoded.map(
+        (k, v) => MapEntry(k, (v as num?)?.toInt() ?? 0),
+      );
+    } catch (_) {
+      return const {};
+    }
   }
 
   /// Maps ancestry stat names to HeroModKeys.

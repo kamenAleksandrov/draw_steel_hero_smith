@@ -25,11 +25,11 @@ potency needs to be shown in the sheet
 
 recoveries must better show their value
 
-maybe add a gauge to the hero resurce for style to track abilities 
+the A in kits sometimes is not colored properly
 
-surges must have buttons to spend them
+hero starting disengage should be 1
 
-stamina gauge temp hp bar reaches the max hp 5 hp sooner
+
 ## medium
 
 growing ferocity tabels are not implemented
@@ -45,15 +45,21 @@ most popouts should be wider
 abilities cards inside should strech the whole width, example: kits
 
 add an item page to gear
-## hard
 
-perks in codex should display the abilities they grant
+titles must grant their abilities
+
+must add storwight abilites
+
+must add treasure abilities
+
+a page in gear that shows the kits that the hero has favourited and lets them swap
+
+## hard
 
 on my phone some elements do not update on time
 
 the storing of equasion and calculation must be applied accross the board. not just the woadwalker recovery bonus
 
-heroic resourse should have buttons for each type of resource gain.
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

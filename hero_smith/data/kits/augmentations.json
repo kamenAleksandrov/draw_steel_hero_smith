@@ -25,8 +25,8 @@
       }
     },
     "stamina_bonus": 3,
-    "speed_bonus": 0,
-    "stability_bonus": 0,
+    "speed_bonus": null,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
@@ -47,7 +47,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "incompatible_with_kit": true
   },
   {

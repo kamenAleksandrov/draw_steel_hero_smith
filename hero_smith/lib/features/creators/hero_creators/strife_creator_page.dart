@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +14,7 @@ import '../../../core/models/subclass_models.dart';
 import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
+import '../../../core/services/kit_bonus_service.dart';
 import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
 import '../../../core/services/skill_data_service.dart';
@@ -177,13 +180,26 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Load kit (legacy single kit support)
       if (_selectedClass != null) {
-        final values = await db.getHeroValues(widget.heroId);
-        final kitRow = values.firstWhere(
-          (v) => v.key == 'basics.kit',
-          orElse: () => values.first,
-        );
-        if (kitRow.textValue != null && kitRow.textValue!.isNotEmpty) {
-          _selectedKitIds = [kitRow.textValue];
+        // Try to load multiple equipment IDs first
+        final equipmentIds = await repo.getEquipmentIds(widget.heroId);
+        if (equipmentIds.isNotEmpty) {
+          // Convert to List<String?> to allow null values later
+          // Also match equipment to correct slots based on type
+          _selectedKitIds = await _matchEquipmentToSlots(
+            classData: _selectedClass!,
+            equipmentIds: equipmentIds,
+            db: db,
+          );
+        } else {
+          // Fallback to legacy single kit
+          final values = await db.getHeroValues(widget.heroId);
+          final kitRow = values.firstWhere(
+            (v) => v.key == 'basics.kit',
+            orElse: () => values.first,
+          );
+          if (kitRow.textValue != null && kitRow.textValue!.isNotEmpty) {
+            _selectedKitIds = <String?>[kitRow.textValue];
+          }
         }
       }
 
@@ -576,6 +592,19 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return normalized;
   }
 
+  /// Parse JSON string to map, returns null on error
+  Future<Map<String, dynamic>?> _parseJson(String jsonStr) async {
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   void _markDirty() {
     if (!_isDirty) {
       setState(() {
@@ -603,7 +632,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _selectedPerks = {};
       _selectedSubclass = null;
       _featureSelections = {};
-      _selectedKitIds = [];
+      _selectedKitIds = <String?>[];
     });
     _markDirty();
   }
@@ -742,6 +771,69 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
   }
 
+  /// Match loaded equipment IDs to the correct slots based on their types
+  Future<List<String?>> _matchEquipmentToSlots({
+    required ClassData classData,
+    required List<String?> equipmentIds,
+    required dynamic db,
+  }) async {
+    final slots = _determineKitSlots(classData);
+    if (slots.isEmpty) return <String?>[];
+
+    // Build flat list of slot allowed types
+    final slotTypes = <List<String>>[];
+    for (final slot in slots) {
+      for (var i = 0; i < slot.count; i++) {
+        slotTypes.add(slot.allowedTypes);
+      }
+    }
+
+    // Initialize result with nulls
+    final result = List<String?>.filled(slotTypes.length, null);
+    final usedIds = <String>{};
+
+    // Load equipment types for each ID
+    final equipmentTypes = <String, String>{};
+    for (final id in equipmentIds) {
+      if (id == null || id.isEmpty) {
+        continue;
+      }
+      final component = await db.getComponentById(id);
+      if (component != null) {
+        equipmentTypes[id] = component.type;
+      }
+    }
+
+    // First pass: match equipment to slots where type exactly matches
+    for (var slotIndex = 0; slotIndex < slotTypes.length; slotIndex++) {
+      final allowedTypes = slotTypes[slotIndex];
+      for (final id in equipmentIds) {
+        if (id == null || id.isEmpty) continue;
+        if (usedIds.contains(id)) continue;
+        final type = equipmentTypes[id];
+        if (type != null && allowedTypes.contains(type)) {
+          result[slotIndex] = id;
+          usedIds.add(id);
+          break;
+        }
+      }
+    }
+
+    // Second pass: fill remaining slots with any remaining equipment
+    for (var slotIndex = 0; slotIndex < result.length; slotIndex++) {
+      if (result[slotIndex] != null) continue;
+      for (final id in equipmentIds) {
+        if (id == null || id.isEmpty) continue;
+        if (usedIds.contains(id)) continue;
+        result[slotIndex] = id;
+        usedIds.add(id);
+        break;
+      }
+    }
+
+    return result;
+  }
+
   /// Determines kit slots and allowed types for each slot
   /// Returns list of (count, [allowed types]) pairs
   List<({int count, List<String> allowedTypes})> _determineKitSlots(
@@ -864,6 +956,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     if (!_validateSelections()) return;
 
     final repo = ref.read(heroRepositoryProvider);
+    final db = ref.read(appDatabaseProvider);
     final classData = _selectedClass!;
     final startingChars = classData.startingCharacteristics;
 
@@ -908,10 +1001,60 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         }
       }
 
-      // 3.5. Save kit (first non-null kit for now, legacy support)
-      if (_selectedKitIds.isNotEmpty && _selectedKitIds.first != null) {
-        updates.add(repo.updateKit(widget.heroId, _selectedKitIds.first));
+      // 3.5. Calculate equipment bonuses from selected kits/augmentations/etc.
+      final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
+      final equippedIds = slotOrderedEquipmentIds
+          .where((id) => id != null && id.isNotEmpty)
+          .cast<String>()
+          .toList();
+
+      EquipmentBonuses equipmentBonuses = EquipmentBonuses.empty;
+      if (equippedIds.isNotEmpty) {
+        // Load equipment components
+        final equipmentComponents = <Component>[];
+        for (final equipmentId in equippedIds) {
+          final component = await db.getComponentById(equipmentId);
+          if (component != null) {
+            final parsedData = component.dataJson.isNotEmpty
+                ? await _parseJson(component.dataJson) ?? {}
+                : <String, dynamic>{};
+            equipmentComponents.add(Component(
+              id: component.id,
+              type: component.type,
+              name: component.name,
+              data: Map<String, dynamic>.from(parsedData),
+            ));
+          }
+        }
+
+        // Calculate bonuses
+        const kitBonusService = KitBonusService();
+        equipmentBonuses = kitBonusService.calculateBonuses(
+          equipment: equipmentComponents,
+          heroLevel: _selectedLevel,
+        );
       }
+
+      // Persist equipment selection (including empty slots) for other screens
+      updates.add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
+      updates.add(db.upsertHeroValue(
+        heroId: widget.heroId,
+        key: 'basics.equipment',
+        jsonMap: {'ids': slotOrderedEquipmentIds},
+      ));
+
+      // Save equipment bonuses (or clear if empty)
+      updates.add(repo.saveEquipmentBonuses(
+        widget.heroId,
+        staminaBonus: equipmentBonuses.staminaBonus,
+        speedBonus: equipmentBonuses.speedBonus,
+        stabilityBonus: equipmentBonuses.stabilityBonus,
+        disengageBonus: equipmentBonuses.disengageBonus,
+        meleeDamageBonus: equipmentBonuses.meleeDamageBonus,
+        rangedDamageBonus: equipmentBonuses.rangedDamageBonus,
+        meleeDistanceBonus: equipmentBonuses.meleeDistanceBonus,
+        rangedDistanceBonus: equipmentBonuses.rangedDistanceBonus,
+      ));
 
       // 4. Save selected characteristic array name
       if (_selectedArray != null) {
@@ -954,28 +1097,30 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       });
 
-      // 4. Calculate and save Stamina
-      final maxStamina = startingChars.baseStamina +
+      // 6. Calculate and save Stamina (class base + level scaling + equipment bonus)
+      final baseMaxStamina = startingChars.baseStamina +
           (startingChars.staminaPerLevel * (_selectedLevel - 1));
+      final effectiveMaxStamina =
+          baseMaxStamina + equipmentBonuses.staminaBonus;
       updates.add(repo.updateVitals(
         widget.heroId,
-        staminaMax: maxStamina,
-        staminaCurrent: maxStamina, // Start at full health
+        staminaMax: baseMaxStamina,
+        staminaCurrent: effectiveMaxStamina, // Start at full health
       ));
 
-      // 5. Calculate winded and dying values (based on max stamina)
-      final windedValue = maxStamina ~/ 2; // Half of max stamina
-      final dyingValue = -(maxStamina ~/ 2); // Negative half of max stamina
+      // 7. Calculate winded and dying values (based on effective max stamina)
+      final windedValue = effectiveMaxStamina ~/ 2; // Half of max stamina
+      final dyingValue = -(effectiveMaxStamina ~/ 2); // Negative half of max stamina
       updates.add(repo.updateVitals(
         widget.heroId,
         windedValue: windedValue,
         dyingValue: dyingValue,
       ));
 
-      // 6. Save Recoveries
+      // 8. Save Recoveries
       final recoveriesMax = startingChars.baseRecoveries;
       final recoveryValue =
-          (maxStamina / 3).ceil(); // 1/3 of max HP, rounded up
+          (effectiveMaxStamina / 3).ceil(); // 1/3 of max HP, rounded up
       updates.add(repo.updateVitals(
         widget.heroId,
         recoveriesMax: recoveriesMax,
@@ -983,7 +1128,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       ));
       updates.add(repo.updateRecoveryValue(widget.heroId, recoveryValue));
 
-      // 7. Save fixed stats from class
+      // 9. Save stats from class (equipment bonuses are stored separately)
       updates.add(repo.updateCoreStats(
         widget.heroId,
         speed: startingChars.baseSpeed,
@@ -991,13 +1136,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         disengage: startingChars.baseDisengage,
       ));
 
-      // 8. Save Heroic Resource name
+      // 10. Save Heroic Resource name
       updates.add(repo.updateHeroicResourceName(
         widget.heroId,
         startingChars.heroicResourceName,
       ));
 
-      // 9. Calculate and save potencies based on class progression
+      // 11. Calculate and save potencies based on class progression
       final potencyChar = startingChars.potencyProgression.characteristic;
       final potencyModifiers = startingChars.potencyProgression.modifiers;
 
@@ -1039,7 +1184,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // 11. Save selected skills to database (merge with existing story skills)
       // Get existing skills from database
-      final db = ref.read(appDatabaseProvider);
       final existingComponents = await db.getHeroComponents(widget.heroId);
       final existingSkillIds = existingComponents
           .where((c) => c['category'] == 'skill')
@@ -1115,12 +1259,18 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       widget.onDirtyChanged?.call(false);
       widget.onSaveRequested?.call();
 
+      // Calculate display values for snackbar
+      final displayStamina = baseMaxStamina + equipmentBonuses.staminaBonus;
+      final displaySpeed = startingChars.baseSpeed + equipmentBonuses.speedBonus;
+      final displayStability = startingChars.baseStability + equipmentBonuses.stabilityBonus;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             'Saved: Level $_selectedLevel ${classData.name}\n'
-            'Stamina: $maxStamina, Recoveries: $recoveriesMax ($recoveryValue)\n'
-            'Speed: ${startingChars.baseSpeed}, Resource: ${startingChars.heroicResourceName}',
+            'Stamina: $displayStamina${equipmentBonuses.staminaBonus > 0 ? ' (+${equipmentBonuses.staminaBonus} kit)' : ''}, '
+            'Speed: $displaySpeed${equipmentBonuses.speedBonus > 0 ? ' (+${equipmentBonuses.speedBonus})' : ''}, '
+            'Stability: $displayStability${equipmentBonuses.stabilityBonus > 0 ? ' (+${equipmentBonuses.stabilityBonus})' : ''}',
           ),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.green,

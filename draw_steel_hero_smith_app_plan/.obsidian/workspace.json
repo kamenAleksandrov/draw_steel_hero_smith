@@ -212,6 +212,7 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
+    "widgets/ability_display_widget.md",
     "objects/hero_object.md",
     "bugs/Identified bugs and QoL to be fixed.md",
     "features",
@@ -223,7 +224,6 @@
     "pages/gear_page.md",
     "pages/heroes_page.md",
     "objects/ability_object.md",
-    "widgets/ability_display_widget.md",
     "widgets/summaries/ability_summary.md",
     "abilities and features plan/conduit.md",
     "abilities and features plan/elementalist.md",

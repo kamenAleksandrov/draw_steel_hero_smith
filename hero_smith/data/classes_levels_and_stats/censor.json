@@ -10,7 +10,7 @@
     "baseRecoveries": 12,
     "baseSpeed": 5,
     "baseStability": 0,
-    "baseDisengage": 0,
+    "baseDisengage": 1,
 
     "potency_progression": {
       "characteristic": "Presence",

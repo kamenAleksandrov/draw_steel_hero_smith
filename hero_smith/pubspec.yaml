@@ -40,12 +40,13 @@ flutter:
     - data/abilities/class_abilities_simplified/conduit_abilities.json
     - data/abilities/class_abilities_simplified/elementalist_abilities.json
     - data/abilities/class_abilities_simplified/fury_abilities.json
-    - data/abilities/class_abilities_simplified/kits_abilities.json
     - data/abilities/class_abilities_simplified/null_abilities.json
     - data/abilities/class_abilities_simplified/shadow_abilities.json
     - data/abilities/class_abilities_simplified/tactician_abilities.json
     - data/abilities/class_abilities_simplified/talent_abilities.json
     - data/abilities/class_abilities_simplified/troubadour_abilities.json
+    - data/abilities/kits_abilities.json
+    - data/abilities/stormwight_abilities.json
     - data/classes_levels_and_stats/
     # Story data (languages, titles, etc.)
     - data/story/

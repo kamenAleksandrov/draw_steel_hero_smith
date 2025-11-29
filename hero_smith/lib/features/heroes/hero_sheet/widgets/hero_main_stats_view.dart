@@ -197,7 +197,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     setNumber(_NumericField.surgesCurrent, stats.surgesCurrent);
 
     for (final key in _modKeys) {
-      setMod(key, stats.modValue(key));
+      setMod(key, stats.userModValue(key));
     }
 
     _isApplying = false;
@@ -233,7 +233,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         value = value.clamp(0, 999);
         break;
       case _NumericField.level:
-        value = value.clamp(1, 99);
+        value = value.clamp(1, 10);
         break;
       case _NumericField.staminaCurrent:
         value = value.clamp(-999, 999);
@@ -301,7 +301,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final repo = ref.read(heroRepositoryProvider);
     int value = int.tryParse(rawValue) ?? 0;
     value = value.clamp(-99, 99);
-    if (_latestStats?.modValue(key) == value) {
+    if (_latestStats?.userModValue(key) == value) {
       return;
     }
     try {
@@ -917,6 +917,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   ) {
     final theme = Theme.of(context);
     final modValue = totalValue - baseValue;
+    final manualMod = _latestStats?.userModValue(modKey) ?? 0;
     final isPositive = totalValue >= 0;
 
     return Expanded(
@@ -926,7 +927,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           label: fullLabel,
           modKey: modKey,
           baseValue: baseValue,
-          currentModValue: modValue,
+          currentModValue: manualMod,
         ),
         borderRadius: BorderRadius.circular(8),
         child: Container(
@@ -1061,8 +1062,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final theme = Theme.of(context);
     final staminaState = _calculateStaminaState(stats);
     final healAmount = _recoveryHealAmount(stats);
-    final staminaMaxMod = _latestStats?.modValue(HeroModKeys.staminaMax) ?? 0;
-    final recoveriesMaxMod = _latestStats?.modValue(HeroModKeys.recoveriesMax) ?? 0;
+    final staminaChoice = stats.choiceModValue(HeroModKeys.staminaMax);
+    final staminaUser = stats.userModValue(HeroModKeys.staminaMax);
+    final recoveriesChoice = stats.choiceModValue(HeroModKeys.recoveriesMax);
+    final recoveriesUser = stats.userModValue(HeroModKeys.recoveriesMax);
+    final equipmentStaminaBonus =
+        stats.equipmentBonusFor(HeroModKeys.staminaMax);
 
     return Card(
       child: Padding(
@@ -1127,8 +1132,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             label: 'Max',
                             value: stats.staminaMaxEffective,
                             modKey: HeroModKeys.staminaMax,
-                            modValue: staminaMaxMod,
+                            choiceValue: staminaChoice,
+                            userValue: staminaUser,
                             baseValue: stats.staminaMaxBase,
+                            equipmentBonus: equipmentStaminaBonus,
                           ),
                         ],
                       ),
@@ -1189,7 +1196,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   label: 'Max',
                   value: stats.recoveriesMaxEffective,
                   modKey: HeroModKeys.recoveriesMax,
-                  modValue: recoveriesMaxMod,
+                  choiceValue: recoveriesChoice,
+                  userValue: recoveriesUser,
                   baseValue: stats.recoveriesMaxBase,
                 ),
                 const Spacer(),
@@ -1491,19 +1499,28 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required String label,
     required int value,
     required String modKey,
-    required int modValue,
     required int baseValue,
+    required int choiceValue,
+    required int userValue,
+    int equipmentBonus = 0,
   }) {
     final theme = Theme.of(context);
+    final otherChoice = choiceValue - equipmentBonus;
+    final hasBreakdown =
+        equipmentBonus != 0 || otherChoice != 0 || userValue != 0;
 
     return InkWell(
       onTap: () async {
-        await _showStatEditDialog(
+        // Show breakdown dialog
+        await _showMaxVitalBreakdownDialog(
           context,
-          label: '$label Modifier',
+          label: label,
           modKey: modKey,
-          baseValue: baseValue,
-          currentModValue: modValue,
+          classBase: baseValue,
+          equipmentBonus: equipmentBonus,
+          choiceValue: otherChoice,
+          userValue: userValue,
+          total: value,
         );
       },
       borderRadius: BorderRadius.circular(6),
@@ -1512,7 +1529,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label, style: theme.textTheme.labelSmall),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label, style: theme.textTheme.labelSmall),
+                if (hasBreakdown)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Icon(
+                      Icons.info_outline,
+                      size: 10,
+                      color: theme.colorScheme.primary.withOpacity(0.6),
+                    ),
+                  ),
+              ],
+            ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1522,19 +1553,131 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (modValue != 0)
+                if (hasBreakdown)
                   Text(
-                    modValue > 0 ? '+$modValue' : modValue.toString(),
+                    ' ($baseValue'
+                    '${equipmentBonus != 0 ? _formatSigned(equipmentBonus) : ''}'
+                    '${otherChoice != 0 ? _formatSigned(otherChoice) : ''}'
+                    '${userValue != 0 ? _formatSigned(userValue) : ''})',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: modValue > 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.error,
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 9,
                     ),
                   ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _showMaxVitalBreakdownDialog(
+    BuildContext context, {
+    required String label,
+    required String modKey,
+    required int classBase,
+    required int equipmentBonus,
+    required int choiceValue,
+    required int userValue,
+    required int total,
+  }) async {
+    final theme = Theme.of(context);
+    final hasChoice = equipmentBonus != 0 || choiceValue != 0;
+    final hasUser = userValue != 0;
+    
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text('$label Breakdown'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildBreakdownRow(theme, 'Class (Base + Level)', classBase),
+              if (equipmentBonus > 0)
+                _buildBreakdownRow(
+                  theme,
+                  'Equipment',
+                  equipmentBonus,
+                  isBonus: equipmentBonus > 0,
+                ),
+              if (hasChoice)
+                _buildBreakdownRow(
+                  theme,
+                  'Other choice mods',
+                  choiceValue,
+                  isBonus: choiceValue >= 0,
+                ),
+              if (hasUser)
+                _buildBreakdownRow(
+                  theme,
+                  'Manual mods',
+                  userValue,
+                  isBonus: userValue >= 0,
+                ),
+              const Divider(),
+              _buildBreakdownRow(theme, 'Total', total, isBold: true),
+              const SizedBox(height: 16),
+              Text(
+                'Tap "Edit Modifier" to adjust manual modifications.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Close'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await _showStatEditDialog(
+                  context,
+                  label: '$label Modifier',
+                  modKey: modKey,
+                  baseValue: classBase + equipmentBonus + choiceValue,
+                  currentModValue: userValue,
+                );
+              },
+              child: const Text('Edit Modifier'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildBreakdownRow(ThemeData theme, String label, int value, {bool isBonus = false, bool isBold = false}) {
+    final valueText = isBonus ? '+$value' : value.toString();
+    final color = isBonus 
+        ? Colors.green 
+        : (value < 0 ? Colors.red : theme.colorScheme.onSurface);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            valueText,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+              color: isBold ? null : color,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -2331,8 +2474,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildStaminaCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
     final state = _calculateStaminaState(stats);
+    final equipmentStaminaBonus =
+        stats.equipmentBonusFor(HeroModKeys.staminaMax);
     final effectiveMax = stats.staminaMaxEffective;
-    final staminaMaxMod = _latestStats?.modValue(HeroModKeys.staminaMax) ?? 0;
+    final staminaChoiceMod = stats.choiceModValue(HeroModKeys.staminaMax);
+    final staminaManualMod = stats.userModValue(HeroModKeys.staminaMax);
+    final staminaMaxMod = staminaChoiceMod + staminaManualMod;
 
     return Card(
       child: Padding(
@@ -2378,8 +2525,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         context,
                         label: 'Stamina Max',
                         modKey: HeroModKeys.staminaMax,
-                        baseValue: stats.staminaMaxBase,
-                        currentModValue: staminaMaxMod,
+                        baseValue: stats.staminaMaxBase + staminaChoiceMod,
+                        currentModValue: staminaManualMod,
                       );
                     },
                     borderRadius: BorderRadius.circular(8),
@@ -2443,7 +2590,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildRecoveriesCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
     final healAmount = _recoveryHealAmount(stats);
-    final recoveriesMaxMod = _latestStats?.modValue(HeroModKeys.recoveriesMax) ?? 0;
+    final recoveriesChoiceMod = stats.choiceModValue(HeroModKeys.recoveriesMax);
+    final recoveriesManualMod = stats.userModValue(HeroModKeys.recoveriesMax);
+    final recoveriesMaxMod = recoveriesChoiceMod + recoveriesManualMod;
 
     return Card(
       child: Padding(
@@ -2473,8 +2622,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         context,
                         label: 'Recoveries Max',
                         modKey: HeroModKeys.recoveriesMax,
-                        baseValue: stats.recoveriesMaxBase,
-                        currentModValue: recoveriesMaxMod,
+                        baseValue:
+                            stats.recoveriesMaxBase + recoveriesChoiceMod,
+                        currentModValue: recoveriesManualMod,
                       );
                     },
                     borderRadius: BorderRadius.circular(8),
@@ -3211,6 +3361,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   ) {
     final theme = Theme.of(context);
     final modValue = totalValue - baseValue;
+    final manualMod = _latestStats?.userModValue(modKey) ?? 0;
     
     return Expanded(
       child: InkWell(
@@ -3221,7 +3372,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             label: label,
             modKey: modKey,
             baseValue: baseValue,
-            currentModValue: modValue,
+            currentModValue: manualMod,
           );
         },
         borderRadius: BorderRadius.circular(8),
@@ -3269,6 +3420,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final baseIndex = HeroMainStats.sizeToIndex(sizeBase);
     final totalIndex = HeroMainStats.sizeToIndex(sizeTotal);
     final modValue = totalIndex - baseIndex;
+    final manualMod = _latestStats?.userModValue(modKey) ?? 0;
     
     return Expanded(
       child: InkWell(
@@ -3277,7 +3429,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           await _showSizeEditDialog(
             context,
             sizeBase: sizeBase,
-            currentModValue: modValue,
+            currentModValue: manualMod,
           );
         },
         borderRadius: BorderRadius.circular(8),
@@ -3402,6 +3554,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     
     final controller = TextEditingController(text: currentModValue.toString());
     final sourcesDesc = _getModSourceDescription(modKey, _ancestryMods);
+    final equipmentBonus = _latestStats?.equipmentBonusFor(modKey) ?? 0;
+    final choiceTotal = _latestStats?.choiceModValue(modKey) ?? 0;
+    final remainingChoice = choiceTotal - equipmentBonus;
+
+    final autoBonusParts = <String>[];
+    if (equipmentBonus != 0) {
+      autoBonusParts.add('${_formatSigned(equipmentBonus)} from equipment');
+    }
+    if (sourcesDesc.isNotEmpty) {
+      autoBonusParts.add(sourcesDesc);
+    } else if (remainingChoice != 0) {
+      autoBonusParts.add('${_formatSigned(remainingChoice)} from bonuses');
+    }
+    final autoBonusDescription = autoBonusParts.join('; ');
 
     try {
       final result = await showDialog<int>(
@@ -3414,7 +3580,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Base: $baseValue'),
-                if (sourcesDesc.isNotEmpty) ...[
+                if (autoBonusDescription.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -3432,7 +3598,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            sourcesDesc,
+                            autoBonusDescription,
                             style: TextStyle(
                               color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
                               fontSize: 13,
@@ -3702,9 +3868,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       return;
     }
     final newRecoveries = stats.recoveriesCurrent - 1;
+    final maxStamina = stats.staminaMaxEffective;
     final newStamina = math.min(
       stats.staminaCurrent + healAmount,
-      stats.staminaMaxEffective,
+      maxStamina,
     );
     try {
       await ref.read(heroRepositoryProvider).updateVitals(
@@ -3757,9 +3924,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (amount == null || amount <= 0) return;
     if (!mounted) return;
 
+    final maxStamina = stats.staminaMaxEffective;
     final newCurrent = math.min(
       stats.staminaCurrent + amount,
-      stats.staminaMaxEffective,
+      maxStamina,
     );
 
     try {
@@ -3888,8 +4056,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     HeroStatModifications ancestryMods,
   ) {
     final statName = _modKeyToAncestryStatName(modKey);
-    if (statName == null) return '';
-    return ancestryMods.getSourcesDescription(statName);
+    final parts = <String>[];
+    if (statName != null) {
+      final ancestryDesc = ancestryMods.getSourcesDescription(statName);
+      if (ancestryDesc.isNotEmpty) {
+        parts.add(ancestryDesc);
+      }
+    }
+    final equipmentBonus = _latestStats?.equipmentBonusFor(modKey) ?? 0;
+    if (equipmentBonus != 0) {
+      parts.add('${_formatSigned(equipmentBonus)} from equipment');
+    }
+    return parts.join('; ');
   }
 
   /// Builds a widget showing the modification value.

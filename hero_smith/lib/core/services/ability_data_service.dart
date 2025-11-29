@@ -45,7 +45,9 @@ class AbilityDataService {
     'data/abilities/complication_abilities.json',
     'data/abilities/item_enhancement_abilities.json',
     'data/abilities/kit_abilities.json',
+    'data/abilities/kits_abilities.json',
     'data/abilities/perk_abilities.json',
+    'data/abilities/stormwight_abilities.json',
     'data/abilities/titles_abilities.json',
     'data/abilities/treasure_abilities.json',
   ];

@@ -5,9 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
+import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
+import '../../../core/services/kit_bonus_service.dart';
 import '../../../core/theme/kit_theme.dart';
+import 'state/hero_main_stats_providers.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../widgets/abilities/ability_summary.dart';
@@ -196,6 +199,42 @@ Future<List<String>> _getFeatureGrantedAbilities(List<dynamic> heroValues) async
   return grantedAbilityNames;
 }
 
+/// Provider that watches hero equipment IDs for a specific hero
+final heroEquipmentIdsProvider =
+    StreamProvider.family<List<String?>, String>((ref, heroId) {
+  final db = ref.watch(appDatabaseProvider);
+
+  return db.watchHeroValues(heroId).map((values) {
+    String? legacyKitId;
+    List<String?> equipmentList = [];
+
+    for (final value in values) {
+      if (value.key == 'basics.kit') {
+        legacyKitId = value.textValue;
+      } else if (value.key == 'basics.equipment') {
+        if (value.jsonValue != null) {
+          try {
+            final decoded = jsonDecode(value.jsonValue!);
+            if (decoded is Map && decoded['ids'] is List) {
+              equipmentList = (decoded['ids'] as List)
+                  .map<String?>((e) => e == null ? null : e.toString())
+                  .toList();
+            }
+          } catch (_) {}
+        }
+      }
+    }
+
+    // Use equipment list if available, otherwise fall back to legacy kit
+    if (equipmentList.isNotEmpty) {
+      return equipmentList;
+    } else if (legacyKitId != null && legacyKitId.isNotEmpty) {
+      return [legacyKitId];
+    }
+    return <String?>[];
+  });
+});
+
 /// Shows active, passive, and situational abilities available to the hero.
 class SheetAbilities extends ConsumerStatefulWidget {
   const SheetAbilities({
@@ -252,17 +291,47 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
     'stormwight_kit': Icons.pets_outlined,
   };
 
-  List<String?> _selectedEquipmentIds = [];
   List<_EquipmentSlotConfig> _equipmentSlots = [];
+  bool _isLoadingSlotsConfig = true;
   bool _isLoadingEquipment = true;
+  List<String?> _selectedEquipmentIds = [];
+  String? _className;
+  String? _subclassName;
 
   @override
   void initState() {
     super.initState();
-    _loadEquipment();
+    _loadEquipmentSlotConfig();
+  }
+  
+  /// Updates local state from the provider when equipment changes
+  void _updateEquipmentFromProvider(List<String?> equipmentIds) {
+    if (!mounted) return;
+    
+    final normalized = equipmentIds
+        .map((id) => id == null || id.isEmpty ? null : id)
+        .toList();
+
+    var changed = _selectedEquipmentIds.length != normalized.length;
+    if (!changed) {
+      for (var i = 0; i < normalized.length; i++) {
+        if (_selectedEquipmentIds[i] != normalized[i]) {
+          changed = true;
+          break;
+        }
+      }
+    }
+
+    if (changed || _isLoadingEquipment) {
+      setState(() {
+        _selectedEquipmentIds = normalized;
+        _isLoadingEquipment = false;
+      });
+    }
   }
 
-  Future<void> _loadEquipment() async {
+  /// Load only the equipment slot configuration (class-based), not the selected IDs
+  Future<void> _loadEquipmentSlotConfig() async {
     try {
       final db = ref.read(appDatabaseProvider);
       final values = await db.getHeroValues(widget.heroId);
@@ -270,28 +339,12 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
       // Get class and subclass info
       String? className;
       String? subclassName;
-      String? legacyKitId; // For backwards compatibility with single kit storage
-      List<String?>? equipmentList;
       
       for (final value in values) {
         if (value.key == 'basics.className') {
           className = value.textValue;
         } else if (value.key == 'basics.subclass') {
           subclassName = value.textValue;
-        } else if (value.key == 'basics.kit') {
-          legacyKitId = value.textValue;
-        } else if (value.key == 'basics.equipment') {
-          // Load equipment list from JSON
-          if (value.jsonValue != null) {
-            try {
-              final decoded = jsonDecode(value.jsonValue!);
-              if (decoded is Map && decoded['ids'] is List) {
-                equipmentList = (decoded['ids'] as List)
-                    .map((e) => e?.toString())
-                    .toList();
-              }
-            } catch (_) {}
-          }
         }
       }
       
@@ -302,31 +355,19 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
       
       // Build equipment slots based on class
       final slots = _determineEquipmentSlots(classData, subclassName);
-      final equipmentIds = <String?>[];
-      
-      // Use equipment list if available, otherwise fall back to legacy single kit
-      if (equipmentList != null && equipmentList.isNotEmpty) {
-        equipmentIds.addAll(equipmentList);
-      } else if (legacyKitId != null && slots.isNotEmpty) {
-        equipmentIds.add(legacyKitId);
-      }
-      
-      // Fill remaining slots with null
-      while (equipmentIds.length < slots.length) {
-        equipmentIds.add(null);
-      }
       
       if (mounted) {
         setState(() {
           _equipmentSlots = slots;
-          _selectedEquipmentIds = equipmentIds;
-          _isLoadingEquipment = false;
+          _className = className;
+          _subclassName = subclassName;
+          _isLoadingSlotsConfig = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoadingEquipment = false;
+          _isLoadingSlotsConfig = false;
         });
       }
     }
@@ -509,23 +550,22 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
   Future<void> _saveEquipmentToDatabase() async {
     try {
       final db = ref.read(appDatabaseProvider);
-      
-      // Save the equipment list as JSON
-      final jsonData = {'ids': _selectedEquipmentIds};
+      final repo = ref.read(heroRepositoryProvider);
+      final slotOrderedIds = List<String?>.from(_selectedEquipmentIds);
+
+      // Persist for UI watchers
       await db.upsertHeroValue(
         heroId: widget.heroId,
         key: 'basics.equipment',
-        jsonMap: jsonData,
+        jsonMap: {'ids': slotOrderedIds},
       );
-      
-      // Also update the legacy kit field for backwards compatibility
-      // Use the first non-null equipment
-      final repo = ref.read(heroRepositoryProvider);
-      final firstSelected = _selectedEquipmentIds.firstWhere(
-        (id) => id != null,
-        orElse: () => null,
-      );
-      await repo.updateKit(widget.heroId, firstSelected);
+
+      // Persist canonical equipment ordering + legacy kit value
+      await repo.saveEquipmentIds(widget.heroId, slotOrderedIds);
+
+      await _recalculateAndSaveEquipmentBonuses(repo, db, slotOrderedIds);
+
+      ref.invalidate(heroEquipmentBonusesProvider(widget.heroId));
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -533,6 +573,94 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
         );
       }
     }
+  }
+
+  Future<void> _recalculateAndSaveEquipmentBonuses(
+    HeroRepository heroRepo,
+    dynamic db,
+    List<String?> slotIds,
+  ) async {
+    final normalizedIds = slotIds
+        .whereType<String>()
+        .where((id) => id.isNotEmpty)
+        .toList();
+
+    final heroLevel = await heroRepo.getHeroLevel(widget.heroId);
+    final kitBonusService = const KitBonusService();
+
+    if (normalizedIds.isEmpty) {
+      await heroRepo.saveEquipmentBonuses(
+        widget.heroId,
+        staminaBonus: 0,
+        speedBonus: 0,
+        stabilityBonus: 0,
+        disengageBonus: 0,
+        meleeDamageBonus: 0,
+        rangedDamageBonus: 0,
+        meleeDistanceBonus: 0,
+        rangedDistanceBonus: 0,
+      );
+      return;
+    }
+
+    final equipmentComponents = <Component>[];
+    for (final id in normalizedIds) {
+      final componentRow = await db.getComponentById(id);
+      if (componentRow == null) continue;
+      final data = _decodeComponentData(componentRow.dataJson);
+      equipmentComponents.add(Component(
+        id: componentRow.id,
+        type: componentRow.type,
+        name: componentRow.name,
+        data: data,
+      ));
+    }
+
+    if (equipmentComponents.isEmpty) {
+      await heroRepo.saveEquipmentBonuses(
+        widget.heroId,
+        staminaBonus: 0,
+        speedBonus: 0,
+        stabilityBonus: 0,
+        disengageBonus: 0,
+        meleeDamageBonus: 0,
+        rangedDamageBonus: 0,
+        meleeDistanceBonus: 0,
+        rangedDistanceBonus: 0,
+      );
+      return;
+    }
+
+    final bonuses = kitBonusService.calculateBonuses(
+      equipment: equipmentComponents,
+      heroLevel: heroLevel,
+    );
+
+    await heroRepo.saveEquipmentBonuses(
+      widget.heroId,
+      staminaBonus: bonuses.staminaBonus,
+      speedBonus: bonuses.speedBonus,
+      stabilityBonus: bonuses.stabilityBonus,
+      disengageBonus: bonuses.disengageBonus,
+      meleeDamageBonus: bonuses.meleeDamageBonus,
+      rangedDamageBonus: bonuses.rangedDamageBonus,
+      meleeDistanceBonus: bonuses.meleeDistanceBonus,
+      rangedDistanceBonus: bonuses.rangedDistanceBonus,
+    );
+  }
+
+  Map<String, dynamic> _decodeComponentData(String? jsonStr) {
+    if (jsonStr == null || jsonStr.isEmpty) return <String, dynamic>{};
+    try {
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is Map<String, dynamic>) {
+        return Map<String, dynamic>.from(decoded);
+      }
+      if (decoded is Map) {
+        return Map<String, dynamic>.from(decoded.cast<String, dynamic>());
+      }
+    } catch (_) {}
+    return <String, dynamic>{};
   }
 
   Future<void> _showAddAbilityDialog(BuildContext context) async {
@@ -612,6 +740,11 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
   Widget build(BuildContext context) {
     // Watch the ability IDs stream
     final abilityIdsAsync = ref.watch(heroAbilityIdsProvider(widget.heroId));
+    
+    // Watch equipment IDs and update local state for reactive updates
+    final equipmentIdsAsync = ref.watch(heroEquipmentIdsProvider(widget.heroId));
+    equipmentIdsAsync.whenData(_updateEquipmentFromProvider);
+    
     final theme = Theme.of(context);
 
     return Stack(

@@ -35,9 +35,9 @@ class KitTheme {
   // Kit type color schemes
   static const Map<String, KitColorScheme> kitColorSchemes = {
     'kit': KitColorScheme(
-      primary: Colors.teal,
-      badgeBackground: Color.fromARGB(255, 4, 55, 49), // teal.shade700
-      borderColor: Color(0xFF26A69A), // teal.shade400
+      primary: Colors.cyan,
+      badgeBackground: Color(0xFF00838F), // cyan.shade700
+      borderColor: Color(0xFF26C6DA), // cyan.shade400
     ),
     'ward': KitColorScheme(
       primary: Colors.purple,
@@ -55,19 +55,19 @@ class KitTheme {
       borderColor: Color(0xFF5C6BC0), // indigo.shade400
     ),
     'modifier': KitColorScheme(
-      primary: Colors.orange,
-      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
-      borderColor: Color(0xFFFFB74D), // orange.shade400
+      primary: Colors.amber,
+      badgeBackground: Color(0xFFFF8F00), // amber.shade800
+      borderColor: Color(0xFFFFCA28), // amber.shade400
     ),
     'enchantment': KitColorScheme(
-      primary: Colors.orange,
-      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
-      borderColor: Color(0xFFFFB74D), // orange.shade400
+      primary: Colors.amber,
+      badgeBackground: Color(0xFFFF8F00), // amber.shade800
+      borderColor: Color(0xFFFFCA28), // amber.shade400
     ),
     'psionic_augmentation': KitColorScheme(
-      primary: Colors.orange,
-      badgeBackground: Color.fromARGB(255, 148, 104, 39), // orange.shade500
-      borderColor: Color(0xFFFFB74D), // orange.shade400
+      primary: Colors.deepPurple,
+      badgeBackground: Color(0xFF512DA8), // deepPurple.shade700
+      borderColor: Color(0xFF7E57C2), // deepPurple.shade400
     ),
     'prayer': KitColorScheme(
       primary: Colors.orange,

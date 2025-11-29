@@ -17,3 +17,10 @@ final heroAncestryStatModsProvider =
   final service = ref.watch(ancestryBonusServiceProvider);
   return service.loadAncestryStatMods(heroId);
 });
+
+/// Provider to load equipment bonuses that have been applied to the hero.
+final heroEquipmentBonusesProvider =
+    FutureProvider.family<Map<String, int>, String>((ref, heroId) async {
+  final repo = ref.read(heroRepositoryProvider);
+  return repo.getEquipmentBonuses(heroId);
+});

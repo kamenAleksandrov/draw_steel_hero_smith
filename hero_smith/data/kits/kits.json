@@ -24,9 +24,9 @@
         "whip": false
       }
     },
-    "stamina_bonus": 0,
+    "stamina_bonus": null,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": null,
       "2nd_tier": null,
@@ -98,7 +98,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Unmooring"
   },
   {
@@ -128,7 +128,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 2,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
@@ -179,7 +179,7 @@
     },
     "stamina_bonus": 6,
     "speed_bonus": 2,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 2,
       "2nd_tier": 2,
@@ -229,7 +229,7 @@
       }
     },
     "stamina_bonus": 6,
-    "speed_bonus": 0,
+    "speed_bonus": null,
     "stability_bonus": 1,
     "melee_damage_bonus": {
       "1st_tier": 2,
@@ -251,7 +251,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Forward Thrust, Backward Smash"
   },
   {
@@ -281,7 +281,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 3,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 2,
       "2nd_tier": 2,
@@ -331,7 +331,7 @@
       }
     },
     "stamina_bonus": 9,
-    "speed_bonus": 0,
+    "speed_bonus": null,
     "stability_bonus": 2,
     "melee_damage_bonus": {
       "1st_tier": 0,
@@ -353,7 +353,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Pain for Pain"
   },
   {
@@ -404,7 +404,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Devastating Rush"
   },
   {
@@ -455,8 +455,8 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
-    "signature_ability": "Lets Dance"
+    "disengage_bonus": null,
+    "signature_ability": "Let's Dance"
   },
   {
     "id": "kit_raider",
@@ -485,7 +485,7 @@
     },
     "stamina_bonus": 6,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
@@ -536,7 +536,7 @@
     },
     "stamina_bonus": 6,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
@@ -587,7 +587,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": null,
       "2nd_tier": null,
@@ -638,7 +638,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 2,
       "2nd_tier": 2,
@@ -688,7 +688,7 @@
       }
     },
     "stamina_bonus": 12,
-    "speed_bonus": 0,
+    "speed_bonus": null,
     "stability_bonus": 1,
     "melee_damage_bonus": {
       "1st_tier": 2,
@@ -710,7 +710,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Protective Attack"
   },
   {
@@ -738,9 +738,9 @@
         "whip": false
       }
     },
-    "stamina_bonus": 0,
+    "stamina_bonus": null,
     "speed_bonus": 1,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": null,
       "2nd_tier": null,
@@ -812,7 +812,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Leaping Lightning"
   },
   {
@@ -842,7 +842,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 2,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
@@ -893,7 +893,7 @@
     },
     "stamina_bonus": 3,
     "speed_bonus": 3,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 2,
       "2nd_tier": 2,
@@ -943,7 +943,7 @@
       }
     },
     "stamina_bonus": 9,
-    "speed_bonus": 0,
+    "speed_bonus": null,
     "stability_bonus": 1,
     "melee_damage_bonus": {
       "1st_tier": 2,
@@ -1016,7 +1016,7 @@
       "2nd_echelon": null,
       "3rd_echelon": null
     },
-    "disengage_bonus": 0,
+    "disengage_bonus": null,
     "signature_ability": "Weakening Brand"
   },
   {
@@ -1044,9 +1044,9 @@
         "whip": true
       }
     },
-    "stamina_bonus": 0,
+    "stamina_bonus": null,
     "speed_bonus": 3,
-    "stability_bonus": 0,
+    "stability_bonus": null,
     "melee_damage_bonus": {
       "1st_tier": 1,
       "2nd_tier": 1,
