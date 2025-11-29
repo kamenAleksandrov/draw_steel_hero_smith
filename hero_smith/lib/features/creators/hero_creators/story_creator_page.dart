@@ -61,6 +61,36 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
 
   bool get isDirty => _dirty;
 
+  Set<String> get _selectedLanguageIdsForPerks {
+    final ids = <String>{};
+    ids.addAll(_hero?.languages ?? const <String>[]);
+    if (_selectedLanguageId != null && _selectedLanguageId!.trim().isNotEmpty) {
+      ids.add(_selectedLanguageId!.trim());
+    }
+    for (final lang in _careerLanguageIds) {
+      if (lang != null && lang.trim().isNotEmpty) {
+        ids.add(lang.trim());
+      }
+    }
+    return ids;
+  }
+
+  Set<String> get _selectedSkillIdsForPerks {
+    final ids = <String>{};
+    ids.addAll(_hero?.skills ?? const <String>[]);
+    if (_environmentSkillId != null && _environmentSkillId!.isNotEmpty) {
+      ids.add(_environmentSkillId!);
+    }
+    if (_organisationSkillId != null && _organisationSkillId!.isNotEmpty) {
+      ids.add(_organisationSkillId!);
+    }
+    if (_upbringingSkillId != null && _upbringingSkillId!.isNotEmpty) {
+      ids.add(_upbringingSkillId!);
+    }
+    ids.addAll(_careerSkillIds);
+    return ids;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -415,12 +445,15 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
         ),
         SliverToBoxAdapter(
           child: StoryCareerSection(
+            heroId: widget.heroId,
             careerId: _careerId,
             chosenSkillIds: _careerSkillIds,
             chosenPerkIds: _careerPerkIds,
             incidentName: _careerIncidentName,
             careerLanguageIds: _careerLanguageIds,
             primaryLanguageId: _selectedLanguageId,
+            selectedLanguageIds: _selectedLanguageIdsForPerks,
+            selectedSkillIds: _selectedSkillIdsForPerks,
             onCareerChanged: _onCareerChanged,
             onCareerLanguageSlotsChanged: _onCareerLanguageSlotsChanged,
             onCareerLanguageChanged: _onCareerLanguageChanged,

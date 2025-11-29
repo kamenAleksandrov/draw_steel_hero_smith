@@ -6,17 +6,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
+import '../../../../core/services/perk_grants_service.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../widgets/abilities/ability_expandable_item.dart';
 
 class StoryCareerSection extends ConsumerWidget {
   const StoryCareerSection({
     super.key,
+    required this.heroId,
     required this.careerId,
     required this.chosenSkillIds,
     required this.chosenPerkIds,
     required this.incidentName,
     required this.careerLanguageIds,
     required this.primaryLanguageId,
+    required this.selectedLanguageIds,
+    required this.selectedSkillIds,
     required this.onCareerChanged,
     required this.onCareerLanguageSlotsChanged,
     required this.onCareerLanguageChanged,
@@ -26,12 +31,15 @@ class StoryCareerSection extends ConsumerWidget {
     required this.onDirty,
   });
 
+  final String heroId;
   final String? careerId;
   final Set<String> chosenSkillIds;
   final Set<String> chosenPerkIds;
   final String? incidentName;
   final List<String?> careerLanguageIds;
   final String? primaryLanguageId;
+  final Set<String> selectedLanguageIds;
+  final Set<String> selectedSkillIds;
 
   final ValueChanged<String?> onCareerChanged;
   final ValueChanged<int> onCareerLanguageSlotsChanged;
@@ -68,6 +76,7 @@ class StoryCareerSection extends ConsumerWidget {
                 loading: () => const LinearProgressIndicator(),
                 error: (e, _) => Text('Failed to load careers: $e'),
                 data: (careers) => _CareerContent(
+                  heroId: heroId,
                   careers: careers,
                   careerId: careerId,
                   chosenSkillIds: chosenSkillIds,
@@ -75,6 +84,8 @@ class StoryCareerSection extends ConsumerWidget {
                   incidentName: incidentName,
                   careerLanguageIds: careerLanguageIds,
                   primaryLanguageId: primaryLanguageId,
+                  selectedLanguageIds: selectedLanguageIds,
+                  selectedSkillIds: selectedSkillIds,
                   skillsAsync: skillsAsync,
                   perksAsync: perksAsync,
                   langsAsync: langsAsync,
@@ -97,6 +108,7 @@ class StoryCareerSection extends ConsumerWidget {
 
 class _CareerContent extends StatefulWidget {
   const _CareerContent({
+    required this.heroId,
     required this.careers,
     required this.careerId,
     required this.chosenSkillIds,
@@ -104,6 +116,8 @@ class _CareerContent extends StatefulWidget {
     required this.incidentName,
     required this.careerLanguageIds,
     required this.primaryLanguageId,
+    required this.selectedLanguageIds,
+    required this.selectedSkillIds,
     required this.skillsAsync,
     required this.perksAsync,
     required this.langsAsync,
@@ -116,6 +130,7 @@ class _CareerContent extends StatefulWidget {
     required this.onDirty,
   });
 
+  final String heroId;
   final List<model.Component> careers;
   final String? careerId;
   final Set<String> chosenSkillIds;
@@ -123,6 +138,8 @@ class _CareerContent extends StatefulWidget {
   final String? incidentName;
   final List<String?> careerLanguageIds;
   final String? primaryLanguageId;
+  final Set<String> selectedLanguageIds;
+  final Set<String> selectedSkillIds;
 
   final AsyncValue<List<model.Component>> skillsAsync;
   final AsyncValue<List<model.Component>> perksAsync;
@@ -753,7 +770,11 @@ class _CareerContentState extends State<_CareerContent> {
                       Builder(
                         builder: (context) {
                           final perk = perkMap[slots[index]]!;
-                          final grants = perk.data['grants'] as List?;
+                          final grantsRaw = perk.data['grants'];
+                          // Normalize grants to a List (can be Map or List)
+                          final grants = grantsRaw is List 
+                              ? grantsRaw 
+                              : (grantsRaw is Map ? [grantsRaw] : null);
                           
                           return Container(
                             padding: const EdgeInsets.all(12),
@@ -798,9 +819,36 @@ class _CareerContentState extends State<_CareerContent> {
                                       color: borderColor,
                                     ),
                                   ),
-                                  _PerkGrantsDisplay(
-                                    grants: grants,
-                                    accentColor: borderColor,
+                                  widget.langsAsync.when(
+                                    loading: () => const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 8),
+                                      child: LinearProgressIndicator(),
+                                    ),
+                                    error: (e, _) => Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Text('Failed to load languages: $e'),
+                                    ),
+                                    data: (languages) => widget.skillsAsync.when(
+                                      loading: () => const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 8),
+                                        child: LinearProgressIndicator(),
+                                      ),
+                                      error: (e, _) => Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: Text('Failed to load skills: $e'),
+                                      ),
+                                      data: (skills) => _PerkGrantsDisplay(
+                                        heroId: widget.heroId,
+                                        perkId: perk.id,
+                                        grants: grants,
+                                        accentColor: borderColor,
+                                        languages: languages,
+                                        skills: skills,
+                                        reservedLanguageIds: widget.selectedLanguageIds,
+                                        reservedSkillIds: widget.selectedSkillIds,
+                                        onDirty: widget.onDirty,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ],
@@ -1120,30 +1168,63 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
 
 /// A widget that displays the granted abilities for a perk.
 /// This is a ConsumerWidget so it can access the abilityByNameProvider.
+final _perkGrantChoicesProvider = FutureProvider.family<
+    Map<String, List<String>>, ({String heroId, String perkId})>((ref, args) async {
+  final db = ref.read(appDatabaseProvider);
+  return PerkGrantsService().getAllGrantChoicesForPerk(
+    db: db,
+    heroId: args.heroId,
+    perkId: args.perkId,
+  );
+});
+
 class _PerkGrantsDisplay extends ConsumerWidget {
   const _PerkGrantsDisplay({
+    required this.heroId,
+    required this.perkId,
     required this.grants,
     required this.accentColor,
+    required this.languages,
+    required this.skills,
+    required this.reservedLanguageIds,
+    required this.reservedSkillIds,
+    required this.onDirty,
   });
 
+  final String heroId;
+  final String perkId;
   final List<dynamic> grants;
   final Color accentColor;
+  final List<model.Component> languages;
+  final List<model.Component> skills;
+  final Set<String> reservedLanguageIds;
+  final Set<String> reservedSkillIds;
+  final VoidCallback onDirty;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
     final textColor = scheme.onSurface;
+    final languageMap = {for (final lang in languages) lang.id: lang};
+    final skillMap = {for (final skill in skills) skill.id: skill};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final grant in grants)
-          _buildGrantItem(context, ref, grant, textColor),
+          _buildGrantItem(context, ref, grant, textColor, languageMap, skillMap),
       ],
     );
   }
 
-  Widget _buildGrantItem(BuildContext context, WidgetRef ref, dynamic grant, Color textColor) {
+  Widget _buildGrantItem(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic grant,
+    Color textColor,
+    Map<String, model.Component> languageMap,
+    Map<String, model.Component> skillMap,
+  ) {
     if (grant is! Map) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 4),
@@ -1151,168 +1232,440 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       );
     }
 
-    final abilityName = grant['ability'] as String?;
-    if (abilityName == null) {
-      final formatted = grant.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Text('• $formatted', style: TextStyle(fontSize: 12, color: textColor)),
-      );
+    if (grant.containsKey('ability')) {
+      return _buildAbilityGrant(context, ref, grant['ability'] as String?, textColor);
+    }
+
+    if (grant.containsKey('languages')) {
+      final count = _parseCount(grant['languages']);
+      return _buildLanguageGrant(context, ref, count, textColor, languageMap);
+    }
+
+    if (grant.containsKey('skill')) {
+      final skillData = grant['skill'];
+      if (skillData is Map) {
+        return _buildSkillGrant(context, ref, Map<String, dynamic>.from(skillData), textColor, skillMap);
+      }
+    }
+
+    final formatted = grant.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    return _buildGrantRow('• $formatted', textColor);
+  }
+
+  Widget _buildAbilityGrant(
+    BuildContext context,
+    WidgetRef ref,
+    String? abilityName,
+    Color textColor,
+  ) {
+    if (abilityName == null || abilityName.isEmpty) {
+      return _buildGrantRow('• Ability grant', textColor);
     }
 
     final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
-
     return abilityAsync.when(
       data: (ability) {
         if (ability == null) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Text('• Ability: $abilityName', style: TextStyle(fontSize: 12, color: textColor)),
+          return _buildGrantRow('• Ability: $abilityName', textColor);
+        }
+        return Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 4),
+          child: AbilityExpandableItem(component: ability),
+        );
+      },
+      loading: () => _buildLoadingRow(textColor, 'Loading $abilityName...'),
+      error: (e, _) => _buildGrantRow('• Ability: $abilityName', textColor),
+    );
+  }
+
+  Widget _buildLanguageGrant(
+    BuildContext context,
+    WidgetRef ref,
+    int count,
+    Color textColor,
+    Map<String, model.Component> languageMap,
+  ) {
+    if (heroId.isEmpty) {
+      return _buildGrantRow('Choose ${count == 1 ? 'a' : count} new language${count == 1 ? '' : 's'}.', textColor);
+    }
+
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    return choicesAsync.when(
+      data: (choices) {
+        final selected = List<String>.from(choices['language'] ?? const []);
+        final widgets = <Widget>[];
+        for (var index = 0; index < count; index++) {
+          final selectedId = index < selected.length ? selected[index] : null;
+          final label = count == 1 ? 'Language Choice' : 'Language Choice ${index + 1}';
+          widgets.add(
+            _buildPickerField(
+              context: context,
+              label: label,
+              placeholder: '— Choose language —',
+              selectedName: selectedId != null ? languageMap[selectedId]?.name : null,
+              onTap: () => _openLanguagePicker(
+                context: context,
+                ref: ref,
+                slotIndex: index,
+                currentChoices: selected,
+                currentSelectedId: selectedId,
+              ),
+            ),
           );
         }
-        return _buildAbilityCard(context, ability, textColor);
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
       },
-      loading: () => Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 12,
-              height: 12,
-              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+      loading: () => _buildLoadingRow(textColor, 'Loading languages...'),
+      error: (e, _) => _buildGrantRow('Failed to load languages: $e', textColor),
+    );
+  }
+
+  Widget _buildSkillGrant(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> skillData,
+    Color textColor,
+    Map<String, model.Component> skillMap,
+  ) {
+    final group = (skillData['group'] as String?)?.trim();
+    if (group == null || group.isEmpty) {
+      return _buildGrantRow('Skill grant available', textColor);
+    }
+
+    final countData = skillData['count'];
+    if (countData == 'one_owned') {
+      return _buildSkillOwnedGrant(context, ref, group, textColor, skillMap);
+    }
+
+    final count = _parseCount(countData);
+    if (count <= 0) {
+      return _buildGrantRow('Choose a ${_capitalize(group)} skill.', textColor);
+    }
+
+    return _buildSkillPickGrant(context, ref, group, count, textColor, skillMap);
+  }
+
+  Widget _buildSkillOwnedGrant(
+    BuildContext context,
+    WidgetRef ref,
+    String group,
+    Color textColor,
+    Map<String, model.Component> skillMap,
+  ) {
+    final normalizedGroup = group.toLowerCase();
+    final owned = skills.where((skill) {
+      final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
+      return skillGroup == normalizedGroup && reservedSkillIds.contains(skill.id);
+    }).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    if (owned.isEmpty) {
+      return _buildGrantRow('No ${_capitalize(group)} skills known yet.', textColor);
+    }
+
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    return choicesAsync.when(
+      data: (choices) {
+        final selected = List<String>.from(choices['skill_owned'] ?? const []);
+        final selectedId = selected.isNotEmpty ? selected.first : null;
+        final label = '${_capitalize(group)} Skill';
+        return _buildPickerField(
+          context: context,
+          label: label,
+          placeholder: '— Choose skill —',
+          selectedName: selectedId != null ? skillMap[selectedId]?.name : null,
+          onTap: () => _openSkillPicker(
+            context: context,
+            ref: ref,
+            grantType: 'skill_owned',
+            slotIndex: 0,
+            currentChoices: selected,
+            currentSelectedId: selectedId,
+            group: group,
+            allowOwnedOnly: true,
+          ),
+        );
+      },
+      loading: () => _buildLoadingRow(textColor, 'Loading skills...'),
+      error: (e, _) => _buildGrantRow('Failed to load skills: $e', textColor),
+    );
+  }
+
+  Widget _buildSkillPickGrant(
+    BuildContext context,
+    WidgetRef ref,
+    String group,
+    int count,
+    Color textColor,
+    Map<String, model.Component> skillMap,
+  ) {
+    final normalizedGroup = group.toLowerCase();
+    final available = skills.where((skill) {
+      final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
+      return skillGroup == normalizedGroup && !reservedSkillIds.contains(skill.id);
+    }).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    if (available.isEmpty) {
+      return _buildGrantRow('No ${_capitalize(group)} skills available to learn.', textColor);
+    }
+
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    return choicesAsync.when(
+      data: (choices) {
+        final selected = List<String>.from(choices['skill_pick'] ?? const []);
+        final widgets = <Widget>[];
+        for (var index = 0; index < count; index++) {
+          final selectedId = index < selected.length ? selected[index] : null;
+          final label = count == 1
+              ? 'New ${_capitalize(group)} Skill'
+              : 'New ${_capitalize(group)} Skill ${index + 1}';
+          widgets.add(
+            _buildPickerField(
+              context: context,
+              label: label,
+              placeholder: '— Choose skill —',
+              selectedName: selectedId != null ? skillMap[selectedId]?.name : null,
+              onTap: () => _openSkillPicker(
+                context: context,
+                ref: ref,
+                grantType: 'skill_pick',
+                slotIndex: index,
+                currentChoices: selected,
+                currentSelectedId: selectedId,
+                group: group,
+                allowOwnedOnly: false,
+              ),
             ),
-            const SizedBox(width: 8),
-            Text('Loading $abilityName...', style: TextStyle(fontSize: 12, color: textColor)),
-          ],
+          );
+        }
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
+      },
+      loading: () => _buildLoadingRow(textColor, 'Loading skills...'),
+      error: (e, _) => _buildGrantRow('Failed to load skills: $e', textColor),
+    );
+  }
+
+  Widget _buildPickerField({
+    required BuildContext context,
+    required String label,
+    required String placeholder,
+    required String? selectedName,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final hintColor = theme.hintColor;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: onTap,
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            suffixIcon: const Icon(Icons.search),
+          ),
+          child: Text(
+            selectedName ?? placeholder,
+            style: TextStyle(
+              fontSize: 14,
+              color: selectedName != null ? theme.textTheme.bodyLarge?.color : hintColor,
+            ),
+          ),
         ),
-      ),
-      error: (e, _) => Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Text('• Ability: $abilityName', style: TextStyle(fontSize: 12, color: textColor)),
       ),
     );
   }
 
-  Widget _buildAbilityCard(BuildContext context, model.Component ability, Color textColor) {
-    final data = ability.data;
-    final actionType = data['action_type'] as String?;
-    final keywords = (data['keywords'] as List?)?.cast<String>() ?? [];
-    final range = data['range'] as Map?;
-    final targets = data['targets'] as String?;
-    final effect = data['effect'] as String?;
-    final storyText = data['story_text'] as String?;
-    final scheme = Theme.of(context).colorScheme;
+  Future<void> _openLanguagePicker({
+    required BuildContext context,
+    required WidgetRef ref,
+    required int slotIndex,
+    required List<String> currentChoices,
+    required String? currentSelectedId,
+  }) async {
+    final exclude = <String>{
+      ...reservedLanguageIds.where((id) => id.isNotEmpty),
+      ...currentChoices.where((id) => id.isNotEmpty && id != currentSelectedId),
+    };
+    final options = _buildLanguageOptions(exclude, currentSelectedId);
+    final result = await _showSearchablePicker<String?>(
+      context: context,
+      title: 'Select Language',
+      options: options,
+      selected: currentSelectedId,
+    );
+    if (result == null) return;
+    final updated = _updatedChoiceList(currentChoices, slotIndex, result.value);
+    await _saveGrantChoice(ref, 'language', updated);
+  }
 
-    return Container(
-      margin: const EdgeInsets.only(top: 8, bottom: 4),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.08),
-        border: Border.all(color: accentColor.withOpacity(0.4), width: 1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header row with name and action type
-          Row(
-            children: [
-              Text(
-                '⚡ ${ability.name}',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                ),
-              ),
-              if (actionType != null) ...[
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: scheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    actionType,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
-              ],
-            ],
+  Future<void> _openSkillPicker({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String grantType,
+    required int slotIndex,
+    required List<String> currentChoices,
+    required String? currentSelectedId,
+    required String group,
+    required bool allowOwnedOnly,
+  }) async {
+    final exclude = currentChoices
+        .where((id) => id.isNotEmpty && id != currentSelectedId)
+        .toSet();
+    if (!allowOwnedOnly) {
+      exclude.addAll(reservedSkillIds);
+    }
+    final options = _buildSkillOptions(
+      group: group,
+      allowOwnedOnly: allowOwnedOnly,
+      exclude: exclude,
+      currentSelectedId: currentSelectedId,
+    );
+    final result = await _showSearchablePicker<String?>(
+      context: context,
+      title: 'Select ${_capitalize(group)} Skill',
+      options: options,
+      selected: currentSelectedId,
+    );
+    if (result == null) return;
+    final updated = _updatedChoiceList(currentChoices, slotIndex, result.value);
+    await _saveGrantChoice(ref, grantType, updated);
+  }
+
+  List<_SearchOption<String?>> _buildLanguageOptions(Set<String> exclude, String? currentSelectedId) {
+    final grouped = <String, List<model.Component>>{};
+    for (final lang in languages) {
+      final type = (lang.data['language_type'] as String?)?.toLowerCase() ?? 'human';
+      grouped.putIfAbsent(type, () => []).add(lang);
+    }
+    for (final group in grouped.values) {
+      group.sort((a, b) => a.name.compareTo(b.name));
+    }
+
+    final options = <_SearchOption<String?>>[
+      const _SearchOption<String?>(label: '— Choose language —', value: null),
+    ];
+
+    for (final entry in grouped.entries) {
+      for (final lang in entry.value) {
+        if (lang.id != currentSelectedId && exclude.contains(lang.id)) {
+          continue;
+        }
+        options.add(
+          _SearchOption<String?>(
+            label: lang.name,
+            value: lang.id,
+            subtitle: _languageGroupTitle(entry.key),
           ),
-          // Keywords
-          if (keywords.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 4,
-              runSpacing: 2,
-              children: keywords.map((k) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(
-                  color: scheme.tertiaryContainer.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Text(
-                  k,
-                  style: TextStyle(fontSize: 9, color: scheme.onTertiaryContainer),
-                ),
-              )).toList(),
-            ),
-          ],
-          // Story text / flavor
-          if (storyText != null && storyText.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              storyText,
-              style: TextStyle(
-                fontSize: 11,
-                fontStyle: FontStyle.italic,
-                color: textColor.withOpacity(0.8),
-              ),
-            ),
-          ],
-          // Range and Targets
-          if (range != null || targets != null) ...[
-            const SizedBox(height: 6),
-            if (range != null && range['distance'] != null)
-              _buildDetail('Range', range['distance'].toString(), textColor),
-            if (targets != null)
-              _buildDetail('Targets', targets, textColor),
-          ],
-          // Effect
-          if (effect != null && effect.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              'Effect:',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
-            ),
-            const SizedBox(height: 2),
-            Text(effect, style: TextStyle(fontSize: 11, color: textColor)),
-          ],
+        );
+      }
+    }
+    return options;
+  }
+
+  List<_SearchOption<String?>> _buildSkillOptions({
+    required String group,
+    required bool allowOwnedOnly,
+    required Set<String> exclude,
+    required String? currentSelectedId,
+  }) {
+    final normalizedGroup = group.toLowerCase();
+    final source = skills.where((skill) {
+      final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
+      if (skillGroup != normalizedGroup) return false;
+      if (allowOwnedOnly) {
+        return reservedSkillIds.contains(skill.id);
+      }
+      return !reservedSkillIds.contains(skill.id) || skill.id == currentSelectedId;
+    }).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+    final options = <_SearchOption<String?>>[
+      const _SearchOption<String?>(label: '— Choose skill —', value: null),
+    ];
+
+    for (final skill in source) {
+      if (skill.id != currentSelectedId && exclude.contains(skill.id)) continue;
+      options.add(_SearchOption<String?>(label: skill.name, value: skill.id));
+    }
+    return options;
+  }
+
+  List<String> _updatedChoiceList(List<String> currentChoices, int slotIndex, String? newValue) {
+    final updated = List<String>.from(currentChoices);
+    while (updated.length <= slotIndex) {
+      updated.add('');
+    }
+    updated[slotIndex] = newValue?.trim() ?? '';
+    return updated.where((value) => value.isNotEmpty).toList();
+  }
+
+  Future<void> _saveGrantChoice(
+    WidgetRef ref,
+    String grantType,
+    List<String> chosenIds,
+  ) async {
+    final db = ref.read(appDatabaseProvider);
+    await PerkGrantsService().saveGrantChoiceAndApply(
+      db: db,
+      heroId: heroId,
+      perkId: perkId,
+      grantType: grantType,
+      chosenIds: chosenIds,
+    );
+    onDirty();
+    ref.invalidate(_perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+  }
+
+  Widget _buildGrantRow(String text, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(text, style: TextStyle(fontSize: 12, color: color)),
+    );
+  }
+
+  Widget _buildLoadingRow(Color color, String message) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+          ),
+          const SizedBox(width: 8),
+          Text(message, style: TextStyle(fontSize: 12, color: color)),
         ],
       ),
     );
   }
 
-  Widget _buildDetail(String label, String value, Color textColor) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: '$label: ',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
-            ),
-            TextSpan(text: value, style: TextStyle(fontSize: 11, color: textColor)),
-          ],
-        ),
-      ),
-    );
+  int _parseCount(dynamic value) {
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) {
+      final parsed = int.tryParse(value.trim());
+      if (parsed != null) return parsed;
+    }
+    return 0;
+  }
+
+  String _languageGroupTitle(String key) {
+    switch (key) {
+      case 'ancestral':
+        return 'Ancestral Languages';
+      case 'dead':
+        return 'Dead Languages';
+      default:
+        return 'Human Languages';
+    }
+  }
+
+  String _capitalize(String value) {
+    if (value.isEmpty) return value;
+    return value[0].toUpperCase() + value.substring(1).toLowerCase();
   }
 }

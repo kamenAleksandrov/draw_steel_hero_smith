@@ -6,6 +6,8 @@ import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:path_provider/path_provider.dart';
 
+import '../models/component.dart' as model;
+
 part 'app_database.g.dart';
 
 class Components extends Table {
@@ -271,6 +273,30 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<Component>> getAllComponents() => select(components).get();
+  
+  /// Get a single component by ID
+  Future<Component?> getComponentById(String id) async {
+    return (select(components)..where((c) => c.id.equals(id))).getSingleOrNull();
+  }
+  
+  /// Insert a component model into the database
+  Future<void> insertComponent(model.Component component) async {
+    final now = DateTime.now();
+    await into(components).insert(
+      ComponentsCompanion.insert(
+        id: component.id,
+        type: component.type,
+        name: component.name,
+        dataJson: Value(jsonEncode(component.data)),
+        source: const Value('perk_ability'),
+        parentId: const Value(null),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+  }
+  
   Stream<List<Component>> watchAllComponents() => select(components).watch();
   Stream<List<Component>> watchComponentsByType(String type) =>
       (select(components)..where((c) => c.type.equals(type))).watch();
@@ -386,6 +412,16 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<HeroValue>> getHeroValues(String heroId) {
     return (select(heroValues)..where((t) => t.heroId.equals(heroId))).get();
+  }
+
+  /// Delete a specific hero value by key
+  Future<void> deleteHeroValue({
+    required String heroId,
+    required String key,
+  }) async {
+    await (delete(heroValues)
+          ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
+        .go();
   }
 
   Stream<List<HeroValue>> watchHeroValues(String heroId) {

@@ -2,26 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
 import '../../core/models/component.dart';
+import '../../core/services/perk_grants_service.dart';
 import '../../core/theme/ds_theme.dart';
+import '../abilities/ability_expandable_item.dart';
 import '../shared/section_widgets.dart';
 import '../shared/expandable_card.dart';
 
+/// Provider for loading perk grant choices for a specific hero and perk
+final _perkGrantChoicesProvider = FutureProvider.family<
+    Map<String, List<String>>, ({String heroId, String perkId})>((ref, args) async {
+  final db = ref.read(appDatabaseProvider);
+  return PerkGrantsService().getAllGrantChoicesForPerk(
+    db: db,
+    heroId: args.heroId,
+    perkId: args.perkId,
+  );
+});
+
+/// Provider for loading hero's skills
+final _heroSkillIdsProvider = FutureProvider.family<List<String>, String>((ref, heroId) async {
+  final db = ref.read(appDatabaseProvider);
+  return PerkGrantsService().getHeroSkillIds(db: db, heroId: heroId);
+});
+
+/// Provider for loading hero's languages  
+final _heroLanguageIdsProvider = FutureProvider.family<List<String>, String>((ref, heroId) async {
+  final db = ref.read(appDatabaseProvider);
+  return PerkGrantsService().getHeroLanguageIds(db: db, heroId: heroId);
+});
+
+/// Provider for loading all skills
+final _allSkillsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  return PerkGrantsService().loadSkills();
+});
+
+/// Provider for loading all languages
+final _allLanguagesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+  return PerkGrantsService().loadLanguages();
+});
+
 class PerkCard extends ConsumerWidget {
   final Component perk;
+  /// If provided, enables hero-specific grant selection UI
+  final String? heroId;
 
-  const PerkCard({super.key, required this.perk});
+  const PerkCard({super.key, required this.perk, this.heroId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = perk.data;
     final group = (data['group'] as String?) ?? 'exploration';
     final description = data['description'] as String?;
-    final grants = data['grants'] as List?;
+    final grantsRaw = data['grants'];
 
     final ds = DsTheme.of(context);
     final scheme = Theme.of(context).colorScheme;
     final borderColor = ds.perkGroupBorder[group] ?? scheme.outlineVariant;
     final neutralText = scheme.onSurface;
+    
+    // Parse grants using the service
+    final parsedGrant = PerkGrant.fromJson(grantsRaw);
+    final hasGrants = parsedGrant != null;
 
     return ExpandableCard(
       title: perk.name,
@@ -51,10 +92,10 @@ class PerkCard extends ConsumerWidget {
             const SizedBox(height: 2),
             _buildIndentedText(description, neutralText),
           ],
-          if (grants != null && grants.isNotEmpty) ...[
+          if (hasGrants) ...[
             SectionLabel('Grants', emoji: ds.perkSectionEmoji['grants'], color: borderColor),
             const SizedBox(height: 2),
-            _buildGrants(context, ref, grants, neutralText, borderColor),
+            _buildGrantsFromParsed(context, ref, parsedGrant, neutralText, borderColor),
           ],
         ],
       ),
@@ -73,29 +114,28 @@ class PerkCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildGrants(BuildContext context, WidgetRef ref, List<dynamic> grants, Color textColor, Color accentColor) {
+  Widget _buildGrantsFromParsed(BuildContext context, WidgetRef ref, PerkGrant grant, Color textColor, Color accentColor) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final grant in grants)
-            _buildGrantItem(context, ref, grant, textColor, accentColor),
-        ],
+        children: _buildGrantWidgets(context, ref, grant, textColor, accentColor),
       ),
     );
   }
 
-  Widget _buildGrantItem(BuildContext context, WidgetRef ref, dynamic grant, Color textColor, Color accentColor) {
-    if (grant is! Map) {
-      return _buildGrantRow(grant.toString(), textColor);
-    }
-    
-    final abilityName = grant['ability'] as String?;
-    if (abilityName == null) {
-      return _buildGrantRow(_formatGrant(grant), textColor);
-    }
+  List<Widget> _buildGrantWidgets(BuildContext context, WidgetRef ref, PerkGrant grant, Color textColor, Color accentColor) {
+    return switch (grant) {
+      AbilityGrant(:final abilityName) => [_buildAbilityGrantItem(context, ref, abilityName, textColor, accentColor)],
+      CreatureGrant(:final creatureName) => [_buildCreatureGrantItem(creatureName, textColor)],
+      SkillFromOwnedGrant(:final group) => [_buildSkillFromOwnedGrantItem(context, ref, group, textColor, accentColor)],
+      SkillPickGrant(:final group, :final count) => [_buildSkillPickGrantItem(context, ref, group, count, textColor, accentColor)],
+      LanguageGrant(:final count) => [_buildLanguageGrantItem(context, ref, count, textColor, accentColor)],
+      MultiGrant(:final grants) => grants.expand((g) => _buildGrantWidgets(context, ref, g, textColor, accentColor)).toList(),
+    };
+  }
 
+  Widget _buildAbilityGrantItem(BuildContext context, WidgetRef ref, String abilityName, Color textColor, Color accentColor) {
     // Look up the full ability by name
     final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
     
@@ -104,7 +144,10 @@ class PerkCard extends ConsumerWidget {
         if (ability == null) {
           return _buildGrantRow('Ability: $abilityName', textColor);
         }
-        return _buildAbilityCard(context, ability, textColor, accentColor);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: AbilityExpandableItem(component: ability),
+        );
       },
       loading: () => Padding(
         padding: const EdgeInsets.only(bottom: 6),
@@ -127,144 +170,575 @@ class PerkCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildAbilityCard(BuildContext context, Component ability, Color textColor, Color accentColor) {
-    final data = ability.data;
-    final actionType = data['action_type'] as String?;
-    final keywords = (data['keywords'] as List?)?.cast<String>() ?? [];
-    final range = data['range'] as Map?;
-    final targets = data['targets'] as String?;
-    final effect = data['effect'] as String?;
-    final storyText = data['story_text'] as String?;
-    final scheme = Theme.of(context).colorScheme;
+  Widget _buildCreatureGrantItem(String creatureName, Color textColor) {
+    // For now, just display the creature name - future implementation
+    return _buildGrantRow('🐾 Creature: $creatureName', textColor);
+  }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: accentColor.withOpacity(0.05),
-        border: Border.all(color: accentColor.withOpacity(0.3), width: 1),
-        borderRadius: BorderRadius.circular(8),
+  Widget _buildSkillFromOwnedGrantItem(BuildContext context, WidgetRef ref, String group, Color textColor, Color accentColor) {
+    // If no heroId, just show generic text
+    if (heroId == null) {
+      return _buildGrantRow('Choose one $group skill you own', textColor);
+    }
+
+    // Load hero's skills and all skills for the group
+    final heroSkillsAsync = ref.watch(_heroSkillIdsProvider(heroId!));
+    final allSkillsAsync = ref.watch(_allSkillsProvider);
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+
+    return heroSkillsAsync.when(
+      loading: () => _buildLoadingGrant(accentColor, textColor),
+      error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+      data: (heroSkillIds) => allSkillsAsync.when(
+        loading: () => _buildLoadingGrant(accentColor, textColor),
+        error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+        data: (allSkills) => choicesAsync.when(
+          loading: () => _buildLoadingGrant(accentColor, textColor),
+          error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+          data: (choices) {
+            // Get skills that: 1) hero owns AND 2) match the group
+            final groupSkills = allSkills.where((s) =>
+              (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
+            ).toList();
+            
+            final ownedGroupSkills = groupSkills.where((s) =>
+              heroSkillIds.contains(s['id'] as String?)
+            ).toList();
+
+            if (ownedGroupSkills.isEmpty) {
+              return _buildGrantRow('⚠️ No $group skills owned', textColor.withOpacity(0.7));
+            }
+
+            // Get current choice
+            final currentChoice = choices['skill_owned']?.firstOrNull;
+            final selectedSkill = currentChoice != null
+              ? ownedGroupSkills.firstWhere(
+                  (s) => s['id'] == currentChoice,
+                  orElse: () => <String, dynamic>{},
+                )
+              : null;
+
+            return _buildSkillSelector(
+              context: context,
+              ref: ref,
+              label: 'Chosen ${_capitalize(group)} Skill',
+              skills: ownedGroupSkills,
+              selectedSkillId: currentChoice,
+              selectedSkillName: selectedSkill?['name'] as String?,
+              grantType: 'skill_owned',
+              textColor: textColor,
+              accentColor: accentColor,
+            );
+          },
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
+  Widget _buildSkillPickGrantItem(BuildContext context, WidgetRef ref, String group, int count, Color textColor, Color accentColor) {
+    // If no heroId, just show generic text
+    if (heroId == null) {
+      return _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor);
+    }
+
+    // Load hero's skills and all skills for the group
+    final heroSkillsAsync = ref.watch(_heroSkillIdsProvider(heroId!));
+    final allSkillsAsync = ref.watch(_allSkillsProvider);
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+
+    return heroSkillsAsync.when(
+      loading: () => _buildLoadingGrant(accentColor, textColor),
+      error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+      data: (heroSkillIds) => allSkillsAsync.when(
+        loading: () => _buildLoadingGrant(accentColor, textColor),
+        error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+        data: (allSkills) => choicesAsync.when(
+          loading: () => _buildLoadingGrant(accentColor, textColor),
+          error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+          data: (choices) {
+            // Get skills that: 1) hero DOESN'T own AND 2) match the group
+            final groupSkills = allSkills.where((s) =>
+              (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
+            ).toList();
+            
+            final availableSkills = groupSkills.where((s) =>
+              !heroSkillIds.contains(s['id'] as String?)
+            ).toList();
+
+            // Get current choices
+            final currentChoices = choices['skill_pick'] ?? [];
+            
+            // Build a widget for each slot
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(count, (index) {
+                final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                final selectedSkill = selectedId != null
+                  ? groupSkills.firstWhere(
+                      (s) => s['id'] == selectedId,
+                      orElse: () => <String, dynamic>{},
+                    )
+                  : null;
+
+                // For available options, exclude already selected ones (from other slots)
+                final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
+                final slotOptions = availableSkills.where((s) =>
+                  !alreadySelected.contains(s['id'] as String?)
+                ).toList();
+
+                return _buildSkillSelector(
+                  context: context,
+                  ref: ref,
+                  label: count == 1 
+                    ? 'New ${_capitalize(group)} Skill'
+                    : 'New ${_capitalize(group)} Skill ${index + 1}',
+                  skills: slotOptions,
+                  selectedSkillId: selectedId,
+                  selectedSkillName: selectedSkill?['name'] as String?,
+                  grantType: 'skill_pick',
+                  slotIndex: index,
+                  allCurrentChoices: currentChoices,
+                  textColor: textColor,
+                  accentColor: accentColor,
+                );
+              }),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageGrantItem(BuildContext context, WidgetRef ref, int count, Color textColor, Color accentColor) {
+    // If no heroId, just show generic text
+    if (heroId == null) {
+      return _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor);
+    }
+
+    // Load hero's languages and all languages
+    final heroLanguagesAsync = ref.watch(_heroLanguageIdsProvider(heroId!));
+    final allLanguagesAsync = ref.watch(_allLanguagesProvider);
+    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+
+    return heroLanguagesAsync.when(
+      loading: () => _buildLoadingGrant(accentColor, textColor),
+      error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+      data: (heroLanguageIds) => allLanguagesAsync.when(
+        loading: () => _buildLoadingGrant(accentColor, textColor),
+        error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+        data: (allLanguages) => choicesAsync.when(
+          loading: () => _buildLoadingGrant(accentColor, textColor),
+          error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+          data: (choices) {
+            // Get languages that hero DOESN'T own
+            final availableLanguages = allLanguages.where((l) =>
+              !heroLanguageIds.contains(l['id'] as String?)
+            ).toList();
+
+            // Get current choices
+            final currentChoices = choices['language'] ?? [];
+            
+            // Build a widget for each slot
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(count, (index) {
+                final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                final selectedLanguage = selectedId != null
+                  ? allLanguages.firstWhere(
+                      (l) => l['id'] == selectedId,
+                      orElse: () => <String, dynamic>{},
+                    )
+                  : null;
+
+                // For available options, exclude already selected ones (from other slots)
+                final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
+                final slotOptions = availableLanguages.where((l) =>
+                  !alreadySelected.contains(l['id'] as String?)
+                ).toList();
+
+                return _buildLanguageSelector(
+                  context: context,
+                  ref: ref,
+                  label: count == 1 ? 'New Language' : 'New Language ${index + 1}',
+                  languages: slotOptions,
+                  selectedLanguageId: selectedId,
+                  selectedLanguageName: selectedLanguage?['name'] as String?,
+                  slotIndex: index,
+                  allCurrentChoices: currentChoices,
+                  textColor: textColor,
+                  accentColor: accentColor,
+                );
+              }),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingGrant(Color accentColor, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
         children: [
-          // Header row with name and action type
-          Row(
-            children: [
-              Text(
-                '⚡ ${ability.name}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                ),
-              ),
-              if (actionType != null) ...[
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: scheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    actionType,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w600,
-                      color: scheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
-              ],
-            ],
+          SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
           ),
-          // Keywords
-          if (keywords.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 4,
-              runSpacing: 2,
-              children: keywords.map((k) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(
-                  color: scheme.tertiaryContainer.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                child: Text(
-                  k,
-                  style: TextStyle(
-                    fontSize: 8,
-                    color: scheme.onTertiaryContainer,
-                  ),
-                ),
-              )).toList(),
-            ),
-          ],
-          // Story text / flavor
-          if (storyText != null && storyText.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              storyText,
-              style: TextStyle(
-                fontSize: 10,
-                fontStyle: FontStyle.italic,
-                color: textColor.withOpacity(0.8),
-              ),
-            ),
-          ],
-          // Range and Targets
-          if (range != null || targets != null) ...[
-            const SizedBox(height: 6),
-            if (range != null && range['distance'] != null)
-              _buildAbilityDetail('Range', range['distance'].toString(), textColor),
-            if (targets != null)
-              _buildAbilityDetail('Targets', targets, textColor),
-          ],
-          // Effect
-          if (effect != null && effect.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              'Effect:',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              effect,
-              style: TextStyle(fontSize: 10, color: textColor),
-            ),
-          ],
+          const SizedBox(width: 8),
+          Text('Loading...', style: TextStyle(fontSize: 11, color: textColor)),
         ],
       ),
     );
   }
 
-  Widget _buildAbilityDetail(String label, String value, Color textColor) {
+  Widget _buildSkillSelector({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String label,
+    required List<Map<String, dynamic>> skills,
+    required String? selectedSkillId,
+    required String? selectedSkillName,
+    required String grantType,
+    int? slotIndex,
+    List<String>? allCurrentChoices,
+    required Color textColor,
+    required Color accentColor,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: '$label: ',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: textColor,
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 0, left: 2, right: 6),
+            child: Icon(Icons.school, size: 14, color: accentColor),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: skills.isEmpty ? null : () => _showSkillPicker(
+                context: context,
+                ref: ref,
+                skills: skills,
+                currentSelectedId: selectedSkillId,
+                grantType: grantType,
+                slotIndex: slotIndex,
+                allCurrentChoices: allCurrentChoices,
+                accentColor: accentColor,
+              ),
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: selectedSkillId != null 
+                      ? accentColor.withOpacity(0.4)
+                      : accentColor.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        selectedSkillName ?? 'Tap to select $label',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: selectedSkillName != null ? textColor : textColor.withOpacity(0.6),
+                          fontStyle: selectedSkillName != null ? FontStyle.normal : FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.arrow_drop_down, size: 16, color: accentColor),
+                  ],
+                ),
               ),
             ),
-            TextSpan(
-              text: value,
-              style: TextStyle(fontSize: 10, color: textColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector({
+    required BuildContext context,
+    required WidgetRef ref,
+    required String label,
+    required List<Map<String, dynamic>> languages,
+    required String? selectedLanguageId,
+    required String? selectedLanguageName,
+    int? slotIndex,
+    List<String>? allCurrentChoices,
+    required Color textColor,
+    required Color accentColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 0, left: 2, right: 6),
+            child: Icon(Icons.translate, size: 14, color: accentColor),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: languages.isEmpty ? null : () => _showLanguagePicker(
+                context: context,
+                ref: ref,
+                languages: languages,
+                currentSelectedId: selectedLanguageId,
+                slotIndex: slotIndex,
+                allCurrentChoices: allCurrentChoices,
+                accentColor: accentColor,
+              ),
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: selectedLanguageId != null 
+                      ? accentColor.withOpacity(0.4)
+                      : accentColor.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        selectedLanguageName ?? 'Tap to select $label',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: selectedLanguageName != null ? textColor : textColor.withOpacity(0.6),
+                          fontStyle: selectedLanguageName != null ? FontStyle.normal : FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.arrow_drop_down, size: 16, color: accentColor),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSkillPicker({
+    required BuildContext context,
+    required WidgetRef ref,
+    required List<Map<String, dynamic>> skills,
+    required String? currentSelectedId,
+    required String grantType,
+    int? slotIndex,
+    List<String>? allCurrentChoices,
+    required Color accentColor,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (_, scrollController) => Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Text(
+                    'Select Skill',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: skills.length,
+                itemBuilder: (_, index) {
+                  final skill = skills[index];
+                  final id = skill['id'] as String?;
+                  final name = skill['name'] as String? ?? 'Unknown';
+                  final isSelected = id == currentSelectedId;
+
+                  return ListTile(
+                    leading: Icon(
+                      isSelected ? Icons.check_circle : Icons.circle_outlined,
+                      color: isSelected ? accentColor : null,
+                    ),
+                    title: Text(name),
+                    selected: isSelected,
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      if (id == null || heroId == null) return;
+                      
+                      final db = ref.read(appDatabaseProvider);
+                      final service = PerkGrantsService();
+                      
+                      // Update the choice list
+                      List<String> newChoices;
+                      if (slotIndex != null && allCurrentChoices != null) {
+                        // Multi-slot selection
+                        newChoices = List<String>.from(allCurrentChoices);
+                        while (newChoices.length <= slotIndex) {
+                          newChoices.add('');
+                        }
+                        newChoices[slotIndex] = id;
+                        // Remove empty strings
+                        newChoices = newChoices.where((c) => c.isNotEmpty).toList();
+                      } else {
+                        // Single selection
+                        newChoices = [id];
+                      }
+                      
+                      // Save choice and apply changes (removes old grants, adds new ones)
+                      await service.saveGrantChoiceAndApply(
+                        db: db,
+                        heroId: heroId!,
+                        perkId: perk.id,
+                        grantType: grantType,
+                        chosenIds: newChoices,
+                      );
+                      
+                      // Invalidate providers to refresh
+                      ref.invalidate(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+                      ref.invalidate(_heroSkillIdsProvider(heroId!));
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _showLanguagePicker({
+    required BuildContext context,
+    required WidgetRef ref,
+    required List<Map<String, dynamic>> languages,
+    required String? currentSelectedId,
+    int? slotIndex,
+    List<String>? allCurrentChoices,
+    required Color accentColor,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (_, scrollController) => Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Text(
+                    'Select Language',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: languages.length,
+                itemBuilder: (_, index) {
+                  final language = languages[index];
+                  final id = language['id'] as String?;
+                  final name = language['name'] as String? ?? 'Unknown';
+                  final isSelected = id == currentSelectedId;
+
+                  return ListTile(
+                    leading: Icon(
+                      isSelected ? Icons.check_circle : Icons.circle_outlined,
+                      color: isSelected ? accentColor : null,
+                    ),
+                    title: Text(name),
+                    selected: isSelected,
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      if (id == null || heroId == null) return;
+                      
+                      final db = ref.read(appDatabaseProvider);
+                      final service = PerkGrantsService();
+                      
+                      // Update the choice list
+                      List<String> newChoices;
+                      if (slotIndex != null && allCurrentChoices != null) {
+                        // Multi-slot selection
+                        newChoices = List<String>.from(allCurrentChoices);
+                        while (newChoices.length <= slotIndex) {
+                          newChoices.add('');
+                        }
+                        newChoices[slotIndex] = id;
+                        // Remove empty strings
+                        newChoices = newChoices.where((c) => c.isNotEmpty).toList();
+                      } else {
+                        // Single selection
+                        newChoices = [id];
+                      }
+                      
+                      // Save choice and apply changes (removes old grants, adds new ones)
+                      await service.saveGrantChoiceAndApply(
+                        db: db,
+                        heroId: heroId!,
+                        perkId: perk.id,
+                        grantType: 'language',
+                        chosenIds: newChoices,
+                      );
+                      
+                      // Invalidate providers to refresh
+                      ref.invalidate(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+                      ref.invalidate(_heroLanguageIdsProvider(heroId!));
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 
   Widget _buildGrantRow(String text, Color color) {
@@ -295,19 +769,5 @@ class PerkCard extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _formatGrant(dynamic grant) {
-    if (grant is String) return grant;
-    if (grant is Map) {
-      final ability = grant['ability'];
-      if (ability is String) return 'Ability: $ability';
-      
-      // Handle other grant types if needed
-      final keys = grant.keys.cast<String>().toList();
-      keys.sort();
-      return keys.map((k) => '$k: ${grant[k]}').join(', ');
-    }
-    return grant.toString();
   }
 }

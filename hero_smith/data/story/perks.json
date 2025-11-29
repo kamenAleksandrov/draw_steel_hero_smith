@@ -1,5 +1,48 @@
 [
   {
+    "id": "area_of_expertise",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Area of Expertise",
+    "description": "Choose one skill you already have from the crafting skill group. Whenever you obtain a tier 1 outcome on an easy or medium test using this skill, you treat it as a tier 2 outcome instead. Additionally, if you spend 1 minute inspecting an object related to the chosen skill, you can estimate its value and learn of any flaws in its construction.",
+    "grants": { "skill": { "group": "crafting", "count": "one_owned" } }
+  },
+  {
+    "id": "expert_artisan",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Expert Artisan",
+    "description": "Whenever you make a test as part of a crafting or research project that uses a skill you already have from the crafting skill group, you can make the power roll twice and use either roll."
+  },
+  {
+    "id": "handy",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Handy",
+    "description": "Whenever you make a test to craft something and don’t have a skill that applies to the test, you gain a +1 bonus to the power roll."
+  },
+  {
+    "id": "improvisation_creation",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Improvisation Creation",
+    "description": "Without needing to make a test—and even without tools—you can quickly jury-rig or repair a mundane item or piece of equipment related to a skill you have from the crafting skill group. That item lasts for 1 hour or works for one use or activation (whichever comes first, as the Director determines), then breaks beyond repair. For example, if you have the Carpentry skill, you could repair a rickety wooden bridge long enough for a group of creatures to cross it, or build a simple shovel made of wood that can be used for 1 hour."
+  },
+  {
+    "id": "inspired_artisan",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Inspired Artisan",
+    "description": "When you make a project roll using a skill from the crafting skill group, you can spend a hero token to make another project roll for the same project as part of the same respite activity. You can’t use this perk more than once per respite."
+  },
+  {
+    "id": "traveling_artisan",
+    "type": "perk",
+    "group": "crafting",
+    "name": "Traveling Artisan",
+    "description": "On any day when you don’t take a respite, you can spend 1 uninterrupted hour working on a crafting project using a skill you have from the crafting skill group. If you do so, you gain 1d10 project points toward that project."
+  },
+  {
     "id": "brawny",
     "type": "perk",
     "group": "exploration",
@@ -9,7 +52,7 @@
   {
     "id": "camouflage_hunter",
     "type": "perk",
-    "group": "exploration", 
+    "group": "exploration",
     "name": "Camouflage Hunter",
     "description": "Whenever you are in wilderness, once you are hidden from a creature, you don't need cover or concealment to stay hidden from them."
   },
@@ -17,7 +60,7 @@
     "id": "danger_sense",
     "type": "perk",
     "group": "exploration",
-    "name": "Danger Sense", 
+    "name": "Danger Sense",
     "description": "Whenever you are in a natural environment (but not in a settlement in that environment), you gain an edge on tests made using the Alertness skill, and you can't be surprised. Additionally, you have a connection to nature that warns you if any natural disaster is imminent within the next 72 hours, though you don't know exactly what it will entail (an earthquake, a wildfire, and so forth)."
   },
   {
@@ -26,14 +69,15 @@
     "group": "exploration",
     "name": "Friend Catapult",
     "description": "As a maneuver, you grab a willing adjacent ally or object of your size or smaller, then vertical push that target up to a number of squares equal to twice your Might score. If a creature you push falls as a result of this movement, the effective distance of the fall is reduced by a number of squares equal to twice your Might score. When you use this perk, you can't use it again until you earn 1 or more Victories.",
-    "grants": [ { "ability": "Friend Catapult" } ]
+    "grants": [{ "ability": "Friend Catapult" }]
   },
   {
     "id": "ive_got_you",
     "type": "perk",
     "group": "exploration",
     "name": "I've Got You!",
-    "description": "Whenever a willing ally falls and would land on you or adjacent to you, you can safely catch them as a free triggered action. Neither of you takes damage from the ally's fall."
+    "description": "Whenever a willing ally falls and would land on you or adjacent to you, you can safely catch them as a free triggered action. Neither of you takes damage from the ally's fall.",
+    "grants": [{ "ability": "I've Got You!" }]
   },
   {
     "id": "monster_whisperer",
@@ -45,7 +89,7 @@
   {
     "id": "put_your_back_into_it",
     "type": "perk",
-    "group": "exploration", 
+    "group": "exploration",
     "name": "Put Your Back Into It!",
     "description": "During montage tests, whenever you make a test to assist a test and obtain a tier 1 outcome, the assisted test doesn't take a bane. Additionally, once per montage test, you can turn an ally's tier 1 test outcome into a tier 2 outcome."
   },
@@ -60,7 +104,7 @@
     "id": "teamwork",
     "type": "perk",
     "group": "exploration",
-    "name": "Teamwork", 
+    "name": "Teamwork",
     "description": "When you take your first turn during any montage test, you can both make a test and assist another hero's test."
   },
   {
@@ -74,7 +118,7 @@
     "id": "charming_liar",
     "type": "perk",
     "group": "interpersonal",
-    "name": "Charming Liar", 
+    "name": "Charming Liar",
     "description": "If you fail a test using the Lie skill, you don't suffer any consequences associated with the failure. Additionally, during a negotiation, you can be caught in one lie without negative consequences. When you use either benefit of this perk, you can't use this perk again until you earn 1 or more Victories."
   },
   {
@@ -85,7 +129,7 @@
     "description": "Whenever a creature watches you sing, dance, or perform a role (as an actor, not just in disguise) for 1 uninterrupted minute or more, you gain an edge on any test made to influence that creature for 1 hour after the performance ends."
   },
   {
-    "id": "engrossing_monologue", 
+    "id": "engrossing_monologue",
     "type": "perk",
     "group": "interpersonal",
     "name": "Engrossing Monologue",
@@ -101,7 +145,7 @@
   {
     "id": "lie_detector",
     "type": "perk",
-    "group": "interpersonal", 
+    "group": "interpersonal",
     "name": "Lie Detector",
     "description": "In response to another creature communicating information to you, you can spend a hero token to determine whether that information contained any knowing lies. If so, you know what the lies are, but not what the truth is."
   },
@@ -123,7 +167,7 @@
     "id": "power_player",
     "type": "perk",
     "group": "interpersonal",
-    "name": "Power Player", 
+    "name": "Power Player",
     "description": "Whenever you make a test that uses the Brag, Flirt, or Intimidate skills, you can use Might instead of any other characteristic the test calls for."
   },
   {
@@ -159,7 +203,8 @@
     "type": "perk",
     "group": "intrigue",
     "name": "Gum Up the Works",
-    "description": "Whenever a mundane trap activates within 3 squares, you can use a triggered action to move up to 3 squares toward it. If this movement brings you adjacent to any of the trap's mechanisms, you can jam the trap, preventing it from activating. As long as you stay adjacent to the mechanism, the trap can't go off unless an attempt to disarm it fails."
+    "description": "Whenever a mundane trap activates within 3 squares, you can use a triggered action to move up to 3 squares toward it. If this movement brings you adjacent to any of the trap's mechanisms, you can jam the trap, preventing it from activating. As long as you stay adjacent to the mechanism, the trap can't go off unless an attempt to disarm it fails.",
+    "grants": [{ "ability": "Gum Up the Works" }]
   },
   {
     "id": "lucky_dog",
@@ -172,7 +217,7 @@
     "id": "master_of_disguise",
     "type": "perk",
     "group": "intrigue",
-    "name": "Master of Disguise", 
+    "name": "Master of Disguise",
     "description": "You can don or remove a disguise as part of any test you make using the Hide skill, or while using the Hide maneuver."
   },
   {
@@ -194,12 +239,13 @@
     "type": "perk",
     "group": "lore",
     "name": "Eidetic Memory",
-    "description": "Your mind is an encyclopedia, though not always an easy one to organize. When you finish a respite, choose one skill from the lore skill group that you don't have. You have that skill until you finish your next respite. Additionally, if you spend 1 uninterrupted minute or more reading any page of text, you can memorize its contents, allowing you to memorize entire books with sufficient time."
+    "description": "Your mind is an encyclopedia, though not always an easy one to organize. When you finish a respite, choose one skill from the lore skill group that you don't have. You have that skill until you finish your next respite. Additionally, if you spend 1 uninterrupted minute or more reading any page of text, you can memorize its contents, allowing you to memorize entire books with sufficient time.",
+    "grants": { "skill": { "group": "lore", "count": 1 } }
   },
   {
     "id": "expert_sage",
     "type": "perk",
-    "group": "lore", 
+    "group": "lore",
     "name": "Expert Sage",
     "description": "Whenever you make a test as part of a crafting or research project using a skill from the lore skill group, you can make the power roll twice and use either roll."
   },
@@ -215,7 +261,8 @@
     "type": "perk",
     "group": "lore",
     "name": "Linguist",
-    "description": "You automatically learn two new languages, as long as you have regularly heard those languages spoken or seen them written before. Additionally, if you spend 7 days or more in a place where you regularly hear or read a language you don't know, you can pick up enough of that language to hold a conversation or understand basic written information. Having picked up a language this way, you can subsequently learn it using the Learn New Language research project at half the usual project goal cost."
+    "description": "You automatically learn two new languages, as long as you have regularly heard those languages spoken or seen them written before. Additionally, if you spend 7 days or more in a place where you regularly hear or read a language you don't know, you can pick up enough of that language to hold a conversation or understand basic written information. Having picked up a language this way, you can subsequently learn it using the Learn New Language research project at half the usual project goal cost.",
+    "grants": { "languages": 2 }
   },
   {
     "id": "polymath",
@@ -229,7 +276,8 @@
     "type": "perk",
     "group": "lore",
     "name": "Specialist",
-    "description": "You are a leading expert on a particular subject. Choose one skill you have from the lore skill group. You always have a double edge on tests made to recall lore using this skill. Additionally, your specialist knowledge grants you notoriety in fields related to the chosen skill. You treat your Renown as 1 higher when negotiating with an NPC who knows your reputation, or 2 higher if they have the same skill you chose for this perk."
+    "description": "You are a leading expert on a particular subject. Choose one skill you have from the lore skill group. You always have a double edge on tests made to recall lore using this skill. Additionally, your specialist knowledge grants you notoriety in fields related to the chosen skill. You treat your Renown as 1 higher when negotiating with an NPC who knows your reputation, or 2 higher if they have the same skill you chose for this perk.",
+    "grants": { "skill": { "group": "lore", "count": "one_owned" } }
   },
   {
     "id": "traveling_sage",
@@ -244,7 +292,7 @@
     "group": "supernatural",
     "name": "Arcane Trick",
     "description": "You have the following ability.",
-    "grants": [ { "ability": "Arcane Trick" } ]
+    "grants": [{ "ability": "Arcane Trick" }]
   },
   {
     "id": "creature_sense",
@@ -252,14 +300,15 @@
     "group": "supernatural",
     "name": "Creature Sense",
     "description": "You have the following ability.",
-    "grants": [ { "ability": "Creature Sense" } ]
+    "grants": [{ "ability": "Creature Sense" }]
   },
   {
     "id": "familiar",
     "type": "perk",
     "group": "supernatural",
     "name": "Familiar",
-    "description": "A supernatural spirit who has taken the form of a specific small animal or animated object has chosen to be your familiar—or to adopt you as their familiar. The spirit uses the familiar stat block. The familiar can hold small objects in their mouth or claws, but can't perform activities that would typically require hands (opening a door, unrolling a scroll, and so forth). They can't harm other creatures or objects. They can flank in combat, but only with you. If your familiar is destroyed, you can restore them as a respite activity, or by spending a Recovery as a main action to bring them back into existence in an unoccupied space adjacent to you."
+    "description": "A supernatural spirit who has taken the form of a specific small animal or animated object has chosen to be your familiar—or to adopt you as their familiar. The spirit uses the familiar stat block. The familiar can hold small objects in their mouth or claws, but can't perform activities that would typically require hands (opening a door, unrolling a scroll, and so forth). They can't harm other creatures or objects. They can flank in combat, but only with you. If your familiar is destroyed, you can restore them as a respite activity, or by spending a Recovery as a main action to bring them back into existence in an unoccupied space adjacent to you.",
+    "grants": [{ "creature": "Familiar" }]
   },
   {
     "id": "invisible_force",
@@ -267,7 +316,7 @@
     "group": "supernatural",
     "name": "Invisible Force",
     "description": "You have the following ability.",
-    "grants": [ { "ability": "Invisible Force" } ]
+    "grants": [{ "ability": "Invisible Force" }]
   },
   {
     "id": "psychic_whisper",
@@ -275,7 +324,7 @@
     "group": "supernatural",
     "name": "Psychic Whisper",
     "description": "You have the following ability.",
-    "grants": [ { "ability": "Psychic Whisper" } ]
+    "grants": [{ "ability": "Psychic Whisper" }]
   },
   {
     "id": "ritualist",

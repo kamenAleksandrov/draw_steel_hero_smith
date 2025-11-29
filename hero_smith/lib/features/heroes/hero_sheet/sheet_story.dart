@@ -13,6 +13,7 @@ import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/complication_grants_service.dart';
+import '../../../widgets/perks/perk_card.dart';
 import '../../../core/services/story_creator_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
@@ -569,10 +570,7 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                       ),
                       const SizedBox(height: 8),
                       ...career.chosenPerkIds.map((perkId) =>
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: _buildComponentDisplay(context, '', perkId, Icons.star),
-                        ),
+                        _buildHeroPerkCard(context, perkId),
                       ),
                     ],
                   ],
@@ -1217,6 +1215,37 @@ class _SheetStoryState extends ConsumerState<SheetStory>
           ),
         ],
       ),
+    );
+  }
+
+  /// Build a PerkCard for the hero, using the heroId for grant selections
+  Widget _buildHeroPerkCard(BuildContext context, String perkId) {
+    final componentAsync = ref.watch(componentByIdProvider(perkId));
+    
+    return componentAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.only(bottom: 8),
+        child: SizedBox(
+          height: 40,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text('Error loading perk: $e', style: const TextStyle(color: Colors.red)),
+      ),
+      data: (component) {
+        if (component == null || component.id.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text('Perk not found: $perkId'),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: PerkCard(perk: component, heroId: widget.heroId),
+        );
+      },
     );
   }
 
@@ -2592,7 +2621,9 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
     
     final description = benefit['description'] as String?;
     final ability = benefit['ability'] as String?;
-    final grants = benefit['grants'] as List?;
+    final grantsRaw = benefit['grants'];
+    // Normalize grants to a List (can be Map or List)
+    final grants = grantsRaw is List ? grantsRaw : (grantsRaw is Map ? [grantsRaw] : null);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

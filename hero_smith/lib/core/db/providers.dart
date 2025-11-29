@@ -7,6 +7,7 @@ import '../repositories/component_drift_repository.dart';
 import '../repositories/hero_repository.dart';
 import '../repositories/downtime_repository.dart';
 import '../models/component.dart' as model;
+import '../services/perk_grants_service.dart';
 
 // Core singletons
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
@@ -63,13 +64,84 @@ final heroSummariesProvider = StreamProvider<List<HeroSummary>>((ref) {
 });
 
 // Provider to fetch an ability by name (used for perk grants lookup)
-final abilityByNameProvider = FutureProvider.family<model.Component?, String>((ref, name) async {
+final abilityByNameProvider = FutureProvider.family<model.Component?, String>((ref, rawName) async {
+  final name = rawName.trim();
+  if (name.isEmpty) return null;
+
   final abilities = await ref.read(componentsByTypeProvider('ability').future);
+
   // Try exact match first
-  final exactMatch = abilities.where((c) => c.name == name).firstOrNull;
-  if (exactMatch != null) return exactMatch;
-  
-  // Try case-insensitive match
-  final lowerName = name.toLowerCase();
-  return abilities.where((c) => c.name.toLowerCase() == lowerName).firstOrNull;
+  final exactMatch = _findAbility(abilities, (c) => c.name == name);
+  if (exactMatch != null && exactMatch.id.isNotEmpty) {
+    return exactMatch;
+  }
+
+  // Try normalized (case/punctuation-insensitive) match
+  final normalizedTarget = _normalizeAbilityName(name);
+  final normalizedMatch = _findAbility(
+    abilities,
+    (c) => _normalizeAbilityName(c.name) == normalizedTarget,
+  );
+  if (normalizedMatch != null && normalizedMatch.id.isNotEmpty) {
+    return normalizedMatch;
+  }
+
+  // Fallback to perk_abilities.json entries
+  final perkAbilityMap = await PerkGrantsService().getPerkAbilityByName(name);
+  if (perkAbilityMap == null) {
+    return null;
+  }
+  return _perkAbilityToComponent(perkAbilityMap, name);
 });
+
+model.Component? _findAbility(
+  List<model.Component> abilities,
+  bool Function(model.Component ability) predicate,
+) {
+  for (final ability in abilities) {
+    if (predicate(ability)) {
+      return ability;
+    }
+  }
+  return null;
+}
+
+String _normalizeAbilityName(String value) {
+  return value
+      .trim()
+      .toLowerCase()
+      .replaceAll('\u2019', "'")
+      .replaceAll('\u2018', "'")
+      .replaceAll('\u201C', '"')
+      .replaceAll('\u201D', '"');
+}
+
+model.Component _perkAbilityToComponent(Map<String, dynamic> raw, String fallbackName) {
+  final data = Map<String, dynamic>.from(raw);
+  final rawId = data.remove('id')?.toString();
+  final type = data.remove('type')?.toString() ?? 'ability';
+  final name = data.remove('name')?.toString() ?? fallbackName;
+  final safeId = (rawId == null || rawId.isEmpty) ? _slugify(name) : rawId;
+  final componentId = safeId.startsWith('perk_ability_') ? safeId : 'perk_ability_$safeId';
+
+  return model.Component(
+    id: componentId,
+    type: type,
+    name: name,
+    data: data,
+    source: 'perk_ability',
+  );
+}
+
+String _slugify(String value) {
+  final normalized = value
+      .trim()
+      .toLowerCase()
+      .replaceAll('\u2019', '')
+      .replaceAll('\u2018', '')
+      .replaceAll('\u201C', '')
+      .replaceAll('\u201D', '');
+  final slug = normalized.replaceAll(RegExp('[^a-z0-9]+'), '_').replaceAll(RegExp('_+'), '_');
+  final trimmed = slug.replaceAll(RegExp(r'^_+|_+$'), '');
+  return trimmed.isEmpty ? 'ability' : trimmed;
+}

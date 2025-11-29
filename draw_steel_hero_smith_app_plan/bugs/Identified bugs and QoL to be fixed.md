@@ -64,8 +64,20 @@ treasures that are already in the gear of a hero should not be removed when i tr
 
 
 
+perks that may gain features
 
-
+area of expertise
+friend catapult
+i've got you
+gun up the works
+eidetic memory
+linguist
+specialist
+arcane trick
+creature snece
+familliar
+invisible force
+psyhic wisper
 
 
 

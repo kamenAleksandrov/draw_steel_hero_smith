@@ -3,22 +3,26 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../db/app_database.dart' as db;
 import '../db/providers.dart';
 import '../models/story_creator_models.dart';
 import '../repositories/hero_repository.dart';
 import 'ancestry_bonus_service.dart';
 import 'complication_grants_service.dart';
+import 'perk_grants_service.dart';
 
 class StoryCreatorService {
   StoryCreatorService(
     this._heroRepository,
     this._ancestryBonusService,
     this._complicationGrantsService,
+    this._db,
   );
 
   final HeroRepository _heroRepository;
   final AncestryBonusService _ancestryBonusService;
   final ComplicationGrantsService _complicationGrantsService;
+  final db.AppDatabase _db;
   Map<String, StoryCultureSuggestion>? _suggestionsCache;
 
   Future<StoryCreatorLoadResult> loadInitialData(String heroId) async {
@@ -122,12 +126,33 @@ class StoryCreatorService {
       upbringingSkillId: payload.upbringingSkillId,
     );
 
+    // Get previously selected perks before saving career selection
+    final oldCareerSelection = await _heroRepository.loadCareerSelection(payload.heroId);
+    final oldPerkIds = oldCareerSelection.chosenPerkIds.toSet();
+    final newPerkIds = payload.careerPerkIds.toSet();
+    
+    // Determine which perks were removed and which were added
+    final removedPerkIds = oldPerkIds.difference(newPerkIds);
+    final addedPerkIds = newPerkIds.difference(oldPerkIds);
+
     await _heroRepository.saveCareerSelection(
       heroId: payload.heroId,
       careerId: payload.careerId,
       chosenSkillIds: payload.careerSkillIds.toList(),
       chosenPerkIds: payload.careerPerkIds.toList(),
       incitingIncidentName: payload.careerIncidentName,
+    );
+
+    // Remove grants from perks that were deselected
+    await _removePerkGrants(
+      heroId: payload.heroId,
+      perkIds: removedPerkIds.toList(),
+    );
+
+    // Apply perk grants (abilities) for newly selected perks
+    await _applyPerkGrants(
+      heroId: payload.heroId,
+      perkIds: addedPerkIds.toList(),
     );
 
     await _heroRepository.saveComplication(
@@ -197,6 +222,57 @@ class StoryCreatorService {
     return text.isEmpty ? null : text;
   }
 
+  /// Apply perk grants for selected perks.
+  /// This adds ability grants from perks to the hero's abilities.
+  Future<void> _applyPerkGrants({
+    required String heroId,
+    required List<String> perkIds,
+  }) async {
+    // Get all perks from database
+    final allComponents = await _db.getAllComponents();
+    final perkGrantsService = PerkGrantsService();
+    
+    for (final perkId in perkIds) {
+      final perkComp = allComponents.where(
+        (c) => c.id == perkId && c.type == 'perk',
+      ).firstOrNull;
+      
+      if (perkComp == null) continue;
+      
+      try {
+        final data = jsonDecode(perkComp.dataJson) as Map<String, dynamic>;
+        final grantsRaw = data['grants'];
+        if (grantsRaw != null) {
+          await perkGrantsService.applyPerkGrants(
+            db: _db,
+            heroId: heroId,
+            perkId: perkId,
+            grantsJson: grantsRaw,
+          );
+        }
+      } catch (_) {
+        // Skip if perk data is invalid
+      }
+    }
+  }
+
+  /// Remove perk grants for deselected perks.
+  /// This removes ability grants from perks that are no longer selected.
+  Future<void> _removePerkGrants({
+    required String heroId,
+    required List<String> perkIds,
+  }) async {
+    final perkGrantsService = PerkGrantsService();
+    
+    for (final perkId in perkIds) {
+      await perkGrantsService.removePerkGrants(
+        db: _db,
+        heroId: heroId,
+        perkId: perkId,
+      );
+    }
+  }
+
   bool _listEquals(List<String> a, List<String> b) {
     if (a.length != b.length) return false;
     for (var i = 0; i < a.length; i++) {
@@ -218,5 +294,6 @@ final storyCreatorServiceProvider = Provider<StoryCreatorService>((ref) {
   final repo = ref.read(heroRepositoryProvider);
   final ancestryBonusService = ref.read(ancestryBonusServiceProvider);
   final complicationGrantsService = ref.read(complicationGrantsServiceProvider);
-  return StoryCreatorService(repo, ancestryBonusService, complicationGrantsService);
+  final database = ref.read(appDatabaseProvider);
+  return StoryCreatorService(repo, ancestryBonusService, complicationGrantsService, database);
 });
