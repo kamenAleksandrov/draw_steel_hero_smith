@@ -9,8 +9,6 @@ need to add an icon.
 
 when clicking any field that accepts values in the creator the ap should not defopult to typing in the field
 
-the starting chars should remember theri values if the class is unchanged
-
 cannot save the word of guidance in the features panel
 
 features that require a choise need to be noted

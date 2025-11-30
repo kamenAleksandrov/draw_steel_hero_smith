@@ -631,6 +631,59 @@ class HeroRepository {
     return decoded.map((k, v) => MapEntry(k, (v as num).toInt()));
   }
 
+  Future<void> saveFeatureSelections(
+    String heroId,
+    Map<String, Set<String>> selections,
+  ) async {
+    final jsonMap = <String, dynamic>{
+      for (final entry in selections.entries)
+        entry.key: entry.value.toList(),
+    };
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.class_feature_selections',
+      jsonMap: jsonMap,
+    );
+  }
+
+  Future<Map<String, Set<String>>> getFeatureSelections(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull(
+      (v) => v.key == 'strife.class_feature_selections',
+    );
+    if (row?.jsonValue == null && row?.textValue == null) return const {};
+
+    final raw = row!.jsonValue ?? row.textValue!;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        final result = <String, Set<String>>{};
+        decoded.forEach((key, value) {
+          if (key is! String) return;
+          final normalizedKey = key.trim();
+          if (normalizedKey.isEmpty) return;
+          final values = <String>{};
+          if (value is List) {
+            for (final entry in value) {
+              if (entry is String && entry.trim().isNotEmpty) {
+                values.add(entry.trim());
+              }
+            }
+          } else if (value is String && value.trim().isNotEmpty) {
+            values.add(value.trim());
+          }
+          if (values.isNotEmpty) {
+            result[normalizedKey] = values;
+          }
+        });
+        return result.isEmpty ? const {} : result;
+      }
+    } catch (_) {
+      // Ignore parse issues and fall through to empty map.
+    }
+    return const {};
+  }
+
   Future<void> updateCoreStats(
     String heroId, {
     int? speed,

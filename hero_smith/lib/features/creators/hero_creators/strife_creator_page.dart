@@ -12,6 +12,7 @@ import '../../../core/models/component.dart';
 import '../../../core/models/perks_models.dart';
 import '../../../core/models/skills_models.dart';
 import '../../../core/models/subclass_models.dart';
+import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
@@ -186,6 +187,60 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
         if (matchingArray != null) {
           _selectedArray = matchingArray;
+        }
+
+        // Load subclass / deity / domain selections
+        final domainNames = hero.domain == null
+            ? <String>[]
+            : hero.domain!
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+        final savedSubclassKey = await repo.getSubclassKey(widget.heroId);
+        final subclassName = hero.subclass?.trim();
+        final subclassKey = savedSubclassKey ??
+            (subclassName != null && subclassName.isNotEmpty
+                ? ClassFeatureDataService.slugify(subclassName)
+                : null);
+        if ((subclassName?.isNotEmpty ?? false) ||
+            (hero.deityId?.trim().isNotEmpty ?? false) ||
+            domainNames.isNotEmpty) {
+          _selectedSubclass = SubclassSelectionResult(
+            subclassKey: subclassKey,
+            subclassName: subclassName,
+            deityId: hero.deityId?.trim().isNotEmpty == true
+                ? hero.deityId!.trim()
+                : null,
+            deityName: hero.deityId?.trim().isNotEmpty == true
+                ? hero.deityId!.trim()
+                : null,
+            domainNames: domainNames,
+          );
+        } else {
+          _selectedSubclass = null;
+        }
+
+        // Load saved feature selections
+        final savedFeatureSelections =
+            await repo.getFeatureSelections(widget.heroId);
+        if (savedFeatureSelections.isNotEmpty) {
+          _featureSelections = savedFeatureSelections;
+        } else {
+          _featureSelections = {};
+        }
+
+        // Load equipment / modifications selections
+        final equipmentIds = await repo.getEquipmentIds(widget.heroId);
+        if (equipmentIds.isNotEmpty) {
+          final matched = await _matchEquipmentToSlots(
+            classData: classData,
+            equipmentIds: equipmentIds,
+            db: db,
+          );
+          _selectedKitIds = matched;
+        } else {
+          _selectedKitIds = <String?>[];
         }
       }
 
@@ -1148,6 +1203,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         meleeDistanceBonus: equipmentBonuses.meleeDistanceBonus,
         rangedDistanceBonus: equipmentBonuses.rangedDistanceBonus,
       ));
+
+      // Save class feature selections (user picks + auto-applied)
+      updates.add(
+        repo.saveFeatureSelections(widget.heroId, _featureSelections),
+      );
 
       // 4. Save selected characteristic array name
       if (_selectedArray != null) {
