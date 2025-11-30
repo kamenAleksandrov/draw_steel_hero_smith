@@ -326,7 +326,8 @@ class StrifeCreatorTab extends StatefulWidget {
   _StrifeCreatorTabState createState() => _StrifeCreatorTabState();
 }
 
-class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
+class _StrifeCreatorTabState extends State<StrifeCreatorTab>
+    with AutomaticKeepAliveClientMixin {
   bool _dirty = false;
   final GlobalKey<StrifeCreatorPageState> _pageKey =
     GlobalKey<StrifeCreatorPageState>();
@@ -349,6 +350,7 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StrifeCreatorPage(
       key: _pageKey,
       heroId: widget.heroId,
@@ -361,4 +363,7 @@ class _StrifeCreatorTabState extends State<StrifeCreatorTab> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

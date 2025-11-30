@@ -8,6 +8,7 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
 
@@ -20,12 +21,14 @@ class StartingAbilitiesWidget extends StatefulWidget {
     required this.classData,
     required this.selectedLevel,
     this.selectedAbilities = const <String, String?>{},
+    this.reservedAbilityIds = const <String>{},
     this.onSelectionChanged,
   });
 
   final ClassData classData;
   final int selectedLevel;
   final Map<String, String?> selectedAbilities;
+  final Set<String> reservedAbilityIds;
   final AbilitySelectionChanged? onSelectionChanged;
 
   @override
@@ -65,6 +68,10 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
     final classChanged =
         oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
+    final reservedChanged = !_setEquality.equals(
+      oldWidget.reservedAbilityIds,
+      widget.reservedAbilityIds,
+    );
     if (classChanged) {
       _loadAbilities();
       return;
@@ -77,6 +84,12 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
     } else if (!_mapEquality.equals(
         oldWidget.selectedAbilities, widget.selectedAbilities)) {
       _applyExternalSelections(widget.selectedAbilities);
+    }
+    if (reservedChanged && !_isLoading && _error == null) {
+      final changed = _applyReservedPruning();
+      if (changed) {
+        _notifySelectionChanged();
+      }
     }
   }
 
@@ -189,6 +202,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
       _selectionCallbackVersion += 1;
     });
 
+    _applyReservedPruning();
     _notifySelectionChanged();
   }
 
@@ -210,8 +224,26 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
     });
     if (changed) {
       setState(() {});
+      _applyReservedPruning();
       _notifySelectionChanged();
     }
+  }
+
+  bool _applyReservedPruning() {
+    if (widget.reservedAbilityIds.isEmpty) return false;
+    final allowIds = _selections.values
+        .expand((slots) => slots)
+        .whereType<String>()
+        .toSet();
+    final changed = ComponentSelectionGuard.pruneBlockedSelections(
+      _selections,
+      widget.reservedAbilityIds,
+      allowIds: allowIds,
+    );
+    if (changed) {
+      setState(() {});
+    }
+    return changed;
   }
 
   String? _resolveAbilityId(String? value) {
@@ -472,6 +504,23 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
           else
             ...List.generate(slots.length, (index) {
               final current = slots[index];
+              final otherSelected = slots
+                  .asMap()
+                  .entries
+                  .where((entry) => entry.key != index)
+                  .map((entry) => entry.value)
+                  .whereType<String>()
+                  .toSet();
+              final reservedIds = <String>{
+                ...widget.reservedAbilityIds,
+                ...otherSelected,
+              };
+              final availableOptions = ComponentSelectionGuard.filterAllowed(
+                options: options,
+                reservedIds: reservedIds,
+                idSelector: (option) => option.id,
+                currentId: current,
+              );
               final selectedOption =
                   current != null ? _abilityById[current] : null;
               return Padding(
@@ -495,7 +544,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
                           value: null,
                           child: Text('Unassigned'),
                         ),
-                        ...options.map(
+                        ...availableOptions.map(
                           (option) => DropdownMenuItem<String?>(
                             value: option.id,
                             child: Text(_abilityOptionLabel(option)),

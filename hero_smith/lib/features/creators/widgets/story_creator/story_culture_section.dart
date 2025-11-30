@@ -6,6 +6,7 @@ import '../../../../core/models/component.dart' as model;
 import '../../../../core/models/story_creator_models.dart';
 import '../../../../core/services/story_creator_service.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/utils/selection_guard.dart';
 
 class _SearchOption<T> {
   const _SearchOption({
@@ -141,9 +142,11 @@ class StoryCultureSection extends ConsumerWidget {
     required this.organisationId,
     required this.upbringingId,
     required this.selectedLanguageId,
+    required this.reservedLanguageIds,
     required this.environmentSkillId,
     required this.organisationSkillId,
     required this.upbringingSkillId,
+    required this.reservedSkillIds,
     required this.onLanguageChanged,
     required this.onEnvironmentChanged,
     required this.onOrganisationChanged,
@@ -159,9 +162,11 @@ class StoryCultureSection extends ConsumerWidget {
   final String? organisationId;
   final String? upbringingId;
   final String? selectedLanguageId;
+  final Set<String> reservedLanguageIds;
   final String? environmentSkillId;
   final String? organisationSkillId;
   final String? upbringingSkillId;
+  final Set<String> reservedSkillIds;
 
   final ValueChanged<String?> onLanguageChanged;
   final ValueChanged<String?> onEnvironmentChanged;
@@ -247,6 +252,7 @@ class StoryCultureSection extends ConsumerWidget {
                     data: (langs) => _LanguageDropdown(
                       languages: langs,
                       selectedLanguageId: selectedLanguageId,
+                      reservedLanguageIds: reservedLanguageIds,
                       onChanged: (val) {
                         onLanguageChanged(val);
                         onDirty();
@@ -283,19 +289,20 @@ class StoryCultureSection extends ConsumerWidget {
                         skillsAsync.when(
                           loading: () => const SizedBox.shrink(),
                           error: (_, __) => const SizedBox.shrink(),
-                          data: (skills) => envAsync.when(
-                            loading: () => const SizedBox.shrink(),
-                            error: (_, __) => const SizedBox.shrink(),
-                            data: (envs) => _CultureSkillChooser(
-                              label: 'Environment Skill',
-                              selectedCultureId: environmentId,
-                              cultureItems: envs,
-                              selectedSkillId: environmentSkillId,
-                              allSkills: skills,
-                              onChanged: (value) {
-                                onEnvironmentSkillChanged(value);
-                                onDirty();
-                              },
+                            data: (skills) => envAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
+                              data: (envs) => _CultureSkillChooser(
+                                label: 'Environment Skill',
+                                selectedCultureId: environmentId,
+                                cultureItems: envs,
+                                selectedSkillId: environmentSkillId,
+                                reservedSkillIds: reservedSkillIds,
+                                allSkills: skills,
+                                onChanged: (value) {
+                                  onEnvironmentSkillChanged(value);
+                                  onDirty();
+                                },
                             ),
                           ),
                         ),
@@ -333,19 +340,20 @@ class StoryCultureSection extends ConsumerWidget {
                         skillsAsync.when(
                           loading: () => const SizedBox.shrink(),
                           error: (_, __) => const SizedBox.shrink(),
-                          data: (skills) => orgAsync.when(
-                            loading: () => const SizedBox.shrink(),
-                            error: (_, __) => const SizedBox.shrink(),
-                            data: (orgs) => _CultureSkillChooser(
-                              label: 'Organization Skill',
-                              selectedCultureId: organisationId,
-                              cultureItems: orgs,
-                              selectedSkillId: organisationSkillId,
-                              allSkills: skills,
-                              onChanged: (value) {
-                                onOrganisationSkillChanged(value);
-                                onDirty();
-                              },
+                            data: (skills) => orgAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
+                              data: (orgs) => _CultureSkillChooser(
+                                label: 'Organization Skill',
+                                selectedCultureId: organisationId,
+                                cultureItems: orgs,
+                                selectedSkillId: organisationSkillId,
+                                reservedSkillIds: reservedSkillIds,
+                                allSkills: skills,
+                                onChanged: (value) {
+                                  onOrganisationSkillChanged(value);
+                                  onDirty();
+                                },
                             ),
                           ),
                         ),
@@ -383,19 +391,20 @@ class StoryCultureSection extends ConsumerWidget {
                         skillsAsync.when(
                           loading: () => const SizedBox.shrink(),
                           error: (_, __) => const SizedBox.shrink(),
-                          data: (skills) => upAsync.when(
-                            loading: () => const SizedBox.shrink(),
-                            error: (_, __) => const SizedBox.shrink(),
-                            data: (ups) => _CultureSkillChooser(
-                              label: 'Upbringing Skill',
-                              selectedCultureId: upbringingId,
-                              cultureItems: ups,
-                              selectedSkillId: upbringingSkillId,
-                              allSkills: skills,
-                              onChanged: (value) {
-                                onUpbringingSkillChanged(value);
-                                onDirty();
-                              },
+                            data: (skills) => upAsync.when(
+                              loading: () => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
+                              data: (ups) => _CultureSkillChooser(
+                                label: 'Upbringing Skill',
+                                selectedCultureId: upbringingId,
+                                cultureItems: ups,
+                                selectedSkillId: upbringingSkillId,
+                                reservedSkillIds: reservedSkillIds,
+                                allSkills: skills,
+                                onChanged: (value) {
+                                  onUpbringingSkillChanged(value);
+                                  onDirty();
+                                },
                             ),
                           ),
                         ),
@@ -563,21 +572,34 @@ class _LanguageDropdown extends StatelessWidget {
   const _LanguageDropdown({
     required this.languages,
     required this.selectedLanguageId,
+    required this.reservedLanguageIds,
     required this.onChanged,
   });
 
   final List<model.Component> languages;
   final String? selectedLanguageId;
+  final Set<String> reservedLanguageIds;
   final ValueChanged<String?> onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final filteredLanguages = ComponentSelectionGuard.filterAllowed(
+      options: languages,
+      reservedIds: reservedLanguageIds,
+      idSelector: (lang) => lang.id,
+      currentId: selectedLanguageId,
+    );
+
+    if (filteredLanguages.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final groups = <String, List<model.Component>>{
       'human': [],
       'ancestral': [],
       'dead': [],
     };
-    for (final lang in languages) {
+    for (final lang in filteredLanguages) {
       final type = lang.data['language_type'] as String? ?? 'human';
       if (groups.containsKey(type)) {
         groups[type]!.add(lang);
@@ -587,7 +609,7 @@ class _LanguageDropdown extends StatelessWidget {
       list.sort((a, b) => a.name.compareTo(b.name));
     }
     final selected = selectedLanguageId != null &&
-            languages.any((lang) => lang.id == selectedLanguageId)
+            filteredLanguages.any((lang) => lang.id == selectedLanguageId)
         ? selectedLanguageId
         : null;
 
@@ -649,7 +671,7 @@ class _LanguageDropdown extends StatelessWidget {
           ),
           child: Text(
             selected != null
-                ? languages.firstWhere((l) => l.id == selected).name
+                ? filteredLanguages.firstWhere((l) => l.id == selected).name
                 : '— Choose language —',
             style: TextStyle(
               fontSize: 16,
@@ -797,6 +819,7 @@ class _CultureSkillChooser extends StatelessWidget {
     required this.cultureItems,
     required this.allSkills,
     required this.selectedSkillId,
+    required this.reservedSkillIds,
     required this.onChanged,
   });
 
@@ -805,6 +828,7 @@ class _CultureSkillChooser extends StatelessWidget {
   final List<model.Component> cultureItems;
   final List<model.Component> allSkills;
   final String? selectedSkillId;
+  final Set<String> reservedSkillIds;
   final ValueChanged<String?> onChanged;
 
   @override
@@ -839,13 +863,20 @@ class _CultureSkillChooser extends StatelessWidget {
       }
     }
 
-    if (eligible.isEmpty) return const SizedBox.shrink();
+    final allowedSkills = ComponentSelectionGuard.filterAllowed(
+      options: eligible,
+      reservedIds: reservedSkillIds,
+      idSelector: (skill) => skill.id,
+      currentId: selectedSkillId,
+    );
+
+    if (allowedSkills.isEmpty) return const SizedBox.shrink();
 
     final helper = (selected.data['skillDescription'] as String?) ?? '';
     final skillGroups = <String, List<model.Component>>{};
     final ungrouped = <model.Component>[];
 
-    for (final skill in eligible) {
+    for (final skill in allowedSkills) {
       final group = skill.data['group']?.toString();
       if (group != null && group.isNotEmpty) {
         skillGroups.putIfAbsent(group, () => []).add(skill);
@@ -860,10 +891,10 @@ class _CultureSkillChooser extends StatelessWidget {
     }
     ungrouped.sort((a, b) => a.name.compareTo(b.name));
 
-    final validSelected =
-        selectedSkillId != null && eligible.any((s) => s.id == selectedSkillId)
-            ? selectedSkillId
-            : null;
+    final validSelected = selectedSkillId != null &&
+            allowedSkills.any((s) => s.id == selectedSkillId)
+        ? selectedSkillId
+        : null;
 
     final accent = Theme.of(context).colorScheme.secondary;
     final border = OutlineInputBorder(

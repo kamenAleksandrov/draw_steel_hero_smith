@@ -164,6 +164,21 @@ class CharacteristicArray {
       description: (json['description'] as String?) ?? '',
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CharacteristicArray) return false;
+    if (description != other.description) return false;
+    if (values.length != other.values.length) return false;
+    for (var i = 0; i < values.length; i++) {
+      if (values[i] != other.values[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hash(description, Object.hashAll(values));
 }
 
 class LevelProgression {

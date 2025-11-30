@@ -8,6 +8,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/services/perk_grants_service.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 
 class StoryCareerSection extends ConsumerWidget {
@@ -22,6 +23,9 @@ class StoryCareerSection extends ConsumerWidget {
     required this.primaryLanguageId,
     required this.selectedLanguageIds,
     required this.selectedSkillIds,
+    required this.reservedLanguageIds,
+    required this.reservedSkillIds,
+    required this.reservedPerkIds,
     required this.onCareerChanged,
     required this.onCareerLanguageSlotsChanged,
     required this.onCareerLanguageChanged,
@@ -40,6 +44,9 @@ class StoryCareerSection extends ConsumerWidget {
   final String? primaryLanguageId;
   final Set<String> selectedLanguageIds;
   final Set<String> selectedSkillIds;
+  final Set<String> reservedLanguageIds;
+  final Set<String> reservedSkillIds;
+  final Set<String> reservedPerkIds;
 
   final ValueChanged<String?> onCareerChanged;
   final ValueChanged<int> onCareerLanguageSlotsChanged;
@@ -86,6 +93,9 @@ class StoryCareerSection extends ConsumerWidget {
                   primaryLanguageId: primaryLanguageId,
                   selectedLanguageIds: selectedLanguageIds,
                   selectedSkillIds: selectedSkillIds,
+                  reservedLanguageIds: reservedLanguageIds,
+                  reservedSkillIds: reservedSkillIds,
+                  reservedPerkIds: reservedPerkIds,
                   skillsAsync: skillsAsync,
                   perksAsync: perksAsync,
                   langsAsync: langsAsync,
@@ -118,6 +128,9 @@ class _CareerContent extends StatefulWidget {
     required this.primaryLanguageId,
     required this.selectedLanguageIds,
     required this.selectedSkillIds,
+    required this.reservedLanguageIds,
+    required this.reservedSkillIds,
+    required this.reservedPerkIds,
     required this.skillsAsync,
     required this.perksAsync,
     required this.langsAsync,
@@ -140,6 +153,9 @@ class _CareerContent extends StatefulWidget {
   final String? primaryLanguageId;
   final Set<String> selectedLanguageIds;
   final Set<String> selectedSkillIds;
+  final Set<String> reservedLanguageIds;
+  final Set<String> reservedSkillIds;
+  final Set<String> reservedPerkIds;
 
   final AsyncValue<List<model.Component>> skillsAsync;
   final AsyncValue<List<model.Component>> perksAsync;
@@ -344,6 +360,7 @@ class _CareerContentState extends State<_CareerContent> {
                             ? widget.careerLanguageIds[i]
                             : null,
                         exclude: {
+                          ...widget.reservedLanguageIds,
                           if (widget.primaryLanguageId != null)
                             widget.primaryLanguageId,
                           for (var j = 0;
@@ -454,7 +471,7 @@ class _CareerContentState extends State<_CareerContent> {
                   ),
                 ];
 
-                final excludedIds = <String>{};
+                final excludedIds = <String>{...widget.reservedSkillIds};
                 for (var i = 0; i < slots.length; i++) {
                   if (i == currentIndex) continue;
                   final pick = slots[i];
@@ -462,11 +479,15 @@ class _CareerContentState extends State<_CareerContent> {
                     excludedIds.add(pick);
                   }
                 }
+                final currentValue = slots[currentIndex];
 
                 for (final groupKey in sortedGroups) {
                   for (final skill in grouped[groupKey]!) {
-                    final isCurrent = slots[currentIndex] == skill.id;
-                    if (!isCurrent && excludedIds.contains(skill.id)) {
+                    if (ComponentSelectionGuard.isBlocked(
+                      skill.id,
+                      excludedIds,
+                      currentId: currentValue,
+                    )) {
                       continue;
                     }
                     options.add(
@@ -480,8 +501,11 @@ class _CareerContentState extends State<_CareerContent> {
                 }
 
                 for (final skill in ungrouped) {
-                  final isCurrent = slots[currentIndex] == skill.id;
-                  if (!isCurrent && excludedIds.contains(skill.id)) {
+                  if (ComponentSelectionGuard.isBlocked(
+                    skill.id,
+                    excludedIds,
+                    currentId: currentValue,
+                  )) {
                     continue;
                   }
                   options.add(
@@ -669,7 +693,7 @@ class _CareerContentState extends State<_CareerContent> {
                   ),
                 ];
 
-                final excludedIds = <String>{};
+                final excludedIds = <String>{...widget.reservedPerkIds};
                 for (var i = 0; i < slots.length; i++) {
                   if (i == currentIndex) continue;
                   final pick = slots[i];
@@ -680,8 +704,11 @@ class _CareerContentState extends State<_CareerContent> {
 
                 for (final key in sortedGroupKeys) {
                   for (final perk in grouped[key]!) {
-                    final isCurrent = slots[currentIndex] == perk.id;
-                    if (!isCurrent && excludedIds.contains(perk.id)) {
+                    if (ComponentSelectionGuard.isBlocked(
+                      perk.id,
+                      excludedIds,
+                      currentId: slots[currentIndex],
+                    )) {
                       continue;
                     }
                     options.add(

@@ -28,7 +28,8 @@ class StoryCreatorTab extends ConsumerStatefulWidget {
   ConsumerState<StoryCreatorTab> createState() => StoryCreatorTabState();
 }
 
-class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
+class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _nameCtrl = TextEditingController();
 
   bool _loading = true;
@@ -91,6 +92,75 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
     return ids;
   }
 
+  Set<String> get _reservedLanguageIds => {
+        ..._selectedLanguageIdsForPerks,
+      };
+
+  Set<String> get _reservedSkillIds => {
+        ..._selectedSkillIdsForPerks,
+      };
+
+  Set<String> get _reservedPerkIds => {
+        ...(_hero?.perks ?? const <String>[]),
+        ..._careerPerkIds,
+      };
+
+  List<String> _findDuplicates(Iterable<String?> values) {
+    final seen = <String>{};
+    final duplicates = <String>{};
+    for (final value in values.whereType<String>()) {
+      if (!seen.add(value)) {
+        duplicates.add(value);
+      }
+    }
+    return duplicates.toList();
+  }
+
+  Future<bool> _confirmDuplicateSelections() async {
+    final skillDuplicates = _findDuplicates([
+      _environmentSkillId,
+      _organisationSkillId,
+      _upbringingSkillId,
+      ..._careerSkillIds,
+    ]);
+
+    final languageDuplicates = _findDuplicates([
+      _selectedLanguageId,
+      ..._careerLanguageIds.whereType<String>(),
+    ]);
+
+    if (skillDuplicates.isEmpty && languageDuplicates.isEmpty) {
+      return true;
+    }
+
+    final categories = <String>[];
+    if (skillDuplicates.isNotEmpty) categories.add('skills');
+    if (languageDuplicates.isNotEmpty) categories.add('languages');
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Duplicate selections'),
+        content: Text(
+          'You have duplicate ${categories.join(' and ')}. '
+          'These choices will overwrite each other. Do you want to continue?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Go back'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -106,6 +176,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
   }
 
   Future<void> save() async {
+    final allowSave = await _confirmDuplicateSelections();
+    if (!allowSave) return;
+
     final service = ref.read(storyCreatorServiceProvider);
     final languageIds = <String>{
       if (_selectedLanguageId != null && _selectedLanguageId!.trim().isNotEmpty)
@@ -388,6 +461,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -430,9 +504,11 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
             organisationId: _organisationId,
             upbringingId: _upbringingId,
             selectedLanguageId: _selectedLanguageId,
+            reservedLanguageIds: _reservedLanguageIds,
             environmentSkillId: _environmentSkillId,
             organisationSkillId: _organisationSkillId,
             upbringingSkillId: _upbringingSkillId,
+            reservedSkillIds: _reservedSkillIds,
             onLanguageChanged: _onLanguageChanged,
             onEnvironmentChanged: _onEnvironmentChanged,
             onOrganisationChanged: _onOrganisationChanged,
@@ -454,6 +530,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
             primaryLanguageId: _selectedLanguageId,
             selectedLanguageIds: _selectedLanguageIdsForPerks,
             selectedSkillIds: _selectedSkillIdsForPerks,
+            reservedLanguageIds: _reservedLanguageIds,
+            reservedSkillIds: _reservedSkillIds,
+            reservedPerkIds: _reservedPerkIds,
             onCareerChanged: _onCareerChanged,
             onCareerLanguageSlotsChanged: _onCareerLanguageSlotsChanged,
             onCareerLanguageChanged: _onCareerLanguageChanged,
@@ -479,6 +558,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _ErrorView extends StatelessWidget {

@@ -557,12 +557,56 @@ class HeroRepository {
   }
 
   Future<void> updateCharacteristicArray(
-      String heroId, String? arrayName) async {
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: 'strife.characteristic_array',
-      textValue: arrayName,
+    String heroId, {
+    String? arrayName,
+    List<int>? arrayValues,
+  }) async {
+    final updates = <Future<void>>[
+      _db.upsertHeroValue(
+        heroId: heroId,
+        key: 'strife.characteristic_array',
+        textValue: arrayName,
+      ),
+    ];
+
+    if (arrayValues != null) {
+      updates.add(
+        _db.upsertHeroValue(
+          heroId: heroId,
+          key: 'strife.characteristic_array_values',
+          jsonMap: {'values': arrayValues},
+        ),
+      );
+    }
+
+    await Future.wait(updates);
+  }
+
+  Future<List<int>> getCharacteristicArrayValues(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull(
+      (v) => v.key == 'strife.characteristic_array_values',
     );
+    if (row == null) return const [];
+
+    final rawJson = row.jsonValue ?? row.textValue;
+    if (rawJson == null || rawJson.isEmpty) return const [];
+
+    try {
+      final decoded = jsonDecode(rawJson);
+      if (decoded is Map && decoded['values'] is List) {
+        return (decoded['values'] as List)
+            .whereType<num>()
+            .map((e) => e.toInt())
+            .toList();
+      }
+      if (decoded is List) {
+        return decoded.whereType<num>().map((e) => e.toInt()).toList();
+      }
+    } catch (_) {
+      // Ignore parse errors and fall through to empty list.
+    }
+    return const [];
   }
 
   /// Save the user's characteristic assignment choices (which stat gets which value)

@@ -1612,6 +1612,14 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
   }
 
   Future<void> _addSkill(String skillId) async {
+    if (_selectedSkillIds.contains(skillId)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Skill already added')),
+        );
+      }
+      return;
+    }
     try {
       final db = ref.read(appDatabaseProvider);
       final updatedIds = [..._selectedSkillIds, skillId];
@@ -1938,6 +1946,14 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
   }
 
   Future<void> _addLanguage(String languageId) async {
+    if (_selectedLanguageIds.contains(languageId)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Language already added')),
+        );
+      }
+      return;
+    }
     try {
       final db = ref.read(appDatabaseProvider);
       final updatedIds = [..._selectedLanguageIds, languageId];
@@ -2323,6 +2339,14 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
   }
 
   Future<void> _addTitle(String titleId, int benefitIndex) async {
+    if (_selectedTitles.containsKey(titleId)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Title already added')),
+        );
+      }
+      return;
+    }
     try {
       final db = ref.read(appDatabaseProvider);
       final title = _availableTitles.firstWhere((t) => t['id'] == titleId);

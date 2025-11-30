@@ -9,6 +9,7 @@ import '../../../../core/services/perk_data_service.dart';
 import '../../../../core/services/perks_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
+import '../../../../core/utils/selection_guard.dart';
 
 typedef PerkSelectionChanged = void Function(StartingPerkSelectionResult result);
 
@@ -18,12 +19,14 @@ class StartingPerksWidget extends StatefulWidget {
     required this.classData,
     required this.selectedLevel,
     this.selectedPerks = const <String, String?>{},
+    this.reservedPerkIds = const <String>{},
     this.onSelectionChanged,
   });
 
   final ClassData classData;
   final int selectedLevel;
   final Map<String, String?> selectedPerks;
+  final Set<String> reservedPerkIds;
   final PerkSelectionChanged? onSelectionChanged;
 
   @override
@@ -66,6 +69,10 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     final classChanged =
         oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
+    final reservedChanged = !_setEquality.equals(
+      oldWidget.reservedPerkIds,
+      widget.reservedPerkIds,
+    );
     if ((classChanged || levelChanged) && !_isLoading && _error == null) {
       _rebuildPlan(
         preserveSelections: !classChanged,
@@ -74,6 +81,12 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     } else if (!_mapEquality.equals(
         oldWidget.selectedPerks, widget.selectedPerks)) {
       _applyExternalSelections(widget.selectedPerks);
+    }
+    if (reservedChanged && !_isLoading && _error == null) {
+      final changed = _applyReservedPruning();
+      if (changed) {
+        _notifySelectionChanged();
+      }
     }
   }
 
@@ -151,6 +164,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       _error = null;
     });
 
+    _applyReservedPruning();
     _notifySelectionChanged();
   }
 
@@ -172,8 +186,26 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     });
     if (changed) {
       setState(() {});
+      _applyReservedPruning();
       _notifySelectionChanged();
     }
+  }
+
+  bool _applyReservedPruning() {
+    if (widget.reservedPerkIds.isEmpty) return false;
+    final allowIds = _selections.values
+        .expand((slots) => slots)
+        .whereType<String>()
+        .toSet();
+    final changed = ComponentSelectionGuard.pruneBlockedSelections(
+      _selections,
+      widget.reservedPerkIds,
+      allowIds: allowIds,
+    );
+    if (changed) {
+      setState(() {});
+    }
+    return changed;
   }
 
   String? _resolvePerkId(String? value) {
@@ -407,6 +439,23 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
           ...List.generate(slots.length, (index) {
             final current = slots[index];
             final selectedPerk = current != null ? _perkById[current] : null;
+            final otherSelected = slots
+                .asMap()
+                .entries
+                .where((entry) => entry.key != index)
+                .map((entry) => entry.value)
+                .whereType<String>()
+                .toSet();
+            final reservedIds = <String>{
+              ...widget.reservedPerkIds,
+              ...otherSelected,
+            };
+            final availableOptions = ComponentSelectionGuard.filterAllowed(
+              options: options,
+              reservedIds: reservedIds,
+              idSelector: (option) => option.id,
+              currentId: current,
+            );
             return Padding(
               padding:
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
@@ -428,7 +477,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
                         value: null,
                         child: Text('Unassigned'),
                       ),
-                      ...options.map(
+                      ...availableOptions.map(
                         (option) => DropdownMenuItem<String?>(
                           value: option.id,
                           child: Text(

@@ -194,7 +194,7 @@ class StartingCharacteristicsController extends ChangeNotifier {
 
   /// Updates controller state when the array selection changes.
   void updateArray(CharacteristicArray? newArray) {
-    if (identical(_selectedArray, newArray)) return;
+    if (_selectedArray == newArray) return;
     _selectedArray = newArray;
     _tokens = _logic.buildTokens(newArray?.values ?? const []);
     _assignments = _buildEmptyAssignments();

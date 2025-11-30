@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -92,6 +93,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Map<String, String?> _selectedSkills = {};
   Map<String, String?> _selectedAbilities = {};
   Map<String, String?> _selectedPerks = {};
+  Set<String> _reservedSkillIds = {};
+  Set<String> _reservedAbilityIds = {};
+  Set<String> _reservedPerkIds = {};
   SubclassSelectionResult? _selectedSubclass;
   Map<String, Set<String>> _featureSelections = {};
   List<String?> _selectedKitIds = [];
@@ -134,75 +138,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // Load level
       _selectedLevel = hero.level;
 
-      // Load class
-      if (hero.className != null) {
-        final classData = _classDataService.getAllClasses().firstWhere(
-            (c) => c.classId == hero.className,
-            orElse: () => _classDataService.getAllClasses().first);
-        _selectedClass = classData;
-
-        // Load characteristic array if available
-        final values = await db.getHeroValues(widget.heroId);
-        final arrayRow = values.firstWhere(
-          (v) => v.key == 'strife.characteristic_array',
-          orElse: () => values.first, // dummy value
-        );
-
-        if (arrayRow.textValue != null && arrayRow.textValue!.isNotEmpty) {
-          // Try to find matching array in class data
-          final arrayDesc = arrayRow.textValue!;
-          final matchingArray = classData
-              .startingCharacteristics.startingCharacteristicsArrays
-              .cast<CharacteristicArray?>()
-              .firstWhere(
-                (arr) => arr?.description == arrayDesc,
-                orElse: () => null,
-              );
-          if (matchingArray != null) {
-            _selectedArray = matchingArray;
-          }
-        }
-      }
-
-      // Load subclass
-      if (hero.subclass != null && hero.subclass!.isNotEmpty) {
-        // Try to load the subclass key for proper selection matching
-        final subclassKey = await repo.getSubclassKey(widget.heroId);
-        _selectedSubclass = SubclassSelectionResult(
-          subclassKey: subclassKey,
-          subclassName: hero.subclass,
-          deityId: hero.deityId,
-          domainNames: hero.domain != null
-              ? hero.domain!.split(',').map((e) => e.trim()).toList()
-              : [],
-        );
-      }
-
-      // Load kit (legacy single kit support)
-      if (_selectedClass != null) {
-        // Try to load multiple equipment IDs first
-        final equipmentIds = await repo.getEquipmentIds(widget.heroId);
-        if (equipmentIds.isNotEmpty) {
-          // Convert to List<String?> to allow null values later
-          // Also match equipment to correct slots based on type
-          _selectedKitIds = await _matchEquipmentToSlots(
-            classData: _selectedClass!,
-            equipmentIds: equipmentIds,
-            db: db,
-          );
-        } else {
-          // Fallback to legacy single kit
-          final values = await db.getHeroValues(widget.heroId);
-          final kitRow = values.firstWhere(
-            (v) => v.key == 'basics.kit',
-            orElse: () => values.first,
-          );
-          if (kitRow.textValue != null && kitRow.textValue!.isNotEmpty) {
-            _selectedKitIds = <String?>[kitRow.textValue];
-          }
-        }
-      }
-
       // Load characteristics (assigned values from stored assignments)
       final savedAssignments =
           await repo.getCharacteristicAssignments(widget.heroId);
@@ -223,6 +158,37 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         };
       }
 
+      // Load class
+      if (hero.className != null) {
+        final classData = _classDataService.getAllClasses().firstWhere(
+            (c) => c.classId == hero.className,
+            orElse: () => _classDataService.getAllClasses().first);
+        _selectedClass = classData;
+
+        // Load characteristic array if available
+        final values = await db.getHeroValues(widget.heroId);
+        String? arrayDescription;
+        for (final value in values) {
+          if (value.key == 'strife.characteristic_array') {
+            arrayDescription = value.textValue;
+            break;
+          }
+        }
+
+        final savedArrayValues =
+            await repo.getCharacteristicArrayValues(widget.heroId);
+
+        final matchingArray = _findSavedArraySelection(
+          classData: classData,
+          savedDescription: arrayDescription,
+          savedValues: savedArrayValues,
+        );
+
+        if (matchingArray != null) {
+          _selectedArray = matchingArray;
+        }
+      }
+
       // Load abilities
       if (_selectedClass != null) {
         final abilityIds =
@@ -235,25 +201,72 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           selectedLevel: _selectedLevel,
           abilityIds: abilityIds,
         );
+        final assignedAbilityIds =
+            _selectedAbilities.values.whereType<String>().toSet();
+        _reservedAbilityIds = abilityIds.toSet();
+
         _selectedSkills = await _restoreSkillSelections(
           classData: _selectedClass!,
           selectedLevel: _selectedLevel,
           skillIds: skillIds,
         );
+        final assignedSkillIds =
+            _selectedSkills.values.whereType<String>().toSet();
+        _reservedSkillIds = skillIds.toSet();
+
         _selectedPerks = await _restorePerkSelections(
           classData: _selectedClass!,
           selectedLevel: _selectedLevel,
           perkIds: perkIds,
         );
+        final assignedPerkIds =
+            _selectedPerks.values.whereType<String>().toSet();
+        _reservedPerkIds = perkIds.toSet();
       } else {
         _selectedAbilities = const <String, String?>{};
         _selectedSkills = const <String, String?>{};
         _selectedPerks = const <String, String?>{};
+        _reservedAbilityIds = {};
+        _reservedSkillIds = {};
+        _reservedPerkIds = {};
       }
     } catch (e) {
       debugPrint('Failed to load hero data: $e');
       // Don't fail the whole initialization if hero data can't be loaded
     }
+  }
+
+  CharacteristicArray? _findSavedArraySelection({
+    required ClassData classData,
+    String? savedDescription,
+    required List<int> savedValues,
+  }) {
+    final arrays = classData.startingCharacteristics.startingCharacteristicsArrays;
+
+    if (savedDescription != null && savedDescription.isNotEmpty) {
+      final byDescription = arrays.firstWhereOrNull(
+        (arr) => arr.description == savedDescription,
+      );
+      if (byDescription != null) {
+        return byDescription;
+      }
+    }
+
+    final valueCandidates = savedValues.isNotEmpty
+        ? savedValues
+        : _assignedCharacteristics.values.toList();
+
+    if (valueCandidates.isEmpty) return null;
+
+    final target = List<int>.from(valueCandidates)..sort();
+    return arrays.firstWhereOrNull((arr) {
+      final arrValues = List<int>.from(arr.values)..sort();
+      if (arrValues.length != target.length) return false;
+      for (var i = 0; i < arrValues.length; i++) {
+        if (arrValues[i] != target[i]) return false;
+      }
+      return true;
+    });
   }
 
   Future<Map<String, String?>> _restoreAbilitySelections({
@@ -630,6 +643,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _selectedSkills = {};
       _selectedAbilities = {};
       _selectedPerks = {};
+      _reservedSkillIds = {};
+      _reservedAbilityIds = {};
+      _reservedPerkIds = {};
       _selectedSubclass = null;
       _featureSelections = {};
       _selectedKitIds = <String?>[];
@@ -638,6 +654,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleArrayChanged(CharacteristicArray? array) {
+    if (_selectedArray == array) return;
     setState(() {
       _selectedArray = array;
       _assignedCharacteristics = {};
@@ -948,12 +965,88 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return true;
   }
 
+  Set<String> _findDuplicates(Iterable<String?> values) {
+    final seen = <String>{};
+    final dupes = <String>{};
+    for (final value in values.whereType<String>()) {
+      if (!seen.add(value)) {
+        dupes.add(value);
+      }
+    }
+    return dupes;
+  }
+
+  Map<String, Set<String>> _collectSelectionConflicts() {
+    final issues = <String, Set<String>>{};
+
+    final skillValues = _selectedSkills.values.whereType<String>();
+    final skillIssues = {
+      ..._findDuplicates(skillValues),
+      ...skillValues.toSet().intersection(_reservedSkillIds),
+    };
+    if (skillIssues.isNotEmpty) {
+      issues['skills'] = skillIssues;
+    }
+
+    final perkValues = _selectedPerks.values.whereType<String>();
+    final perkIssues = {
+      ..._findDuplicates(perkValues),
+      ...perkValues.toSet().intersection(_reservedPerkIds),
+    };
+    if (perkIssues.isNotEmpty) {
+      issues['perks'] = perkIssues;
+    }
+
+    final abilityValues = _selectedAbilities.values.whereType<String>();
+    final abilityIssues = {
+      ..._findDuplicates(abilityValues),
+      ...abilityValues.toSet().intersection(_reservedAbilityIds),
+    };
+    if (abilityIssues.isNotEmpty) {
+      issues['abilities'] = abilityIssues;
+    }
+
+    return issues;
+  }
+
+  Future<bool> _confirmSelectionConflicts() async {
+    final issues = _collectSelectionConflicts();
+    if (issues.isEmpty) return true;
+
+    final categories = issues.keys.join(', ');
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Duplicate selections'),
+        content: Text(
+          'Some $categories are already assigned to this hero. '
+          'Do you want to keep these duplicates?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Go back'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+
+    return result ?? false;
+  }
+
   Future<void> handleSave() async {
     await _handleSave();
   }
 
   Future<void> _handleSave() async {
     if (!_validateSelections()) return;
+    final allowDuplicates = await _confirmSelectionConflicts();
+    if (!allowDuplicates) return;
 
     final repo = ref.read(heroRepositoryProvider);
     final db = ref.read(appDatabaseProvider);
@@ -1060,7 +1153,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (_selectedArray != null) {
         updates.add(repo.updateCharacteristicArray(
           widget.heroId,
-          _selectedArray!.description,
+          arrayName: _selectedArray!.description,
+          arrayValues: _selectedArray!.values,
         ));
       }
 
@@ -1366,18 +1460,21 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedAbilities: _selectedAbilities,
+              reservedAbilityIds: _reservedAbilityIds,
               onSelectionChanged: _handleAbilitySelectionsChanged,
             ),
             StartingSkillsWidget(
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedSkills: _selectedSkills,
+              reservedSkillIds: _reservedSkillIds,
               onSelectionChanged: _handleSkillSelectionsChanged,
             ),
             StartingPerksWidget(
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedPerks: _selectedPerks,
+              reservedPerkIds: _reservedPerkIds,
               onSelectionChanged: _handlePerkSelectionsChanged,
             ),
             ClassFeaturesSection(

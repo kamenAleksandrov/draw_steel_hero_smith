@@ -7,6 +7,7 @@ import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/selection_guard.dart';
 
 typedef SkillSelectionChanged = void Function(
     StartingSkillSelectionResult result);
@@ -17,12 +18,14 @@ class StartingSkillsWidget extends StatefulWidget {
     required this.classData,
     required this.selectedLevel,
     this.selectedSkills = const <String, String?>{},
+    this.reservedSkillIds = const <String>{},
     this.onSelectionChanged,
   });
 
   final ClassData classData;
   final int selectedLevel;
   final Map<String, String?> selectedSkills;
+  final Set<String> reservedSkillIds;
   final SkillSelectionChanged? onSelectionChanged;
 
   @override
@@ -64,6 +67,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     final classChanged =
         oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
+    final reservedChanged = !_setEquality.equals(
+      oldWidget.reservedSkillIds,
+      widget.reservedSkillIds,
+    );
     if ((classChanged || levelChanged) && !_isLoading && _error == null) {
       _rebuildPlan(
         preserveSelections: !classChanged,
@@ -71,6 +78,12 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
       );
     } else if (oldWidget.selectedSkills != widget.selectedSkills) {
       _applyExternalSelections(widget.selectedSkills);
+    }
+    if (reservedChanged && !_isLoading && _error == null) {
+      final changed = _applyReservedPruning();
+      if (changed) {
+        _notifySelectionChanged();
+      }
     }
   }
 
@@ -143,6 +156,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
       _error = null;
     });
 
+    _applyReservedPruning();
     _notifySelectionChanged();
   }
 
@@ -164,8 +178,26 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     });
     if (changed) {
       setState(() {});
+      _applyReservedPruning();
       _notifySelectionChanged();
     }
+  }
+
+  bool _applyReservedPruning() {
+    if (widget.reservedSkillIds.isEmpty) return false;
+    final allowIds = _selections.values
+        .expand((slots) => slots)
+        .whereType<String>()
+        .toSet();
+    final changed = ComponentSelectionGuard.pruneBlockedSelections(
+      _selections,
+      widget.reservedSkillIds,
+      allowIds: allowIds,
+    );
+    if (changed) {
+      setState(() {});
+    }
+    return changed;
   }
 
   String? _resolveSkillId(String? value) {
@@ -488,6 +520,23 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
             final current = slots[index];
+            final otherSelected = slots
+                .asMap()
+                .entries
+                .where((entry) => entry.key != index)
+                .map((entry) => entry.value)
+                .whereType<String>()
+                .toSet();
+            final reservedIds = <String>{
+              ...widget.reservedSkillIds,
+              ...otherSelected,
+            };
+            final availableOptions = ComponentSelectionGuard.filterAllowed(
+              options: options,
+              reservedIds: reservedIds,
+              idSelector: (option) => option.id,
+              currentId: current,
+            );
             return Padding(
               padding:
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
@@ -504,7 +553,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                     value: null,
                     child: Text('Unassigned'),
                   ),
-                  ...options.map(
+                  ...availableOptions.map(
                     (option) => DropdownMenuItem<String?>(
                       value: option.id,
                       child: Text('${option.name} (${option.group})'),
