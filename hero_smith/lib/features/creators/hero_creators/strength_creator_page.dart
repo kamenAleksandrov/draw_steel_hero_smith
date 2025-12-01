@@ -32,6 +32,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
   SubclassSelectionResult? _subclassSelection;
   int _selectedLevel = 1;
   Map<String, Set<String>> _featureSelections = const {};
+  List<String?> _equipmentIds = const [];
 
   @override
   void initState() {
@@ -97,6 +98,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
 
       final savedFeatureSelections =
           await repo.getFeatureSelections(widget.heroId);
+      
+      // Load equipment IDs for kit detection
+      final equipmentIds = await repo.getEquipmentIds(widget.heroId);
 
       if (!mounted) return;
       setState(() {
@@ -106,6 +110,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         _featureSelections = savedFeatureSelections.isNotEmpty
             ? savedFeatureSelections
             : const {};
+        _equipmentIds = equipmentIds;
         _isLoading = false;
         _error = null;
       });
@@ -196,6 +201,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
           selectedLevel: _selectedLevel,
           selectedSubclass: _subclassSelection,
           initialSelections: _featureSelections,
+          equipmentIds: _equipmentIds,
           onSelectionsChanged: _handleSelectionsChanged,
         )
       else

@@ -8,12 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/hero_mod_keys.dart';
+import '../../../../core/models/heroic_resource_progression.dart';
 import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/class_data_service.dart';
+import '../../../../core/services/heroic_resource_progression_service.dart';
 import '../../../../core/services/resource_generation_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../hero_downtime_tracking_page.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
@@ -1235,6 +1238,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
               ],
             ),
+            // Heroic Resource Progression Widget (Fury/Null only)
+            _buildHeroicResourceProgression(context, stats),
             const SizedBox(height: 12),
             // End of Combat button
             Center(
@@ -1774,8 +1779,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 4),       
               _buildResourceGenerationButtons(context, stats),
+              _buildHeroicResourceSpendButtons(context, stats),
+              const SizedBox(height: 6),
             ],
           ),
         );
@@ -1828,6 +1835,54 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           }).toList(),
         );
       },
+    );
+  }
+
+  Widget _buildHeroicResourceSpendButtons(BuildContext context, HeroMainStats stats) {
+    const amounts = [1, 3, 5, 7, 9, 11];
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: amounts.map((amount) {
+        final enabled = stats.heroicResourceCurrent >= amount;
+        return _buildHeroicResourceButton(
+          context,
+          label: '-$amount',
+          amount: amount,
+          enabled: enabled,
+          color: Theme.of(context).colorScheme.primary,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildHeroicResourceButton(
+    BuildContext context, {
+    required String label,
+    required int amount,
+    required bool enabled,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: enabled ? () => _spendHeroicResource(amount) : null,
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(
+            color: enabled ? color.withOpacity(0.6) : color.withOpacity(0.2),
+          ),
+          color: enabled ? color.withOpacity(0.15) : color.withOpacity(0.05),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: enabled ? color : color.withOpacity(0.4),
+              ),
+        ),
+      ),
     );
   }
 
@@ -1988,6 +2043,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             ),
           ),
           const SizedBox(height: 4),
+          _buildHeroicResourceSpendButtons(context, stats),
+          const SizedBox(height: 6),
           _buildResourceGenerationButtons(context, stats),
         ],
       ),
@@ -2077,6 +2134,45 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  /// Build the heroic resource progression widget for Fury and Null classes
+  Widget _buildHeroicResourceProgression(BuildContext context, HeroMainStats stats) {
+    final progressionAsync = ref.watch(heroResourceProgressionProvider(widget.heroId));
+    final progressionContextAsync = ref.watch(heroProgressionContextProvider(widget.heroId));
+
+    return progressionAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (progression) {
+        if (progression == null) return const SizedBox.shrink();
+
+        return progressionContextAsync.when(
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (context) {
+            // Check if Stormwight without kit
+            final service = HeroicResourceProgressionService();
+            if (service.isStormwightSubclass(context.subclassName) &&
+                (context.kitId == null || context.kitId!.isEmpty)) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              children: [
+                const Divider(height: 20),
+                HeroicResourceGauge(
+                  progression: progression,
+                  currentResource: stats.heroicResourceCurrent,
+                  heroLevel: stats.level,
+                  showCompact: true,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildAddSurgeButton(BuildContext context, int amount) {
     final theme = Theme.of(context);
     
@@ -2158,6 +2254,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         ),
       ),
     );
+  }
+
+  Future<void> _spendHeroicResource(int amount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+
+    final current = stats.heroicResourceCurrent;
+    if (current < amount) return;
+
+    final newValue = current - amount;
+    await _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
   }
 
   Future<void> _spendSurges(int amount) async {

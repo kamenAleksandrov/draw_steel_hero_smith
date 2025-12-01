@@ -14,6 +14,7 @@ class ClassFeaturesSection extends StatefulWidget {
     this.selectedSubclass,
     this.initialSelections = const {},
     this.onSelectionsChanged,
+    this.equipmentIds = const [],
   });
 
   final ClassData classData;
@@ -21,6 +22,9 @@ class ClassFeaturesSection extends StatefulWidget {
   final SubclassSelectionResult? selectedSubclass;
   final Map<String, Set<String>> initialSelections;
   final ValueChanged<Map<String, Set<String>>>? onSelectionsChanged;
+  
+  /// Equipment IDs for determining kit (used for Stormwight progression)
+  final List<String?> equipmentIds;
 
   @override
   State<ClassFeaturesSection> createState() => _ClassFeaturesSectionState();
@@ -335,6 +339,8 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
           subclassLabel: subclassLabel,
           subclassSelection: widget.selectedSubclass,
           grantTypeByFeatureName: grantTypeMap,
+          className: widget.classData.name,
+          equipmentIds: widget.equipmentIds,
         ),
       ),
     );

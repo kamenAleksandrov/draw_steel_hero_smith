@@ -65,7 +65,7 @@
       "3rd_echelon": null
     },
     "disengage_bonus": 1,
-    "signature_ability": "Bear Claws",
+    "signature_ability": ["Bear Claws", "Aspect of the Wild"],
     "feature": "Boren Growing Ferocity"
   },
   {
@@ -134,7 +134,7 @@
       "3rd_echelon": null
     },
     "disengage_bonus": 1,
-    "signature_ability": "Wing Buffet",
+    "signature_ability": ["Wing Buffet", "Aspect of the Wild"],
     "feature": "Corven Growing Ferocity"
   },
   {
@@ -203,7 +203,7 @@
       "3rd_echelon": null
     },
     "disengage_bonus": 1,
-    "signature_ability": "Driving Pounce",
+    "signature_ability": ["Driving Pounce", "Aspect of the Wild"],
     "feature": "Raden Growing Ferocity"
   },
   {
@@ -272,7 +272,7 @@
       "3rd_echelon": null
     },
     "disengage_bonus": 1,
-    "signature_ability": "Unbalancing Attack",
+    "signature_ability": ["Unbalancing Attack", "Aspect of the Wild"],
     "feature": "Vulken Growing Ferocity"
   }
 ]
