@@ -21,7 +21,6 @@ import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/skills_service.dart';
-import '../widgets/strife_creator/class_features_section.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';
@@ -98,7 +97,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Set<String> _reservedAbilityIds = {};
   Set<String> _reservedPerkIds = {};
   SubclassSelectionResult? _selectedSubclass;
-  Map<String, Set<String>> _featureSelections = {};
   List<String?> _selectedKitIds = [];
 
   @override
@@ -219,15 +217,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           );
         } else {
           _selectedSubclass = null;
-        }
-
-        // Load saved feature selections
-        final savedFeatureSelections =
-            await repo.getFeatureSelections(widget.heroId);
-        if (savedFeatureSelections.isNotEmpty) {
-          _featureSelections = savedFeatureSelections;
-        } else {
-          _featureSelections = {};
         }
 
         // Load equipment / modifications selections
@@ -702,7 +691,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _reservedAbilityIds = {};
       _reservedPerkIds = {};
       _selectedSubclass = null;
-      _featureSelections = {};
       _selectedKitIds = <String?>[];
     });
     _markDirty();
@@ -1204,11 +1192,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         rangedDistanceBonus: equipmentBonuses.rangedDistanceBonus,
       ));
 
-      // Save class feature selections (user picks + auto-applied)
-      updates.add(
-        repo.saveFeatureSelections(widget.heroId, _featureSelections),
-      );
-
       // 4. Save selected characteristic array name
       if (_selectedArray != null) {
         updates.add(repo.updateCharacteristicArray(
@@ -1536,17 +1519,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               selectedPerks: _selectedPerks,
               reservedPerkIds: _reservedPerkIds,
               onSelectionChanged: _handlePerkSelectionsChanged,
-            ),
-            ClassFeaturesSection(
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedSubclass: _selectedSubclass,
-              initialSelections: _featureSelections,
-              onSelectionsChanged: (value) {
-                setState(() {
-                  _featureSelections = value;
-                });
-              },
             ),
           ],
 

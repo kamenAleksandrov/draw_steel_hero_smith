@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
+import 'package:hero_smith/features/creators/hero_creators/strength_creator_page.dart';
 import 'package:hero_smith/features/heroes/hero_sheet/hero_sheet_page.dart';
 
 class HeroCreatorPage extends ConsumerStatefulWidget {
@@ -21,6 +22,8 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
       GlobalKey<StoryCreatorTabState>();
   final GlobalKey<_StrifeCreatorTabState> _strifeTabKey =
       GlobalKey<_StrifeCreatorTabState>();
+  final GlobalKey<StrenghtCreatorPageState> _strengthPageKey =
+      GlobalKey<StrenghtCreatorPageState>();
 
   bool _storyDirty = false;
   bool _strifeDirty = false;
@@ -32,7 +35,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabChange);
   }
 
@@ -105,6 +108,10 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
       }
       // If 'cancel' or dialog dismissed, stay on current tab (already set above)
       _handlingTabPrompt = false;
+    }
+
+    if (mounted && _tabController.index == 2) {
+      _strengthPageKey.currentState?.reload();
     }
 
     if (mounted) {
@@ -288,6 +295,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
             tabs: const [
               Tab(text: 'Story'),
               Tab(text: 'Strife'),
+              Tab(text: 'Strenght'),
             ],
           ),
         ),
@@ -304,6 +312,10 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
               key: _strifeTabKey,
               heroId: widget.heroId,
               onDirtyChanged: _handleStrifeDirty,
+            ),
+            StrenghtCreatorPage(
+              key: _strengthPageKey,
+              heroId: widget.heroId,
             ),
           ],
         ),
