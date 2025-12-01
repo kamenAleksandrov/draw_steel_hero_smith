@@ -19,7 +19,7 @@ class KitCard extends StatefulWidget {
 }
 
 class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
-  Component? _signatureAbility;
+  List<Component> _signatureAbilities = [];
   bool _loadingAbility = false;
   late bool _isExpanded;
   late AnimationController _animationController;
@@ -59,19 +59,38 @@ class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
   }
 
   Future<void> _loadSignatureAbility() async {
-    final signatureAbilityName = widget.component.data['signature_ability'] as String?;
-    if (signatureAbilityName == null || signatureAbilityName.isEmpty) return;
+    final signatureAbilityData = widget.component.data['signature_ability'];
+    if (signatureAbilityData == null) return;
+
+    // Handle both string and array formats
+    final List<String> abilityNames;
+    if (signatureAbilityData is String) {
+      if (signatureAbilityData.isEmpty) return;
+      abilityNames = [signatureAbilityData];
+    } else if (signatureAbilityData is List) {
+      abilityNames = signatureAbilityData.cast<String>();
+      if (abilityNames.isEmpty) return;
+    } else {
+      return;
+    }
 
     setState(() => _loadingAbility = true);
 
     try {
       final abilityService = AbilityDataService();
       final library = await abilityService.loadLibrary();
-      final ability = library.find(signatureAbilityName);
+      final loadedAbilities = <Component>[];
+      
+      for (final abilityName in abilityNames) {
+        final ability = library.find(abilityName);
+        if (ability != null) {
+          loadedAbilities.add(ability);
+        }
+      }
       
       if (mounted) {
         setState(() {
-          _signatureAbility = ability;
+          _signatureAbilities = loadedAbilities;
           _loadingAbility = false;
         });
       }
@@ -637,10 +656,12 @@ class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
 
   Widget _buildSignatureAbilitySection(BuildContext context, Map<String, dynamic> data,
       KitColorScheme colorScheme, bool isDark) {
-    if (_signatureAbility != null) {
-      return SizedBox(
-        width: double.infinity,
-        child: AbilityExpandableItem(component: _signatureAbility!),
+    if (_signatureAbilities.isNotEmpty) {
+      return Column(
+        children: _signatureAbilities.map((ability) => SizedBox(
+          width: double.infinity,
+          child: AbilityExpandableItem(component: ability),
+        )).toList(),
       );
     } else if (_loadingAbility) {
       return Container(
@@ -657,28 +678,42 @@ class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
         ),
       );
     } else if (data['signature_ability'] != null) {
+      // Fallback: display ability names as text if components couldn't be loaded
+      final signatureAbilityData = data['signature_ability'];
+      final List<String> abilityNames;
+      if (signatureAbilityData is String) {
+        abilityNames = [signatureAbilityData];
+      } else if (signatureAbilityData is List) {
+        abilityNames = signatureAbilityData.cast<String>();
+      } else {
+        return const SizedBox.shrink();
+      }
+      
       return _buildSection(
         context: context,
         icon: '\u{2728}',
-        title: 'Signature Ability',
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: colorScheme.primary.withOpacity(isDark ? 0.1 : 0.05),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: colorScheme.primary.withOpacity(0.2),
+        title: abilityNames.length > 1 ? 'Signature Abilities' : 'Signature Ability',
+        child: Column(
+          children: abilityNames.map((name) => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            margin: EdgeInsets.only(bottom: name != abilityNames.last ? 8 : 0),
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withOpacity(isDark ? 0.1 : 0.05),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: colorScheme.primary.withOpacity(0.2),
+              ),
             ),
-          ),
-          child: Text(
-            data['signature_ability'] as String,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark ? colorScheme.primary.shade300 : colorScheme.primary.shade700,
+            child: Text(
+              name,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isDark ? colorScheme.primary.shade300 : colorScheme.primary.shade700,
+              ),
             ),
-          ),
+          )).toList(),
         ),
         colorScheme: colorScheme,
         isDark: isDark,

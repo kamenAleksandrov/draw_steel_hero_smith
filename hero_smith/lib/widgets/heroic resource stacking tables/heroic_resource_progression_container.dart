@@ -58,8 +58,14 @@ class _HeroicResourceProgressionContainerState
 
   HeroicResourceProgression? _progression;
   bool _isLoading = true;
+  bool _isInitialLoad = true; // Track first load vs subsequent updates
   String? _error;
   bool _awaitingKitSelection = false;
+
+  // Cache the last loaded config to avoid redundant loads
+  String? _lastClassName;
+  String? _lastSubclassName;
+  String? _lastKitId;
 
   @override
   void initState() {
@@ -71,10 +77,12 @@ class _HeroicResourceProgressionContainerState
   void didUpdateWidget(covariant HeroicResourceProgressionContainer oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Reload if any relevant property changed
-    if (oldWidget.className != widget.className ||
+    // Only reload if class/subclass/kit changed (not currentResource or heroLevel)
+    final configChanged = oldWidget.className != widget.className ||
         oldWidget.subclassName != widget.subclassName ||
-        oldWidget.kitId != widget.kitId) {
+        oldWidget.kitId != widget.kitId;
+        
+    if (configChanged) {
       _loadProgression();
     }
   }
@@ -82,11 +90,27 @@ class _HeroicResourceProgressionContainerState
   Future<void> _loadProgression() async {
     if (!mounted) return;
 
-    setState(() {
-      _isLoading = true;
+    // Skip reload if config hasn't actually changed
+    if (_lastClassName == widget.className &&
+        _lastSubclassName == widget.subclassName &&
+        _lastKitId == widget.kitId &&
+        _progression != null) {
+      return;
+    }
+
+    // Only show loading indicator on initial load, not on config changes
+    // to avoid jarring visual updates
+    if (_isInitialLoad) {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+        _awaitingKitSelection = false;
+      });
+    } else {
+      // For subsequent loads, update silently
       _error = null;
       _awaitingKitSelection = false;
-    });
+    }
 
     try {
       // Check if this class even uses progression tables
@@ -95,6 +119,10 @@ class _HeroicResourceProgressionContainerState
           setState(() {
             _progression = null;
             _isLoading = false;
+            _isInitialLoad = false;
+            _lastClassName = widget.className;
+            _lastSubclassName = widget.subclassName;
+            _lastKitId = widget.kitId;
           });
           widget.onProgressionLoaded?.call(null);
         }
@@ -111,6 +139,10 @@ class _HeroicResourceProgressionContainerState
             _awaitingKitSelection = true;
             _progression = null;
             _isLoading = false;
+            _isInitialLoad = false;
+            _lastClassName = widget.className;
+            _lastSubclassName = widget.subclassName;
+            _lastKitId = widget.kitId;
           });
           widget.onProgressionLoaded?.call(null);
         }
@@ -128,6 +160,11 @@ class _HeroicResourceProgressionContainerState
         setState(() {
           _progression = progression;
           _isLoading = false;
+          _isInitialLoad = false;
+          // Update cache
+          _lastClassName = widget.className;
+          _lastSubclassName = widget.subclassName;
+          _lastKitId = widget.kitId;
         });
         widget.onProgressionLoaded?.call(progression);
       }
@@ -136,6 +173,7 @@ class _HeroicResourceProgressionContainerState
         setState(() {
           _error = 'Failed to load progression: $e';
           _isLoading = false;
+          _isInitialLoad = false;
         });
         widget.onProgressionLoaded?.call(null);
       }

@@ -8,6 +8,7 @@ import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../widgets/strength_creator/class_features_section.dart';
+import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 
 class StrenghtCreatorPage extends ConsumerStatefulWidget {
   const StrenghtCreatorPage({
@@ -195,6 +196,15 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         ...notices,
         const SizedBox(height: 12),
       ],
+      if (_classData != null)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: AutoHeroGreenFormWidget(
+            heroId: widget.heroId,
+            sectionTitle: 'Green Elementalist Forms',
+            sectionSpacing: 12,
+          ),
+        ),
       if (_classData != null)
         ClassFeaturesSection(
           classData: _classData!,

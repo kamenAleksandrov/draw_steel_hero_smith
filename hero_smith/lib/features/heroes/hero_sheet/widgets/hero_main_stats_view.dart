@@ -17,6 +17,7 @@ import '../../../../core/services/heroic_resource_progression_service.dart';
 import '../../../../core/services/resource_generation_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
+import '../../../../widgets/creature stat block/hero_green_form_widget.dart';
 import '../hero_downtime_tracking_page.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
@@ -395,6 +396,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           const SizedBox(height: 12),
           _buildVitalsCard(context, stats, resourceDetails),
           const SizedBox(height: 12),
+          AutoHeroGreenFormWidget(
+            heroId: widget.heroId,
+            sectionTitle: 'Green Elementalist Forms',
+            sectionSpacing: 12,
+          ),
           ConditionsTrackerWidget(heroId: widget.heroId),
           const SizedBox(height: 12),
           DamageResistanceTrackerWidget(heroId: widget.heroId),
@@ -2139,37 +2145,31 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final progressionAsync = ref.watch(heroResourceProgressionProvider(widget.heroId));
     final progressionContextAsync = ref.watch(heroProgressionContextProvider(widget.heroId));
 
-    return progressionAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (progression) {
-        if (progression == null) return const SizedBox.shrink();
+    // Keep showing the previous progression/context while Riverpod refreshes to avoid UI flicker.
+    final progression = progressionAsync.valueOrNull;
+    final progressionContext = progressionContextAsync.valueOrNull;
 
-        return progressionContextAsync.when(
-          loading: () => const SizedBox.shrink(),
-          error: (_, __) => const SizedBox.shrink(),
-          data: (context) {
-            // Check if Stormwight without kit
-            final service = HeroicResourceProgressionService();
-            if (service.isStormwightSubclass(context.subclassName) &&
-                (context.kitId == null || context.kitId!.isEmpty)) {
-              return const SizedBox.shrink();
-            }
+    if (progression == null || progressionContext == null) {
+      return const SizedBox.shrink();
+    }
 
-            return Column(
-              children: [
-                const Divider(height: 20),
-                HeroicResourceGauge(
-                  progression: progression,
-                  currentResource: stats.heroicResourceCurrent,
-                  heroLevel: stats.level,
-                  showCompact: true,
-                ),
-              ],
-            );
-          },
-        );
-      },
+    // Check if Stormwight without kit
+    final service = HeroicResourceProgressionService();
+    if (service.isStormwightSubclass(progressionContext.subclassName) &&
+        (progressionContext.kitId == null || progressionContext.kitId!.isEmpty)) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: [
+        const Divider(height: 20),
+        HeroicResourceGauge(
+          progression: progression,
+          currentResource: stats.heroicResourceCurrent,
+          heroLevel: stats.level,
+          showCompact: true,
+        ),
+      ],
     );
   }
 

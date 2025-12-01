@@ -161,7 +161,8 @@
         "load_additional_features": {
           "type": "table",
           "name": "green_forms.json"
-        }
+        },
+        "ability": "Disciple of the Green"
       }
     ]
   },

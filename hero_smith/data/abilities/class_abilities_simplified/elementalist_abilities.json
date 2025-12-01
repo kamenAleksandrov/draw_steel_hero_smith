@@ -655,6 +655,30 @@
   },
   {
     "type": "ability",
+    "id": "disciple_of_the_green",
+    "name": "Disciple of the Green",
+    "level": 2,
+    "resource": "",
+    "resource_value": 0,
+    "story_text": "",
+    "keywords": "Magic, Shapeshift",
+    "action_type": "maneuver",
+    "trigger_text": "",
+    "distance": "Self",
+    "targets": "Self",
+    "power_roll": "",
+    "tier_effects": [
+      {
+        "tier1": "",
+        "tier2": "",
+        "tier3": ""
+      }
+    ],
+    "effect": "You shapeshift into a creature from the Green Animal Forms table. In animal form you can speak, and you use your Reason score for melee free strikes. Your statistics stay the same except as noted by the chosen form. Some forms grant temporary Stamina that is lost when reverting. You choose a specific animal appearance for each form. Your gear either melds into your new form or falls to the ground (your choice). You revert to your true form as a maneuver. You cannot enter an animal form unless already in true form. If you are dying, you revert to your true form and cannot shapeshift again until no longer dying.",
+    "special_effect": ""
+  },
+  {
+    "type": "ability",
     "id": "earth-accepts-me",
     "name": "Earth Accepts Me",
     "level": 3,

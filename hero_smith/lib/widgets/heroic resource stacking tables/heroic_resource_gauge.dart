@@ -6,7 +6,13 @@ import '../../core/theme/app_colors.dart';
 /// A gauge widget that displays heroic resource progression with a bar
 /// that fills based on current resource value, and tier benefits that
 /// change appearance based on whether they're active, inactive, or locked.
-class HeroicResourceGauge extends StatelessWidget {
+///
+/// By default, only shows tiers that are:
+/// - Unlocked (by hero level) AND reached (by current resource), or
+/// - The next unlocked tier to reach
+/// 
+/// Hidden tiers can be revealed via an expandable dropdown.
+class HeroicResourceGauge extends StatefulWidget {
   const HeroicResourceGauge({
     super.key,
     required this.progression,
@@ -28,37 +34,44 @@ class HeroicResourceGauge extends StatelessWidget {
   final bool showCompact;
 
   @override
+  State<HeroicResourceGauge> createState() => _HeroicResourceGaugeState();
+}
+
+class _HeroicResourceGaugeState extends State<HeroicResourceGauge> {
+  bool _isExpanded = false;
+
+  HeroicResourceProgression get progression => widget.progression;
+  int get currentResource => widget.currentResource;
+  int get heroLevel => widget.heroLevel;
+  bool get showCompact => widget.showCompact;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final resourceColor = _getResourceColor();
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: resourceColor.withOpacity(0.3),
-          width: 1.5,
+          color: resourceColor.withOpacity(0.2),
+          width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: resourceColor.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(showCompact ? 12 : 16),
+        padding: EdgeInsets.all(showCompact ? 10 : 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildHeader(isDark, resourceColor),
-            SizedBox(height: showCompact ? 12 : 16),
+            SizedBox(height: showCompact ? 8 : 12),
             _buildProgressBar(isDark, resourceColor),
-            SizedBox(height: showCompact ? 12 : 16),
+            SizedBox(height: showCompact ? 8 : 12),
             _buildTiersList(isDark, resourceColor),
           ],
         ),
@@ -70,41 +83,26 @@ class HeroicResourceGauge extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: resourceColor.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(10),
+            color: resourceColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             _getResourceIcon(),
             color: resourceColor,
-            size: showCompact ? 20 : 24,
+            size: showCompact ? 16 : 18,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                progression.name,
-                style: TextStyle(
-                  fontSize: showCompact ? 14 : 16,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Colors.grey.shade900,
-                  letterSpacing: -0.3,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                '${progression.resourceName}: $currentResource / ${progression.maxResourceValue}',
-                style: TextStyle(
-                  fontSize: showCompact ? 11 : 12,
-                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            progression.name,
+            style: TextStyle(
+              fontSize: showCompact ? 13 : 14,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white : Colors.grey.shade800,
+            ),
           ),
         ),
         _buildCurrentValueBadge(isDark, resourceColor),
@@ -114,22 +112,35 @@ class HeroicResourceGauge extends StatelessWidget {
 
   Widget _buildCurrentValueBadge(bool isDark, Color resourceColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: resourceColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(20),
+        color: resourceColor.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: resourceColor.withOpacity(0.4),
+          color: resourceColor.withOpacity(0.3),
           width: 1,
         ),
       ),
-      child: Text(
-        currentResource.toString(),
-        style: TextStyle(
-          fontSize: showCompact ? 16 : 20,
-          fontWeight: FontWeight.w800,
-          color: resourceColor,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            currentResource.toString(),
+            style: TextStyle(
+              fontSize: showCompact ? 14 : 16,
+              fontWeight: FontWeight.w700,
+              color: resourceColor,
+            ),
+          ),
+          Text(
+            ' / ${progression.maxResourceValue}',
+            style: TextStyle(
+              fontSize: showCompact ? 10 : 11,
+              fontWeight: FontWeight.w500,
+              color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -186,7 +197,7 @@ class HeroicResourceGauge extends StatelessWidget {
         const SizedBox(height: 4),
         // Main progress bar
         Container(
-          height: showCompact ? 10 : 14,
+          height: showCompact ? 8 : 10,
           decoration: BoxDecoration(
             color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(7),
@@ -252,18 +263,96 @@ class HeroicResourceGauge extends StatelessWidget {
   }
 
   Widget _buildTiersList(bool isDark, Color resourceColor) {
+    // Partition tiers into visible (reached or next-to-reach while unlocked) and hidden
+    final visibleTiers = <ProgressionTier>[];
+    final hiddenTiers = <ProgressionTier>[];
+    bool foundNextUnlocked = false;
+
+    for (final tier in progression.tiers) {
+      final isUnlocked = tier.isUnlockedAtLevel(heroLevel);
+      final isReached = currentResource >= tier.resourceThreshold;
+
+      if (isUnlocked && isReached) {
+        // Already reached this tier - always visible
+        visibleTiers.add(tier);
+      } else if (isUnlocked && !foundNextUnlocked) {
+        // First unlocked tier not yet reached - show as "next goal"
+        visibleTiers.add(tier);
+        foundNextUnlocked = true;
+      } else {
+        // Either locked by level or beyond the next goal
+        hiddenTiers.add(tier);
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: progression.tiers.map((tier) {
-        return _TierBenefitItem(
+      children: [
+        // Always-visible tiers
+        ...visibleTiers.map((tier) => _TierBenefitItem(
           tier: tier,
           currentResource: currentResource,
           heroLevel: heroLevel,
           resourceColor: resourceColor,
           isDark: isDark,
           showCompact: showCompact,
-        );
-      }).toList(),
+        )),
+        // Expandable section for hidden tiers
+        if (hiddenTiers.isNotEmpty) ...[
+          _buildExpandToggle(isDark, resourceColor, hiddenTiers.length),
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 200),
+            sizeCurve: Curves.easeOutCubic,
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            firstChild: const SizedBox.shrink(),
+            secondChild: Column(
+              children: hiddenTiers.map((tier) => _TierBenefitItem(
+                tier: tier,
+                currentResource: currentResource,
+                heroLevel: heroLevel,
+                resourceColor: resourceColor,
+                isDark: isDark,
+                showCompact: showCompact,
+              )).toList(),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildExpandToggle(bool isDark, Color resourceColor, int hiddenCount) {
+    return InkWell(
+      onTap: () => setState(() => _isExpanded = !_isExpanded),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _isExpanded ? 'Hide' : 'Show $hiddenCount more tier${hiddenCount == 1 ? '' : 's'}',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(width: 4),
+            AnimatedRotation(
+              turns: _isExpanded ? 0.5 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                Icons.expand_more,
+                size: 16,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
