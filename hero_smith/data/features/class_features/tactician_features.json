@@ -75,14 +75,14 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Adopt the triggered action granted by your tactical doctrine.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Insurgent",
-        "ability": "Overwatch"
+        "ability": "Advanced Tactics"
       },
       {
         "subclass_name": "Mastermind",
-        "ability": "Advanced Tactics"
+        "ability": "Overwatch"
       },
       {
         "subclass_name": "Vanguard",
@@ -98,7 +98,7 @@
     "class": "tactician",
     "is_subclass_feature": true,
     "level": 1,
-    "options": [
+    "grants": [
       {
         "subclass_name": "Insurgent",
         "name": "Covert Operations",
@@ -124,19 +124,19 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2nd-level feature from your tactical doctrine.",
-    "options": [
+    "grants": [
       {
-        "doctrine": "Insurgent",
+        "subclass_name": "Insurgent",
         "name": "Infiltration Tactics",
         "description": "You have trained your squad to work together, stay silent, and wait for the opportune time to strike. Whenever you or any ally within 10 squares of you becomes hidden, that creature gains 1 surge."
       },
       {
-        "doctrine": "Mastermind",
+        "subclass_name": "Mastermind",
         "name": "Goaded",
         "description": "You have learned to leverage your marked foes' psychology and goad them into acting before they're tactically ready. Whenever a creature marked by you uses a strike that targets you or any ally within your line of effect, you can use a free triggered action to change one target of the strike to you or another ally within your line of effect. The new target must be within distance of the ability and within line of effect of the creature using it."
       },
       {
-        "doctrine": "Vanguard",
+        "subclass_name": "Vanguard",
         "name": "Melee Superiority",
         "description": "After constant drills, you can more accurately anticipate an enemy's plan and thwart their attempts to move across the battlefield. Whenever you make an opportunity attack, the target's speed is reduced to 0 until the end of the current turn.\n\nWhen a creature marked by you attempts to move or shift within distance of your melee free strike, you can use a free triggered action and spend 2 focus to make a melee free strike against that creature."
       }
@@ -167,6 +167,47 @@
     "description": "Your expertise with weapons has grown. Whenever you use a signature ability from one of your equipped kits or make a free strike using a weapon from one of your equipped kits, you gain an edge."
   },
   {
+    "id": "feature_tactician_doctrine_feature_5",
+    "type": "feature",
+    "name": "Doctrine Feature",
+    "class": "tactician",
+    "is_subclass_feature": true,
+    "level": 5,
+    "description": "You gain the 5th-level features from your tactical doctrine.",
+    "grants": [
+      {
+        "subclass_name": "Insurgent",
+        "name": "Distracted",
+        "description": "You have mastered the ability to distract your foes, allowing you and your allies to take advantage of their gaps in attention. Whenever you or any ally attempts to hide, any creature marked by you doesn’t count as an observer. Additionally, you and your allies can use other allies as cover for the purpose of hiding."
+      },
+      {
+        "subclass_name": "Insurgent",
+        "name": "Leave No Trace",
+        "description": "You and any ally within 10 squares of you can move at full speed while sneaking. Additionally, enemies within 10 squares of you take a bane on tests made to search for you or your allies while any of you are hidden."
+      },
+      {
+        "subclass_name": "Mastermind",
+        "name": "Anticipation",
+        "description": "You have learned to be more preemptive on the battlefield, thinking more steps ahead than your opponents. You can target two creatures with your Mark ability."
+      },
+      {
+        "subclass_name": "Mastermind",
+        "name": "I Predicted That",
+        "description": "Your expertise in history and lore allows you and your allies to outthink rivals in the present day. You and any ally within 10 squares of you gain an edge on Reason tests"
+      },
+      {
+        "subclass_name": "Vanguard",
+        "name": "Shake It Off",
+        "description": "As a free maneuver, you can spend 1d6 Stamina to ignore a consequence from a test, or to end one effect on you that is ended by a saving throw or that ends at the end of your turn. Any ally adjacent to you can also spend Stamina as a free maneuver to gain this benefit"
+      },
+      {
+        "subclass_name": "Vanguard",
+        "name": "Tactical Offensive",
+        "description": "When you use the Charge main action to attack a creature marked by you, you can use a signature or heroic ability with the Melee and Strike keywords instead of a melee free strike."
+      }
+    ]
+  },
+  {
     "id": "feature_tactician_master_of_arms",
     "type": "feature",
     "name": "Master of Arms",
@@ -183,19 +224,19 @@
     "is_subclass_feature": true,
     "level": 7,
     "description": "You gain the 7th-level feature from your tactical doctrine.",
-    "options": [
+    "grants": [
       {
-        "doctrine": "Insurgent",
+        "subclass_name": "Insurgent",
         "name": "Asymmetric Warfare",
         "description": "You have advanced your skills in subterfuge, now directing full battlefield strategy and logistics. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the intrigue skill group. Additionally, you can use skills from the intrigue skill group to conceal large groups of people, such as escaping civilians and groups of guerilla warriors."
       },
       {
-        "doctrine": "Mastermind",
+        "subclass_name": "Mastermind",
         "name": "Grand Strategy",
         "description": "You have grown your skills in strategy, wielding intricate battlefield tactics and plans. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the lore skill group. Additionally, when you take a respite, you can make a project roll for a research project in addition to undertaking another respite activity."
       },
       {
-        "doctrine": "Vanguard",
+        "subclass_name": "Vanguard",
         "name": "Shock and Awe",
         "description": "You have expanded your leadership skills, strengthening your followers' morale and providing logistical support. During a montage test or negotiation, you can obtain one automatic success on a test made using a skill from the interpersonal skill group. Additionally, you can convince a group of people to help you with a crafting project during a respite. If these people are available when you take a respite, you can make a project roll for a crafting project in addition to undertaking another respite activity."
       }
@@ -225,21 +266,21 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature from your tactical doctrine.",
-    "options": [
+    "grants": [
       {
-        "doctrine": "Insurgent",
+        "subclass_name": "Insurgent",
         "name": "Bait and Ambush",
-        "description": "You have trained your squad to be silent ambushers.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to let the character making the strike shift up to a number of squares equal to your Reason score and use the Hide maneuver as a free maneuver once during the shift. The creature can shift before or after the strike is resolved."
+        "description": "You have trained your squad to be silent ambushers.\n\nMark Benefit: When you or any ally makes a strike against a creature marked by you, you can spend 2 focus to let the character making the strike shift up to a number of squares equal to your Reason score and use the Hide maneuver as a free maneuver once during the shift. The creature can shift before or after the strike is resolved."
       },
       {
-        "doctrine": "Mastermind",
+        "subclass_name": "Mastermind",
         "name": "Pincer Movement",
-        "description": "You have trained your squad to coordinate their movements to maximize combat impact.\n\nWhen you or any ally makes a strike against a creature marked by you, you can spend 2 focus to have the character making the strike shift up to a number of squares equal to your Reason score before the strike is resolved. If you didn't make the strike, you can make this shift as well. If you did make the strike, one ally within 10 squares of you can make this shift as well."
+        "description": "You have trained your squad to coordinate their movements to maximize combat impact.\n\nMark Benefit: When you or any ally makes a strike against a creature marked by you, you can spend 2 focus to have the character making the strike shift up to a number of squares equal to your Reason score before the strike is resolved. If you didn't make the strike, you can make this shift as well. If you did make the strike, one ally within 10 squares of you can make this shift as well."
       },
       {
-        "doctrine": "Vanguard",
+        "subclass_name": "Vanguard",
         "name": "See Your Enemies Driven Before You",
-        "description": "You have trained your squad to maximize impact and break enemy lines when they attack.\n\nWhen you or any ally makes a melee strike against a creature marked by you, you can spend 2 focus to have the character making the strike push the target up to a number of squares equal to your Reason score. That character can then shift up to a number of squares equal to your Reason score, ending this shift adjacent to the target."
+        "description": "You have trained your squad to maximize impact and break enemy lines when they attack.\n\nMark Benefit: When you or any ally makes a melee strike against a creature marked by you, you can spend 2 focus to have the character making the strike push the target up to a number of squares equal to your Reason score. That character can then shift up to a number of squares equal to your Reason score, ending this shift adjacent to the target."
       }
     ]
   },

@@ -84,7 +84,7 @@ class _HeroDowntimeTrackingPageState
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const DowntimeTabsScaffold(initialIndex: 3),
+                  builder: (context) => const EventsPageScaffold(),
                 ),
               );
             },

@@ -16,11 +16,11 @@
     "description": "The gods measure your devotion through a Heroic Resource called piety, which fuels your miracles and domain effects.",
     "in_combat": {
       "name": "Piety in Combat",
-      "description": "At the start of each of your turns during combat, you can pray (no action required). When you do, roll 1d3 and gain that much piety. If you roll a 1, the Director can introduce a complication reflecting the risks of beseeching divine aid in the thick of danger. You lose any unspent piety at the end of the encounter."
+      "description": "At the start of a combat encounter or some other stressful situation tracked in combat rounds (as determined by the Director), you gain piety equal to your Victories. At the start of each of your turns during combat, you gain 1d3 piety. \nAdditionally, you can gain more piety by praying to the gods—but beware! Doing so can easily draw their ire, as the gods hate to be annoyed. Before you roll to gain piety at the start of your turn, you can pray (no action required). If you do, your roll gains the following additional effects: \nIf the roll is a 1, you gain 1 additional piety but anger the gods! You take psychic damage equal to 1d6 + your level, which can’t be reduced in any way. \nIf the roll is a 2, you gain 1 additional piety. \nIf the roll is a 3, you gain 2 additional piety and can activate a domain effect of your choice (see below). \nYou lose any remaining piety at the end of the encounter."
     },
     "out_of_combat": {
       "name": "Piety Outside of Combat",
-      "description": "Though you can't gain piety outside of combat, you can use your heroic abilities and effects that cost piety without spending it. Whenever you use an ability or effect outside of combat that costs piety, you can't use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite.\n\nWhen you use an ability outside of combat that lets you spend unlimited piety on its effect, such as Healing Grace, you can use it as if you had spent an amount of piety equal to your Victories."
+      "description": " Though you can’t gain piety outside of combat, you can use your heroic abilities and effects that cost piety without spending it. Whenever you use an ability or effect outside of combat that costs piety, you can’t use that same ability or effect outside of combat again until you earn 1 or more Victories or finish a respite. \nWhen you use an ability outside of combat that lets you spend unlimited piety on its effect, such as Healing Grace, you can use it as if you had spent an amount of piety equal to your Victories"
     }
   },
   {
@@ -149,54 +149,66 @@
     "class": "conduit",
     "level": 1,
     "description": "Each of your domains provides specific deeds that earn piety and unique effects you can invoke by spending it.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares uses an area ability.\nPrayer Effect: You summon the forces of creation and create a wall of stone within 10 squares whose size is 5 + your Intuition score. The wall lasts until the end of the encounter."
+        "piety": "You gain 2 piety the first time in an encounter that a creature within 10 squares uses an area ability.",
+        "prayer_effect": "You summon the forces of creation and create a wall of stone within 10 squares whose size is 5 + your Intuition score. The wall lasts until the end of the encounter."
       },
       {
         "domain": "Death",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares who isn’t a minion is reduced to 0 Stamina, or the first time in an encounter that a solo creature within 10 squares becomes winded.\nPrayer Effect: You inflict a deadly curse on up to two enemies within 10 squares of you. Each target takes corruption damage equal to twice your Intuition score."
+        "piety": "You gain 2 piety the first time in an encounter that a creature within 10 squares who isn’t a minion is reduced to 0 Stamina, or the first time in an encounter that a solo creature within 10 squares becomes winded.",
+        "prayer_effect": "You inflict a deadly curse on up to two enemies within 10 squares of you. Each target takes corruption damage equal to twice your Intuition score."
       },
       {
         "domain": "Fate",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an ally within 10 squares obtains a tier 3 outcome on a power roll, or an enemy within 10 squares obtains a tier 1 outcome on a power roll.\nPrayer Effect: You call on the forces of fate to create a reliable future. Choose a creature within 10 squares. That creature automatically obtains a tier 1 or tier 3 outcome (your choice) on their next power roll made before the end of the encounter."
+        "piety": "You gain 2 piety the first time in an encounter that an ally within 10 squares obtains a tier 3 outcome on a power roll, or an enemy within 10 squares obtains a tier 1 outcome on a power roll.",
+        "prayer_effect": "You call on the forces of fate to create a reliable future. Choose a creature within 10 squares. That creature automatically obtains a tier 1 or tier 3 outcome (your choice) on their next power roll made before the end of the encounter."
       },
       {
         "domain": "Knowledge",
-        "description": "Piety: You gain 2 piety the first time in an encounter that the Director spends Malice (see Draw Steel: Monsters).\nPrayer Effect: Choose up to five allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 1 surge."
+        "piety": "You gain 2 piety the first time in an encounter that the Director spends Malice (see Draw Steel: Monsters).",
+        "prayer_effect": " Choose up to five allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 1 surge."
       },
       {
         "domain": "Life",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares regains Stamina.\nPrayer Effect: Choose yourself or one ally within 10 squares. That character can spend a Recovery, can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or can stand up if they are prone. Alternatively, you or one ally within 10 squares gains temporary Stamina equal to two times your Intuition score."
+        "piety": "You gain 2 piety the first time in an encounter that a creature within 10 squares regains Stamina.",
+        "prayer_effect": "Choose yourself or one ally within 10 squares. That character can spend a Recovery, can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or can stand up if they are prone. Alternatively, you or one ally within 10 squares gains temporary Stamina equal to two times your Intuition score."
       },
       {
         "domain": "Love",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or any ally within 10 squares uses the Aid Attack maneuver or an ability that targets an ally.\nPrayer Effect: Each ally within 10 squares of you gains temporary Stamina equal to two times your Intuition score."
+        "piety": "You gain 2 piety the first time in an encounter that you or any ally within 10 squares uses the Aid Attack maneuver or an ability that targets an ally.",
+        "prayer_effect": " Each ally within 10 squares of you gains temporary Stamina equal to two times your Intuition score."
       },
       {
         "domain": "Nature",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes acid, cold, fire, lightning, poison, or sonic damage.\nPrayer Effect: Vines whip up from the floor or ground within 10 squares, wrapping around a number of creatures equal to your Intuition score. You can slide each creature up to a number of squares equal to your Intuition score. The vines then fade away."
+        "piety": "You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes acid, cold, fire, lightning, poison, or sonic damage.",
+        "prayer_effect": "Vines whip up from the floor or ground within 10 squares, wrapping around a number of creatures equal to your Intuition score. You can slide each creature up to a number of squares equal to your Intuition score. The vines then fade away."
       },
       {
         "domain": "Protection",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or any ally within 10 squares gains temporary Stamina, or uses a triggered action to reduce incoming damage or to impose a bane or double bane on an enemy’s power roll.\nPrayer Effect: One ally within 10 squares gains temporary Stamina equal to four times your Intuition score."
+        "piety": "You gain 2 piety the first time in an encounter that you or any ally within 10 squares gains temporary Stamina, or uses a triggered action to reduce incoming damage or to impose a bane or double bane on an enemy’s power roll.",
+        "prayer_effect": " One ally within 10 squares gains temporary Stamina equal to four times your Intuition score."
       },
       {
         "domain": "Storm",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an enemy within 10 squares is force moved.\nPrayer Effect: Each enemy in a 3 cube within 10 squares takes lightning damage equal to twice your Intuition score."
+        "piety": " You gain 2 piety the first time in an encounter that an enemy within 10 squares is force moved.",
+        "prayer_effect": "Each enemy in a 3 cube within 10 squares takes lightning damage equal to twice your Intuition score."
       },
       {
         "domain": "Sun",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an enemy within 10 squares takes fire or holy damage.\nPrayer Effect: One enemy within 10 squares takes fire damage equal to three times your Intuition score."
+        "piety": "You gain 2 piety the first time in an encounter that an enemy within 10 squares takes fire or holy damage.",
+        "prayer_effect": "One enemy within 10 squares takes fire damage equal to three times your Intuition score"
       },
       {
         "domain": "Trickery",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes the Aid Attack or Hide maneuver.\nPrayer Effect: You slide one creature within 10 squares of you up to a number of squares equal to 5 + your conduit level."
+        "piety": "You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes the Aid Attack or Hide maneuver.",
+        "prayer_effect": "You slide one creature within 10 squares of you up to a number of squares equal to 5 + your conduit level."
       },
       {
         "domain": "War",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes damage greater than 10 + your level in a single turn.\nPrayer Effect: Choose up to three allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 2 surges."
+        "piety": "You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes damage greater than 10 + your level in a single turn.",
+        "prayer_effect": "Choose up to three allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 2 surges."
       }
     ]
   },
@@ -215,7 +227,7 @@
     "class": "conduit",
     "level": 2,
     "description": "You gain the 1st-level domain feature and ability to choose a skill for the domain you selected at 1st level but whose domain feature you didn't take at that level.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares uses an area ability.\nPrayer Effect: You summon the forces of creation and create a wall of stone within 10 squares whose size is 5 + your Intuition score. The wall lasts until the end of the encounter."
@@ -360,7 +372,7 @@
     "class": "conduit",
     "level": 5,
     "description": "You gain the 4th-level domain feature for the domain whose feature you didn't select at that level.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "name": "Improved Hands of the Maker",
@@ -518,7 +530,7 @@
     "class": "conduit",
     "level": 8,
     "description": "You gain the 7th-level domain feature for the domain whose feature you didn't select at that level.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "name": "Divine Quartermaster",

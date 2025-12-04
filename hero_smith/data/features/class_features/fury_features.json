@@ -6,7 +6,7 @@
     "is_subclass_feature": true,
     "class": "fury",
     "level": 1,
-    "description": " You are a product of customs older than warfare, older than civilization, older than most of the world. You have undergone a rite of passage that revealed the building blocks of the timescape—the Primordial Chaos—and that left an aspect of that chaos inside you. You choose a primordial aspect from the following options, each of which grants you a skill. (Quick Build: Berserker.",
+    "description": "You are a product of customs older than warfare, older than civilization, older than most of the world. You have undergone a rite of passage that revealed the building blocks of the timescape—the Primordial Chaos—and that left an aspect of that chaos inside you. You choose a primordial aspect from the following options, each of which grants you a skill. (Quick Build: Berserker.",
     "options": [
       {
         "subclass_name": "Berserker",
@@ -33,7 +33,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "You are a product of customs older than warfare, older than civilization, older than most of the world. You have undergone a rite of passage that revealed the building blocks of the timescape\u00e2\u20ac\u201dthe Primordial Chaos\u00e2\u20ac\u201dand that left an aspect of that chaos inside you. You choose a primordial aspect from the following options, each of which grants you a skill. (*Quick Build:* Berserker.)\n\nYour primordial aspect is your subclass, and your choice of aspect determines many of the features you'll gain as you gain new levels.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Primordial Strength",
@@ -75,7 +75,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Track how your ferocity empowers you. Each aspect lists escalating benefits as your ferocity reaches higher thresholds.",
-    "options": [
+    "grants": [
       {
         "aspect": "Berserker",
         "table": "Consult the Berserker Growing Ferocity table for bonuses linked to Primordial Strength.",
@@ -118,7 +118,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Choose the triggered action tied to your primordial aspect.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Lines of Force",
@@ -144,7 +144,7 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2th-level feature associated with your primordial aspect.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Unstoppable Force",
@@ -170,7 +170,7 @@
     "is_subclass_feature": true,
     "level": 3,
     "description": "You gain the 3th-level feature associated with your primordial aspect.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Immovable Object",
@@ -228,7 +228,7 @@
     "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature associated with your primordial aspect.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Bounder",
@@ -294,7 +294,7 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature associated with your primordial aspect.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Berserker",
         "name": "Strongest There Is",

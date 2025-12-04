@@ -50,14 +50,7 @@
     "disengage_bonus": null,
     "incompatible_with_kit": true
   },
-  {
-    "id": "density_augmentation",
-    "type": "psionic_augmentation",
-    "name": "Density Augmentation",
-    "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability.",
-    "stamina_bonus": 6,
-    "stability_bonus": 1
-  },
+
   {
     "id": "distance_augmentation",
     "type": "psionic_augmentation",
@@ -69,6 +62,15 @@
       "3rd_echelon": 2
     },
     "keywords": ["Ranged", "Psionic"]
+  },
+  
+  {
+    "id": "density_augmentation",
+    "type": "psionic_augmentation",
+    "name": "Density Augmentation",
+    "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability.",
+    "stamina_bonus": 6,
+    "stability_bonus": 1
   },
   {
     "id": "force_augmentation",

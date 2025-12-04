@@ -79,7 +79,7 @@
     "level": 1,
     "is_subclass_feature": true,
     "description": "Your elemental specialization grants you a feature.",
-    "options": [
+    "grants": [
       {
         "name": "Motivate Earth",
         "subclass_name": "Earth",
@@ -92,15 +92,17 @@
         "description": "You have the following ability.",
         "ability": "Return to Formlessness"
       },
-      {
-        "name": "A Beyonding of Vision",
-        "subclass_name": "Green",
-        "description": "You instantly recognize illusions for what they are, you can see invisible creatures, and supernatural effects can't conceal creatures and objects from you. Additionally, you always know if an area or object you observe is magical or affected by magic, and you know the specifics of what that magic can do.\n\nYou also gain the following ability."
-      },
+
       {
         "name": " It Is the Soul Which Hears",
-        "subclass_name": "Void",
+        "subclass_name": "Green",
         "description": " You can speak with and understand animals, beasts, and plant creatures, even if they don’t share a language with you. Your ability to communicate with these creatures doesn’t make them inherently more intelligent, but you can use Reason instead of Presence while making tests to influence them. Additionally, you can touch a living plant that is not a plant creature to communicate with it telepathically. You can use words to communicate with the plant, but it communicates with you only by transmitting feelings and sensations that can’t be overly specific"
+      },
+      {
+        "name": "A Beyonding of Vision",
+        "subclass_name": "Void",
+        "description": "You instantly recognize illusions for what they are, you can see invisible creatures, and supernatural effects can't conceal creatures and objects from you. Additionally, you always know if an area or object you observe is magical or affected by magic, and you know the specifics of what that magic can do.\n\nYou also gain the following ability.",
+        "ability": "Shared Void Sense"
       }
     ]
   },
@@ -112,7 +114,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Gain the triggered action tied to your elemental specialization.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Earth",
         "ability": "Skin Like Castle Walls"
@@ -139,7 +141,7 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2nd-level feature associated with your chosen element.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Earth",
         "name": "Disciple of Earth",
@@ -174,7 +176,7 @@
     "is_subclass_feature": true,
     "level": 3,
     "description": "You gain the 3rd-level feature associated with your chosen element.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Earth",
         "description": "You have the following ability.",
@@ -212,8 +214,8 @@
     "class": "elementalist",
     "is_subclass_feature": true,
     "level": 4,
-    "description": "You gain the 4th-level Mantle of Essence Specialization Effects associated with your chosen element.",
-    "options": [
+    "description": "While you have 3 or more essence and are not dying, you exude an aura of magic whose distance is equal to your Reason score. The effects within the area of the aura are based on your specialization, as shown on the Mantle of Essence Specialization Effects table. You can activate and deactivate the aura at will (no action required). \n\nYou gain the 4th-level Mantle of Essence Specialization Effects associated with your chosen element.",
+    "grants": [
       {
         "subclass_name": "Earth",
         "name": "Quaking Earth",
@@ -244,7 +246,7 @@
     "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature associated with your chosen element.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Earth",
         "name": "The Mountain Does Not Move",
@@ -299,7 +301,7 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature associated with your chosen element.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Fire",
         "name": "The Flame Primordial",
@@ -355,7 +357,7 @@
     "is_subclass_feature": true,
     "level": 10,
     "description": "You gain the 10th-level capstone feature associated with your chosen element.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Earth",
         "name": "Master of Earth",

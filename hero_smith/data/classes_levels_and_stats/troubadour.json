@@ -27,7 +27,7 @@
       "granted_skills": ["Read Person"],
       "skill_groups": ["interpersonal"],
       "skill_count": 2,
-      "skill_groups_2": ["interpersonal", "lore"],
+      "skill_groups_2": ["intrigue", "lore"],
       "skill_count_1": 1,
       "quick_build": ["Brag", "Read Person", "Rumors", "Society"]
     },

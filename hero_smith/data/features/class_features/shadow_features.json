@@ -26,6 +26,40 @@
     ]
   },
   {
+    "id": "feature_shadow_college_features",
+    "type": "feature",
+    "name": "College Feature",
+    "class": "shadow",
+    "is_subclass_feature": true,
+    "level": 1,
+    "description": "Your shadow college grants you one or two features, as shown on the 1st-Level College Features table",
+    "grants": [
+      {
+        "subclass_name": "Black Ash",
+        "name": "Black Ash Teleport",
+        "description": "You have the following ability.",
+        "ability": "Black Ash Teleport"
+      },
+      {
+        "subclass_name": "Caustic Alchemy",
+        "name": "Coat the Blade",
+        "description": "You have the following ability.",
+        "ability": "Coat the Blade"
+      },
+      {
+        "subclass_name": "Caustic Alchemy",
+        "name": "Smoke Bomb",
+        "description": " You always carry a supply of smoke bombs to use for distractions and easy getaways. You can use the Hide maneuver even if you are observed and don’t initially have cover or concealment. When you do so, you can shift a number of squares equal to your Agility score. If you end this movement with cover or concealment, you are automatically hidden."
+      },
+      {
+        "subclass_name": "Harlequin Mask",
+        "name": "I’m No Threat",
+        "description": "You have the following ability.",
+        "ability": "I’m No Threat"
+      }
+    ]
+  },
+  {
     "id": "feature_shadow_insight",
     "type": "heroic resource",
     "name": "Insight",
@@ -58,7 +92,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Your shadow college grants you a triggered action, as shown on the College Triggered Actions table.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Black Ash",
         "name": "In All This Confusion",
@@ -87,7 +121,7 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2nd-level feature from your shadow college.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Black Ash",
         "name": "Burning Ash",
@@ -146,7 +180,7 @@
     "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature from your shadow college.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Black Ash",
         "name": "Trail of Cinders",
@@ -204,19 +238,20 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature from your shadow college.",
-    "options": [
+    "grants": [
       {
-        "college": "Black Ash",
+        "subclass_name": "Black Ash",
         "name": "Cinder Step",
         "description": "Whenever you willingly move, you can teleport. When you teleport this way, it counts as using a shadow ability for the purpose of using your Burning Ash and Trail of Cinders features."
       },
       {
-        "college": "Caustic Alchemy",
+        "subclass_name": "Caustic Alchemy",
         "name": "Time Bomb",
-        "description": "You have damage immunity against area abilities and effects equal to your Agility score. You also have the following ability, which you can use once per round on your turn."
+        "description": "You have damage immunity against area abilities and effects equal to your Agility score. You also have the following ability, which you can use once per round on your turn.",
+        "ability": "Time Bomb"
       },
       {
-        "college": "Harlequin Mask",
+        "subclass_name": "Harlequin Mask",
         "name": "Parkour",
         "description": "Your movement no longer provokes opportunity attacks. Additionally, you can use your Harlequin Gambit feature as a free triggered action when a creature is reduced to 0 Stamina by your Clever Trick ability."
       }

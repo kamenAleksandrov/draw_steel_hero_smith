@@ -242,8 +242,8 @@
     "targets": "One ally",
     "power_roll": "",
     "tier_effects": [],
-    "effect": "The target can use a signature ability as a free triggered action.\n\nYou target two allies instead of one.",
-    "special_effect": ""
+    "effect": "The target can use a signature ability as a free triggered action.",
+    "special_effect": "Spend 5 Focus: You target two allies instead of one."
   },
   {
     "type": "ability",

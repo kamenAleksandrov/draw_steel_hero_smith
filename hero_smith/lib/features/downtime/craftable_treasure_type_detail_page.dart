@@ -372,6 +372,11 @@ class _TreasureDetails extends StatelessWidget {
           // Effect
           _buildEffect(context),
 
+          // Level variants for leveled treasures
+          if (treasure.raw['leveled'] == true) ...[
+            _buildLevelVariants(context),
+          ],
+
           // Crafting Info Section
           const Divider(height: 24),
           _CraftingInfoSection(treasure: treasure, color: color),
@@ -417,6 +422,122 @@ class _TreasureDetails extends StatelessWidget {
         const SizedBox(height: 12),
       ],
     );
+  }
+
+  Widget _buildLevelVariants(BuildContext context) {
+    final theme = Theme.of(context);
+    final levels = [
+      {'level': 1, 'data': treasure.raw['level_1']},
+      {'level': 5, 'data': treasure.raw['level_5']},
+      {'level': 9, 'data': treasure.raw['level_9']},
+    ];
+
+    final availableLevels = levels.where((level) => level['data'] != null).toList();
+    
+    if (availableLevels.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            'LEVEL VARIANTS',
+            style: theme.textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...availableLevels.map((level) => Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildLevelCard(
+            context,
+            level['level'] as int,
+            level['data'] as Map<String, dynamic>,
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildLevelCard(
+    BuildContext context,
+    int level,
+    Map<String, dynamic> levelData,
+  ) {
+    final theme = Theme.of(context);
+    final effectDescription = levelData['effect_description'] as String?;
+    if (effectDescription == null || effectDescription.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final levelColor = _getLevelColor(level);
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: levelColor.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Level header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: levelColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(7),
+                topRight: Radius.circular(7),
+              ),
+            ),
+            child: Text(
+              'LEVEL $level',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+          // Level content
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              effectDescription,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getLevelColor(int level) {
+    switch (level) {
+      case 1:
+        return Colors.green.shade600;
+      case 5:
+        return Colors.blue.shade600;
+      case 9:
+        return Colors.purple.shade600;
+      default:
+        return Colors.grey.shade600;
+    }
   }
 }
 

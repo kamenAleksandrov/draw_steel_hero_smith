@@ -214,12 +214,31 @@ class ClassFeatureDataService {
     return required.intersection(activeSubclassSlugs).isNotEmpty;
   }
 
+  /// Extracts the list of options or grants from feature details.
+  /// Returns the list from 'grants' if present, otherwise from 'options'.
+  static List<dynamic>? extractOptionsOrGrants(Map<String, dynamic>? details) {
+    if (details == null) return null;
+    final grants = details['grants'];
+    if (grants is List && grants.isNotEmpty) return grants;
+    final options = details['options'];
+    if (options is List) return options;
+    return null;
+  }
+
+  /// Returns true if the feature uses 'grants' (auto-apply all matching)
+  /// instead of 'options' (user picks one).
+  static bool hasGrants(Map<String, dynamic>? details) {
+    if (details == null) return false;
+    final grants = details['grants'];
+    return grants is List && grants.isNotEmpty;
+  }
+
   static Set<String> extractOptionKeys(Map<String, dynamic>? details) {
     if (details == null) return const <String>{};
-    final options = details['options'];
-    if (options is! List) return const <String>{};
+    final items = extractOptionsOrGrants(details);
+    if (items == null) return const <String>{};
     final keys = <String>{};
-    for (final option in options) {
+    for (final option in items) {
       if (option is! Map<String, dynamic>) continue;
       keys.add(featureOptionKey(option));
     }
@@ -252,9 +271,9 @@ class ClassFeatureDataService {
   ) {
     final ids = <String>{};
     featureDetailsById.forEach((featureId, details) {
-      final options = details['options'];
-      if (options is! List) return;
-      final hasDomain = options.any((option) {
+      final items = extractOptionsOrGrants(details);
+      if (items == null) return;
+      final hasDomain = items.any((option) {
         if (option is! Map<String, dynamic>) return false;
         final domain = option['domain']?.toString().trim();
         return domain != null && domain.isNotEmpty;
@@ -271,9 +290,9 @@ class ClassFeatureDataService {
   ) {
     final ids = <String>{};
     featureDetailsById.forEach((featureId, details) {
-      final options = details['options'];
-      if (options is! List) return;
-      final hasDeity = options.any((option) {
+      final items = extractOptionsOrGrants(details);
+      if (items == null) return;
+      final hasDeity = items.any((option) {
         if (option is! Map) return false;
         final map = option is Map<String, dynamic>
             ? option
@@ -295,10 +314,10 @@ class ClassFeatureDataService {
     if (domainSlugs.isEmpty) return const <String>{};
     final details = featureDetailsById[featureId];
     if (details == null) return const <String>{};
-    final options = details['options'];
-    if (options is! List) return const <String>{};
+    final items = extractOptionsOrGrants(details);
+    if (items == null) return const <String>{};
     final keys = <String>{};
-    for (final option in options) {
+    for (final option in items) {
       if (option is! Map<String, dynamic>) continue;
       final domainName = option['domain']?.toString().trim();
       if (domainName == null || domainName.isEmpty) continue;
@@ -317,12 +336,12 @@ class ClassFeatureDataService {
   ) {
     final details = featureDetailsById[featureId];
     if (details == null) return const <String>{};
-    final options = details['options'];
-    if (options is! List) return const <String>{};
+    final items = extractOptionsOrGrants(details);
+    if (items == null) return const <String>{};
 
     final keys = <String>{};
     var hasTaggedOption = false;
-    for (final option in options) {
+    for (final option in items) {
       if (option is! Map) continue;
       final map = option is Map<String, dynamic>
           ? option
@@ -349,12 +368,12 @@ class ClassFeatureDataService {
   ) {
     final details = featureDetailsById[featureId];
     if (details == null) return const <String>{};
-    final options = details['options'];
-    if (options is! List) return const <String>{};
+    final items = extractOptionsOrGrants(details);
+    if (items == null) return const <String>{};
 
     final keys = <String>{};
     var hasTaggedOption = false;
-    for (final option in options) {
+    for (final option in items) {
       if (option is! Map) continue;
       final map = option is Map<String, dynamic>
           ? option
@@ -385,13 +404,20 @@ class ClassFeatureDataService {
         selections.remove(featureId);
         continue;
       }
+      
+      final details = featureDetailsById[featureId];
+      final isGrants = hasGrants(details);
+      
       final matchingKeys = domainOptionKeysFor(
         featureDetailsById,
         featureId,
         domainSlugs,
       );
       if (matchingKeys.isNotEmpty) {
-        if (domainSlugs.length == 1) {
+        // For grants: auto-select ALL matching keys
+        // For options with single domain: auto-select all matching
+        // For options with multiple domains: preserve existing or require choice
+        if (isGrants || domainSlugs.length == 1) {
           selections[featureId] = matchingKeys;
         } else {
           final existing = selections[featureId] ?? const <String>{};
@@ -421,18 +447,21 @@ class ClassFeatureDataService {
         continue;
       }
 
-      final options = details['options'];
-      if (options is! List) {
+      final items = extractOptionsOrGrants(details);
+      if (items == null) {
         if (subclassSlugs.isEmpty) {
           selections.remove(feature.id);
         }
         continue;
       }
 
+      // Check if this feature uses grants (auto-apply all matching)
+      final isGrants = hasGrants(details);
+
       final matchingKeys = <String>{};
       var hasTaggedOption = false;
 
-      for (final option in options) {
+      for (final option in items) {
         if (option is! Map) continue;
         final map = option is Map<String, dynamic>
             ? option
@@ -463,7 +492,11 @@ class ClassFeatureDataService {
         continue;
       }
 
-      if (matchingKeys.length == 1) {
+      // For grants: auto-select ALL matching keys
+      // For options: preserve existing selection or require user choice
+      if (isGrants) {
+        selections[feature.id] = matchingKeys;
+      } else if (matchingKeys.length == 1) {
         selections[feature.id] = matchingKeys;
       } else {
         final existing = selections[feature.id] ?? const <String>{};
@@ -492,18 +525,21 @@ class ClassFeatureDataService {
         continue;
       }
 
-      final options = details['options'];
-      if (options is! List) {
+      final items = extractOptionsOrGrants(details);
+      if (items == null) {
         if (deitySlugs.isEmpty) {
           selections.remove(featureId);
         }
         continue;
       }
 
+      // Check if this feature uses grants (auto-apply all matching)
+      final isGrants = hasGrants(details);
+
       final matchingKeys = <String>{};
       var hasTaggedOption = false;
 
-      for (final option in options) {
+      for (final option in items) {
         if (option is! Map) continue;
         final map = option is Map<String, dynamic>
             ? option
@@ -534,7 +570,11 @@ class ClassFeatureDataService {
         continue;
       }
 
-      if (matchingKeys.length == 1) {
+      // For grants: auto-select ALL matching keys
+      // For options: preserve existing selection or require user choice
+      if (isGrants) {
+        selections[featureId] = matchingKeys;
+      } else if (matchingKeys.length == 1) {
         selections[featureId] = matchingKeys;
       } else {
         final existing = selections[featureId] ?? const <String>{};

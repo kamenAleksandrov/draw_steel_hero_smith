@@ -49,7 +49,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "As you advance in your chosen null tradition, you gain certain benefits in combat, including benefits based on the amount of discipline you have. Benefits based on how much discipline you have last until the end of your turn, even if a benefit would become unavailable to you because of the amount of discipline you spend during your turn. Some Discipline Mastery benefits can be applied only if you are a specific level or higher, with the level of those benefits noted in the tables below.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Chronokinetic",
         "description": " Whenever you use the Inertial Shield ability, you can use the Disengage move action as a free triggered action. Additionally, as your discipline grows, your psionic mastery of your body intensifies, granting benefits from the Chronokinetic Mastery table. Benefits are cumulative except where an improved benefit replaces a lesser benefit.",
@@ -118,7 +118,7 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "You gain the 2th-level feature for your null tradition.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Chronokinetic",
         "name": "Rapid Processing",
@@ -184,7 +184,7 @@
     "is_subclass_feature": true,
     "level": 5,
     "description": "You gain the 5th-level feature for your null tradition.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Chronokinetic",
         "name": "Instant Action",
@@ -219,6 +219,18 @@
     "description": "Whenever you reduce acid, cold, corruption, fire, lightning, poison, or sonic damage with damage immunity, you gain 2 surges that can be used only to increase the damage of your next strike."
   },
   {
+    "id": "feature_null_psi_boost",
+    "type": "feature",
+    "name": "Psi Boost",
+    "class": "null",
+    "level": 6,
+    "description": "Whenever you use an ability that is a main action or a maneuver with the Psionic keyword, you can spend additional discipline to apply a psi boost to it and enhance its effects. A psi boost’s effects only last until the end of the turn which the ability is first used. You can apply multiple psi boosts to an ability, but only one instance of each specific boost. You can use the following psi boosts.",
+    "load_additional_features": {
+      "type": "table",
+      "name": "psi_boost.json"
+    }
+  },
+  {
     "id": "feature_null_discipline_mastery_improvement_3",
     "type": "feature",
     "name": "Discipline Mastery Improvement",
@@ -242,7 +254,7 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "You gain the 8th-level feature for your null tradition.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Chronokinetic",
         "name": "Shared Momentum",

@@ -834,7 +834,8 @@ class _FeatureContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final description = _coalesceDescription();
-    final allOptions = _extractOptions();
+    final allOptions = _extractOptionsOrGrants();
+    final isGrantsFeature = _hasGrants();
     final originalSelections = widget.selectedOptions[feature.id] ?? const <String>{};
 
     final optionsContext = _prepareFeatureOptions(allOptions, originalSelections);
@@ -866,6 +867,7 @@ class _FeatureContent extends StatelessWidget {
               details: details,
               optionsContext: optionsContext,
               originalSelections: originalSelections,
+              isGrantsFeature: isGrantsFeature,
               widget: widget,
             ),
           ],
@@ -944,18 +946,40 @@ class _FeatureContent extends StatelessWidget {
     return value.toString();
   }
 
-  List<Map<String, dynamic>> _extractOptions() {
-    final raw = details?['options'];
-    if (raw is! List) return const [];
-    final options = <Map<String, dynamic>>[];
+  /// Extracts options or grants from feature details.
+  /// Returns the list from 'grants' if present, otherwise from 'options'.
+  List<Map<String, dynamic>> _extractOptionsOrGrants() {
+    if (details == null) return const [];
+    // Prefer grants over options
+    final grants = details!['grants'];
+    if (grants is List && grants.isNotEmpty) {
+      return _parseItemList(grants);
+    }
+    final options = details!['options'];
+    if (options is List) {
+      return _parseItemList(options);
+    }
+    return const [];
+  }
+
+  List<Map<String, dynamic>> _parseItemList(List raw) {
+    final items = <Map<String, dynamic>>[];
     for (final entry in raw) {
       if (entry is Map<String, dynamic>) {
-        options.add(entry);
+        items.add(entry);
       } else if (entry is Map) {
-        options.add(entry.cast<String, dynamic>());
+        items.add(entry.cast<String, dynamic>());
       }
     }
-    return options;
+    return items;
+  }
+
+  /// Returns true if the feature uses 'grants' (auto-apply all matching)
+  /// instead of 'options' (user picks one).
+  bool _hasGrants() {
+    if (details == null) return false;
+    final grants = details!['grants'];
+    return grants is List && grants.isNotEmpty;
   }
 
   _FeatureOptionsContext _prepareFeatureOptions(
@@ -1318,6 +1342,7 @@ class _OptionsSection extends StatelessWidget {
     required this.optionsContext,
     required this.originalSelections,
     required this.widget,
+    this.isGrantsFeature = false,
   });
 
   final Feature feature;
@@ -1325,6 +1350,10 @@ class _OptionsSection extends StatelessWidget {
   final _FeatureOptionsContext optionsContext;
   final Set<String> originalSelections;
   final ClassFeaturesWidget widget;
+  
+  /// If true, this feature uses 'grants' instead of 'options'.
+  /// All matching grants should be auto-displayed (no user choice needed).
+  final bool isGrantsFeature;
 
   @override
   Widget build(BuildContext context) {
@@ -1332,18 +1361,19 @@ class _OptionsSection extends StatelessWidget {
     final scheme = theme.colorScheme;
     final allowMultiple = _inferAllowMultiple();
     final effectiveSelections = optionsContext.selectedKeys;
-    final canEdit = widget.onSelectionChanged != null && optionsContext.allowEditing;
+    final canEdit = widget.onSelectionChanged != null && optionsContext.allowEditing && !isGrantsFeature;
     final isAutoApplied = _isAutoAppliedSelection();
 
     final grantType = widget.grantTypeByFeatureName[feature.name.toLowerCase().trim()] ?? '';
     final isPickFeature = grantType == 'pick';
     final hasOptions = optionsContext.options.isNotEmpty;
-    final needsSelection = isPickFeature && hasOptions && effectiveSelections.isEmpty;
+    // For grants, we don't need user selection - they're all auto-applied
+    final needsSelection = !isGrantsFeature && isPickFeature && hasOptions && effectiveSelections.isEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Selection prompt for pick features
+        // Selection prompt for pick features (not for grants)
         if (needsSelection && !isAutoApplied)
           _SelectionPrompt(allowMultiple: allowMultiple),
 
@@ -1354,8 +1384,23 @@ class _OptionsSection extends StatelessWidget {
             child: _InfoMessage(message: message),
           ),
 
-        // Options
-        if (isAutoApplied && optionsContext.options.isNotEmpty)
+        // For grants: display all matching as auto-applied content
+        if (isGrantsFeature && optionsContext.options.isNotEmpty) ...[
+          Text(
+            'Granted Features',
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ...optionsContext.options.map((option) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _AutoAppliedContent(option: option, widget: widget),
+          )),
+        ]
+        // For options: use existing behavior
+        else if (isAutoApplied && optionsContext.options.isNotEmpty)
           _AutoAppliedContent(option: optionsContext.options.first, widget: widget)
         else if (optionsContext.options.isNotEmpty) ...[
           Text(

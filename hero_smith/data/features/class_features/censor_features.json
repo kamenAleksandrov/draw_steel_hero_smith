@@ -47,7 +47,7 @@
     "name": "Deity and Domains",
     "level": 1,
     "description": "You gain a domain feature from your domain, as shown on the 1st-Level Censor Domain Features table. Additionally, you gain a skill from your domain, chosen from the skill group indicated on the table.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "name": "Hands of the Maker",
@@ -182,7 +182,7 @@
     "level": 2,
     "is_subclass_feature": true,
     "description": "Your censor order grants you two features.",
-    "options": [
+    "grants": [
       {
         "id": "feature_censor_a_sense_for_truth",
         "type": "feature",
@@ -253,7 +253,7 @@
     "name": "Domain Feature",
     "level": 4,
     "description": "You gain a domain feature from your domain, as shown on the 4th-Level Censor Domain Features table.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "name": "Improved Hands of the Maker",
@@ -343,7 +343,7 @@
     "level": 5,
     "is_subclass_feature": true,
     "description": "Your censor order grants you a feature.",
-    "options": [
+    "grants": [
       {
         "id": "feature_censor_evil_revealed",
         "type": "feature",
@@ -388,7 +388,7 @@
     "name": "Domain Feature",
     "level": 7,
     "description": "You gain a domain feature from your domain, as shown on the 7th-Level Censor Domain Features table.",
-    "options": [
+    "grants": [
       {
         "domain": "Creation",
         "name": "Divine Quartermaster",

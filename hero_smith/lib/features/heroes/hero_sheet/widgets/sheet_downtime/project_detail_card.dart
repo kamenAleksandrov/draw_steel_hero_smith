@@ -4,7 +4,7 @@ import '../../../../../core/theme/hero_theme.dart';
 import '../../../../../widgets/downtime/downtime_tabs.dart';
 
 /// Card displaying project details with progress
-class ProjectDetailCard extends StatelessWidget {
+class ProjectDetailCard extends StatefulWidget {
   const ProjectDetailCard({
     super.key,
     required this.project,
@@ -14,6 +14,9 @@ class ProjectDetailCard extends StatelessWidget {
     this.onDelete,
     this.onAddToGear,
     this.isTreasureProject = false,
+    this.treasureData,
+    this.isEnhancementProject = false,
+    this.enhancementData,
   });
 
   final HeroDowntimeProject project;
@@ -23,276 +26,663 @@ class ProjectDetailCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onAddToGear;
   final bool isTreasureProject;
+  final Map<String, dynamic>? treasureData;
+  final bool isEnhancementProject;
+  final Map<String, dynamic>? enhancementData;
+
+  @override
+  State<ProjectDetailCard> createState() => _ProjectDetailCardState();
+}
+
+class _ProjectDetailCardState extends State<ProjectDetailCard> {
+  bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progress = project.progress;
-    final isCompleted = project.isCompleted;
+    final progress = widget.project.progress;
+    final isCompleted = widget.project.isCompleted;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title and status
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    project.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      decoration:
-                          isCompleted ? TextDecoration.lineThrough : null,
-                    ),
-                  ),
-                ),
-                if (isCompleted)
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 24,
-                  ),
-                if (onTap != null) ...[
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: onTap,
-                    iconSize: 20,
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(4),
-                    tooltip: 'Edit Project',
-                  ),
-                ],
-                if (onDelete != null) ...[
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: onDelete,
-                    iconSize: 20,
-                    constraints: const BoxConstraints(),
-                    padding: const EdgeInsets.all(4),
-                    tooltip: 'Remove Project',
-                  ),
-                ],
-              ],
-            ),
-
-              const SizedBox(height: 8),
-
-              // Progress bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    isCompleted
-                        ? Colors.green
-                        : HeroTheme.primarySection,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Points display
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row - always visible
+          InkWell(
+            onTap: () => setState(() => _isExpanded = !_isExpanded),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 children: [
-                  Text(
-                    '${project.currentPoints} / ${project.projectGoal} points',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
+                  Icon(
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    size: 24,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.project.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        decoration:
+                            isCompleted ? TextDecoration.lineThrough : null,
+                      ),
                     ),
                   ),
+                  // Progress indicator in header
                   Text(
                     '${(progress * 100).toInt()}%',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: HeroTheme.primarySection,
+                      color: isCompleted ? Colors.green : HeroTheme.primarySection,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  if (isCompleted) ...[
+                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 24,
+                    ),
+                  ],
+                  if (widget.onTap != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      onPressed: widget.onTap,
+                      iconSize: 20,
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(4),
+                      tooltip: 'Edit Project',
+                    ),
+                  ],
+                  if (widget.onDelete != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: widget.onDelete,
+                      iconSize: 20,
+                      constraints: const BoxConstraints(),
+                      padding: const EdgeInsets.all(4),
+                      tooltip: 'Remove Project',
+                    ),
+                  ],
                 ],
               ),
+            ),
+          ),
 
-              // Event indicators
-              if (project.events.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: project.events.map((event) {
-                    final triggered = event.triggered;
-                    return _EventChip(
-                      event: event,
-                      triggered: triggered,
-                      theme: theme,
-                    );
-                  }).toList(),
-                ),
-                // Show event descriptions for triggered events
-                ...project.events
-                    .where((e) => e.triggered && e.eventDescription != null && e.eventDescription!.isNotEmpty)
-                    .map((event) => Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: Colors.amber.withValues(alpha: 0.3),
+          // Expandable content
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Description
+                  if (widget.project.description.isNotEmpty) ...[
+                    Text(
+                      widget.project.description,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
+                  // Effect description from treasure data
+                  if (widget.treasureData != null) ...[
+                    _buildTreasureEffects(theme),
+                  ],
+
+                  // Effect description from enhancement data
+                  if (widget.enhancementData != null) ...[
+                    _buildEnhancementEffects(theme),
+                  ],
+
+                  // Progress bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 8,
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isCompleted ? Colors.green : HeroTheme.primarySection,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Points display
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${widget.project.currentPoints} / ${widget.project.projectGoal} points',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        '${(progress * 100).toInt()}%',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: HeroTheme.primarySection,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Event indicators
+                  if (widget.project.events.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: widget.project.events.map((event) {
+                        final triggered = event.triggered;
+                        return _EventChip(
+                          event: event,
+                          triggered: triggered,
+                          theme: theme,
+                        );
+                      }).toList(),
+                    ),
+                    // Show event descriptions for triggered events
+                    ...widget.project.events
+                        .where((e) =>
+                            e.triggered &&
+                            e.eventDescription != null &&
+                            e.eventDescription!.isNotEmpty)
+                        .map((event) => Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.amber.withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.event_note,
+                                      size: 16,
+                                      color: Colors.amber.shade700,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Event at ${event.pointThreshold} pts',
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(
+                                              color: Colors.amber.shade800,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            event.eventDescription!,
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            child: Row(
+                            )),
+                  ],
+
+                  // Notes section
+                  if (widget.project.notes.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest
+                            .withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color:
+                              theme.colorScheme.outline.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.note,
+                            size: 16,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                  Icons.event_note,
-                                  size: 16,
-                                  color: Colors.amber.shade700,
+                                Text(
+                                  'Notes',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Event at ${event.pointThreshold} pts',
-                                        style: theme.textTheme.labelSmall?.copyWith(
-                                          color: Colors.amber.shade800,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        event.eventDescription!,
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: theme.colorScheme.onSurface,
-                                        ),
-                                      ),
-                                    ],
+                                const SizedBox(height: 2),
+                                Text(
+                                  widget.project.notes,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurface,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        )),
-              ],
-
-              // Notes section
-              if (project.notes.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.note,
-                        size: 16,
-                        color: theme.colorScheme.onSurfaceVariant,
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Notes',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              project.notes,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
+                    ),
+                  ],
+
+                  // Roll characteristics
+                  if (widget.project.rollCharacteristics.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 4,
+                      children:
+                          widget.project.rollCharacteristics.map((char) {
+                        return Chip(
+                          label: Text(
+                            char.toUpperCase(),
+                            style: theme.textTheme.bodySmall,
+                          ),
+                          visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+
+                  // Add Points button (show if not completed and goal not yet reached)
+                  if (!isCompleted &&
+                      widget.onAddPoints != null &&
+                      widget.onAddToGear == null) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: widget.onAddPoints,
+                        icon: const Icon(Icons.add, size: 20),
+                        label: const Text('Add Points'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: HeroTheme.primarySection,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+
+                  // Add to Gear button for treasure projects that reached their goal
+                  if (widget.isTreasureProject &&
+                      widget.onAddToGear != null) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: widget.onAddToGear,
+                        icon: const Icon(Icons.backpack, size: 20),
+                        label: const Text('Add Crafted Item to Gear'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.green.shade600,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  // Add Enhancement to Gear button for enhancement projects that reached their goal
+                  if (widget.isEnhancementProject &&
+                      widget.onAddToGear != null) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        onPressed: widget.onAddToGear,
+                        icon: const Icon(Icons.auto_fix_high, size: 20),
+                        label: const Text('Add Enhancement to Gear'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.deepPurple.shade800,
+                          foregroundColor: Colors.grey.shade300,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTreasureEffects(ThemeData theme) {
+    final data = widget.treasureData!;
+    final effect = data['effect'] as Map<String, dynamic>?;
+    final effectDescription = effect?['effect_description'] as String?;
+    final isLeveled = data['leveled'] == true;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Base effect
+        if (effectDescription != null && effectDescription.isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.deepPurple.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 16,
+                      color: Colors.deepPurple.shade400,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'EFFECT',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.deepPurple.shade400,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  effectDescription,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    height: 1.5,
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
 
-              // Roll characteristics
-              if (project.rollCharacteristics.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 4,
-                  children: project.rollCharacteristics.map((char) {
-                    return Chip(
-                      label: Text(
-                        char.toUpperCase(),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    );
-                  }).toList(),
-                ),
-              ],
+        // Level variants for leveled treasures
+        if (isLeveled) ...[
+          _buildLevelVariants(theme, data),
+        ],
+      ],
+    );
+  }
 
-              // Add Points button (show if not completed and goal not yet reached)
-              if (!isCompleted && onAddPoints != null && onAddToGear == null) ...[
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: onAddPoints,
-                    icon: const Icon(Icons.add, size: 20),
-                    label: const Text('Add Points'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: HeroTheme.primarySection,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+  Widget _buildEnhancementEffects(ThemeData theme) {
+    final data = widget.enhancementData!;
+    final description = data['description'] as String?;
+    final enhancementType = data['type'] as String?;
+    final level = data['level'] as int?;
+    
+    // Get display name for enhancement type
+    String typeDisplay = '';
+    if (enhancementType != null) {
+      switch (enhancementType) {
+        case 'armor_enhancement':
+          typeDisplay = 'Armor Enhancement';
+          break;
+        case 'weapon_enhancement':
+          typeDisplay = 'Weapon Enhancement';
+          break;
+        case 'implement_enhancement':
+          typeDisplay = 'Implement Enhancement';
+          break;
+        case 'shield_enhancement':
+          typeDisplay = 'Shield Enhancement';
+          break;
+        default:
+          typeDisplay = enhancementType.replaceAll('_', ' ');
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Enhancement type and level badge
+        if (typeDisplay.isNotEmpty || level != null) ...[
+          Row(
+            children: [
+              if (typeDisplay.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    typeDisplay.toUpperCase(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.deepPurple.shade300,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
               ],
-
-              // Add to Gear button for treasure projects that reached their goal
-              if (isTreasureProject && onAddToGear != null) ...[
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: onAddToGear,
-                    icon: const Icon(Icons.backpack, size: 20),
-                    label: const Text('Add Crafted Item to Gear'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.green.shade600,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+              if (level != null) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getLevelColor(level).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'LEVEL $level',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: _getLevelColor(level),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
             ],
           ),
+          const SizedBox(height: 12),
+        ],
+
+        // Description
+        if (description != null && description.isNotEmpty) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.deepPurple.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_fix_high,
+                      size: 16,
+                      color: Colors.deepPurple.shade400,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'ENHANCEMENT EFFECT',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.deepPurple.shade400,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildLevelVariants(ThemeData theme, Map<String, dynamic> data) {
+    final levels = [
+      {'level': 1, 'data': data['level_1']},
+      {'level': 5, 'data': data['level_5']},
+      {'level': 9, 'data': data['level_9']},
+    ];
+
+    final availableLevels = levels.where((level) => level['data'] != null).toList();
+    
+    if (availableLevels.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'LEVEL VARIANTS',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
         ),
-      );
+        const SizedBox(height: 8),
+        ...availableLevels.map((level) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: _buildLevelCard(
+            theme,
+            level['level'] as int,
+            level['data'] as Map<String, dynamic>,
+          ),
+        )),
+        const SizedBox(height: 4),
+      ],
+    );
+  }
+
+  Widget _buildLevelCard(
+    ThemeData theme,
+    int level,
+    Map<String, dynamic> levelData,
+  ) {
+    final effectDescription = levelData['effect_description'] as String?;
+    if (effectDescription == null || effectDescription.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final levelColor = _getLevelColor(level);
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: levelColor.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: levelColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(7),
+                topRight: Radius.circular(7),
+              ),
+            ),
+            child: Text(
+              'LEVEL $level',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Text(
+              effectDescription,
+              style: theme.textTheme.bodySmall?.copyWith(
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getLevelColor(int level) {
+    switch (level) {
+      case 1:
+        return Colors.green.shade600;
+      case 5:
+        return Colors.blue.shade600;
+      case 9:
+        return Colors.purple.shade600;
+      default:
+        return Colors.grey.shade600;
     }
   }
+}
 
 /// Event chip that becomes tappable when triggered
 class _EventChip extends StatelessWidget {

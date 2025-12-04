@@ -68,7 +68,7 @@
     "is_subclass_feature": true,
     "level": 1,
     "description": "Your talent tradition grants you two features, as shown on the 1st-Level Tradition Features table.",
-    "options": [
+    "grants": [
       {
         "name": "Accelerate",
         "subclass_name": "Chronopathy",
@@ -115,7 +115,7 @@
     "is_subclass_feature": true,
     "level": 2,
     "description": "Your tradition unlocks an additional feature at 2nd level.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Chronopathy",
         "name": "Ease the Hours",
@@ -172,8 +172,8 @@
     "class": "talent",
     "is_subclass_feature": true,
     "level": 5,
-    "description": " Your talent tradition grants you two features, as shown on the 5th-Level Tradition Features table.",
-    "options": [
+    "description": "Your talent tradition grants you two features, as shown on the 5th-Level Tradition Features table.",
+    "grants": [
       {
         "name": "Distortion Temporal",
         "subclass_name": "Chronopathy",
@@ -207,6 +207,18 @@
     ]
   },
   {
+    "id": "feature_talent_psi_boost",
+    "type": "feature",
+    "name": "Psi Boost",
+    "class": "talent",
+    "level": 6,
+    "description": "Whenever you use an ability that is a main action or a maneuver with the Psionic keyword, you can spend additional clarity to apply a psi boost to it and enhance its effects. A psi boost’s effects only last until the end of the turn which the ability is first used. You can apply multiple psi boosts to an ability, but only one instance of each specific boost. You can use the following psi boosts.",
+    "load_additional_features": {
+      "type": "table",
+      "name": "psi_boost.json"
+    }
+  },
+  {
     "id": "feature_talent_ancestral_memory",
     "type": "feature",
     "name": "Ancestral Memory",
@@ -238,7 +250,7 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "Your tradition continues to evolve at 8th level.",
-    "options": [
+    "grants": [
       {
         "name": "Doubling the Hours",
         "subclass_name": "Chronopathy",

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/db/providers.dart';
+import '../../../../../core/models/downtime.dart';
 import '../../../../../core/models/downtime_tracking.dart';
 import '../../../../../core/theme/hero_theme.dart';
 import '../../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';
-import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider
+import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider and enhancementTemplatesProvider
 
 /// Provider for hero's downtime projects
 final heroProjectsProvider =
@@ -61,6 +62,29 @@ class ProjectsListTab extends ConsumerWidget {
     return null;
   }
 
+  /// Try to find the matching enhancement for a project (by templateProjectId or name)
+  DowntimeEntry? _findMatchingEnhancement(
+    HeroDowntimeProject project, 
+    List<DowntimeEntry> enhancements,
+  ) {
+    // First try by templateProjectId
+    if (project.templateProjectId != null) {
+      for (final e in enhancements) {
+        if (e.id == project.templateProjectId) {
+          return e;
+        }
+      }
+    }
+    // Fall back to name matching (case-insensitive)
+    final nameLower = project.name.toLowerCase();
+    for (final e in enhancements) {
+      if (e.name.toLowerCase() == nameLower) {
+        return e;
+      }
+    }
+    return null;
+  }
+
   Widget _buildContent(
     BuildContext context,
     WidgetRef ref,
@@ -69,6 +93,10 @@ class ProjectsListTab extends ConsumerWidget {
     // Use the same provider that project_template_browser uses for treasures
     final treasuresAsync = ref.watch(craftableTreasuresProvider);
     final treasures = treasuresAsync.valueOrNull ?? <CraftableTreasure>[];
+    
+    // Also watch for enhancements
+    final enhancementsAsync = ref.watch(enhancementTemplatesProvider);
+    final enhancements = enhancementsAsync.valueOrNull ?? <DowntimeEntry>[];
     
     return CustomScrollView(
       slivers: [
@@ -98,7 +126,9 @@ class ProjectsListTab extends ConsumerWidget {
                 final project = activeProjects[index];
                 final hasReachedGoal = project.currentPoints >= project.projectGoal;
                 final matchingTreasure = _findMatchingTreasure(project, treasures);
+                final matchingEnhancement = _findMatchingEnhancement(project, enhancements);
                 final isTreasureProject = matchingTreasure != null;
+                final isEnhancementProject = matchingEnhancement != null;
                 return ProjectDetailCard(
                   project: project,
                   heroId: heroId,
@@ -106,9 +136,14 @@ class ProjectsListTab extends ConsumerWidget {
                   onAddPoints: () => _addPointsToProject(context, ref, project),
                   onDelete: () => _deleteProject(context, ref, project),
                   isTreasureProject: isTreasureProject,
+                  treasureData: matchingTreasure?.raw,
+                  isEnhancementProject: isEnhancementProject,
+                  enhancementData: matchingEnhancement?.raw,
                   onAddToGear: (isTreasureProject && hasReachedGoal)
                       ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
-                      : null,
+                      : (isEnhancementProject && hasReachedGoal)
+                          ? () => _addEnhancementToGear(context, ref, project, matchingEnhancement)
+                          : null,
                 );
               },
               childCount: projects.where((p) => !p.isCompleted).length,
@@ -137,16 +172,23 @@ class ProjectsListTab extends ConsumerWidget {
                     projects.where((p) => p.isCompleted).toList();
                 final project = completedProjects[index];
                 final matchingTreasure = _findMatchingTreasure(project, treasures);
+                final matchingEnhancement = _findMatchingEnhancement(project, enhancements);
                 final isTreasureProject = matchingTreasure != null;
+                final isEnhancementProject = matchingEnhancement != null;
                 return ProjectDetailCard(
                   project: project,
                   heroId: heroId,
                   onTap: () => _editProject(context, ref, project),
                   onDelete: () => _deleteProject(context, ref, project),
                   isTreasureProject: isTreasureProject,
+                  treasureData: matchingTreasure?.raw,
+                  isEnhancementProject: isEnhancementProject,
+                  enhancementData: matchingEnhancement?.raw,
                   onAddToGear: isTreasureProject
                       ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
-                      : null,
+                      : isEnhancementProject
+                          ? () => _addEnhancementToGear(context, ref, project, matchingEnhancement)
+                          : null,
                 );
               },
               childCount: projects.where((p) => p.isCompleted).length,
@@ -477,6 +519,59 @@ class ProjectsListTab extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to add treasure: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _addEnhancementToGear(
+    BuildContext context,
+    WidgetRef ref,
+    HeroDowntimeProject project,
+    DowntimeEntry enhancement,
+  ) async {
+    final enhancementId = enhancement.id;
+    
+    // Get current hero enhancements (stored in 'enhancement' category)
+    final db = ref.read(appDatabaseProvider);
+    final existingEnhancements = await db.getHeroComponentIds(heroId, 'enhancement');
+    
+    // Check if already added
+    if (existingEnhancements.contains(enhancementId)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('"${enhancement.name}" is already in your gear!'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Add enhancement to hero's gear
+    try {
+      await db.addHeroComponentId(
+        heroId: heroId,
+        componentId: enhancementId,
+        category: 'enhancement',
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added "${enhancement.name}" to your gear!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add enhancement: $e'),
             backgroundColor: Colors.red,
           ),
         );

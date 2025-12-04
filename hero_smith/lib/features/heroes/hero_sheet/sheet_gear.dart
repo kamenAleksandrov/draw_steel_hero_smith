@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/data/downtime_data_source.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/class_data.dart';
 import '../../../core/models/component.dart' as model;
+import '../../../core/models/downtime.dart';
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_bonus_service.dart';
@@ -134,21 +136,27 @@ class _TreasuresTab extends ConsumerStatefulWidget {
 
 class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
   List<model.Component> _allTreasures = [];
+  List<DowntimeEntry> _allEnhancements = [];
   bool _isLoadingTreasures = true;
   String? _error;
   StreamSubscription<List<String>>? _treasureIdsSubscription;
+  StreamSubscription<List<String>>? _enhancementIdsSubscription;
   List<String> _heroTreasureIds = [];
+  List<String> _heroEnhancementIds = [];
 
   @override
   void initState() {
     super.initState();
     _loadAllTreasures();
+    _loadAllEnhancements();
     _watchHeroTreasureIds();
+    _watchHeroEnhancementIds();
   }
 
   @override
   void dispose() {
     _treasureIdsSubscription?.cancel();
+    _enhancementIdsSubscription?.cancel();
     super.dispose();
   }
 
@@ -171,6 +179,37 @@ class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
         }
       },
     );
+  }
+
+  void _watchHeroEnhancementIds() {
+    final db = ref.read(appDatabaseProvider);
+    _enhancementIdsSubscription =
+        db.watchHeroComponentIds(widget.heroId, 'enhancement').listen(
+      (ids) {
+        if (mounted) {
+          setState(() {
+            _heroEnhancementIds = ids;
+          });
+        }
+      },
+      onError: (e) {
+        // Ignore enhancement errors - they're optional
+      },
+    );
+  }
+
+  Future<void> _loadAllEnhancements() async {
+    try {
+      final dataSource = DowntimeDataSource();
+      final enhancements = await dataSource.loadEnhancements();
+      if (mounted) {
+        setState(() {
+          _allEnhancements = enhancements;
+        });
+      }
+    } catch (e) {
+      // Ignore enhancement loading errors - they're optional
+    }
   }
 
   Future<void> _loadAllTreasures() async {
@@ -310,12 +349,19 @@ class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
     final heroTreasures =
         _allTreasures.where((t) => _heroTreasureIds.contains(t.id)).toList();
 
+    // Get hero's enhancements
+    final heroEnhancements =
+        _allEnhancements.where((e) => _heroEnhancementIds.contains(e.id)).toList();
+
     // Group treasures by type
     final groupedTreasures = <String, List<model.Component>>{};
     for (final treasure in heroTreasures) {
       final groupKey = _getTreasureGroupName(treasure.type);
       groupedTreasures.putIfAbsent(groupKey, () => []).add(treasure);
     }
+
+    // Total count includes both treasures and enhancements
+    final totalCount = heroTreasures.length + heroEnhancements.length;
 
     return Column(
       children: [
@@ -324,7 +370,7 @@ class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
           child: Row(
             children: [
               Text(
-                'Treasures (${heroTreasures.length})',
+                'Treasures & Enhancements ($totalCount)',
                 style: AppTextStyles.subtitle,
               ),
               const Spacer(),
@@ -337,69 +383,162 @@ class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
           ),
         ),
         Expanded(
-          child: heroTreasures.isEmpty
+          child: (heroTreasures.isEmpty && heroEnhancements.isEmpty)
               ? const Center(
                   child: Text(
-                    'No treasures yet.\nTap "Add" to begin.',
+                    'No treasures or enhancements yet.\nTap "Add" to begin or complete a downtime project.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
-              : ListView.builder(
+              : ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: groupedTreasures.length,
-                  itemBuilder: (context, index) {
-                    final entry = groupedTreasures.entries.elementAt(index);
-                    final groupName = entry.key;
-                    final treasures = entry.value;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, bottom: 8),
-                          child: Text(
-                            groupName,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                          ),
+                  children: [
+                    // Enhancements section (if any)
+                    if (heroEnhancements.isNotEmpty) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 8),
+                        child: Text(
+                          'Item Enhancements',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
                         ),
-                        ...treasures.map((treasure) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Stack(
-                              children: [
-                                _buildTreasureCard(treasure),
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                    onPressed: () =>
-                                        _removeTreasure(treasure.id),
-                                    style: IconButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.white.withOpacity(0.9),
-                                    ),
+                      ),
+                      ...heroEnhancements.map((enhancement) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Stack(
+                            children: [
+                              _buildEnhancementCard(enhancement),
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                  onPressed: () =>
+                                      _removeEnhancement(enhancement.id),
+                                  style: IconButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.white.withOpacity(0.9),
                                   ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                    
+                    // Treasures sections
+                    ...groupedTreasures.entries.map((entry) {
+                      final groupName = entry.key;
+                      final treasures = entry.value;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16, bottom: 8),
+                            child: Text(
+                              groupName,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
                             ),
-                          );
-                        }),
-                      ],
-                    );
-                  },
+                          ),
+                          ...treasures.map((treasure) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Stack(
+                                children: [
+                                  _buildTreasureCard(treasure),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () =>
+                                          _removeTreasure(treasure.id),
+                                      style: IconButton.styleFrom(
+                                        backgroundColor:
+                                            Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    }),
+                    
+                    const SizedBox(height: 16),
+                  ],
                 ),
         ),
       ],
     );
+  }
+
+  Future<void> _removeEnhancement(String enhancementId) async {
+    final db = ref.read(appDatabaseProvider);
+    final updated = _heroEnhancementIds.where((id) => id != enhancementId).toList();
+
+    try {
+      await db.setHeroComponentIds(
+        heroId: widget.heroId,
+        category: 'enhancement',
+        componentIds: updated,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Enhancement removed'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to remove enhancement: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildEnhancementCard(DowntimeEntry enhancement) {
+    return _EnhancementCard(enhancement: enhancement);
+  }
+
+  Color _getLevelColor(int level) {
+    if (level <= 2) {
+      return Colors.green.shade600;
+    } else if (level <= 4) {
+      return Colors.blue.shade600;
+    } else if (level <= 6) {
+      return Colors.purple.shade600;
+    } else if (level <= 8) {
+      return Colors.orange.shade700;
+    } else {
+      return Colors.red.shade600;
+    }
   }
 
   Widget _buildTreasureCard(model.Component treasure) {
@@ -2149,5 +2288,271 @@ class _AddTreasureDialogState extends State<_AddTreasureDialog> {
       default:
         return Icons.category;
     }
+  }
+}
+
+// ============================================================================
+// ENHANCEMENT CARD
+// ============================================================================
+
+class _EnhancementCard extends StatefulWidget {
+  final DowntimeEntry enhancement;
+
+  const _EnhancementCard({required this.enhancement});
+
+  @override
+  State<_EnhancementCard> createState() => _EnhancementCardState();
+}
+
+class _EnhancementCardState extends State<_EnhancementCard>
+    with SingleTickerProviderStateMixin {
+  bool _isExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _expandAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      if (_isExpanded) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
+  }
+
+  String _getTypeDisplay(String enhancementType) {
+    switch (enhancementType) {
+      case 'armor_enhancement':
+        return 'Armor';
+      case 'weapon_enhancement':
+        return 'Weapon';
+      case 'implement_enhancement':
+        return 'Implement';
+      case 'shield_enhancement':
+        return 'Shield';
+      default:
+        return enhancementType.replaceAll('_', ' ');
+    }
+  }
+
+  IconData _getTypeIcon(String enhancementType) {
+    switch (enhancementType) {
+      case 'armor_enhancement':
+        return Icons.shield;
+      case 'weapon_enhancement':
+        return Icons.sports_martial_arts;
+      case 'implement_enhancement':
+        return Icons.auto_awesome;
+      case 'shield_enhancement':
+        return Icons.security;
+      default:
+        return Icons.auto_fix_high;
+    }
+  }
+
+  Color _getLevelColor(int level) {
+    if (level <= 2) {
+      return Colors.green.shade400;
+    } else if (level <= 4) {
+      return Colors.blue.shade400;
+    } else if (level <= 6) {
+      return Colors.purple.shade400;
+    } else if (level <= 8) {
+      return Colors.orange.shade400;
+    } else {
+      return Colors.red.shade400;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final enhancementType = widget.enhancement.raw['type'] as String? ?? '';
+    final level = widget.enhancement.raw['level'] as int?;
+    final description = widget.enhancement.raw['description'] as String? ?? '';
+    final typeDisplay = _getTypeDisplay(enhancementType);
+    final typeIcon = _getTypeIcon(enhancementType);
+
+    // Use orange scheme matching treasure card styling exactly
+    const primaryColor = Colors.orange;
+    final cardBorderColor = theme.brightness == Brightness.dark
+      ? primaryColor.shade600.withOpacity(0.3)
+      : primaryColor.shade300.withOpacity(0.5);
+    final cardBgColor = theme.brightness == Brightness.dark
+      ? const Color.fromARGB(255, 37, 36, 36)
+      : Colors.white;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      color: cardBgColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: cardBorderColor,
+          width: 1,
+        ),
+      ),
+      child: InkWell(
+        onTap: _toggleExpanded,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header row with name and expand icon
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: primaryColor.shade700,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      typeIcon,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      widget.enhancement.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // Type and level tags
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: primaryColor.shade700,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      typeDisplay.toUpperCase(),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (level != null) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getLevelColor(level),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'LEVEL $level',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+
+              // Expandable content
+              SizeTransition(
+                sizeFactor: _expandAnimation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (description.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.brightness == Brightness.dark
+                            ? primaryColor.shade800.withOpacity(0.2)
+                            : primaryColor.shade50.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: theme.brightness == Brightness.dark
+                              ? primaryColor.shade600.withOpacity(0.5)
+                              : primaryColor.shade300.withOpacity(0.8),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.auto_fix_high,
+                                  size: 14,
+                                  color: primaryColor.shade400,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'EFFECT',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: primaryColor.shade400,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              description,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                height: 1.5,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

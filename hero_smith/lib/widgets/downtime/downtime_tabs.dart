@@ -872,15 +872,18 @@ class DowntimeTabsScaffold extends StatelessWidget {
       initialIndex: initialIndex,
       child: Column(
         children: [
-          TabBar(
-            isScrollable: false,
-            tabAlignment: TabAlignment.fill,
-            tabs: const [
-              Tab(icon: Icon(AppIcons.projects), text: 'Projects'),
-              Tab(icon: Icon(AppIcons.enhancements), text: 'Enhancements'),
-              Tab(icon: Icon(AppIcons.treasures), text: 'Treasures'),
-              Tab(icon: Icon(Icons.event_note), text: 'Events'),
-            ],
+          Material(
+            color: Theme.of(context).colorScheme.surface,
+            child: TabBar(
+              isScrollable: false,
+              tabAlignment: TabAlignment.fill,
+              tabs: const [
+                Tab(icon: Icon(AppIcons.projects), text: 'Projects'),
+                Tab(icon: Icon(AppIcons.enhancements), text: 'Enhancements'),
+                Tab(icon: Icon(AppIcons.treasures), text: 'Treasures'),
+                Tab(icon: Icon(Icons.event_note), text: 'Events'),
+              ],
+            ),
           ),
           const Expanded(
             child: TabBarView(

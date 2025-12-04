@@ -1799,7 +1799,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   /// Builds the resource generation buttons based on class
   Widget _buildResourceGenerationButtons(BuildContext context, HeroMainStats stats) {
     return FutureBuilder<List<GenerationPreset>>(
-      future: _getResourceGenerationOptions(stats.classId),
+      future: _getResourceGenerationOptions(stats.classId, heroLevel: stats.level),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
@@ -1892,9 +1892,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Future<List<GenerationPreset>> _getResourceGenerationOptions(String? classId) async {
+  Future<List<GenerationPreset>> _getResourceGenerationOptions(String? classId, {int heroLevel = 1}) async {
     await ResourceGenerationService.instance.initialize();
-    return ResourceGenerationService.instance.getGenerationOptionsForClass(classId);
+    return ResourceGenerationService.instance.getGenerationOptionsForClass(classId, heroLevel: heroLevel);
   }
 
   Future<void> _handleResourceGeneration(
@@ -1905,6 +1905,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final result = ResourceGenerationService.instance.calculateGeneration(
       optionKey: optionKey,
       victories: stats.victories,
+      classId: stats.classId,
+      heroLevel: stats.level,
     );
 
     if (result.requiresConfirmation && result.alternativeValues != null) {
@@ -1914,6 +1916,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         rolledValue: result.value,
         alternatives: result.alternativeValues!,
         diceType: '1d3',
+        diceToValueMapping: result.diceToValueMapping,
       );
 
       if (selectedValue != null && mounted) {
@@ -1930,8 +1933,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int rolledValue,
     required List<int> alternatives,
     required String diceType,
+    Map<int, int>? diceToValueMapping,
   }) async {
     final theme = Theme.of(context);
+    
+    // Find which dice roll corresponds to the rolled value
+    int? rolledDice;
+    if (diceToValueMapping != null) {
+      for (final entry in diceToValueMapping.entries) {
+        if (entry.value == rolledValue) {
+          rolledDice = entry.key;
+          break;
+        }
+      }
+    }
 
     return showDialog<int>(
       context: context,
@@ -1947,14 +1962,94 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'You rolled: $rolledValue',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
+              if (rolledDice != null && diceToValueMapping != null) ...[
+                Text(
+                  'You rolled: $rolledDice',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  'Gain +$rolledValue resource',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                  ),
+                ),
+              ] else
+                Text(
+                  'You rolled: $rolledValue',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
               const SizedBox(height: 16),
+              // Show the dice-to-value mapping table if available
+              if (diceToValueMapping != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Roll Values',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: diceToValueMapping.entries.map((entry) {
+                          final isRolled = entry.key == rolledDice;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isRolled
+                                  ? theme.colorScheme.primaryContainer
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(4),
+                              border: isRolled
+                                  ? Border.all(
+                                      color: theme.colorScheme.primary,
+                                      width: 2,
+                                    )
+                                  : null,
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  '${entry.key}',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: isRolled
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                                Text(
+                                  '+${entry.value}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               Text(
                 'Accept this roll or choose a different value:',
                 style: theme.textTheme.bodyMedium,

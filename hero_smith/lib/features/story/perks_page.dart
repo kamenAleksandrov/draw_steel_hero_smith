@@ -27,13 +27,21 @@ class PerksPage extends ConsumerWidget {
           }
 
           // Desired order based on the groups we found
-          const order = ['exploration', 'interpersonal', 'intrigue', 'lore', 'supernatural'];
+          const order = [
+            'crafting',
+            'exploration',
+            'interpersonal',
+            'intrigue',
+            'lore',
+            'supernatural'
+          ];
           final sorted = <MapEntry<String, List<Component>>>[];
           for (final g in order) {
             if (grouped.containsKey(g)) sorted.add(MapEntry(g, grouped[g]!));
           }
           // Add any missing, alphabetically
-          final remaining = grouped.keys.where((k) => !order.contains(k)).toList()..sort();
+          final remaining =
+              grouped.keys.where((k) => !order.contains(k)).toList()..sort();
           for (final g in remaining) {
             sorted.add(MapEntry(g, grouped[g]!));
           }
@@ -42,7 +50,9 @@ class PerksPage extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: sorted.map((entry) => _buildGroup(context, entry.key, entry.value)).toList(),
+              children: sorted
+                  .map((entry) => _buildGroup(context, entry.key, entry.value))
+                  .toList(),
             ),
           );
         },
@@ -50,7 +60,8 @@ class PerksPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildGroup(BuildContext context, String group, List<Component> perks) {
+  Widget _buildGroup(
+      BuildContext context, String group, List<Component> perks) {
     perks.sort((a, b) => a.name.compareTo(b.name));
     final title = switch (group) {
       'exploration' => 'Exploration',
@@ -70,7 +81,8 @@ class PerksPage extends ConsumerWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(width: 8),
               Container(
@@ -81,7 +93,10 @@ class PerksPage extends ConsumerWidget {
                 ),
                 child: Text(
                   '${perks.length}',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white),
                 ),
               ),
             ],

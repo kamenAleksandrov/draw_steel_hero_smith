@@ -90,7 +90,7 @@
         "count": 1,
         "perk_groups": ["crafting", "lore", "supernatural"]
       },
-      "new_subclass_abilities": {
+      "new_abilities": {
         "grants_previous_levels": true,
         "5_cost": 1
       }
@@ -146,7 +146,7 @@
           "perk_groups": ["crafting", "lore", "supernatural"]
         }
       ],
-      "new_subclass_abilities": {
+      "new_abilities": {
         "grants_previous_levels": true,
         "9_cost": 1
       }
@@ -175,7 +175,7 @@
     {
       "level": 9,
       "features": [{ "name": "Grand Wyrding", "grant_type": "granted" }],
-      "new_subclass_abilities": {
+      "new_abilities": {
         "grants_previous_levels": true,
         "11_cost": 1
       }
