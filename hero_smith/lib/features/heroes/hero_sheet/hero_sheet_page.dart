@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../creators/hero_creators/hero_creator_page.dart';
-import 'sheet_abilities.dart';
+import 'abilities/sheet_abilities.dart';
 import 'sheet_gear.dart';
 import 'sheet_main_stats.dart';
 import 'sheet_notes.dart';
-import 'sheet_story.dart';
+import 'story/sheet_story.dart';
 
 /// Top-level hero sheet that hosts all hero information.
 class HeroSheetPage extends StatefulWidget {

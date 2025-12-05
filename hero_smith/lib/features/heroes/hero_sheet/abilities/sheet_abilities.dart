@@ -3,21 +3,21 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/db/providers.dart';
-import '../../../core/models/component.dart';
-import '../../../core/repositories/hero_repository.dart';
-import '../../../core/services/ability_data_service.dart';
-import '../../../core/services/class_data_service.dart';
-import '../../../core/services/kit_bonus_service.dart';
-import '../../../core/theme/kit_theme.dart';
-import 'state/hero_main_stats_providers.dart';
-import '../../../widgets/abilities/abilities_shared.dart';
-import '../../../widgets/abilities/ability_expandable_item.dart';
-import '../../../widgets/abilities/ability_summary.dart';
-import '../../../widgets/kits/kit_card.dart';
-import '../../../widgets/kits/modifier_card.dart';
-import '../../../widgets/kits/stormwight_kit_card.dart';
-import '../../../widgets/kits/ward_card.dart';
+import '../../../../core/db/providers.dart';
+import '../../../../core/models/component.dart';
+import '../../../../core/repositories/hero_repository.dart';
+import '../../../../core/services/ability_data_service.dart';
+import '../../../../core/services/class_data_service.dart';
+import '../../../../core/services/kit_bonus_service.dart';
+import '../../../../core/theme/kit_theme.dart';
+import '../state/hero_main_stats_providers.dart';
+import '../../../../widgets/abilities/abilities_shared.dart';
+import '../../../../widgets/abilities/ability_expandable_item.dart';
+import '../../../../widgets/abilities/ability_summary.dart';
+import '../../../../widgets/kits/kit_card.dart';
+import '../../../../widgets/kits/modifier_card.dart';
+import '../../../../widgets/kits/stormwight_kit_card.dart';
+import '../../../../widgets/kits/ward_card.dart';
 
 /// Provider that watches hero ability IDs for a specific hero
 final heroAbilityIdsProvider =

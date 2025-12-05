@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/hero_theme.dart';
-import '../../../widgets/downtime/downtime_tabs.dart';
-import 'widgets/sheet_downtime/projects_list_tab.dart';
-import 'widgets/sheet_downtime/followers_tab.dart';
-import 'widgets/sheet_downtime/sources_tab.dart';
+import '../../../../core/theme/hero_theme.dart';
+import '../../../../widgets/downtime/downtime_tabs.dart';
+import 'sheet_downtime/projects_list_tab.dart';
+import 'sheet_downtime/followers_tab.dart';
+import 'sheet_downtime/sources_tab.dart';
 
 /// Main page for managing hero downtime projects
 class HeroDowntimeTrackingPage extends ConsumerStatefulWidget {

@@ -18,7 +18,7 @@ import '../../../../core/services/resource_generation_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../../widgets/creature stat block/hero_green_form_widget.dart';
-import '../hero_downtime_tracking_page.dart';
+import '../downtime/hero_downtime_tracking_page.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
