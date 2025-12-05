@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/db/providers.dart';
 import '../../../../../core/models/component.dart' as model;
 import '../../../../../widgets/shared/story_display_widgets.dart';
-import '../../widgets/token_tracker_widget.dart';
+import 'token_tracker_widget.dart';
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =

@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/hero_mod_keys.dart';
-import '../../../../core/models/heroic_resource_progression.dart';
 import '../../../../core/models/stat_modification_model.dart';
-import '../../../../core/repositories/feature_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/class_data_service.dart';
 import '../../../../core/services/heroic_resource_progression_service.dart';
@@ -22,6 +19,10 @@ import '../downtime/hero_downtime_tracking_page.dart';
 import '../state/hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
+import 'hero_main_stats_models.dart';
+import 'hero_stat_insights.dart';
+import 'hero_stamina_helpers.dart';
+import 'heroic_resource_details_provider.dart';
 
 class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
@@ -37,39 +38,8 @@ class HeroMainStatsView extends ConsumerStatefulWidget {
   ConsumerState<HeroMainStatsView> createState() => _HeroMainStatsViewState();
 }
 
-enum _NumericField {
-  victories,
-  exp,
-  level,
-  staminaCurrent,
-  staminaTemp,
-  recoveriesCurrent,
-  heroicResourceCurrent,
-  surgesCurrent,
-}
-
-extension _NumericFieldLabel on _NumericField {
-  String get label {
-    switch (this) {
-      case _NumericField.victories:
-        return 'Victories';
-      case _NumericField.exp:
-        return 'Experience';
-      case _NumericField.level:
-        return 'Level';
-      case _NumericField.staminaCurrent:
-        return 'Stamina';
-      case _NumericField.staminaTemp:
-        return 'Temporary stamina';
-      case _NumericField.recoveriesCurrent:
-        return 'Recoveries';
-      case _NumericField.heroicResourceCurrent:
-        return 'Heroic resource';
-      case _NumericField.surgesCurrent:
-        return 'Surges';
-    }
-  }
-}
+// NumericField enum moved to hero_main_stats_models.dart
+typedef _NumericField = NumericField;
 
 class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   final Map<_NumericField, TextEditingController> _numberControllers = {
@@ -333,8 +303,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         }
         
         final resourceDetailsAsync = ref.watch(
-          _heroicResourceDetailsProvider(
-            _HeroicResourceRequest(
+          heroicResourceDetailsProvider(
+            HeroicResourceRequest(
               classId: stats.classId,
               fallbackName: stats.heroicResourceName,
             ),
@@ -3125,25 +3095,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // Delegates to extracted helper function
   int _numberValueFromStats(HeroMainStats stats, _NumericField field) {
-    switch (field) {
-      case _NumericField.victories:
-        return stats.victories;
-      case _NumericField.exp:
-        return stats.exp;
-      case _NumericField.level:
-        return stats.level;
-      case _NumericField.staminaCurrent:
-        return stats.staminaCurrent;
-      case _NumericField.staminaTemp:
-        return stats.staminaTemp;
-      case _NumericField.recoveriesCurrent:
-        return stats.recoveriesCurrent;
-      case _NumericField.heroicResourceCurrent:
-        return stats.heroicResourceCurrent;
-      case _NumericField.surgesCurrent:
-        return stats.surgesCurrent;
-    }
+    return getNumberValueFromStats(stats, field);
   }
 
   Widget _buildModificationInput(
@@ -3964,99 +3918,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     }
   }
 
-  List<String> _wealthInsights(int wealth) {
-    if (wealth <= 0) {
-      return const [
-        'No notable wealth recorded yet.',
-        'Increase wealth to unlock lifestyle perks.',
-      ];
-    }
-    final tier = _wealthTiers.lastWhereOrNull((t) => wealth >= t.score);
-    final nextTier = _wealthTiers.firstWhereOrNull((t) => wealth < t.score);
-    final lines = <String>[];
-    if (tier != null) {
-      lines.add('Score ${tier.score}: ${tier.description}');
-    }
-    if (nextTier != null) {
-      lines.add('Next tier at ${nextTier.score}: ${nextTier.description}');
-    } else if (wealth > _wealthTiers.last.score) {
-      lines.add('You have surpassed all recorded wealth tiers.');
-    }
-    return lines;
-  }
+  // Delegates to extracted insight generators
+  List<String> _wealthInsights(int wealth) => generateWealthInsights(wealth);
 
-  List<String> _renownInsights(int renown) {
-    final followers = _renownFollowers.fold<int>(
-      0,
-      (acc, tier) => renown >= tier.threshold ? tier.followers : acc,
-    );
-    final impressionTier =
-        _impressionTiers.lastWhereOrNull((tier) => renown >= tier.value);
-    final lines = <String>[];
-    if (followers > 0) {
-      lines.add(
-        'Followers: $followers loyal ${followers == 1 ? 'supporter' : 'supporters'}.',
-      );
-    } else {
-      lines.add('Followers: none yet - grow your renown to attract allies.');
-    }
-    if (impressionTier != null) {
-      lines.add(
-          'Impression ${impressionTier.value}: ${impressionTier.description}');
-    } else {
-      lines.add('Impression: your deeds are still largely unknown.');
-    }
-    return lines;
-  }
+  List<String> _renownInsights(int renown) => generateRenownInsights(renown);
 
-  List<String> _xpInsights(int xp, int currentLevel) {
-    final currentTier = _xpAdvancementTiers.firstWhereOrNull(
-      (tier) => tier.level == currentLevel,
-    );
-    final nextTier = _xpAdvancementTiers.firstWhereOrNull(
-      (tier) => tier.level == currentLevel + 1,
-    );
-    
-    final lines = <String>[];
-    if (currentTier != null) {
-      if (currentTier.maxXp == -1) {
-        lines.add('Level ${currentTier.level}: ${currentTier.minXp}+ XP');
-      } else {
-        lines.add('Level ${currentTier.level}: ${currentTier.minXp}-${currentTier.maxXp} XP');
-      }
-    }
-    if (nextTier != null) {
-      final xpNeeded = nextTier.minXp - xp;
-      if (xpNeeded > 0) {
-        lines.add('Next level at ${nextTier.minXp} XP ($xpNeeded more needed)');
-      } else {
-        lines.add('Ready to level up! (${nextTier.minXp} XP threshold reached)');
-      }
-    } else if (currentLevel >= 10) {
-      lines.add('Maximum level reached!');
-    }
-    return lines;
-  }
+  List<String> _xpInsights(int xp, int currentLevel) => generateXpInsights(xp, currentLevel);
 
+  // Delegates to extracted helper - wrapped for internal type compatibility
   _StaminaState _calculateStaminaState(HeroMainStats stats) {
-    final max = stats.staminaMaxEffective;
-    final half = (max / 2).floor();
-    final current = stats.staminaCurrent;
-    if (current > half) {
-      return const _StaminaState('Healthy', Colors.green);
-    }
-    if (current > 0) {
-      return const _StaminaState('Winded', Colors.orange);
-    }
-    if (current > -half) {
-      return const _StaminaState('Dying', Colors.redAccent);
-    }
-    return const _StaminaState('Dead', Colors.red);
+    final state = calculateStaminaState(stats);
+    return _StaminaState(state.label, state.color);
   }
 
-  int _recoveryHealAmount(HeroMainStats stats) {
-    return stats.recoveryValueEffective;
-  }
+  // Delegates to extracted helper
+  int _recoveryHealAmount(HeroMainStats stats) => calculateRecoveryHealAmount(stats);
 
   Future<void> _handleUseRecovery(HeroMainStats stats) async {
     if (!mounted) return;
@@ -4226,10 +4102,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  String _formatSigned(int value) {
-    if (value > 0) return '+$value';
-    return value.toString();
-  }
+  // Delegates to extracted helper
+  String _formatSigned(int value) => formatSigned(value);
 
   /// Maps HeroModKeys to ancestry stat names for looking up sources.
   String? _modKeyToAncestryStatName(String modKey) {
@@ -4290,203 +4164,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 }
 
-class _StatTileData {
-  const _StatTileData(this.label, this.baseValue, this.totalValue, this.modKey);
+// Internal type aliases for backward compatibility with private types
+// The actual classes are now in hero_main_stats_models.dart
+typedef _StatTileData = StatTileData;
 
-  final String label;
-  final int baseValue;
-  final int totalValue;
-  final String modKey;
-}
-
+/// Internal stamina state class for compatibility
 class _StaminaState {
   const _StaminaState(this.label, this.color);
 
   final String label;
   final Color color;
 }
-
-class HeroicResourceDetails {
-  const HeroicResourceDetails({
-    required this.name,
-    this.description,
-    this.inCombatName,
-    this.inCombatDescription,
-    this.outCombatName,
-    this.outCombatDescription,
-  });
-
-  final String name;
-  final String? description;
-  final String? inCombatName;
-  final String? inCombatDescription;
-  final String? outCombatName;
-  final String? outCombatDescription;
-}
-
-class _HeroicResourceRequest {
-  const _HeroicResourceRequest({
-    required this.classId,
-    required this.fallbackName,
-  });
-
-  final String? classId;
-  final String? fallbackName;
-
-  @override
-  bool operator ==(Object other) {
-    return other is _HeroicResourceRequest &&
-        other.classId == classId &&
-        other.fallbackName == fallbackName;
-  }
-
-  @override
-  int get hashCode => Object.hash(classId, fallbackName);
-}
-
-final _heroicResourceCache = <String, HeroicResourceDetails>{};
-
-final _heroicResourceDetailsProvider =
-    FutureProvider.family<HeroicResourceDetails?, _HeroicResourceRequest>(
-  (ref, request) async {
-    final slug = _slugFromClassId(request.classId);
-    if (slug == null) {
-      final fallback = request.fallbackName;
-      return fallback == null ? null : HeroicResourceDetails(name: fallback);
-    }
-
-    final cached = _heroicResourceCache[slug];
-    if (cached != null) return cached;
-
-    try {
-      final maps = await FeatureRepository.loadClassFeatureMaps(slug);
-      final entry = maps.firstWhereOrNull(
-        (map) =>
-            (map['type']?.toString().toLowerCase() ?? '') == 'heroic resource',
-      );
-      if (entry == null) {
-        final fallback = request.fallbackName;
-        if (fallback == null) return null;
-        final details = HeroicResourceDetails(name: fallback);
-        _heroicResourceCache[slug] = details;
-        return details;
-      }
-
-      final name = entry['name']?.toString() ??
-          request.fallbackName ??
-          'Heroic Resource';
-      final description = entry['description']?.toString();
-
-      String? inCombatName;
-      String? inCombatDescription;
-      final inCombat = entry['in_combat'];
-      if (inCombat is Map) {
-        inCombatName = inCombat['name']?.toString();
-        inCombatDescription = inCombat['description']?.toString();
-      }
-
-      String? outCombatName;
-      String? outCombatDescription;
-      final outCombat = entry['out_of_combat'];
-      if (outCombat is Map) {
-        outCombatName = outCombat['name']?.toString();
-        outCombatDescription = outCombat['description']?.toString();
-      }
-
-      final details = HeroicResourceDetails(
-        name: name,
-        description: description,
-        inCombatName: inCombatName,
-        inCombatDescription: inCombatDescription,
-        outCombatName: outCombatName,
-        outCombatDescription: outCombatDescription,
-      );
-      _heroicResourceCache[slug] = details;
-      return details;
-    } catch (_) {
-      final fallback = request.fallbackName;
-      return fallback == null ? null : HeroicResourceDetails(name: fallback);
-    }
-  },
-);
-
-String? _slugFromClassId(String? classId) {
-  if (classId == null || classId.isEmpty) return null;
-  if (classId.startsWith('class_')) {
-    return classId.substring('class_'.length);
-  }
-  return classId;
-}
-
-class _WealthTier {
-  const _WealthTier(this.score, this.description);
-
-  final int score;
-  final String description;
-}
-
-const List<_WealthTier> _wealthTiers = [
-  _WealthTier(1, 'Common gear, lodging, and travel'),
-  _WealthTier(2, 'Fine dining, fine lodging, horse and cart'),
-  _WealthTier(3, 'Catapult, small house'),
-  _WealthTier(4, 'Library, tavern, manor home, sailing boat'),
-  _WealthTier(5, 'Church, keep, wizard tower'),
-  _WealthTier(6, 'Castle, shipyard'),
-];
-
-class _RenownFollowerTier {
-  const _RenownFollowerTier(this.threshold, this.followers);
-
-  final int threshold;
-  final int followers;
-}
-
-const List<_RenownFollowerTier> _renownFollowers = [
-  _RenownFollowerTier(3, 1),
-  _RenownFollowerTier(6, 2),
-  _RenownFollowerTier(9, 3),
-  _RenownFollowerTier(12, 4),
-];
-
-class _RenownImpressionTier {
-  const _RenownImpressionTier(this.value, this.description);
-
-  final int value;
-  final String description;
-}
-
-const List<_RenownImpressionTier> _impressionTiers = [
-  _RenownImpressionTier(1, 'Brigand leader, commoner, shop owner'),
-  _RenownImpressionTier(2, 'Knight, local guildmaster, professor'),
-  _RenownImpressionTier(3, 'Cult leader, locally known mage, noble lord'),
-  _RenownImpressionTier(4, 'Assassin, baron, locally famous entertainer'),
-  _RenownImpressionTier(5, 'Captain of the watch, high priest, viscount'),
-  _RenownImpressionTier(6, 'Count, warlord'),
-  _RenownImpressionTier(7, 'Marquis, world-renowned entertainer'),
-  _RenownImpressionTier(8, 'Duke, spymaster'),
-  _RenownImpressionTier(9, 'Archmage, prince'),
-  _RenownImpressionTier(10, 'Demon lord, monarch'),
-  _RenownImpressionTier(11, 'Archdevil, archfey, demigod'),
-  _RenownImpressionTier(12, 'Deity, titan'),
-];
-
-class _XpAdvancement {
-  const _XpAdvancement(this.level, this.minXp, this.maxXp);
-
-  final int level;
-  final int minXp;
-  final int maxXp;
-}
-
-const List<_XpAdvancement> _xpAdvancementTiers = [
-  _XpAdvancement(1, 0, 15),
-  _XpAdvancement(2, 16, 31),
-  _XpAdvancement(3, 32, 47),
-  _XpAdvancement(4, 48, 63),
-  _XpAdvancement(5, 64, 79),
-  _XpAdvancement(6, 80, 95),
-  _XpAdvancement(7, 96, 111),
-  _XpAdvancement(8, 112, 127),
-  _XpAdvancement(9, 128, 143),
-  _XpAdvancement(10, 144, -1), // -1 means no max
-];

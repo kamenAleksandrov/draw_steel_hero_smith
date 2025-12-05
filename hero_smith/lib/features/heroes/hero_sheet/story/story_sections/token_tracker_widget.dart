@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/services/complication_grants_service.dart';
+import '../../../../../core/services/complication_grants_service.dart';
 
 /// Widget for tracking complication tokens (e.g., antihero tokens).
 /// Shows current/max values with +/- buttons.
