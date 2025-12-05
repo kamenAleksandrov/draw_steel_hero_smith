@@ -221,7 +221,9 @@ class ClassFeatureDataService {
     final grants = details['grants'];
     if (grants is List && grants.isNotEmpty) return grants;
     final options = details['options'];
-    if (options is List) return options;
+    if (options is List && options.isNotEmpty) return options;
+    final options2 = details['options_2'];
+    if (options2 is List && options2.isNotEmpty) return options2;
     return null;
   }
 
@@ -231,6 +233,96 @@ class ClassFeatureDataService {
     if (details == null) return false;
     final grants = details['grants'];
     return grants is List && grants.isNotEmpty;
+  }
+
+  /// Normalizes the raw options/grants list into a typed list of maps.
+  static List<Map<String, dynamic>> extractOptionMaps(
+    Map<String, dynamic>? details,
+  ) {
+    final raw = extractOptionsOrGrants(details);
+    if (raw == null) return const [];
+
+    final result = <Map<String, dynamic>>[];
+    for (final entry in raw) {
+      if (entry is Map<String, dynamic>) {
+        result.add(entry);
+      } else if (entry is Map) {
+        result.add(entry.cast<String, dynamic>());
+      }
+    }
+    return result;
+  }
+
+  /// Maximum number of selections allowed for a feature.
+  /// Defaults to 1, becomes 2 for `options_2`, or respects explicit limits.
+  static int selectionLimit(Map<String, dynamic>? details) {
+    if (details == null) return 1;
+
+    final options2 = details['options_2'];
+    if (options2 is List && options2.isNotEmpty) return 2;
+
+    final maxSel = details['max_selections'] ?? details['select_count'];
+    if (maxSel is num) {
+      final value = maxSel.toInt();
+      return value < 1 ? 1 : value;
+    }
+
+    final allowMultiple = details['allow_multiple'];
+    if (allowMultiple is bool && allowMultiple) {
+      final options = extractOptionMaps(details);
+      if (options.isNotEmpty) return options.length;
+      return 99; // generous upper bound when explicitly allowed
+    }
+
+    return 1;
+  }
+
+  /// Minimum number of selections expected for a feature.
+  /// Defaults to 1 when options exist; `options_2` requires 2.
+  static int minimumSelections(Map<String, dynamic>? details) {
+    if (details == null) return 0;
+
+    final options = extractOptionMaps(details);
+    if (options.isEmpty) return 0;
+
+    if (details['options_2'] is List && (details['options_2'] as List).isNotEmpty) {
+      return options.length >= 2 ? 2 : options.length;
+    }
+
+    final minSel = details['min_selections'];
+    if (minSel is num && minSel >= 0) {
+      final limit = selectionLimit(details);
+      final value = minSel.toInt();
+      return value > limit ? limit : value;
+    }
+
+    return 1;
+  }
+
+  /// Applies the selection limit to the provided keys, preserving option order.
+  static Set<String> clampSelectionKeys(
+    Set<String> selectedKeys,
+    Map<String, dynamic>? details,
+  ) {
+    final limit = selectionLimit(details);
+    if (selectedKeys.length <= limit) return selectedKeys;
+
+    final orderedKeys = <String>[];
+    final options = extractOptionMaps(details);
+    for (final option in options) {
+      final key = featureOptionKey(option);
+      if (selectedKeys.contains(key)) {
+        orderedKeys.add(key);
+      }
+    }
+
+    if (orderedKeys.length < selectedKeys.length) {
+      final remaining = selectedKeys.difference(orderedKeys.toSet()).toList()
+        ..sort();
+      orderedKeys.addAll(remaining);
+    }
+
+    return orderedKeys.take(limit).toSet();
   }
 
   static Set<String> extractOptionKeys(Map<String, dynamic>? details) {
@@ -418,12 +510,19 @@ class ClassFeatureDataService {
         // For options with single domain: auto-select all matching
         // For options with multiple domains: preserve existing or require choice
         if (isGrants || domainSlugs.length == 1) {
-          selections[featureId] = matchingKeys;
+          selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
+            matchingKeys,
+            details,
+          );
         } else {
           final existing = selections[featureId] ?? const <String>{};
           final validExisting = existing.intersection(matchingKeys);
-          selections[featureId] =
+          final chosen =
               validExisting.isNotEmpty ? validExisting : <String>{};
+          selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
+            chosen,
+            details,
+          );
         }
       } else {
         selections.remove(featureId);
@@ -440,6 +539,7 @@ class ClassFeatureDataService {
     for (final feature in features) {
       if (!feature.isSubclassFeature) continue;
       final details = featureDetailsById[feature.id];
+      final selectionLimit = ClassFeatureDataService.selectionLimit(details);
       if (details == null) {
         if (subclassSlugs.isEmpty) {
           selections.remove(feature.id);
@@ -495,14 +595,23 @@ class ClassFeatureDataService {
       // For grants: auto-select ALL matching keys
       // For options: preserve existing selection or require user choice
       if (isGrants) {
-        selections[feature.id] = matchingKeys;
-      } else if (matchingKeys.length == 1) {
-        selections[feature.id] = matchingKeys;
+        selections[feature.id] = ClassFeatureDataService.clampSelectionKeys(
+          matchingKeys,
+          details,
+        );
+      } else if (matchingKeys.length == 1 || selectionLimit == 1) {
+        selections[feature.id] = ClassFeatureDataService.clampSelectionKeys(
+          matchingKeys,
+          details,
+        );
       } else {
         final existing = selections[feature.id] ?? const <String>{};
         final validExisting = existing.intersection(matchingKeys);
         if (validExisting.isNotEmpty) {
-          selections[feature.id] = validExisting;
+          selections[feature.id] = ClassFeatureDataService.clampSelectionKeys(
+            validExisting,
+            details,
+          );
         } else {
           selections.remove(feature.id);
         }
@@ -518,6 +627,7 @@ class ClassFeatureDataService {
   }) {
     for (final featureId in deityLinkedFeatureIds) {
       final details = featureDetailsById[featureId];
+      final selectionLimit = ClassFeatureDataService.selectionLimit(details);
       if (details == null) {
         if (deitySlugs.isEmpty) {
           selections.remove(featureId);
@@ -573,14 +683,23 @@ class ClassFeatureDataService {
       // For grants: auto-select ALL matching keys
       // For options: preserve existing selection or require user choice
       if (isGrants) {
-        selections[featureId] = matchingKeys;
-      } else if (matchingKeys.length == 1) {
-        selections[featureId] = matchingKeys;
+        selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
+          matchingKeys,
+          details,
+        );
+      } else if (matchingKeys.length == 1 || selectionLimit == 1) {
+        selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
+          matchingKeys,
+          details,
+        );
       } else {
         final existing = selections[featureId] ?? const <String>{};
         final validExisting = existing.intersection(matchingKeys);
         if (validExisting.isNotEmpty) {
-          selections[featureId] = validExisting;
+          selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
+            validExisting,
+            details,
+          );
         } else {
           selections.remove(featureId);
         }
@@ -626,8 +745,10 @@ class ClassFeatureDataService {
       normalized['loaded_additional_features'] = featureAdditional;
     }
 
-    final options = normalized['options'];
-    if (options is List) {
+    for (final key in ['options', 'options_2']) {
+      final options = normalized[key];
+      if (options is! List) continue;
+
       final processed = <Map<String, dynamic>>[];
       for (final option in options) {
         if (option is! Map) continue;
@@ -641,7 +762,7 @@ class ClassFeatureDataService {
         }
         processed.add(optionMap);
       }
-      normalized['options'] = processed;
+      normalized[key] = processed;
     }
 
     return normalized;

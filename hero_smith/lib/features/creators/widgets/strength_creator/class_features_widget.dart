@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:hero_smith/core/models/feature.dart';
@@ -252,7 +250,7 @@ class _FeatureCard extends StatefulWidget {
 }
 
 class _FeatureCardState extends State<_FeatureCard> {
-  bool _isExpanded = true;
+  bool _isExpanded = false;
 
   Feature get feature => widget.feature;
   ClassFeaturesWidget get w => widget.widget;
@@ -547,7 +545,7 @@ class _HeroicResourceProgressionFeatureState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (description != null && description.isNotEmpty) ...[
+          if (description.isNotEmpty) ...[
             Text(
               description,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -949,29 +947,7 @@ class _FeatureContent extends StatelessWidget {
   /// Extracts options or grants from feature details.
   /// Returns the list from 'grants' if present, otherwise from 'options'.
   List<Map<String, dynamic>> _extractOptionsOrGrants() {
-    if (details == null) return const [];
-    // Prefer grants over options
-    final grants = details!['grants'];
-    if (grants is List && grants.isNotEmpty) {
-      return _parseItemList(grants);
-    }
-    final options = details!['options'];
-    if (options is List) {
-      return _parseItemList(options);
-    }
-    return const [];
-  }
-
-  List<Map<String, dynamic>> _parseItemList(List raw) {
-    final items = <Map<String, dynamic>>[];
-    for (final entry in raw) {
-      if (entry is Map<String, dynamic>) {
-        items.add(entry);
-      } else if (entry is Map) {
-        items.add(entry.cast<String, dynamic>());
-      }
-    }
-    return items;
+    return ClassFeatureDataService.extractOptionMaps(details);
   }
 
   /// Returns true if the feature uses 'grants' (auto-apply all matching)
@@ -1009,6 +985,8 @@ class _FeatureContent extends StatelessWidget {
           allowEditing: false,
           messages: messages,
           requiresExternalSelection: true,
+          selectionLimit: 0,
+          minimumRequired: 0,
         );
       }
     }
@@ -1023,6 +1001,8 @@ class _FeatureContent extends StatelessWidget {
           allowEditing: false,
           messages: messages,
           requiresExternalSelection: true,
+          selectionLimit: 0,
+          minimumRequired: 0,
         );
       }
     }
@@ -1036,7 +1016,21 @@ class _FeatureContent extends StatelessWidget {
         .map((o) => ClassFeatureDataService.featureOptionKey(o))
         .toSet();
 
-    final selectedKeys = currentSelections.where(filteredKeys.contains).toSet();
+    final rawSelectionLimit = ClassFeatureDataService.selectionLimit(details);
+    final rawMinimumRequired = ClassFeatureDataService.minimumSelections(details);
+
+    final effectiveLimit = (rawSelectionLimit > 0 && filteredOptions.isNotEmpty)
+        ? rawSelectionLimit.clamp(1, filteredOptions.length)
+        : rawSelectionLimit;
+    final effectiveMinimum = rawMinimumRequired.clamp(
+      0,
+      filteredOptions.isEmpty ? 0 : filteredOptions.length,
+    );
+
+    final selectedKeys = ClassFeatureDataService.clampSelectionKeys(
+      currentSelections.where(filteredKeys.contains).toSet(),
+      details,
+    );
 
     return _FeatureOptionsContext(
       options: filteredOptions,
@@ -1044,6 +1038,8 @@ class _FeatureContent extends StatelessWidget {
       allowEditing: allowEditing,
       messages: messages,
       requiresExternalSelection: requiresExternalSelection,
+      selectionLimit: effectiveLimit,
+      minimumRequired: effectiveMinimum,
     );
   }
 
@@ -1359,7 +1355,9 @@ class _OptionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final allowMultiple = _inferAllowMultiple();
+    final selectionLimit = optionsContext.selectionLimit;
+    final minimumRequired = optionsContext.minimumRequired;
+    final allowMultiple = selectionLimit != 1;
     final effectiveSelections = optionsContext.selectedKeys;
     final canEdit = widget.onSelectionChanged != null && optionsContext.allowEditing && !isGrantsFeature;
     final isAutoApplied = _isAutoAppliedSelection();
@@ -1368,14 +1366,18 @@ class _OptionsSection extends StatelessWidget {
     final isPickFeature = grantType == 'pick';
     final hasOptions = optionsContext.options.isNotEmpty;
     // For grants, we don't need user selection - they're all auto-applied
-    final needsSelection = !isGrantsFeature && isPickFeature && hasOptions && effectiveSelections.isEmpty;
+    final needsSelection = !isGrantsFeature && isPickFeature && hasOptions &&
+        effectiveSelections.length < (minimumRequired <= 0 ? 1 : minimumRequired);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Selection prompt for pick features (not for grants)
         if (needsSelection && !isAutoApplied)
-          _SelectionPrompt(allowMultiple: allowMultiple),
+          _SelectionPrompt(
+            selectionLimit: selectionLimit,
+            minimumRequired: minimumRequired,
+          ),
 
         // Info messages
         for (final message in optionsContext.messages)
@@ -1404,7 +1406,7 @@ class _OptionsSection extends StatelessWidget {
           _AutoAppliedContent(option: optionsContext.options.first, widget: widget)
         else if (optionsContext.options.isNotEmpty) ...[
           Text(
-            allowMultiple ? 'Select Options' : 'Choose One',
+            _headingText(selectionLimit),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
@@ -1431,14 +1433,13 @@ class _OptionsSection extends StatelessWidget {
     );
   }
 
-  bool _inferAllowMultiple() {
-    if (widget.domainLinkedFeatureIds.contains(feature.id)) return true;
-    if (originalSelections.length > 1) return true;
-    final allowMultiple = details?['allow_multiple'];
-    if (allowMultiple is bool) return allowMultiple;
-    final maxSel = details?['max_selections'] ?? details?['select_count'];
-    if (maxSel is num) return maxSel > 1;
-    return false;
+  String _headingText(int selectionLimit) {
+    if (selectionLimit == 1) return 'Choose One';
+    if (selectionLimit == 2) return 'Choose Two';
+    if (selectionLimit > 1 && selectionLimit < 99) {
+      return 'Select up to $selectionLimit';
+    }
+    return 'Select Options';
   }
 
   bool _isAutoAppliedSelection() {
@@ -1466,9 +1467,21 @@ class _OptionsSection extends StatelessWidget {
     final key = ClassFeatureDataService.featureOptionKey(option);
     final updated = Set<String>.from(optionsContext.selectedKeys);
 
-    if (_inferAllowMultiple()) {
+    final selectionLimit = optionsContext.selectionLimit;
+
+    if (selectionLimit != 1) {
       if (selected) {
         updated.add(key);
+        if (selectionLimit > 0 && updated.length > selectionLimit) {
+          for (final opt in optionsContext.options) {
+            final optKey = ClassFeatureDataService.featureOptionKey(opt);
+            if (optKey == key) continue;
+            if (updated.contains(optKey)) {
+              updated.remove(optKey);
+              break;
+            }
+          }
+        }
       } else {
         updated.remove(key);
       }
@@ -1477,14 +1490,23 @@ class _OptionsSection extends StatelessWidget {
       if (selected) updated.add(key);
     }
 
-    widget.onSelectionChanged!(feature.id, updated);
+    final clamped = ClassFeatureDataService.clampSelectionKeys(
+      updated,
+      details,
+    );
+
+    widget.onSelectionChanged!(feature.id, clamped);
   }
 }
 
 class _SelectionPrompt extends StatelessWidget {
-  const _SelectionPrompt({required this.allowMultiple});
+  const _SelectionPrompt({
+    required this.selectionLimit,
+    required this.minimumRequired,
+  });
 
-  final bool allowMultiple;
+  final int selectionLimit;
+  final int minimumRequired;
 
   @override
   Widget build(BuildContext context) {
@@ -1524,9 +1546,7 @@ class _SelectionPrompt extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  allowMultiple
-                      ? 'Choose one or more options below'
-                      : 'Choose one option below',
+                  _promptText(),
                   style: TextStyle(
                     color: Colors.orange.shade700,
                     fontSize: 13,
@@ -1538,6 +1558,26 @@ class _SelectionPrompt extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _promptText() {
+    final requiredCount = minimumRequired <= 0 ? 1 : minimumRequired;
+
+    if (selectionLimit == 1) return 'Choose one option below';
+    if (selectionLimit == 2) {
+      return requiredCount >= 2
+          ? 'Choose two options below'
+          : 'Choose up to two options below';
+    }
+
+    if (selectionLimit > 1 && selectionLimit < 99) {
+      if (requiredCount >= selectionLimit) {
+        return 'Choose $selectionLimit options below';
+      }
+      return 'Choose up to $selectionLimit options below';
+    }
+
+    return 'Choose one or more options below';
   }
 }
 
@@ -1972,6 +2012,8 @@ class _FeatureOptionsContext {
     required this.allowEditing,
     required this.messages,
     required this.requiresExternalSelection,
+    required this.selectionLimit,
+    required this.minimumRequired,
   });
 
   final List<Map<String, dynamic>> options;
@@ -1979,6 +2021,8 @@ class _FeatureOptionsContext {
   final bool allowEditing;
   final List<String> messages;
   final bool requiresExternalSelection;
+  final int selectionLimit;
+  final int minimumRequired;
 }
 
 class _OptionFilterResult {

@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/class_data.dart';
 import '../../../core/models/component.dart' as model;
-import '../../../core/models/feature.dart' as feature_model;
 import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
@@ -19,6 +18,7 @@ import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/theme/app_text_styles.dart';
 import 'widgets/token_tracker_widget.dart';
+import '../../creators/widgets/strength_creator/class_features_section.dart';
 
 // Provider to fetch a single component by ID
 final componentByIdProvider =
@@ -181,7 +181,18 @@ class _SheetStoryState extends ConsumerState<SheetStory>
   Widget _buildHeroNameSection(BuildContext context) {
     final theme = Theme.of(context);
     final hero = _storyData.hero;
-    
+
+    if (hero == null) {
+      return const SizedBox.shrink();
+    }
+
+    final classAsync = (hero.className != null && (hero.className as String).isNotEmpty)
+        ? ref.watch(componentByIdProvider(hero.className as String))
+        : null;
+    final subclassAsync = (hero.subclass != null && (hero.subclass as String).isNotEmpty)
+        ? ref.watch(componentByIdProvider(hero.subclass as String))
+        : null;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -189,18 +200,46 @@ class _SheetStoryState extends ConsumerState<SheetStory>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hero Identity',
+              'Hero',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
+            _buildInfoRow(context, 'Name', hero.name, Icons.person),
+            const SizedBox(height: 4),
             _buildInfoRow(
               context,
-              'Name',
-              hero?.name ?? 'Unnamed Hero',
-              Icons.person,
+              'Level',
+              hero.level.toString(),
+              Icons.trending_up,
             ),
+            if (classAsync != null) ...[
+              const SizedBox(height: 12),
+              classAsync.when(
+                loading: () => const CircularProgressIndicator(),
+                error: (e, _) => Text('Error loading class: $e'),
+                data: (classComp) => _buildInfoRow(
+                  context,
+                  'Class',
+                  classComp?.name ?? 'Unknown',
+                  Icons.shield,
+                ),
+              ),
+            ],
+            if (subclassAsync != null) ...[
+              const SizedBox(height: 8),
+              subclassAsync.when(
+                loading: () => const CircularProgressIndicator(),
+                error: (e, _) => Text('Error loading subclass: $e'),
+                data: (subclassComp) => _buildInfoRow(
+                  context,
+                  'Subclass',
+                  subclassComp?.name ?? 'Unknown',
+                  Icons.bolt,
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -209,16 +248,17 @@ class _SheetStoryState extends ConsumerState<SheetStory>
 
   Widget _buildAncestrySection(BuildContext context) {
     final theme = Theme.of(context);
-    final hero = _storyData.hero;
-    final ancestryId = hero?.ancestry;
-    final traitIds = _storyData.ancestryTraitIds as List<String>? ?? [];
+    final ancestryId = _storyData.hero?.ancestry as String?;
+    final traitIds = (_storyData.ancestryTraitIds as List<dynamic>? ?? [])
+        .map((id) => id.toString())
+        .toList();
 
     if (ancestryId == null || ancestryId.isEmpty) {
       return const SizedBox.shrink();
     }
 
     final ancestryAsync = ref.watch(componentByIdProvider(ancestryId));
-    final traitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
+    final traitsAsync = ref.watch(allComponentsProvider);
 
     return Card(
       child: Padding(
@@ -265,7 +305,6 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                 loading: () => const CircularProgressIndicator(),
                 error: (e, _) => Text('Error loading traits: $e'),
                 data: (allTraits) {
-                  // Find the ancestry_trait component for this ancestry
                   final ancestryTraitComponent = allTraits.cast<dynamic>().firstWhere(
                     (t) => t.data['ancestry_id'] == ancestryId,
                     orElse: () => null,
@@ -282,7 +321,6 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                   final signature = ancestryTraitComponent.data['signature'] as Map<String, dynamic>?;
                   final traitsList = ancestryTraitComponent.data['traits'] as List?;
                   
-                  // Get selected traits
                   final selectedTraits = traitsList
                       ?.where((trait) => 
                           trait is Map && 
@@ -292,7 +330,6 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Signature ability
                       if (signature != null) ...[
                         Text(
                           '✨ Signature Ability',
@@ -332,7 +369,6 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                         ),
                         const SizedBox(height: 16),
                       ],
-                      // Selected optional traits
                       if (selectedTraits.isNotEmpty) ...[
                         Text(
                           'Optional Traits',
@@ -3004,19 +3040,18 @@ class _FeaturesTab extends ConsumerStatefulWidget {
 
 class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
   final ClassDataService _classDataService = ClassDataService();
-  final ClassFeatureDataService _featureService = ClassFeatureDataService();
   final SubclassDataService _subclassDataService = SubclassDataService();
 
   bool _isLoading = true;
   String? _error;
   ClassData? _classData;
   int _level = 1;
-  ClassFeatureDataResult? _featureData;
   SubclassSelectionResult? _subclassSelection;
   DeityOption? _selectedDeity;
   List<String> _selectedDomains = const <String>[];
   String? _characteristicArrayDescription;
-  Map<String, Set<String>> _autoSelections = const <String, Set<String>>{};
+  Map<String, Set<String>> _featureSelections = const {};
+  List<String?> _equipmentIds = const [];
 
   @override
   void initState() {
@@ -3106,25 +3141,21 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       final activeSubclassSlugs =
           ClassFeatureDataService.activeSubclassSlugs(selection);
 
-      final featureData = await _featureService.loadFeatures(
-        classData: classData,
-        level: hero.level,
-        activeSubclassSlugs: activeSubclassSlugs,
-      );
-
-      final autoSelections =
-          _deriveAutomaticSelections(featureData, selection);
+      final savedFeatureSelections = await repo.getFeatureSelections(widget.heroId);
+      final equipmentIds = await repo.getEquipmentIds(widget.heroId);
 
       if (mounted) {
         setState(() {
           _classData = classData;
           _level = hero.level;
-          _featureData = featureData;
           _subclassSelection = selection;
           _selectedDeity = deityOption;
           _selectedDomains = domainNames;
           _characteristicArrayDescription = arrayDescription;
-          _autoSelections = autoSelections;
+          _featureSelections = savedFeatureSelections.isNotEmpty
+              ? savedFeatureSelections
+              : const {};
+          _equipmentIds = equipmentIds;
           _isLoading = false;
         });
       }
@@ -3166,80 +3197,55 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       );
     }
 
-    if (_classData == null || _featureData == null) {
+    if (_classData == null) {
       return const Center(
         child: Text('No features available'),
       );
     }
 
-    // Get all the computed data
-    final domainSlugs = ClassFeatureDataService.selectedDomainSlugs(_subclassSelection);
-    final subclassSlugs = ClassFeatureDataService.activeSubclassSlugs(_subclassSelection);
-    final deitySlugs = ClassFeatureDataService.selectedDeitySlugs(_subclassSelection);
-
-    // Build list of features to display
-    final displayFeatures = <_FeatureDisplay>[];
-    
-    for (final feature in _featureData!.features) {
-      final details = _featureData!.featureDetailsById[feature.id];
-      if (details == null) continue;
-
-      // Check if feature should be shown based on subclass/domain/deity
-      if (!_shouldShowFeature(feature, details, subclassSlugs, domainSlugs, deitySlugs)) {
-        continue;
-      }
-
-      final selectedOptions = _autoSelections[feature.id] ?? {};
-      final displayOptions = _getDisplayOptions(feature, details, selectedOptions, subclassSlugs, domainSlugs, deitySlugs);
-
-      displayFeatures.add(_FeatureDisplay(
-        name: feature.name,
-        level: feature.level,
-        description: details['description'] as String? ?? '',
-        options: displayOptions,
-      ));
-    }
-
-    return ListView(
-      padding: const EdgeInsets.all(12),
-      children: [
-        // Header with class and level
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _classData!.name,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Level $_level',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                if (_subclassSelection != null) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: _buildSelectionChips(theme),
-                  ),
-                ],
-              ],
-            ),
+    return RefreshIndicator(
+      onRefresh: _loadHeroData,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _buildSelectionChips(theme),
           ),
-        ),
-        const SizedBox(height: 12),
-        
-        // Features list
-        ...displayFeatures.map((feature) => _buildFeatureCard(context, feature)),
-      ],
+          const SizedBox(height: 12),
+          ClassFeaturesSection(
+            classData: _classData!,
+            selectedLevel: _level,
+            selectedSubclass: _subclassSelection,
+            initialSelections: _featureSelections,
+            equipmentIds: _equipmentIds,
+            onSelectionsChanged: _handleSelectionsChanged,
+          ),
+        ],
+      ),
     );
+  }
+
+  Future<void> _handleSelectionsChanged(
+    Map<String, Set<String>> selections,
+  ) async {
+    setState(() {
+      _featureSelections = selections;
+    });
+
+    try {
+      final repo = ref.read(heroRepositoryProvider);
+      await repo.saveFeatureSelections(widget.heroId, selections);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save feature selections: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   List<Widget> _buildSelectionChips(ThemeData theme) {
@@ -3292,380 +3298,4 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       ),
     );
   }
-
-  bool _shouldShowFeature(
-    feature_model.Feature feature,
-    Map<String, dynamic> details,
-    Set<String> subclassSlugs,
-    Set<String> domainSlugs,
-    Set<String> deitySlugs,
-  ) {
-    // Check if feature requires subclass
-    final options = details['options'] as List<dynamic>? ?? [];
-    final requiresSubclass = options.any((opt) {
-      if (opt is! Map<String, dynamic>) return false;
-      return opt['subclass'] != null || (opt['restricts'] as List?)?.isNotEmpty == true;
-    });
-    
-    if (requiresSubclass && subclassSlugs.isEmpty) {
-      return false;
-    }
-
-    // Check if feature requires domain
-    final requiresDomain = _featureData!.domainLinkedFeatureIds.contains(feature.id);
-    if (requiresDomain && domainSlugs.isEmpty) {
-      return false;
-    }
-
-    // Check if feature requires deity
-    final requiresDeity = _featureData!.deityLinkedFeatureIds.contains(feature.id);
-    if (requiresDeity && deitySlugs.isEmpty) {
-      return false;
-    }
-
-    return true;
-  }
-
-  List<_FeatureOption> _getDisplayOptions(
-    feature_model.Feature feature,
-    Map<String, dynamic> details,
-    Set<String> selectedKeys,
-    Set<String> subclassSlugs,
-    Set<String> domainSlugs,
-    Set<String> deitySlugs,
-  ) {
-    final displayOptions = <_FeatureOption>[];
-    final options = details['options'] as List<dynamic>? ?? [];
-
-    for (final optionData in options) {
-      if (optionData is! Map<String, dynamic>) continue;
-      
-      final option = optionData;
-
-      // Check if option should be shown
-      if (option['subclass'] != null) {
-        final optionSubclassSlug = ClassFeatureDataService.slugify(option['subclass'] as String);
-        if (!subclassSlugs.contains(optionSubclassSlug)) {
-          continue;
-        }
-      }
-
-      final restricts = option['restricts'] as List<dynamic>?;
-      if (restricts?.isNotEmpty == true) {
-        final restrictStrings = restricts!.whereType<String>().toList();
-        final matchesRestriction = restrictStrings.any((r) => subclassSlugs.contains(r));
-        if (!matchesRestriction) {
-          continue;
-        }
-      }
-
-      if (option['domain'] != null) {
-        final optionDomainSlug = ClassFeatureDataService.slugify(option['domain'] as String);
-        if (!domainSlugs.contains(optionDomainSlug)) {
-          continue;
-        }
-      }
-
-      if (option['deity'] != null) {
-        final optionDeitySlug = ClassFeatureDataService.slugify(option['deity'] as String);
-        if (!deitySlugs.contains(optionDeitySlug)) {
-          continue;
-        }
-      }
-
-      // Get abilities for this option
-      final abilities = <String>[];
-      final abilityRefs = option['abilities'] as List<dynamic>?;
-      if (abilityRefs?.isNotEmpty == true) {
-        for (final abilityRef in abilityRefs!) {
-          if (abilityRef is! String) continue;
-          final abilityId = _featureData!.abilityIdByName[abilityRef] ?? abilityRef;
-          final abilityDetail = _featureData!.abilityDetailsById[abilityId];
-          if (abilityDetail != null) {
-            final abilityName = abilityDetail['name'] as String? ?? abilityRef;
-            abilities.add(abilityName);
-          }
-        }
-      }
-
-      displayOptions.add(_FeatureOption(
-        name: option['name'] as String? ?? '',
-        description: option['description'] as String? ?? '',
-        abilities: abilities,
-      ));
-    }
-
-    return displayOptions;
-  }
-
-  Widget _buildFeatureCard(BuildContext context, _FeatureDisplay feature) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: feature.description.isNotEmpty || feature.options.isNotEmpty
-            ? () => _showFeatureDetails(context, feature)
-            : null,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    '${feature.level}',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      feature.name,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (feature.options.isNotEmpty)
-                      Text(
-                        '${feature.options.length} option${feature.options.length != 1 ? 's' : ''}',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              if (feature.description.isNotEmpty || feature.options.isNotEmpty)
-                Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
-                  size: 20,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showFeatureDetails(BuildContext context, _FeatureDisplay feature) {
-    final theme = Theme.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  '${feature.level}',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                feature.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (feature.description.isNotEmpty) ...[
-                Text(
-                  feature.description,
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-              ],
-              if (feature.options.isNotEmpty) ...[
-                Text(
-                  'Options',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ...feature.options.map((option) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          option.name,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        if (option.description.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            option.description,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ],
-                        if (option.abilities.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: option.abilities.map((ability) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.secondaryContainer.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  ability,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: theme.colorScheme.onSecondaryContainer,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ],
-                    ),
-                  );
-                }),
-              ],
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Map<String, Set<String>> _deriveAutomaticSelections(
-    ClassFeatureDataResult data,
-    SubclassSelectionResult? selection,
-  ) {
-    if (selection == null) {
-      return const <String, Set<String>>{};
-    }
-
-    final result = <String, Set<String>>{};
-
-    void addSelections(String featureId, Set<String> keys) {
-      if (keys.isEmpty) return;
-      final existing = result[featureId];
-      if (existing == null) {
-        result[featureId] = Set<String>.from(keys);
-      } else {
-        result[featureId] = {...existing, ...keys};
-      }
-    }
-
-    final domainSlugs = ClassFeatureDataService.selectedDomainSlugs(selection);
-    if (domainSlugs.isNotEmpty) {
-      for (final featureId in data.domainLinkedFeatureIds) {
-        final keys = ClassFeatureDataService.domainOptionKeysFor(
-          data.featureDetailsById,
-          featureId,
-          domainSlugs,
-        );
-        addSelections(featureId, keys);
-      }
-    }
-
-    final subclassSlugs = ClassFeatureDataService.activeSubclassSlugs(selection);
-    if (subclassSlugs.isNotEmpty) {
-      for (final feature in data.features) {
-        final keys = ClassFeatureDataService.subclassOptionKeysFor(
-          data.featureDetailsById,
-          feature.id,
-          subclassSlugs,
-        );
-        addSelections(feature.id, keys);
-      }
-    }
-
-    final deitySlugs = ClassFeatureDataService.selectedDeitySlugs(selection);
-    if (deitySlugs.isNotEmpty) {
-      for (final featureId in data.deityLinkedFeatureIds) {
-        final keys = ClassFeatureDataService.deityOptionKeysFor(
-          data.featureDetailsById,
-          featureId,
-          deitySlugs,
-        );
-        addSelections(featureId, keys);
-      }
-    }
-
-    return result;
-  }
-}
-
-// Helper classes for feature display
-class _FeatureDisplay {
-  final String name;
-  final int level;
-  final String description;
-  final List<_FeatureOption> options;
-
-  const _FeatureDisplay({
-    required this.name,
-    required this.level,
-    required this.description,
-    required this.options,
-  });
-}
-
-class _FeatureOption {
-  final String name;
-  final String description;
-  final List<String> abilities;
-
-  const _FeatureOption({
-    required this.name,
-    required this.description,
-    required this.abilities,
-  });
 }

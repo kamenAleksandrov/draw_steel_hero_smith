@@ -179,7 +179,7 @@
     "is_subclass_feature": true,
     "level": 3,
     "description": "Your troubadour class act grants you a feature.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Auteur",
         "name": "Missed Cue",
@@ -205,7 +205,7 @@
     "class": "troubadour",
     "level": 4,
     "description": "You have more ways of getting the most drama out of a situation. Choose two of the following events to add to the events that grant you drama during battle:\n\nAlternatively, you can forgo choosing a new event to choose one event you already have (including an event gained with this feature). Whenever the chosen event grants you drama, you gain 1 additional drama.",
-    "options": [
+    "options_2": [
       {
         "name": "Bad Luck",
         "description": "Whenever a creature rolls a natural 2 on a power roll, you gain 2 drama."
@@ -258,7 +258,7 @@
     "is_subclass_feature": false,
     "level": 5,
     "description": "Your class act grants additional benefits at 5th level.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Auteur",
         "name": "Fix It in Post",
@@ -326,7 +326,7 @@
     "is_subclass_feature": true,
     "level": 8,
     "description": "Your class act grants additional benefits at 8th level.",
-    "options": [
+    "grants": [
       {
         "subclass_name": "Auteur",
         "name": "Deleted Scene",

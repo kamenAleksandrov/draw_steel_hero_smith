@@ -89,11 +89,9 @@ Reload flicker came from the async providers returning to their loading states o
 
 ## hero creation testing
 
-reorder the tabs: strife => strength => story
+reorder the tabs: strife => strength => story?
 
 it might be a good idea to have the features that upgrade other features do so in the ui but idk yet
-
-subclass dependent abilities are not shown.
 
 strenght tab lack the option to save choises which leads to lost picks
 
