@@ -131,7 +131,9 @@ some features that have multiple new lines must be better organised or atleast s
 
 i have to look through all the first level subclass choices and decide how and where what is displayed. example - the tactician has a subclass choice in the strife page, then in two places has the tactical doctrine feature, once as the grant and the second time is as a choice/exlplanation of the doctrine
 
-some abilities may deserve a main stats ui examples are: judgement, mantle of essence, mark, routines, growing ferocity and discipline
+some abilities may deserve a main stats ui examples are: judgement, mantle of essence, mark, routines, troubadour drama gain, growing ferocity and discipline
+
+subclass abilities now show but must be tailored to the subclass
 ### censor
 
 features do not grant the bonus skill form the domain.
@@ -188,8 +190,13 @@ the talent is the only class that can go into negative heroic resource and must 
 
 ### troubadour
 
-routines dont load and grant the two starting reoutines
+routines dont grant the two starting reoutines
 
-missing triggered action
+level 4 melodrama has the option to choose 2 options and i don think i handle this at the moment
 
-missing class act
+level 4 zeitergeit is a feature example that the sheet page should let the user repick choices and keep them saved
+
+level 5 feature lets the user pick 2 features of their subclass but the widget in strength lets them pick 1 of all an just shows the subclass
+
+;level 8 feature does not load the virtuoso crowd favourites
+

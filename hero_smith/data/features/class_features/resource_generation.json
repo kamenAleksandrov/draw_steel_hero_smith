@@ -99,7 +99,11 @@
     {
       "class_key": "troubadour",
       "resource_key": "drama",
-      "generation_options": ["victories", "plus_1", "plus_1d3", "plus_2", "plus_3"]
+      "generation_options": ["victories", "plus_1", "plus_1d3", "plus_2", "plus_3"],
+      "generation_increase_at_levels": [
+        { "level": 7, "increase": "plus_1d3+1", "remove": "plus_1d3" },
+        { "level": 10, "increase": "plus_3", "remove": "plus_2" }
+      ]
     }
   ]
 }

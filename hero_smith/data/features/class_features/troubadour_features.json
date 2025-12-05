@@ -56,7 +56,7 @@
     "class": "troubadour",
     "level": 1,
     "description": "You enter every battle with a set of performance abilities at the ready. Performances are magical presentations (such as songs, dances, poems, or gymnastic feats) that your allies can participate in. These abilities have the Performance keyword. At the start of each combat round, as long as you are not dazed, dead, or surprised, you can either choose a new performance or maintain your current performance (no action required). Your performance lasts until you are unable to maintain it or until the end of the encounter.\n\nYou start off with the Choreography and Revitalizing Limerick performance abilities. Your choice of class act grants you additional performances.",
-    "performances": [
+    "grants": [
       {
         "name": "Choreography",
         "description": "You have the following ability.",
@@ -72,18 +72,12 @@
   {
     "id": "feature_class_act_features_lvl1",
     "type": "feature",
-    "name": "Class Act Repertoire",
+    "name": "Class Act Features",
     "class": "troubadour",
     "is_subclass_feature": true,
     "level": 1,
     "description": "Your troubadour class act grants you two features.",
-    "repertoire": [
-      {
-        "name": "Acrobatics",
-        "subclass_name": "Duelist",
-        "description": "You have the following performance ability, which is usable with your Routines feature.",
-        "ability": "Acrobatics"
-      },
+    "grants": [
       {
         "name": "Blocking",
         "subclass_name": "Auteur",
@@ -97,10 +91,10 @@
         "ability": "Dramatic Monologue"
       },
       {
-        "name": "Power Chord",
-        "subclass_name": "Virtuoso",
-        "description": "You have the following ability.",
-        "ability": "Power Chord"
+        "name": "Acrobatics",
+        "subclass_name": "Duelist",
+        "description": "You have the following performance ability, which is usable with your Routines feature.",
+        "ability": "Acrobatics"
       },
       {
         "name": "Star Power",
@@ -109,9 +103,41 @@
         "ability": "Star Power"
       },
       {
+        "name": "Power Chord",
+        "subclass_name": "Virtuoso",
+        "description": "You have the following ability.",
+        "ability": "Power Chord"
+      },
+      {
         "name": " Virtuoso Performances",
         "description": " You have the following performance abilities, which are usable with your Routines feature.",
         "ability": ["“Thunder Mother”", "“Ballad of the Beast”"]
+      }
+    ]
+  },
+  {
+    "id": "feature_troubadour_class_act_triggered_action",
+    "type": "feature",
+    "name": "Class Act Triggered Action",
+    "class": "troubadour",
+    "is_subclass_feature": true,
+    "level": 1,
+    "description": "Your troubadour class act grants you a triggered action, as shown on the Class Act Triggered Actions table.",
+    "grants": [
+      {
+        "subclass_name": "Auteur",
+        "name": "Turnabout Is Fair Play",
+        "ability": "Turnabout Is Fair Play"
+      },
+      {
+        "subclass_name": "Duelist",
+        "name": "Riposte",
+        "ability": "Riposte"
+      },
+      {
+        "subclass_name": "Virtuoso",
+        "name": "Harmonize",
+        "ability": "Harmonize"
       }
     ]
   },
@@ -178,7 +204,29 @@
     "name": "Melodrama",
     "class": "troubadour",
     "level": 4,
-    "description": "You have more ways of getting the most drama out of a situation. Choose two of the following events to add to the events that grant you drama during battle:\n\n- Whenever a creature rolls a natural 2 on a power roll, you gain 2 drama.\n- The first time the Director deals damage to a hero using a Villain action or an ability that costs Malice, you gain 2 drama.\n- The first time a hero unwillingly falls 5 or more squares, you gain 2 drama.\n- The first time a hero deals damage with 3 surges, you gain 2 drama.\n- Whenever a hero spends their last Recovery, you gain 2 drama.\nAlternatively, you can forgo choosing a new event to choose one event you already have (including an event gained with this feature). Whenever the chosen event grants you drama, you gain 1 additional drama."
+    "description": "You have more ways of getting the most drama out of a situation. Choose two of the following events to add to the events that grant you drama during battle:\n\nAlternatively, you can forgo choosing a new event to choose one event you already have (including an event gained with this feature). Whenever the chosen event grants you drama, you gain 1 additional drama.",
+    "options": [
+      {
+        "name": "Bad Luck",
+        "description": "Whenever a creature rolls a natural 2 on a power roll, you gain 2 drama."
+      },
+      {
+        "name": "Oppose the tyrant!",
+        "description": "The first time the Director deals damage to a hero using a Villain action or an ability that costs Malice, you gain 2 drama."
+      },
+      {
+        "name": "Unwilling Fall",
+        "description": "The first time a hero unwillingly falls 5 or more squares, you gain 2 drama."
+      },
+      {
+        "name": "Vigorous Surge",
+        "description": "The first time a hero deals damage with 3 surges, you gain 2 drama."
+      },
+      {
+        "name": "Last Recovery",
+        "description": "Whenever a hero spends their last Recovery, you gain 2 drama."
+      }
+    ]
   },
   {
     "id": "feature_troubadour_zeitgeist",

@@ -85,7 +85,7 @@ ABILITY_TO_SUBCLASS: Dict[str, Optional[str]] = {
     # fury abilities
     "Special Delivery": "Berserker",
     "Wrecking Ball": "Berserker",
-    "Death... Death!": "Reaver",
+    "Death ... Death!": "Reaver",
     "Phalanx-Breaker": "Reaver",
     "Apex Predator": "Stormwight",
     "Visceral Roar": "Stormwight",
@@ -155,7 +155,7 @@ ABILITY_TO_SUBCLASS: Dict[str, Optional[str]] = {
     "Hustle!": "Mastermind",
     "Instant Retaliation": "Vanguard",
     "To Me Squad!": "Vanguard",
-    "Hit and Run!": "Insurgent",
+    "Squad! Hit and Run!": "Insurgent",
     "Their Lack of Focus Is Their Undoing": "Insurgent",
     "Blot Out the Sun!": "Mastermind",
     "Counterstrategy": "Mastermind",
@@ -181,6 +181,27 @@ ABILITY_TO_SUBCLASS: Dict[str, Optional[str]] = {
     "Gravitic Nova": "Telekinesis",
     "Resonant Mind Spike": "Telepathy",
     "Synaptic Terror": "Telepathy",
+
+    # troubadour abilities
+    "Guest Star": "Auteur",
+    "Twist at the End": "Auteur",
+    "Classic Chandelier Stunt": "Duelist",
+    "En Garde!": "Duelist",
+    "Encore": "Virtuoso",
+    "Tough Crowd": "Virtuoso",
+    "Here’s How Your Story Ends": "Auteur",
+    "You’re All My Understudies": "Auteur",
+    "Blood on the Stage": "Duelist",
+    "Fight Choreography": "Duelist",
+    "Feedback": "Virtuoso",
+    "Legendary Drum Fill": "Virtuoso",
+    "Epic": "Auteur",
+    "Rising Tension": "Auteur",
+    "Expert Fencer": "Duelist",
+    "Renegotiated Contract": "Duelist",
+    "Jam Session": "Virtuoso",
+    "Melt Their Faces": "Virtuoso",
+
 }
 
 # =============================================================================
