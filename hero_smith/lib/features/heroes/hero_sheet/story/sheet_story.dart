@@ -18,6 +18,7 @@ import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../creators/widgets/strength_creator/class_features_section.dart';
 import '../../../../widgets/shared/story_display_widgets.dart';
+import '../../../../widgets/perks/perks_selection_widget.dart';
 import 'story_sections/story_sections.dart';
 
 part 'sheet_story_story_tab.dart';
@@ -25,6 +26,7 @@ part 'sheet_story_skills_tab.dart';
 part 'sheet_story_languages_tab.dart';
 part 'sheet_story_titles_tab.dart';
 part 'sheet_story_features_tab.dart';
+part 'sheet_story_perks_tab.dart';
 
 // Provider to fetch a single component by ID
 final componentByIdProvider =
@@ -65,7 +67,7 @@ class _SheetStoryState extends ConsumerState<SheetStory>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     _loadStoryData();
   }
 
@@ -112,6 +114,7 @@ class _SheetStoryState extends ConsumerState<SheetStory>
             Tab(text: 'Story'),
             Tab(text: 'Skills'),
             Tab(text: 'Languages'),
+            Tab(text: 'Perks'),
             Tab(text: 'Titles'),
           ],
         ),
@@ -123,6 +126,7 @@ class _SheetStoryState extends ConsumerState<SheetStory>
               _buildStoryTab(context),
               _SkillsTab(heroId: widget.heroId),
               _LanguagesTab(heroId: widget.heroId),
+              _PerksTab(heroId: widget.heroId),
               _TitlesTab(heroId: widget.heroId),
             ],
           ),

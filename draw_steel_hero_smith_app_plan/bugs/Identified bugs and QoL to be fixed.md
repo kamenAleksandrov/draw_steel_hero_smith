@@ -87,13 +87,13 @@ treasures that are already in the gear of a hero should not be removed when i tr
 
 Reload flicker came from the async providers returning to their loading states on every hero update. I removed the nested `AsyncValue.when` blocks and now we reuse the latest progression/context values via `valueOrNull`, so the gauge keeps showing stale data while Riverpod refreshes in the background. If both values are still null (first load) the section stays hidden just like before. This should eliminate the twitching when only the resource value changes.
 
+strenght tab lack the option to save choises which leads to lost picks
+
 ## hero creation testing
 
 reorder the tabs: strife => strength => story?
 
 it might be a good idea to have the features that upgrade other features do so in the ui but idk yet
-
-strenght tab lack the option to save choises which leads to lost picks
 
 duplicate marks saveing the page for duplication wrongfully
 
@@ -103,15 +103,11 @@ auto granted features must have theri names shown too
 
 in the strife page expanded cards close when they move out of sight and this move the app scroll and is annoying.
 
-the resource addition buttons should update each time the heroes base go up
-
 perks in the hero creator strife do not show all their pick and choices as they do in the story.
 
 level 10 features have more work to be fully functional.
 
 hero card does not update if i dont restrart the app
-
-rn update the resource generation, the oprions and grants and the subclass abilities
 
 the choose a characteristic level bonus is removed upon chosing a new value for the widgets and their picker below. this should be fixed.
 

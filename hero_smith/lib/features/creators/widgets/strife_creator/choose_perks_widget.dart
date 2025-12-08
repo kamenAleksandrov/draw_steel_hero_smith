@@ -1,19 +1,22 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/db/providers.dart';
 import '../../../../core/models/class_data.dart';
-import '../../../../core/models/component.dart';
+import '../../../../core/models/component.dart' as model;
 import '../../../../core/models/perks_models.dart';
-import '../../../../core/services/ability_data_service.dart';
-import '../../../../core/services/perk_data_service.dart';
 import '../../../../core/services/perks_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../core/utils/selection_guard.dart';
+import '../../../../widgets/abilities/ability_expandable_item.dart';
+import '../../../../widgets/perks/perks_selection_widget.dart';
 
 typedef PerkSelectionChanged = void Function(StartingPerkSelectionResult result);
 
-class StartingPerksWidget extends StatefulWidget {
+/// Widget for selecting starting perks based on class levels.
+/// Uses the shared PerksSelectionWidget components for consistent UI.
+class StartingPerksWidget extends ConsumerStatefulWidget {
   const StartingPerksWidget({
     super.key,
     required this.classData,
@@ -30,25 +33,16 @@ class StartingPerksWidget extends StatefulWidget {
   final PerkSelectionChanged? onSelectionChanged;
 
   @override
-  State<StartingPerksWidget> createState() => _StartingPerksWidgetState();
+  ConsumerState<StartingPerksWidget> createState() => _StartingPerksWidgetState();
 }
 
-class _StartingPerksWidgetState extends State<StartingPerksWidget> {
+class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget> {
   final StartingPerksService _service = const StartingPerksService();
-  final PerkDataService _perkDataService = PerkDataService();
-  final AbilityDataService _abilityDataService = AbilityDataService();
   final MapEquality<String, String?> _mapEquality =
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
 
   bool _isExpanded = false;
-  bool _isLoading = true;
-  String? _error;
-
-  List<PerkOption> _perkOptions = const <PerkOption>[];
-  Map<String, PerkOption> _perkById = const <String, PerkOption>{};
-  Map<String, String> _perkIdByName = const <String, String>{};
-  AbilityLibrary? _abilityLibrary;
 
   StartingPerkPlan? _plan;
   final Map<String, List<String?>> _selections = {};
@@ -60,7 +54,10 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
   @override
   void initState() {
     super.initState();
-    _loadPerks();
+    _rebuildPlan(
+      preserveSelections: false,
+      externalSelections: widget.selectedPerks,
+    );
   }
 
   @override
@@ -73,7 +70,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       oldWidget.reservedPerkIds,
       widget.reservedPerkIds,
     );
-    if ((classChanged || levelChanged) && !_isLoading && _error == null) {
+    if (classChanged || levelChanged) {
       _rebuildPlan(
         preserveSelections: !classChanged,
         externalSelections: classChanged ? const {} : widget.selectedPerks,
@@ -82,44 +79,11 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
         oldWidget.selectedPerks, widget.selectedPerks)) {
       _applyExternalSelections(widget.selectedPerks);
     }
-    if (reservedChanged && !_isLoading && _error == null) {
+    if (reservedChanged) {
       final changed = _applyReservedPruning();
       if (changed) {
         _notifySelectionChanged();
       }
-    }
-  }
-
-  Future<void> _loadPerks() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final perksFuture = _perkDataService.loadPerks();
-      final abilitiesFuture = _abilityDataService.loadLibrary();
-
-      final perks = await perksFuture;
-      final abilityLibrary = await abilitiesFuture;
-      if (!mounted) return;
-      _perkOptions = perks;
-      _perkById = {
-        for (final option in perks) option.id: option,
-      };
-      _perkIdByName = {
-        for (final option in perks) option.name.toLowerCase(): option.id,
-      };
-      _abilityLibrary = abilityLibrary;
-      _rebuildPlan(
-        preserveSelections: false,
-        externalSelections: widget.selectedPerks,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _error = 'Failed to load perks or abilities: $e';
-      });
     }
   }
 
@@ -149,7 +113,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
         if (external.containsKey(key)) {
           value = external[key];
         }
-        updated[i] = _resolvePerkId(value);
+        updated[i] = value;
       }
 
       newSelections[allowance.id] = updated;
@@ -160,8 +124,6 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       _selections
         ..clear()
         ..addAll(newSelections);
-      _isLoading = false;
-      _error = null;
     });
 
     _applyReservedPruning();
@@ -178,9 +140,8 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       if (slotIndex == null) return;
       final slots = _selections[allowanceId];
       if (slots == null || slotIndex < 0 || slotIndex >= slots.length) return;
-      final resolved = _resolvePerkId(value);
-      if (slots[slotIndex] != resolved) {
-        slots[slotIndex] = resolved;
+      if (slots[slotIndex] != value) {
+        slots[slotIndex] = value;
         changed = true;
       }
     });
@@ -208,33 +169,22 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     return changed;
   }
 
-  String? _resolvePerkId(String? value) {
-    if (value == null) return null;
-    final trimmed = value.trim();
-    if (trimmed.isEmpty) return null;
-    if (_perkById.containsKey(trimmed)) {
-      return trimmed;
-    }
-    return _perkIdByName[trimmed.toLowerCase()];
-  }
-
   void _handlePerkSelection(
     PerkAllowance allowance,
     int slotIndex,
     String? value,
   ) {
-    final resolved = _resolvePerkId(value);
     final slots = _selections[allowance.id];
     if (slots == null || slotIndex < 0 || slotIndex >= slots.length) {
       return;
     }
-    if (slots[slotIndex] == resolved) return;
+    if (slots[slotIndex] == value) return;
 
     setState(() {
-      slots[slotIndex] = resolved;
-      if (resolved != null) {
+      slots[slotIndex] = value;
+      if (value != null) {
         _removeDuplicateSelections(
-          perkId: resolved,
+          perkId: value,
           exceptAllowanceId: allowance.id,
           exceptSlotIndex: slotIndex,
         );
@@ -243,6 +193,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
 
     _notifySelectionChanged();
   }
+
   void _removeDuplicateSelections({
     required String perkId,
     required String exceptAllowanceId,
@@ -272,10 +223,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       final allowanceId = entry.key;
       final slots = entry.value;
       for (var i = 0; i < slots.length; i++) {
-        final value = slots[i];
-        final normalized =
-            value != null && _perkById.containsKey(value) ? value : null;
-        selectionsBySlot[_slotKey(allowanceId, i)] = normalized;
+        selectionsBySlot[_slotKey(allowanceId, i)] = slots[i];
       }
     }
 
@@ -298,38 +246,27 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
       if (!mounted || version != _selectionCallbackVersion) return;
       widget.onSelectionChanged?.call(
         StartingPerkSelectionResult(
-          selectionsBySlot:
-              Map<String, String?>.from(selectionsSnapshot),
+          selectionsBySlot: Map<String, String?>.from(selectionsSnapshot),
           selectedPerkIds: Set<String>.from(selectedIdsSnapshot),
         ),
       );
     });
   }
 
-  List<PerkOption> _optionsForAllowance(PerkAllowance allowance) {
-    if (allowance.allowedGroups.isEmpty) {
-      return _perkOptions;
-    }
-    return _perkOptions
-        .where((option) => allowance.allowedGroups.contains(option.group))
-        .toList();
-  }
-
   String _slotKey(String allowanceId, int index) => '$allowanceId#$index';
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return _buildContainer(
+    final perksAsync = ref.watch(componentsByTypeProvider('perk'));
+
+    return perksAsync.when(
+      loading: () => _buildContainer(
         child: const Padding(
           padding: EdgeInsets.all(16),
           child: Center(child: CircularProgressIndicator()),
         ),
-      );
-    }
-
-    if (_error != null) {
-      return _buildContainer(
+      ),
+      error: (e, _) => _buildContainer(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -342,15 +279,18 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
               ),
               const SizedBox(height: 8),
               Text(
-                _error!,
+                e.toString(),
                 style: AppTextStyles.caption,
               ),
             ],
           ),
         ),
-      );
-    }
+      ),
+      data: (perks) => _buildContent(context, perks),
+    );
+  }
 
+  Widget _buildContent(BuildContext context, List<model.Component> perks) {
     final plan = _plan;
     if (plan == null || plan.allowances.isEmpty) {
       return _buildContainer(
@@ -363,6 +303,8 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
         ),
       );
     }
+
+    final perkMap = {for (final perk in perks) perk.id: perk};
 
     final totalSlots = plan.allowances.fold<int>(
       0,
@@ -390,7 +332,14 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: plan.allowances.map(_buildAllowanceSection).toList(),
+              children: plan.allowances
+                  .map((allowance) => _buildAllowanceSection(
+                        context,
+                        allowance,
+                        perks,
+                        perkMap,
+                      ))
+                  .toList(),
             ),
           ),
         ],
@@ -406,8 +355,26 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     );
   }
 
-  Widget _buildAllowanceSection(PerkAllowance allowance) {
-    final options = _optionsForAllowance(allowance);
+  Widget _buildAllowanceSection(
+    BuildContext context,
+    PerkAllowance allowance,
+    List<model.Component> allPerks,
+    Map<String, model.Component> perkMap,
+  ) {
+    // Filter perks by allowance groups
+    final options = allowance.allowedGroups.isEmpty
+        ? allPerks
+        : allPerks.where((perk) {
+            final group = (perk.data['group'] ??
+                    perk.data['perk_type'] ??
+                    perk.data['perkType'])
+                ?.toString()
+                .toLowerCase()
+                .trim();
+            return group != null && allowance.allowedGroups.contains(group);
+          }).toList();
+    options.sort((a, b) => a.name.compareTo(b.name));
+
     final slots = _selections[allowance.id] ?? const [];
 
     final allowedGroupsText = allowance.allowedGroups.isEmpty
@@ -417,6 +384,28 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
                 ? 'Any'
                 : group[0].toUpperCase() + group.substring(1))
             .join(', ');
+
+    final theme = Theme.of(context);
+    final borderColor = theme.colorScheme.tertiary;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: borderColor.withOpacity(0.6), width: 1.4),
+    );
+
+    // Group perks for searchable picker
+    final grouped = <String, List<model.Component>>{};
+    for (final perk in options) {
+      final rawType = (perk.data['group'] ??
+              perk.data['perk_type'] ??
+              perk.data['perkType'])
+          ?.toString();
+      final key = _formatGroupLabel(rawType);
+      grouped.putIfAbsent(key, () => []).add(perk);
+    }
+    final sortedGroupKeys = grouped.keys.toList()..sort();
+    for (final list in grouped.values) {
+      list.sort((a, b) => a.name.compareTo(b.name));
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -438,7 +427,7 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
             final current = slots[index];
-            final selectedPerk = current != null ? _perkById[current] : null;
+            final selectedPerk = current != null ? perkMap[current] : null;
             final otherSelected = slots
                 .asMap()
                 .entries
@@ -450,50 +439,50 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
               ...widget.reservedPerkIds,
               ...otherSelected,
             };
-            final availableOptions = ComponentSelectionGuard.filterAllowed(
-              options: options,
-              reservedIds: reservedIds,
-              idSelector: (option) => option.id,
-              currentId: current,
-            );
+
             return Padding(
               padding:
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DropdownButtonFormField<String?>(
-                    value: current,
-                    decoration: InputDecoration(
-                      labelText: 'Choice ${index + 1}',
-                      border: const OutlineInputBorder(),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
+                  InkWell(
+                    onTap: () => _openPerkPicker(
+                      context,
+                      allowance,
+                      index,
+                      current,
+                      grouped,
+                      sortedGroupKeys,
+                      reservedIds,
                     ),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('Unassigned'),
-                      ),
-                      ...availableOptions.map(
-                        (option) => DropdownMenuItem<String?>(
-                          value: option.id,
-                          child: Text(
-                            option.group.isEmpty
-                                ? option.name
-                                : '${option.name} (${_formatGroup(option.group)})',
-                          ),
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Choice ${index + 1}',
+                        border: border,
+                        enabledBorder: border,
+                        suffixIcon: const Icon(Icons.search),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
                         ),
                       ),
-                    ],
-                    onChanged: (value) =>
-                        _handlePerkSelection(allowance, index, value),
+                      child: Text(
+                        current != null
+                            ? (perkMap[current]?.name ?? 'Unknown')
+                            : '— Choose perk —',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: current != null
+                              ? theme.textTheme.bodyLarge?.color
+                              : theme.hintColor,
+                        ),
+                      ),
+                    ),
                   ),
                   if (selectedPerk != null) ...[
                     const SizedBox(height: 8),
-                    _buildPerkDetails(context, selectedPerk),
+                    _buildPerkDetails(context, selectedPerk, borderColor),
                   ],
                 ],
               ),
@@ -504,21 +493,69 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
     );
   }
 
-  Widget _buildPerkDetails(BuildContext context, PerkOption perk) {
+  Future<void> _openPerkPicker(
+    BuildContext context,
+    PerkAllowance allowance,
+    int slotIndex,
+    String? currentValue,
+    Map<String, List<model.Component>> grouped,
+    List<String> sortedGroupKeys,
+    Set<String> reservedIds,
+  ) async {
+    final options = <SearchOption<String?>>[
+      const SearchOption<String?>(
+        label: '— Choose perk —',
+        value: null,
+      ),
+    ];
+
+    for (final key in sortedGroupKeys) {
+      for (final perk in grouped[key]!) {
+        if (perk.id != currentValue && reservedIds.contains(perk.id)) {
+          continue;
+        }
+        options.add(
+          SearchOption<String?>(
+            label: perk.name,
+            value: perk.id,
+            subtitle: key,
+          ),
+        );
+      }
+    }
+
+    final result = await showSearchablePicker<String?>(
+      context: context,
+      title: 'Select Perk',
+      options: options,
+      selected: currentValue,
+    );
+
+    if (result == null) return;
+    _handlePerkSelection(allowance, slotIndex, result.value);
+  }
+
+  Widget _buildPerkDetails(
+    BuildContext context,
+    model.Component perk,
+    Color borderColor,
+  ) {
     final theme = Theme.of(context);
-    final borderColor = theme.dividerColor.withOpacity(0.4);
-    final background = theme.colorScheme.surfaceVariant.withOpacity(0.2);
-    final groupLabel = perk.group.isEmpty
+    final group = (perk.data['group'] ??
+            perk.data['perk_type'] ??
+            perk.data['perkType'])
+        ?.toString();
+    final groupLabel = group == null || group.isEmpty
         ? 'Any group'
-        : '${_formatGroup(perk.group)} group';
+        : '${_formatGroupLabel(group)} group';
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor),
-        color: background,
+        border: Border.all(color: borderColor.withOpacity(0.4)),
+        color: borderColor.withOpacity(0.08),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -529,72 +566,117 @@ class _StartingPerksWidgetState extends State<StartingPerksWidget> {
           ),
           const SizedBox(height: 6),
           Text(
-            perk.description,
+            perk.data['description']?.toString() ?? 'No description available',
             style: AppTextStyles.body,
           ),
-          if (perk.grantedAbilities.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              perk.grantedAbilities.length == 1
-                  ? 'Grants ability:'
-                  : 'Grants abilities:',
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            ...List.generate(perk.grantedAbilities.length, (index) {
-              final abilityLabel = perk.grantedAbilities[index];
-              final component = _resolveAbilityComponent(abilityLabel);
-              final isLast = index == perk.grantedAbilities.length - 1;
-              if (component != null) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: isLast ? 0 : 8),
-                  child: AbilityExpandableItem(component: component),
-                );
-              }
-              return Padding(
-                padding: EdgeInsets.only(bottom: isLast ? 0 : 4),
-                child: Text(
-                  '• $abilityLabel',
-                  style: AppTextStyles.caption,
-                ),
-              );
-            }),
-          ],
+          _buildGrantedAbilities(context, perk, borderColor),
         ],
       ),
     );
   }
 
-  static String _formatGroup(String value) {
-    if (value.isEmpty) return value;
-    final parts = value
-        .split(RegExp(r'[_\s]+'))
-        .where((part) => part.isNotEmpty)
-        .map((part) => part[0].toUpperCase() + part.substring(1));
-    return parts.join(' ');
+  Widget _buildGrantedAbilities(
+    BuildContext context,
+    model.Component perk,
+    Color borderColor,
+  ) {
+    final grantsRaw = perk.data['grants'];
+    if (grantsRaw == null) return const SizedBox.shrink();
+
+    final grants = grantsRaw is List
+        ? grantsRaw
+        : (grantsRaw is Map ? [grantsRaw] : null);
+    if (grants == null || grants.isEmpty) return const SizedBox.shrink();
+
+    // Extract ability names from grants
+    final abilityNames = <String>[];
+    for (final grant in grants) {
+      if (grant is Map && grant.containsKey('ability')) {
+        final abilityName = grant['ability']?.toString();
+        if (abilityName != null && abilityName.isNotEmpty) {
+          abilityNames.add(abilityName);
+        }
+      }
+    }
+
+    if (abilityNames.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          abilityNames.length == 1 ? 'Grants ability:' : 'Grants abilities:',
+          style: AppTextStyles.caption.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 6),
+        ...abilityNames.map((name) => _AbilityGrantItem(abilityName: name)),
+      ],
+    );
   }
 
-  Component? _resolveAbilityComponent(String reference) {
-    final library = _abilityLibrary;
-    if (library == null) return null;
-    final primary = library.find(reference);
-    if (primary != null) return primary;
-
-    final trimmed = reference.trim();
-    if (trimmed.isEmpty) return null;
-
-    final withoutParen = trimmed.replaceAll(RegExp(r'\s*\([^)]*\)'), '');
-    if (withoutParen != trimmed) {
-      final fallback = library.find(withoutParen);
-      if (fallback != null) return fallback;
+  String _formatGroupLabel(String? raw) {
+    final value = raw?.trim();
+    if (value == null || value.isEmpty) {
+      return 'General';
     }
+    return value
+        .replaceAll('_', ' ')
+        .replaceAll('-', ' ')
+        .split(RegExp(r'\s+'))
+        .where((segment) => segment.isNotEmpty)
+        .map((segment) =>
+            '${segment[0].toUpperCase()}${segment.substring(1).toLowerCase()}')
+        .join(' ');
+  }
+}
 
-    final beforeColon = trimmed.split(':').first;
-    if (beforeColon != trimmed) {
-      return library.find(beforeColon);
-    }
-    return null;
+/// Widget that displays a granted ability by looking it up
+class _AbilityGrantItem extends ConsumerWidget {
+  const _AbilityGrantItem({required this.abilityName});
+
+  final String abilityName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
+
+    return abilityAsync.when(
+      data: (ability) {
+        if (ability == null) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              '• $abilityName',
+              style: AppTextStyles.caption,
+            ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: AbilityExpandableItem(component: ability),
+        );
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 1.5),
+            ),
+            const SizedBox(width: 8),
+            Text('Loading $abilityName...', style: AppTextStyles.caption),
+          ],
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text('• $abilityName', style: AppTextStyles.caption),
+      ),
+    );
   }
 }
