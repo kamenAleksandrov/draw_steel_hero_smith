@@ -20,6 +20,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
     super.key,
     required this.classData,
     required this.selectedLevel,
+    this.selectedSubclassName,
     this.selectedAbilities = const <String, String?>{},
     this.reservedAbilityIds = const <String>{},
     this.onSelectionChanged,
@@ -27,6 +28,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
 
   final ClassData classData;
   final int selectedLevel;
+  final String? selectedSubclassName;
   final Map<String, String?> selectedAbilities;
   final Set<String> reservedAbilityIds;
   final AbilitySelectionChanged? onSelectionChanged;
@@ -68,6 +70,8 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
     final classChanged =
         oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
+    final subclassChanged =
+        oldWidget.selectedSubclassName != widget.selectedSubclassName;
     final reservedChanged = !_setEquality.equals(
       oldWidget.reservedAbilityIds,
       widget.reservedAbilityIds,
@@ -76,9 +80,9 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
       _loadAbilities();
       return;
     }
-    if (levelChanged && !_isLoading && _error == null) {
+    if ((levelChanged || subclassChanged) && !_isLoading && _error == null) {
       _rebuildPlan(
-        preserveSelections: true,
+        preserveSelections: !subclassChanged,
         externalSelections: widget.selectedAbilities,
       );
     } else if (!_mapEquality.equals(
@@ -359,7 +363,18 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
         return false;
       }
       if (allowance.requiresSubclass) {
+        // Subclass abilities must have a subclass field
         if (option.subclass == null || option.subclass!.isEmpty) {
+          return false;
+        }
+        // Only show abilities matching the hero's selected subclass
+        final selectedSubclass = widget.selectedSubclassName;
+        if (selectedSubclass == null || selectedSubclass.isEmpty) {
+          // No subclass selected, don't show any subclass abilities
+          return false;
+        }
+        // Case-insensitive comparison for subclass matching
+        if (option.subclass!.toLowerCase() != selectedSubclass.toLowerCase()) {
           return false;
         }
       } else {

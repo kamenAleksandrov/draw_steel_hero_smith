@@ -96,6 +96,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Set<String> _reservedSkillIds = {};
   Set<String> _reservedAbilityIds = {};
   Set<String> _reservedPerkIds = {};
+  Set<String> _reservedLanguageIds = {};
   SubclassSelectionResult? _selectedSubclass;
   List<String?> _selectedKitIds = [];
 
@@ -237,32 +238,56 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (_selectedClass != null) {
         final abilityIds =
             await db.getHeroComponentIds(widget.heroId, 'ability');
+        final languageIds =
+            await db.getHeroComponentIds(widget.heroId, 'language');
         final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
         final perkIds = await db.getHeroComponentIds(widget.heroId, 'perk');
 
-        _selectedAbilities = await _restoreAbilitySelections(
-          classData: _selectedClass!,
-          selectedLevel: _selectedLevel,
-          abilityIds: abilityIds,
-        );
+        // First try to load saved strife ability selections directly
+        final savedStrifeAbilitySelections = await _loadStrifeSelections('strife.ability_selections');
+        if (savedStrifeAbilitySelections.isNotEmpty) {
+          _selectedAbilities = savedStrifeAbilitySelections;
+        } else {
+          // Fallback to inference (for legacy data or first-time setup)
+          _selectedAbilities = await _restoreAbilitySelections(
+            classData: _selectedClass!,
+            selectedLevel: _selectedLevel,
+            abilityIds: abilityIds,
+          );
+        }
         final assignedAbilityIds =
             _selectedAbilities.values.whereType<String>().toSet();
         _reservedAbilityIds = abilityIds.toSet();
+        _reservedLanguageIds = languageIds.toSet();
 
-        _selectedSkills = await _restoreSkillSelections(
-          classData: _selectedClass!,
-          selectedLevel: _selectedLevel,
-          skillIds: skillIds,
-        );
+        // First try to load saved strife skill selections directly
+        final savedStrifeSkillSelections = await _loadStrifeSelections('strife.skill_selections');
+        if (savedStrifeSkillSelections.isNotEmpty) {
+          _selectedSkills = savedStrifeSkillSelections;
+        } else {
+          // Fallback to inference (for legacy data or first-time setup)
+          _selectedSkills = await _restoreSkillSelections(
+            classData: _selectedClass!,
+            selectedLevel: _selectedLevel,
+            skillIds: skillIds,
+          );
+        }
         final assignedSkillIds =
             _selectedSkills.values.whereType<String>().toSet();
         _reservedSkillIds = skillIds.toSet();
 
-        _selectedPerks = await _restorePerkSelections(
-          classData: _selectedClass!,
-          selectedLevel: _selectedLevel,
-          perkIds: perkIds,
-        );
+        // First try to load saved strife perk selections directly
+        final savedStrifePerkSelections = await _loadStrifeSelections('strife.perk_selections');
+        if (savedStrifePerkSelections.isNotEmpty) {
+          _selectedPerks = savedStrifePerkSelections;
+        } else {
+          // Fallback to inference (for legacy data or first-time setup)
+          _selectedPerks = await _restorePerkSelections(
+            classData: _selectedClass!,
+            selectedLevel: _selectedLevel,
+            perkIds: perkIds,
+          );
+        }
         final assignedPerkIds =
             _selectedPerks.values.whereType<String>().toSet();
         _reservedPerkIds = perkIds.toSet();
@@ -273,6 +298,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _reservedAbilityIds = {};
         _reservedSkillIds = {};
         _reservedPerkIds = {};
+        _reservedLanguageIds = {};
       }
     } catch (e) {
       debugPrint('Failed to load hero data: $e');
@@ -424,6 +450,25 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
 
     return selections.isEmpty ? const <String, String?>{} : selections;
+  }
+
+  /// Load saved strife selections from hero values
+  Future<Map<String, String?>> _loadStrifeSelections(String key) async {
+    final db = ref.read(appDatabaseProvider);
+    final values = await db.getHeroValues(widget.heroId);
+    final strifeValue = values.firstWhereOrNull(
+      (v) => v.key == key,
+    );
+    if (strifeValue?.jsonValue == null) {
+      return const <String, String?>{};
+    }
+    try {
+      final decoded = jsonDecode(strifeValue!.jsonValue!);
+      if (decoded is Map) {
+        return decoded.map((k, v) => MapEntry(k.toString(), v?.toString()));
+      }
+    } catch (_) {}
+    return const <String, String?>{};
   }
 
   Future<Map<String, String?>> _restorePerkSelections({
@@ -690,6 +735,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _reservedSkillIds = {};
       _reservedAbilityIds = {};
       _reservedPerkIds = {};
+      _reservedLanguageIds = {};
       _selectedSubclass = null;
       _selectedKitIds = <String?>[];
     });
@@ -1319,6 +1365,15 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       }
 
+      // 10b. Save strife ability slot selections separately for proper restoration
+      updates.add(
+        db.upsertHeroValue(
+          heroId: widget.heroId,
+          key: 'strife.ability_selections',
+          jsonMap: _selectedAbilities.map((k, v) => MapEntry(k, v)),
+        ),
+      );
+
       // 11. Save selected skills to database (merge with existing story skills)
       // Get existing skills from database
       final existingComponents = await db.getHeroComponents(widget.heroId);
@@ -1362,6 +1417,15 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       }
 
+      // 11b. Save strife skill slot selections separately for proper restoration
+      updates.add(
+        db.upsertHeroValue(
+          heroId: widget.heroId,
+          key: 'strife.skill_selections',
+          jsonMap: _selectedSkills.map((k, v) => MapEntry(k, v)),
+        ),
+      );
+
       // 12. Save selected perks to database (merge with existing story perks)
       final existingPerkIds = existingComponents
           .where((c) => c['category'] == 'perk')
@@ -1384,6 +1448,15 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           ),
         );
       }
+
+      // 12b. Save strife perk slot selections separately for proper restoration
+      updates.add(
+        db.upsertHeroValue(
+          heroId: widget.heroId,
+          key: 'strife.perk_selections',
+          jsonMap: _selectedPerks.map((k, v) => MapEntry(k, v)),
+        ),
+      );
 
       // Execute all updates
       await Future.wait(updates);
@@ -1502,6 +1575,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             StartingAbilitiesWidget(
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
+              selectedSubclassName: _selectedSubclass?.subclassName,
               selectedAbilities: _selectedAbilities,
               reservedAbilityIds: _reservedAbilityIds,
               onSelectionChanged: _handleAbilitySelectionsChanged,
@@ -1514,10 +1588,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               onSelectionChanged: _handleSkillSelectionsChanged,
             ),
             StartingPerksWidget(
+              heroId: widget.heroId,
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedPerks: _selectedPerks,
               reservedPerkIds: _reservedPerkIds,
+              reservedLanguageIds: _reservedLanguageIds,
+              reservedSkillIds: _reservedSkillIds,
               onSelectionChanged: _handlePerkSelectionsChanged,
             ),
           ],

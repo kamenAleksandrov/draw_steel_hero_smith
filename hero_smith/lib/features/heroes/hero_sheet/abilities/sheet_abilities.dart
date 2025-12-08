@@ -9,6 +9,7 @@ import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/class_data_service.dart';
 import '../../../../core/services/kit_bonus_service.dart';
+import '../../../../core/services/perk_grants_service.dart';
 import '../../../../core/theme/kit_theme.dart';
 import '../state/hero_main_stats_providers.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
@@ -297,11 +298,30 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
   List<String?> _selectedEquipmentIds = [];
   String? _className;
   String? _subclassName;
+  bool _perkGrantsEnsured = false;
 
   @override
   void initState() {
     super.initState();
     _loadEquipmentSlotConfig();
+    _ensurePerkGrants();
+  }
+  
+  /// Ensure all perk grants are applied when the abilities sheet loads.
+  /// This handles cases where perks were added outside the PerksSelectionWidget.
+  Future<void> _ensurePerkGrants() async {
+    if (_perkGrantsEnsured) return;
+    _perkGrantsEnsured = true;
+    
+    try {
+      final db = ref.read(appDatabaseProvider);
+      await PerkGrantsService().ensureAllPerkGrantsApplied(
+        db: db,
+        heroId: widget.heroId,
+      );
+    } catch (e) {
+      debugPrint('Failed to ensure perk grants: $e');
+    }
   }
   
   /// Updates local state from the provider when equipment changes
@@ -1870,15 +1890,44 @@ class _AbilityListViewState extends ConsumerState<_AbilityListView>
   ) async {
     final library = await AbilityDataService().loadLibrary();
     final components = <Component>[];
+    final missingIds = <String>[];
 
     for (final id in abilityIds) {
       try {
         final component = library.byId(id) ?? library.find(id);
         if (component != null) {
           components.add(component);
+        } else {
+          missingIds.add(id);
         }
       } catch (e) {
         debugPrint('Failed to resolve ability $id: $e');
+        missingIds.add(id);
+      }
+    }
+
+    // Check the database for any abilities not found in the library
+    // (e.g., perk-granted abilities that were dynamically inserted)
+    if (missingIds.isNotEmpty) {
+      final db = ref.read(appDatabaseProvider);
+      for (final id in missingIds) {
+        try {
+          final row = await db.getComponentById(id);
+          if (row != null && row.type == 'ability') {
+            Map<String, dynamic> data = {};
+            if (row.dataJson != null && row.dataJson.isNotEmpty) {
+              data = jsonDecode(row.dataJson) as Map<String, dynamic>;
+            }
+            components.add(Component(
+              id: row.id,
+              type: row.type,
+              name: row.name,
+              data: data,
+            ));
+          }
+        } catch (e) {
+          debugPrint('Failed to load ability $id from database: $e');
+        }
       }
     }
 

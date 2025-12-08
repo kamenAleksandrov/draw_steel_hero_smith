@@ -91,19 +91,26 @@ strenght tab lack the option to save choises which leads to lost picks
 
 ## hero creation testing
 
+### unnecessary changes
+
 reorder the tabs: strife => strength => story?
 
 it might be a good idea to have the features that upgrade other features do so in the ui but idk yet
 
-duplicate marks saveing the page for duplication wrongfully
+in the creator there are cost categories and they load for each ability, insetead group abilities under one
 
-perks from the strife page do not save their abilities to the hero.
+some features that have multiple new lines must be better organised or atleast spaced one empty row apart.
+
+i have to look through all the first level subclass choices and decide how and where what is displayed. example - the tactician has a subclass choice in the strife page, then in two places has the tactical doctrine feature, once as the grant and the second time is as a choice/exlplanation of the doctrine 
+
+some abilities may deserve a main stats ui examples are: judgement, mantle of essence, mark, routines, troubadour drama gain, growing ferocity and discipline
+### necessary changes
+
+duplicate marks saveing the page for duplication wrongfully
 
 auto granted features must have theri names shown too
 
 in the strife page expanded cards close when they move out of sight and this move the app scroll and is annoying.
-
-perks in the hero creator strife do not show all their pick and choices as they do in the story.
 
 level 10 features have more work to be fully functional.
 
@@ -111,23 +118,11 @@ hero card does not update if i dont restrart the app
 
 the choose a characteristic level bonus is removed upon chosing a new value for the widgets and their picker below. this should be fixed.
 
-in the creator there are cost categories and they load for each ability, insetead group abilities under one
-
 characteristics scores bonuses at higher levels do not save to the character
 
 changing class should prompt for confirmation
 
-this calss does not grant additional perk pics should be removed for level 1
-
 the hero class skill and ther features bonuses do not save or grant their bonuses
-
-some features that have multiple new lines must be better organised or atleast spaced one empty row apart.
-
-i have to look through all the first level subclass choices and decide how and where what is displayed. example - the tactician has a subclass choice in the strife page, then in two places has the tactical doctrine feature, once as the grant and the second time is as a choice/exlplanation of the doctrine
-
-some abilities may deserve a main stats ui examples are: judgement, mantle of essence, mark, routines, troubadour drama gain, growing ferocity and discipline
-
-subclass abilities now show but must be tailored to the subclass
 ### censor
 
 features do not grant the bonus skill form the domain.

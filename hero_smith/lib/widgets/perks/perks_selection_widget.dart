@@ -1,5 +1,7 @@
 import 'dart:collection';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,7 +12,8 @@ import '../abilities/ability_expandable_item.dart';
 
 /// Provider for loading perk grant choices for a specific hero and perk
 final perkGrantChoicesProvider = FutureProvider.family<
-    Map<String, List<String>>, ({String heroId, String perkId})>((ref, args) async {
+    Map<String, List<String>>,
+    ({String heroId, String perkId})>((ref, args) async {
   final db = ref.read(appDatabaseProvider);
   return PerkGrantsService().getAllGrantChoicesForPerk(
     db: db,
@@ -22,8 +25,8 @@ final perkGrantChoicesProvider = FutureProvider.family<
 /// Callback for perk selection changes
 typedef PerksSelectionChanged = void Function(Set<String> selectedPerkIds);
 
-/// A reusable widget for selecting perks. 
-/// 
+/// A reusable widget for selecting perks.
+///
 /// This widget can be used:
 /// 1. In the story creator's career section (with perkType filter and pickCount)
 /// 2. In the hero sheet's perks tab (showing all hero perks and allowing additions)
@@ -35,6 +38,7 @@ class PerksSelectionWidget extends ConsumerStatefulWidget {
     this.selectedPerkIds = const {},
     this.reservedPerkIds = const {},
     this.perkType,
+    this.allowedGroups,
     this.pickCount,
     this.onSelectionChanged,
     this.onDirty,
@@ -47,6 +51,7 @@ class PerksSelectionWidget extends ConsumerStatefulWidget {
     this.headerSubtitle,
     this.allowAddingNew = false,
     this.emptyStateMessage = 'No perks selected.',
+    this.persistToDatabase = false,
   });
 
   /// The hero ID for grant choice persistence
@@ -60,6 +65,9 @@ class PerksSelectionWidget extends ConsumerStatefulWidget {
 
   /// Optional perk type filter (e.g., "crafting", "exploration")
   final String? perkType;
+
+  /// Optional allowed perk groups; takes priority over [perkType] when provided.
+  final Set<String>? allowedGroups;
 
   /// Number of perks to pick. If null, shows all selected perks (view mode)
   final int? pickCount;
@@ -97,11 +105,37 @@ class PerksSelectionWidget extends ConsumerStatefulWidget {
   /// Message shown when no perks are selected
   final String emptyStateMessage;
 
+  /// Whether to persist selection changes directly to the database.
+  /// Set to true when this widget manages ALL of a hero's perks (e.g., in hero sheet).
+  /// Set to false when this widget manages only a subset (e.g., career perks in story creator).
+  final bool persistToDatabase;
+
   @override
-  ConsumerState<PerksSelectionWidget> createState() => _PerksSelectionWidgetState();
+  ConsumerState<PerksSelectionWidget> createState() =>
+      _PerksSelectionWidgetState();
 }
 
 class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
+  bool _appliedInitialGrants = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _ensureExistingPerkGrants());
+  }
+
+  @override
+  void didUpdateWidget(covariant PerksSelectionWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.heroId != widget.heroId ||
+        !setEquals(oldWidget.selectedPerkIds, widget.selectedPerkIds)) {
+      _appliedInitialGrants = false;
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _ensureExistingPerkGrants());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final perksAsync = ref.watch(componentsByTypeProvider('perk'));
@@ -116,11 +150,19 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
   Widget _buildContent(BuildContext context, List<model.Component> allPerks) {
     final theme = Theme.of(context);
     final borderColor = theme.colorScheme.tertiary;
+    final normalizedAllowedGroups =
+        _normalizeAllowedGroups(widget.allowedGroups);
 
     // Filter perks by type if specified
-    final filteredPerks = _filterPerksByType(allPerks, widget.perkType);
-    
-    if (filteredPerks.isEmpty && widget.perkType != null) {
+    final filteredPerks = _filterPerksByType(
+      allPerks,
+      widget.perkType,
+      allowedGroups: normalizedAllowedGroups,
+    );
+
+    final hasFilters = normalizedAllowedGroups.isNotEmpty ||
+        (widget.perkType?.isNotEmpty ?? false);
+    if (filteredPerks.isEmpty && hasFilters) {
       // Fallback to all perks if no perks match the type
       return _buildPerkSelector(context, allPerks, borderColor);
     }
@@ -128,13 +170,31 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     return _buildPerkSelector(context, filteredPerks, borderColor);
   }
 
-  List<model.Component> _filterPerksByType(List<model.Component> perks, String? perkType) {
-    if (perkType == null || perkType.isEmpty) {
+  Set<String> _normalizeAllowedGroups(Set<String>? groups) {
+    if (groups == null) return const {};
+    return groups
+        .map(_normalizePerkType)
+        .whereType<String>()
+        .where((value) => value.isNotEmpty)
+        .toSet();
+  }
+
+  List<model.Component> _filterPerksByType(
+    List<model.Component> perks,
+    String? perkType, {
+    Set<String> allowedGroups = const {},
+  }) {
+    if ((perkType == null || perkType.isEmpty) && allowedGroups.isEmpty) {
       return perks..sort((a, b) => a.name.compareTo(b.name));
     }
 
     final normalizedType = _normalizePerkType(perkType);
-    if (normalizedType == null || normalizedType.isEmpty) {
+    final normalizedAllowed = allowedGroups
+        .map(_normalizePerkType)
+        .whereType<String>()
+        .where((value) => value.isNotEmpty)
+        .toSet();
+    if (normalizedType == null && normalizedAllowed.isEmpty) {
       return perks..sort((a, b) => a.name.compareTo(b.name));
     }
 
@@ -146,6 +206,17 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
       final normalizedPerkType = _normalizePerkType(rawType);
       if (normalizedPerkType == null || normalizedPerkType.isEmpty) {
         return false;
+      }
+      if (normalizedAllowed.isNotEmpty) {
+        return normalizedAllowed.any(
+          (group) =>
+              normalizedPerkType == group ||
+              normalizedPerkType.contains(group) ||
+              group.contains(normalizedPerkType),
+        );
+      }
+      if (normalizedType == null || normalizedType.isEmpty) {
+        return true;
       }
       return normalizedPerkType == normalizedType ||
           normalizedPerkType.contains(normalizedType) ||
@@ -207,11 +278,13 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     final perkMap = {for (final perk in perks) perk.id: perk};
 
     // Get current selections
-    final currentSelections = widget.selectedPerkIds.where(perkMap.containsKey).toList();
+    final currentSelections =
+        widget.selectedPerkIds.where(perkMap.containsKey).toList();
 
     // If pickCount is null, show all selected perks (view mode)
     if (pickCount == null) {
-      return _buildViewMode(context, currentSelections, perkMap, borderColor, grouped, sortedGroupKeys);
+      return _buildViewMode(context, currentSelections, perkMap, borderColor,
+          grouped, sortedGroupKeys);
     }
 
     // Build selection mode
@@ -235,7 +308,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     List<String> sortedGroupKeys,
   ) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -300,7 +373,8 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
               padding: EdgeInsets.only(
                 bottom: index < currentSelections.length - 1 ? 12 : 0,
               ),
-              child: _buildPerkDisplay(context, perk, borderColor, showRemove: widget.allowAddingNew),
+              child: _buildPerkDisplay(context, perk, borderColor,
+                  showRemove: widget.allowAddingNew),
             );
           }),
       ],
@@ -331,7 +405,9 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
 
     final slots = currentSlots();
     final remaining = slots.where((value) => value == null).length;
-    final perkTypeLabel = widget.perkType?.isNotEmpty == true ? ' of type ${widget.perkType}' : '';
+    final perkTypeLabel = widget.perkType?.isNotEmpty == true
+        ? ' of type ${widget.perkType}'
+        : '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,9 +475,8 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     bool showRemove = false,
   }) {
     final grantsRaw = perk.data['grants'];
-    final grants = grantsRaw is List
-        ? grantsRaw
-        : (grantsRaw is Map ? [grantsRaw] : null);
+    final grants =
+        grantsRaw is List ? grantsRaw : (grantsRaw is Map ? [grantsRaw] : null);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -455,6 +530,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
                 color: borderColor,
               ),
             ),
+            const SizedBox(height: 8),
             _PerkGrantsDisplay(
               heroId: widget.heroId,
               perkId: perk.id,
@@ -497,9 +573,9 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
 
     if (confirmed != true) return;
 
-    final newSelection = Set<String>.from(widget.selectedPerkIds)..remove(perkId);
-    widget.onSelectionChanged?.call(newSelection);
-    widget.onDirty?.call();
+    final newSelection = Set<String>.from(widget.selectedPerkIds)
+      ..remove(perkId);
+    await _applySelectionChange(newSelection, {perkId}, perkMap: null);
   }
 
   Future<void> _openSearchForPerkIndex(
@@ -518,19 +594,19 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
       grouped,
       sortedGroupKeys,
     );
-    
+
     final result = await showSearchablePicker<String?>(
       context: context,
       title: 'Select Perk',
       options: options,
       selected: currentSlots[index],
     );
-    
+
     if (result == null) return;
 
     final updated = List<String?>.from(currentSlots);
     updated[index] = result.value;
-    
+
     // Remove duplicates
     if (result.value != null) {
       for (var i = 0; i < updated.length; i++) {
@@ -539,15 +615,15 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
         }
       }
     }
-    
+
     final next = LinkedHashSet<String>();
     for (final pick in updated) {
       if (pick != null) {
         next.add(pick);
       }
     }
-    widget.onSelectionChanged?.call(next);
-    widget.onDirty?.call();
+    final removed = Set<String>.from(widget.selectedPerkIds)..removeAll(next);
+    await _applySelectionChange(next, removed, perkMap: perkMap);
   }
 
   Future<void> _openAddPerkPicker(
@@ -594,9 +670,9 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
 
     if (result == null || result.value == null) return;
 
-    final newSelection = Set<String>.from(widget.selectedPerkIds)..add(result.value!);
-    widget.onSelectionChanged?.call(newSelection);
-    widget.onDirty?.call();
+    final newSelection = Set<String>.from(widget.selectedPerkIds)
+      ..add(result.value!);
+    await _applySelectionChange(newSelection, const {}, perkMap: perkMap);
   }
 
   List<SearchOption<String?>> _buildSearchOptionsForPerkIndex(
@@ -644,6 +720,101 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     if (id == currentId) return false;
     return blocked.contains(id);
   }
+
+  Future<void> _ensureExistingPerkGrants() async {
+    if (_appliedInitialGrants) return;
+    // Only apply grants if persistToDatabase is enabled
+    if (!widget.persistToDatabase) {
+      _appliedInitialGrants = true;
+      return;
+    }
+    if (widget.heroId.isEmpty) return;
+    if (widget.selectedPerkIds.isEmpty) {
+      _appliedInitialGrants = true;
+      return;
+    }
+
+    final db = ref.read(appDatabaseProvider);
+    for (final perkId in widget.selectedPerkIds) {
+      final component = await _loadPerkComponent(perkId, null, db);
+      if (component == null) continue;
+      await PerkGrantsService().applyPerkGrants(
+        db: db,
+        heroId: widget.heroId,
+        perkId: perkId,
+        grantsJson: component.data['grants'],
+      );
+    }
+    _appliedInitialGrants = true;
+  }
+
+  Future<void> _applySelectionChange(
+    Set<String> next,
+    Set<String> removed, {
+    Map<String, model.Component>? perkMap,
+  }) async {
+    final added = next.difference(widget.selectedPerkIds);
+
+    // Only persist to database and apply grants if persistToDatabase is enabled
+    if (widget.persistToDatabase && widget.heroId.isNotEmpty) {
+      final db = ref.read(appDatabaseProvider);
+
+      // Persist the current perk list
+      await db.setHeroComponentIds(
+        heroId: widget.heroId,
+        category: 'perk',
+        componentIds: next.toList(),
+      );
+
+      // Apply grants for newly added perks (abilities)
+      for (final perkId in added) {
+        final component = await _loadPerkComponent(perkId, perkMap, db);
+        if (component == null) continue;
+        await PerkGrantsService().applyPerkGrants(
+          db: db,
+          heroId: widget.heroId,
+          perkId: perkId,
+          grantsJson: component.data['grants'],
+        );
+      }
+
+      // Remove grants from removed perks
+      for (final perkId in removed) {
+        await PerkGrantsService().removePerkGrants(
+          db: db,
+          heroId: widget.heroId,
+          perkId: perkId,
+        );
+      }
+    }
+
+    widget.onSelectionChanged?.call(next);
+    widget.onDirty?.call();
+  }
+
+  Future<model.Component?> _loadPerkComponent(
+    String perkId,
+    Map<String, model.Component>? perkMap,
+    dynamic db,
+  ) async {
+    if (perkMap != null && perkMap.containsKey(perkId)) {
+      return perkMap[perkId];
+    }
+    final row = await db.getComponentById(perkId);
+    if (row == null) return null;
+    Map<String, dynamic> data = {};
+    if (row.dataJson != null && row.dataJson.isNotEmpty) {
+      data = jsonDecode(row.dataJson) as Map<String, dynamic>;
+    } else if (row.data != null) {
+      data = Map<String, dynamic>.from(row.data as Map);
+    }
+    return model.Component(
+      id: row.id,
+      type: row.type,
+      name: row.name,
+      data: data,
+    );
+  }
 }
 
 /// A widget that displays the granted abilities/skills/languages for a perk.
@@ -681,7 +852,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final grant in grants)
-          _buildGrantItem(context, ref, grant, textColor, languageMap, skillMap),
+          _buildGrantItem(
+              context, ref, grant, textColor, languageMap, skillMap),
       ],
     );
   }
@@ -697,12 +869,14 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     if (grant is! Map) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 4),
-        child: Text('• ${grant.toString()}', style: TextStyle(fontSize: 12, color: textColor)),
+        child: Text('• ${grant.toString()}',
+            style: TextStyle(fontSize: 12, color: textColor)),
       );
     }
 
     if (grant.containsKey('ability')) {
-      return _buildAbilityGrant(context, ref, grant['ability'] as String?, textColor);
+      return _buildAbilityGrant(
+          context, ref, grant['ability'] as String?, textColor);
     }
 
     if (grant.containsKey('languages')) {
@@ -713,11 +887,13 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     if (grant.containsKey('skill')) {
       final skillData = grant['skill'];
       if (skillData is Map) {
-        return _buildSkillGrant(context, ref, Map<String, dynamic>.from(skillData), textColor, skillMap);
+        return _buildSkillGrant(context, ref,
+            Map<String, dynamic>.from(skillData), textColor, skillMap);
       }
     }
 
-    final formatted = grant.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    final formatted =
+        grant.entries.map((e) => '${e.key}: ${e.value}').join(', ');
     return _buildGrantRow('• $formatted', textColor);
   }
 
@@ -755,23 +931,28 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     Map<String, model.Component> languageMap,
   ) {
     if (heroId.isEmpty) {
-      return _buildGrantRow('Choose ${count == 1 ? 'a' : count} new language${count == 1 ? '' : 's'}.', textColor);
+      return _buildGrantRow(
+          'Choose ${count == 1 ? 'a' : count} new language${count == 1 ? '' : 's'}.',
+          textColor);
     }
 
-    final choicesAsync = ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    final choicesAsync =
+        ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
     return choicesAsync.when(
       data: (choices) {
         final selected = List<String>.from(choices['language'] ?? const []);
         final widgets = <Widget>[];
         for (var index = 0; index < count; index++) {
           final selectedId = index < selected.length ? selected[index] : null;
-          final label = count == 1 ? 'Language Choice' : 'Language Choice ${index + 1}';
+          final label =
+              count == 1 ? 'Language Choice' : 'Language Choice ${index + 1}';
           widgets.add(
             _buildPickerField(
               context: context,
               label: label,
               placeholder: '— Choose language —',
-              selectedName: selectedId != null ? languageMap[selectedId]?.name : null,
+              selectedName:
+                  selectedId != null ? languageMap[selectedId]?.name : null,
               onTap: () => _openLanguagePicker(
                 context: context,
                 ref: ref,
@@ -782,10 +963,12 @@ class _PerkGrantsDisplay extends ConsumerWidget {
             ),
           );
         }
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
       },
       loading: () => _buildLoadingRow(textColor, 'Loading languages...'),
-      error: (e, _) => _buildGrantRow('Failed to load languages: $e', textColor),
+      error: (e, _) =>
+          _buildGrantRow('Failed to load languages: $e', textColor),
     );
   }
 
@@ -811,7 +994,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       return _buildGrantRow('Choose a ${_capitalize(group)} skill.', textColor);
     }
 
-    return _buildSkillPickGrant(context, ref, group, count, textColor, skillMap);
+    return _buildSkillPickGrant(
+        context, ref, group, count, textColor, skillMap);
   }
 
   Widget _buildSkillOwnedGrant(
@@ -824,15 +1008,18 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     final normalizedGroup = group.toLowerCase();
     final owned = skills.where((skill) {
       final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
-      return skillGroup == normalizedGroup && reservedSkillIds.contains(skill.id);
+      return skillGroup == normalizedGroup &&
+          reservedSkillIds.contains(skill.id);
     }).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
 
     if (owned.isEmpty) {
-      return _buildGrantRow('No ${_capitalize(group)} skills known yet.', textColor);
+      return _buildGrantRow(
+          'No ${_capitalize(group)} skills known yet.', textColor);
     }
 
-    final choicesAsync = ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    final choicesAsync =
+        ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
     return choicesAsync.when(
       data: (choices) {
         final selected = List<String>.from(choices['skill_owned'] ?? const []);
@@ -871,15 +1058,18 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     final normalizedGroup = group.toLowerCase();
     final available = skills.where((skill) {
       final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
-      return skillGroup == normalizedGroup && !reservedSkillIds.contains(skill.id);
+      return skillGroup == normalizedGroup &&
+          !reservedSkillIds.contains(skill.id);
     }).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
 
     if (available.isEmpty) {
-      return _buildGrantRow('No ${_capitalize(group)} skills available to learn.', textColor);
+      return _buildGrantRow(
+          'No ${_capitalize(group)} skills available to learn.', textColor);
     }
 
-    final choicesAsync = ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
+    final choicesAsync =
+        ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
     return choicesAsync.when(
       data: (choices) {
         final selected = List<String>.from(choices['skill_pick'] ?? const []);
@@ -894,7 +1084,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
               context: context,
               label: label,
               placeholder: '— Choose skill —',
-              selectedName: selectedId != null ? skillMap[selectedId]?.name : null,
+              selectedName:
+                  selectedId != null ? skillMap[selectedId]?.name : null,
               onTap: () => _openSkillPicker(
                 context: context,
                 ref: ref,
@@ -908,7 +1099,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
             ),
           );
         }
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
       },
       loading: () => _buildLoadingRow(textColor, 'Loading skills...'),
       error: (e, _) => _buildGrantRow('Failed to load skills: $e', textColor),
@@ -932,14 +1124,17 @@ class _PerkGrantsDisplay extends ConsumerWidget {
           decoration: InputDecoration(
             labelText: label,
             border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             suffixIcon: const Icon(Icons.search),
           ),
           child: Text(
             selectedName ?? placeholder,
             style: TextStyle(
               fontSize: 14,
-              color: selectedName != null ? theme.textTheme.bodyLarge?.color : hintColor,
+              color: selectedName != null
+                  ? theme.textTheme.bodyLarge?.color
+                  : hintColor,
             ),
           ),
         ),
@@ -1003,10 +1198,12 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     await _saveGrantChoice(ref, grantType, updated);
   }
 
-  List<SearchOption<String?>> _buildLanguageOptions(Set<String> exclude, String? currentSelectedId) {
+  List<SearchOption<String?>> _buildLanguageOptions(
+      Set<String> exclude, String? currentSelectedId) {
     final grouped = <String, List<model.Component>>{};
     for (final lang in languages) {
-      final type = (lang.data['language_type'] as String?)?.toLowerCase() ?? 'human';
+      final type =
+          (lang.data['language_type'] as String?)?.toLowerCase() ?? 'human';
       grouped.putIfAbsent(type, () => []).add(lang);
     }
     for (final group in grouped.values) {
@@ -1047,7 +1244,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       if (allowOwnedOnly) {
         return reservedSkillIds.contains(skill.id);
       }
-      return !reservedSkillIds.contains(skill.id) || skill.id == currentSelectedId;
+      return !reservedSkillIds.contains(skill.id) ||
+          skill.id == currentSelectedId;
     }).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
 
@@ -1062,7 +1260,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     return options;
   }
 
-  List<String> _updatedChoiceList(List<String> currentChoices, int slotIndex, String? newValue) {
+  List<String> _updatedChoiceList(
+      List<String> currentChoices, int slotIndex, String? newValue) {
     final updated = List<String>.from(currentChoices);
     while (updated.length <= slotIndex) {
       updated.add('');
@@ -1103,7 +1302,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
           SizedBox(
             width: 12,
             height: 12,
-            child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+            child:
+                CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
           ),
           const SizedBox(width: 8),
           Text(message, style: TextStyle(fontSize: 12, color: color)),
@@ -1185,7 +1385,10 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                   .where(
                     (option) =>
                         option.label.toLowerCase().contains(normalizedQuery) ||
-                        (option.subtitle?.toLowerCase().contains(normalizedQuery) ?? false),
+                        (option.subtitle
+                                ?.toLowerCase()
+                                .contains(normalizedQuery) ??
+                            false),
                   )
                   .toList();
 
@@ -1242,9 +1445,8 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                                 subtitle: option.subtitle != null
                                     ? Text(option.subtitle!)
                                     : null,
-                                trailing: isSelected
-                                    ? const Icon(Icons.check)
-                                    : null,
+                                trailing:
+                                    isSelected ? const Icon(Icons.check) : null,
                                 onTap: () => Navigator.of(context).pop(
                                   PickerSelection<T>(value: option.value),
                                 ),

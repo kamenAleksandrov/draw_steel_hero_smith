@@ -94,7 +94,7 @@ class PerkCard extends ConsumerWidget {
           ],
           if (hasGrants) ...[
             SectionLabel('Grants', emoji: ds.perkSectionEmoji['grants'], color: borderColor),
-            const SizedBox(height: 2),
+            const SizedBox(height: 8),
             _buildGrantsFromParsed(context, ref, parsedGrant, neutralText, borderColor),
           ],
         ],

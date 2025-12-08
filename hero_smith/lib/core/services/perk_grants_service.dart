@@ -266,6 +266,45 @@ class PerkGrantsService {
     return await db.getHeroComponentIds(heroId, 'language');
   }
   
+  /// Ensure all perk grants are applied for a hero.
+  /// This is useful when viewing the abilities sheet to make sure any
+  /// perk-granted abilities are properly registered in the hero's abilities.
+  Future<void> ensureAllPerkGrantsApplied({
+    required AppDatabase db,
+    required String heroId,
+  }) async {
+    // Get all perk IDs for this hero
+    final perkIds = await db.getHeroComponentIds(heroId, 'perk');
+    if (perkIds.isEmpty) return;
+    
+    // Get all perk components
+    final allComponents = await db.getAllComponents();
+    final perkComponents = allComponents
+        .where((c) => c.type == 'perk' && perkIds.contains(c.id))
+        .toList();
+    
+    // Apply grants for each perk
+    for (final perkComp in perkComponents) {
+      try {
+        Map<String, dynamic> data = {};
+        if (perkComp.dataJson != null && perkComp.dataJson.isNotEmpty) {
+          data = jsonDecode(perkComp.dataJson) as Map<String, dynamic>;
+        }
+        final grantsJson = data['grants'];
+        if (grantsJson != null) {
+          await applyPerkGrants(
+            db: db,
+            heroId: heroId,
+            perkId: perkComp.id,
+            grantsJson: grantsJson,
+          );
+        }
+      } catch (_) {
+        // Skip if perk data is invalid
+      }
+    }
+  }
+  
   // =========================================================================
   // Methods to persist perk grants to hero component collections
   // =========================================================================

@@ -66,24 +66,14 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
   }
 
   Future<void> _handleSelectionChanged(Set<String> newSelection) async {
-    try {
-      final db = ref.read(appDatabaseProvider);
-      await db.setHeroComponentIds(
-        heroId: widget.heroId,
-        category: 'perk',
-        componentIds: newSelection.toList(),
-      );
+    // Update local state - the PerksSelectionWidget handles database persistence
+    // when persistToDatabase is true
+    setState(() {
+      _selectedPerkIds = newSelection;
+    });
 
-      setState(() {
-        _selectedPerkIds = newSelection;
-      });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update perks: $e')),
-        );
-      }
-    }
+    // Reload related data so the tab reflects changes immediately
+    await _loadData();
   }
 
   @override
@@ -126,6 +116,7 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
         headerSubtitle: 'Special abilities and bonuses from your career and titles',
         allowAddingNew: true,
         emptyStateMessage: 'No perks selected. Tap "Add Perk" to get started.',
+        persistToDatabase: true,
       ),
     );
   }

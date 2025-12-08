@@ -114,15 +114,11 @@ class ClassSelectorWidget extends StatelessWidget {
                       children: [
                         _buildStatChip(
                           'Stamina',
-                          '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)} (Base ${selectedClass!.startingCharacteristics.baseStamina} + ${selectedClass!.startingCharacteristics.staminaPerLevel}/lvl)',
+                          '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)} (Base ${selectedClass!.startingCharacteristics.baseStamina} + ${selectedClass!.startingCharacteristics.staminaPerLevel} per lvl)',
                         ),
                         _buildStatChip(
                           'Recoveries',
                           '${selectedClass!.startingCharacteristics.baseRecoveries}',
-                        ),
-                        _buildStatChip(
-                          'Speed',
-                          '${selectedClass!.startingCharacteristics.baseSpeed}',
                         ),
                       ],
                     ),
