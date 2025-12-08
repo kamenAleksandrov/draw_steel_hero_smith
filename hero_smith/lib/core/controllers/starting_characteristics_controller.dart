@@ -11,11 +11,15 @@ class StartingCharacteristicsController extends ChangeNotifier {
     required int selectedLevel,
     CharacteristicArray? selectedArray,
     Map<String, int>? initialAssignments,
+    Map<String, String?>? initialLevelChoiceSelections,
   })  : _classData = classData,
         _selectedLevel = selectedLevel,
-        _selectedArray = selectedArray {
+        _selectedArray = selectedArray,
+        _initialLevelChoiceSelections = initialLevelChoiceSelections {
     _initialize(initialAssignments ?? const {});
   }
+
+  final Map<String, String?>? _initialLevelChoiceSelections;
 
   final StartingCharacteristicsService _logic =
       const StartingCharacteristicsService();
@@ -108,6 +112,7 @@ class StartingCharacteristicsController extends ChangeNotifier {
     _levelChoices = _buildLevelChoices();
     _levelChoiceSelections = _buildLevelChoiceSelections(
       preserveSelections: false,
+      initialSelections: _initialLevelChoiceSelections,
     );
   }
 
@@ -153,11 +158,12 @@ class StartingCharacteristicsController extends ChangeNotifier {
 
   Map<String, String?> _buildLevelChoiceSelections({
     required bool preserveSelections,
+    Map<String, String?>? initialSelections,
   }) {
     return _logic.buildLevelChoiceSelections(
       choices: _levelChoices,
-      previousSelections: _levelChoiceSelections,
-      preserveSelections: preserveSelections,
+      previousSelections: preserveSelections ? _levelChoiceSelections : (initialSelections ?? const {}),
+      preserveSelections: preserveSelections || initialSelections != null,
     );
   }
 

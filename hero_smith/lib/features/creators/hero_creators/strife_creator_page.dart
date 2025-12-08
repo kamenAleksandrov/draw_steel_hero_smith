@@ -21,6 +21,7 @@ import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/skills_service.dart';
+import '../../../core/services/starting_characteristics_service.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';
@@ -90,6 +91,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Map<String, int> _assignedCharacteristics = {};
 // ignore: unused_field
   Map<String, int> _finalCharacteristics = {};
+  Map<String, String?> _levelChoiceSelections = {};
   Map<String, String?> _selectedSkills = {};
   Map<String, String?> _selectedAbilities = {};
   Map<String, String?> _selectedPerks = {};
@@ -186,6 +188,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
         if (matchingArray != null) {
           _selectedArray = matchingArray;
+        }
+
+        // Load level choice selections (for "Any" characteristic improvements)
+        final savedLevelChoiceSelections =
+            await repo.getLevelChoiceSelections(widget.heroId);
+        if (savedLevelChoiceSelections.isNotEmpty) {
+          _levelChoiceSelections = savedLevelChoiceSelections;
         }
 
         // Load subclass / deity / domain selections
@@ -729,6 +738,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // Reset characteristic and skill selections when class changes
       _selectedArray = null;
       _assignedCharacteristics = {};
+      _levelChoiceSelections = {};
       _selectedSkills = {};
       _selectedAbilities = {};
       _selectedPerks = {};
@@ -761,6 +771,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   void _handleFinalTotalsChanged(Map<String, int> totals) {
     setState(() {
       _finalCharacteristics = totals;
+    });
+    _markDirty();
+  }
+
+  void _handleLevelChoiceSelectionsChanged(Map<String, String?> selections) {
+    setState(() {
+      _levelChoiceSelections = selections;
     });
     _markDirty();
   }
@@ -1054,6 +1071,35 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return true;
   }
 
+  /// Applies a characteristic payload (setTo, increaseBy, max) to a stat value
+  void _applyCharacteristicPayload(
+    String stat,
+    AdjustmentPayload payload,
+    Map<String, int> characteristics,
+  ) {
+    var value = characteristics[stat] ?? 0;
+
+    // Apply increaseBy
+    final increase = payload.increaseBy;
+    if (increase != null) {
+      value += increase;
+    }
+
+    // Apply setTo (only if current value is lower)
+    final setTo = payload.setTo;
+    if (setTo != null && value < setTo) {
+      value = setTo;
+    }
+
+    // Apply max cap
+    final maxValue = payload.max;
+    if (maxValue != null && value > maxValue) {
+      value = maxValue;
+    }
+
+    characteristics[stat] = value;
+  }
+
   Set<String> _findDuplicates(Iterable<String?> values) {
     final seen = <String>{};
     final dupes = <String>{};
@@ -1255,30 +1301,77 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         ));
       }
 
-      // 5. Save characteristics (base values from assignments AND fixed values)
-      // First, save assigned characteristics from arrays
-      _assignedCharacteristics.forEach((characteristic, value) {
-        final charLower = characteristic.toLowerCase();
-        if (charLower == 'might' ||
-            charLower == 'agility' ||
-            charLower == 'reason' ||
-            charLower == 'intuition' ||
-            charLower == 'presence') {
-          updates.add(
-            repo.setCharacteristicBase(widget.heroId,
-                characteristic: charLower, value: value),
-          );
+      // 4.6. Save level choice selections (which characteristic to boost at each level)
+      if (_levelChoiceSelections.isNotEmpty) {
+        updates.add(repo.saveLevelChoiceSelections(
+          widget.heroId,
+          _levelChoiceSelections,
+        ));
+      }
+
+      // 5. Calculate and save characteristics (base values = fixed + array + level improvements)
+      // Use the service to calculate final characteristic values
+      const charService = StartingCharacteristicsService();
+      final adjustmentEntries = charService.collectAdjustmentEntries(
+        classData: classData,
+        selectedLevel: _selectedLevel,
+      );
+
+      // Build initial values from fixed starting characteristics
+      final baseCharacteristics = <String, int>{
+        for (final stat in CharacteristicUtils.characteristicOrder) stat: 0,
+      };
+
+      // Apply fixed values
+      startingChars.fixedStartingCharacteristics.forEach((key, value) {
+        final normalizedKey = CharacteristicUtils.normalizeKey(key);
+        if (normalizedKey != null) {
+          baseCharacteristics[normalizedKey] = value;
         }
       });
 
-      // Then, save fixed starting characteristics from class
-      startingChars.fixedStartingCharacteristics
-          .forEach((characteristic, value) {
+      // Apply array assignments
+      _assignedCharacteristics.forEach((characteristic, value) {
+        final charLower = characteristic.toLowerCase();
+        if (baseCharacteristics.containsKey(charLower)) {
+          baseCharacteristics[charLower] =
+              (baseCharacteristics[charLower] ?? 0) + value;
+        }
+      });
+
+      // Apply level-based improvements
+      for (final entry in adjustmentEntries) {
+        final payload = entry.payload;
+        if (entry.target == 'all') {
+          // Apply to all characteristics
+          for (final stat in CharacteristicUtils.characteristicOrder) {
+            _applyCharacteristicPayload(stat, payload, baseCharacteristics);
+          }
+        } else if (entry.target == 'any') {
+          // Apply to the user's chosen characteristic
+          final choiceId = entry.choiceId;
+          if (choiceId != null) {
+            final chosenStat = _levelChoiceSelections[choiceId];
+            if (chosenStat != null) {
+              _applyCharacteristicPayload(
+                  chosenStat, payload, baseCharacteristics);
+            }
+          }
+        } else if (CharacteristicUtils.characteristicOrder
+            .contains(entry.target)) {
+          // Apply to specific characteristic
+          _applyCharacteristicPayload(
+              entry.target, payload, baseCharacteristics);
+        }
+      }
+
+      // Save the final base characteristics
+      for (final entry in baseCharacteristics.entries) {
         updates.add(
           repo.setCharacteristicBase(widget.heroId,
-              characteristic: characteristic, value: value),
+              characteristic: entry.key, value: entry.value),
         );
-      });
+      }
 
       // 6. Calculate and save Stamina (class base + level scaling + equipment bonus)
       final baseMaxStamina = startingChars.baseStamina +
@@ -1561,9 +1654,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               selectedLevel: _selectedLevel,
               selectedArray: _selectedArray,
               assignedCharacteristics: _assignedCharacteristics,
+              initialLevelChoiceSelections: _levelChoiceSelections,
               onArrayChanged: _handleArrayChanged,
               onAssignmentsChanged: _handleAssignmentsChanged,
               onFinalTotalsChanged: _handleFinalTotalsChanged,
+              onLevelChoiceSelectionsChanged: _handleLevelChoiceSelectionsChanged,
             ),
             ChooseSubclassWidget(
               classData: _selectedClass!,

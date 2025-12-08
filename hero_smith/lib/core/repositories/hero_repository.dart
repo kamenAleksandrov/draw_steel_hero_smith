@@ -631,6 +631,39 @@ class HeroRepository {
     return decoded.map((k, v) => MapEntry(k, (v as num).toInt()));
   }
 
+  /// Save the user's level choice selections (which characteristic to boost at each level)
+  Future<void> saveLevelChoiceSelections(
+    String heroId,
+    Map<String, String?> selections,
+  ) async {
+    // Filter out null values for cleaner storage
+    final nonNullSelections = <String, String>{};
+    selections.forEach((key, value) {
+      if (value != null) {
+        nonNullSelections[key] = value;
+      }
+    });
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.level_choice_selections',
+      jsonMap: nonNullSelections,
+    );
+  }
+
+  /// Load the user's level choice selections
+  Future<Map<String, String?>> getLevelChoiceSelections(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final row = values.firstWhereOrNull(
+        (v) => v.key == 'strife.level_choice_selections');
+    if (row?.jsonValue == null) return {};
+    try {
+      final decoded = jsonDecode(row!.jsonValue!) as Map<String, dynamic>;
+      return decoded.map((k, v) => MapEntry(k, v?.toString()));
+    } catch (_) {
+      return {};
+    }
+  }
+
   Future<void> saveFeatureSelections(
     String heroId,
     Map<String, Set<String>> selections,

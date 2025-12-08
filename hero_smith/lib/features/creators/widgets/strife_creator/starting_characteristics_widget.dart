@@ -13,18 +13,22 @@ class StartingCharacteristicsWidget extends StatefulWidget {
     required this.selectedLevel,
     this.selectedArray,
     required this.assignedCharacteristics,
+    this.initialLevelChoiceSelections,
     required this.onArrayChanged,
     required this.onAssignmentsChanged,
     this.onFinalTotalsChanged,
+    this.onLevelChoiceSelectionsChanged,
   });
 
   final ClassData classData;
   final int selectedLevel;
   final CharacteristicArray? selectedArray;
   final Map<String, int> assignedCharacteristics;
+  final Map<String, String?>? initialLevelChoiceSelections;
   final ValueChanged<CharacteristicArray?> onArrayChanged;
   final ValueChanged<Map<String, int>> onAssignmentsChanged;
   final ValueChanged<Map<String, int>>? onFinalTotalsChanged;
+  final ValueChanged<Map<String, String?>>? onLevelChoiceSelectionsChanged;
 
   @override
   State<StartingCharacteristicsWidget> createState() =>
@@ -36,8 +40,10 @@ class _StartingCharacteristicsWidgetState
   late StartingCharacteristicsController _controller;
   Map<String, int> _lastAssignments = const {};
   Map<String, int> _lastTotals = const {};
+  Map<String, String?> _lastLevelChoiceSelections = const {};
   int _assignmentsCallbackVersion = 0;
   int _totalsCallbackVersion = 0;
+  int _levelChoiceSelectionsCallbackVersion = 0;
 
   @override
   void initState() {
@@ -47,9 +53,13 @@ class _StartingCharacteristicsWidgetState
       selectedLevel: widget.selectedLevel,
       selectedArray: widget.selectedArray,
       initialAssignments: widget.assignedCharacteristics,
+      initialLevelChoiceSelections: widget.initialLevelChoiceSelections,
     );
     _lastAssignments = Map<String, int>.from(
       _controller.assignedCharacteristics,
+    );
+    _lastLevelChoiceSelections = Map<String, String?>.from(
+      _controller.levelChoiceSelections,
     );
     _controller.addListener(_onControllerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -108,18 +118,42 @@ class _StartingCharacteristicsWidgetState
       });
     }
 
-    if (widget.onFinalTotalsChanged == null) return;
-    final totals = _controller.summary.totals;
-    if (!CharacteristicUtils.intMapEquality.equals(_lastTotals, totals)) {
-      final snapshot = Map<String, int>.from(totals);
-      _lastTotals = snapshot;
-      _totalsCallbackVersion += 1;
-      final version = _totalsCallbackVersion;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || version != _totalsCallbackVersion) return;
-        widget.onFinalTotalsChanged?.call(Map<String, int>.from(snapshot));
-      });
+    if (widget.onFinalTotalsChanged != null) {
+      final totals = _controller.summary.totals;
+      if (!CharacteristicUtils.intMapEquality.equals(_lastTotals, totals)) {
+        final snapshot = Map<String, int>.from(totals);
+        _lastTotals = snapshot;
+        _totalsCallbackVersion += 1;
+        final version = _totalsCallbackVersion;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || version != _totalsCallbackVersion) return;
+          widget.onFinalTotalsChanged?.call(Map<String, int>.from(snapshot));
+        });
+      }
     }
+
+    // Notify parent of level choice selection changes
+    if (widget.onLevelChoiceSelectionsChanged != null) {
+      final levelSelections = _controller.levelChoiceSelections;
+      if (!_levelChoiceSelectionsEqual(_lastLevelChoiceSelections, levelSelections)) {
+        final snapshot = Map<String, String?>.from(levelSelections);
+        _lastLevelChoiceSelections = snapshot;
+        _levelChoiceSelectionsCallbackVersion += 1;
+        final version = _levelChoiceSelectionsCallbackVersion;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || version != _levelChoiceSelectionsCallbackVersion) return;
+          widget.onLevelChoiceSelectionsChanged?.call(Map<String, String?>.from(snapshot));
+        });
+      }
+    }
+  }
+
+  bool _levelChoiceSelectionsEqual(Map<String, String?> a, Map<String, String?> b) {
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (a[key] != b[key]) return false;
+    }
+    return true;
   }
 
   String _displayName(String key) => CharacteristicUtils.displayName(key);
