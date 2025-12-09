@@ -405,6 +405,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       subclassKey: _selectedSubclassKey,
       subclassName: _selectedSubclassName,
       skill: selectedOption?.skill,
+      skillGroup: selectedOption?.skillGroup,
       deityId: deity?.id,
       deityName: deity?.name,
       domainNames: List<String>.from(_selectedDomains),

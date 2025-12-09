@@ -22,6 +22,8 @@ import '../../../core/services/perks_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
+import '../../../core/services/subclass_data_service.dart';
+import '../../../core/services/subclass_service.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';
@@ -56,6 +58,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   final StartingSkillsService _startingSkillsService =
       const StartingSkillsService();
   final SkillDataService _skillDataService = SkillDataService();
+  final SubclassService _subclassPlanService = const SubclassService();
+  final SubclassDataService _subclassDataService = SubclassDataService();
   final StartingPerksService _startingPerksService =
       const StartingPerksService();
   final PerkDataService _perkDataService = PerkDataService();
@@ -89,12 +93,15 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   ClassData? _selectedClass;
   CharacteristicArray? _selectedArray;
   Map<String, int> _assignedCharacteristics = {};
-// ignore: unused_field
+  // ignore: unused_field
   Map<String, int> _finalCharacteristics = {};
   Map<String, String?> _levelChoiceSelections = {};
   Map<String, String?> _selectedSkills = {};
   Map<String, String?> _selectedAbilities = {};
   Map<String, String?> _selectedPerks = {};
+  Set<String> _baseSkillIds = {};
+  Set<String> _skillGrantIds = {};
+  Map<String, String> _skillIdLookup = {};
   Set<String> _reservedSkillIds = {};
   Set<String> _reservedAbilityIds = {};
   Set<String> _reservedPerkIds = {};
@@ -139,6 +146,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Load level
       _selectedLevel = hero.level;
+
+      // Load skill lookup for resolving names to IDs
+      final skillOptions = await _skillDataService.loadSkills();
+      _skillIdLookup = {
+        for (final option in skillOptions) option.name.toLowerCase(): option.id,
+        for (final option in skillOptions) option.id.toLowerCase(): option.id,
+      };
 
       // Load characteristics (assigned values from stored assignments)
       final savedAssignments =
@@ -229,6 +243,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           _selectedSubclass = null;
         }
 
+        if (_selectedSubclass != null) {
+          _selectedSubclass = await _hydrateSubclassSelection(
+            classData: classData,
+            selection: _selectedSubclass!,
+          );
+        }
+
         // Load equipment / modifications selections
         final equipmentIds = await repo.getEquipmentIds(widget.heroId);
         if (equipmentIds.isNotEmpty) {
@@ -251,6 +272,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             await db.getHeroComponentIds(widget.heroId, 'language');
         final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
         final perkIds = await db.getHeroComponentIds(widget.heroId, 'perk');
+        _baseSkillIds = _normalizeSkillIds(skillIds);
 
         // First try to load saved strife ability selections directly
         final savedStrifeAbilitySelections = await _loadStrifeSelections('strife.ability_selections');
@@ -281,9 +303,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             skillIds: skillIds,
           );
         }
-        final assignedSkillIds =
-            _selectedSkills.values.whereType<String>().toSet();
-        _reservedSkillIds = skillIds.toSet();
+        _reservedSkillIds = _baseSkillIds;
 
         // First try to load saved strife perk selections directly
         final savedStrifePerkSelections = await _loadStrifeSelections('strife.perk_selections');
@@ -297,9 +317,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             perkIds: perkIds,
           );
         }
-        final assignedPerkIds =
-            _selectedPerks.values.whereType<String>().toSet();
         _reservedPerkIds = perkIds.toSet();
+
+        _updateGrantIdsForCurrentPlan();
       } else {
         _selectedAbilities = const <String, String?>{};
         _selectedSkills = const <String, String?>{};
@@ -309,6 +329,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _reservedPerkIds = {};
         _reservedLanguageIds = {};
       }
+
+      _refreshReservedSkills();
     } catch (e) {
       debugPrint('Failed to load hero data: $e');
       // Don't fail the whole initialization if hero data can't be loaded
@@ -420,6 +442,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     final plan = _startingSkillsService.buildPlan(
       classData: classData,
       selectedLevel: selectedLevel,
+      subclassSelection: _selectedSubclass,
     );
     if (plan.allowances.isEmpty) {
       return const <String, String?>{};
@@ -478,6 +501,63 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       }
     } catch (_) {}
     return const <String, String?>{};
+  }
+
+  String? _resolveSkillId(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    final lower = trimmed.toLowerCase();
+    return _skillIdLookup[lower] ?? _skillIdLookup[trimmed] ?? trimmed;
+  }
+
+  Set<String> _normalizeSkillIds(Iterable<String> values) {
+    final result = <String>{};
+    for (final value in values) {
+      final resolved = _resolveSkillId(value) ?? value.trim();
+      if (resolved.isNotEmpty) {
+        result.add(resolved);
+      }
+    }
+    return result;
+  }
+
+  void _refreshReservedSkills() {
+    final normalizedSelections =
+        _normalizeSkillIds(_selectedSkills.values.whereType<String>());
+    final reserved = <String>{
+      ..._baseSkillIds,
+      ...normalizedSelections,
+    };
+    final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
+    if (subclassSkillId != null) {
+      reserved.add(subclassSkillId);
+    }
+
+    const equality = SetEquality<String>();
+    if (!equality.equals(reserved, _reservedSkillIds)) {
+      setState(() {
+        _reservedSkillIds = reserved;
+      });
+    }
+  }
+
+  void _updateGrantIdsForCurrentPlan() {
+    if (_selectedClass == null) {
+      _skillGrantIds = {};
+      return;
+    }
+
+    final plan = _startingSkillsService.buildPlan(
+      classData: _selectedClass!,
+      selectedLevel: _selectedLevel,
+      subclassSelection: _selectedSubclass,
+    );
+    _skillGrantIds = plan.grantedSkillNames
+        .map(_resolveSkillId)
+        .whereType<String>()
+        .toSet();
+    _refreshReservedSkills();
   }
 
   Future<Map<String, String?>> _restorePerkSelections({
@@ -703,6 +783,46 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return normalized;
   }
 
+  Future<SubclassSelectionResult?> _hydrateSubclassSelection({
+    required ClassData classData,
+    required SubclassSelectionResult selection,
+  }) async {
+    try {
+      final plan = _subclassPlanService.buildPlan(
+        classData: classData,
+        selectedLevel: _selectedLevel,
+      );
+      if (!plan.hasSubclassChoice || plan.subclassFeatureName == null) {
+        return selection;
+      }
+
+      final data = await _subclassDataService.loadSubclassFeatureData(
+        classSlug: _classSlug(classData.classId),
+        featureName: plan.subclassFeatureName!,
+      );
+      final options = data?.options ?? const <SubclassOption>[];
+      SubclassOption? option;
+      if (selection.subclassKey != null) {
+        option = options.firstWhereOrNull(
+          (opt) => opt.key == selection.subclassKey,
+        );
+      }
+      option ??= options.firstWhereOrNull(
+        (opt) =>
+            opt.name.toLowerCase() ==
+            (selection.subclassName ?? '').toLowerCase(),
+      );
+      if (option == null) return selection;
+      return selection.copyWith(
+        subclassName: selection.subclassName ?? option.name,
+        skill: option.skill ?? selection.skill,
+        skillGroup: option.skillGroup ?? selection.skillGroup,
+      );
+    } catch (_) {
+      return selection;
+    }
+  }
+
   /// Parse JSON string to map, returns null on error
   Future<Map<String, dynamic>?> _parseJson(String jsonStr) async {
     try {
@@ -729,6 +849,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     setState(() {
       _selectedLevel = level;
     });
+    _updateGrantIdsForCurrentPlan();
+    _refreshReservedSkills();
     _markDirty();
   }
 
@@ -740,15 +862,18 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _assignedCharacteristics = {};
       _levelChoiceSelections = {};
       _selectedSkills = {};
+      _skillGrantIds = {};
       _selectedAbilities = {};
       _selectedPerks = {};
-      _reservedSkillIds = {};
+      _reservedSkillIds = _baseSkillIds;
       _reservedAbilityIds = {};
       _reservedPerkIds = {};
       _reservedLanguageIds = {};
       _selectedSubclass = null;
       _selectedKitIds = <String?>[];
     });
+    _updateGrantIdsForCurrentPlan();
+    _refreshReservedSkills();
     _markDirty();
   }
 
@@ -785,7 +910,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   void _handleSkillSelectionsChanged(StartingSkillSelectionResult result) {
     setState(() {
       _selectedSkills = result.selectionsBySlot;
+      _skillGrantIds = Set<String>.from(result.grantedSkillIds);
     });
+    _refreshReservedSkills();
     _markDirty();
   }
 
@@ -807,6 +934,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     setState(() {
       _selectedSubclass = result;
     });
+    _updateGrantIdsForCurrentPlan();
+    _refreshReservedSkills();
     _markDirty();
   }
 
@@ -1100,9 +1229,14 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     final issues = <String, Set<String>>{};
 
     final skillValues = _selectedSkills.values.whereType<String>();
+    final normalizedSkillSelections = _normalizeSkillIds(skillValues);
+    final reservedExcludingSelection =
+        _reservedSkillIds.difference(normalizedSkillSelections);
     final skillIssues = {
-      ..._findDuplicates(skillValues),
-      ...skillValues.toSet().intersection(_reservedSkillIds),
+      ..._findDuplicates(normalizedSkillSelections),
+      ...normalizedSkillSelections.intersection(reservedExcludingSelection),
+      ..._skillGrantIds.intersection(normalizedSkillSelections),
+      ..._skillGrantIds.intersection(_baseSkillIds),
     };
     if (skillIssues.isNotEmpty) {
       issues['skills'] = skillIssues;
@@ -1465,25 +1599,18 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           .whereType<String>()
           .where((id) => id.isNotEmpty)
           .toSet();
+      final grantSkillIds = Set<String>.from(_skillGrantIds);
 
       // Add subclass skill if present
-      if (_selectedSubclass?.skill != null &&
-          _selectedSubclass!.skill!.isNotEmpty) {
-        // The skill field contains the skill name, we need to find the skill ID
-        final allComponents = await db.getAllComponents();
-        final subclassSkillName = _selectedSubclass!.skill!;
-        final subclassSkillComponent = allComponents.where(
-          (c) =>
-              c.type == 'skill' &&
-              (c.name == subclassSkillName || c.id == subclassSkillName),
-        ).firstOrNull;
-        if (subclassSkillComponent != null) {
-          strifeSkillIds.add(subclassSkillComponent.id);
-        }
+      final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
+      if (subclassSkillId != null) {
+        strifeSkillIds.add(subclassSkillId);
       }
 
-      // Merge: keep existing story skills + new strife skills
-      final mergedSkillIds = existingSkillIds.union(strifeSkillIds);
+      // Merge: keep existing story skills + new strife skills + grants
+      final mergedSkillIds = existingSkillIds
+          .union(strifeSkillIds)
+          .union(grantSkillIds);
 
       if (mergedSkillIds.isNotEmpty) {
         updates.add(
@@ -1663,6 +1790,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             StartingSkillsWidget(
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
+              selectedSubclass: _selectedSubclass,
               selectedSkills: _selectedSkills,
               reservedSkillIds: _reservedSkillIds,
               onSelectionChanged: _handleSkillSelectionsChanged,

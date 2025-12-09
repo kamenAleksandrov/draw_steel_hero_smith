@@ -428,6 +428,11 @@ class AppDatabase extends _$AppDatabase {
     return (select(heroValues)..where((t) => t.heroId.equals(heroId))).watch();
   }
 
+  /// Watch all hero values across all heroes (for summary updates)
+  Stream<List<HeroValue>> watchAllHeroValues() {
+    return select(heroValues).watch();
+  }
+
   /// Get component IDs for a specific category (replaces getHeroComponents)
   Future<List<String>> getHeroComponentIds(String heroId, String category) async {
     final key = 'component.$category';

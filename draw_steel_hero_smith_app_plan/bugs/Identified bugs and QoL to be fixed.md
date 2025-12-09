@@ -106,19 +106,15 @@ some features that have multiple new lines must be better organised or atleast s
 i have to look through all the first level subclass choices and decide how and where what is displayed. example - the tactician has a subclass choice in the strife page, then in two places has the tactical doctrine feature, once as the grant and the second time is as a choice/exlplanation of the doctrine 
 
 some abilities may deserve a main stats ui examples are: judgement, mantle of essence, mark, routines, troubadour drama gain, growing ferocity and discipline
+
+changing class should prompt for confirmation
+
+level 10 features have more work to be fully functional.
 ### necessary changes
 
 duplicate marks saveing the page for duplication wrongfully
 
 auto granted features must have theri names shown too
-
-level 10 features have more work to be fully functional.
-
-hero card does not update if i dont restrart the app
-
-the choose a characteristic level bonus is removed upon chosing a new value for the widgets and their picker below. this should be fixed.
-
-changing class should prompt for confirmation
 
 the hero class skill and ther features bonuses do not save or grant their bonuses
 

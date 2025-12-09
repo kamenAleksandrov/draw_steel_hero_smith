@@ -83,6 +83,7 @@ class SubclassSelectionResult {
     this.subclassKey,
     this.subclassName,
     this.skill,
+    this.skillGroup,
     this.deityId,
     this.deityName,
     this.domainNames = const <String>[],
@@ -91,6 +92,7 @@ class SubclassSelectionResult {
   final String? subclassKey;
   final String? subclassName;
   final String? skill;
+  final String? skillGroup;
   final String? deityId;
   final String? deityName;
   final List<String> domainNames;
@@ -99,6 +101,7 @@ class SubclassSelectionResult {
     String? subclassKey,
     String? subclassName,
     String? skill,
+    String? skillGroup,
     String? deityId,
     String? deityName,
     List<String>? domainNames,
@@ -107,6 +110,7 @@ class SubclassSelectionResult {
       subclassKey: subclassKey ?? this.subclassKey,
       subclassName: subclassName ?? this.subclassName,
       skill: skill ?? this.skill,
+      skillGroup: skillGroup ?? this.skillGroup,
       deityId: deityId ?? this.deityId,
       deityName: deityName ?? this.deityName,
       domainNames: domainNames ?? this.domainNames,
@@ -118,6 +122,7 @@ class SubclassSelectionResult {
         subclassKey,
         subclassName,
         skill,
+        skillGroup,
         deityId,
         deityName,
         Object.hashAll(domainNames),
@@ -130,6 +135,7 @@ class SubclassSelectionResult {
         other.subclassKey == subclassKey &&
         other.subclassName == subclassName &&
         other.skill == skill &&
+        other.skillGroup == skillGroup &&
         other.deityId == deityId &&
         other.deityName == deityName;
   }

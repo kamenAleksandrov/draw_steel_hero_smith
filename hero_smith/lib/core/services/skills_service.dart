@@ -1,6 +1,7 @@
 import '../models/class_data.dart';
 import '../models/characteristics_models.dart';
 import '../models/skills_models.dart';
+import '../models/subclass_models.dart';
 
 /// Business helper for translating class data into skill allowances.
 class StartingSkillsService {
@@ -17,6 +18,9 @@ class StartingSkillsService {
   StartingSkillPlan buildPlan({
     required ClassData classData,
     required int selectedLevel,
+    SubclassSelectionResult? subclassSelection,
+    List<SkillAllowance> additionalAllowances = const <SkillAllowance>[],
+    List<String> additionalGrantedSkillNames = const <String>[],
   }) {
     final startingSkills = classData.startingCharacteristics.startingSkills;
     final startingAllowances =
@@ -27,9 +31,14 @@ class StartingSkillsService {
       selectedLevel: selectedLevel,
     );
 
+    final subclassAllowances =
+        _buildSubclassAllowances(subclassSelection: subclassSelection);
+
     final combined = <SkillAllowance>[
       ...startingAllowances.allowances,
       ...levelAllowances,
+      ...subclassAllowances.allowances,
+      ...additionalAllowances,
     ];
 
     combined.sort((a, b) {
@@ -41,7 +50,11 @@ class StartingSkillsService {
 
     return StartingSkillPlan(
       allowances: combined,
-      grantedSkillNames: startingAllowances.grantedSkills,
+      grantedSkillNames: [
+        ...startingAllowances.grantedSkills,
+        ...subclassAllowances.grantedSkills,
+        ...additionalGrantedSkillNames,
+      ],
       quickBuildSuggestions: startingSkills.quickBuild,
     );
   }
@@ -113,6 +126,50 @@ class StartingSkillsService {
         suffix: suffix,
       );
       addAllowance(count: count, groups: groups);
+    }
+
+    return _StartingAllowanceBundle(
+      allowances: allowances,
+      grantedSkills: granted,
+    );
+  }
+
+  _StartingAllowanceBundle _buildSubclassAllowances({
+    required SubclassSelectionResult? subclassSelection,
+  }) {
+    if (subclassSelection == null) {
+      return const _StartingAllowanceBundle(
+        allowances: <SkillAllowance>[],
+        grantedSkills: <String>[],
+      );
+    }
+
+    final allowances = <SkillAllowance>[];
+    final granted = <String>[];
+
+    final grantedSkill = subclassSelection.skill?.trim();
+    if (grantedSkill != null && grantedSkill.isNotEmpty) {
+      granted.add(grantedSkill);
+    }
+
+    final skillGroup = subclassSelection.skillGroup?.trim();
+    if (skillGroup != null && skillGroup.isNotEmpty) {
+      final normalizedGroups = _normalizeGroups([skillGroup]);
+      final label = subclassSelection.subclassName != null &&
+              subclassSelection.subclassName!.isNotEmpty
+          ? '${subclassSelection.subclassName} Skill'
+          : 'Subclass Skill';
+
+      allowances.add(
+        SkillAllowance(
+          id: 'subclass-${subclassSelection.subclassKey ?? 'skill'}',
+          level: 0,
+          label: label,
+          pickCount: 1,
+          allowedGroups: normalizedGroups,
+          isStarting: true,
+        ),
+      );
     }
 
     return _StartingAllowanceBundle(

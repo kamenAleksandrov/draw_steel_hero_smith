@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
@@ -1017,43 +1018,82 @@ class HeroRepository {
   }
 
   // Lightweight projection for list screens
-  Stream<List<HeroSummary>> watchSummaries() async* {
-    await for (final heroes in _db.watchAllHeroes()) {
-      final summaries = <HeroSummary>[];
-      for (final h in heroes) {
-        final values = await _db.getHeroValues(h.id);
-        final comps = await _db.getHeroComponents(h.id);
-        String? getText(String key) =>
-            values.firstWhereOrNull((v) => v.key == key)?.textValue;
-        int? getInt(String key) =>
-            values.firstWhereOrNull((v) => v.key == key)?.value;
-        final allComps = await _db.getAllComponents();
-        String? nameForId(String? compId) => compId == null
-            ? null
-            : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
-        String? nameForCategory(String category) {
-          final compId = comps.firstWhereOrNull(
-              (c) => c['category'] == category)?['componentId'];
-          return nameForId(compId);
+  // Watches both heroes table and hero_values table for changes
+  Stream<List<HeroSummary>> watchSummaries() {
+    // Create a combined stream that triggers on either heroes or hero_values changes
+    final controller = StreamController<List<HeroSummary>>();
+    
+    StreamSubscription<List<db.Heroe>>? heroesSubscription;
+    StreamSubscription<List<db.HeroValue>>? valuesSubscription;
+    
+    Future<void> buildSummaries() async {
+      try {
+        final heroes = await _db.getAllHeroes();
+        final summaries = <HeroSummary>[];
+        for (final h in heroes) {
+          final values = await _db.getHeroValues(h.id);
+          final comps = await _db.getHeroComponents(h.id);
+          String? getText(String key) =>
+              values.firstWhereOrNull((v) => v.key == key)?.textValue;
+          int? getInt(String key) =>
+              values.firstWhereOrNull((v) => v.key == key)?.value;
+          final allComps = await _db.getAllComponents();
+          String? nameForId(String? compId) => compId == null
+              ? null
+              : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
+          String? nameForCategory(String category) {
+            final compId = comps.firstWhereOrNull(
+                (c) => c['category'] == category)?['componentId'];
+            return nameForId(compId);
+          }
+
+          final classId = getText(_k.className);
+          final ancestryId = getText(_k.ancestry);
+          final careerId = getText(_k.career);
+
+          summaries.add(HeroSummary(
+            id: h.id,
+            name: h.name,
+            className: nameForId(classId),
+            level: getInt(_k.level) ?? 1,
+            ancestryName: nameForId(ancestryId),
+            careerName: nameForId(careerId),
+            complicationName: nameForCategory('complication'),
+            heroicResourceName: getText(_k.heroicResource),
+          ));
         }
-
-        final classId = getText(_k.className);
-        final ancestryId = getText(_k.ancestry);
-        final careerId = getText(_k.career);
-
-        summaries.add(HeroSummary(
-          id: h.id,
-          name: h.name,
-          className: nameForId(classId),
-          level: getInt(_k.level) ?? 1,
-          ancestryName: nameForId(ancestryId),
-          careerName: nameForId(careerId),
-          complicationName: nameForCategory('complication'),
-          heroicResourceName: getText(_k.heroicResource),
-        ));
+        if (!controller.isClosed) {
+          controller.add(summaries);
+        }
+      } catch (e) {
+        if (!controller.isClosed) {
+          controller.addError(e);
+        }
       }
-      yield summaries;
     }
+
+    controller.onListen = () {
+      // Watch heroes table
+      heroesSubscription = _db.watchAllHeroes().listen((_) {
+        buildSummaries();
+      });
+      
+      // Watch hero_values table for changes
+      valuesSubscription = _db.watchAllHeroValues().listen((_) {
+        buildSummaries();
+      });
+      
+      // Build initial summaries
+      buildSummaries();
+    };
+
+    controller.onCancel = () {
+      heroesSubscription?.cancel();
+      valuesSubscription?.cancel();
+      controller.close();
+    };
+
+    return controller.stream;
   }
 
   // --- Ancestry selections (traits) ---

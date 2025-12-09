@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/models/class_data.dart';
 import '../../../../core/models/skills_models.dart';
+import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -143,6 +144,7 @@ class StartingSkillsWidget extends StatefulWidget {
     super.key,
     required this.classData,
     required this.selectedLevel,
+    this.selectedSubclass,
     this.selectedSkills = const <String, String?>{},
     this.reservedSkillIds = const <String>{},
     this.onSelectionChanged,
@@ -150,6 +152,7 @@ class StartingSkillsWidget extends StatefulWidget {
 
   final ClassData classData;
   final int selectedLevel;
+  final SubclassSelectionResult? selectedSubclass;
   final Map<String, String?> selectedSkills;
   final Set<String> reservedSkillIds;
   final SkillSelectionChanged? onSelectionChanged;
@@ -177,6 +180,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   List<SkillOption> _skillOptions = const [];
   Map<String, SkillOption> _skillById = const {};
   Map<String, String> _skillIdByName = const {};
+  Set<String> _resolvedExternalReservedSkillIds = const {};
+  Set<String> _resolvedGrantedSkillIds = const {};
 
   StartingSkillPlan? _plan;
   final Map<String, List<String?>> _selections = {};
@@ -197,19 +202,28 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     final classChanged =
         oldWidget.classData.classId != widget.classData.classId;
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
+    final subclassChanged =
+        oldWidget.selectedSubclass != widget.selectedSubclass;
     final reservedChanged = !_setEquality.equals(
       oldWidget.reservedSkillIds,
       widget.reservedSkillIds,
     );
-    if ((classChanged || levelChanged) && !_isLoading && _error == null) {
+    if ((classChanged || levelChanged || subclassChanged) &&
+        !_isLoading &&
+        _error == null) {
       _rebuildPlan(
         preserveSelections: !classChanged,
-        externalSelections: classChanged ? const {} : widget.selectedSkills,
+        externalSelections:
+            classChanged ? const {} : widget.selectedSkills,
       );
     } else if (oldWidget.selectedSkills != widget.selectedSkills) {
       _applyExternalSelections(widget.selectedSkills);
     }
     if (reservedChanged && !_isLoading && _error == null) {
+      setState(() {
+        _resolvedExternalReservedSkillIds =
+            _resolveReservedSkillIds(widget.reservedSkillIds);
+      });
       final changed = _applyReservedPruning();
       if (changed) {
         _notifySelectionChanged();
@@ -231,7 +245,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
       };
       _skillIdByName = {
         for (final option in skills) option.name.toLowerCase(): option.id,
+        for (final option in skills) option.id.toLowerCase(): option.id,
       };
+      _resolvedExternalReservedSkillIds =
+          _resolveReservedSkillIds(widget.reservedSkillIds);
       _rebuildPlan(
         preserveSelections: false,
         externalSelections: widget.selectedSkills,
@@ -252,10 +269,15 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     final plan = _service.buildPlan(
       classData: widget.classData,
       selectedLevel: widget.selectedLevel,
+      subclassSelection: widget.selectedSubclass,
     );
 
     final newSelections = <String, List<String?>>{};
     final external = externalSelections ?? widget.selectedSkills;
+    final resolvedReserved =
+        _resolveReservedSkillIds(widget.reservedSkillIds);
+    final resolvedGranted =
+        _resolveGrantedSkillIds(plan.grantedSkillNames);
 
     for (final allowance in plan.allowances) {
       final existing =
@@ -279,6 +301,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
 
     setState(() {
       _plan = plan;
+      _resolvedExternalReservedSkillIds = resolvedReserved;
+      _resolvedGrantedSkillIds = resolvedGranted;
       _selections
         ..clear()
         ..addAll(newSelections);
@@ -313,15 +337,21 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     }
   }
 
+  Set<String> get _effectiveReservedSkillIds => {
+        ..._resolvedExternalReservedSkillIds,
+        ..._resolvedGrantedSkillIds,
+      };
+
   bool _applyReservedPruning() {
-    if (widget.reservedSkillIds.isEmpty) return false;
+    final reserved = _effectiveReservedSkillIds;
+    if (reserved.isEmpty) return false;
     final allowIds = _selections.values
         .expand((slots) => slots)
         .whereType<String>()
         .toSet();
     final changed = ComponentSelectionGuard.pruneBlockedSelections(
       _selections,
-      widget.reservedSkillIds,
+      reserved,
       allowIds: allowIds,
     );
     if (changed) {
@@ -339,6 +369,28 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     }
     final lower = trimmed.toLowerCase();
     return _skillIdByName[lower];
+  }
+
+  Set<String> _resolveReservedSkillIds(Iterable<String> values) {
+    final resolved = <String>{};
+    for (final value in values) {
+      final normalized = _resolveSkillId(value) ?? value.trim();
+      if (normalized.isNotEmpty) {
+        resolved.add(normalized);
+      }
+    }
+    return resolved;
+  }
+
+  Set<String> _resolveGrantedSkillIds(Iterable<String> names) {
+    final resolved = <String>{};
+    for (final name in names) {
+      final id = _resolveSkillId(name);
+      if (id != null) {
+        resolved.add(id);
+      }
+    }
+    return resolved;
   }
 
   void _handleSkillSelection(
@@ -405,12 +457,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     }
 
     final grantedIds = <String>{};
-    for (final name in plan.grantedSkillNames) {
-      final resolved = _resolveSkillId(name);
-      if (resolved != null) {
-        grantedIds.add(resolved);
-      }
-    }
+    grantedIds.addAll(_resolvedGrantedSkillIds);
 
     final grantedNames = List<String>.from(plan.grantedSkillNames);
 
@@ -480,6 +527,49 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     }
     
     return options;
+  }
+
+  Set<String> _grantedConflictIds() {
+    final grantList = (_plan?.grantedSkillNames ?? const <String>[])
+        .map(_resolveSkillId)
+        .whereType<String>()
+        .toList();
+    final internalDupes = _findDuplicateIds(grantList);
+    final selectedIds = _selections.values
+        .expand((slots) => slots)
+        .whereType<String>()
+        .toSet();
+    // Ignore reserves that come from the grants themselves; only flag when
+    // another picker or DB entry holds the same skill.
+    final externalReserved = _resolvedExternalReservedSkillIds
+        .difference(_resolvedGrantedSkillIds);
+    final conflicts = _resolvedGrantedSkillIds
+        .intersection({...externalReserved, ...selectedIds});
+    return {...internalDupes, ...conflicts};
+  }
+
+  List<String> _namesForIds(Iterable<String> ids) {
+    final names = <String>[];
+    for (final id in ids) {
+      final option = _skillById[id];
+      if (option != null && option.name.isNotEmpty) {
+        names.add(option.name);
+      } else if (id.isNotEmpty) {
+        names.add(id);
+      }
+    }
+    return names;
+  }
+
+  Set<String> _findDuplicateIds(Iterable<String> values) {
+    final seen = <String>{};
+    final dupes = <String>{};
+    for (final value in values) {
+      if (!seen.add(value)) {
+        dupes.add(value);
+      }
+    }
+    return dupes;
   }
 
   String _slotKey(String allowanceId, int index) => '$allowanceId#$index';
@@ -583,6 +673,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   }
 
   Widget _buildGrantedSection(List<String> granted) {
+    final duplicateGrantNames = _namesForIds(_grantedConflictIds()).toSet();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -619,6 +711,16 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                 )
                 .toList(),
           ),
+          if (duplicateGrantNames.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              'Already assigned: ${duplicateGrantNames.join(', ')}. '
+              'Change another pick if you don\'t want to waste this grant.',
+              style: AppTextStyles.caption.copyWith(
+                color: Colors.orange,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -683,16 +785,22 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
             final current = slots[index];
-            final otherSelected = slots
+            final otherSelectedSameAllowance = slots
                 .asMap()
                 .entries
                 .where((entry) => entry.key != index)
                 .map((entry) => entry.value)
                 .whereType<String>()
                 .toSet();
+            final selectedInOtherAllowances = _selections.entries
+                .where((entry) => entry.key != allowance.id)
+                .expand((entry) => entry.value)
+                .whereType<String>()
+                .toSet();
             final reservedIds = <String>{
-              ...widget.reservedSkillIds,
-              ...otherSelected,
+              ..._effectiveReservedSkillIds,
+              ...otherSelectedSameAllowance,
+              ...selectedInOtherAllowances,
             };
             final availableOptions = ComponentSelectionGuard.filterAllowed(
               options: options,
