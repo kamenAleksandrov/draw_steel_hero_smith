@@ -16,10 +16,13 @@ class WardCard extends StatefulWidget {
   State<WardCard> createState() => _WardCardState();
 }
 
-class _WardCardState extends State<WardCard> with SingleTickerProviderStateMixin {
+class _WardCardState extends State<WardCard> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late bool _isExpanded;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -55,6 +58,7 @@ class _WardCardState extends State<WardCard> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final d = widget.component.data;
     final colorScheme = KitTheme.getColorScheme('ward');
     final theme = Theme.of(context);

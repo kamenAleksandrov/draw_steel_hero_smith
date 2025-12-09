@@ -1,7 +1,7 @@
 part of 'class_features_widget.dart';
 
 class _FeatureCard extends StatefulWidget {
-  const _FeatureCard({required this.feature, required this.widget});
+  const _FeatureCard({super.key, required this.feature, required this.widget});
 
   final Feature feature;
   final ClassFeaturesWidget widget;
@@ -10,14 +10,42 @@ class _FeatureCard extends StatefulWidget {
   State<_FeatureCard> createState() => _FeatureCardState();
 }
 
-class _FeatureCardState extends State<_FeatureCard> {
+class _FeatureCardState extends State<_FeatureCard>
+    with AutomaticKeepAliveClientMixin {
   bool _isExpanded = false;
+  bool _initialized = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   Feature get feature => widget.feature;
   ClassFeaturesWidget get w => widget.widget;
 
+  String get _storageKey => 'feature_card_expanded_${feature.id}';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      final bucket = PageStorage.of(context);
+      final stored = bucket.readState(context, identifier: _storageKey);
+      if (stored is bool) {
+        _isExpanded = stored;
+      }
+    }
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      PageStorage.of(context).writeState(context, _isExpanded, identifier: _storageKey);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final details = w.featureDetailsById[feature.id];
@@ -50,6 +78,7 @@ class _FeatureCardState extends State<_FeatureCard> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Header (always visible)
           _FeatureHeader(
@@ -57,22 +86,35 @@ class _FeatureCardState extends State<_FeatureCard> {
             featureStyle: featureStyle,
             grantType: grantType,
             isExpanded: _isExpanded,
-            onToggle: () => setState(() => _isExpanded = !_isExpanded),
+            onToggle: _toggleExpanded,
             widget: w,
           ),
-          // Expandable content
-          if (_isExpanded) ...[
-            Divider(
-              height: 1,
-              color: featureStyle.borderColor.withValues(alpha: 0.2),
+          // Expandable content with animated size
+          ClipRect(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _isExpanded
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Divider(
+                          height: 1,
+                          color: featureStyle.borderColor.withValues(alpha: 0.2),
+                        ),
+                        _FeatureContent(
+                          feature: feature,
+                          details: details,
+                          grantType: grantType,
+                          widget: w,
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
             ),
-            _FeatureContent(
-              feature: feature,
-              details: details,
-              grantType: grantType,
-              widget: w,
-            ),
-          ],
+          ),
         ],
       ),
     );

@@ -18,10 +18,13 @@ class ModifierCard extends StatefulWidget {
   State<ModifierCard> createState() => _ModifierCardState();
 }
 
-class _ModifierCardState extends State<ModifierCard> with SingleTickerProviderStateMixin {
+class _ModifierCardState extends State<ModifierCard> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late bool _isExpanded;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -69,6 +72,7 @@ class _ModifierCardState extends State<ModifierCard> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final d = widget.component.data;
     final kitType = _getKitType();
     final colorScheme = KitTheme.getColorScheme(kitType);

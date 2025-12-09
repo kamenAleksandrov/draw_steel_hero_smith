@@ -158,7 +158,8 @@ class StartingSkillsWidget extends StatefulWidget {
   State<StartingSkillsWidget> createState() => _StartingSkillsWidgetState();
 }
 
-class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
+class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
+    with AutomaticKeepAliveClientMixin {
   final StartingSkillsService _service = const StartingSkillsService();
   final SkillDataService _skillDataService = SkillDataService();
   final MapEquality<String, String?> _mapEquality =
@@ -167,6 +168,9 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
   final ListEquality<String> _listEquality = const ListEquality<String>();
 
   bool _isExpanded = false;
+
+  @override
+  bool get wantKeepAlive => true;
   bool _isLoading = true;
   String? _error;
 
@@ -482,6 +486,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     if (_isLoading) {
       return _buildContainer(
         child: const Padding(
@@ -536,8 +541,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
 
     return _buildContainer(
       child: ExpansionTile(
+        key: const PageStorageKey<String>('starting_skills_expansion'),
         tilePadding: const EdgeInsets.symmetric(horizontal: 12),
         initiallyExpanded: _isExpanded,
+        maintainState: true,
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(

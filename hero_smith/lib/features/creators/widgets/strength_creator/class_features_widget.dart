@@ -97,18 +97,21 @@ class ClassFeaturesWidget extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final levelNumber in levels)
-            if (grouped[levelNumber]?.isNotEmpty ?? false)
-              _LevelSection(
-                levelNumber: levelNumber,
-                currentLevel: level,
-                features: grouped[levelNumber]!,
-                widget: this,
-              ),
-        ],
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: levels.length,
+        itemBuilder: (context, index) {
+          final levelNumber = levels[index];
+          if (grouped[levelNumber]?.isEmpty ?? true) return const SizedBox.shrink();
+          return _LevelSection(
+            key: PageStorageKey<String>('class_features_level_$levelNumber'),
+            levelNumber: levelNumber,
+            currentLevel: level,
+            features: grouped[levelNumber]!,
+            widget: this,
+          );
+        },
       ),
     );
   }

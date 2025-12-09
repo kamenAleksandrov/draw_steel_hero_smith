@@ -61,6 +61,8 @@ there is some scroll error in the strenght. when i try to go back up a bit faste
 need to add a perks field to the features sheet
 
 there should be a way to show what condition immunities does a hero have
+
+add a gold/silver/copper to the wealth stat and make it have both.1
 ## hard
 
 on my phone some elements do not update on time
@@ -110,19 +112,17 @@ duplicate marks saveing the page for duplication wrongfully
 
 auto granted features must have theri names shown too
 
-in the strife page expanded cards close when they move out of sight and this move the app scroll and is annoying.
-
 level 10 features have more work to be fully functional.
 
 hero card does not update if i dont restrart the app
 
 the choose a characteristic level bonus is removed upon chosing a new value for the widgets and their picker below. this should be fixed.
 
-characteristics scores bonuses at higher levels do not save to the character
-
 changing class should prompt for confirmation
 
 the hero class skill and ther features bonuses do not save or grant their bonuses
+
+the options and gratns in the json logic should be noted.
 ### censor
 
 features do not grant the bonus skill form the domain.

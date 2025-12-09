@@ -18,12 +18,15 @@ class KitCard extends StatefulWidget {
   State<KitCard> createState() => _KitCardState();
 }
 
-class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
+class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   List<Component> _signatureAbilities = [];
   bool _loadingAbility = false;
   late bool _isExpanded;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -130,6 +133,7 @@ class _KitCardState extends State<KitCard> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final data = widget.component.data;
     final colorScheme = KitTheme.getColorScheme('kit');
     final theme = Theme.of(context);

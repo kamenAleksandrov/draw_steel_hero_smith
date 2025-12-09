@@ -45,13 +45,17 @@ class StartingPerksWidget extends ConsumerStatefulWidget {
       _StartingPerksWidgetState();
 }
 
-class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget> {
+class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
+    with AutomaticKeepAliveClientMixin {
   final StartingPerksService _service = const StartingPerksService();
   final MapEquality<String, String?> _mapEquality =
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
 
   bool _isExpanded = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   StartingPerkPlan? _plan;
   final Map<String, List<String?>> _selections = {};
@@ -259,6 +263,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final languagesAsync = ref.watch(componentsByTypeProvider('language'));
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
 
@@ -328,8 +333,10 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget> {
 
     return _buildContainer(
       child: ExpansionTile(
+        key: const PageStorageKey<String>('starting_perks_expansion'),
         tilePadding: const EdgeInsets.symmetric(horizontal: 12),
         initiallyExpanded: _isExpanded,
+        maintainState: true,
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(

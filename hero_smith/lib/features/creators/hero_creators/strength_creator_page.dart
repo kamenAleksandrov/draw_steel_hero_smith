@@ -28,7 +28,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
   final ClassDataService _classDataService = ClassDataService();
 
   bool _isLoading = true;
+  bool _isRefreshing = false;
   String? _error;
+  bool _hasLoadedOnce = false;
   ClassData? _classData;
   SubclassSelectionResult? _subclassSelection;
   int _selectedLevel = 1;
@@ -41,9 +43,11 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
     _load();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool showFullScreenLoader = false}) async {
+    final useFullScreenLoader = !_hasLoadedOnce || showFullScreenLoader;
     setState(() {
-      _isLoading = true;
+      _isLoading = useFullScreenLoader;
+      _isRefreshing = !useFullScreenLoader;
       _error = null;
     });
 
@@ -112,15 +116,31 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
             ? savedFeatureSelections
             : const {};
         _equipmentIds = equipmentIds;
+        _hasLoadedOnce = true;
         _isLoading = false;
+        _isRefreshing = false;
         _error = null;
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _error = 'Failed to load strength data: $e';
-        _isLoading = false;
-      });
+      if (!_hasLoadedOnce || showFullScreenLoader) {
+        setState(() {
+          _error = 'Failed to load strength data: $e';
+          _isLoading = false;
+          _isRefreshing = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+          _isRefreshing = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to refresh features: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -153,7 +173,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_error != null) {
+    if (_error != null && !_hasLoadedOnce) {
       return _NoticeCard(
         icon: Icons.error_outline,
         color: Colors.red,
@@ -221,17 +241,34 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
             'Choose a class first to load features.',
             textAlign: TextAlign.center,
           ),
-        ),
+      ),
       const SizedBox(height: 24),
     ];
 
-    return RefreshIndicator(
-      onRefresh: _load,
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        children: content,
-      ),
+    final listView = ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      addAutomaticKeepAlives: true,
+      children: content,
+    );
+
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: () => _load(),
+          child: listView,
+        ),
+        if (_isRefreshing)
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              ignoring: true,
+              child: LinearProgressIndicator(minHeight: 3),
+            ),
+          ),
+      ],
     );
   }
 

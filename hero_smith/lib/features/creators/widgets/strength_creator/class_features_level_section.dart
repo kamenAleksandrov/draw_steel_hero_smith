@@ -1,7 +1,8 @@
 part of 'class_features_widget.dart';
 
-class _LevelSection extends StatelessWidget {
+class _LevelSection extends StatefulWidget {
   const _LevelSection({
+    super.key,
     required this.levelNumber,
     required this.currentLevel,
     required this.features,
@@ -14,11 +15,21 @@ class _LevelSection extends StatelessWidget {
   final ClassFeaturesWidget widget;
 
   @override
+  State<_LevelSection> createState() => _LevelSectionState();
+}
+
+class _LevelSectionState extends State<_LevelSection>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final levelColor = FeatureTokens.getLevelColor(levelNumber);
-    final isUnlocked = levelNumber <= currentLevel;
+    final levelColor = FeatureTokens.getLevelColor(widget.levelNumber);
+    final isUnlocked = widget.levelNumber <= widget.currentLevel;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -36,14 +47,15 @@ class _LevelSection extends StatelessWidget {
         child: Theme(
           data: theme.copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
-            key: PageStorageKey<String>('level_$levelNumber'),
+            key: PageStorageKey<String>('level_${widget.levelNumber}'),
             initiallyExpanded: isUnlocked,
+            maintainState: true,
             tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             backgroundColor: scheme.surface,
             collapsedBackgroundColor: scheme.surface,
-            leading: _LevelBadge(level: levelNumber, isUnlocked: isUnlocked),
+            leading: _LevelBadge(level: widget.levelNumber, isUnlocked: isUnlocked),
             title: Text(
-              'Level $levelNumber Features',
+              'Level ${widget.levelNumber} Features',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isUnlocked
@@ -52,7 +64,7 @@ class _LevelSection extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              '${features.length} feature${features.length == 1 ? '' : 's'}',
+              '${widget.features.length} feature${widget.features.length == 1 ? '' : 's'}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
@@ -64,13 +76,21 @@ class _LevelSection extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    for (var i = 0; i < features.length; i++) ...[
-                      _FeatureCard(feature: features[i], widget: widget),
-                      if (i < features.length - 1) const SizedBox(height: 12),
-                    ],
-                  ],
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: widget.features.length,
+                  itemBuilder: (context, index) {
+                    final feature = widget.features[index];
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: index < widget.features.length - 1 ? 12 : 0),
+                      child: _FeatureCard(
+                        key: ValueKey(feature.id),
+                        feature: feature,
+                        widget: widget.widget,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

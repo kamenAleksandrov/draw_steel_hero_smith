@@ -40,13 +40,22 @@ class _OptionsSection extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Selection prompt for pick features (not for grants)
-        if (needsSelection && !isAutoApplied)
-          _SelectionPrompt(
-            selectionLimit: selectionLimit,
-            minimumRequired: minimumRequired,
+        // Selection prompt for pick features (not for grants) - animated to prevent layout jumps
+        ClipRect(
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            alignment: Alignment.topCenter,
+            child: (needsSelection && !isAutoApplied)
+                ? _SelectionPrompt(
+                    selectionLimit: selectionLimit,
+                    minimumRequired: minimumRequired,
+                  )
+                : const SizedBox.shrink(),
           ),
+        ),
 
         // Info messages
         for (final message in optionsContext.messages)
@@ -85,6 +94,7 @@ class _OptionsSection extends StatelessWidget {
           ...optionsContext.options.map((option) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: _OptionTile(
+                  key: ValueKey(ClassFeatureDataService.featureOptionKey(option)),
                   option: option,
                   feature: feature,
                   isSelected: effectiveSelections
@@ -374,6 +384,7 @@ class _AutoAppliedContent extends StatelessWidget {
 
 class _OptionTile extends StatefulWidget {
   const _OptionTile({
+    super.key,
     required this.option,
     required this.feature,
     required this.isSelected,
@@ -399,11 +410,39 @@ class _OptionTile extends StatefulWidget {
   State<_OptionTile> createState() => _OptionTileState();
 }
 
-class _OptionTileState extends State<_OptionTile> {
+class _OptionTileState extends State<_OptionTile>
+    with AutomaticKeepAliveClientMixin {
   bool _isExpanded = false;
+  bool _initialized = false;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  String get _storageKey => 'option_tile_expanded_${widget.feature.id}_${ClassFeatureDataService.featureOptionKey(widget.option)}';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      final bucket = PageStorage.of(context);
+      final stored = bucket.readState(context, identifier: _storageKey);
+      if (stored is bool) {
+        _isExpanded = stored;
+      }
+    }
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      PageStorage.of(context).writeState(context, _isExpanded, identifier: _storageKey);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final label = ClassFeatureDataService.featureOptionLabel(widget.option);
@@ -439,6 +478,7 @@ class _OptionTileState extends State<_OptionTile> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Main tile
           InkWell(
@@ -496,7 +536,7 @@ class _OptionTileState extends State<_OptionTile> {
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      onPressed: () => setState(() => _isExpanded = !_isExpanded),
+                      onPressed: _toggleExpanded,
                       visualDensity: VisualDensity.compact,
                       tooltip: _isExpanded ? 'Collapse' : 'Expand',
                     ),
@@ -504,32 +544,45 @@ class _OptionTileState extends State<_OptionTile> {
               ),
             ),
           ),
-          // Expanded details
-          if (_isExpanded && hasDetails) ...[
-            Divider(height: 1, color: borderColor.withValues(alpha: 0.3)),
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (description?.isNotEmpty ?? false) ...[
-                    Text(
-                      description!,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        height: 1.5,
-                      ),
-                    ),
-                    if (ability != null) const SizedBox(height: 12),
-                  ],
-                  if (ability != null)
-                    AbilityExpandableItem(
-                      component: _abilityMapToComponent(ability),
-                    ),
-                ],
-              ),
+          // Expanded details with animated size
+          ClipRect(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: (_isExpanded && hasDetails)
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(height: 1, color: borderColor.withValues(alpha: 0.3)),
+                        Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (description?.isNotEmpty ?? false) ...[
+                                Text(
+                                  description!,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: scheme.onSurfaceVariant,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                if (ability != null) const SizedBox(height: 12),
+                              ],
+                              if (ability != null)
+                                AbilityExpandableItem(
+                                  component: _abilityMapToComponent(ability),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
             ),
-          ],
+          ),
         ],
       ),
     );

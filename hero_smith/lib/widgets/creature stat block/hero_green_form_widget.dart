@@ -244,11 +244,15 @@ class AutoHeroGreenFormWidget extends ConsumerStatefulWidget {
   ConsumerState<AutoHeroGreenFormWidget> createState() => _AutoHeroGreenFormWidgetState();
 }
 
-class _AutoHeroGreenFormWidgetState extends ConsumerState<AutoHeroGreenFormWidget> {
+class _AutoHeroGreenFormWidgetState extends ConsumerState<AutoHeroGreenFormWidget> 
+    with AutomaticKeepAliveClientMixin {
   int _heroLevel = 1;
   String? _selectedFormId;
   bool _isLoading = true;
   bool _isGreenElementalist = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -342,6 +346,7 @@ class _AutoHeroGreenFormWidgetState extends ConsumerState<AutoHeroGreenFormWidge
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final content = _buildContent(context);
     if (content == null) {
       return const SizedBox.shrink();

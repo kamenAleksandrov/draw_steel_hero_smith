@@ -15,11 +15,16 @@ class AbilityExpandableItem extends StatefulWidget {
   State<AbilityExpandableItem> createState() => _AbilityExpandableItemState();
 }
 
-class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
+class _AbilityExpandableItemState extends State<AbilityExpandableItem>
+    with AutomaticKeepAliveClientMixin {
   bool _expanded = false;
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final ability = AbilityData.fromComponent(widget.component);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -59,6 +64,7 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,19 +81,32 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
                     ),
                   ],
                 ),
-                if (_expanded) ...[
-                  const SizedBox(height: 16),
-                  Divider(
-                    color: borderColor.withValues(alpha: 0.5),
-                    thickness: 1.1,
-                    height: 1.1,
+                ClipRect(
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: _expanded
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              Divider(
+                                color: borderColor.withValues(alpha: 0.5),
+                                thickness: 1.1,
+                                height: 1.1,
+                              ),
+                              const SizedBox(height: 16),
+                              AbilityFullView(
+                                component: widget.component,
+                                abilityData: ability,
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
-                  const SizedBox(height: 16),
-                  AbilityFullView(
-                    component: widget.component,
-                    abilityData: ability,
-                  ),
-                ],
+                ),
               ],
             ),
           ),

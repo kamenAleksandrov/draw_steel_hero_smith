@@ -30,7 +30,8 @@ class ClassFeaturesSection extends StatefulWidget {
   State<ClassFeaturesSection> createState() => _ClassFeaturesSectionState();
 }
 
-class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
+class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
+    with AutomaticKeepAliveClientMixin {
   final ClassFeatureDataService _service = ClassFeatureDataService();
 
   bool _isLoading = true;
@@ -38,6 +39,9 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
   ClassFeatureDataResult? _data;
   Map<String, Set<String>> _selections = const {};
   int _loadRequestId = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -262,6 +266,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     if (_isLoading) {
       return const Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -320,28 +325,26 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection> {
     // Extract grant_type metadata from class levels
     final grantTypeMap = _buildGrantTypeMap();
 
-    return SingleChildScrollView(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: double.infinity),
-        child: ClassFeaturesWidget(
-          level: widget.selectedLevel,
-          features: data.features,
-          featureDetailsById: data.featureDetailsById,
-          selectedOptions: _selections,
-          onSelectionChanged: _handleSelectionChanged,
-          domainLinkedFeatureIds: data.domainLinkedFeatureIds,
-          selectedDomainSlugs: domainSlugs,
-          deityLinkedFeatureIds: data.deityLinkedFeatureIds,
-          selectedDeitySlugs: deitySlugs,
-          abilityDetailsById: data.abilityDetailsById,
-          abilityIdByName: data.abilityIdByName,
-          activeSubclassSlugs: subclassSlugs,
-          subclassLabel: subclassLabel,
-          subclassSelection: widget.selectedSubclass,
-          grantTypeByFeatureName: grantTypeMap,
-          className: widget.classData.name,
-          equipmentIds: widget.equipmentIds,
-        ),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: double.infinity),
+      child: ClassFeaturesWidget(
+        level: widget.selectedLevel,
+        features: data.features,
+        featureDetailsById: data.featureDetailsById,
+        selectedOptions: _selections,
+        onSelectionChanged: _handleSelectionChanged,
+        domainLinkedFeatureIds: data.domainLinkedFeatureIds,
+        selectedDomainSlugs: domainSlugs,
+        deityLinkedFeatureIds: data.deityLinkedFeatureIds,
+        selectedDeitySlugs: deitySlugs,
+        abilityDetailsById: data.abilityDetailsById,
+        abilityIdByName: data.abilityIdByName,
+        activeSubclassSlugs: subclassSlugs,
+        subclassLabel: subclassLabel,
+        subclassSelection: widget.selectedSubclass,
+        grantTypeByFeatureName: grantTypeMap,
+        className: widget.classData.name,
+        equipmentIds: widget.equipmentIds,
       ),
     );
   }

@@ -1053,21 +1053,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       return false;
     }
 
-    if (_selectedArray == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a characteristic array')),
-      );
-      return false;
-    }
-
-    if (_assignedCharacteristics.length != _selectedArray!.values.length) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please assign all characteristic values')),
-      );
-      return false;
-    }
-
     return true;
   }
 

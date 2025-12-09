@@ -37,8 +37,12 @@ class HeroicResourceGauge extends StatefulWidget {
   State<HeroicResourceGauge> createState() => _HeroicResourceGaugeState();
 }
 
-class _HeroicResourceGaugeState extends State<HeroicResourceGauge> {
+class _HeroicResourceGaugeState extends State<HeroicResourceGauge>
+    with AutomaticKeepAliveClientMixin {
   bool _isExpanded = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   HeroicResourceProgression get progression => widget.progression;
   int get currentResource => widget.currentResource;
@@ -47,6 +51,7 @@ class _HeroicResourceGaugeState extends State<HeroicResourceGauge> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final resourceColor = _getResourceColor();

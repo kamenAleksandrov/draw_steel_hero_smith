@@ -20,10 +20,13 @@ class BaseTreasureCard extends StatefulWidget {
 }
 
 class _BaseTreasureCardState extends State<BaseTreasureCard> 
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -57,6 +60,7 @@ class _BaseTreasureCardState extends State<BaseTreasureCard>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final colorScheme = TreasureTheme.getColorScheme(widget.component.type);
     
     return Card(
