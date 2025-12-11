@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hero_smith/core/models/component.dart';
 import 'package:hero_smith/core/services/ability_data_service.dart';
 import 'package:hero_smith/core/theme/kit_theme.dart';
+import 'package:hero_smith/core/theme/semantic/semantic_tokens.dart';
 import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 
 class StormwightKitCard extends StatefulWidget {
@@ -392,17 +393,7 @@ class _StormwightKitCardState extends State<StormwightKitCard> with SingleTicker
               title: 'Primordial Storm',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: primordialStorm.map((e) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    e is Map<String, dynamic> ? e.values.first.toString() : e.toString(),
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-                    ),
-                  ),
-                )).toList(),
+                children: _buildPrimordialStormContent(primordialStorm, isDark),
               ),
               colorScheme: colorScheme,
               isDark: isDark,
@@ -712,5 +703,112 @@ class _StormwightKitCardState extends State<StormwightKitCard> with SingleTicker
       default: return key.replaceAll('_', ' ').split(' ')
           .map((w) => w[0].toUpperCase() + w.substring(1)).join(' ');
     }
+  }
+
+  List<Widget> _buildPrimordialStormContent(List primordialStorm, bool isDark) {
+    final widgets = <Widget>[];
+    String? description;
+    String? stormType;
+    String? damageType;
+
+    // Extract values from the primordial storm array
+    for (final item in primordialStorm) {
+      if (item is Map<String, dynamic>) {
+        if (item.containsKey('description')) {
+          description = item['description'] as String?;
+        }
+        if (item.containsKey('storm_type')) {
+          stormType = item['storm_type'] as String?;
+        }
+        if (item.containsKey('damage_type')) {
+          damageType = item['damage_type'] as String?;
+        }
+      }
+    }
+
+    // Add description if present
+    if (description != null && description.isNotEmpty) {
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Add storm type and damage type with labels
+    if (stormType != null || damageType != null) {
+      // Get damage type color and emoji
+      final damageColor = damageType != null 
+          ? DamageTokens.color(damageType.toLowerCase())
+          : null;
+      final damageEmoji = damageType != null 
+          ? DamageTokens.emoji(damageType.toLowerCase())
+          : '';
+
+      widgets.add(
+        Wrap(
+          spacing: 16,
+          runSpacing: 8,
+          children: [
+            if (stormType != null)
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Storm: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                    ),
+                    TextSpan(text: stormType),
+                  ],
+                ),
+              ),
+            if (damageType != null)
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: 'Damage Type: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
+                    ),
+                    TextSpan(
+                      text: damageEmoji.isNotEmpty ? '$damageEmoji $damageType' : damageType,
+                      style: TextStyle(
+                        color: damageColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    return widgets;
   }
 }

@@ -100,7 +100,8 @@
     "name": "Null Speed",
     "class": "null",
     "level": 1,
-    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score."
+    "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score.",
+    "grants": []
   },
   {
     "id": "feature_null_psionic_martial_arts",

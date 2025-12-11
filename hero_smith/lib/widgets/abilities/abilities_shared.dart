@@ -69,6 +69,7 @@ class AbilityTextHighlighter {
     // 3. Characteristic before <: "M < WEAK", "A < AVERAGE"
     // 4. Characteristic at start followed by < (for tier text): "^A < WEAK"
     // 5. Damage types: fire, cold, etc.
+    // 6. Characteristics in comma/or lists: "M, R, I, or P"
     final regex = RegExp(
       // Group 1-2: Potency with no space: M<weak
       r'([MARIP])<(' + potencyPattern + r')\b'
@@ -79,7 +80,11 @@ class AbilityTextHighlighter {
       // Group 6: Characteristic before damage keyword: "3 + A damage" or "A fire damage"
       r'|(?<=\+\s?)([MARIP])(?=\s+(?:' + damageTypesPattern + r')?\s*damage)'
       // Group 7: Standalone damage types
-      r'|\b(' + damageTypesPattern + r')\b(?=\s+damage|\s+immunity|\))',
+      r'|\b(' + damageTypesPattern + r')\b(?=\s+damage|\s+immunity|\))'
+      // Group 8: Characteristic after comma or "or" in a list context (e.g., "M, R, I, or P")
+      r'|(?<=,\s?)([MARIP])(?=\s|,|$)'
+      // Group 9: Characteristic after "or " (e.g., "or P")
+      r'|(?<=\bor\s)([MARIP])(?=\s|,|$)',
       caseSensitive: false,
     );
 
@@ -107,6 +112,9 @@ class AbilityTextHighlighter {
 
       // Damage type (group 7)
       final damageType = match.group(7);
+
+      // Characteristic in comma list (group 8) or after "or" (group 9)
+      final charInList = match.group(8) ?? match.group(9);
 
       if (potencyCharNoSpace != null && potencyStrengthNoSpace != null) {
         // Potency highlighting without space (e.g., "M<weak")
@@ -167,6 +175,15 @@ class AbilityTextHighlighter {
           text: emoji.isNotEmpty ? '$emoji $damageType' : damageType,
           style: baseStyle.copyWith(
             color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+      } else if (charInList != null) {
+        // Characteristic in a comma-separated list or after "or"
+        spans.add(TextSpan(
+          text: charInList,
+          style: baseStyle.copyWith(
+            color: CharacteristicTokens.color(charInList.toUpperCase()),
             fontWeight: FontWeight.bold,
           ),
         ));
