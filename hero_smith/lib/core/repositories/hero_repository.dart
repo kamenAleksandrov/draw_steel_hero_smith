@@ -202,14 +202,22 @@ class HeroMainStats {
   /// Get the progression index of the total size (for calculations)
   int get sizeIndex => sizeToIndex(sizeTotal);
   
-  int get speedTotal => speedBase + modValue(HeroModKeys.speed);
-  int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage);
-  int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability);
+  /// Feature bonuses (from class features, ancestry traits, perks, titles, etc.)
+  /// These are calculated from dynamic modifiers and shown separately in UI.
+  int get speedFeatureBonus => dynamicBonusFor('speed');
+  int get disengageFeatureBonus => dynamicBonusFor('disengage');
+  int get stabilityFeatureBonus => dynamicBonusFor('stability');
+  int get staminaFeatureBonus => dynamicBonusFor('stamina');
+  int get recoveriesFeatureBonus => dynamicBonusFor('recoveries');
+
+  int get speedTotal => speedBase + modValue(HeroModKeys.speed) + speedFeatureBonus;
+  int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage) + disengageFeatureBonus;
+  int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability) + stabilityFeatureBonus;
 
   int get staminaMaxEffective =>
-      staminaMaxBase + modValue(HeroModKeys.staminaMax);
+      staminaMaxBase + modValue(HeroModKeys.staminaMax) + staminaFeatureBonus;
   int get recoveriesMaxEffective =>
-      recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax);
+      recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax) + recoveriesFeatureBonus;
   int get surgesTotal => surgesCurrent + modValue(HeroModKeys.surges);
 
   /// Create a context for dynamic modifier calculations
@@ -362,6 +370,24 @@ class HeroRepository {
       setInt(_k.surgesCurrent, surgesCurrent),
       setInt(_k.heroicResourceCurrent, heroicResourceCurrent),
     ]);
+  }
+
+  /// Clamp current stamina to not exceed the max stamina.
+  /// Returns true if the value was clamped and updated, false otherwise.
+  Future<bool> clampCurrentStaminaToMax(
+    String heroId, {
+    required int currentStamina,
+    required int maxStamina,
+  }) async {
+    if (currentStamina > maxStamina) {
+      await _db.upsertHeroValue(
+        heroId: heroId,
+        key: _k.staminaCurrent,
+        value: maxStamina,
+      );
+      return true;
+    }
+    return false;
   }
 
   Future<void> updateHeroicResourceName(String heroId, String? name) async {
@@ -538,7 +564,7 @@ class HeroRepository {
   }
 
   /// Save equipment bonuses that have been applied to the hero.
-  /// Writes to hero_entries with source_type='kit' for the new system.
+  /// Stores in hero_values as the source of truth. Legacy hero_entries are cleared.
   Future<void> saveEquipmentBonuses(
     String heroId, {
     required int staminaBonus,
@@ -550,15 +576,14 @@ class HeroRepository {
     required int meleeDistanceBonus,
     required int rangedDistanceBonus,
   }) async {
-    // Write to hero_entries for the new system
-    await _entries.addEntry(
+    // Clear legacy hero_entries to avoid double application
+    await _db.clearHeroEntryType(heroId, 'equipment_bonuses');
+
+    // Persist to hero_values (source of truth)
+    await _db.upsertHeroValue(
       heroId: heroId,
-      entryType: 'equipment_bonuses',
-      entryId: 'combined_equipment_bonuses',
-      sourceType: 'kit',
-      sourceId: 'combined',
-      gainedBy: 'calculated',
-      payload: {
+      key: 'strife.equipment_bonuses',
+      jsonMap: {
         'stamina': staminaBonus,
         'speed': speedBonus,
         'stability': stabilityBonus,
@@ -573,7 +598,12 @@ class HeroRepository {
 
   /// Load equipment bonuses from hero_entries (new system) or legacy hero_values.
   Future<Map<String, int>> getEquipmentBonuses(String heroId) async {
-    // Try hero_entries first (new system)
+    // Source of truth: hero_values
+    final values = await _db.getHeroValues(heroId);
+    final parsed = _parseEquipmentBonuses(values);
+    if (parsed.isNotEmpty) return parsed;
+
+    // Fallback to legacy hero_entries for backward compatibility
     final entries = await _entries.listEntriesByType(heroId, 'equipment_bonuses');
     final bonusEntry = entries.firstWhereOrNull(
       (e) => e.entryId == 'combined_equipment_bonuses' && e.sourceType == 'kit',
@@ -596,9 +626,82 @@ class HeroRepository {
       } catch (_) {}
     }
     
-    // Fall back to legacy hero_values
+    return const {};
+  }
+
+  /// Load feature stat bonuses from hero_entries.
+  /// Returns aggregated bonuses from all feature_stat_bonus entries.
+  Future<Map<String, int>> getFeatureStatBonuses(String heroId) async {
+    final bonuses = <String, int>{};
+
+    // Source of truth: hero_values stored under strife.feature_stat_bonuses
     final values = await _db.getHeroValues(heroId);
-    return _parseEquipmentBonuses(values);
+    final hvRow = values.firstWhereOrNull((v) => v.key == 'strife.feature_stat_bonuses');
+    final hvRaw = hvRow?.jsonValue ?? hvRow?.textValue;
+    if (hvRaw != null && hvRaw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(hvRaw);
+        if (decoded is Map) {
+          for (final featureEntry in decoded.entries) {
+            final payload = featureEntry.value;
+            if (payload is! Map) continue;
+            for (final bonusEntry in payload.entries) {
+              final key = bonusEntry.key.toString();
+              final value = bonusEntry.value;
+
+              final statKey = switch (key) {
+                'speed_bonus' => 'speed',
+                'disengage_bonus' => 'disengage',
+                'stability_bonus' => 'stability',
+                'stamina_increase' => 'stamina',
+                'recoveries_bonus' => 'recoveries',
+                _ => key,
+              };
+
+              if (value is int) {
+                bonuses[statKey] = (bonuses[statKey] ?? 0) + value;
+              } else if (value is num) {
+                bonuses[statKey] = (bonuses[statKey] ?? 0) + value.toInt();
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (bonuses.isNotEmpty) return bonuses;
+
+    // Fallback to legacy hero_entries
+    final entries = await _entries.listEntriesByType(heroId, 'feature_stat_bonus');
+    for (final entry in entries) {
+      if (entry.payload == null) continue;
+      try {
+        final payload = jsonDecode(entry.payload!);
+        if (payload is! Map) continue;
+
+        for (final bonusEntry in payload.entries) {
+          final key = bonusEntry.key.toString();
+          final value = bonusEntry.value;
+
+          final statKey = switch (key) {
+            'speed_bonus' => 'speed',
+            'disengage_bonus' => 'disengage',
+            'stability_bonus' => 'stability',
+            'stamina_increase' => 'stamina',
+            'recoveries_bonus' => 'recoveries',
+            _ => key,
+          };
+
+          if (value is int) {
+            bonuses[statKey] = (bonuses[statKey] ?? 0) + value;
+          } else if (value is num) {
+            bonuses[statKey] = (bonuses[statKey] ?? 0) + value.toInt();
+          }
+        }
+      } catch (_) {}
+    }
+
+    return bonuses;
   }
 
   int _toIntOrZero(dynamic value) {

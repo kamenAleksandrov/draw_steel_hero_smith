@@ -129,6 +129,25 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       // Load equipment IDs for kit detection
       final equipmentIds = await repo.getEquipmentIds(widget.heroId);
 
+      // Re-apply class feature grants on load so new grant handlers (like
+      // grants[] speed/disengage bonuses) take effect even if the user doesn't
+      // change any selections in this session.
+      if (classData != null) {
+        try {
+          final db = ref.read(appDatabaseProvider);
+          final grantService = ClassFeatureGrantsService(db);
+          await grantService.applyClassFeatureSelections(
+            heroId: widget.heroId,
+            classData: classData,
+            level: hero.level,
+            selections: savedFeatureSelections,
+            subclassSelection: subclassSelection,
+          );
+        } catch (_) {
+          // Best-effort: keep loading UI even if re-apply fails.
+        }
+      }
+
       if (!mounted) return;
       setState(() {
         _classData = classData;

@@ -17,6 +17,7 @@ import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_bonus_service.dart';
+import '../../../core/services/kit_grants_service.dart';
 import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
 import '../../../core/services/skill_data_service.dart';
@@ -24,6 +25,7 @@ import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/subclass_service.dart';
+import '../../heroes/hero_sheet/main_stats/hero_main_stats_providers.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';
@@ -1448,54 +1450,46 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         }
       }
 
-      // 3.5. Calculate equipment bonuses from selected kits/augmentations/etc.
+      // 3.5. Apply kit grants (bonuses, abilities, stat mods like decrease_total) from selected equipment
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
-      final equippedIds = slotOrderedEquipmentIds
-          .where((id) => id != null && id.isNotEmpty)
-          .cast<String>()
-          .toList();
-
-      EquipmentBonuses equipmentBonuses = EquipmentBonuses.empty;
-      if (equippedIds.isNotEmpty) {
-        // Load equipment components
-        final equipmentComponents = <Component>[];
-        for (final equipmentId in equippedIds) {
-          final component = await db.getComponentById(equipmentId);
-          if (component != null) {
-            final parsedData = component.dataJson.isNotEmpty
-                ? await _parseJson(component.dataJson) ?? {}
+      
+      // Use KitGrantsService to apply all kit grants
+      final kitGrantsService = KitGrantsService(db);
+      await kitGrantsService.applyKitGrants(
+        heroId: widget.heroId,
+        equipmentIds: slotOrderedEquipmentIds,
+        heroLevel: _selectedLevel,
+      );
+      
+      // Calculate equipment bonuses for stamina/speed/stability display
+      final bonusService = const KitBonusService();
+      final selectedEquipment = <Component>[];
+      for (final id in slotOrderedEquipmentIds) {
+        if (id != null) {
+          final dbComponent = await db.getComponentById(id);
+          if (dbComponent != null) {
+            // Convert database Component to model Component
+            final data = dbComponent.dataJson.isNotEmpty
+                ? jsonDecode(dbComponent.dataJson) as Map<String, dynamic>
                 : <String, dynamic>{};
-            equipmentComponents.add(Component(
-              id: component.id,
-              type: component.type,
-              name: component.name,
-              data: Map<String, dynamic>.from(parsedData),
+            selectedEquipment.add(Component(
+              id: dbComponent.id,
+              type: dbComponent.type,
+              name: dbComponent.name,
+              data: data,
+              source: dbComponent.source,
+              parentId: dbComponent.parentId,
             ));
           }
         }
-
-        // Calculate bonuses
-        const kitBonusService = KitBonusService();
-        equipmentBonuses = kitBonusService.calculateBonuses(
-          equipment: equipmentComponents,
-          heroLevel: _selectedLevel,
-        );
       }
-
-      // Persist equipment selection (including empty slots) for other screens
+      final equipmentBonuses = bonusService.calculateBonuses(
+        equipment: selectedEquipment,
+        heroLevel: _selectedLevel,
+      );
+      
+      // Also save equipment IDs separately for other screens
       updates.add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
-      // Save equipment bonuses (or clear if empty)
-      updates.add(repo.saveEquipmentBonuses(
-        widget.heroId,
-        staminaBonus: equipmentBonuses.staminaBonus,
-        speedBonus: equipmentBonuses.speedBonus,
-        stabilityBonus: equipmentBonuses.stabilityBonus,
-        disengageBonus: equipmentBonuses.disengageBonus,
-        meleeDamageBonus: equipmentBonuses.meleeDamageBonus,
-        rangedDamageBonus: equipmentBonuses.rangedDamageBonus,
-        meleeDistanceBonus: equipmentBonuses.meleeDistanceBonus,
-        rangedDistanceBonus: equipmentBonuses.rangedDistanceBonus,
-      ));
 
       // 4. Save selected characteristic array name
       if (_selectedArray != null) {
@@ -1586,11 +1580,17 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         );
       }
 
-      // 6. Calculate and save Stamina (class base + level scaling + equipment bonus)
+      // 5.5. Load feature stat bonuses (from class features like "stamina_increase: 21")
+      // Note: speed/disengage bonuses may be characteristic-based ("Agility") so they're
+      // computed at runtime via dynamicModifiers, not added here.
+      final featureStatBonuses = await repo.getFeatureStatBonuses(widget.heroId);
+      final featureStaminaBonus = featureStatBonuses['stamina'] ?? 0;
+
+      // 6. Calculate and save Stamina (class base + level scaling + equipment bonus + feature bonus)
       final baseMaxStamina = startingChars.baseStamina +
           (startingChars.staminaPerLevel * (_selectedLevel - 1));
       final effectiveMaxStamina =
-          baseMaxStamina + equipmentBonuses.staminaBonus;
+          baseMaxStamina + equipmentBonuses.staminaBonus + featureStaminaBonus;
       updates.add(repo.updateVitals(
         widget.heroId,
         staminaMax: baseMaxStamina,
@@ -1760,6 +1760,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       await Future.wait(updates);
 
       if (!mounted) return;
+
+      // Invalidate providers so UI reflects the saved data
+      ref.invalidate(heroEquipmentBonusesProvider(widget.heroId));
+      ref.invalidate(heroValuesProvider(widget.heroId));
+      ref.invalidate(heroAssemblyProvider(widget.heroId));
 
       // Update local state with the new saved IDs
       _savedSubclassSkillId = subclassSkillId;

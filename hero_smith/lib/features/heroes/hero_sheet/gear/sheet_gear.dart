@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/data/downtime_data_source.dart';
-import '../../../core/db/providers.dart';
-import '../../../core/models/class_data.dart';
-import '../../../core/models/component.dart' as model;
-import '../../../core/models/downtime.dart';
-import '../../../core/repositories/hero_repository.dart';
-import '../../../core/services/class_data_service.dart';
-import '../../../core/services/kit_bonus_service.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../widgets/treasures/treasures.dart';
-import 'main_stats/hero_main_stats_providers.dart';
+import '../../../../core/data/downtime_data_source.dart';
+import '../../../../core/db/providers.dart';
+import '../../../../core/models/class_data.dart';
+import '../../../../core/models/component.dart' as model;
+import '../../../../core/models/downtime.dart';
+import '../../../../core/repositories/hero_repository.dart';
+import '../../../../core/services/class_data_service.dart';
+import '../../../../core/services/kit_grants_service.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../widgets/treasures/treasures.dart';
+import '../main_stats/hero_main_stats_providers.dart';
 
 String _kitTypeDisplayName(String type) {
   switch (type) {
@@ -621,6 +621,7 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
   final Map<String, model.Component> _kitCache = {};
   bool _isLoading = true;
   String? _error;
+  String? _heroClassName; // Stored for class-based equipment filtering
 
   @override
   void initState() {
@@ -659,8 +660,28 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
 
       // Load all kit-type components that match allowed types
       final allComponents = await ref.read(allComponentsProvider.future);
+      
+      // Normalize class name for comparison (strip 'class_' prefix, lowercase)
+      final normalizedClassName = className?.toLowerCase().replaceFirst('class_', '');
+      
       final kits = allComponents
-          .where((c) => allowedTypes.contains(c.type))
+          .where((c) {
+            // First check if type is allowed
+            if (!allowedTypes.contains(c.type)) return false;
+            
+            // Then check class restrictions (available_to_classes)
+            final availableToClasses = c.data['available_to_classes'];
+            if (availableToClasses == null) {
+              // No class restriction, available to all
+              return true;
+            }
+            if (availableToClasses is List && normalizedClassName != null) {
+              return availableToClasses
+                  .map((e) => e.toString().toLowerCase())
+                  .contains(normalizedClassName);
+            }
+            return true;
+          })
           .toList()
         ..sort((a, b) => a.name.compareTo(b.name));
 
@@ -684,6 +705,7 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
           _equipmentSlots = slots;
           _equippedSlotIds = alignedEquipped;
           _equippedKitIds = equippedActive;
+          _heroClassName = className;
           _kitCache
             ..clear()
             ..addAll(cache);
@@ -1086,6 +1108,7 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
 
       ref.invalidate(heroRepositoryProvider);
       ref.invalidate(heroEquipmentBonusesProvider(widget.heroId));
+      ref.invalidate(heroValuesProvider(widget.heroId));
 
       final equippedActive = updatedSlots.whereType<String>().toList();
       _kitCache[kit.id] = kit;
@@ -1116,67 +1139,19 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
 
   Future<void> _recalculateAndSaveBonuses(
       HeroRepository heroRepo, List<String?> equipmentSlotIds) async {
-    final normalizedIds = equipmentSlotIds
-        .whereType<String>()
-        .where((id) => id.isNotEmpty)
-        .toList();
-
-    if (normalizedIds.isEmpty) {
-      await heroRepo.saveEquipmentBonuses(
-        widget.heroId,
-        staminaBonus: 0,
-        speedBonus: 0,
-        stabilityBonus: 0,
-        disengageBonus: 0,
-        meleeDamageBonus: 0,
-        rangedDamageBonus: 0,
-        meleeDistanceBonus: 0,
-        rangedDistanceBonus: 0,
-      );
-      return;
-    }
-
+    final db = ref.read(appDatabaseProvider);
     final level = await heroRepo.getHeroLevel(widget.heroId);
-    final equippedComponents = <model.Component>[];
-    for (final kitId in normalizedIds) {
-      final component = _findKitById(kitId);
-      if (component != null) {
-        equippedComponents.add(component);
-      }
-    }
-
-    if (equippedComponents.isEmpty) {
-      await heroRepo.saveEquipmentBonuses(
-        widget.heroId,
-        staminaBonus: 0,
-        speedBonus: 0,
-        stabilityBonus: 0,
-        disengageBonus: 0,
-        meleeDamageBonus: 0,
-        rangedDamageBonus: 0,
-        meleeDistanceBonus: 0,
-        rangedDistanceBonus: 0,
-      );
-      return;
-    }
-
-    const kitBonusService = KitBonusService();
-    final bonuses = kitBonusService.calculateBonuses(
-      equipment: equippedComponents,
+    
+    // Use KitGrantsService to apply all kit grants (including stat mods like decrease_total)
+    final kitGrantsService = KitGrantsService(db);
+    await kitGrantsService.applyKitGrants(
+      heroId: widget.heroId,
+      equipmentIds: equipmentSlotIds,
       heroLevel: level,
     );
-
-    await heroRepo.saveEquipmentBonuses(
-      widget.heroId,
-      staminaBonus: bonuses.staminaBonus,
-      speedBonus: bonuses.speedBonus,
-      stabilityBonus: bonuses.stabilityBonus,
-      disengageBonus: bonuses.disengageBonus,
-      meleeDamageBonus: bonuses.meleeDamageBonus,
-      rangedDamageBonus: bonuses.rangedDamageBonus,
-      meleeDistanceBonus: bonuses.meleeDistanceBonus,
-      rangedDistanceBonus: bonuses.rangedDistanceBonus,
-    );
+    
+    // Also invalidate hero assembly to reload stat mods
+    ref.invalidate(heroAssemblyProvider(widget.heroId));
   }
 
   model.Component? _findKitById(String kitId) {

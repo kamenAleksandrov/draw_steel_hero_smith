@@ -289,6 +289,9 @@ class KitGrantsService {
 
     // Store stat bonuses as hero_entries
     await _storeKitStatBonuses(heroId, kit, heroLevel);
+
+    // Process decrease_total (e.g., for wards that reduce saving throw value)
+    await _processDecreaseTotalBonus(heroId, kit);
   }
 
   Future<void> _applyKitOptionGrants(
@@ -406,6 +409,46 @@ class KitGrantsService {
       sourceType: 'kit',
       entryType: 'kit_stat_bonus',
     );
+    await _entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'kit',
+      entryType: 'stat_mod',
+    );
+  }
+
+  /// Process decrease_total bonus from equipment (e.g., wards that reduce saving throw)
+  Future<void> _processDecreaseTotalBonus(
+    String heroId,
+    model.Component kit,
+  ) async {
+    final data = kit.data;
+    final decreaseTotal = data['decrease_total'];
+    
+    if (decreaseTotal == null) return;
+    
+    if (decreaseTotal is Map) {
+      final stat = (decreaseTotal['stat'] as String?)?.toLowerCase() ?? '';
+      final value = _parseIntOrNull(decreaseTotal['value']) ?? 0;
+      
+      if (stat.isNotEmpty && value != 0) {
+        // Normalize stat name for storage (e.g., "saving throw" -> "saving_throw")
+        final normalizedStat = stat.replaceAll(' ', '_');
+        
+        // Store as a stat mod entry with negative value (decrease)
+        // Use the format expected by _mergeStatMods: { "stat_name": value }
+        await _entries.addEntry(
+          heroId: heroId,
+          entryType: 'stat_mod',
+          entryId: '${kit.id}_decrease_$normalizedStat',
+          sourceType: 'kit',
+          sourceId: kit.id,
+          gainedBy: 'grant',
+          payload: {
+            normalizedStat: -value, // Negative because it decreases the total
+          },
+        );
+      }
+    }
   }
 
   Future<String> _resolveAbilityId(String abilityName) async {

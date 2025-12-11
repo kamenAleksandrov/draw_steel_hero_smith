@@ -101,7 +101,7 @@
     "class": "null",
     "level": 1,
     "description": "The flow of psionic power through you allows you to achieve high velocity. You gain a bonus to speed and to the number of squares you can shift when you take the Disengage move action equal to your Agility score.",
-    "grants": []
+    "grants": [{ "speed_bonus": "Agility" }, { "disengage_bonus": "Agility" }]
   },
   {
     "id": "feature_null_psionic_martial_arts",
@@ -279,7 +279,8 @@
     "name": "I Am the Weapon",
     "class": "null",
     "level": 9,
-    "description": "Your Stamina increases by 21 and you can't be made bleeding even while dying. You no longer age or have need of food. Additionally, you can use Intuition instead of another characteristic when resisting potencies."
+    "description": "Your Stamina increases by 21 and you can't be made bleeding even while dying. You no longer age or have need of food. Additionally, you can use Intuition instead of another characteristic when resisting potencies.",
+    "grants": [{ "stamina_increase": 21 }, { "condition_immunity": "bleeding" }]
   },
   {
     "id": "feature_null_discipline_mastery_improvement",

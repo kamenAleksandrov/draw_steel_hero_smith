@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 
 import '../db/app_database.dart' as db;
@@ -76,6 +78,13 @@ class ClassFeatureGrantsService {
 
     // Remove existing class feature grants for this hero
     await _clearAllClassFeatureGrants(heroId);
+
+    // Clear stored feature stat bonuses in hero_values (source of truth)
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.feature_stat_bonuses',
+      jsonMap: const {},
+    );
 
     // Process each applicable feature
     for (final feature in applicableFeatures) {
@@ -257,6 +266,9 @@ class ClassFeatureGrantsService {
 
     // Process title grants if present
     await _processTitleGrants(heroId, feature.id, details);
+
+    // Process top-level grants array (for stat bonuses, condition immunities, etc.)
+    await _processGrantsArray(heroId, feature.id, details, activeSubclassSlugs);
   }
 
   bool _optionMatchesSubclass(
@@ -479,6 +491,158 @@ class ClassFeatureGrantsService {
       sourceId: featureId,
       gainedBy: 'grant',
     );
+  }
+
+  /// Process the top-level "grants" array in a feature.
+  /// 
+  /// Handles various grant types:
+  /// - speed_bonus: Grants speed bonus (may be static or linked to characteristic)
+  /// - disengage_bonus: Grants disengage bonus (may be static or linked to characteristic)
+  /// - stamina_increase: Grants stamina increase
+  /// - condition_immunity: Grants immunity to a condition
+  /// - ability: Grants an ability
+  /// - skill: Grants a skill
+  /// - language: Grants a language
+  Future<void> _processGrantsArray(
+    String heroId,
+    String featureId,
+    Map<String, dynamic> details,
+    Set<String> activeSubclassSlugs,
+  ) async {
+    final grants = details['grants'];
+    if (grants is! List) return;
+
+    // Collect stat bonuses to merge into a single hero_values entry later
+    final statBonuses = <String, dynamic>{};
+    final conditionImmunities = <String>[];
+
+    for (final grant in grants) {
+      if (grant is! Map<String, dynamic>) continue;
+
+      // Check if this grant is subclass-specific
+      if (!_optionMatchesSubclass(grant, activeSubclassSlugs)) continue;
+
+      // Process each type of grant
+      for (final entry in grant.entries) {
+        final key = entry.key;
+        final value = entry.value;
+
+        // Skip subclass keys
+        if (_subclassOptionKeys.contains(key)) continue;
+
+        switch (key) {
+          // Stat bonuses (may be static int or characteristic name like "Agility")
+          case 'speed_bonus':
+          case 'disengage_bonus':
+          case 'stability_bonus':
+          case 'stamina_increase':
+          case 'recoveries_bonus':
+            statBonuses[key] = value;
+            break;
+
+          // Condition immunity
+          case 'condition_immunity':
+            if (value is String && value.isNotEmpty) {
+              conditionImmunities.add(value);
+            }
+            break;
+
+          // Ability grant
+          case 'ability':
+            if (value is String && value.isNotEmpty) {
+              final abilityId = await _resolveAbilityId(value);
+              await _entries.addEntry(
+                heroId: heroId,
+                entryType: 'ability',
+                entryId: abilityId,
+                sourceType: 'class_feature',
+                sourceId: featureId,
+                gainedBy: 'grant',
+              );
+            }
+            break;
+
+          // Skill grant
+          case 'skill':
+            if (value is String && value.isNotEmpty) {
+              final skillId = await _resolveSkillId(value);
+              if (skillId != null) {
+                await _entries.addEntry(
+                  heroId: heroId,
+                  entryType: 'skill',
+                  entryId: skillId,
+                  sourceType: 'class_feature',
+                  sourceId: featureId,
+                  gainedBy: 'grant',
+                );
+              }
+            }
+            break;
+
+          // Language grant
+          case 'language':
+            if (value is String && value.isNotEmpty) {
+              await _entries.addEntry(
+                heroId: heroId,
+                entryType: 'language',
+                entryId: 'language_${ClassFeatureDataService.slugify(value)}',
+                sourceType: 'class_feature',
+                sourceId: featureId,
+                gainedBy: 'grant',
+                payload: {'name': value},
+              );
+            }
+            break;
+
+          default:
+            // Store other grants generically in payload for future use
+            break;
+        }
+      }
+    }
+
+    // Store stat bonuses into hero_values under strife.feature_stat_bonuses
+    // We keep a map keyed by featureId to preserve source
+    if (statBonuses.isNotEmpty) {
+      // Load existing map (if any) to merge with other features
+      final values = await _db.getHeroValues(heroId);
+      final hvRow = values.firstWhereOrNull((v) => v.key == 'strife.feature_stat_bonuses');
+      Map<String, dynamic> combined = {};
+      final raw = hvRow?.jsonValue ?? hvRow?.textValue;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          combined = Map<String, dynamic>.from(jsonDecode(raw));
+        } catch (_) {
+          combined = {};
+        }
+      }
+
+      combined[featureId] = statBonuses;
+
+      // Clear legacy hero_entries for feature_stat_bonus to avoid double counting
+      await _db.clearHeroEntryType(heroId, 'feature_stat_bonus');
+
+      await _db.upsertHeroValue(
+        heroId: heroId,
+        key: 'strife.feature_stat_bonuses',
+        jsonMap: combined,
+      );
+    }
+
+    // Store condition immunities
+    if (conditionImmunities.isNotEmpty) {
+      for (final condition in conditionImmunities) {
+        await _entries.addEntry(
+          heroId: heroId,
+          entryType: 'condition_immunity',
+          entryId: 'immunity_$condition',
+          sourceType: 'class_feature',
+          sourceId: featureId,
+          gainedBy: 'grant',
+          payload: {'condition': condition},
+        );
+      }
+    }
   }
 
   List<String> _normalizeToList(dynamic value) {

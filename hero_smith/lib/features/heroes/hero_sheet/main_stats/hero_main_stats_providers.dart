@@ -84,6 +84,21 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
   // Heroic resource name from hero_values
   final heroicResourceName = readText('heroic.resource');
 
+  // Build dynamic modifiers from hero_values + feature stat bonuses stored in hero_values
+  final baseDynamicMods = DynamicModifierList.fromJsonString(
+    readText('dynamic_modifiers'),
+  );
+
+  final featureBonusMap = _parseFeatureStatBonusMap(values);
+  var featureDynamicMods = _buildFeatureStatBonusDynamicModifiersFromMap(featureBonusMap);
+
+  // Fallback to assembly-derived entries for backward compatibility
+  if (featureDynamicMods.modifiers.isEmpty) {
+    featureDynamicMods = _buildFeatureStatBonusDynamicModifiersFromAssembly(assembly);
+  }
+
+  final dynamicModifiers = baseDynamicMods.add(featureDynamicMods.modifiers);
+
   return HeroMainStats(
     victories: readInt('score.victories'),
     exp: readInt('score.exp'),
@@ -113,9 +128,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
     userModifications: userModifications,
     choiceModifications: choiceModifications,
     equipmentBonuses: equipmentBonuses,
-    dynamicModifiers: DynamicModifierList.fromJsonString(
-      readText('dynamic_modifiers'),
-    ),
+    dynamicModifiers: dynamicModifiers,
   );
 }
 
@@ -191,6 +204,140 @@ String? _statToModKey(String stat) {
     'renown' => HeroModKeys.renown,
     _ => null,
   };
+}
+
+/// Map bonus key from JSON to stat name
+String? _bonusKeyToStat(String key) {
+  return switch (key) {
+    'speed_bonus' => 'speed',
+    'disengage_bonus' => 'disengage',
+    'stability_bonus' => 'stability',
+    'stamina_increase' => 'stamina',
+    'recoveries_bonus' => 'recoveries',
+    _ => null,
+  };
+}
+
+/// Normalize characteristic name for formula parameter
+String? _normalizeCharacteristic(String value) {
+  final lower = value.toLowerCase();
+  return switch (lower) {
+    'might' => 'might',
+    'agility' => 'agility',
+    'reason' => 'reason',
+    'intuition' => 'intuition',
+    'presence' => 'presence',
+    _ => null,
+  };
+}
+
+/// Parse feature stat bonuses stored in hero_values under strife.feature_stat_bonuses.
+/// Returns a map keyed by featureId -> payload map.
+Map<String, dynamic> _parseFeatureStatBonusMap(List<db.HeroValue> values) {
+  final row = values.firstWhereOrNull((v) => v.key == 'strife.feature_stat_bonuses');
+  final raw = row?.jsonValue ?? row?.textValue;
+  if (raw == null || raw.isEmpty) return const {};
+  try {
+    final decoded = jsonDecode(raw);
+    if (decoded is Map<String, dynamic>) {
+      return decoded;
+    }
+  } catch (_) {}
+  return const {};
+}
+
+/// Build dynamic modifiers from a feature bonus map stored in hero_values.
+DynamicModifierList _buildFeatureStatBonusDynamicModifiersFromMap(
+    Map<String, dynamic> featureBonusMap) {
+  if (featureBonusMap.isEmpty) return DynamicModifierList.empty();
+
+  final modifiers = <DynamicModifier>[];
+
+  for (final entry in featureBonusMap.entries) {
+    final sourceId = entry.key;
+    final payload = entry.value;
+    if (payload is! Map) continue;
+
+    final source = 'class_feature:$sourceId';
+
+    for (final bonusEntry in payload.entries) {
+      final key = bonusEntry.key.toString();
+      final value = bonusEntry.value;
+
+      final stat = _bonusKeyToStat(key);
+      if (stat == null) continue;
+
+      if (value is int) {
+        modifiers.add(DynamicModifier(
+          stat: stat,
+          formulaType: FormulaType.fixed,
+          formulaParam: value.toString(),
+          source: source,
+        ));
+      } else if (value is String) {
+        final characteristic = _normalizeCharacteristic(value);
+        if (characteristic != null) {
+          modifiers.add(DynamicModifier(
+            stat: stat,
+            formulaType: FormulaType.characteristic,
+            formulaParam: characteristic,
+            source: source,
+          ));
+        }
+      }
+    }
+  }
+
+  return DynamicModifierList(modifiers);
+}
+
+/// Legacy: build dynamic modifiers from assembly feature_stat_bonus hero_entries.
+DynamicModifierList _buildFeatureStatBonusDynamicModifiersFromAssembly(
+    HeroAssembly? assembly) {
+  if (assembly == null) return DynamicModifierList.empty();
+  final modifiers = <DynamicModifier>[];
+
+  for (final entry in assembly.featureStatBonuses) {
+    if (entry.payload == null) continue;
+
+    try {
+      final payload = jsonDecode(entry.payload!);
+      if (payload is! Map) continue;
+
+      final source = 'class_feature:${entry.sourceId}';
+
+      for (final bonusEntry in payload.entries) {
+        final key = bonusEntry.key.toString();
+        final value = bonusEntry.value;
+
+        final stat = _bonusKeyToStat(key);
+        if (stat == null) continue;
+
+        if (value is int) {
+          modifiers.add(DynamicModifier(
+            stat: stat,
+            formulaType: FormulaType.fixed,
+            formulaParam: value.toString(),
+            source: source,
+          ));
+        } else if (value is String) {
+          final characteristic = _normalizeCharacteristic(value);
+          if (characteristic != null) {
+            modifiers.add(DynamicModifier(
+              stat: stat,
+              formulaType: FormulaType.characteristic,
+              formulaParam: characteristic,
+              source: source,
+            ));
+          }
+        }
+      }
+    } catch (_) {
+      // Skip malformed entries
+    }
+  }
+
+  return DynamicModifierList(modifiers);
 }
 
 /// Add equipment bonuses to the modifications map.

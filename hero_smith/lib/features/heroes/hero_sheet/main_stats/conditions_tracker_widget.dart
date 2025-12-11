@@ -8,6 +8,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
 
+/// Information about a condition immunity and its source
+class ConditionImmunityInfo {
+  final String conditionId;
+  final String conditionName;
+  final String sourceType;
+  final String sourceId;
+  final String? sourceName; // Human-readable source name
+
+  const ConditionImmunityInfo({
+    required this.conditionId,
+    required this.conditionName,
+    required this.sourceType,
+    required this.sourceId,
+    this.sourceName,
+  });
+}
+
 enum ConditionEndType {
   endOfTurn,
   saveEnds,
@@ -75,6 +92,7 @@ class _ConditionsTrackerWidgetState
   int _saveEndsBase = 6;
   int _saveEndsMod = 0;
   final List<TrackedCondition> _trackedConditions = [];
+  List<ConditionImmunityInfo> _conditionImmunities = [];
 
   int get _saveEndsTotal => _saveEndsBase + _saveEndsMod;
 
@@ -82,6 +100,7 @@ class _ConditionsTrackerWidgetState
   void initState() {
     super.initState();
     _loadTrackedConditions();
+    _loadConditionImmunities();
   }
 
   Future<void> _loadTrackedConditions() async {
@@ -104,12 +123,30 @@ class _ConditionsTrackerWidgetState
 
       // Load save ends base value
       final saveEndsBase = readInt('conditions.save_ends', defaultValue: 6);
-      final saveEndsMod = hero.modifications['conditions_save_ends_mod'] ?? 0;
+      
+      // Load user's manual modifier
+      final userMod = hero.modifications['conditions_save_ends_mod'] ?? 0;
+      
+      // Load modifiers from assembly (ancestry, kit, complication sources)
+      int assemblyMod = 0;
+      try {
+        final assemblyAsync = ref.read(heroAssemblyProvider(widget.heroId));
+        final assembly = assemblyAsync.valueOrNull;
+        if (assembly != null) {
+          // Check for saving_throw stat mod
+          assemblyMod = assembly.statMods.getTotalForStat('saving_throw');
+        }
+      } catch (_) {
+        // Assembly not available yet, ignore
+      }
+      
+      // Total mod is user mod + assembly mod
+      final totalMod = userMod + assemblyMod;
       
       if (mounted) {
         setState(() {
           _saveEndsBase = saveEndsBase;
-          _saveEndsMod = saveEndsMod;
+          _saveEndsMod = totalMod;
         });
       }
 
@@ -137,6 +174,95 @@ class _ConditionsTrackerWidgetState
       }
     } catch (e) {
       // Failed to load, but that's okay - start with empty state
+    }
+  }
+
+  /// Load condition immunities from hero_entries via HeroAssembly
+  Future<void> _loadConditionImmunities() async {
+    try {
+      final assemblyAsync = ref.read(heroAssemblyProvider(widget.heroId));
+      final assembly = assemblyAsync.valueOrNull;
+      if (assembly == null || !mounted) return;
+
+      final immunities = <ConditionImmunityInfo>[];
+      
+      for (final entry in assembly.conditionImmunities) {
+        // Parse the condition name from the entry
+        String conditionName = entry.entryId;
+        
+        // Try to extract condition name from payload
+        if (entry.payload != null) {
+          try {
+            final payload = jsonDecode(entry.payload!);
+            if (payload is Map) {
+              conditionName = payload['condition']?.toString() ?? 
+                              payload['conditionName']?.toString() ?? 
+                              entry.entryId;
+            }
+          } catch (_) {}
+        }
+        
+        // Clean up the condition name (remove prefixes like "immunity_")
+        if (conditionName.startsWith('immunity_')) {
+          conditionName = conditionName.substring('immunity_'.length);
+        }
+        
+        // Capitalize first letter
+        if (conditionName.isNotEmpty) {
+          conditionName = conditionName[0].toUpperCase() + conditionName.substring(1);
+        }
+        
+        // Get source name
+        String? sourceName = _getSourceName(entry.sourceType, entry.sourceId);
+        
+        immunities.add(ConditionImmunityInfo(
+          conditionId: entry.entryId,
+          conditionName: conditionName,
+          sourceType: entry.sourceType,
+          sourceId: entry.sourceId,
+          sourceName: sourceName,
+        ));
+      }
+
+      if (mounted) {
+        setState(() {
+          _conditionImmunities = immunities;
+        });
+      }
+    } catch (e) {
+      // Failed to load immunities, continue without them
+    }
+  }
+
+  /// Get a human-readable name for the source of an immunity
+  String? _getSourceName(String sourceType, String sourceId) {
+    // Format source type for display
+    switch (sourceType) {
+      case 'class_feature':
+        // Extract feature name from ID (e.g., "feature_null_i_am_the_weapon" -> "I Am the Weapon")
+        var name = sourceId;
+        if (name.startsWith('feature_')) {
+          // Remove "feature_" prefix and class name
+          final parts = name.split('_');
+          if (parts.length > 2) {
+            // Skip "feature" and class name, join the rest
+            name = parts.skip(2).map((p) => 
+              p.isEmpty ? '' : '${p[0].toUpperCase()}${p.substring(1)}'
+            ).join(' ');
+          }
+        }
+        return 'Feature: $name';
+      case 'ancestry':
+        return 'Ancestry Trait';
+      case 'perk':
+        return 'Perk';
+      case 'title':
+        return 'Title';
+      case 'equipment':
+      case 'kit':
+        return 'Equipment';
+      default:
+        return sourceType;
     }
   }
 
@@ -643,6 +769,82 @@ class _ConditionsTrackerWidgetState
                 onPressed: _showAddConditionDialog,
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Add Condition'),
+              ),
+            ),
+            
+            // Condition Immunities section
+            if (_conditionImmunities.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+              _buildConditionImmunitiesSection(context),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConditionImmunitiesSection(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.shield_outlined, size: 16, color: theme.colorScheme.primary),
+            const SizedBox(width: 6),
+            Text(
+              'Condition Immunities',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final immunity in _conditionImmunities)
+              _buildImmunityChip(context, immunity),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImmunityChip(BuildContext context, ConditionImmunityInfo immunity) {
+    final theme = Theme.of(context);
+    
+    return Tooltip(
+      message: immunity.sourceName ?? 'Unknown source',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.colorScheme.primary.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.block,
+              size: 14,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              immunity.conditionName,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

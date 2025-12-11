@@ -65,6 +65,8 @@ there should be a way to show what condition immunities does a hero have
 add a gold/silver/copper to the wealth stat and make it have both.1
 
 Characteristics in the ability cards color only the first characteristics letter.
+
+favourite kits dont show all bonuses
 ## hard
 
 on my phone some elements do not update on time
@@ -126,6 +128,8 @@ features must have ui updated to handle options, grants and other such cases bet
 features do not grant the bonus skill form the domain.
 ### conduit
 
+cconduit wards show too and bastion ward does not grant its bonus to the save throws  
+
 the conduit has extra generation methods and prayer effects that must take their information from the features file where we have the piety generation and the prayer effect. the prayer must be seen in the 1d3 generation and the piety in the piety feature
 
 the strenght triggered actions mark the 2 options
@@ -160,6 +164,8 @@ null 9th level am the weapon gives +21 stamina which should be reflected in the 
 ### shadow
 
 ### tactician
+
+tacticison healt not right, has 2 kits must have both and gain the biggest bonus. swaping favourites does not swap the 2 kits properly it gives only 1 and i cant see the 2 kits in the abilities
 
 ### talent
 

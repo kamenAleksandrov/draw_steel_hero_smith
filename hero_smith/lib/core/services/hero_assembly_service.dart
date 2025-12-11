@@ -146,6 +146,7 @@ class HeroAssemblyService {
     final traits = byType['ancestry_trait'] ?? const [];
     final classFeatures = byType['class_feature'] ?? const [];
     final conditionImmunities = byType['condition_immunity'] ?? const [];
+    final featureStatBonuses = byType['feature_stat_bonus'] ?? const [];
 
     // === GROUPED BY SOURCE ===
     final abilitiesBySource = groupBySource(abilities);
@@ -237,6 +238,7 @@ class HeroAssemblyService {
       traits: traits,
       classFeatures: classFeatures,
       conditionImmunities: conditionImmunities,
+      featureStatBonuses: featureStatBonuses,
       // Grouped by source
       abilitiesBySource: abilitiesBySource,
       skillsBySource: skillsBySource,

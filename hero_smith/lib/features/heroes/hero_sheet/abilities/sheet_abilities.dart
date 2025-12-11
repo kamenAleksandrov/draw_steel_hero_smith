@@ -303,6 +303,7 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
       await _recalculateAndSaveEquipmentBonuses(repo, db, slotOrderedIds);
 
       ref.invalidate(heroEquipmentBonusesProvider(widget.heroId));
+      ref.invalidate(heroValuesProvider(widget.heroId));
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

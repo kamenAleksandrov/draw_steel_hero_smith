@@ -60,6 +60,7 @@ class HeroAssembly {
   final List<db.HeroEntry> traits; // ancestry traits
   final List<db.HeroEntry> classFeatures;
   final List<db.HeroEntry> conditionImmunities;
+  final List<db.HeroEntry> featureStatBonuses; // feature-granted stat bonuses
 
   // ===========================================================================
   // CONTENT GROUPED BY SOURCE (sourceType:sourceId)
@@ -115,6 +116,7 @@ class HeroAssembly {
     this.traits = const [],
     this.classFeatures = const [],
     this.conditionImmunities = const [],
+    this.featureStatBonuses = const [],
     // Grouped by source
     this.abilitiesBySource = const {},
     this.skillsBySource = const {},
