@@ -13,7 +13,7 @@ import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_bonus_service.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/treasures/treasures.dart';
-import 'state/hero_main_stats_providers.dart';
+import 'main_stats/hero_main_stats_providers.dart';
 
 String _kitTypeDisplayName(String type) {
   switch (type) {

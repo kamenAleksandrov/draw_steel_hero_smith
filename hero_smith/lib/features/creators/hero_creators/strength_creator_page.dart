@@ -102,8 +102,29 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         );
       }
 
-      final savedFeatureSelections =
+      var savedFeatureSelections =
           await repo.getFeatureSelections(widget.heroId);
+      // Detect subclass changes and clear stale feature grants/selections so
+      // features from a previous subclass are not kept.
+      try {
+        final db = ref.read(appDatabaseProvider);
+        final grantService = ClassFeatureGrantsService(db);
+        final storedSubclassKey =
+            (await grantService.loadSubclassKey(widget.heroId))?.trim();
+        final currentSubclassKey = subclassSelection?.subclassKey?.trim();
+        final subclassChanged = (storedSubclassKey ?? '') !=
+            (currentSubclassKey ?? '');
+
+        if (subclassChanged) {
+          // Remove old class feature grants and clear persisted selections.
+          await grantService.removeClassFeatureGrants(widget.heroId);
+          await repo.saveFeatureSelections(widget.heroId, const {});
+          savedFeatureSelections = const {};
+        }
+      } catch (_) {
+        // If cleanup fails, continue with existing selections; a future save
+        // will still re-apply correct grants.
+      }
       
       // Load equipment IDs for kit detection
       final equipmentIds = await repo.getEquipmentIds(widget.heroId);

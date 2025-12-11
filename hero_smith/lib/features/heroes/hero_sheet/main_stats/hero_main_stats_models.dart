@@ -81,6 +81,10 @@ class HeroicResourceDetails {
     this.inCombatDescription,
     this.outCombatName,
     this.outCombatDescription,
+    this.strainName,
+    this.strainDescription,
+    this.canBeNegative = false,
+    this.negativeFormula,
   });
 
   final String name;
@@ -89,6 +93,41 @@ class HeroicResourceDetails {
   final String? inCombatDescription;
   final String? outCombatName;
   final String? outCombatDescription;
+  final String? strainName;
+  final String? strainDescription;
+  /// Whether this resource can go below zero (e.g., Talent's Clarity can be strained).
+  final bool canBeNegative;
+  /// Formula for calculating the minimum (most negative) value, e.g., "-(1 + Reason)".
+  final String? negativeFormula;
+
+  /// Calculate the minimum allowed value based on the formula and hero's stats.
+  /// Returns 0 if canBeNegative is false or formula is null.
+  int calculateMinValue({int reasonScore = 0}) {
+    if (!canBeNegative || negativeFormula == null) return 0;
+    
+    // Parse formula like "-(1 + Reason)"
+    final formula = negativeFormula!.toLowerCase().trim();
+    
+    // Handle "-(X + Reason)" pattern
+    final match = RegExp(r'-\s*\(\s*(\d+)\s*\+\s*reason\s*\)').firstMatch(formula);
+    if (match != null) {
+      final baseValue = int.tryParse(match.group(1) ?? '0') ?? 0;
+      return -(baseValue + reasonScore);
+    }
+    
+    // Handle simple "-Reason" pattern
+    if (formula == '-reason') {
+      return -reasonScore;
+    }
+    
+    // Handle numeric value
+    final numericValue = int.tryParse(formula);
+    if (numericValue != null) {
+      return numericValue;
+    }
+    
+    return 0;
+  }
 }
 
 /// Request key for fetching heroic resource details.

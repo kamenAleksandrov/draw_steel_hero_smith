@@ -16,7 +16,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../../widgets/creature stat block/hero_green_form_widget.dart';
 import '../downtime/hero_downtime_tracking_page.dart';
-import '../state/hero_main_stats_providers.dart';
+import 'hero_main_stats_providers.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
 import 'hero_main_stats_models.dart';
@@ -83,6 +83,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   HeroMainStats? _latestStats;
   HeroStatModifications _ancestryMods = const HeroStatModifications.empty();
   bool _isApplying = false;
+  
+  /// The minimum value the heroic resource can reach (0 for most classes, negative for Talent).
+  /// This is dynamically calculated based on class features and the hero's Reason score.
+  int _heroicResourceMinValue = 0;
+  
+  /// Cached resource details for calculating min value
+  HeroicResourceDetails? _cachedResourceDetails;
 
   @override
   void initState() {
@@ -220,6 +227,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         value = value.clamp(0, max);
         break;
       case _NumericField.heroicResourceCurrent:
+        // Use dynamic min value based on class (can be negative for Talent)
+        value = value.clamp(_heroicResourceMinValue, 999);
+        break;
       case _NumericField.surgesCurrent:
         value = value.clamp(0, 999);
         break;
@@ -320,6 +330,19 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         ),
       ),
     );
+    
+    // Update heroic resource min value when details or reason score changes
+    final resourceDetails = resourceDetailsAsync.valueOrNull;
+    if (resourceDetails != null) {
+      final newMinValue = resourceDetails.calculateMinValue(
+        reasonScore: effectiveStats.reasonTotal,
+      );
+      if (_heroicResourceMinValue != newMinValue || _cachedResourceDetails != resourceDetails) {
+        _heroicResourceMinValue = newMinValue;
+        _cachedResourceDetails = resourceDetails;
+      }
+    }
+    
     return _buildContent(context, effectiveStats, resourceDetailsAsync);
   }
 
@@ -1717,7 +1740,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         final resourceName = details?.name ?? stats.heroicResourceName ?? 'Resource';
         final hasDetails = (details?.description ?? '').isNotEmpty ||
             (details?.inCombatDescription ?? '').isNotEmpty ||
-            (details?.outCombatDescription ?? '').isNotEmpty;
+            (details?.outCombatDescription ?? '').isNotEmpty ||
+            (details?.strainDescription ?? '').isNotEmpty;
+        
+        // Calculate minimum value for resources that can go negative
+        final minValue = details?.calculateMinValue(reasonScore: stats.reasonTotal) ?? 0;
+        final canBeNegative = details?.canBeNegative ?? false;
 
         return Padding(
           padding: const EdgeInsets.only(left: 12),
@@ -1755,17 +1783,32 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 borderRadius: BorderRadius.circular(6),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  child: Text(
-                    value.toString(),
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        value.toString(),
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: value < 0 ? Colors.red : null,
+                        ),
+                      ),
+                      if (canBeNegative) ...[
+                        const SizedBox(width: 4),
+                        Text(
+                          '(min: $minValue)',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
               const SizedBox(height: 4),       
               _buildResourceGenerationButtons(context, stats),
-              _buildHeroicResourceSpendButtons(context, stats),
+              _buildHeroicResourceSpendButtons(context, stats, minValue: minValue),
               const SizedBox(height: 6),
             ],
           ),
@@ -1822,13 +1865,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Widget _buildHeroicResourceSpendButtons(BuildContext context, HeroMainStats stats) {
+  Widget _buildHeroicResourceSpendButtons(BuildContext context, HeroMainStats stats, {int minValue = 0}) {
     const amounts = [1, 3, 5, 7, 9, 11];
     return Wrap(
       spacing: 4,
       runSpacing: 4,
       children: amounts.map((amount) {
-        final enabled = stats.heroicResourceCurrent >= amount;
+        // Button is enabled if spending this amount won't go below the minimum
+        final resultingValue = stats.heroicResourceCurrent - amount;
+        final enabled = resultingValue >= minValue;
         return _buildHeroicResourceButton(
           context,
           label: '-$amount',
@@ -2334,9 +2379,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (stats == null) return;
 
     final current = stats.heroicResourceCurrent;
-    if (current < amount) return;
-
     final newValue = current - amount;
+    
+    // Check against dynamic minimum (can be negative for classes like Talent)
+    if (newValue < _heroicResourceMinValue) return;
+
     await _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
   }
 
@@ -2999,6 +3046,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   const SizedBox(height: 4),
                   Text(
                     details!.outCombatDescription!,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if ((details?.strainDescription ?? '').isNotEmpty) ...[
+                  Text(
+                    details?.strainName ?? 'Strain',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: Colors.red.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    details!.strainDescription!,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ],

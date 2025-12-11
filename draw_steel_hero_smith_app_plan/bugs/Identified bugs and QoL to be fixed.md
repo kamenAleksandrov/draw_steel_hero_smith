@@ -63,6 +63,8 @@ need to add a perks field to the features sheet
 there should be a way to show what condition immunities does a hero have
 
 add a gold/silver/copper to the wealth stat and make it have both.1
+
+Characteristics in the ability cards color only the first characteristics letter.
 ## hard
 
 on my phone some elements do not update on time
@@ -146,15 +148,10 @@ would be cool to have the mantle of essence like the fury or null growing resour
 
 ### fury
 
-1rst level strength page primordial aspect shows as choice required but the choice is already made in the strife page 
-
 the primordial storm type and its damage type in the kits should be displayed better
-
 ### null
 
 the null must get bonus to speed and disengage equal to agility
- 
-the null has acces to only the Density Augmentation, Force Augmentation and Speed Augmentations
 
 the psi boosts are not loaded into the class, i think creating a ui for them would be appropriate.
 
@@ -162,13 +159,9 @@ null 9th level am the weapon gives +21 stamina which should be reflected in the 
 
 ### shadow
 
-shadow firt level colledge feature was missing so i added it. whats important is to make sure that the cod can handle 2 entries in the json for the subclass and grant them both
-
 ### tactician
 
 ### talent
-
-the talent is the only class that can go into negative heroic resource and must be handled in the code and json.
 
 ### troubadour
 

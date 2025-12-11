@@ -61,6 +61,17 @@ final heroicResourceDetailsProvider =
         outCombatDescription = outCombat['description']?.toString();
       }
 
+      String? strainName;
+      String? strainDescription;
+      final strain = entry['strain'];
+      if (strain is Map) {
+        strainName = strain['name']?.toString();
+        strainDescription = strain['description']?.toString();
+      }
+
+      final canBeNegative = entry['can_be_negative'] == true;
+      final negativeFormula = entry['negative_formula']?.toString();
+
       final details = HeroicResourceDetails(
         name: name,
         description: description,
@@ -68,6 +79,10 @@ final heroicResourceDetailsProvider =
         inCombatDescription: inCombatDescription,
         outCombatName: outCombatName,
         outCombatDescription: outCombatDescription,
+        strainName: strainName,
+        strainDescription: strainDescription,
+        canBeNegative: canBeNegative,
+        negativeFormula: negativeFormula,
       );
       heroicResourceCache[slug] = details;
       return details;

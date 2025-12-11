@@ -18,6 +18,7 @@ class EquipmentSlot {
     required this.selectedItemId,
     required this.onChanged,
     this.helperText,
+    this.classId,
   });
 
   final String label;
@@ -25,6 +26,8 @@ class EquipmentSlot {
   final String? selectedItemId;
   final ValueChanged<String?> onChanged;
   final String? helperText;
+  /// The class ID to filter equipment that has class restrictions (e.g., psionic_augmentation)
+  final String? classId;
 }
 
 /// Compact section that renders all equipment and modification requirements together.
@@ -205,21 +208,20 @@ class _EquipmentSlotTile extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  final result = await showDialog<String?>(
-                    context: context,
-                    builder: (dialogContext) => _EquipmentSelectionDialog(
-                      slotLabel: slot.label,
-                      allowedTypes: allowedTypes,
-                      currentItemId: slot.selectedItemId,
-                      canRemove: slot.selectedItemId != null,
-                    ),
-                  );
-
-                  if (result == null) {
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final result = await showDialog<String?>(
+                      context: context,
+                      builder: (dialogContext) => _EquipmentSelectionDialog(
+                        slotLabel: slot.label,
+                        allowedTypes: allowedTypes,
+                        currentItemId: slot.selectedItemId,
+                        canRemove: slot.selectedItemId != null,
+                        classId: slot.classId,
+                      ),
+                    );                  if (result == null) {
                     return;
                   }
                   if (result == EquipmentAndModificationsWidget._removeSignal) {
@@ -398,12 +400,15 @@ class _EquipmentSelectionDialog extends ConsumerStatefulWidget {
     required this.allowedTypes,
     required this.currentItemId,
     required this.canRemove,
+    this.classId,
   });
 
   final String slotLabel;
   final List<String> allowedTypes;
   final String? currentItemId;
   final bool canRemove;
+  /// The class ID to filter equipment with class restrictions (e.g., psionic_augmentation)
+  final String? classId;
 
   @override
   ConsumerState<_EquipmentSelectionDialog> createState() =>
@@ -575,9 +580,32 @@ class _EquipmentSelectionDialogState
 
     return category.data.when(
       data: (items) {
+        // First, filter by class restrictions (available_to_classes)
+        var classFiltered = items;
+        if (widget.classId != null) {
+          classFiltered = items.where((item) {
+            final availableToClasses = item.data['available_to_classes'];
+            if (availableToClasses == null) {
+              // No class restriction, available to all
+              return true;
+            }
+            if (availableToClasses is List) {
+              // Normalize the class ID for comparison (strip 'class_' prefix, lowercase)
+              final normalizedClassId = widget.classId!
+                  .toLowerCase()
+                  .replaceFirst('class_', '');
+              return availableToClasses
+                  .map((e) => e.toString().toLowerCase())
+                  .contains(normalizedClassId);
+            }
+            return true;
+          }).toList();
+        }
+
+        // Then filter by search query
         final filtered = query.isEmpty
-            ? items
-            : items.where((item) {
+            ? classFiltered
+            : classFiltered.where((item) {
                 final name = item.name.toLowerCase();
                 final description =
                     (item.data['description'] as String?)?.toLowerCase() ?? '';

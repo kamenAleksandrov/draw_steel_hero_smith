@@ -12,7 +12,7 @@ import '../../../../core/services/class_data_service.dart';
 import '../../../../core/services/kit_bonus_service.dart';
 import '../../../../core/services/perk_grants_service.dart';
 import '../../../../core/theme/kit_theme.dart';
-import '../state/hero_main_stats_providers.dart';
+import '../main_stats/hero_main_stats_providers.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/ability_summary.dart';

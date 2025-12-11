@@ -220,7 +220,7 @@ class HeroAssemblyService {
         'heroic_current': intVal('heroic.current'),
       },
       userMods: mapIntVal('mods.map'),
-      level: intVal('stats.level', 1),
+      level: intVal('basics.level', 1),
       // Resistances
       resistances: resistances,
       resistanceEntries: resistanceEntries,

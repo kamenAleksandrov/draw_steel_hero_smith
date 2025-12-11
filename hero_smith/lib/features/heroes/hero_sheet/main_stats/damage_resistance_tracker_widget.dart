@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/models/damage_resistance_model.dart';
 import '../../../../core/services/ancestry_bonus_service.dart';
-import '../state/hero_main_stats_providers.dart';
+import 'hero_main_stats_providers.dart';
 
 /// Widget for tracking damage immunities and weaknesses.
 /// Displays a merged view where immunity and weakness are additive:

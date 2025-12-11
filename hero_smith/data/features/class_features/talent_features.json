@@ -25,6 +25,8 @@
   {
     "id": "feature_talent_clarity_and_strain",
     "type": "heroic resource",
+    "can_be_negative": true,
+    "negative_formula": "-(1 + Reason)",
     "name": "Clarity and Strain",
     "class": "talent",
     "level": 1,

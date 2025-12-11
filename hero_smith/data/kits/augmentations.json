@@ -48,9 +48,9 @@
       "3rd_echelon": null
     },
     "disengage_bonus": null,
-    "incompatible_with_kit": true
+    "incompatible_with_kit": true,
+    "available_to_classes": ["talent"]
   },
-
   {
     "id": "distance_augmentation",
     "type": "psionic_augmentation",
@@ -61,16 +61,17 @@
       "2nd_echelon": 2,
       "3rd_echelon": 2
     },
-    "keywords": ["Ranged", "Psionic"]
+    "keywords": ["Ranged", "Psionic"],
+    "available_to_classes": ["talent"]
   },
-  
   {
     "id": "density_augmentation",
     "type": "psionic_augmentation",
     "name": "Density Augmentation",
     "description": "You gain a +6 bonus to Stamina, and this bonus increases by 6 at 4th, 7th, and 10th levels. Additionally, you gain a +1 bonus to stability.",
     "stamina_bonus": 6,
-    "stability_bonus": 1
+    "stability_bonus": 1,
+    "available_to_classes": ["null", "talent"]
   },
   {
     "id": "force_augmentation",
@@ -78,7 +79,8 @@
     "name": "Force Augmentation",
     "description": "Your damage-dealing psionic abilities gain a +1 bonus to rolled damage.",
     "damage_bonus": 1,
-    "keywords": ["Psionic"]
+    "keywords": ["Psionic"],
+    "available_to_classes": ["null", "talent"]
   },
   {
     "id": "speed_augmentation",
@@ -86,6 +88,7 @@
     "name": "Speed Augmentation",
     "description": "You gain a +1 bonus to speed and to the distance you can shift when you take the Disengage move action.",
     "speed_bonus": 1,
-    "disengage_bonus": 1
+    "disengage_bonus": 1,
+    "available_to_classes": ["null", "talent"]
   }
 ]

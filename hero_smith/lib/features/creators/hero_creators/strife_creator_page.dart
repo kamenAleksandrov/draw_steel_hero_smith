@@ -115,6 +115,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   List<String?> _selectedKitIds = [];
   /// The skill ID saved in config as granted by the current subclass (to avoid self-flagging)
   String? _savedSubclassSkillId;
+  /// The class ID that was loaded from the database (to detect class changes on save)
+  String? _savedClassId;
 
   @override
   void initState() {
@@ -230,6 +232,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             (c) => c.classId == hero.className,
             orElse: () => _classDataService.getAllClasses().first);
         _selectedClass = classData;
+        _savedClassId = classData.classId; // Track the saved class for change detection
 
         // Load characteristic array if available
         final arrayConfig =
@@ -1074,6 +1077,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
                 : null,
             onChanged: (kitId) => _handleKitChangedAtSlot(currentIndex, kitId),
             helperText: helperText,
+            classId: _selectedClass?.classId,
           ),
         );
         kitIndex++;
@@ -1397,6 +1401,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     final startingChars = classData.startingCharacteristics;
 
     try {
+      // Check if the class has changed - if so, clear all previous strife data first
+      final classChanged = _savedClassId != null && _savedClassId != classData.classId;
+      if (classChanged) {
+        debugPrint('Class changed from $_savedClassId to ${classData.classId} - clearing old strife data');
+        await repo.clearStrifeData(widget.heroId);
+      }
+
       final updates = <Future>[];
 
       // 1. Save level
@@ -1644,21 +1655,20 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         weak: '$weakPotency',
       ));
 
-      // 10. Save selected abilities to database
+      // 10. Save selected abilities to database (replaces all previous abilities)
       final selectedAbilityIds = _selectedAbilities.values
           .whereType<String>()
           .where((id) => id.isNotEmpty)
           .toList();
 
-      if (selectedAbilityIds.isNotEmpty) {
-        updates.add(
-          ref.read(appDatabaseProvider).setHeroComponentIds(
-                heroId: widget.heroId,
-                category: 'ability',
-                componentIds: selectedAbilityIds,
-              ),
-        );
-      }
+      // Always save abilities (even if empty, to clear old ones)
+      updates.add(
+        ref.read(appDatabaseProvider).setHeroComponentIds(
+              heroId: widget.heroId,
+              category: 'ability',
+              componentIds: selectedAbilityIds,
+            ),
+      );
 
       // 10b. Save strife ability slot selections separately for proper restoration
       updates.add(db.setHeroConfig(
@@ -1671,13 +1681,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
       updates.add(repo.saveSubclassSkill(widget.heroId, subclassSkillId));
 
-      // Get the previously saved subclass skill ID to remove it from hero_components
-      final previousSubclassSkillConfig = await db.getHeroConfigValue(
-        widget.heroId,
-        'strife.subclass_skill_id',
-      );
-      final previousSubclassSkillId = previousSubclassSkillConfig?['id']?.toString();
-
       // Save the new subclass skill ID for future reference
       if (subclassSkillId != null && subclassSkillId.isNotEmpty) {
         updates.add(db.setHeroConfig(
@@ -1689,21 +1692,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         updates.add(db.deleteHeroConfig(widget.heroId, 'strife.subclass_skill_id'));
       }
 
-      // 12. Save selected skills to database (merge with existing story skills)
-      // Get existing skills from database
-      final existingComponents = await db.getHeroComponents(widget.heroId);
-      var existingSkillIds = existingComponents
-          .where((c) => c['category'] == 'skill')
-          .map((c) => c['componentId'] as String)
-          .toSet();
-
-      // Remove previous subclass skill from existing skills (if it changed)
-      if (previousSubclassSkillId != null &&
-          previousSubclassSkillId.isNotEmpty &&
-          previousSubclassSkillId != subclassSkillId) {
-        existingSkillIds = existingSkillIds.difference({previousSubclassSkillId});
-      }
-
+      // 12. Save selected skills to database
+      // After clearStrifeData, only story-sourced skills remain - we add new strife selections
       // Collect strife-selected skills (NOT including subclass skill - that's tracked via entries)
       final strifeSkillIds = _selectedSkills.values
           .whereType<String>()
@@ -1711,53 +1701,55 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           .toSet();
       final grantSkillIds = Set<String>.from(_skillGrantIds);
 
-      // Merge: keep existing story skills + new strife skills + grants
-      // Note: subclass skill is NOT added here - it's tracked separately via hero_entries
-      final mergedSkillIds = existingSkillIds
+      // Get story-sourced skills (from ancestry, career, complication, culture)
+      // These are preserved across class changes
+      final storySkillIds = _dbSavedSkillIds;
+
+      // Combine: story skills + new strife skills + class grants
+      // Note: subclass skill is tracked separately via hero_entries with sourceType='subclass'
+      final mergedSkillIds = storySkillIds
           .union(strifeSkillIds)
           .union(grantSkillIds);
 
-      if (mergedSkillIds.isNotEmpty) {
-        updates.add(
-          db.setHeroComponentIds(
-            heroId: widget.heroId,
-            category: 'skill',
-            componentIds: mergedSkillIds.toList(),
-          ),
-        );
-      }
+      // Save all skills (setHeroComponentIds replaces the 'skill' category for manual_choice source)
+      updates.add(
+        db.setHeroComponentIds(
+          heroId: widget.heroId,
+          category: 'skill',
+          componentIds: mergedSkillIds.toList(),
+        ),
+      );
 
-      // 11b. Save strife skill slot selections separately for proper restoration
+      // 12b. Save strife skill slot selections separately for proper restoration
       updates.add(db.setHeroConfig(
         heroId: widget.heroId,
         configKey: 'strife.skill_selections',
         value: _selectedSkills.map((k, v) => MapEntry(k, v)),
       ));
 
-      // 12. Save selected perks to database (merge with existing story perks)
-      final existingPerkIds = existingComponents
-          .where((c) => c['category'] == 'perk')
-          .map((c) => c['componentId'] as String)
-          .toSet();
-
+      // 13. Save selected perks to database
+      // After clearStrifeData, only story-sourced perks remain
       final strifePerkIds = _selectedPerks.values
           .whereType<String>()
           .where((id) => id.isNotEmpty)
           .toSet();
 
-      final mergedPerkIds = existingPerkIds.union(strifePerkIds);
+      // Get story-sourced perks (from ancestry, career, complication, culture)
+      final storyPerkIds = _dbSavedPerkIds;
 
-      if (mergedPerkIds.isNotEmpty) {
-        updates.add(
-          db.setHeroComponentIds(
-            heroId: widget.heroId,
-            category: 'perk',
-            componentIds: mergedPerkIds.toList(),
-          ),
-        );
-      }
+      // Combine: story perks + new strife perks
+      final mergedPerkIds = storyPerkIds.union(strifePerkIds);
 
-      // 12b. Save strife perk slot selections separately for proper restoration
+      // Save all perks (setHeroComponentIds replaces the 'perk' category for manual_choice source)
+      updates.add(
+        db.setHeroComponentIds(
+          heroId: widget.heroId,
+          category: 'perk',
+          componentIds: mergedPerkIds.toList(),
+        ),
+      );
+
+      // 13b. Save strife perk slot selections separately for proper restoration
       updates.add(db.setHeroConfig(
         heroId: widget.heroId,
         configKey: 'strife.perk_selections',
@@ -1769,8 +1761,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       if (!mounted) return;
 
-      // Update local state with the new saved subclass skill ID
+      // Update local state with the new saved IDs
       _savedSubclassSkillId = subclassSkillId;
+      _savedClassId = classData.classId; // Update saved class ID after successful save
 
       setState(() {
         _isDirty = false;

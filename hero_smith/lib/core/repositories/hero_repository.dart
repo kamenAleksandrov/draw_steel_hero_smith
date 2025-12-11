@@ -388,8 +388,10 @@ class HeroRepository {
   }
 
   Future<void> updateSubclass(String heroId, String? subclass) async {
+    // Always clear existing subclass entries first to avoid duplicates
+    await _db.clearHeroEntryType(heroId, 'subclass');
+    
     if (subclass == null || subclass.isEmpty) {
-      await _db.clearHeroEntryType(heroId, 'subclass');
       // Also clear legacy hero_values
       await _db.upsertHeroValue(heroId: heroId, key: _k.subclass, textValue: '');
       return;
@@ -605,6 +607,67 @@ class HeroRepository {
     if (value is num) return value.toInt();
     if (value is String) return int.tryParse(value) ?? 0;
     return 0;
+  }
+
+  // ===========================================================================
+  // CLEAR STRIFE DATA (for class change)
+  // ===========================================================================
+
+  /// Clears all strife-related data when changing to a different class.
+  /// This removes class, subclass, deity, domain, equipment, abilities (from strife),
+  /// skills (from strife), perks (from strife), and all strife config values.
+  /// Story-sourced data (ancestry, career, complication) is preserved.
+  Future<void> clearStrifeData(String heroId) async {
+    // Clear hero_entries for strife-related entry types
+    await _db.clearHeroEntryType(heroId, 'class');
+    await _db.clearHeroEntryType(heroId, 'subclass');
+    await _db.clearHeroEntryType(heroId, 'deity');
+    await _db.clearHeroEntryType(heroId, 'domain');
+    await _db.clearHeroEntryType(heroId, 'kit');
+    await _db.clearHeroEntryType(heroId, 'equipment');
+    await _db.clearHeroEntryType(heroId, 'equipment_bonuses');
+
+    // Clear abilities - these are managed by strife only
+    await _db.clearHeroEntryType(heroId, 'ability');
+
+    // Clear skills and perks from strife source only (preserve story-sourced ones)
+    // We need to clear by source_type to preserve story-granted entries
+    await _clearEntriesBySource(heroId, 'skill', 'manual_choice');
+    await _clearEntriesBySource(heroId, 'skill', 'subclass');
+    await _clearEntriesBySource(heroId, 'skill', 'class');
+    await _clearEntriesBySource(heroId, 'perk', 'manual_choice');
+    await _clearEntriesBySource(heroId, 'perk', 'class');
+
+    // Clear all strife config keys
+    await _db.deleteHeroConfig(heroId, 'strife.characteristic_array');
+    await _db.deleteHeroConfig(heroId, 'strife.characteristic_assignments');
+    await _db.deleteHeroConfig(heroId, 'strife.level_choice_selections');
+    await _db.deleteHeroConfig(heroId, 'strife.class_feature_selections');
+    await _db.deleteHeroConfig(heroId, 'strife.subclass_key');
+    await _db.deleteHeroConfig(heroId, 'strife.subclass_skill_id');
+    await _db.deleteHeroConfig(heroId, 'strife.ability_selections');
+    await _db.deleteHeroConfig(heroId, 'strife.skill_selections');
+    await _db.deleteHeroConfig(heroId, 'strife.perk_selections');
+
+    // Clear equipment config
+    await _db.deleteHeroConfig(heroId, 'equipment.slots');
+    await _db.deleteHeroConfig(heroId, 'class_feature.selections');
+
+    // Clear legacy hero_values for subclass
+    await _db.upsertHeroValue(heroId: heroId, key: _k.subclass, textValue: '');
+  }
+
+  /// Helper to clear entries by source type (preserves entries from other sources)
+  Future<void> _clearEntriesBySource(
+    String heroId,
+    String entryType,
+    String sourceType,
+  ) async {
+    await _entries.removeEntriesFromSource(
+      heroId: heroId,
+      entryType: entryType,
+      sourceType: sourceType,
+    );
   }
 
   // ===========================================================================
