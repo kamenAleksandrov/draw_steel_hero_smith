@@ -325,9 +325,20 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
     // Extract grant_type metadata from class levels
     final grantTypeMap = _buildGrantTypeMap();
 
+    // Create a key that changes when subclass/domain selection changes
+    // This prevents scroll position restoration crashes when content changes significantly
+    final widgetKey = ValueKey(
+      '${widget.classData.classId}_'
+      '${widget.selectedLevel}_'
+      '${subclassSlugs.join(",")}_'
+      '${domainSlugs.join(",")}_'
+      '${deitySlugs.join(",")}',
+    );
+
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: double.infinity),
       child: ClassFeaturesWidget(
+        key: widgetKey,
         level: widget.selectedLevel,
         features: data.features,
         featureDetailsById: data.featureDetailsById,

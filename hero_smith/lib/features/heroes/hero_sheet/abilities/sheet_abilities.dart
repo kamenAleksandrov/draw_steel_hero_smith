@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
+import '../../../../core/repositories/hero_entry_repository.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/class_data_service.dart';
@@ -20,217 +21,67 @@ import '../../../../widgets/kits/modifier_card.dart';
 import '../../../../widgets/kits/stormwight_kit_card.dart';
 import '../../../../widgets/kits/ward_card.dart';
 
-/// Provider that watches hero ability IDs for a specific hero
+/// Provider that watches hero ability IDs for a specific hero.
+/// 
+/// All abilities are now stored in hero_entries with entryType='ability'.
+/// Sources include:
+/// - manual_choice: abilities chosen directly (class ability picks)
+/// - ancestry: abilities from ancestry traits
+/// - complication: abilities from complications
+/// - kit: abilities from equipped kits
+/// - perk: abilities from perks
+/// - title: abilities from title benefits
+/// - class_feature: abilities from class features
 final heroAbilityIdsProvider =
     StreamProvider.family<List<String>, String>((ref, heroId) {
   final db = ref.watch(appDatabaseProvider);
 
-  // Watch hero values and filter for ability component IDs
-  return db.watchHeroValues(heroId).asyncMap((values) async {
-    // Get manually selected abilities
-    final abilityKey = 'component.ability';
-
-    dynamic row;
-    for (final value in values) {
-      if (value.key == abilityKey) {
-        row = value;
-        break;
-      }
-    }
-
-    final selectedAbilityIds = <String>[];
-
-    if (row != null) {
-      // Check if it's stored as JSON array
-      if (row.jsonValue != null) {
-        try {
-          final decoded = jsonDecode(row.jsonValue!);
-          if (decoded is Map && decoded['ids'] is List) {
-            selectedAbilityIds.addAll(
-              (decoded['ids'] as List).map((e) => e.toString()),
-            );
-          }
-        } catch (_) {
-          // Ignore parsing errors
-        }
-      }
-
-      // Check if it's a single ID stored as textValue
-      if (row.textValue != null && row.textValue!.isNotEmpty) {
-        selectedAbilityIds.add(row.textValue!);
-      }
-    }
-
-    // Get feature-granted abilities (from class features)
-    final grantedAbilityNames = await _getFeatureGrantedAbilities(values);
-    
-    // Get ancestry-granted abilities
-    final ancestryAbilityNames = _getAncestryGrantedAbilities(values);
-    
-    // Get complication-granted abilities
-    final complicationAbilityNames = _getComplicationGrantedAbilities(values);
-    
-    // Combine all granted ability names
-    final allGrantedNames = <String>{
-      ...grantedAbilityNames,
-      ...ancestryAbilityNames,
-      ...complicationAbilityNames,
-    };
-    
-    // Load ability library and resolve granted ability names to IDs
-    final library = await AbilityDataService().loadLibrary();
-    final grantedAbilityIds = <String>[];
-    
-    for (final abilityName in allGrantedNames) {
-      final component = library.components.cast<Component?>().firstWhere(
-        (c) => c?.name.toLowerCase() == abilityName.toLowerCase(),
-        orElse: () => null,
-      );
-      if (component != null) {
-        grantedAbilityIds.add(component.id);
-      }
-    }
-
-    // Combine selected and granted abilities
-    final allAbilityIds = <String>{...selectedAbilityIds, ...grantedAbilityIds}.toList();
-    
-    return allAbilityIds;
-  });
+  // Watch all abilities from hero_entries table
+  // This automatically includes all sources (ancestry, complication, kit, perk, title, etc.)
+  return db.watchHeroComponentIds(heroId, 'ability');
 });
-
-/// Helper function to extract granted ability names from ancestry traits
-List<String> _getAncestryGrantedAbilities(List<dynamic> heroValues) {
-  final abilityNames = <String>[];
-  
-  for (final value in heroValues) {
-    if (value.key == 'ancestry.granted_abilities') {
-      final raw = value.jsonValue ?? value.textValue;
-      if (raw != null && raw.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(raw);
-          if (decoded is Map) {
-            // Format: {"Barbed Tail": "Barbed Tail trait", ...}
-            abilityNames.addAll(decoded.keys.map((e) => e.toString()));
-          } else if (decoded is List) {
-            abilityNames.addAll(decoded.map((e) => e.toString()));
-          }
-        } catch (_) {
-          // Ignore parsing errors
-        }
-      }
-      break;
-    }
-  }
-  
-  return abilityNames;
-}
-
-/// Helper function to extract granted ability names from complication
-List<String> _getComplicationGrantedAbilities(List<dynamic> heroValues) {
-  final abilityNames = <String>[];
-  
-  for (final value in heroValues) {
-    // Key used by complication_grants_service.dart
-    if (value.key == 'complication.abilities') {
-      final raw = value.jsonValue ?? value.textValue;
-      if (raw != null && raw.isNotEmpty) {
-        try {
-          final decoded = jsonDecode(raw);
-          if (decoded is Map) {
-            // Format: {"Posthumous Retirement": "War Dog Collar", ...}
-            // Keys are ability names, values are source complication names
-            abilityNames.addAll(decoded.keys.map((e) => e.toString()));
-          } else if (decoded is List) {
-            abilityNames.addAll(decoded.map((e) => e.toString()));
-          }
-        } catch (_) {
-          // Ignore parsing errors
-        }
-      }
-      break;
-    }
-  }
-  
-  return abilityNames;
-}
-
-/// Helper function to extract granted ability names from class features
-Future<List<String>> _getFeatureGrantedAbilities(List<dynamic> heroValues) async {
-  // Get hero's class name and level
-  String? className;
-  int heroLevel = 1;
-
-  for (final value in heroValues) {
-    if (value.key == 'basics.className') {
-      className = value.textValue;
-    } else if (value.key == 'basics.level') {
-      heroLevel = int.tryParse(value.textValue ?? '1') ?? 1;
-    }
-  }
-
-  if (className == null) {
-    return [];
-  }
-
-  // Load class data
-  final classDataService = ClassDataService();
-  await classDataService.initialize();
-  
-  final classData = classDataService.getClassById(className);
-  
-  if (classData == null) {
-    return [];
-  }
-
-  // Extract granted abilities from features up to hero's level
-  final grantedAbilityNames = <String>[];
-  
-  for (final levelData in classData.levels) {
-    if (levelData.level > heroLevel) {
-      break;
-    }
-    
-    for (final feature in levelData.features) {
-      if (feature.grantType == 'ability') {
-        grantedAbilityNames.add(feature.name);
-      }
-    }
-  }
-
-  return grantedAbilityNames;
-}
 
 /// Provider that watches hero equipment IDs for a specific hero
 final heroEquipmentIdsProvider =
     StreamProvider.family<List<String?>, String>((ref, heroId) {
   final db = ref.watch(appDatabaseProvider);
 
-  return db.watchHeroValues(heroId).map((values) {
-    String? legacyKitId;
-    List<String?> equipmentList = [];
+  // Watch equipment.slots from hero_config (primary storage)
+  return db.watchHeroConfigValue(heroId, 'equipment.slots').asyncMap((config) async {
+    if (config != null && config['ids'] is List) {
+      return (config['ids'] as List)
+          .map<String?>((e) => e == null ? null : e.toString())
+          .toList();
+    }
 
-    for (final value in values) {
-      if (value.key == 'basics.kit') {
-        legacyKitId = value.textValue;
-      } else if (value.key == 'basics.equipment') {
+    // Fall back to hero_entries for equipment without slot ordering
+    final entryIds = await db.getHeroEntryIds(heroId, 'equipment');
+    if (entryIds.isNotEmpty) return entryIds.map<String?>((e) => e).toList();
+
+    // Fall back to legacy kit entry
+    final kitEntry = await db.getSingleHeroEntryId(heroId, 'kit');
+    if (kitEntry != null) return <String?>[kitEntry];
+
+    // Final fallback: legacy hero_values
+    final legacyValues = await db.getHeroValues(heroId);
+    for (final value in legacyValues) {
+      if (value.key == 'basics.equipment') {
         if (value.jsonValue != null) {
           try {
             final decoded = jsonDecode(value.jsonValue!);
             if (decoded is Map && decoded['ids'] is List) {
-              equipmentList = (decoded['ids'] as List)
+              return (decoded['ids'] as List)
                   .map<String?>((e) => e == null ? null : e.toString())
                   .toList();
             }
           } catch (_) {}
         }
+      } else if (value.key == 'basics.kit') {
+        final kitId = value.textValue;
+        if (kitId != null && kitId.isNotEmpty) {
+          return <String?>[kitId];
+        }
       }
-    }
-
-    // Use equipment list if available, otherwise fall back to legacy kit
-    if (equipmentList.isNotEmpty) {
-      return equipmentList;
-    } else if (legacyKitId != null && legacyKitId.isNotEmpty) {
-      return [legacyKitId];
     }
     return <String?>[];
   });
@@ -293,10 +144,13 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
   };
 
   List<_EquipmentSlotConfig> _equipmentSlots = [];
+  // ignore: unused_field
   bool _isLoadingSlotsConfig = true;
   bool _isLoadingEquipment = true;
   List<String?> _selectedEquipmentIds = [];
+  // ignore: unused_field
   String? _className;
+  // ignore: unused_field
   String? _subclassName;
   bool _perkGrantsEnsured = false;
 
@@ -697,54 +551,37 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
 
   Future<void> _addAbilityToHero(String abilityId) async {
     try {
-      final _db = ref.read(appDatabaseProvider);
-      final db = _db;
-      final values = await db.getHeroValues(widget.heroId);
+      final db = ref.read(appDatabaseProvider);
+      final entries = HeroEntryRepository(db);
       
-      // Get current abilities
-      final abilityKey = 'component.ability';
-      final row = values.cast<dynamic>().firstWhere(
-        (v) => v.key == abilityKey,
-        orElse: () => null,
+      // Check if ability is already added with manual_choice source
+      final existingEntries = await entries.listEntriesByType(widget.heroId, 'ability');
+      final alreadyAdded = existingEntries.any(
+        (e) => e.entryId == abilityId && e.sourceType == 'manual_choice',
       );
-
-      final currentAbilityIds = <String>[];
       
-      if (row?.jsonValue != null) {
-        try {
-          final decoded = jsonDecode(row.jsonValue!);
-          if (decoded is Map && decoded['ids'] is List) {
-            currentAbilityIds.addAll(
-              (decoded['ids'] as List).map((e) => e.toString()),
-            );
-          }
-        } catch (_) {}
-      }
-      
-      if (row?.textValue != null && row.textValue!.isNotEmpty) {
-        currentAbilityIds.add(row.textValue!);
-      }
-
-      // Add new ability if not already present
-      if (!currentAbilityIds.contains(abilityId)) {
-        currentAbilityIds.add(abilityId);
-        
-        // Save back to database
-        final jsonData = {'ids': currentAbilityIds};
-        await _db.upsertHeroValue(
-          heroId: widget.heroId,
-          key: abilityKey,
-          jsonMap: jsonData,
-        );
-        
+      if (alreadyAdded) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ability added successfully')),
+            const SnackBar(content: Text('Ability already added')),
           );
         }
-      } else if (mounted) {
+        return;
+      }
+
+      // Add ability to hero_entries with sourceType='manual_choice'
+      await entries.addEntry(
+        heroId: widget.heroId,
+        entryType: 'ability',
+        entryId: abilityId,
+        sourceType: 'manual_choice',
+        sourceId: 'sheet_add',
+        gainedBy: 'choice',
+      );
+      
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ability already added')),
+          const SnackBar(content: Text('Ability added successfully')),
         );
       }
     } catch (e) {
@@ -1835,41 +1672,22 @@ class _AbilityListViewState extends ConsumerState<_AbilityListView>
 
     try {
       final db = ref.read(appDatabaseProvider);
-      final values = await db.getHeroValues(widget.heroId);
+      final entries = HeroEntryRepository(db);
       
-      final abilityKey = 'component.ability';
-      final row = values.cast<dynamic>().firstWhere(
-        (v) => v.key == abilityKey,
-        orElse: () => null,
-      );
-
-      final currentAbilityIds = <String>[];
+      // Remove the ability entry from hero_entries
+      // Only remove if it was manually added (sourceType='manual_choice')
+      // First get the entries to find the one matching our criteria
+      final existingEntries = await entries.listEntriesByType(widget.heroId, 'ability');
+      final toRemove = existingEntries.where(
+        (e) => e.entryId == abilityId && e.sourceType == 'manual_choice',
+      ).toList();
       
-      if (row?.jsonValue != null) {
-        try {
-          final decoded = jsonDecode(row.jsonValue!);
-          if (decoded is Map && decoded['ids'] is List) {
-            currentAbilityIds.addAll(
-              (decoded['ids'] as List).map((e) => e.toString()),
-            );
-          }
-        } catch (_) {}
+      for (final entry in toRemove) {
+        await db.customStatement(
+          'DELETE FROM hero_entries WHERE id = ?',
+          [entry.id],
+        );
       }
-      
-      if (row?.textValue != null && row.textValue!.isNotEmpty) {
-        currentAbilityIds.add(row.textValue!);
-      }
-
-      // Remove the ability
-      currentAbilityIds.remove(abilityId);
-      
-      // Save back to database
-      final jsonData = {'ids': currentAbilityIds};
-      await db.upsertHeroValue(
-        heroId: widget.heroId,
-        key: abilityKey,
-        jsonMap: jsonData,
-      );
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1915,7 +1733,7 @@ class _AbilityListViewState extends ConsumerState<_AbilityListView>
           final row = await db.getComponentById(id);
           if (row != null && row.type == 'ability') {
             Map<String, dynamic> data = {};
-            if (row.dataJson != null && row.dataJson.isNotEmpty) {
+            if (row.dataJson.isNotEmpty) {
               data = jsonDecode(row.dataJson) as Map<String, dynamic>;
             }
             components.add(Component(
@@ -1934,6 +1752,7 @@ class _AbilityListViewState extends ConsumerState<_AbilityListView>
     return components;
   }
 
+  // ignore: unused_element
   Widget _buildSectionHeader(BuildContext context, String title, int count) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12, left: 4),

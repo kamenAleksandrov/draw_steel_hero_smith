@@ -186,104 +186,108 @@ class _StoryComplicationSectionState
               ),
             ),
             const SizedBox(height: 16),
-            complicationsAsync.when(
-              loading: () => const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(24),
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-              error: (error, stack) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'Failed to load complications: $error',
-                    style: TextStyle(color: theme.colorScheme.error),
+            Builder(builder: (context) {
+              final complications = complicationsAsync.valueOrNull;
+              if (complications == null) {
+                if (complicationsAsync.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'Failed to load complications: ${complicationsAsync.error}',
+                        style: TextStyle(color: theme.colorScheme.error),
+                      ),
+                    ),
+                  );
+                }
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-              ),
-              data: (complications) {
-                if (complications.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('No complications available'),
-                  );
-                }
-
-                final sorted = [...complications];
-                sorted.sort((a, b) => a.name.compareTo(b.name));
-
-                final selectedComp = widget.selectedComplicationId != null
-                    ? sorted.firstWhere(
-                        (c) => c.id == widget.selectedComplicationId,
-                        orElse: () => sorted.first,
-                      )
-                    : null;
-
-                Future<void> openSearch() async {
-                  final options = <_SearchOption<String?>>[
-                    const _SearchOption<String?>(
-                      label: 'None',
-                      value: null,
-                    ),
-                    ...sorted.map(
-                      (comp) => _SearchOption<String?>(
-                        label: comp.name,
-                        value: comp.id,
-                      ),
-                    ),
-                  ];
-
-                  final result = await _showSearchablePicker<String?>(
-                    context: context,
-                    title: 'Select Complication',
-                    options: options,
-                    selected: widget.selectedComplicationId,
-                  );
-
-                  if (result == null) return;
-                  widget.onComplicationChanged(result.value);
-                  widget.onDirty();
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    InkWell(
-                      onTap: openSearch,
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Select Complication',
-                          border: OutlineInputBorder(),
-                          suffixIcon: Icon(Icons.search),
-                        ),
-                        child: Text(
-                          selectedComp != null ? selectedComp.name : 'None',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: selectedComp != null
-                                ? theme.textTheme.bodyLarge?.color
-                                : theme.hintColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (selectedComp != null) ...[
-                      const SizedBox(height: 24),
-                      _ComplicationDetails(
-                        complication: selectedComp,
-                        choices: widget.complicationChoices,
-                        onChoicesChanged: (choices) {
-                          widget.onChoicesChanged(choices);
-                          widget.onDirty();
-                        },
-                        heroAncestryTraitIds: widget.heroAncestryTraitIds,
-                      ),
-                    ],
-                  ],
                 );
-              },
-            ),
+              }
+              
+              if (complications.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('No complications available'),
+                );
+              }
+
+              final sorted = [...complications];
+              sorted.sort((a, b) => a.name.compareTo(b.name));
+
+              final selectedComp = widget.selectedComplicationId != null
+                  ? sorted.firstWhere(
+                      (c) => c.id == widget.selectedComplicationId,
+                      orElse: () => sorted.first,
+                    )
+                  : null;
+
+              Future<void> openSearch() async {
+                final options = <_SearchOption<String?>>[
+                  const _SearchOption<String?>(
+                    label: 'None',
+                    value: null,
+                  ),
+                  ...sorted.map(
+                    (comp) => _SearchOption<String?>(
+                      label: comp.name,
+                      value: comp.id,
+                    ),
+                  ),
+                ];
+
+                final result = await _showSearchablePicker<String?>(
+                  context: context,
+                  title: 'Select Complication',
+                  options: options,
+                  selected: widget.selectedComplicationId,
+                );
+
+                if (result == null) return;
+                widget.onComplicationChanged(result.value);
+                widget.onDirty();
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  InkWell(
+                    onTap: openSearch,
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Select Complication',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.search),
+                      ),
+                      child: Text(
+                        selectedComp != null ? selectedComp.name : 'None',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: selectedComp != null
+                              ? theme.textTheme.bodyLarge?.color
+                              : theme.hintColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (selectedComp != null) ...[
+                    const SizedBox(height: 24),
+                    _ComplicationDetails(
+                      complication: selectedComp,
+                      choices: widget.complicationChoices,
+                      onChoicesChanged: (choices) {
+                        widget.onChoicesChanged(choices);
+                        widget.onDirty();
+                      },
+                      heroAncestryTraitIds: widget.heroAncestryTraitIds,
+                    ),
+                  ],
+                ],
+              );
+            }),
           ],
         ),
       ),
@@ -653,27 +657,31 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          skillsAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading skills: $e'),
-            data: (allSkills) {
-              // Filter skills by groups - 'any' means all groups
-              final isAnyGroup = grant.groups.contains('any');
-              final filteredSkills = allSkills.where((skill) {
-                final skillGroup = (skill.data['group'] as String?)?.toLowerCase() ?? '';
-                if (isAnyGroup) return true;
-                return grant.groups.any((g) => g.toLowerCase() == skillGroup);
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
+          Builder(builder: (context) {
+            final allSkills = skillsAsync.valueOrNull;
+            if (allSkills == null) {
+              if (skillsAsync.hasError) {
+                return Text('Error loading skills: ${skillsAsync.error}');
+              }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter skills by groups - 'any' means all groups
+            final isAnyGroup = grant.groups.contains('any');
+            final filteredSkills = allSkills.where((skill) {
+              final skillGroup = (skill.data['group'] as String?)?.toLowerCase() ?? '';
+              if (isAnyGroup) return true;
+              return grant.groups.any((g) => g.toLowerCase() == skillGroup);
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              if (filteredSkills.isEmpty) {
-                return Text(
-                  'No skills available for: $groupsStr',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
+            if (filteredSkills.isEmpty) {
+              return Text(
+                'No skills available for: $groupsStr',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
               }
 
               // Build picker slots for each skill choice
@@ -755,8 +763,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   );
                 }),
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -797,70 +804,74 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          skillsAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading skills: $e'),
-            data: (allSkills) {
-              // Filter skills by options - match by name (case-insensitive)
-              final optionNamesLower = grant.options.map((o) => o.toLowerCase()).toSet();
-              final filteredSkills = allSkills.where((skill) {
-                return optionNamesLower.contains(skill.name.toLowerCase());
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
-
-              if (filteredSkills.isEmpty) {
-                return Text(
-                  'No matching skills found for: ${grant.options.join(', ')}',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
+          Builder(builder: (context) {
+            final allSkills = skillsAsync.valueOrNull;
+            if (allSkills == null) {
+              if (skillsAsync.hasError) {
+                return Text('Error loading skills: ${skillsAsync.error}');
               }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter skills by options - match by name (case-insensitive)
+            final optionNamesLower = grant.options.map((o) => o.toLowerCase()).toSet();
+            final filteredSkills = allSkills.where((skill) {
+              return optionNamesLower.contains(skill.name.toLowerCase());
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              final selectedSkill = grant.selectedSkillId != null
-                  ? filteredSkills.firstWhereOrNull((s) => s.id == grant.selectedSkillId)
-                  : null;
+            if (filteredSkills.isEmpty) {
+              return Text(
+                'No matching skills found for: ${grant.options.join(', ')}',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
+            }
 
-              return InkWell(
-                onTap: () async {
-                  final options = filteredSkills.map((s) {
-                    final group = s.data['group'] as String? ?? '';
-                    final description = s.data['description'] as String? ?? '';
-                    return _SearchOption<String>(
-                      label: s.name,
-                      value: s.id,
-                      subtitle: '[$group] $description',
-                    );
-                  }).toList();
+            final selectedSkill = grant.selectedSkillId != null
+                ? filteredSkills.firstWhereOrNull((s) => s.id == grant.selectedSkillId)
+                : null;
 
-                  final result = await _showSearchablePicker<String>(
-                    context: context,
-                    title: 'Select Skill',
-                    options: options,
-                    selected: grant.selectedSkillId,
+            return InkWell(
+              onTap: () async {
+                final options = filteredSkills.map((s) {
+                  final group = s.data['group'] as String? ?? '';
+                  final description = s.data['description'] as String? ?? '';
+                  return _SearchOption<String>(
+                    label: s.name,
+                    value: s.id,
+                    subtitle: '[$group] $description',
                   );
+                }).toList();
 
-                  if (result != null) {
-                    _updateChoice(choiceKey, result.value);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: selectedSkill != null
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withOpacity(0.5),
-                    ),
+                final result = await _showSearchablePicker<String>(
+                  context: context,
+                  title: 'Select Skill',
+                  options: options,
+                  selected: grant.selectedSkillId,
+                );
+
+                if (result != null) {
+                  _updateChoice(choiceKey, result.value);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: selectedSkill != null
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.outline.withOpacity(0.5),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
-                        size: 20,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
+                      size: 20,
                         color: selectedSkill != null
                             ? theme.colorScheme.primary
                             : theme.colorScheme.outline,
@@ -880,8 +891,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   ),
                 ),
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -925,79 +935,83 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          componentsAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading treasures: $e'),
-            data: (components) {
-              // Filter by treasure type
-              final treasures = components.where((c) {
-                if (c.type != treasureType) return false;
-                // Filter by echelon if specified
-                if (grant.echelon != null) {
-                  final echelon = c.data['echelon'] as int?;
-                  return echelon == grant.echelon;
-                }
-                return true;
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
-
-              if (treasures.isEmpty) {
-                return Text(
-                  'No ${treasureType.replaceAll('_', ' ')}s available',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontStyle: FontStyle.italic,
-                  ),
-                );
+          Builder(builder: (context) {
+            final components = componentsAsync.valueOrNull;
+            if (components == null) {
+              if (componentsAsync.hasError) {
+                return Text('Error loading treasures: ${componentsAsync.error}');
               }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter by treasure type
+            final treasures = components.where((c) {
+              if (c.type != treasureType) return false;
+              // Filter by echelon if specified
+              if (grant.echelon != null) {
+                final echelon = c.data['echelon'] as int?;
+                return echelon == grant.echelon;
+              }
+              return true;
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              // Use the proper index for the choice key
-              final choiceKey = '${complicationId}_treasure_$treasureIndex';
-              final selectedId = grant.selectedTreasureId;
-              final selectedTreasure = selectedId != null 
-                  ? treasures.firstWhereOrNull((t) => t.id == selectedId)
-                  : null;
+            if (treasures.isEmpty) {
+              return Text(
+                'No ${treasureType.replaceAll('_', ' ')}s available',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              );
+            }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final options = treasures.map((t) {
-                        final subtitle = t.data['description'] as String?;
-                        return _SearchOption<String>(
-                          label: t.name,
-                          value: t.id,
-                          subtitle: subtitle,
-                        );
-                      }).toList();
+            // Use the proper index for the choice key
+            final choiceKey = '${complicationId}_treasure_$treasureIndex';
+            final selectedId = grant.selectedTreasureId;
+            final selectedTreasure = selectedId != null 
+                ? treasures.firstWhereOrNull((t) => t.id == selectedId)
+                : null;
 
-                      final result = await _showSearchablePicker<String>(
-                        context: context,
-                        title: 'Select ${treasureType.replaceAll('_', ' ')}',
-                        options: options,
-                        selected: selectedId,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    final options = treasures.map((t) {
+                      final subtitle = t.data['description'] as String?;
+                      return _SearchOption<String>(
+                        label: t.name,
+                        value: t.id,
+                        subtitle: subtitle,
                       );
+                    }).toList();
 
-                      if (result != null) {
-                        _updateChoice(choiceKey, result.value);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: selectedTreasure != null 
-                              ? theme.colorScheme.primary 
-                              : theme.colorScheme.outline.withOpacity(0.5),
-                        ),
+                    final result = await _showSearchablePicker<String>(
+                      context: context,
+                      title: 'Select ${treasureType.replaceAll('_', ' ')}',
+                      options: options,
+                      selected: selectedId,
+                    );
+
+                    if (result != null) {
+                      _updateChoice(choiceKey, result.value);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: selectedTreasure != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.outline.withOpacity(0.5),
                       ),
-                      child: Row(
-                        children: [
+                    ),
+                    child: Row(
+                      children: [
                           Icon(
                             selectedTreasure != null ? Icons.check_circle : Icons.circle_outlined,
                             size: 20,
@@ -1034,8 +1048,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   ],
                 ],
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -1080,91 +1093,95 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          componentsAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading treasures: $e'),
-            data: (components) {
-              // Filter for leveled treasures matching the category
-              final treasures = components.where((c) {
-                if (c.type != 'leveled_treasure') return false;
-                // Filter by leveled_type if category is specified
-                if (category != null) {
-                  final leveledType = c.data['leveled_type'] as String?;
-                  return leveledType?.toLowerCase() == category;
-                }
-                return true;
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
-
-              if (treasures.isEmpty) {
-                return Text(
-                  'No leveled ${categoryLabel}s available',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontStyle: FontStyle.italic,
-                  ),
-                );
+          Builder(builder: (context) {
+            final components = componentsAsync.valueOrNull;
+            if (components == null) {
+              if (componentsAsync.hasError) {
+                return Text('Error loading treasures: ${componentsAsync.error}');
               }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter for leveled treasures matching the category
+            final treasures = components.where((c) {
+              if (c.type != 'leveled_treasure') return false;
+              // Filter by leveled_type if category is specified
+              if (category != null) {
+                final leveledType = c.data['leveled_type'] as String?;
+                return leveledType?.toLowerCase() == category;
+              }
+              return true;
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              // Use the proper index for the choice key
-              final choiceKey = '${complicationId}_treasure_$leveledTreasureIndex';
-              final selectedId = grant.selectedTreasureId;
-              final selectedTreasure = selectedId != null 
-                  ? treasures.firstWhereOrNull((t) => t.id == selectedId)
-                  : null;
+            if (treasures.isEmpty) {
+              return Text(
+                'No leveled ${categoryLabel}s available',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                ),
+              );
+            }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final options = treasures.map((t) {
-                        final subtitle = t.data['description'] as String?;
-                        return _SearchOption<String>(
-                          label: t.name,
-                          value: t.id,
-                          subtitle: subtitle,
-                        );
-                      }).toList();
+            // Use the proper index for the choice key
+            final choiceKey = '${complicationId}_treasure_$leveledTreasureIndex';
+            final selectedId = grant.selectedTreasureId;
+            final selectedTreasure = selectedId != null 
+                ? treasures.firstWhereOrNull((t) => t.id == selectedId)
+                : null;
 
-                      final result = await _showSearchablePicker<String>(
-                        context: context,
-                        title: 'Select leveled $categoryLabel',
-                        options: options,
-                        selected: selectedId,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () async {
+                    final options = treasures.map((t) {
+                      final subtitle = t.data['description'] as String?;
+                      return _SearchOption<String>(
+                        label: t.name,
+                        value: t.id,
+                        subtitle: subtitle,
                       );
+                    }).toList();
 
-                      if (result != null) {
-                        _updateChoice(choiceKey, result.value);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
+                    final result = await _showSearchablePicker<String>(
+                      context: context,
+                      title: 'Select leveled $categoryLabel',
+                      options: options,
+                      selected: selectedId,
+                    );
+
+                    if (result != null) {
+                      _updateChoice(choiceKey, result.value);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: selectedTreasure != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.outline.withOpacity(0.5),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          selectedTreasure != null ? Icons.check_circle : Icons.circle_outlined,
+                          size: 20,
                           color: selectedTreasure != null 
                               ? theme.colorScheme.primary 
-                              : theme.colorScheme.outline.withOpacity(0.5),
+                              : theme.colorScheme.outline,
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            selectedTreasure != null ? Icons.check_circle : Icons.circle_outlined,
-                            size: 20,
-                            color: selectedTreasure != null 
-                                ? theme.colorScheme.primary 
-                                : theme.colorScheme.outline,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              selectedTreasure?.name ?? 'Tap to select...',
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            selectedTreasure?.name ?? 'Tap to select...',
+                            style: theme.textTheme.bodyMedium?.copyWith(
                                 color: selectedTreasure != null 
                                     ? null 
                                     : theme.colorScheme.outline,
@@ -1189,8 +1206,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   ],
                 ],
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -1230,88 +1246,92 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          languagesAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading languages: $e'),
-            data: (allLanguages) {
-              // Filter out dead languages - this is for living languages only
-              final livingLanguages = allLanguages.where((lang) {
-                final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
-                return langType != 'dead';
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
-
-              if (livingLanguages.isEmpty) {
-                return Text(
-                  'No languages available',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
+          Builder(builder: (context) {
+            final allLanguages = languagesAsync.valueOrNull;
+            if (allLanguages == null) {
+              if (languagesAsync.hasError) {
+                return Text('Error loading languages: ${languagesAsync.error}');
               }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter out dead languages - this is for living languages only
+            final livingLanguages = allLanguages.where((lang) {
+              final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
+              return langType != 'dead';
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              // Build picker slots for each language choice
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(grant.count, (index) {
-                  final choiceKey = '${complicationId}_language_$index';
-                  final selectedId = index < grant.selectedLanguageIds.length 
-                      ? grant.selectedLanguageIds[index] 
-                      : null;
-                  final selectedLanguage = selectedId != null
-                      ? livingLanguages.firstWhereOrNull((l) => l.id == selectedId)
-                      : null;
+            if (livingLanguages.isEmpty) {
+              return Text(
+                'No languages available',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
+            }
 
-                  // Exclude already selected languages from options
-                  final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
-                  final availableLanguages = livingLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
+            // Build picker slots for each language choice
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(grant.count, (index) {
+                final choiceKey = '${complicationId}_language_$index';
+                final selectedId = index < grant.selectedLanguageIds.length 
+                    ? grant.selectedLanguageIds[index] 
+                    : null;
+                final selectedLanguage = selectedId != null
+                    ? livingLanguages.firstWhereOrNull((l) => l.id == selectedId)
+                    : null;
 
-                  return Padding(
-                    padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
-                    child: InkWell(
-                      onTap: () async {
-                        final options = availableLanguages.map((l) {
-                          final langType = l.data['type'] as String? ?? '';
-                          final region = l.data['region'] as String?;
-                          final ancestry = l.data['ancestry'] as String?;
-                          final subtitle = region != null 
-                              ? '[$langType] Region: $region' 
-                              : ancestry != null 
-                                  ? '[$langType] Ancestry: $ancestry' 
-                                  : '[$langType]';
-                          return _SearchOption<String>(
-                            label: l.name,
-                            value: l.id,
-                            subtitle: subtitle,
-                          );
-                        }).toList();
+                // Exclude already selected languages from options
+                final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
+                final availableLanguages = livingLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
 
-                        final result = await _showSearchablePicker<String>(
-                          context: context,
-                          title: 'Select Language ${index + 1}',
-                          options: options,
-                          selected: selectedId,
+                return Padding(
+                  padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
+                  child: InkWell(
+                    onTap: () async {
+                      final options = availableLanguages.map((l) {
+                        final langType = l.data['type'] as String? ?? '';
+                        final region = l.data['region'] as String?;
+                        final ancestry = l.data['ancestry'] as String?;
+                        final subtitle = region != null 
+                            ? '[$langType] Region: $region' 
+                            : ancestry != null 
+                                ? '[$langType] Ancestry: $ancestry' 
+                                : '[$langType]';
+                        return _SearchOption<String>(
+                          label: l.name,
+                          value: l.id,
+                          subtitle: subtitle,
                         );
+                      }).toList();
 
-                        if (result != null) {
-                          _updateChoice(choiceKey, result.value);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: selectedLanguage != null
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline.withOpacity(0.5),
-                          ),
+                      final result = await _showSearchablePicker<String>(
+                        context: context,
+                        title: 'Select Language ${index + 1}',
+                        options: options,
+                        selected: selectedId,
+                      );
+
+                      if (result != null) {
+                        _updateChoice(choiceKey, result.value);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: selectedLanguage != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline.withOpacity(0.5),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
                               selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
                               size: 20,
                               color: selectedLanguage != null
@@ -1336,8 +1356,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   );
                 }),
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -1377,112 +1396,115 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 8),
-          languagesAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading languages: $e'),
-            data: (allLanguages) {
-              // Filter for dead languages only
-              final deadLanguages = allLanguages.where((lang) {
-                final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
-                return langType == 'dead';
-              }).toList()
-                ..sort((a, b) => a.name.compareTo(b.name));
-
-              if (deadLanguages.isEmpty) {
-                return Text(
-                  'No dead languages available',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
+          Builder(builder: (context) {
+            final allLanguages = languagesAsync.valueOrNull;
+            if (allLanguages == null) {
+              if (languagesAsync.hasError) {
+                return Text('Error loading languages: ${languagesAsync.error}');
               }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              );
+            }
+            // Filter for dead languages only
+            final deadLanguages = allLanguages.where((lang) {
+              final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
+              return langType == 'dead';
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
-              // Build picker slots for each language choice
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(grant.count, (index) {
-                  final choiceKey = '${complicationId}_dead_language_$index';
-                  final selectedId = index < grant.selectedLanguageIds.length 
-                      ? grant.selectedLanguageIds[index] 
-                      : null;
-                  final selectedLanguage = selectedId != null
-                      ? deadLanguages.firstWhereOrNull((l) => l.id == selectedId)
-                      : null;
+            if (deadLanguages.isEmpty) {
+              return Text(
+                'No dead languages available',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
+            }
 
-                  // Exclude already selected languages from options
-                  final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
-                  final availableLanguages = deadLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
+            // Build picker slots for each language choice
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(grant.count, (index) {
+                final choiceKey = '${complicationId}_dead_language_$index';
+                final selectedId = index < grant.selectedLanguageIds.length 
+                    ? grant.selectedLanguageIds[index] 
+                    : null;
+                final selectedLanguage = selectedId != null
+                    ? deadLanguages.firstWhereOrNull((l) => l.id == selectedId)
+                    : null;
 
-                  return Padding(
-                    padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
-                    child: InkWell(
-                      onTap: () async {
-                        final options = availableLanguages.map((l) {
-                          final ancestry = l.data['ancestry'] as String? ?? '';
-                          final commonTopics = l.data['common_topics'] as List?;
-                          final topicsStr = commonTopics != null ? commonTopics.join(', ') : '';
-                          final subtitle = topicsStr.isNotEmpty 
-                              ? 'Ancestry: $ancestry • Topics: $topicsStr' 
-                              : 'Ancestry: $ancestry';
-                          return _SearchOption<String>(
-                            label: l.name,
-                            value: l.id,
-                            subtitle: subtitle,
-                          );
-                        }).toList();
+                // Exclude already selected languages from options
+                final alreadySelected = grant.selectedLanguageIds.where((id) => id != selectedId).toSet();
+                final availableLanguages = deadLanguages.where((l) => !alreadySelected.contains(l.id)).toList();
 
-                        final result = await _showSearchablePicker<String>(
-                          context: context,
-                          title: 'Select Dead Language ${index + 1}',
-                          options: options,
-                          selected: selectedId,
+                return Padding(
+                  padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
+                  child: InkWell(
+                    onTap: () async {
+                      final options = availableLanguages.map((l) {
+                        final ancestry = l.data['ancestry'] as String? ?? '';
+                        final commonTopics = l.data['common_topics'] as List?;
+                        final topicsStr = commonTopics != null ? commonTopics.join(', ') : '';
+                        final subtitle = topicsStr.isNotEmpty 
+                            ? 'Ancestry: $ancestry • Topics: $topicsStr' 
+                            : 'Ancestry: $ancestry';
+                        return _SearchOption<String>(
+                          label: l.name,
+                          value: l.id,
+                          subtitle: subtitle,
                         );
+                      }).toList();
 
-                        if (result != null) {
-                          _updateChoice(choiceKey, result.value);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: selectedLanguage != null
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline.withOpacity(0.5),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
-                              size: 20,
-                              color: selectedLanguage != null
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.outline,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                selectedLanguage?.name ?? 'Tap to select dead language ${index + 1}...',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: selectedLanguage != null ? null : theme.colorScheme.outline,
-                                  fontStyle: selectedLanguage != null ? null : FontStyle.italic,
-                                ),
-                              ),
-                            ),
-                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
-                          ],
+                      final result = await _showSearchablePicker<String>(
+                        context: context,
+                        title: 'Select Dead Language ${index + 1}',
+                        options: options,
+                        selected: selectedId,
+                      );
+
+                      if (result != null) {
+                        _updateChoice(choiceKey, result.value);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: selectedLanguage != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outline.withOpacity(0.5),
                         ),
                       ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
+                            size: 20,
+                            color: selectedLanguage != null
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.outline,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              selectedLanguage?.name ?? 'Tap to select dead language ${index + 1}...',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: selectedLanguage != null ? null : theme.colorScheme.outline,
+                                fontStyle: selectedLanguage != null ? null : FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                          Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                        ],
+                      ),
                     ),
-                  );
-                }),
-              );
-            },
-          ),
+                  ),
+                );
+              }),
+            );
+          }),
         ],
       ),
     );
@@ -1599,103 +1621,107 @@ class _ComplicationDetails extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ancestryTraitsAsync.when(
-            loading: () => const SizedBox(
-              height: 48,
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
-            error: (e, _) => Text('Error loading ancestry traits: $e'),
-            data: (allAncestryTraits) {
-              // Find the ancestry traits component that matches the grant's ancestry
-              // e.g., "dragon_knight" matches "ancestry_dragon_knight" in ancestry_id
-              final targetAncestryId = 'ancestry_${grant.ancestry}';
-              final traitsComp = allAncestryTraits.firstWhereOrNull(
-                (t) => t.data['ancestry_id'] == targetAncestryId,
+          Builder(builder: (context) {
+            final allAncestryTraits = ancestryTraitsAsync.valueOrNull;
+            if (allAncestryTraits == null) {
+              if (ancestryTraitsAsync.hasError) {
+                return Text('Error loading ancestry traits: ${ancestryTraitsAsync.error}');
+              }
+              return const SizedBox(
+                height: 48,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               );
+            }
+            // Find the ancestry traits component that matches the grant's ancestry
+            // e.g., "dragon_knight" matches "ancestry_dragon_knight" in ancestry_id
+            final targetAncestryId = 'ancestry_${grant.ancestry}';
+            final traitsComp = allAncestryTraits.firstWhereOrNull(
+              (t) => t.data['ancestry_id'] == targetAncestryId,
+            );
 
-              if (traitsComp == null) {
-                return Text(
-                  'No traits found for ${grant.ancestry}',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
-              }
+            if (traitsComp == null) {
+              return Text(
+                'No traits found for ${grant.ancestry}',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
+            }
 
-              final traitsList = (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
-              
-              if (traitsList.isEmpty) {
-                return Text(
-                  'No traits available for ${grant.ancestry}',
-                  style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
-                );
-              }
+            final traitsList = (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
+            
+            if (traitsList.isEmpty) {
+              return Text(
+                'No traits available for ${grant.ancestry}',
+                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+              );
+            }
 
-              // Get selected traits from complication choices
-              // Stored as comma-separated list: "complicationId_ancestry_traits" -> "dk_draconian_guard,dk_wings"
-              final choiceKey = '${complicationId}_ancestry_traits';
-              final selectedIdsStr = choices[choiceKey] ?? '';
-              final selectedIds = selectedIdsStr.isNotEmpty
-                  ? selectedIdsStr.split(',').toSet()
-                  : <String>{};
+            // Get selected traits from complication choices
+            // Stored as comma-separated list: "complicationId_ancestry_traits" -> "dk_draconian_guard,dk_wings"
+            final choiceKey = '${complicationId}_ancestry_traits';
+            final selectedIdsStr = choices[choiceKey] ?? '';
+            final selectedIds = selectedIdsStr.isNotEmpty
+                ? selectedIdsStr.split(',').toSet()
+                : <String>{};
 
-              // Calculate spent points from selected traits
-              final spent = selectedIds.fold<int>(0, (sum, id) {
-                final match = traitsList.firstWhere(
-                  (t) => (t['id'] ?? t['name']).toString() == id,
-                  orElse: () => const {},
-                );
-                return sum + (match.cast<String, dynamic>()['cost'] as int? ?? 0);
-              });
-              final remaining = grant.ancestryPoints - spent;
+            // Calculate spent points from selected traits
+            final spent = selectedIds.fold<int>(0, (sum, id) {
+              final match = traitsList.firstWhere(
+                (t) => (t['id'] ?? t['name']).toString() == id,
+                orElse: () => const {},
+              );
+              return sum + (match.cast<String, dynamic>()['cost'] as int? ?? 0);
+            });
+            final remaining = grant.ancestryPoints - spent;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Chip(label: Text('Points: ${grant.ancestryPoints}')),
-                      const SizedBox(width: 8),
-                      Chip(
-                        label: Text('Remaining: $remaining'),
-                        backgroundColor: remaining < 0
-                            ? theme.colorScheme.errorContainer
-                            : null,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ...traitsList.map((t) {
-                    final traitData = t.cast<String, dynamic>();
-                    final id = (traitData['id'] ?? traitData['name']).toString();
-                    final name = (traitData['name'] ?? id).toString();
-                    final desc = (traitData['description'] ?? '').toString();
-                    final cost = (traitData['cost'] as int?) ?? 0;
-                    final selected = selectedIds.contains(id);
-                    final canSelect = selected || remaining - cost >= 0;
-                    
-                    // Exclude traits already selected by hero in ancestry section
-                    final alreadyPickedByHero = heroAncestryTraitIds.contains(id);
-                    if (alreadyPickedByHero) {
-                      // Show as disabled/already picked
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          enabled: false,
-                          leading: Icon(Icons.check_circle, color: theme.colorScheme.outline),
-                          title: Text(
-                            name,
-                            style: TextStyle(
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
-                              decoration: TextDecoration.lineThrough,
-                            ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Chip(label: Text('Points: ${grant.ancestryPoints}')),
+                    const SizedBox(width: 8),
+                    Chip(
+                      label: Text('Remaining: $remaining'),
+                      backgroundColor: remaining < 0
+                          ? theme.colorScheme.errorContainer
+                          : null,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ...traitsList.map((t) {
+                  final traitData = t.cast<String, dynamic>();
+                  final id = (traitData['id'] ?? traitData['name']).toString();
+                  final name = (traitData['name'] ?? id).toString();
+                  final desc = (traitData['description'] ?? '').toString();
+                  final cost = (traitData['cost'] as int?) ?? 0;
+                  final selected = selectedIds.contains(id);
+                  final canSelect = selected || remaining - cost >= 0;
+                  
+                  // Exclude traits already selected by hero in ancestry section
+                  final alreadyPickedByHero = heroAncestryTraitIds.contains(id);
+                  if (alreadyPickedByHero) {
+                    // Show as disabled/already picked
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        enabled: false,
+                        leading: Icon(Icons.check_circle, color: theme.colorScheme.outline),
+                        title: Text(
+                          name,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            decoration: TextDecoration.lineThrough,
                           ),
-                          subtitle: Text(
-                            '(Already selected in ancestry)',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontStyle: FontStyle.italic,
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
-                            ),
+                        ),
+                        subtitle: Text(
+                          '(Already selected in ancestry)',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontStyle: FontStyle.italic,
+                            color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
+                        ),
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
@@ -1747,8 +1773,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   }),
                 ],
               );
-            },
-          ),
+          }),
         ],
       ),
     );
@@ -1792,16 +1817,12 @@ class _ComplicationDetails extends ConsumerWidget {
     final theme = Theme.of(context);
     final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
 
-    return abilityAsync.when(
-      data: (ability) {
-        if (ability == null) {
-          // Ability not found in library - just show the name
-          return _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined);
-        }
-        // Reuse existing AbilityExpandableItem widget for full ability display
-        return AbilityExpandableItem(component: ability);
-      },
-      loading: () => Padding(
+    final ability = abilityAsync.valueOrNull;
+    if (ability == null) {
+      if (abilityAsync.hasError) {
+        return _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined);
+      }
+      return Padding(
         padding: const EdgeInsets.only(bottom: 4),
         child: Row(
           children: [
@@ -1822,9 +1843,11 @@ class _ComplicationDetails extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-      error: (e, _) => _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined),
-    );
+      );
+    }
+    
+    // Reuse existing AbilityExpandableItem widget for full ability display
+    return AbilityExpandableItem(component: ability);
   }
 
   Widget _buildTreasurePreview(BuildContext context, model.Component treasure) {

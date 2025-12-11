@@ -233,6 +233,7 @@ class _AncestryDetails extends StatelessWidget {
             _buildImmunityDropdown(
               signatureId: 'signature_immunity',
               currentValue: traitChoices['signature_immunity'],
+              excludedValues: const {}, // Signature has no exclusions
               onChanged: (value) {
                 if (value != null) {
                   onTraitChoiceChanged('signature_immunity', value);
@@ -305,6 +306,8 @@ class _AncestryDetails extends StatelessWidget {
                   child: _buildImmunityDropdown(
                     signatureId: id,
                     currentValue: traitChoices[id],
+                    // Exclude signature immunity and other trait immunity choices
+                    excludedValues: _getExcludedImmunities(id, traitChoices),
                     onChanged: (value) {
                       if (value != null) {
                         onTraitChoiceChanged(id, value);
@@ -359,6 +362,30 @@ class _AncestryDetails extends StatelessWidget {
     return options.cast<String>();
   }
 
+  /// Get immunity types that should be excluded from a trait's dropdown.
+  /// Excludes signature immunity and other traits' immunity choices.
+  Set<String> _getExcludedImmunities(String currentTraitId, Map<String, String> choices) {
+    final excluded = <String>{};
+    
+    // Exclude signature immunity choice
+    final signatureImmunity = choices['signature_immunity'];
+    if (signatureImmunity != null && signatureImmunity.isNotEmpty) {
+      excluded.add(signatureImmunity);
+    }
+    
+    // Exclude other traits' immunity choices (but not the current trait's choice)
+    for (final entry in choices.entries) {
+      if (entry.key == currentTraitId) continue;
+      if (entry.key == 'signature_immunity') continue; // Already handled
+      // Only add if it's likely an immunity type
+      if (_immunityTypes.contains(entry.value.toLowerCase())) {
+        excluded.add(entry.value.toLowerCase());
+      }
+    }
+    
+    return excluded;
+  }
+
   static const _immunityTypes = [
     'acid',
     'cold',
@@ -371,8 +398,15 @@ class _AncestryDetails extends StatelessWidget {
   Widget _buildImmunityDropdown({
     required String signatureId,
     required String? currentValue,
+    required Set<String> excludedValues,
     required ValueChanged<String?> onChanged,
   }) {
+    // Filter out excluded immunity types (but keep current value if it was previously selected)
+    final availableTypes = _immunityTypes.where((type) {
+      if (type == currentValue) return true; // Always show current selection
+      return !excludedValues.contains(type);
+    }).toList();
+
     return DropdownButtonFormField<String>(
       value: currentValue,
       decoration: InputDecoration(
@@ -387,7 +421,7 @@ class _AncestryDetails extends StatelessWidget {
           value: null,
           child: Text('— Select immunity —'),
         ),
-        ..._immunityTypes.map(
+        ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
             value: type,
             child: Text(type[0].toUpperCase() + type.substring(1)),

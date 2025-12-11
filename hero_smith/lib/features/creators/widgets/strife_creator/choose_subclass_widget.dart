@@ -74,7 +74,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: TextField(
                       controller: controller,
-                      autofocus: true,
+                      autofocus: false,
                       decoration: const InputDecoration(
                         hintText: 'Search...',
                         prefixIcon: Icon(Icons.search),
@@ -143,12 +143,21 @@ class ChooseSubclassWidget extends StatefulWidget {
     required this.selectedLevel,
     this.selectedSubclass,
     this.onSelectionChanged,
+    this.reservedSkillIds = const {},
+    this.skillNameToIdLookup = const {},
+    this.savedSubclassSkillId,
   });
 
   final ClassData classData;
   final int selectedLevel;
   final SubclassSelectionResult? selectedSubclass;
   final SubclassSelectionChanged? onSelectionChanged;
+  /// Skill IDs that are already taken (from story page, DB, etc.)
+  final Set<String> reservedSkillIds;
+  /// Map of skill name (lowercase) to skill ID for resolving granted skill names
+  final Map<String, String> skillNameToIdLookup;
+  /// The skill ID currently saved in DB as granted by this subclass (to avoid self-flagging)
+  final String? savedSubclassSkillId;
 
   @override
   State<ChooseSubclassWidget> createState() => _ChooseSubclassWidgetState();
@@ -176,6 +185,22 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
   SubclassSelectionResult? _lastNotified;
   int _callbackVersion = 0;
   int _loadRequestId = 0;
+
+  /// Checks if a skill name corresponds to a reserved skill ID
+  /// Excludes the skill that was previously saved as granted by this subclass
+  bool _isSkillReserved(String? skillName) {
+    if (skillName == null || skillName.isEmpty) return false;
+    final normalized = skillName.trim().toLowerCase();
+    final skillId = widget.skillNameToIdLookup[normalized] ?? 'skill_$normalized';
+    
+    // If this skill was saved as granted by the subclass itself, don't flag it
+    if (widget.savedSubclassSkillId != null && 
+        widget.savedSubclassSkillId == skillId) {
+      return false;
+    }
+    
+    return widget.reservedSkillIds.contains(skillId);
+  }
 
   @override
   void initState() {
@@ -594,6 +619,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     final skillInfo = option.skill;
     final skillGroup = option.skillGroup;
     final ability = option.abilityName;
+    final skillIsReserved = _isSkillReserved(skillInfo);
 
     final chips = <Widget>[];
     if (skillInfo != null && skillInfo.isNotEmpty) {
@@ -632,6 +658,33 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
             spacing: 8,
             runSpacing: 8,
             children: chips,
+          ),
+        ],
+        if (skillIsReserved) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.orange.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.warning_amber_rounded, 
+                    size: 16, color: Colors.orange.shade700),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    'You already have the $skillInfo skill from a previous selection.',
+                    style: AppTextStyles.caption.copyWith(
+                      color: Colors.orange.shade800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ],

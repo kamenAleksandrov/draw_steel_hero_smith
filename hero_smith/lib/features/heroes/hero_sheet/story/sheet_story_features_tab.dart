@@ -206,6 +206,17 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
     try {
       final repo = ref.read(heroRepositoryProvider);
       await repo.saveFeatureSelections(widget.heroId, selections);
+      if (_classData != null) {
+        final db = ref.read(appDatabaseProvider);
+        final grantService = ClassFeatureGrantsService(db);
+        await grantService.applyClassFeatureSelections(
+          heroId: widget.heroId,
+          classData: _classData!,
+          level: _level,
+          selections: selections,
+          subclassSelection: _subclassSelection,
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

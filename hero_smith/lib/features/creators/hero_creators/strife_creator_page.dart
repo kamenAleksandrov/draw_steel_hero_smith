@@ -87,6 +87,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _isDirty = false;
+  bool _initialLoadComplete = false;
+  Map<String, dynamic> _lastSavedSnapshot = const {};
+
+  // Utility for deep map/set equality checks to avoid false dirty states
+  static const _deepEq = DeepCollectionEquality();
 
   // State variables
   int _selectedLevel = 1;
@@ -108,11 +113,42 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Set<String> _reservedLanguageIds = {};
   SubclassSelectionResult? _selectedSubclass;
   List<String?> _selectedKitIds = [];
+  /// The skill ID saved in config as granted by the current subclass (to avoid self-flagging)
+  String? _savedSubclassSkillId;
 
   @override
   void initState() {
     super.initState();
     _initializeData();
+  }
+
+  Map<String, dynamic> _currentSnapshot() {
+    // Build a stable snapshot for dirty detection; keep ordering deterministic where possible
+    return {
+      'level': _selectedLevel,
+      'class': _selectedClass?.classId,
+      'array': _selectedArray?.description,
+      'arrayValues': _selectedArray?.values,
+      'assigned': Map<String, int>.from(_assignedCharacteristics),
+      'levelChoices': Map<String, String?>.from(_levelChoiceSelections),
+      'skills': Map<String, String?>.from(_selectedSkills),
+      'skillGrants': (_skillGrantIds.toList()..sort()),
+      'abilities': Map<String, String?>.from(_selectedAbilities),
+      'perks': Map<String, String?>.from(_selectedPerks),
+      'subclass': _selectedSubclass == null
+          ? null
+          : {
+              'key': _selectedSubclass!.subclassKey,
+              'name': _selectedSubclass!.subclassName,
+              'deity': _selectedSubclass!.deityId,
+              'domains': List<String>.from(_selectedSubclass!.domainNames),
+            },
+      'kits': List<String?>.from(_selectedKitIds),
+    };
+  }
+
+  void _syncSnapshot() {
+    _lastSavedSnapshot = _currentSnapshot();
   }
 
   Future<void> _initializeData() async {
@@ -126,6 +162,20 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
+      });
+      _syncSnapshot();
+      
+      // Mark initial load complete after first frame to prevent false dirty detection
+      // Widgets may fire onChange callbacks during their first build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _initialLoadComplete = true;
+        if (_isDirty) {
+          setState(() {
+            _isDirty = false;
+          });
+          widget.onDirtyChanged?.call(false);
+        }
       });
     } catch (e) {
       if (!mounted) return;
@@ -182,14 +232,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _selectedClass = classData;
 
         // Load characteristic array if available
-        final values = await db.getHeroValues(widget.heroId);
-        String? arrayDescription;
-        for (final value in values) {
-          if (value.key == 'strife.characteristic_array') {
-            arrayDescription = value.textValue;
-            break;
-          }
-        }
+        final arrayConfig =
+            await db.getHeroConfigValue(widget.heroId, 'strife.characteristic_array');
+        final arrayDescription = arrayConfig?['name']?.toString();
 
         final savedArrayValues =
             await repo.getCharacteristicArrayValues(widget.heroId);
@@ -250,6 +295,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           );
         }
 
+        // Load saved subclass skill ID to avoid self-flagging as duplicate
+        final savedSubclassSkillConfig = await db.getHeroConfigValue(
+          widget.heroId,
+          'strife.subclass_skill_id',
+        );
+        _savedSubclassSkillId = savedSubclassSkillConfig?['id']?.toString();
+
         // Load equipment / modifications selections
         final equipmentIds = await repo.getEquipmentIds(widget.heroId);
         if (equipmentIds.isNotEmpty) {
@@ -286,6 +338,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             abilityIds: abilityIds,
           );
         }
+        // ignore: unused_local_variable
         final assignedAbilityIds =
             _selectedAbilities.values.whereType<String>().toSet();
         _reservedAbilityIds = abilityIds.toSet();
@@ -484,22 +537,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return selections.isEmpty ? const <String, String?>{} : selections;
   }
 
-  /// Load saved strife selections from hero values
+  /// Load saved strife selections from hero_config
   Future<Map<String, String?>> _loadStrifeSelections(String key) async {
     final db = ref.read(appDatabaseProvider);
-    final values = await db.getHeroValues(widget.heroId);
-    final strifeValue = values.firstWhereOrNull(
-      (v) => v.key == key,
-    );
-    if (strifeValue?.jsonValue == null) {
-      return const <String, String?>{};
+    final config = await db.getHeroConfigValue(widget.heroId, key);
+    if (config != null) {
+      return config.map((k, v) => MapEntry(k.toString(), v?.toString()));
     }
-    try {
-      final decoded = jsonDecode(strifeValue!.jsonValue!);
-      if (decoded is Map) {
-        return decoded.map((k, v) => MapEntry(k.toString(), v?.toString()));
-      }
-    } catch (_) {}
     return const <String, String?>{};
   }
 
@@ -522,12 +566,28 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return result;
   }
 
+  /// Gets skill IDs saved in the database from other sources (story, ancestry, etc.)
+  Set<String> get _dbSavedSkillIds => ref.watch(
+        heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'skill')),
+      );
+
+  /// Gets perk IDs saved in the database from other sources.
+  Set<String> get _dbSavedPerkIds => ref.watch(
+        heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'perk')),
+      );
+
+  /// Gets language IDs saved in the database from other sources.
+  Set<String> get _dbSavedLanguageIds => ref.watch(
+        heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'language')),
+      );
+
   void _refreshReservedSkills() {
     final normalizedSelections =
         _normalizeSkillIds(_selectedSkills.values.whereType<String>());
     final reserved = <String>{
       ..._baseSkillIds,
       ...normalizedSelections,
+      ..._dbSavedSkillIds, // Include DB-saved skills from other sources
     };
     final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
     if (subclassSkillId != null) {
@@ -837,15 +897,27 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _markDirty() {
-    if (!_isDirty) {
+    // Don't mark dirty during initial data loading or before first frame completes
+    if (_isLoading || !_initialLoadComplete) return;
+
+    const deepEq = DeepCollectionEquality();
+    final changed = !deepEq.equals(_lastSavedSnapshot, _currentSnapshot());
+
+    if (changed && !_isDirty) {
       setState(() {
         _isDirty = true;
       });
       widget.onDirtyChanged?.call(true);
+    } else if (!changed && _isDirty) {
+      setState(() {
+        _isDirty = false;
+      });
+      widget.onDirtyChanged?.call(false);
     }
   }
 
   void _handleLevelChanged(int level) {
+    if (level == _selectedLevel) return;
     setState(() {
       _selectedLevel = level;
     });
@@ -855,6 +927,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleClassChanged(ClassData classData) {
+    if (_selectedClass?.classId == classData.classId) return;
     setState(() {
       _selectedClass = classData;
       // Reset characteristic and skill selections when class changes
@@ -887,6 +960,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleAssignmentsChanged(Map<String, int> assignments) {
+    if (_deepEq.equals(_assignedCharacteristics, assignments)) return;
     setState(() {
       _assignedCharacteristics = assignments;
     });
@@ -894,6 +968,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleFinalTotalsChanged(Map<String, int> totals) {
+    if (_deepEq.equals(_finalCharacteristics, totals)) return;
     setState(() {
       _finalCharacteristics = totals;
     });
@@ -901,6 +976,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleLevelChoiceSelectionsChanged(Map<String, String?> selections) {
+    if (_deepEq.equals(_levelChoiceSelections, selections)) return;
     setState(() {
       _levelChoiceSelections = selections;
     });
@@ -908,6 +984,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleSkillSelectionsChanged(StartingSkillSelectionResult result) {
+    final sameSlots = _deepEq.equals(_selectedSkills, result.selectionsBySlot);
+    final sameGrants = _deepEq.equals(_skillGrantIds, result.grantedSkillIds.toSet());
+    if (sameSlots && sameGrants) return;
     setState(() {
       _selectedSkills = result.selectionsBySlot;
       _skillGrantIds = Set<String>.from(result.grantedSkillIds);
@@ -917,6 +996,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handlePerkSelectionsChanged(StartingPerkSelectionResult result) {
+    if (_deepEq.equals(_selectedPerks, result.selectionsBySlot)) return;
     setState(() {
       _selectedPerks = result.selectionsBySlot;
     });
@@ -924,6 +1004,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleAbilitySelectionsChanged(StartingAbilitySelectionResult result) {
+    if (_deepEq.equals(_selectedAbilities, result.selectionsBySlot)) return;
     setState(() {
       _selectedAbilities = result.selectionsBySlot;
     });
@@ -931,6 +1012,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleSubclassSelectionChanged(SubclassSelectionResult result) {
+    final sameDeity = _selectedSubclass?.deityId == result.deityId;
+    final sameSubclass = _selectedSubclass?.subclassName == result.subclassName &&
+        _selectedSubclass?.subclassKey == result.subclassKey;
+    final sameDomains = _deepEq.equals(_selectedSubclass?.domainNames ?? const <String>[], result.domainNames);
+    if (sameDeity && sameSubclass && sameDomains) return;
     setState(() {
       _selectedSubclass = result;
     });
@@ -940,6 +1026,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleKitChangedAtSlot(int slotIndex, String? kitId) {
+    if (_selectedKitIds.length > slotIndex && _selectedKitIds[slotIndex] == kitId) {
+      return;
+    }
     setState(() {
       while (_selectedKitIds.length <= slotIndex) {
         _selectedKitIds.add(null);
@@ -1384,12 +1473,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Persist equipment selection (including empty slots) for other screens
       updates.add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
-      updates.add(db.upsertHeroValue(
-        heroId: widget.heroId,
-        key: 'basics.equipment',
-        jsonMap: {'ids': slotOrderedEquipmentIds},
-      ));
-
       // Save equipment bonuses (or clear if empty)
       updates.add(repo.saveEquipmentBonuses(
         widget.heroId,
@@ -1578,36 +1661,58 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       }
 
       // 10b. Save strife ability slot selections separately for proper restoration
-      updates.add(
-        db.upsertHeroValue(
-          heroId: widget.heroId,
-          key: 'strife.ability_selections',
-          jsonMap: _selectedAbilities.map((k, v) => MapEntry(k, v)),
-        ),
-      );
+      updates.add(db.setHeroConfig(
+        heroId: widget.heroId,
+        configKey: 'strife.ability_selections',
+        value: _selectedAbilities.map((k, v) => MapEntry(k, v)),
+      ));
 
-      // 11. Save selected skills to database (merge with existing story skills)
+      // 11. Save subclass skill via hero_entries (properly tracks source for removal on change)
+      final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
+      updates.add(repo.saveSubclassSkill(widget.heroId, subclassSkillId));
+
+      // Get the previously saved subclass skill ID to remove it from hero_components
+      final previousSubclassSkillConfig = await db.getHeroConfigValue(
+        widget.heroId,
+        'strife.subclass_skill_id',
+      );
+      final previousSubclassSkillId = previousSubclassSkillConfig?['id']?.toString();
+
+      // Save the new subclass skill ID for future reference
+      if (subclassSkillId != null && subclassSkillId.isNotEmpty) {
+        updates.add(db.setHeroConfig(
+          heroId: widget.heroId,
+          configKey: 'strife.subclass_skill_id',
+          value: {'id': subclassSkillId},
+        ));
+      } else {
+        updates.add(db.deleteHeroConfig(widget.heroId, 'strife.subclass_skill_id'));
+      }
+
+      // 12. Save selected skills to database (merge with existing story skills)
       // Get existing skills from database
       final existingComponents = await db.getHeroComponents(widget.heroId);
-      final existingSkillIds = existingComponents
+      var existingSkillIds = existingComponents
           .where((c) => c['category'] == 'skill')
           .map((c) => c['componentId'] as String)
           .toSet();
 
-      // Collect strife-selected skills
+      // Remove previous subclass skill from existing skills (if it changed)
+      if (previousSubclassSkillId != null &&
+          previousSubclassSkillId.isNotEmpty &&
+          previousSubclassSkillId != subclassSkillId) {
+        existingSkillIds = existingSkillIds.difference({previousSubclassSkillId});
+      }
+
+      // Collect strife-selected skills (NOT including subclass skill - that's tracked via entries)
       final strifeSkillIds = _selectedSkills.values
           .whereType<String>()
           .where((id) => id.isNotEmpty)
           .toSet();
       final grantSkillIds = Set<String>.from(_skillGrantIds);
 
-      // Add subclass skill if present
-      final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
-      if (subclassSkillId != null) {
-        strifeSkillIds.add(subclassSkillId);
-      }
-
       // Merge: keep existing story skills + new strife skills + grants
+      // Note: subclass skill is NOT added here - it's tracked separately via hero_entries
       final mergedSkillIds = existingSkillIds
           .union(strifeSkillIds)
           .union(grantSkillIds);
@@ -1623,13 +1728,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       }
 
       // 11b. Save strife skill slot selections separately for proper restoration
-      updates.add(
-        db.upsertHeroValue(
-          heroId: widget.heroId,
-          key: 'strife.skill_selections',
-          jsonMap: _selectedSkills.map((k, v) => MapEntry(k, v)),
-        ),
-      );
+      updates.add(db.setHeroConfig(
+        heroId: widget.heroId,
+        configKey: 'strife.skill_selections',
+        value: _selectedSkills.map((k, v) => MapEntry(k, v)),
+      ));
 
       // 12. Save selected perks to database (merge with existing story perks)
       final existingPerkIds = existingComponents
@@ -1655,23 +1758,25 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       }
 
       // 12b. Save strife perk slot selections separately for proper restoration
-      updates.add(
-        db.upsertHeroValue(
-          heroId: widget.heroId,
-          key: 'strife.perk_selections',
-          jsonMap: _selectedPerks.map((k, v) => MapEntry(k, v)),
-        ),
-      );
+      updates.add(db.setHeroConfig(
+        heroId: widget.heroId,
+        configKey: 'strife.perk_selections',
+        value: _selectedPerks.map((k, v) => MapEntry(k, v)),
+      ));
 
       // Execute all updates
       await Future.wait(updates);
 
       if (!mounted) return;
 
+      // Update local state with the new saved subclass skill ID
+      _savedSubclassSkillId = subclassSkillId;
+
       setState(() {
         _isDirty = false;
       });
       widget.onDirtyChanged?.call(false);
+      _syncSnapshot();
       widget.onSaveRequested?.call();
 
       // Calculate display values for snackbar
@@ -1777,6 +1882,16 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               selectedLevel: _selectedLevel,
               selectedSubclass: _selectedSubclass,
               onSelectionChanged: _handleSubclassSelectionChanged,
+              // Pass reserved skills excluding the current subclass's own skill
+              // so it doesn't flag itself as a duplicate
+              reservedSkillIds: {
+                ..._baseSkillIds,
+                ..._normalizeSkillIds(_selectedSkills.values.whereType<String>()),
+                ..._dbSavedSkillIds,
+              },
+              skillNameToIdLookup: _skillIdLookup,
+              // Pass the saved subclass skill ID to avoid self-flagging
+              savedSubclassSkillId: _savedSubclassSkillId,
             ),
             ..._buildKitWidgets(),
             StartingAbilitiesWidget(
@@ -1800,8 +1915,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedPerks: _selectedPerks,
-              reservedPerkIds: _reservedPerkIds,
-              reservedLanguageIds: _reservedLanguageIds,
+              reservedPerkIds: {..._reservedPerkIds, ..._dbSavedPerkIds},
+              reservedLanguageIds: {..._reservedLanguageIds, ..._dbSavedLanguageIds},
               reservedSkillIds: _reservedSkillIds,
               onSelectionChanged: _handlePerkSelectionsChanged,
             ),

@@ -1,23 +1,268 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/db/app_database.dart' as db;
 import '../../../../core/db/providers.dart';
+import '../../../../core/models/damage_resistance_model.dart';
+import '../../../../core/models/dynamic_modifier_model.dart';
+import '../../../../core/models/hero_assembled_model.dart';
+import '../../../../core/models/hero_mod_keys.dart';
 import '../../../../core/models/heroic_resource_progression.dart';
 import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/ancestry_bonus_service.dart';
 import '../../../../core/services/heroic_resource_progression_service.dart';
 
+/// Provider that combines hero_values (base stats) with HeroAssembly (mods/bonuses)
+/// to produce the complete HeroMainStats.
+///
+/// This is a pure combination of existing providers; Riverpod will recompute
+/// whenever any dependency changes (values, assembly, equipment bonuses).
 final heroMainStatsProvider =
-    StreamProvider.family<HeroMainStats, String>((ref, heroId) {
-  final repo = ref.watch(heroRepositoryProvider);
-  return repo.watchMainStats(heroId);
+    Provider.family<AsyncValue<HeroMainStats>, String>((ref, heroId) {
+  final valuesAsync = ref.watch(heroValuesProvider(heroId));
+  final assemblyAsync = ref.watch(heroAssemblyProvider(heroId));
+  final equipmentBonusesAsync = ref.watch(heroEquipmentBonusesProvider(heroId));
+
+  // Propagate loading/error states if any dependency is not ready
+  if (valuesAsync.isLoading || assemblyAsync.isLoading || equipmentBonusesAsync.isLoading) {
+    return const AsyncLoading();
+  }
+
+  // Errors: surface the first one encountered
+  if (valuesAsync.hasError) {
+    return AsyncError(valuesAsync.error!, valuesAsync.stackTrace ?? StackTrace.current);
+  }
+  if (assemblyAsync.hasError) {
+    return AsyncError(assemblyAsync.error!, assemblyAsync.stackTrace ?? StackTrace.current);
+  }
+  if (equipmentBonusesAsync.hasError) {
+    return AsyncError(
+      equipmentBonusesAsync.error!,
+      equipmentBonusesAsync.stackTrace ?? StackTrace.current,
+    );
+  }
+
+  final values = valuesAsync.requireValue;
+  final assembly = assemblyAsync.value; // may be null
+  final equipmentBonuses = equipmentBonusesAsync.requireValue;
+
+  final stats = _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses);
+  return AsyncData(stats);
 });
 
-/// Provider to load ancestry stat modifications with their sources.
+/// Pure function to combine hero_values and HeroAssembly into HeroMainStats.
+HeroMainStats _mapValuesAndAssemblyToMainStats(
+  List<db.HeroValue> values,
+  HeroAssembly? assembly,
+  Map<String, int> equipmentBonuses,
+) {
+  int readInt(String key, {int defaultValue = 0}) {
+    final v = values.firstWhereOrNull((e) => e.key == key);
+    if (v == null) return defaultValue;
+    return v.value ?? int.tryParse(v.textValue ?? '') ?? defaultValue;
+  }
+
+  String? readText(String key) {
+    final v = values.firstWhereOrNull((e) => e.key == key);
+    return v?.textValue;
+  }
+
+  // User modifications from hero_values
+  final userModifications = _extractUserModifications(values);
+
+  // Choice modifications: stat mods from assembly + equipment bonuses
+  final choiceModifications = _buildChoiceModifications(assembly, equipmentBonuses);
+
+  // Combined modifications
+  final modifications = _combineModificationMaps(choiceModifications, userModifications);
+
+  // Class ID comes from assembly (hero_entries), fallback to legacy hero_values
+  final classId = assembly?.classId ?? readText('basics.className');
+
+  // Heroic resource name from hero_values
+  final heroicResourceName = readText('heroic.resource');
+
+  return HeroMainStats(
+    victories: readInt('score.victories'),
+    exp: readInt('score.exp'),
+    level: assembly?.level ?? readInt('basics.level', defaultValue: 1),
+    wealthBase: readInt('score.wealth'),
+    renownBase: readInt('score.renown'),
+    mightBase: readInt('stats.might'),
+    agilityBase: readInt('stats.agility'),
+    reasonBase: readInt('stats.reason'),
+    intuitionBase: readInt('stats.intuition'),
+    presenceBase: readInt('stats.presence'),
+    sizeBase: readText('stats.size') ?? '1M',
+    speedBase: readInt('stats.speed'),
+    disengageBase: readInt('stats.disengage'),
+    stabilityBase: readInt('stats.stability'),
+    staminaCurrent: readInt('stamina.current'),
+    staminaMaxBase: readInt('stamina.max'),
+    staminaTemp: readInt('stamina.temp'),
+    recoveriesCurrent: readInt('recoveries.current'),
+    recoveriesMaxBase: readInt('recoveries.max'),
+    recoveryValueBonus: readInt('complication.recovery_bonus'),
+    surgesCurrent: readInt('surges.current'),
+    classId: classId,
+    heroicResourceName: heroicResourceName,
+    heroicResourceCurrent: readInt('heroic.current'),
+    modifications: modifications,
+    userModifications: userModifications,
+    choiceModifications: choiceModifications,
+    equipmentBonuses: equipmentBonuses,
+    dynamicModifiers: DynamicModifierList.fromJsonString(
+      readText('dynamic_modifiers'),
+    ),
+  );
+}
+
+/// Extract user modifications from hero_values (mods.map).
+Map<String, int> _extractUserModifications(List<db.HeroValue> values) {
+  final map = <String, int>{};
+  final modsEntry = values.firstWhereOrNull((e) => e.key == 'mods.map');
+  if (modsEntry != null) {
+    final raw = modsEntry.jsonValue ?? modsEntry.textValue;
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        final decoded = _jsonDecode(raw);
+        if (decoded is Map) {
+          decoded.forEach((key, value) {
+            final parsed = _toInt(value);
+            if (parsed != null && parsed != 0) {
+              map[key.toString()] = parsed;
+            }
+          });
+        }
+      } catch (_) {}
+    }
+  }
+  return map.isEmpty ? const {} : Map.unmodifiable(map);
+}
+
+/// Build choice modifications from assembly stat mods + equipment bonuses.
+Map<String, int> _buildChoiceModifications(
+  HeroAssembly? assembly,
+  Map<String, int> equipmentBonuses,
+) {
+  final map = <String, int>{};
+
+  // Add stat mods from assembly (ancestry, complication, perks, etc.)
+  if (assembly != null) {
+    for (final stat in ['might', 'agility', 'reason', 'intuition', 'presence', 
+                        'speed', 'disengage', 'stability', 'size', 'stamina', 
+                        'recoveries', 'surges', 'wealth', 'renown']) {
+      final modTotal = assembly.statMods.getTotalForStat(stat);
+      if (modTotal != 0) {
+        final modKey = _statToModKey(stat);
+        if (modKey != null) {
+          map[modKey] = (map[modKey] ?? 0) + modTotal;
+        }
+      }
+    }
+  }
+
+  // Add equipment bonuses
+  if (equipmentBonuses.isNotEmpty) {
+    _addEquipmentMods(map, equipmentBonuses);
+  }
+
+  return map.isEmpty ? const {} : Map.unmodifiable(map);
+}
+
+/// Map stat name to HeroModKeys.
+String? _statToModKey(String stat) {
+  return switch (stat.toLowerCase()) {
+    'might' => HeroModKeys.might,
+    'agility' => HeroModKeys.agility,
+    'reason' => HeroModKeys.reason,
+    'intuition' => HeroModKeys.intuition,
+    'presence' => HeroModKeys.presence,
+    'size' => HeroModKeys.size,
+    'speed' => HeroModKeys.speed,
+    'disengage' => HeroModKeys.disengage,
+    'stability' => HeroModKeys.stability,
+    'stamina' => HeroModKeys.staminaMax,
+    'recoveries' => HeroModKeys.recoveriesMax,
+    'surges' => HeroModKeys.surges,
+    'wealth' => HeroModKeys.wealth,
+    'renown' => HeroModKeys.renown,
+    _ => null,
+  };
+}
+
+/// Add equipment bonuses to the modifications map.
+void _addEquipmentMods(Map<String, int> map, Map<String, int> bonuses) {
+  void add(String key, int? value) {
+    if (value == null || value == 0) return;
+    map[key] = (map[key] ?? 0) + value;
+  }
+
+  add(HeroModKeys.staminaMax, bonuses['stamina']);
+  add(HeroModKeys.speed, bonuses['speed']);
+  add(HeroModKeys.stability, bonuses['stability']);
+  add(HeroModKeys.disengage, bonuses['disengage']);
+}
+
+/// Combine modification maps.
+Map<String, int> _combineModificationMaps(
+  Map<String, int> choiceMods,
+  Map<String, int> userMods,
+) {
+  if (choiceMods.isEmpty && userMods.isEmpty) return const {};
+  final result = <String, int>{};
+  void merge(Map<String, int> source) {
+    source.forEach((key, value) {
+      if (value == 0) return;
+      result[key] = (result[key] ?? 0) + value;
+    });
+  }
+
+  merge(choiceMods);
+  merge(userMods);
+  return Map.unmodifiable(result);
+}
+
+dynamic _jsonDecode(String raw) {
+  try {
+    return jsonDecode(raw);
+  } catch (_) {
+    return null;
+  }
+}
+
+int? _toInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value);
+  return null;
+}
+
+extension _ListExtension<T> on List<T> {
+  T? firstWhereOrNull(bool Function(T) test) {
+    for (final element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+/// Provider to watch ancestry stat modifications with their sources.
+/// Uses a stream so it auto-updates when ancestry bonuses change.
 final heroAncestryStatModsProvider =
-    FutureProvider.family<HeroStatModifications, String>((ref, heroId) async {
+    StreamProvider.family<HeroStatModifications, String>((ref, heroId) {
   final service = ref.watch(ancestryBonusServiceProvider);
-  return service.loadAncestryStatMods(heroId);
+  return service.watchAncestryStatMods(heroId);
+});
+
+/// Provider to watch damage resistances - auto-updates when values change.
+final heroDamageResistancesProvider =
+    StreamProvider.family<HeroDamageResistances, String>((ref, heroId) {
+  final service = ref.watch(ancestryBonusServiceProvider);
+  return service.watchDamageResistances(heroId);
 });
 
 /// Provider to load equipment bonuses that have been applied to the hero.
@@ -40,22 +285,17 @@ class HeroProgressionContext {
   final String? kitId;
 }
 
-/// Provider to load hero progression context (class, subclass, kit)
+/// Provider to load hero progression context (class, subclass, kit) from HeroAssembly
 final heroProgressionContextProvider =
     FutureProvider.family<HeroProgressionContext, String>((ref, heroId) async {
-  final repo = ref.read(heroRepositoryProvider);
-  HeroMainStats? stats;
-  try {
-    stats = await ref.watch(heroMainStatsProvider(heroId).future);
-  } catch (_) {
-    stats = null;
-  }
-  final hero = await repo.load(heroId);
-  if (hero == null && stats == null) {
+  // Use assembly as the source of truth for class/subclass/kit
+  final assembly = await ref.watch(heroAssemblyProvider(heroId).future);
+  
+  if (assembly == null) {
     return const HeroProgressionContext(className: null, subclassName: null);
   }
 
-  String? normalizedClassName = hero?.className ?? stats?.classId;
+  String? normalizedClassName = assembly.classId;
   if (normalizedClassName != null) {
     normalizedClassName = normalizedClassName.trim();
     if (normalizedClassName.startsWith('class_')) {
@@ -63,13 +303,11 @@ final heroProgressionContextProvider =
     }
   }
 
-  // Get equipment IDs to find the kit
-  final equipmentIds = await repo.getEquipmentIds(heroId);
+  // Get kit from assembly equipment
   String? kitId;
-  
-  // Find the first stormwight kit in equipment
-  for (final id in equipmentIds) {
-    if (id != null && id.contains('kit_')) {
+  for (final equipEntry in assembly.equipment) {
+    final id = equipEntry.entryId;
+    if (id.contains('kit_')) {
       // Check if it's a stormwight kit (boren, corven, raden, vulken)
       final normalizedId = id.toLowerCase();
       if (normalizedId.contains('boren') ||
@@ -85,7 +323,7 @@ final heroProgressionContextProvider =
 
   return HeroProgressionContext(
     className: normalizedClassName,
-    subclassName: hero?.subclass,
+    subclassName: assembly.subclassId,
     kitId: kitId,
   );
 });

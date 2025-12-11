@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../db/app_database.dart';
-import '../models/component.dart' as model;
+import '../repositories/hero_entry_repository.dart';
 
 /// Represents a parsed perk grant
 sealed class PerkGrant {
@@ -287,7 +287,7 @@ class PerkGrantsService {
     for (final perkComp in perkComponents) {
       try {
         Map<String, dynamic> data = {};
-        if (perkComp.dataJson != null && perkComp.dataJson.isNotEmpty) {
+        if (perkComp.dataJson.isNotEmpty) {
           data = jsonDecode(perkComp.dataJson) as Map<String, dynamic>;
         }
         final grantsJson = data['grants'];
@@ -329,11 +329,11 @@ class PerkGrantsService {
     final abilityIds = await _resolveAbilityIds(db, abilityNames);
     if (abilityIds.isEmpty) return;
     
-    // Track which abilities came from this perk
+    // Track which abilities came from this perk (legacy, kept for backwards compat)
     await _savePerkAbilityGrants(db, heroId, perkId, abilityIds);
     
-    // Add to hero's ability components (merge with existing)
-    await _addToHeroAbilities(db, heroId, abilityIds);
+    // Add to hero's ability entries with proper source tracking
+    await _addToHeroAbilities(db, heroId, perkId, abilityIds);
   }
   
   /// Remove all grants from a perk when it is deselected.
@@ -397,13 +397,13 @@ class PerkGrantsService {
     final added = chosenIds.where((id) => !previousChoices.contains(id)).toList();
     final removed = previousChoices.where((id) => !chosenIds.contains(id)).toList();
     
-    // Apply changes to hero components
+    // Apply changes to hero entries
     if (grantType == 'language') {
       if (removed.isNotEmpty) {
         await _removeFromHeroLanguages(db, heroId, removed, perkId);
       }
       if (added.isNotEmpty) {
-        await _addToHeroLanguages(db, heroId, added);
+        await _addToHeroLanguages(db, heroId, perkId, added);
       }
     } else if (grantType == 'skill_pick') {
       // New skills being learned
@@ -411,7 +411,7 @@ class PerkGrantsService {
         await _removeFromHeroSkills(db, heroId, removed, perkId);
       }
       if (added.isNotEmpty) {
-        await _addToHeroSkills(db, heroId, added);
+        await _addToHeroSkills(db, heroId, perkId, added);
       }
     }
     // skill_owned doesn't add new skills, just tracks selection
@@ -472,14 +472,13 @@ class PerkGrantsService {
     final existing = await db.getComponentById(id);
     if (existing != null) return;
     
-    // Create the component
-    final component = model.Component(
+    // Insert the component directly
+    await db.insertComponentRaw(
       id: id,
       type: 'ability',
       name: abilityData['name'] as String? ?? id,
       data: Map<String, dynamic>.from(abilityData),
     );
-    await db.insertComponent(component);
   }
   
   static const _kPerkAbilitiesPrefix = 'perk_abilities.';
@@ -532,116 +531,80 @@ class PerkGrantsService {
   
   // --- Private helpers for hero components ---
   
-  Future<void> _addToHeroAbilities(AppDatabase db, String heroId, List<String> abilityIds) async {
-    final current = await db.getHeroComponentIds(heroId, 'ability');
-    final merged = {...current, ...abilityIds}.toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'ability', componentIds: merged);
+  Future<void> _addToHeroAbilities(AppDatabase db, String heroId, String perkId, List<String> abilityIds) async {
+    if (abilityIds.isEmpty) return;
+    final entries = HeroEntryRepository(db);
+    await entries.addEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'ability',
+      entryIds: abilityIds,
+      gainedBy: 'grant',
+    );
   }
   
   Future<void> _removeFromHeroAbilities(
-    AppDatabase db, String heroId, List<String> abilityIds, String excludePerkId,
+    AppDatabase db, String heroId, List<String> abilityIds, String perkId,
   ) async {
-    // Check if any of these abilities are granted by other perks
-    final values = await db.getHeroValues(heroId);
-    final stillGranted = <String>{};
-    
-    for (final value in values) {
-      if (value.key.startsWith(_kPerkAbilitiesPrefix) && 
-          value.key != '$_kPerkAbilitiesPrefix$excludePerkId') {
-        final jsonStr = value.jsonValue;
-        if (jsonStr != null) {
-          try {
-            final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-            if (map['list'] is List) {
-              stillGranted.addAll((map['list'] as List).cast<String>());
-            }
-          } catch (_) {}
-        }
-      }
-    }
-    
-    // Only remove abilities not granted by other perks
-    final toRemove = abilityIds.where((id) => !stillGranted.contains(id)).toSet();
-    if (toRemove.isEmpty) return;
-    
-    final current = await db.getHeroComponentIds(heroId, 'ability');
-    final updated = current.where((id) => !toRemove.contains(id)).toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'ability', componentIds: updated);
+    // Simply remove all abilities from this specific perk
+    // Other perks' abilities are stored separately with their own sourceId
+    final entries = HeroEntryRepository(db);
+    await entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'ability',
+    );
   }
   
-  Future<void> _addToHeroLanguages(AppDatabase db, String heroId, List<String> languageIds) async {
-    final current = await db.getHeroComponentIds(heroId, 'language');
-    final merged = {...current, ...languageIds}.toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'language', componentIds: merged);
+  Future<void> _addToHeroLanguages(AppDatabase db, String heroId, String perkId, List<String> languageIds) async {
+    if (languageIds.isEmpty) return;
+    final entries = HeroEntryRepository(db);
+    await entries.addEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'language',
+      entryIds: languageIds,
+      gainedBy: 'grant',
+    );
   }
   
   Future<void> _removeFromHeroLanguages(
-    AppDatabase db, String heroId, List<String> languageIds, String excludePerkId,
+    AppDatabase db, String heroId, List<String> languageIds, String perkId,
   ) async {
-    // Check if any of these languages are granted by other perks
-    final values = await db.getHeroValues(heroId);
-    final stillGranted = <String>{};
-    
-    for (final value in values) {
-      if (value.key.startsWith('perk_grant.') && 
-          value.key.endsWith('.language') &&
-          !value.key.startsWith('perk_grant.$excludePerkId.')) {
-        final jsonStr = value.jsonValue;
-        if (jsonStr != null) {
-          try {
-            final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-            if (map['list'] is List) {
-              stillGranted.addAll((map['list'] as List).cast<String>());
-            }
-          } catch (_) {}
-        }
-      }
-    }
-    
-    // Only remove languages not granted by other perks
-    final toRemove = languageIds.where((id) => !stillGranted.contains(id)).toSet();
-    if (toRemove.isEmpty) return;
-    
-    final current = await db.getHeroComponentIds(heroId, 'language');
-    final updated = current.where((id) => !toRemove.contains(id)).toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'language', componentIds: updated);
+    final entries = HeroEntryRepository(db);
+    await entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'language',
+    );
   }
   
-  Future<void> _addToHeroSkills(AppDatabase db, String heroId, List<String> skillIds) async {
-    final current = await db.getHeroComponentIds(heroId, 'skill');
-    final merged = {...current, ...skillIds}.toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'skill', componentIds: merged);
+  Future<void> _addToHeroSkills(AppDatabase db, String heroId, String perkId, List<String> skillIds) async {
+    if (skillIds.isEmpty) return;
+    final entries = HeroEntryRepository(db);
+    await entries.addEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'skill',
+      entryIds: skillIds,
+      gainedBy: 'grant',
+    );
   }
   
   Future<void> _removeFromHeroSkills(
-    AppDatabase db, String heroId, List<String> skillIds, String excludePerkId,
+    AppDatabase db, String heroId, List<String> skillIds, String perkId,
   ) async {
-    // Check if any of these skills are granted by other perks
-    final values = await db.getHeroValues(heroId);
-    final stillGranted = <String>{};
-    
-    for (final value in values) {
-      if (value.key.startsWith('perk_grant.') && 
-          value.key.endsWith('.skill_pick') &&
-          !value.key.startsWith('perk_grant.$excludePerkId.')) {
-        final jsonStr = value.jsonValue;
-        if (jsonStr != null) {
-          try {
-            final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-            if (map['list'] is List) {
-              stillGranted.addAll((map['list'] as List).cast<String>());
-            }
-          } catch (_) {}
-        }
-      }
-    }
-    
-    // Only remove skills not granted by other perks
-    final toRemove = skillIds.where((id) => !stillGranted.contains(id)).toSet();
-    if (toRemove.isEmpty) return;
-    
-    final current = await db.getHeroComponentIds(heroId, 'skill');
-    final updated = current.where((id) => !toRemove.contains(id)).toList();
-    await db.setHeroComponentIds(heroId: heroId, category: 'skill', componentIds: updated);
+    final entries = HeroEntryRepository(db);
+    await entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'perk',
+      sourceId: perkId,
+      entryType: 'skill',
+    );
   }
 }

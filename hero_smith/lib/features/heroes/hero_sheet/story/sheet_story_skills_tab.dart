@@ -253,6 +253,7 @@ class _AddSkillDialog extends StatefulWidget {
 }
 
 class _AddSkillDialogState extends State<_AddSkillDialog> {
+  // ignore: unused_field
   String _searchQuery = '';
   List<_SkillOption> _filteredSkills = [];
 

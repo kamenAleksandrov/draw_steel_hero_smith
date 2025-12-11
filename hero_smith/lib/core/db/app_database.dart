@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:path_provider/path_provider.dart';
 
-import '../models/component.dart' as model;
-
+import '../services/hero_entry_normalizer.dart';
 part 'app_database.g.dart';
 
 class Components extends Table {
@@ -33,6 +33,33 @@ class Heroes extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   @override
   Set<Column> get primaryKey => {id};
+}
+
+/// Unified table for all hero-owned content (skills, perks, languages, titles,
+/// traits, abilities, equipment, ancestry/class/career picks, etc.).
+class HeroEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get entryType => text()(); // e.g. skill, perk, language, class
+  TextColumn get entryId => text()(); // component id
+  TextColumn get sourceType =>
+      text().withDefault(const Constant('legacy'))(); // e.g. class, ancestry
+  TextColumn get sourceId => text().withDefault(const Constant(''))(); // component id of source
+  TextColumn get gainedBy => text().withDefault(const Constant('grant'))(); // grant | choice
+  TextColumn get payload => text().nullable()(); // JSON metadata
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+/// Stores configuration/choice metadata that is not itself a content entry.
+class HeroConfig extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get heroId => text().references(Heroes, #id)();
+  TextColumn get configKey => text()(); // e.g. ancestry.trait_choices
+  TextColumn get valueJson => text()(); // JSON-encoded value
+  TextColumn get metadata => text().nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // HeroComponents table removed - all data now stored in HeroValues
@@ -134,6 +161,8 @@ class HeroNotes extends Table {
   HeroFollowers,
   HeroProjectSources,
   HeroNotes,
+  HeroEntries,
+  HeroConfig,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
@@ -144,12 +173,18 @@ class AppDatabase extends _$AppDatabase {
   static bool databasePreexisted = false;
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (Migrator m) async {
           await m.createAll();
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_entries_hero_id ON hero_entries(hero_id)');
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_entries_type ON hero_entries(hero_id, entry_type)');
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_config_hero_id ON hero_config(hero_id)');
         },
         onUpgrade: (Migrator m, int from, int to) async {
           if (from < 2) {
@@ -170,14 +205,71 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(heroNotes);
           }
           if (from < 5) {
-            // Migration from schema version 4 to 5
-            // Add notes column to hero_downtime_projects
-            await customStatement(
-              "ALTER TABLE hero_downtime_projects ADD COLUMN notes TEXT NOT NULL DEFAULT ''",
-            );
+          // Migration from schema version 4 to 5
+          // Add notes column to hero_downtime_projects
+          await customStatement(
+            "ALTER TABLE hero_downtime_projects ADD COLUMN notes TEXT NOT NULL DEFAULT ''",
+          );
+        }
+        if (from < 6) {
+          // Migration from schema version 5 to 6
+          await m.createTable(heroEntries);
+          await m.createTable(heroConfig);
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_entries_hero_id ON hero_entries(hero_id)');
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_entries_type ON hero_entries(hero_id, entry_type)');
+          await customStatement(
+              'CREATE INDEX IF NOT EXISTS idx_hero_config_hero_id ON hero_config(hero_id)');
+          await _migrateHeroValuesToEntriesAndConfig();
+        }
+        if (from < 7) {
+          // Normalization pass to ensure correct metadata and cleanup legacy fields
+          final heroesList = await select(heroes).get();
+          final normalizer = HeroEntryNormalizer(this);
+          for (final h in heroesList) {
+            await normalizer.normalize(h.id);
           }
-        },
-      );
+        }
+        if (from < 8) {
+          // Ensure hero_config uniqueness and cleanup duplicates
+          // MUST dedupe BEFORE creating unique index to avoid constraint failures
+          final heroesList = await select(heroes).get();
+          final normalizer = HeroEntryNormalizer(this);
+          for (final h in heroesList) {
+            await normalizer.normalize(h.id);
+          }
+          // Now safe to create unique index
+          await customStatement(
+              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
+        }
+        if (from < 9) {
+          // v9: Fix for users who migrated to v8 but still have duplicate config rows
+          // The unique index creation with IF NOT EXISTS doesn't enforce on existing data
+          // so we must: 1) drop index, 2) dedupe, 3) recreate index
+          await customStatement('DROP INDEX IF EXISTS idx_hero_config_unique');
+          final heroesList = await select(heroes).get();
+          final normalizer = HeroEntryNormalizer(this);
+          for (final h in heroesList) {
+            await normalizer.normalize(h.id);
+          }
+          await customStatement(
+              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
+        }
+        if (from < 10) {
+          // v10: Force cleanup of duplicates created by buggy setHeroConfig
+          // Now that setHeroConfig properly deletes before insert, this is a one-time cleanup
+          await customStatement('DROP INDEX IF EXISTS idx_hero_config_unique');
+          final heroesList = await select(heroes).get();
+          final normalizer = HeroEntryNormalizer(this);
+          for (final h in heroesList) {
+            await normalizer.normalize(h.id);
+          }
+          await customStatement(
+              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
+        }
+      },
+    );
 
   /// Migrate hero components data to hero values (schema v1 -> v2)
   Future<void> _migrateHeroComponentsToValues() async {
@@ -244,6 +336,465 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
+  /// Migration helper: move non-numeric content/configuration out of hero_values
+  /// into hero_entries / hero_config to keep hero_values numeric/state only.
+  ///
+  /// Mapping reference:
+  /// - component.*                     => hero_entries(entry_type = suffix)
+  /// - basics.{className,subclass,...} => hero_entries (class/subclass/ancestry/career/kit)
+  /// - faith.{deity,domain}            => hero_entries (deity/domain rows)
+  /// - ancestry.selected_traits        => hero_entries(ancestry_trait); choices/signature -> hero_config
+  /// - culture.*.skill                 => hero_config (selection metadata)
+  /// - career.* selections             => hero_config (skills/perks/incident)
+  /// - strife.* selections/layout      => hero_config; equipment ids -> hero_entries(equipment)
+  /// - perk_grant.*                    => hero_config
+  /// - perk_abilities.*                => hero_entries(ability, source=perk)
+  /// - complication.{skills,abilities,languages,features,treasures} => hero_entries (source=complication)
+  /// - complication.choices            => hero_config
+  /// - gear.favorite_kits / inventory  => hero_config
+  Future<void> _migrateHeroValuesToEntriesAndConfig() async {
+    final allValues = await select(heroValues).get();
+    final now = DateTime.now();
+    const bannedPrefixes = [
+      'ancestry.granted_abilities',
+      'ancestry.applied_bonuses',
+      'ancestry.condition_immunities',
+      'ancestry.stat_mods',
+      'perk_abilities.',
+      'complication.applied_grants',
+      'complication.abilities',
+      'complication.skills',
+      'complication.features',
+      'complication.treasures',
+      'complication.languages',
+      'complication.damage_resistances',
+      'strife.equipment_bonuses',
+    ];
+
+    Future<void> addEntry({
+      required String heroId,
+      required String entryType,
+      required String entryId,
+      String sourceType = 'legacy',
+      String sourceId = '',
+      String gainedBy = 'grant',
+      Map<String, dynamic>? payload,
+    }) async {
+      await into(heroEntries).insert(
+        HeroEntriesCompanion.insert(
+          heroId: heroId,
+          entryType: entryType,
+          entryId: entryId,
+          sourceType: Value(sourceType),
+          sourceId: Value(sourceId),
+          gainedBy: Value(gainedBy),
+          payload: Value(payload == null ? null : jsonEncode(payload)),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+        mode: InsertMode.insertOrIgnore,
+      );
+    }
+
+    Future<void> setConfig({
+      required String heroId,
+      required String key,
+      required String valueJson,
+      String? metadata,
+    }) async {
+      await into(heroConfig).insert(
+        HeroConfigCompanion.insert(
+          heroId: heroId,
+          configKey: key,
+          valueJson: valueJson,
+          metadata: Value(metadata),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+    }
+
+    // Track hero_values rows to delete after migration.
+    final idsToDelete = <int>{};
+
+    for (final v in allValues) {
+      if (bannedPrefixes.any((p) => v.key.startsWith(p))) {
+        idsToDelete.add(v.id);
+        continue;
+      }
+      final key = v.key;
+      final heroId = v.heroId;
+
+      // --- Component.* legacy buckets -> hero_entries
+      if (key.startsWith('component.')) {
+        final entryType = key.substring('component.'.length);
+        final ids = <String>[];
+        if (v.textValue != null && v.textValue!.isNotEmpty) {
+          ids.add(v.textValue!);
+        }
+        if (v.jsonValue != null) {
+          try {
+            final decoded = jsonDecode(v.jsonValue!);
+            if (decoded is Map && decoded['ids'] is List) {
+              ids.addAll(
+                  (decoded['ids'] as List).map((e) => e.toString()).toList());
+            } else if (decoded is List) {
+              ids.addAll(decoded.map((e) => e.toString()));
+            }
+          } catch (_) {}
+        }
+        for (final id in ids) {
+          await addEntry(
+            heroId: heroId,
+            entryType: entryType,
+            entryId: id,
+            sourceType: 'legacy_component',
+            sourceId: entryType,
+            gainedBy: 'grant',
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // --- Top-level picks -> hero_entries (class/ancestry/career/etc.)
+      switch (key) {
+        case 'basics.className':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'class',
+              entryId: v.textValue!,
+              sourceType: 'class',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'basics.subclass':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'subclass',
+              entryId: v.textValue!,
+              sourceType: 'class',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'basics.ancestry':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'ancestry',
+              entryId: v.textValue!,
+              sourceType: 'ancestry',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'basics.career':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'career',
+              entryId: v.textValue!,
+              sourceType: 'career',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'basics.kit':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'kit',
+              entryId: v.textValue!,
+              sourceType: 'kit',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'faith.deity':
+          if ((v.textValue ?? '').isNotEmpty) {
+            await addEntry(
+              heroId: heroId,
+              entryType: 'deity',
+              entryId: v.textValue!,
+              sourceType: 'deity',
+              gainedBy: 'choice',
+            );
+          }
+          idsToDelete.add(v.id);
+          continue;
+        case 'faith.domain':
+          if ((v.textValue ?? '').isNotEmpty) {
+            final parts = v.textValue!
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty);
+            for (final domain in parts) {
+              await addEntry(
+                heroId: heroId,
+                entryType: 'domain',
+                entryId: domain,
+                sourceType: 'domain',
+                gainedBy: 'choice',
+              );
+            }
+          }
+          idsToDelete.add(v.id);
+          continue;
+        default:
+          break;
+      }
+
+      // --- Ancestry trait picks -> hero_entries + config
+      if (key == 'ancestry.selected_traits') {
+        if (v.jsonValue != null || v.textValue != null) {
+          try {
+            final raw = v.jsonValue ?? v.textValue;
+            final decoded = jsonDecode(raw!);
+            final ids = decoded is List
+                ? decoded.map((e) => e.toString()).toList()
+                : decoded is Map && decoded['list'] is List
+                    ? (decoded['list'] as List)
+                        .map((e) => e.toString())
+                        .toList()
+                    : <String>[];
+            for (final id in ids) {
+              await addEntry(
+                heroId: heroId,
+                entryType: 'ancestry_trait',
+                entryId: id,
+                sourceType: 'ancestry',
+                sourceId: 'ancestry',
+                gainedBy: 'choice',
+              );
+            }
+          } catch (_) {}
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Ancestry signature / trait choices are configuration
+      if (key == 'ancestry.signature_name') {
+        final raw = v.textValue ?? v.jsonValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: 'ancestry.signature_name',
+            valueJson: jsonEncode({'name': raw}),
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+      if (key == 'ancestry.trait_choices') {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: 'ancestry.trait_choices',
+            valueJson: raw,
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Culture skill choices are configuration metadata
+      if (key == 'culture.environment.skill' ||
+          key == 'culture.organisation.skill' ||
+          key == 'culture.upbringing.skill') {
+        final raw = v.textValue ?? v.jsonValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: jsonEncode({'selection': raw}),
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Career choice metadata (lists are duplicated in hero_entries already)
+      if (key == 'career.chosen_skills' ||
+          key == 'career.chosen_perks' ||
+          key == 'career.inciting_incident') {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: raw,
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Strife creator selections (all config)
+      if (key.startsWith('strife.')) {
+        // Content lists will be rehydrated into hero_entries separately
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: raw,
+          );
+        }
+        // Special case: equipment ids are content entries
+        if (key == 'strife.equipment_ids' || key == 'basics.equipment') {
+          try {
+            final decoded = raw != null ? jsonDecode(raw) : null;
+            final ids = <String?>[];
+            if (decoded is Map && decoded['ids'] is List) {
+              ids.addAll((decoded['ids'] as List).map((e) => e?.toString()));
+            } else if (decoded is List) {
+              ids.addAll(decoded.map((e) => e?.toString()));
+            }
+            for (var i = 0; i < ids.length; i++) {
+              final id = ids[i];
+              if (id == null || id.isEmpty) continue;
+              await addEntry(
+                heroId: heroId,
+                entryType: 'equipment',
+                entryId: id,
+                sourceType: 'equipment',
+                sourceId: 'strife',
+                gainedBy: 'choice',
+                payload: {'slot_index': i},
+              );
+            }
+          } catch (_) {}
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Perk ability grants (ability content) -> hero_entries
+      if (key.startsWith('perk_abilities.')) {
+        final perkId = key.substring('perk_abilities.'.length);
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          try {
+            final decoded = jsonDecode(raw);
+            final list = decoded is Map && decoded['list'] is List
+                ? (decoded['list'] as List)
+                : decoded is List
+                    ? decoded
+                    : const [];
+            for (final abilityId in list) {
+              await addEntry(
+                heroId: heroId,
+                entryType: 'ability',
+                entryId: abilityId.toString(),
+                sourceType: 'perk',
+                sourceId: perkId,
+                gainedBy: 'grant',
+              );
+            }
+          } catch (_) {}
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Perk grant choices -> hero_config
+      if (key.startsWith('perk_grant.')) {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: raw,
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Complication content lists -> hero_entries; choices -> hero_config
+      if (key == 'complication.skills' ||
+          key == 'complication.languages' ||
+          key == 'complication.features' ||
+          key == 'complication.treasures' ||
+          key == 'complication.abilities') {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          try {
+            final decoded = jsonDecode(raw);
+            Iterable list;
+            if (decoded is Map && decoded['list'] is List) {
+              list = decoded['list'] as List;
+            } else if (decoded is Map && decoded.values.every((e) => e != null)) {
+              list = decoded.values;
+            } else if (decoded is List) {
+              list = decoded;
+            } else {
+              list = const <dynamic>[];
+            }
+            final entryType = key.split('.').last.replaceAll('_', '');
+            for (final id in list) {
+              await addEntry(
+                heroId: heroId,
+                entryType: entryType,
+                entryId: id.toString(),
+                sourceType: 'complication',
+                sourceId: 'complication',
+                gainedBy: 'grant',
+              );
+            }
+          } catch (_) {}
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+      if (key == 'complication.choices') {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: raw,
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+
+      // Gear preferences -> hero_config
+      if (key == 'gear.favorite_kits' || key == 'gear.inventory_containers') {
+        final raw = v.jsonValue ?? v.textValue;
+        if (raw != null) {
+          await setConfig(
+            heroId: heroId,
+            key: key,
+            valueJson: raw,
+          );
+        }
+        idsToDelete.add(v.id);
+        continue;
+      }
+    }
+
+    // Remove migrated rows from hero_values.
+    if (idsToDelete.isNotEmpty) {
+      await (delete(heroValues)
+            ..where((t) => t.id.isIn(idsToDelete.toList())))
+          .go();
+    }
+  }
+
   // CRUD helpers for components
   Future<void> upsertComponentModel({
     required String id,
@@ -279,17 +830,24 @@ class AppDatabase extends _$AppDatabase {
     return (select(components)..where((c) => c.id.equals(id))).getSingleOrNull();
   }
   
-  /// Insert a component model into the database
-  Future<void> insertComponent(model.Component component) async {
+  /// Insert a component into the database from raw values
+  Future<void> insertComponentRaw({
+    required String id,
+    required String type,
+    required String name,
+    required Map<String, dynamic> data,
+    String source = 'perk_ability',
+    String? parentId,
+  }) async {
     final now = DateTime.now();
     await into(components).insert(
       ComponentsCompanion.insert(
-        id: component.id,
-        type: component.type,
-        name: component.name,
-        dataJson: Value(jsonEncode(component.data)),
-        source: const Value('perk_ability'),
-        parentId: const Value(null),
+        id: id,
+        type: type,
+        name: name,
+        dataJson: Value(jsonEncode(data)),
+        source: Value(source),
+        parentId: Value(parentId),
         createdAt: Value(now),
         updatedAt: Value(now),
       ),
@@ -433,21 +991,208 @@ class AppDatabase extends _$AppDatabase {
     return select(heroValues).watch();
   }
 
+  // --- Hero entries helpers -------------------------------------------------
+
+  /// Insert (or replace existing) hero content entry.
+  Future<void> upsertHeroEntry({
+    required String heroId,
+    required String entryType,
+    required String entryId,
+    String sourceType = 'manual_choice',
+    String sourceId = '',
+    String gainedBy = 'grant',
+    Map<String, dynamic>? payload,
+  }) async {
+    final now = DateTime.now();
+    // Remove duplicates for same hero/type/id combo to keep rows unique-ish.
+    await (delete(heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals(entryType) &
+              t.entryId.equals(entryId)))
+        .go();
+    await into(heroEntries).insert(
+      HeroEntriesCompanion.insert(
+        heroId: heroId,
+        entryType: entryType,
+        entryId: entryId,
+        sourceType: Value(sourceType),
+        sourceId: Value(sourceId),
+        gainedBy: Value(gainedBy),
+        payload: Value(payload == null ? null : jsonEncode(payload)),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ),
+    );
+  }
+
+  Future<void> setHeroEntryIds({
+    required String heroId,
+    required String entryType,
+    required List<String> entryIds,
+    String sourceType = 'manual_choice',
+    String sourceId = '',
+    String gainedBy = 'choice',
+  }) async {
+    await transaction(() async {
+      // Only delete entries matching BOTH entryType AND sourceType+sourceId
+      // This preserves entries from other sources (e.g., ancestry, complication)
+      await (delete(heroEntries)
+            ..where((t) =>
+                t.heroId.equals(heroId) &
+                t.entryType.equals(entryType) &
+                t.sourceType.equals(sourceType) &
+                t.sourceId.equals(sourceId)))
+          .go();
+      for (final id in entryIds.where((e) => e.isNotEmpty)) {
+        await upsertHeroEntry(
+          heroId: heroId,
+          entryType: entryType,
+          entryId: id,
+          sourceType: sourceType,
+          sourceId: sourceId,
+          gainedBy: gainedBy,
+        );
+      }
+    });
+  }
+
+  Future<String?> getSingleHeroEntryId(String heroId, String entryType) async {
+    final rows = await (select(heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .get();
+    return rows.isEmpty ? null : rows.first.entryId;
+  }
+
+  Future<void> setSingleHeroEntry({
+    required String heroId,
+    required String entryType,
+    required String entryId,
+    String sourceType = 'manual_choice',
+    String sourceId = '',
+    String gainedBy = 'choice',
+  }) async {
+    await setHeroEntryIds(
+      heroId: heroId,
+      entryType: entryType,
+      entryIds: [entryId],
+      sourceType: sourceType,
+      sourceId: sourceId,
+      gainedBy: gainedBy,
+    );
+  }
+
+  Future<List<String>> getHeroEntryIds(String heroId, String entryType) async {
+    final rows = await (select(heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .get();
+    return rows.map((e) => e.entryId).toList();
+  }
+
+  Stream<List<String>> watchHeroEntryIds(String heroId, String entryType) {
+    return (select(heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .watch()
+        .map((rows) => rows.map((e) => e.entryId).toList());
+  }
+
+  Future<void> clearHeroEntryType(String heroId, String entryType) async {
+    await (delete(heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .go();
+  }
+
+  // --- Hero config helpers --------------------------------------------------
+
+  Future<void> setHeroConfig({
+    required String heroId,
+    required String configKey,
+    required Map<String, dynamic> value,
+    String? metadata,
+  }) async {
+    final now = DateTime.now();
+    final valueJsonEncoded = jsonEncode(value);
+    const deepEq = DeepCollectionEquality();
+
+    // Check if existing row has the same value - skip update if unchanged
+    final existing = await getHeroConfigValue(heroId, configKey);
+    if (existing != null && deepEq.equals(existing, value)) {
+      // No change, skip save
+      return;
+    }
+
+    // Delete existing rows for this hero+key, then insert new one
+    // This ensures no duplicates regardless of index state
+    await (delete(heroConfig)
+          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
+        .go();
+    
+    await into(heroConfig).insert(
+      HeroConfigCompanion.insert(
+        heroId: heroId,
+        configKey: configKey,
+        valueJson: valueJsonEncoded,
+        metadata: Value(metadata),
+        createdAt: Value(now),
+        updatedAt: Value(now),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>?> getHeroConfigValue(
+      String heroId, String configKey) async {
+    // Use .get() instead of .getSingleOrNull() to handle potential duplicates gracefully
+    final rows = await (select(heroConfig)
+          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
+          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
+          ..limit(1))
+        .get();
+    if (rows.isEmpty) return null;
+    try {
+      return jsonDecode(rows.first.valueJson) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> deleteHeroConfig(String heroId, String configKey) async {
+    await (delete(heroConfig)
+          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
+        .go();
+  }
+
+  Stream<Map<String, dynamic>?> watchHeroConfigValue(
+      String heroId, String configKey) {
+    // Use .watch() instead of .watchSingleOrNull() to handle potential duplicates gracefully
+    return (select(heroConfig)
+          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
+          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
+          ..limit(1))
+        .watch()
+        .map((rows) {
+      if (rows.isEmpty) return null;
+      try {
+        return jsonDecode(rows.first.valueJson) as Map<String, dynamic>;
+      } catch (_) {
+        return null;
+      }
+    });
+  }
+
   /// Get component IDs for a specific category (replaces getHeroComponents)
   Future<List<String>> getHeroComponentIds(String heroId, String category) async {
+    final entryIds = await getHeroEntryIds(heroId, category);
+    if (entryIds.isNotEmpty) return entryIds;
+
+    // Backward compatibility: read legacy hero_values if present
     final key = 'component.$category';
     final row = await (select(heroValues)
           ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
         .getSingleOrNull();
-
     if (row == null) return [];
-
-    // Check if it's a single ID stored as textValue
     if (row.textValue != null && row.textValue!.isNotEmpty) {
       return [row.textValue!];
     }
-
-    // Check if it's stored as JSON array
     if (row.jsonValue != null) {
       try {
         final decoded = jsonDecode(row.jsonValue!);
@@ -456,34 +1201,36 @@ class AppDatabase extends _$AppDatabase {
         }
       } catch (_) {}
     }
-
     return [];
   }
 
   /// Watch component IDs for a specific category (stream for real-time updates)
   Stream<List<String>> watchHeroComponentIds(String heroId, String category) {
-    final key = 'component.$category';
-    return (select(heroValues)
-          ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
-        .watchSingleOrNull()
-        .map((row) {
-      if (row == null) return <String>[];
-
-      // Check if it's a single ID stored as textValue
-      if (row.textValue != null && row.textValue!.isNotEmpty) {
-        return [row.textValue!];
+    final legacyKey = 'component.$category';
+    return (select(heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(category)))
+        .watch()
+        .asyncMap((rows) async {
+      if (rows.isNotEmpty) {
+        return rows.map((e) => e.entryId).toList();
       }
-
-      // Check if it's stored as JSON array
-      if (row.jsonValue != null) {
+      final legacyRow = await (select(heroValues)
+            ..where((t) => t.heroId.equals(heroId) & t.key.equals(legacyKey)))
+          .getSingleOrNull();
+      if (legacyRow == null) return <String>[];
+      if (legacyRow.textValue != null && legacyRow.textValue!.isNotEmpty) {
+        return [legacyRow.textValue!];
+      }
+      if (legacyRow.jsonValue != null) {
         try {
-          final decoded = jsonDecode(row.jsonValue!);
+          final decoded = jsonDecode(legacyRow.jsonValue!);
           if (decoded is Map && decoded['ids'] is List) {
-            return (decoded['ids'] as List).map((e) => e.toString()).toList();
+            return (decoded['ids'] as List)
+                .map((e) => e.toString())
+                .toList();
           }
         } catch (_) {}
       }
-
       return <String>[];
     });
   }
@@ -494,37 +1241,14 @@ class AppDatabase extends _$AppDatabase {
     required String category,
     required List<String> componentIds,
   }) async {
-    final key = 'component.$category';
-
-    if (componentIds.isEmpty) {
-      // Remove the entry if no components
-      await (delete(heroValues)
-            ..where((t) => t.heroId.equals(heroId) & t.key.equals(key)))
-          .go();
-      return;
-    }
-
-    // For single-item categories, store as textValue
-    if (componentIds.length == 1 &&
-        (category == 'culture_environment' ||
-            category == 'culture_organisation' ||
-            category == 'culture_upbringing' ||
-            category == 'ancestry' ||
-            category == 'career' ||
-            category == 'complication')) {
-      await upsertHeroValue(
-        heroId: heroId,
-        key: key,
-        textValue: componentIds.first,
-      );
-    } else {
-      // Store as JSON array for languages, skills, etc.
-      await upsertHeroValue(
-        heroId: heroId,
-        key: key,
-        jsonMap: {'ids': componentIds},
-      );
-    }
+    await setHeroEntryIds(
+      heroId: heroId,
+      entryType: category,
+      entryIds: componentIds,
+      sourceType: 'manual_choice',
+      sourceId: category,
+      gainedBy: 'choice',
+    );
   }
 
   /// Add a single component ID to a category (replaces addHeroComponent)
@@ -550,6 +1274,8 @@ class AppDatabase extends _$AppDatabase {
       await (delete(heroDowntimeProjects)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroFollowers)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroProjectSources)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroEntries)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroConfig)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroes)..where((t) => t.id.equals(heroId))).go();
     });
@@ -558,40 +1284,15 @@ class AppDatabase extends _$AppDatabase {
   // Deprecated methods - kept for backwards compatibility during transition
   @Deprecated('Use getHeroComponentIds instead')
   Future<List<Map<String, String>>> getHeroComponents(String heroId) async {
-    // Return all component entries as a list of maps
-    final values = await getHeroValues(heroId);
-    final result = <Map<String, String>>[];
-    
-    for (final value in values) {
-      if (value.key.startsWith('component.')) {
-        final category = value.key.substring('component.'.length);
-        
-        // Handle textValue (single component)
-        if (value.textValue != null && value.textValue!.isNotEmpty) {
-          result.add({
-            'componentId': value.textValue!,
-            'category': category,
-          });
-        }
-        
-        // Handle jsonValue (multiple components)
-        if (value.jsonValue != null) {
-          try {
-            final decoded = jsonDecode(value.jsonValue!);
-            if (decoded is Map && decoded['ids'] is List) {
-              for (final id in decoded['ids']) {
-                result.add({
-                  'componentId': id.toString(),
-                  'category': category,
-                });
-              }
-            }
-          } catch (_) {}
-        }
-      }
-    }
-    
-    return result;
+    final entries = await (select(heroEntries)
+          ..where((t) => t.heroId.equals(heroId)))
+        .get();
+    return entries
+        .map((e) => {
+              'componentId': e.entryId,
+              'category': e.entryType,
+            })
+        .toList();
   }
 
   @Deprecated('Use setHeroComponentIds instead')

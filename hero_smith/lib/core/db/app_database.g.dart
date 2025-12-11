@@ -3717,6 +3717,877 @@ class HeroNotesCompanion extends UpdateCompanion<HeroNote> {
   }
 }
 
+class $HeroEntriesTable extends HeroEntries
+    with TableInfo<$HeroEntriesTable, HeroEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _entryTypeMeta =
+      const VerificationMeta('entryType');
+  @override
+  late final GeneratedColumn<String> entryType = GeneratedColumn<String>(
+      'entry_type', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _entryIdMeta =
+      const VerificationMeta('entryId');
+  @override
+  late final GeneratedColumn<String> entryId = GeneratedColumn<String>(
+      'entry_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sourceTypeMeta =
+      const VerificationMeta('sourceType');
+  @override
+  late final GeneratedColumn<String> sourceType = GeneratedColumn<String>(
+      'source_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('legacy'));
+  static const VerificationMeta _sourceIdMeta =
+      const VerificationMeta('sourceId');
+  @override
+  late final GeneratedColumn<String> sourceId = GeneratedColumn<String>(
+      'source_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _gainedByMeta =
+      const VerificationMeta('gainedBy');
+  @override
+  late final GeneratedColumn<String> gainedBy = GeneratedColumn<String>(
+      'gained_by', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('grant'));
+  static const VerificationMeta _payloadMeta =
+      const VerificationMeta('payload');
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+      'payload', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        heroId,
+        entryType,
+        entryId,
+        sourceType,
+        sourceId,
+        gainedBy,
+        payload,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_entries';
+  @override
+  VerificationContext validateIntegrity(Insertable<HeroEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('entry_type')) {
+      context.handle(_entryTypeMeta,
+          entryType.isAcceptableOrUnknown(data['entry_type']!, _entryTypeMeta));
+    } else if (isInserting) {
+      context.missing(_entryTypeMeta);
+    }
+    if (data.containsKey('entry_id')) {
+      context.handle(_entryIdMeta,
+          entryId.isAcceptableOrUnknown(data['entry_id']!, _entryIdMeta));
+    } else if (isInserting) {
+      context.missing(_entryIdMeta);
+    }
+    if (data.containsKey('source_type')) {
+      context.handle(
+          _sourceTypeMeta,
+          sourceType.isAcceptableOrUnknown(
+              data['source_type']!, _sourceTypeMeta));
+    }
+    if (data.containsKey('source_id')) {
+      context.handle(_sourceIdMeta,
+          sourceId.isAcceptableOrUnknown(data['source_id']!, _sourceIdMeta));
+    }
+    if (data.containsKey('gained_by')) {
+      context.handle(_gainedByMeta,
+          gainedBy.isAcceptableOrUnknown(data['gained_by']!, _gainedByMeta));
+    }
+    if (data.containsKey('payload')) {
+      context.handle(_payloadMeta,
+          payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroEntry(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      entryType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}entry_type'])!,
+      entryId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}entry_id'])!,
+      sourceType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_type'])!,
+      sourceId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}source_id'])!,
+      gainedBy: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}gained_by'])!,
+      payload: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}payload']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $HeroEntriesTable createAlias(String alias) {
+    return $HeroEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class HeroEntry extends DataClass implements Insertable<HeroEntry> {
+  final int id;
+  final String heroId;
+  final String entryType;
+  final String entryId;
+  final String sourceType;
+  final String sourceId;
+  final String gainedBy;
+  final String? payload;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const HeroEntry(
+      {required this.id,
+      required this.heroId,
+      required this.entryType,
+      required this.entryId,
+      required this.sourceType,
+      required this.sourceId,
+      required this.gainedBy,
+      this.payload,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    map['entry_type'] = Variable<String>(entryType);
+    map['entry_id'] = Variable<String>(entryId);
+    map['source_type'] = Variable<String>(sourceType);
+    map['source_id'] = Variable<String>(sourceId);
+    map['gained_by'] = Variable<String>(gainedBy);
+    if (!nullToAbsent || payload != null) {
+      map['payload'] = Variable<String>(payload);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  HeroEntriesCompanion toCompanion(bool nullToAbsent) {
+    return HeroEntriesCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      entryType: Value(entryType),
+      entryId: Value(entryId),
+      sourceType: Value(sourceType),
+      sourceId: Value(sourceId),
+      gainedBy: Value(gainedBy),
+      payload: payload == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payload),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory HeroEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroEntry(
+      id: serializer.fromJson<int>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      entryType: serializer.fromJson<String>(json['entryType']),
+      entryId: serializer.fromJson<String>(json['entryId']),
+      sourceType: serializer.fromJson<String>(json['sourceType']),
+      sourceId: serializer.fromJson<String>(json['sourceId']),
+      gainedBy: serializer.fromJson<String>(json['gainedBy']),
+      payload: serializer.fromJson<String?>(json['payload']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'entryType': serializer.toJson<String>(entryType),
+      'entryId': serializer.toJson<String>(entryId),
+      'sourceType': serializer.toJson<String>(sourceType),
+      'sourceId': serializer.toJson<String>(sourceId),
+      'gainedBy': serializer.toJson<String>(gainedBy),
+      'payload': serializer.toJson<String?>(payload),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  HeroEntry copyWith(
+          {int? id,
+          String? heroId,
+          String? entryType,
+          String? entryId,
+          String? sourceType,
+          String? sourceId,
+          String? gainedBy,
+          Value<String?> payload = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      HeroEntry(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        entryType: entryType ?? this.entryType,
+        entryId: entryId ?? this.entryId,
+        sourceType: sourceType ?? this.sourceType,
+        sourceId: sourceId ?? this.sourceId,
+        gainedBy: gainedBy ?? this.gainedBy,
+        payload: payload.present ? payload.value : this.payload,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  HeroEntry copyWithCompanion(HeroEntriesCompanion data) {
+    return HeroEntry(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      entryType: data.entryType.present ? data.entryType.value : this.entryType,
+      entryId: data.entryId.present ? data.entryId.value : this.entryId,
+      sourceType:
+          data.sourceType.present ? data.sourceType.value : this.sourceType,
+      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
+      gainedBy: data.gainedBy.present ? data.gainedBy.value : this.gainedBy,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroEntry(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('entryType: $entryType, ')
+          ..write('entryId: $entryId, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('gainedBy: $gainedBy, ')
+          ..write('payload: $payload, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, heroId, entryType, entryId, sourceType,
+      sourceId, gainedBy, payload, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroEntry &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.entryType == this.entryType &&
+          other.entryId == this.entryId &&
+          other.sourceType == this.sourceType &&
+          other.sourceId == this.sourceId &&
+          other.gainedBy == this.gainedBy &&
+          other.payload == this.payload &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class HeroEntriesCompanion extends UpdateCompanion<HeroEntry> {
+  final Value<int> id;
+  final Value<String> heroId;
+  final Value<String> entryType;
+  final Value<String> entryId;
+  final Value<String> sourceType;
+  final Value<String> sourceId;
+  final Value<String> gainedBy;
+  final Value<String?> payload;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const HeroEntriesCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.entryType = const Value.absent(),
+    this.entryId = const Value.absent(),
+    this.sourceType = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.gainedBy = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  HeroEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String heroId,
+    required String entryType,
+    required String entryId,
+    this.sourceType = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.gainedBy = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  })  : heroId = Value(heroId),
+        entryType = Value(entryType),
+        entryId = Value(entryId);
+  static Insertable<HeroEntry> custom({
+    Expression<int>? id,
+    Expression<String>? heroId,
+    Expression<String>? entryType,
+    Expression<String>? entryId,
+    Expression<String>? sourceType,
+    Expression<String>? sourceId,
+    Expression<String>? gainedBy,
+    Expression<String>? payload,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (entryType != null) 'entry_type': entryType,
+      if (entryId != null) 'entry_id': entryId,
+      if (sourceType != null) 'source_type': sourceType,
+      if (sourceId != null) 'source_id': sourceId,
+      if (gainedBy != null) 'gained_by': gainedBy,
+      if (payload != null) 'payload': payload,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  HeroEntriesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? heroId,
+      Value<String>? entryType,
+      Value<String>? entryId,
+      Value<String>? sourceType,
+      Value<String>? sourceId,
+      Value<String>? gainedBy,
+      Value<String?>? payload,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return HeroEntriesCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      entryType: entryType ?? this.entryType,
+      entryId: entryId ?? this.entryId,
+      sourceType: sourceType ?? this.sourceType,
+      sourceId: sourceId ?? this.sourceId,
+      gainedBy: gainedBy ?? this.gainedBy,
+      payload: payload ?? this.payload,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (entryType.present) {
+      map['entry_type'] = Variable<String>(entryType.value);
+    }
+    if (entryId.present) {
+      map['entry_id'] = Variable<String>(entryId.value);
+    }
+    if (sourceType.present) {
+      map['source_type'] = Variable<String>(sourceType.value);
+    }
+    if (sourceId.present) {
+      map['source_id'] = Variable<String>(sourceId.value);
+    }
+    if (gainedBy.present) {
+      map['gained_by'] = Variable<String>(gainedBy.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('entryType: $entryType, ')
+          ..write('entryId: $entryId, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('gainedBy: $gainedBy, ')
+          ..write('payload: $payload, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $HeroConfigTable extends HeroConfig
+    with TableInfo<$HeroConfigTable, HeroConfigData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $HeroConfigTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _heroIdMeta = const VerificationMeta('heroId');
+  @override
+  late final GeneratedColumn<String> heroId = GeneratedColumn<String>(
+      'hero_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES heroes (id)'));
+  static const VerificationMeta _configKeyMeta =
+      const VerificationMeta('configKey');
+  @override
+  late final GeneratedColumn<String> configKey = GeneratedColumn<String>(
+      'config_key', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _valueJsonMeta =
+      const VerificationMeta('valueJson');
+  @override
+  late final GeneratedColumn<String> valueJson = GeneratedColumn<String>(
+      'value_json', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _metadataMeta =
+      const VerificationMeta('metadata');
+  @override
+  late final GeneratedColumn<String> metadata = GeneratedColumn<String>(
+      'metadata', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, heroId, configKey, valueJson, metadata, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'hero_config';
+  @override
+  VerificationContext validateIntegrity(Insertable<HeroConfigData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('hero_id')) {
+      context.handle(_heroIdMeta,
+          heroId.isAcceptableOrUnknown(data['hero_id']!, _heroIdMeta));
+    } else if (isInserting) {
+      context.missing(_heroIdMeta);
+    }
+    if (data.containsKey('config_key')) {
+      context.handle(_configKeyMeta,
+          configKey.isAcceptableOrUnknown(data['config_key']!, _configKeyMeta));
+    } else if (isInserting) {
+      context.missing(_configKeyMeta);
+    }
+    if (data.containsKey('value_json')) {
+      context.handle(_valueJsonMeta,
+          valueJson.isAcceptableOrUnknown(data['value_json']!, _valueJsonMeta));
+    } else if (isInserting) {
+      context.missing(_valueJsonMeta);
+    }
+    if (data.containsKey('metadata')) {
+      context.handle(_metadataMeta,
+          metadata.isAcceptableOrUnknown(data['metadata']!, _metadataMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  HeroConfigData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return HeroConfigData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      heroId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hero_id'])!,
+      configKey: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}config_key'])!,
+      valueJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}value_json'])!,
+      metadata: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}metadata']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $HeroConfigTable createAlias(String alias) {
+    return $HeroConfigTable(attachedDatabase, alias);
+  }
+}
+
+class HeroConfigData extends DataClass implements Insertable<HeroConfigData> {
+  final int id;
+  final String heroId;
+  final String configKey;
+  final String valueJson;
+  final String? metadata;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const HeroConfigData(
+      {required this.id,
+      required this.heroId,
+      required this.configKey,
+      required this.valueJson,
+      this.metadata,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['hero_id'] = Variable<String>(heroId);
+    map['config_key'] = Variable<String>(configKey);
+    map['value_json'] = Variable<String>(valueJson);
+    if (!nullToAbsent || metadata != null) {
+      map['metadata'] = Variable<String>(metadata);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  HeroConfigCompanion toCompanion(bool nullToAbsent) {
+    return HeroConfigCompanion(
+      id: Value(id),
+      heroId: Value(heroId),
+      configKey: Value(configKey),
+      valueJson: Value(valueJson),
+      metadata: metadata == null && nullToAbsent
+          ? const Value.absent()
+          : Value(metadata),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory HeroConfigData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return HeroConfigData(
+      id: serializer.fromJson<int>(json['id']),
+      heroId: serializer.fromJson<String>(json['heroId']),
+      configKey: serializer.fromJson<String>(json['configKey']),
+      valueJson: serializer.fromJson<String>(json['valueJson']),
+      metadata: serializer.fromJson<String?>(json['metadata']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'heroId': serializer.toJson<String>(heroId),
+      'configKey': serializer.toJson<String>(configKey),
+      'valueJson': serializer.toJson<String>(valueJson),
+      'metadata': serializer.toJson<String?>(metadata),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  HeroConfigData copyWith(
+          {int? id,
+          String? heroId,
+          String? configKey,
+          String? valueJson,
+          Value<String?> metadata = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      HeroConfigData(
+        id: id ?? this.id,
+        heroId: heroId ?? this.heroId,
+        configKey: configKey ?? this.configKey,
+        valueJson: valueJson ?? this.valueJson,
+        metadata: metadata.present ? metadata.value : this.metadata,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  HeroConfigData copyWithCompanion(HeroConfigCompanion data) {
+    return HeroConfigData(
+      id: data.id.present ? data.id.value : this.id,
+      heroId: data.heroId.present ? data.heroId.value : this.heroId,
+      configKey: data.configKey.present ? data.configKey.value : this.configKey,
+      valueJson: data.valueJson.present ? data.valueJson.value : this.valueJson,
+      metadata: data.metadata.present ? data.metadata.value : this.metadata,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroConfigData(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('configKey: $configKey, ')
+          ..write('valueJson: $valueJson, ')
+          ..write('metadata: $metadata, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, heroId, configKey, valueJson, metadata, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is HeroConfigData &&
+          other.id == this.id &&
+          other.heroId == this.heroId &&
+          other.configKey == this.configKey &&
+          other.valueJson == this.valueJson &&
+          other.metadata == this.metadata &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class HeroConfigCompanion extends UpdateCompanion<HeroConfigData> {
+  final Value<int> id;
+  final Value<String> heroId;
+  final Value<String> configKey;
+  final Value<String> valueJson;
+  final Value<String?> metadata;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  const HeroConfigCompanion({
+    this.id = const Value.absent(),
+    this.heroId = const Value.absent(),
+    this.configKey = const Value.absent(),
+    this.valueJson = const Value.absent(),
+    this.metadata = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  HeroConfigCompanion.insert({
+    this.id = const Value.absent(),
+    required String heroId,
+    required String configKey,
+    required String valueJson,
+    this.metadata = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  })  : heroId = Value(heroId),
+        configKey = Value(configKey),
+        valueJson = Value(valueJson);
+  static Insertable<HeroConfigData> custom({
+    Expression<int>? id,
+    Expression<String>? heroId,
+    Expression<String>? configKey,
+    Expression<String>? valueJson,
+    Expression<String>? metadata,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (heroId != null) 'hero_id': heroId,
+      if (configKey != null) 'config_key': configKey,
+      if (valueJson != null) 'value_json': valueJson,
+      if (metadata != null) 'metadata': metadata,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  HeroConfigCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? heroId,
+      Value<String>? configKey,
+      Value<String>? valueJson,
+      Value<String?>? metadata,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt}) {
+    return HeroConfigCompanion(
+      id: id ?? this.id,
+      heroId: heroId ?? this.heroId,
+      configKey: configKey ?? this.configKey,
+      valueJson: valueJson ?? this.valueJson,
+      metadata: metadata ?? this.metadata,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (heroId.present) {
+      map['hero_id'] = Variable<String>(heroId.value);
+    }
+    if (configKey.present) {
+      map['config_key'] = Variable<String>(configKey.value);
+    }
+    if (valueJson.present) {
+      map['value_json'] = Variable<String>(valueJson.value);
+    }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HeroConfigCompanion(')
+          ..write('id: $id, ')
+          ..write('heroId: $heroId, ')
+          ..write('configKey: $configKey, ')
+          ..write('valueJson: $valueJson, ')
+          ..write('metadata: $metadata, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3730,6 +4601,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $HeroProjectSourcesTable heroProjectSources =
       $HeroProjectSourcesTable(this);
   late final $HeroNotesTable heroNotes = $HeroNotesTable(this);
+  late final $HeroEntriesTable heroEntries = $HeroEntriesTable(this);
+  late final $HeroConfigTable heroConfig = $HeroConfigTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3742,7 +4615,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         heroDowntimeProjects,
         heroFollowers,
         heroProjectSources,
-        heroNotes
+        heroNotes,
+        heroEntries,
+        heroConfig
       ];
 }
 
@@ -4249,6 +5124,34 @@ final class $$HeroesTableReferences
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$HeroEntriesTable, List<HeroEntry>>
+      _heroEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.heroEntries,
+          aliasName: $_aliasNameGenerator(db.heroes.id, db.heroEntries.heroId));
+
+  $$HeroEntriesTableProcessedTableManager get heroEntriesRefs {
+    final manager = $$HeroEntriesTableTableManager($_db, $_db.heroEntries)
+        .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_heroEntriesRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$HeroConfigTable, List<HeroConfigData>>
+      _heroConfigRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.heroConfig,
+          aliasName: $_aliasNameGenerator(db.heroes.id, db.heroConfig.heroId));
+
+  $$HeroConfigTableProcessedTableManager get heroConfigRefs {
+    final manager = $$HeroConfigTableTableManager($_db, $_db.heroConfig)
+        .filter((f) => f.heroId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_heroConfigRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$HeroesTableFilterComposer
@@ -4390,6 +5293,48 @@ class $$HeroesTableFilterComposer
             $$HeroNotesTableFilterComposer(
               $db: $db,
               $table: $db.heroNotes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroEntriesRefs(
+      Expression<bool> Function($$HeroEntriesTableFilterComposer f) f) {
+    final $$HeroEntriesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroEntries,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroEntriesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroEntries,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> heroConfigRefs(
+      Expression<bool> Function($$HeroConfigTableFilterComposer f) f) {
+    final $$HeroConfigTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroConfig,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroConfigTableFilterComposer(
+              $db: $db,
+              $table: $db.heroConfig,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -4589,6 +5534,48 @@ class $$HeroesTableAnnotationComposer
             ));
     return f(composer);
   }
+
+  Expression<T> heroEntriesRefs<T extends Object>(
+      Expression<T> Function($$HeroEntriesTableAnnotationComposer a) f) {
+    final $$HeroEntriesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroEntries,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroEntriesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroEntries,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> heroConfigRefs<T extends Object>(
+      Expression<T> Function($$HeroConfigTableAnnotationComposer a) f) {
+    final $$HeroConfigTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.heroConfig,
+        getReferencedColumn: (t) => t.heroId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroConfigTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroConfig,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$HeroesTableTableManager extends RootTableManager<
@@ -4608,7 +5595,9 @@ class $$HeroesTableTableManager extends RootTableManager<
         bool heroDowntimeProjectsRefs,
         bool heroFollowersRefs,
         bool heroProjectSourcesRefs,
-        bool heroNotesRefs})> {
+        bool heroNotesRefs,
+        bool heroEntriesRefs,
+        bool heroConfigRefs})> {
   $$HeroesTableTableManager(_$AppDatabase db, $HeroesTable table)
       : super(TableManagerState(
           db: db,
@@ -4661,7 +5650,9 @@ class $$HeroesTableTableManager extends RootTableManager<
               heroDowntimeProjectsRefs = false,
               heroFollowersRefs = false,
               heroProjectSourcesRefs = false,
-              heroNotesRefs = false}) {
+              heroNotesRefs = false,
+              heroEntriesRefs = false,
+              heroConfigRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
@@ -4669,7 +5660,9 @@ class $$HeroesTableTableManager extends RootTableManager<
                 if (heroDowntimeProjectsRefs) db.heroDowntimeProjects,
                 if (heroFollowersRefs) db.heroFollowers,
                 if (heroProjectSourcesRefs) db.heroProjectSources,
-                if (heroNotesRefs) db.heroNotes
+                if (heroNotesRefs) db.heroNotes,
+                if (heroEntriesRefs) db.heroEntries,
+                if (heroConfigRefs) db.heroConfig
               ],
               addJoins: <
                   T extends TableManagerState<
@@ -4761,6 +5754,31 @@ class $$HeroesTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroEntriesRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable, HeroEntry>(
+                        currentTable: table,
+                        referencedTable:
+                            $$HeroesTableReferences._heroEntriesRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroEntriesRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
+                        typedResults: items),
+                  if (heroConfigRefs)
+                    await $_getPrefetchedData<Heroe, $HeroesTable,
+                            HeroConfigData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$HeroesTableReferences._heroConfigRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$HeroesTableReferences(db, table, p0)
+                                .heroConfigRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.heroId == item.id),
                         typedResults: items)
                 ];
               },
@@ -4786,7 +5804,9 @@ typedef $$HeroesTableProcessedTableManager = ProcessedTableManager<
         bool heroDowntimeProjectsRefs,
         bool heroFollowersRefs,
         bool heroProjectSourcesRefs,
-        bool heroNotesRefs})>;
+        bool heroNotesRefs,
+        bool heroEntriesRefs,
+        bool heroConfigRefs})>;
 typedef $$HeroValuesTableCreateCompanionBuilder = HeroValuesCompanion Function({
   Value<int> id,
   required String heroId,
@@ -6741,6 +7761,645 @@ typedef $$HeroNotesTableProcessedTableManager = ProcessedTableManager<
     (HeroNote, $$HeroNotesTableReferences),
     HeroNote,
     PrefetchHooks Function({bool heroId})>;
+typedef $$HeroEntriesTableCreateCompanionBuilder = HeroEntriesCompanion
+    Function({
+  Value<int> id,
+  required String heroId,
+  required String entryType,
+  required String entryId,
+  Value<String> sourceType,
+  Value<String> sourceId,
+  Value<String> gainedBy,
+  Value<String?> payload,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+typedef $$HeroEntriesTableUpdateCompanionBuilder = HeroEntriesCompanion
+    Function({
+  Value<int> id,
+  Value<String> heroId,
+  Value<String> entryType,
+  Value<String> entryId,
+  Value<String> sourceType,
+  Value<String> sourceId,
+  Value<String> gainedBy,
+  Value<String?> payload,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+final class $$HeroEntriesTableReferences
+    extends BaseReferences<_$AppDatabase, $HeroEntriesTable, HeroEntry> {
+  $$HeroEntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes
+      .createAlias($_aliasNameGenerator(db.heroEntries.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroEntriesTable> {
+  $$HeroEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get entryType => $composableBuilder(
+      column: $table.entryType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get entryId => $composableBuilder(
+      column: $table.entryId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sourceType => $composableBuilder(
+      column: $table.sourceType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sourceId => $composableBuilder(
+      column: $table.sourceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get gainedBy => $composableBuilder(
+      column: $table.gainedBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroEntriesTable> {
+  $$HeroEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get entryType => $composableBuilder(
+      column: $table.entryType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get entryId => $composableBuilder(
+      column: $table.entryId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sourceType => $composableBuilder(
+      column: $table.sourceType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sourceId => $composableBuilder(
+      column: $table.sourceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get gainedBy => $composableBuilder(
+      column: $table.gainedBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroEntriesTable> {
+  $$HeroEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get entryType =>
+      $composableBuilder(column: $table.entryType, builder: (column) => column);
+
+  GeneratedColumn<String> get entryId =>
+      $composableBuilder(column: $table.entryId, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceType => $composableBuilder(
+      column: $table.sourceType, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceId =>
+      $composableBuilder(column: $table.sourceId, builder: (column) => column);
+
+  GeneratedColumn<String> get gainedBy =>
+      $composableBuilder(column: $table.gainedBy, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroEntriesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroEntriesTable,
+    HeroEntry,
+    $$HeroEntriesTableFilterComposer,
+    $$HeroEntriesTableOrderingComposer,
+    $$HeroEntriesTableAnnotationComposer,
+    $$HeroEntriesTableCreateCompanionBuilder,
+    $$HeroEntriesTableUpdateCompanionBuilder,
+    (HeroEntry, $$HeroEntriesTableReferences),
+    HeroEntry,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroEntriesTableTableManager(_$AppDatabase db, $HeroEntriesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String> entryType = const Value.absent(),
+            Value<String> entryId = const Value.absent(),
+            Value<String> sourceType = const Value.absent(),
+            Value<String> sourceId = const Value.absent(),
+            Value<String> gainedBy = const Value.absent(),
+            Value<String?> payload = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              HeroEntriesCompanion(
+            id: id,
+            heroId: heroId,
+            entryType: entryType,
+            entryId: entryId,
+            sourceType: sourceType,
+            sourceId: sourceId,
+            gainedBy: gainedBy,
+            payload: payload,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String heroId,
+            required String entryType,
+            required String entryId,
+            Value<String> sourceType = const Value.absent(),
+            Value<String> sourceId = const Value.absent(),
+            Value<String> gainedBy = const Value.absent(),
+            Value<String?> payload = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              HeroEntriesCompanion.insert(
+            id: id,
+            heroId: heroId,
+            entryType: entryType,
+            entryId: entryId,
+            sourceType: sourceType,
+            sourceId: sourceId,
+            gainedBy: gainedBy,
+            payload: payload,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroEntriesTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroEntriesTableReferences._heroIdTable(db),
+                    referencedColumn:
+                        $$HeroEntriesTableReferences._heroIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroEntriesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $HeroEntriesTable,
+    HeroEntry,
+    $$HeroEntriesTableFilterComposer,
+    $$HeroEntriesTableOrderingComposer,
+    $$HeroEntriesTableAnnotationComposer,
+    $$HeroEntriesTableCreateCompanionBuilder,
+    $$HeroEntriesTableUpdateCompanionBuilder,
+    (HeroEntry, $$HeroEntriesTableReferences),
+    HeroEntry,
+    PrefetchHooks Function({bool heroId})>;
+typedef $$HeroConfigTableCreateCompanionBuilder = HeroConfigCompanion Function({
+  Value<int> id,
+  required String heroId,
+  required String configKey,
+  required String valueJson,
+  Value<String?> metadata,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+typedef $$HeroConfigTableUpdateCompanionBuilder = HeroConfigCompanion Function({
+  Value<int> id,
+  Value<String> heroId,
+  Value<String> configKey,
+  Value<String> valueJson,
+  Value<String?> metadata,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+});
+
+final class $$HeroConfigTableReferences
+    extends BaseReferences<_$AppDatabase, $HeroConfigTable, HeroConfigData> {
+  $$HeroConfigTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $HeroesTable _heroIdTable(_$AppDatabase db) => db.heroes
+      .createAlias($_aliasNameGenerator(db.heroConfig.heroId, db.heroes.id));
+
+  $$HeroesTableProcessedTableManager get heroId {
+    final $_column = $_itemColumn<String>('hero_id')!;
+
+    final manager = $$HeroesTableTableManager($_db, $_db.heroes)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_heroIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$HeroConfigTableFilterComposer
+    extends Composer<_$AppDatabase, $HeroConfigTable> {
+  $$HeroConfigTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get configKey => $composableBuilder(
+      column: $table.configKey, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get valueJson => $composableBuilder(
+      column: $table.valueJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get metadata => $composableBuilder(
+      column: $table.metadata, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  $$HeroesTableFilterComposer get heroId {
+    final $$HeroesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableFilterComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroConfigTableOrderingComposer
+    extends Composer<_$AppDatabase, $HeroConfigTable> {
+  $$HeroConfigTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get configKey => $composableBuilder(
+      column: $table.configKey, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get valueJson => $composableBuilder(
+      column: $table.valueJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get metadata => $composableBuilder(
+      column: $table.metadata, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  $$HeroesTableOrderingComposer get heroId {
+    final $$HeroesTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableOrderingComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroConfigTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HeroConfigTable> {
+  $$HeroConfigTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get configKey =>
+      $composableBuilder(column: $table.configKey, builder: (column) => column);
+
+  GeneratedColumn<String> get valueJson =>
+      $composableBuilder(column: $table.valueJson, builder: (column) => column);
+
+  GeneratedColumn<String> get metadata =>
+      $composableBuilder(column: $table.metadata, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$HeroesTableAnnotationComposer get heroId {
+    final $$HeroesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.heroId,
+        referencedTable: $db.heroes,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$HeroesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.heroes,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$HeroConfigTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $HeroConfigTable,
+    HeroConfigData,
+    $$HeroConfigTableFilterComposer,
+    $$HeroConfigTableOrderingComposer,
+    $$HeroConfigTableAnnotationComposer,
+    $$HeroConfigTableCreateCompanionBuilder,
+    $$HeroConfigTableUpdateCompanionBuilder,
+    (HeroConfigData, $$HeroConfigTableReferences),
+    HeroConfigData,
+    PrefetchHooks Function({bool heroId})> {
+  $$HeroConfigTableTableManager(_$AppDatabase db, $HeroConfigTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$HeroConfigTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$HeroConfigTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$HeroConfigTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> heroId = const Value.absent(),
+            Value<String> configKey = const Value.absent(),
+            Value<String> valueJson = const Value.absent(),
+            Value<String?> metadata = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              HeroConfigCompanion(
+            id: id,
+            heroId: heroId,
+            configKey: configKey,
+            valueJson: valueJson,
+            metadata: metadata,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String heroId,
+            required String configKey,
+            required String valueJson,
+            Value<String?> metadata = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+          }) =>
+              HeroConfigCompanion.insert(
+            id: id,
+            heroId: heroId,
+            configKey: configKey,
+            valueJson: valueJson,
+            metadata: metadata,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$HeroConfigTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({heroId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (heroId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.heroId,
+                    referencedTable:
+                        $$HeroConfigTableReferences._heroIdTable(db),
+                    referencedColumn:
+                        $$HeroConfigTableReferences._heroIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$HeroConfigTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $HeroConfigTable,
+    HeroConfigData,
+    $$HeroConfigTableFilterComposer,
+    $$HeroConfigTableOrderingComposer,
+    $$HeroConfigTableAnnotationComposer,
+    $$HeroConfigTableCreateCompanionBuilder,
+    $$HeroConfigTableUpdateCompanionBuilder,
+    (HeroConfigData, $$HeroConfigTableReferences),
+    HeroConfigData,
+    PrefetchHooks Function({bool heroId})>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6761,4 +8420,8 @@ class $AppDatabaseManager {
       $$HeroProjectSourcesTableTableManager(_db, _db.heroProjectSources);
   $$HeroNotesTableTableManager get heroNotes =>
       $$HeroNotesTableTableManager(_db, _db.heroNotes);
+  $$HeroEntriesTableTableManager get heroEntries =>
+      $$HeroEntriesTableTableManager(_db, _db.heroEntries);
+  $$HeroConfigTableTableManager get heroConfig =>
+      $$HeroConfigTableTableManager(_db, _db.heroConfig);
 }

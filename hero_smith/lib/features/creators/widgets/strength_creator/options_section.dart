@@ -57,12 +57,13 @@ class _OptionsSection extends StatelessWidget {
           ),
         ),
 
-        // Info messages
+        // Info messages (skip "Pick" messages for grants features since they're auto-applied)
         for (final message in optionsContext.messages)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: _InfoMessage(message: message),
-          ),
+          if (!isGrantsFeature || !message.toLowerCase().contains('pick'))
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _InfoMessage(message: message),
+            ),
 
         // For grants: display all matching as auto-applied content
         if (isGrantsFeature && optionsContext.options.isNotEmpty) ...[

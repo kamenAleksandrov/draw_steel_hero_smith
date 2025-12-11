@@ -16,6 +16,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late List<Map<String, dynamic>> allComplications;
+  // ignore: unused_local_variable
   late List<model.Component> complicationComponents;
 
   setUpAll(() async {

@@ -7,6 +7,7 @@ import '../../../core/models/class_data.dart';
 import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
+import '../../../core/services/class_feature_grants_service.dart';
 import '../widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 
@@ -155,6 +156,17 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
     try {
       final repo = ref.read(heroRepositoryProvider);
       await repo.saveFeatureSelections(widget.heroId, selections);
+      if (_classData != null) {
+        final db = ref.read(appDatabaseProvider);
+        final grantService = ClassFeatureGrantsService(db);
+        await grantService.applyClassFeatureSelections(
+          heroId: widget.heroId,
+          classData: _classData!,
+          level: _selectedLevel,
+          selections: selections,
+          subclassSelection: _subclassSelection,
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

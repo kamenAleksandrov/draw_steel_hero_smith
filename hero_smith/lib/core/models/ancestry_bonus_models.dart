@@ -67,21 +67,27 @@ sealed class AncestryBonus {
       }
     }
 
-    // grants_ability_name
-    if (traitData['grants_ability_name'] != null) {
-      final data = traitData['grants_ability_name'];
-      if (data is String) {
+    // grants_ability_name or ability_name (ability_name is used in the JSON data files)
+    final abilityData = traitData['grants_ability_name'] ?? traitData['ability_name'];
+    if (abilityData != null) {
+      if (abilityData is String && abilityData.isNotEmpty) {
         bonuses.add(GrantsAbilityBonus(
           sourceTraitId: traitId,
           sourceTraitName: traitName,
-          abilityNames: [data],
+          abilityNames: [abilityData],
         ));
-      } else if (data is List) {
-        bonuses.add(GrantsAbilityBonus(
-          sourceTraitId: traitId,
-          sourceTraitName: traitName,
-          abilityNames: data.map((e) => e.toString()).toList(),
-        ));
+      } else if (abilityData is List) {
+        final names = abilityData
+            .map((e) => e?.toString() ?? '')
+            .where((e) => e.isNotEmpty)
+            .toList();
+        if (names.isNotEmpty) {
+          bonuses.add(GrantsAbilityBonus(
+            sourceTraitId: traitId,
+            sourceTraitName: traitName,
+            abilityNames: names,
+          ));
+        }
       }
     }
 

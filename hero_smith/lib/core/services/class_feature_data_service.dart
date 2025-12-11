@@ -215,16 +215,44 @@ class ClassFeatureDataService {
   }
 
   /// Extracts the list of options or grants from feature details.
-  /// Returns the list from 'grants' if present, otherwise from 'options'.
+  /// Returns the list from 'grants' if present, otherwise from 'options' or 'options_X'.
+  /// The 'options_X' pattern (e.g., options_2, options_3) indicates X choices allowed.
   static List<dynamic>? extractOptionsOrGrants(Map<String, dynamic>? details) {
     if (details == null) return null;
     final grants = details['grants'];
     if (grants is List && grants.isNotEmpty) return grants;
     final options = details['options'];
     if (options is List && options.isNotEmpty) return options;
-    final options2 = details['options_2'];
-    if (options2 is List && options2.isNotEmpty) return options2;
+    // Check for options_X pattern (options_2, options_3, etc.)
+    final optionsXKey = _findOptionsXKey(details);
+    if (optionsXKey != null) {
+      final optionsX = details[optionsXKey];
+      if (optionsX is List && optionsX.isNotEmpty) return optionsX;
+    }
     return null;
+  }
+
+  /// Finds the first 'options_X' key in the details map where X is a number.
+  /// Returns the key name (e.g., 'options_2') or null if not found.
+  static String? _findOptionsXKey(Map<String, dynamic>? details) {
+    if (details == null) return null;
+    final pattern = RegExp(r'^options_(\d+)$');
+    for (final key in details.keys) {
+      if (pattern.hasMatch(key)) {
+        final value = details[key];
+        if (value is List && value.isNotEmpty) return key;
+      }
+    }
+    return null;
+  }
+
+  /// Extracts the selection count from an 'options_X' key.
+  /// Returns X from 'options_X' or null if the key doesn't match the pattern.
+  static int? _extractOptionsXCount(String? key) {
+    if (key == null) return null;
+    final match = RegExp(r'^options_(\d+)$').firstMatch(key);
+    if (match == null) return null;
+    return int.tryParse(match.group(1)!);
   }
 
   /// Returns true if the feature uses 'grants' (auto-apply all matching)
@@ -254,12 +282,14 @@ class ClassFeatureDataService {
   }
 
   /// Maximum number of selections allowed for a feature.
-  /// Defaults to 1, becomes 2 for `options_2`, or respects explicit limits.
+  /// Defaults to 1, uses X for `options_X` pattern, or respects explicit limits.
   static int selectionLimit(Map<String, dynamic>? details) {
     if (details == null) return 1;
 
-    final options2 = details['options_2'];
-    if (options2 is List && options2.isNotEmpty) return 2;
+    // Check for options_X pattern (options_2, options_3, etc.)
+    final optionsXKey = _findOptionsXKey(details);
+    final optionsXCount = _extractOptionsXCount(optionsXKey);
+    if (optionsXCount != null && optionsXCount > 0) return optionsXCount;
 
     final maxSel = details['max_selections'] ?? details['select_count'];
     if (maxSel is num) {
@@ -278,15 +308,18 @@ class ClassFeatureDataService {
   }
 
   /// Minimum number of selections expected for a feature.
-  /// Defaults to 1 when options exist; `options_2` requires 2.
+  /// Defaults to 1 when options exist; `options_X` requires X selections.
   static int minimumSelections(Map<String, dynamic>? details) {
     if (details == null) return 0;
 
     final options = extractOptionMaps(details);
     if (options.isEmpty) return 0;
 
-    if (details['options_2'] is List && (details['options_2'] as List).isNotEmpty) {
-      return options.length >= 2 ? 2 : options.length;
+    // Check for options_X pattern (options_2, options_3, etc.)
+    final optionsXKey = _findOptionsXKey(details);
+    final optionsXCount = _extractOptionsXCount(optionsXKey);
+    if (optionsXCount != null && optionsXCount > 0) {
+      return options.length >= optionsXCount ? optionsXCount : options.length;
     }
 
     final minSel = details['min_selections'];
@@ -745,7 +778,14 @@ class ClassFeatureDataService {
       normalized['loaded_additional_features'] = featureAdditional;
     }
 
-    for (final key in ['options', 'options_2']) {
+    // Process options, options_X, and grants keys
+    final optionKeys = <String>['options', 'grants'];
+    // Find any options_X keys
+    final optionsXPattern = RegExp(r'^options_\d+$');
+    for (final key in normalized.keys) {
+      if (optionsXPattern.hasMatch(key)) optionKeys.add(key);
+    }
+    for (final key in optionKeys) {
       final options = normalized[key];
       if (options is! List) continue;
 

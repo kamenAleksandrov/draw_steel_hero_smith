@@ -294,25 +294,33 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     // Update ancestry mods state
     _ancestryMods = ancestryModsAsync.valueOrNull ?? const HeroStatModifications.empty();
 
-    return statsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => _buildErrorState(context, error),
-      data: (stats) {
-        if (_latestStats == null) {
-          _applyStats(stats);
-        }
-        
-        final resourceDetailsAsync = ref.watch(
-          heroicResourceDetailsProvider(
-            HeroicResourceRequest(
-              classId: stats.classId,
-              fallbackName: stats.heroicResourceName,
-            ),
-          ),
-        );
-        return _buildContent(context, stats, resourceDetailsAsync);
-      },
+    // Use valueOrNull to prevent flicker - show stale data during refresh
+    final stats = statsAsync.valueOrNull;
+    
+    // Only show loading if we have no cached stats at all
+    if (stats == null && _latestStats == null) {
+      if (statsAsync.hasError) {
+        return _buildErrorState(context, statsAsync.error!);
+      }
+      return const Center(child: CircularProgressIndicator());
+    }
+    
+    // Use fresh stats if available, otherwise fall back to cached
+    final effectiveStats = stats ?? _latestStats!;
+    
+    if (_latestStats == null) {
+      _applyStats(effectiveStats);
+    }
+    
+    final resourceDetailsAsync = ref.watch(
+      heroicResourceDetailsProvider(
+        HeroicResourceRequest(
+          classId: effectiveStats.classId,
+          fallbackName: effectiveStats.heroicResourceName,
+        ),
+      ),
     );
+    return _buildContent(context, effectiveStats, resourceDetailsAsync);
   }
 
   Widget _buildErrorState(BuildContext context, Object error) {
@@ -2358,6 +2366,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     await _persistNumberField(_NumericField.surgesCurrent, '0');
   }
 
+  // ignore: unused_element
   Widget _buildSummaryCard(BuildContext context) {
     final theme = Theme.of(context);
     final level = _latestStats?.level ?? 1;
@@ -2404,6 +2413,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildWealthRenownCard(BuildContext context, HeroMainStats stats) {
     return Card(
       child: Padding(
@@ -2437,6 +2447,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildEconomyTile(
     BuildContext context, {
     required String title,
@@ -2491,6 +2502,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildPrimaryStatsCard(BuildContext context, HeroMainStats stats) {
     return Card(
       child: Padding(
@@ -2524,6 +2536,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildSecondaryStatsCard(BuildContext context, HeroMainStats stats) {
     return Card(
       child: Padding(
@@ -2555,6 +2568,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildStatCollection(
     BuildContext context,
     String title,
@@ -2616,6 +2630,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildStaminaAndRecoveries(
     BuildContext context,
     HeroMainStats stats,
@@ -2646,6 +2661,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildStaminaCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
     final state = _calculateStaminaState(stats);
+    // ignore: unused_local_variable
     final equipmentStaminaBonus =
         stats.equipmentBonusFor(HeroModKeys.staminaMax);
     final effectiveMax = stats.staminaMaxEffective;
@@ -2843,6 +2859,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildResourceAndSurges(
     BuildContext context,
     HeroMainStats stats,

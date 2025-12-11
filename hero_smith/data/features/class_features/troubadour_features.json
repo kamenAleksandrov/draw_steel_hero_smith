@@ -255,7 +255,7 @@
     "type": "feature",
     "name": "Class Act Feature",
     "class": "troubadour",
-    "is_subclass_feature": false,
+    "is_subclass_feature": true,
     "level": 5,
     "description": "Your class act grants additional benefits at 5th level.",
     "grants": [

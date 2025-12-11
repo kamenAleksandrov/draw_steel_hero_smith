@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/core/models/hero_model.dart';
 import 'package:hero_smith/core/models/story_creator_models.dart';
 import 'package:hero_smith/core/services/story_creator_service.dart';
@@ -33,6 +34,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
   final TextEditingController _nameCtrl = TextEditingController();
 
   bool _loading = true;
+  bool _saving = false;
   String? _error;
   HeroModel? _hero;
   bool _dirty = false;
@@ -92,17 +94,55 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
     return ids;
   }
 
+  // Cache for DB-saved IDs during save operation to prevent flicker
+  Set<String> _cachedDbLanguageIds = const {};
+  Set<String> _cachedDbSkillIds = const {};
+  Set<String> _cachedDbPerkIds = const {};
+
+  /// Gets all language IDs saved in the database for this hero.
+  Set<String> get _dbSavedLanguageIds {
+    if (_saving) return _cachedDbLanguageIds;
+    final result = ref.watch(
+      heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'language')),
+    );
+    _cachedDbLanguageIds = result;
+    return result;
+  }
+
+  /// Gets all skill IDs saved in the database for this hero.
+  Set<String> get _dbSavedSkillIds {
+    if (_saving) return _cachedDbSkillIds;
+    final result = ref.watch(
+      heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'skill')),
+    );
+    _cachedDbSkillIds = result;
+    return result;
+  }
+
+  /// Gets all perk IDs saved in the database for this hero.
+  Set<String> get _dbSavedPerkIds {
+    if (_saving) return _cachedDbPerkIds;
+    final result = ref.watch(
+      heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'perk')),
+    );
+    _cachedDbPerkIds = result;
+    return result;
+  }
+
   Set<String> get _reservedLanguageIds => {
         ..._selectedLanguageIdsForPerks,
+        ..._dbSavedLanguageIds,
       };
 
   Set<String> get _reservedSkillIds => {
         ..._selectedSkillIdsForPerks,
+        ..._dbSavedSkillIds,
       };
 
   Set<String> get _reservedPerkIds => {
         ...(_hero?.perks ?? const <String>[]),
         ..._careerPerkIds,
+        ..._dbSavedPerkIds,
       };
 
   List<String> _findDuplicates(Iterable<String?> values) {
@@ -179,6 +219,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
     final allowSave = await _confirmDuplicateSelections();
     if (!allowSave) return;
 
+    // Set saving flag to prevent rebuild flicker during save
+    _saving = true;
+
     final service = ref.read(storyCreatorServiceProvider);
     final languageIds = <String>{
       if (_selectedLanguageId != null && _selectedLanguageId!.trim().isNotEmpty)
@@ -210,7 +253,11 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
       complicationChoices: Map<String, String>.from(_complicationChoices),
     );
 
-    await service.saveStory(payload);
+    try {
+      await service.saveStory(payload);
+    } finally {
+      _saving = false;
+    }
     if (!mounted) return;
 
     final wasDirty = _dirty;

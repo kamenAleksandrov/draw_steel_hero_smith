@@ -510,7 +510,7 @@ class _EquipmentSelectionDialogState
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                 child: TextField(
                   controller: _searchController,
-                  autofocus: true,
+                  autofocus: false,
                   decoration: InputDecoration(
                     hintText: 'Search equipment...',
                     prefixIcon: const Icon(Icons.search),

@@ -155,6 +155,7 @@ class ClassDetailPage extends StatelessWidget {
   }
 
   Widget _buildStatsGrid(BuildContext context) {
+    // ignore: unused_local_variable
     final theme = Theme.of(context);
     final classColor = FeatureTokens.getClassColor(className);
     final featuresByLevel = FeatureRepository.groupFeaturesByLevel(features);

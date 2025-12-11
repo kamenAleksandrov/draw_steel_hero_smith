@@ -1,19 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'app_database.dart';
+import 'app_database.dart' as db;
 import 'database_maintenance.dart';
 import '../seed/asset_seeder.dart';
 import '../repositories/component_drift_repository.dart';
 import '../repositories/hero_repository.dart';
+import '../repositories/hero_entry_repository.dart';
 import '../repositories/downtime_repository.dart';
 import '../models/component.dart' as model;
 import '../services/perk_grants_service.dart';
+import '../services/hero_config_service.dart';
+import '../services/hero_assembly_service.dart';
+import '../models/hero_assembled_model.dart';
 
 // Core singletons
-final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
+final appDatabaseProvider =
+    Provider<db.AppDatabase>((ref) => db.AppDatabase.instance);
 final componentRepositoryProvider = Provider<ComponentDriftRepository>((ref) {
   final db = ref.read(appDatabaseProvider);
   return ComponentDriftRepository(db);
+});
+
+final heroEntryRepositoryProvider = Provider<HeroEntryRepository>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return HeroEntryRepository(db);
+});
+
+final heroConfigServiceProvider = Provider<HeroConfigService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return HeroConfigService(db);
+});
+
+final heroAssemblyServiceProvider = Provider<HeroAssemblyService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return HeroAssemblyService(db);
 });
 
 final heroRepositoryProvider = Provider<HeroRepository>((ref) {
@@ -61,6 +81,60 @@ final allHeroesProvider = StreamProvider((ref) {
 final heroSummariesProvider = StreamProvider<List<HeroSummary>>((ref) {
   final repo = ref.read(heroRepositoryProvider);
   return repo.watchSummaries();
+});
+
+// Hero entries/config/value watchers
+final heroEntriesProvider =
+    StreamProvider.family<List<db.HeroEntry>, String>((ref, heroId) {
+  final repo = ref.read(heroEntryRepositoryProvider);
+  return repo.watchEntries(heroId);
+});
+
+/// Provider to get entry IDs of a specific type for a hero.
+/// Useful for pickers to exclude already-saved entries.
+/// Args: (heroId: String, entryType: String)
+final heroEntryIdsByTypeProvider = Provider.family<Set<String>,
+    ({String heroId, String entryType})>((ref, args) {
+  final entriesAsync = ref.watch(heroEntriesProvider(args.heroId));
+  // Use valueOrNull to prevent flicker - return empty set only on error or initial load
+  final entries = entriesAsync.valueOrNull;
+  if (entries == null) return const <String>{};
+  return entries
+      .where((e) => e.entryType == args.entryType)
+      .map((e) => e.entryId)
+      .toSet();
+});
+
+final heroConfigProvider =
+    StreamProvider.family<List<db.HeroConfigData>, String>((ref, heroId) {
+  final service = ref.read(heroConfigServiceProvider);
+  return service.watchConfig(heroId);
+});
+
+final heroValuesProvider =
+    StreamProvider.family<List<db.HeroValue>, String>((ref, heroId) {
+  final dbInstance = ref.read(appDatabaseProvider);
+  return dbInstance.watchHeroValues(heroId);
+});
+
+final heroRowProvider =
+    StreamProvider.family<db.Heroe?, String>((ref, heroId) {
+  final dbInstance = ref.read(appDatabaseProvider);
+  return (dbInstance.select(dbInstance.heroes)
+        ..where((t) => t.id.equals(heroId)))
+      .watchSingleOrNull();
+});
+
+/// Derived hero assembly that reacts to entries/config/values changes.
+final heroAssemblyProvider =
+    FutureProvider.family<HeroAssembly?, String>((ref, heroId) async {
+  // Invalidate on upstream changes
+  ref.watch(heroEntriesProvider(heroId));
+  ref.watch(heroConfigProvider(heroId));
+  ref.watch(heroValuesProvider(heroId));
+  ref.watch(heroRowProvider(heroId));
+  final svc = ref.read(heroAssemblyServiceProvider);
+  return svc.assemble(heroId);
 });
 
 // Provider to fetch an ability by name (used for perk grants lookup)

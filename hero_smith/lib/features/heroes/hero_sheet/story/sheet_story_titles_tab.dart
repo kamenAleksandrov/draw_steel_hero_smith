@@ -97,6 +97,13 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         category: 'title',
         componentIds: updatedIds,
       );
+      
+      // Apply title grants (abilities, etc.)
+      await TitleGrantsService().applyTitleGrants(
+        db: db,
+        heroId: widget.heroId,
+        selectedTitleIds: updatedIds,
+      );
 
       setState(() {});
     } catch (e) {
@@ -122,6 +129,13 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         category: 'title',
         componentIds: updatedIds,
       );
+      
+      // Reapply title grants with updated list
+      await TitleGrantsService().applyTitleGrants(
+        db: db,
+        heroId: widget.heroId,
+        selectedTitleIds: updatedIds,
+      );
 
       setState(() {});
     } catch (e) {
@@ -146,6 +160,13 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         heroId: widget.heroId,
         category: 'title',
         componentIds: updatedIds,
+      );
+      
+      // Reapply title grants with new benefit selection
+      await TitleGrantsService().applyTitleGrants(
+        db: db,
+        heroId: widget.heroId,
+        selectedTitleIds: updatedIds,
       );
 
       setState(() {});

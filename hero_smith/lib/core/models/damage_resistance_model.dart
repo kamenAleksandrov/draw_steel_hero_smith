@@ -143,8 +143,15 @@ class HeroDamageResistances {
     );
   }
 
-  /// Merge bonus values from ancestry/traits while preserving base values
-  HeroDamageResistances applyBonuses(Map<String, DamageResistanceBonus> bonuses) {
+  /// Merge bonus values from ancestry/traits while preserving base values.
+  /// 
+  /// If [clearMissing] is true (default), bonuses for damage types not in [bonuses]
+  /// will be cleared to 0. If false, existing bonus values are preserved for types
+  /// not in [bonuses].
+  HeroDamageResistances applyBonuses(
+    Map<String, DamageResistanceBonus> bonuses, {
+    bool clearMissing = true,
+  }) {
     final updated = <DamageResistance>[];
     final processed = <String>{};
 
@@ -159,13 +166,58 @@ class HeroDamageResistances {
           bonusWeakness: bonus.weakness,
           sources: bonus.sources,
         ));
-      } else {
-        // Keep existing but clear bonus values
+      } else if (clearMissing) {
+        // Clear bonus values for types not in the bonus map
         updated.add(existing.copyWith(
           bonusImmunity: 0,
           bonusWeakness: 0,
           sources: const [],
         ));
+      } else {
+        // Preserve existing bonus values
+        updated.add(existing);
+      }
+    }
+
+    // Add new damage types from bonuses that weren't in existing resistances
+    for (final entry in bonuses.entries) {
+      if (!processed.contains(entry.key)) {
+        updated.add(DamageResistance(
+          damageType: entry.value.damageType,
+          bonusImmunity: entry.value.immunity,
+          bonusWeakness: entry.value.weakness,
+          sources: entry.value.sources,
+        ));
+      }
+    }
+
+    return HeroDamageResistances(resistances: updated);
+  }
+
+  /// Merge bonuses from multiple sources additively.
+  /// 
+  /// Unlike [applyBonuses], this adds the bonus values to existing bonuses
+  /// rather than replacing them, and combines source lists.
+  HeroDamageResistances mergeBonuses(Map<String, DamageResistanceBonus> bonuses) {
+    final updated = <DamageResistance>[];
+    final processed = <String>{};
+
+    // Update existing resistances by adding new bonuses
+    for (final existing in resistances) {
+      final key = existing.damageType.toLowerCase();
+      processed.add(key);
+      final bonus = bonuses[key];
+      if (bonus != null) {
+        // Combine sources, avoiding duplicates
+        final combinedSources = <String>{...existing.sources, ...bonus.sources}.toList();
+        updated.add(existing.copyWith(
+          bonusImmunity: existing.bonusImmunity + bonus.immunity,
+          bonusWeakness: existing.bonusWeakness + bonus.weakness,
+          sources: combinedSources,
+        ));
+      } else {
+        // No new bonus for this type, keep existing
+        updated.add(existing);
       }
     }
 
@@ -268,6 +320,7 @@ class DamageTypes {
   ];
 
   static String displayName(String type) {
+    if (type.isEmpty) return 'Unknown';
     if (type == damage) return 'All Damage';
     return type.substring(0, 1).toUpperCase() + type.substring(1);
   }

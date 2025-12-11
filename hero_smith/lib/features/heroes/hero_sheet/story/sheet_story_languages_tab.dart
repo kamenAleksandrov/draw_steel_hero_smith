@@ -261,6 +261,7 @@ class _AddLanguageDialog extends StatefulWidget {
 }
 
 class _AddLanguageDialogState extends State<_AddLanguageDialog> {
+  // ignore: unused_field
   String _searchQuery = '';
   List<_LanguageOption> _filteredLanguages = [];
 

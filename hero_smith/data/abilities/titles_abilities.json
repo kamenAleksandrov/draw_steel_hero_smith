@@ -159,7 +159,7 @@
     "costs": { "resource": null, "amount": null },
     "story_text": "Coming through with hot soup! I better watch out for that banana peel!",
     "keywords": ["Ranged"],
-    "action_type": "Triggered",
+    "action_type": "triggered action",
     "range": { "distance": "Ranged 10", "area": null },
     "targets": "One creature",
     "trigger_text": "Trigger: An ally makes a test to lie to, pick the pocket of, hide from, or sneak by the target and doesn’t like the outcome.",

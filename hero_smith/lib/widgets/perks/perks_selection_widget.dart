@@ -1413,7 +1413,7 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: TextField(
                       controller: controller,
-                      autofocus: true,
+                      autofocus: false,
                       decoration: const InputDecoration(
                         hintText: 'Search...',
                         prefixIcon: Icon(Icons.search),

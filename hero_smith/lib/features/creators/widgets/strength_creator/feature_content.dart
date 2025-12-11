@@ -129,13 +129,14 @@ class _FeatureContent extends StatelessWidget {
   }
 
   /// Extracts options or grants from feature details.
-  /// Returns the list from 'grants' if present, otherwise from 'options'.
+  /// Returns the list from 'grants' if auto-applied, otherwise from 'options' or 'options_X'.
+  /// The 'options_X' pattern (e.g., options_2, options_3) indicates X choices allowed.
   List<Map<String, dynamic>> _extractOptionsOrGrants() {
     return ClassFeatureDataService.extractOptionMaps(details);
   }
 
   /// Returns true if the feature uses 'grants' (auto-apply all matching)
-  /// instead of 'options' (user picks one).
+  /// instead of 'options' or 'options_X' (user picks).
   bool _hasGrants() {
     if (details == null) return false;
     final grants = details!['grants'];
@@ -377,11 +378,23 @@ class _FeatureContent extends StatelessWidget {
     return _extractOptionSlugs(option, ClassFeaturesWidget._widgetDeityOptionKeys);
   }
 
+  /// Keys that explicitly indicate a subclass requirement (not fallbacks like 'name')
+  static const List<String> _explicitSubclassKeys = [
+    'subclass', 'subclass_name', 'tradition', 'order', 'doctrine',
+    'mask', 'path', 'circle', 'college', 'element', 'role',
+    'discipline', 'oath', 'school', 'guild', 'aspect',
+  ];
+
   Set<String> _extractOptionSlugs(Map<String, dynamic> option, List<String> keys) {
     final slugs = <String>{};
-    for (final key in keys) {
+    var hasExplicitSubclassKey = false;
+    
+    // First pass: collect slugs from explicit subclass keys
+    for (final key in _explicitSubclassKeys) {
+      if (!keys.contains(key)) continue;
       final value = option[key];
       if (value == null) continue;
+      hasExplicitSubclassKey = true;
       if (value is String) {
         final trimmed = value.trim();
         if (trimmed.isEmpty) continue;
@@ -394,6 +407,27 @@ class _FeatureContent extends StatelessWidget {
         }
       }
     }
+    
+    // If no explicit subclass keys found, fall back to checking 'name' and 'domain'
+    if (!hasExplicitSubclassKey) {
+      for (final key in keys) {
+        if (_explicitSubclassKeys.contains(key)) continue; // Skip already checked
+        final value = option[key];
+        if (value == null) continue;
+        if (value is String) {
+          final trimmed = value.trim();
+          if (trimmed.isEmpty) continue;
+          slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+        } else if (value is List) {
+          for (final entry in value.whereType<String>()) {
+            final trimmed = entry.trim();
+            if (trimmed.isEmpty) continue;
+            slugs.addAll(ClassFeatureDataService.slugVariants(trimmed));
+          }
+        }
+      }
+    }
+    
     return slugs;
   }
 

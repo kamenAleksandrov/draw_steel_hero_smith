@@ -390,6 +390,19 @@ class _CareerContentState extends State<_CareerContent> {
             loading: () => const LinearProgressIndicator(),
             error: (e, _) => Text('Failed to load skills: $e'),
             data: (skills) {
+              // Resolve granted skill names to IDs for exclusion
+              final grantedSkillIds = <String>{};
+              for (final grantedName in grantedSkills) {
+                final normalizedGranted = grantedName.trim().toLowerCase();
+                final matchingSkill = skills.firstWhere(
+                  (s) => s.name.trim().toLowerCase() == normalizedGranted,
+                  orElse: () => const model.Component(id: '', type: '', name: ''),
+                );
+                if (matchingSkill.id.isNotEmpty) {
+                  grantedSkillIds.add(matchingSkill.id);
+                }
+              }
+
               final eligible = skills.where((skill) {
                 if (normalizedSkillGroups.isEmpty) return true;
                 final group =
@@ -466,7 +479,10 @@ class _CareerContentState extends State<_CareerContent> {
                   ),
                 ];
 
-                final excludedIds = <String>{...widget.reservedSkillIds};
+                final excludedIds = <String>{
+                  ...widget.reservedSkillIds,
+                  ...grantedSkillIds,
+                };
                 for (var i = 0; i < slots.length; i++) {
                   if (i == currentIndex) continue;
                   final pick = slots[i];
@@ -866,7 +882,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: TextField(
                       controller: controller,
-                      autofocus: true,
+                      autofocus: false,
                       decoration: const InputDecoration(
                         hintText: 'Search...',
                         prefixIcon: Icon(Icons.search),

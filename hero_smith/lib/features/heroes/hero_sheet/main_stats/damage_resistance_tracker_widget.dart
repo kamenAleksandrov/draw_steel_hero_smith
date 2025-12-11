@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/models/damage_resistance_model.dart';
 import '../../../../core/services/ancestry_bonus_service.dart';
+import '../state/hero_main_stats_providers.dart';
 
 /// Widget for tracking damage immunities and weaknesses.
 /// Displays a merged view where immunity and weakness are additive:
@@ -25,36 +26,32 @@ class DamageResistanceTrackerWidget extends ConsumerStatefulWidget {
 class _DamageResistanceTrackerWidgetState
     extends ConsumerState<DamageResistanceTrackerWidget> {
   HeroDamageResistances _resistances = HeroDamageResistances.empty;
-  bool _loading = true;
 
   @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() => _loading = true);
-    try {
-      final service = ref.read(ancestryBonusServiceProvider);
-      final resistances = await service.loadDamageResistances(widget.heroId);
-      if (mounted) {
-        setState(() {
-          _resistances = resistances;
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading resistances: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+  Widget build(BuildContext context) {
+    // Watch the stream provider for automatic updates
+    final resistancesAsync = ref.watch(heroDamageResistancesProvider(widget.heroId));
+    
+    return resistancesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, _) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Error loading resistances: $error'),
+            ElevatedButton(
+              onPressed: () => ref.invalidate(heroDamageResistancesProvider(widget.heroId)),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+      data: (resistances) {
+        // Update local state for editing
+        _resistances = resistances;
+        return _buildContent(context);
+      },
+    );
   }
 
   Future<void> _save() async {
@@ -371,18 +368,8 @@ class _DamageResistanceTrackerWidgetState
     };
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     final theme = Theme.of(context);
-
-    if (_loading) {
-      return const Card(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
 
     return Card(
       child: Padding(

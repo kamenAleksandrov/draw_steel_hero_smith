@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +33,7 @@ String _kitTypeDisplayName(String type) {
   }
 }
 
+// ignore: unused_element
 IconData _kitTypeIcon(String type) {
   switch (type) {
     case 'kit':
@@ -527,6 +527,7 @@ class _TreasuresTabState extends ConsumerState<_TreasuresTab> {
     return _EnhancementCard(enhancement: enhancement);
   }
 
+  // ignore: unused_element
   Color _getLevelColor(int level) {
     if (level <= 2) {
       return Colors.green.shade600;
@@ -699,6 +700,7 @@ class _KitsTabState extends ConsumerState<_KitsTab> {
     }
   }
 
+  // ignore: unused_element
   Widget _buildEquippedSlotsSummary() {
     if (_equipmentSlots.isEmpty) {
       return const SizedBox.shrink();

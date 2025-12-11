@@ -112,19 +112,16 @@ changing class should prompt for confirmation
 level 10 features have more work to be fully functional.
 ### necessary changes
 
-duplicate marks saveing the page for duplication wrongfully
+remove duplication finding
 
 auto granted features must have theri names shown too
 
 the hero class skill and ther features bonuses do not save or grant their bonuses
 
-the options and gratns in the json logic should be noted.
+features must have ui updated to handle options, grants and other such cases better.
 ### censor
 
 features do not grant the bonus skill form the domain.
-
-the 2nd level fetures are both granted, not a choice.
-
 ### conduit
 
 the conduit has extra generation methods and prayer effects that must take their information from the features file where we have the piety generation and the prayer effect. the prayer must be seen in the 1d3 generation and the piety in the piety feature

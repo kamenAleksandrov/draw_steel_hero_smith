@@ -48,6 +48,10 @@ class StoryCreatorService {
   }
 
   Future<void> saveStory(StoryCreatorSavePayload payload) async {
+    print('[StoryCreatorService] saveStory called');
+    print('[StoryCreatorService] payload.ancestryId: ${payload.ancestryId}');
+    print('[StoryCreatorService] payload.ancestryTraitIds: ${payload.ancestryTraitIds}');
+    
     final hero = await _heroRepository.load(payload.heroId);
     if (hero == null) {
       throw Exception('Hero with id ${payload.heroId} not found.');
@@ -61,9 +65,16 @@ class StoryCreatorService {
     final traitsChanged = !_listEquals(oldTraitIds, payload.ancestryTraitIds.toList());
     final choicesChanged = !_mapEquals(oldTraitChoices, payload.ancestryTraitChoices);
 
+    print('[StoryCreatorService] oldAncestryId: $oldAncestryId');
+    print('[StoryCreatorService] oldTraitIds: $oldTraitIds');
+    print('[StoryCreatorService] ancestryChanged: $ancestryChanged, traitsChanged: $traitsChanged, choicesChanged: $choicesChanged');
+
     // Remove old bonuses if ancestry, traits, or choices changed
     if (ancestryChanged || traitsChanged || choicesChanged) {
+      print('[StoryCreatorService] Changes detected, removing old bonuses and will apply new ones');
       await _ancestryBonusService.removeBonuses(payload.heroId);
+    } else {
+      print('[StoryCreatorService] No ancestry/trait changes detected, skipping bonus application');
     }
 
     // Check if complication or its choices have changed
