@@ -478,29 +478,12 @@ class _DamageResistanceTrackerWidgetState
                       ? Border.all(color: color.withOpacity(0.4))
                       : null,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _formatNetValue(net),
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: color ?? theme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (resistance.sources.isNotEmpty) ...[
-                      const SizedBox(width: 4),
-                      Tooltip(
-                        message: 'From: ${resistance.sources.join(", ")}',
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 12,
-                          color: color?.withOpacity(0.7) ?? theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
+                child: Text(
+                  _formatNetValue(net),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: color ?? theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               // Delete button

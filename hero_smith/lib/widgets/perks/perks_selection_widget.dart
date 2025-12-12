@@ -445,7 +445,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
               child: Text(
                 slots[index] != null
                     ? perkMap[slots[index]]!.name
-                    : '— Choose perk —',
+                    : 'Choose perk',
                 style: TextStyle(
                   fontSize: 16,
                   color: slots[index] != null
@@ -641,7 +641,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
 
     final options = <SearchOption<String?>>[
       const SearchOption<String?>(
-        label: '— Choose perk —',
+        label: 'Choose perk',
         value: null,
       ),
     ];
@@ -684,7 +684,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
   ) {
     final options = <SearchOption<String?>>[
       const SearchOption<String?>(
-        label: '— Choose perk —',
+        label: 'Choose perk',
         value: null,
       ),
     ];
@@ -950,7 +950,7 @@ class _PerkGrantsDisplay extends ConsumerWidget {
             _buildPickerField(
               context: context,
               label: label,
-              placeholder: '— Choose language —',
+              placeholder: 'Choose language',
               selectedName:
                   selectedId != null ? languageMap[selectedId]?.name : null,
               onTap: () => _openLanguagePicker(
@@ -1028,7 +1028,7 @@ class _PerkGrantsDisplay extends ConsumerWidget {
         return _buildPickerField(
           context: context,
           label: label,
-          placeholder: '— Choose skill —',
+          placeholder: 'Choose skill',
           selectedName: selectedId != null ? skillMap[selectedId]?.name : null,
           onTap: () => _openSkillPicker(
             context: context,
@@ -1083,7 +1083,7 @@ class _PerkGrantsDisplay extends ConsumerWidget {
             _buildPickerField(
               context: context,
               label: label,
-              placeholder: '— Choose skill —',
+              placeholder: 'Choose skill',
               selectedName:
                   selectedId != null ? skillMap[selectedId]?.name : null,
               onTap: () => _openSkillPicker(
@@ -1211,7 +1211,7 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     }
 
     final options = <SearchOption<String?>>[
-      const SearchOption<String?>(label: '— Choose language —', value: null),
+      const SearchOption<String?>(label: 'Choose language', value: null),
     ];
 
     for (final entry in grouped.entries) {
@@ -1250,7 +1250,7 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       ..sort((a, b) => a.name.compareTo(b.name));
 
     final options = <SearchOption<String?>>[
-      const SearchOption<String?>(label: '— Choose skill —', value: null),
+      const SearchOption<String?>(label: 'Choose skill', value: null),
     ];
 
     for (final skill in source) {

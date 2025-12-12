@@ -1342,6 +1342,13 @@ class HeroRepository {
     required String? ancestryId,
     required List<String> selectedTraitIds,
   }) async {
+    // Clear all previous ancestry entries (ancestry and traits) regardless of sourceId
+    // This ensures we don't keep entries from the previous ancestry selection
+    await _entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'ancestry',
+    );
+
     if (ancestryId != null && ancestryId.isNotEmpty) {
       await _entries.addEntriesFromSource(
         heroId: heroId,
@@ -1588,6 +1595,12 @@ class HeroRepository {
     // Detect previous career to apply numeric grants only on change
     final previousCareerId =
         await _db.getSingleHeroEntryId(heroId, 'career');
+
+    // Clear all previous career entries (career and granted skills) regardless of sourceId
+    await _entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'career',
+    );
 
     if (careerId != null && careerId.isNotEmpty) {
       await _entries.addEntriesFromSource(

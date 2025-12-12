@@ -83,6 +83,18 @@ the gear page should look through every item in the heros inventory  and check t
 
 when picking a class and chosing the same class as the current the choises should not reset.
 
+we are targeting the complications and the processes around them
+
+- when a complication is removed, i need to code to run a check at the json for this complication, this check must see if the removed complication had a ability to grant, if it does - use the ability name to search the hero_entries for this ability and remove it. it should have entry_type ability
+
+- dragon dreams still not granting the ability. it load the ancestry traits of the dragon knight ancestry and they in their place add the abilities.
+
+- elemental incide must grant the hp per echelon. to achive this in the complications.stat_mods save the "per_echelon" too, then adapt the code to check if the hero is levels 1,4,7,10 and fro each milestone add +3
+
+- mundane still has the same error. you are saving a flat value when you need to be savign the string "level" and the code must be adapted to increase per level. we alreaady have this functionality in other widgets, do it here again
+
+- ivory tower still cant find dead languages from the jsons in here: C:\dev\projects\draw_steel_hero_smith\hero_smith\data\story\languages.json
+
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

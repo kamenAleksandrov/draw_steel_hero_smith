@@ -47,11 +47,8 @@ sealed class AncestryBonus {
   }
 
   static List<AncestryBonus> parseFromTraitData(
-    Map<String, dynamic> traitData,
-    String traitId,
-    String traitName,
-    [Map<String, String> traitChoices = const {}]
-  ) {
+      Map<String, dynamic> traitData, String traitId, String traitName,
+      [Map<String, String> traitChoices = const {}]) {
     final bonuses = <AncestryBonus>[];
 
     // set_base_stat_if_not_already_higher
@@ -68,7 +65,8 @@ sealed class AncestryBonus {
     }
 
     // grants_ability_name or ability_name (ability_name is used in the JSON data files)
-    final abilityData = traitData['grants_ability_name'] ?? traitData['ability_name'];
+    final abilityData =
+        traitData['grants_ability_name'] ?? traitData['ability_name'];
     if (abilityData != null) {
       if (abilityData is String && abilityData.isNotEmpty) {
         bonuses.add(GrantsAbilityBonus(
@@ -161,14 +159,14 @@ sealed class AncestryBonus {
       if (data is List) {
         final options = data.map((e) => e.toString()).toList();
         final selectedAbility = traitChoices[traitId];
-        
+
         bonuses.add(PickAbilityBonus(
           sourceTraitId: traitId,
           sourceTraitName: traitName,
           abilityOptions: options,
           selectedAbilityName: selectedAbility,
         ));
-        
+
         // If an ability is selected, also add a grants_ability_name bonus
         if (selectedAbility != null && selectedAbility.isNotEmpty) {
           bonuses.add(GrantsAbilityBonus(
@@ -192,7 +190,7 @@ sealed class AncestryBonus {
     Map<String, String> traitChoices,
   ) {
     final stat = (data['stat'] as String?) ?? '';
-    
+
     // Handle damage type (for immunity/weakness)
     List<String>? damageTypes;
     final typeData = data['type'];
@@ -200,7 +198,8 @@ sealed class AncestryBonus {
       if (typeData == 'pick_one') {
         // For pick_one, get the user's choice from traitChoices
         // Try the trait id first, then signature_immunity for signature traits
-        final choiceKey = traitId.startsWith('signature') ? 'signature_immunity' : traitId;
+        final choiceKey =
+            traitId.startsWith('signature') ? 'signature_immunity' : traitId;
         final selectedType = traitChoices[choiceKey];
         if (selectedType != null && selectedType.isNotEmpty) {
           damageTypes = [selectedType];
@@ -382,18 +381,18 @@ class IncreaseTotalBonus extends AncestryBonus {
 
     // Handle formulas
     final normalized = value.toLowerCase().replaceAll(' ', '');
-    
+
     // Pattern: "level+X" or "level-X" or just "level"
     if (normalized == 'level') {
       return heroLevel;
     }
-    
+
     final levelPlusMatch = RegExp(r'level\+(\d+)').firstMatch(normalized);
     if (levelPlusMatch != null) {
       final addition = int.parse(levelPlusMatch.group(1)!);
       return heroLevel + addition;
     }
-    
+
     final levelMinusMatch = RegExp(r'level-(\d+)').firstMatch(normalized);
     if (levelMinusMatch != null) {
       final subtraction = int.parse(levelMinusMatch.group(1)!);
@@ -421,7 +420,8 @@ class IncreaseTotalBonus extends AncestryBonus {
       sourceTraitName: json['sourceTraitName'] as String? ?? '',
       stat: json['stat'] as String? ?? '',
       value: json['value']?.toString() ?? '0',
-      damageTypes: types is List ? types.map((e) => e.toString()).toList() : null,
+      damageTypes:
+          types is List ? types.map((e) => e.toString()).toList() : null,
     );
   }
 }

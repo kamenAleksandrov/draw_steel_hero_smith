@@ -182,6 +182,7 @@ class HeroEntryNormalizer {
         sourceId: classId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'basics.className');
     }
 
     // Subclass → hero_entry
@@ -195,6 +196,7 @@ class HeroEntryNormalizer {
         sourceId: subclassId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'basics.subclass');
     }
 
     // Ancestry → hero_entry
@@ -208,6 +210,7 @@ class HeroEntryNormalizer {
         sourceId: ancestryId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'basics.ancestry');
     }
 
     // Career → hero_entry
@@ -221,6 +224,7 @@ class HeroEntryNormalizer {
         sourceId: careerId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'basics.career');
     }
 
     // Kit → hero_entry
@@ -234,6 +238,7 @@ class HeroEntryNormalizer {
         sourceId: kitId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'basics.kit');
     }
   }
 
@@ -253,6 +258,7 @@ class HeroEntryNormalizer {
         sourceId: deityId,
         gainedBy: 'choice',
       );
+      await _db.deleteHeroValue(heroId: heroId, key: 'faith.deity');
     }
 
     final domainStr = text('faith.domain');
@@ -272,6 +278,7 @@ class HeroEntryNormalizer {
           gainedBy: 'choice',
         );
       }
+      await _db.deleteHeroValue(heroId: heroId, key: 'faith.domain');
     }
   }
 
@@ -293,6 +300,7 @@ class HeroEntryNormalizer {
           gainedBy: 'choice',
         );
       }
+      await _db.deleteHeroValue(heroId: heroId, key: 'ancestry.selected_traits');
     }
 
     // Migrate ancestry.granted_abilities
@@ -309,6 +317,7 @@ class HeroEntryNormalizer {
           gainedBy: 'grant',
         );
       }
+      await _db.deleteHeroValue(heroId: heroId, key: 'ancestry.granted_abilities');
     }
 
     // Migrate ancestry.stat_mods
@@ -326,6 +335,7 @@ class HeroEntryNormalizer {
           payload: {'mods': mods},
         );
       }
+      await _db.deleteHeroValue(heroId: heroId, key: 'ancestry.stat_mods');
     }
 
     // Migrate ancestry.condition_immunities as resistance entries
@@ -342,6 +352,7 @@ class HeroEntryNormalizer {
           gainedBy: 'grant',
         );
       }
+      await _db.deleteHeroValue(heroId: heroId, key: 'ancestry.condition_immunities');
     }
   }
 
@@ -351,9 +362,11 @@ class HeroEntryNormalizer {
     
     // Group all perk_grant.* keys by perkId
     final perkGrants = <String, Map<String, dynamic>>{};
+    final keysToDelete = <String>[];
     
     for (final row in rows) {
       if (!row.key.startsWith('perk_grant.')) continue;
+      keysToDelete.add(row.key);
       
       // Parse: perk_grant.<perkId>.<grantType>
       final parts = row.key.split('.');
@@ -391,6 +404,11 @@ class HeroEntryNormalizer {
           value: selections,
         );
       }
+    }
+
+    // Delete legacy keys
+    for (final key in keysToDelete) {
+      await _db.deleteHeroValue(heroId: heroId, key: key);
     }
   }
 

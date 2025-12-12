@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
-import '../../../../core/models/story_creator_models.dart';
-import '../../../../core/services/story_creator_service.dart';
 import '../../../../core/theme/hero_theme.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -185,25 +183,6 @@ class StoryCultureSection extends ConsumerWidget {
     final upAsync = ref.watch(componentsByTypeProvider('culture_upbringing'));
     final langsAsync = ref.watch(componentsByTypeProvider('language'));
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
-    final ancestriesAsync = ref.watch(componentsByTypeProvider('ancestry'));
-
-    Future<StoryCultureSuggestion?>? suggestionFuture;
-    ancestriesAsync.when(
-      data: (ancestries) {
-        final ancestry = ancestries.firstWhere(
-          (a) => a.id == selectedAncestryId,
-          orElse: () =>
-              const model.Component(id: '', type: 'ancestry', name: ''),
-        );
-        if (ancestry.id.isNotEmpty) {
-          final service = ref.read(storyCreatorServiceProvider);
-          suggestionFuture = service.suggestionForAncestry(ancestry.name);
-        }
-      },
-      loading: () {},
-      error: (_, __) {},
-    );
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
@@ -223,29 +202,7 @@ class StoryCultureSection extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (selectedAncestryId != null)
-                    _SuggestionChips(
-                      suggestionFuture: suggestionFuture,
-                      langsAsync: langsAsync,
-                      envAsync: envAsync,
-                      orgAsync: orgAsync,
-                      upAsync: upAsync,
-                      onLanguageChanged: onLanguageChanged,
-                      onEnvironmentChanged: (value) {
-                        onEnvironmentChanged(value);
-                        onEnvironmentSkillChanged(null);
-                      },
-                      onOrganisationChanged: (value) {
-                        onOrganisationChanged(value);
-                        onOrganisationSkillChanged(null);
-                      },
-                      onUpbringingChanged: (value) {
-                        onUpbringingChanged(value);
-                        onUpbringingSkillChanged(null);
-                      },
-                      onDirty: onDirty,
-                    ),
-                  const SizedBox(height: 16),
+  
                   langsAsync.when(
                     loading: () => const LinearProgressIndicator(),
                     error: (e, _) => Text('Failed to load languages: $e'),
@@ -421,153 +378,6 @@ class StoryCultureSection extends ConsumerWidget {
   }
 }
 
-class _SuggestionChips extends StatelessWidget {
-  const _SuggestionChips({
-    required this.suggestionFuture,
-    required this.langsAsync,
-    required this.envAsync,
-    required this.orgAsync,
-    required this.upAsync,
-    required this.onLanguageChanged,
-    required this.onEnvironmentChanged,
-    required this.onOrganisationChanged,
-    required this.onUpbringingChanged,
-    required this.onDirty,
-  });
-
-  final Future<StoryCultureSuggestion?>? suggestionFuture;
-  final AsyncValue<List<model.Component>> langsAsync;
-  final AsyncValue<List<model.Component>> envAsync;
-  final AsyncValue<List<model.Component>> orgAsync;
-  final AsyncValue<List<model.Component>> upAsync;
-  final ValueChanged<String?> onLanguageChanged;
-  final ValueChanged<String?> onEnvironmentChanged;
-  final ValueChanged<String?> onOrganisationChanged;
-  final ValueChanged<String?> onUpbringingChanged;
-  final VoidCallback onDirty;
-
-  @override
-  Widget build(BuildContext context) {
-    if (suggestionFuture == null) return const SizedBox.shrink();
-    return FutureBuilder<StoryCultureSuggestion?>(
-      future: suggestionFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink();
-        }
-        final suggestion = snapshot.data;
-        if (suggestion == null || suggestion.isEmpty) {
-          return const SizedBox.shrink();
-        }
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              const Icon(Icons.tips_and_updates,
-                  size: 16, color: Colors.blueGrey),
-              Text(
-                'Suggested:',
-                style: TextStyle(
-                  color: Colors.blueGrey.shade700,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              if (suggestion.language != null)
-                ActionChip(
-                  label: Text('Language: ${suggestion.language}'),
-                  onPressed: () {
-                    final languageName = suggestion.language!.toLowerCase();
-                    langsAsync.maybeWhen(
-                      data: (langs) {
-                        final found = langs.firstWhere(
-                          (l) => l.name.toLowerCase() == languageName,
-                          orElse: () => const model.Component(
-                              id: '', type: 'language', name: ''),
-                        );
-                        if (found.id.isEmpty) return;
-                        onLanguageChanged(found.id);
-                        onDirty();
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-              if (suggestion.environment != null)
-                ActionChip(
-                  label: Text('Environment: ${suggestion.environment}'),
-                  onPressed: () {
-                    final name = suggestion.environment!.toLowerCase();
-                    envAsync.maybeWhen(
-                      data: (items) {
-                        final found = items.firstWhere(
-                          (e) => e.name.toLowerCase() == name,
-                          orElse: () => const model.Component(
-                              id: '', type: 'culture_environment', name: ''),
-                        );
-                        if (found.id.isEmpty) return;
-                        onEnvironmentChanged(found.id);
-                        onDirty();
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-              if (suggestion.organization != null)
-                ActionChip(
-                  label: Text('Organization: ${suggestion.organization}'),
-                  onPressed: () {
-                    final name = suggestion.organization!.toLowerCase();
-                    orgAsync.maybeWhen(
-                      data: (items) {
-                        final found = items.firstWhere(
-                          (o) => o.name.toLowerCase() == name,
-                          orElse: () => const model.Component(
-                              id: '', type: 'culture_organisation', name: ''),
-                        );
-                        if (found.id.isEmpty) return;
-                        onOrganisationChanged(found.id);
-                        onDirty();
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-              if (suggestion.upbringing != null)
-                ActionChip(
-                  label: Text('Upbringing: ${suggestion.upbringing}'),
-                  onPressed: () {
-                    final name = suggestion.upbringing!.toLowerCase();
-                    upAsync.maybeWhen(
-                      data: (items) {
-                        final found = items.firstWhere(
-                          (u) => u.name.toLowerCase() == name,
-                          orElse: () => const model.Component(
-                              id: '', type: 'culture_upbringing', name: ''),
-                        );
-                        if (found.id.isEmpty) return;
-                        onUpbringingChanged(found.id);
-                        onDirty();
-                      },
-                      orElse: () {},
-                    );
-                  },
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _LanguageDropdown extends StatelessWidget {
   const _LanguageDropdown({
     required this.languages,
@@ -623,7 +433,7 @@ class _LanguageDropdown extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: '— Choose language —',
+          label: 'Choose language',
           value: null,
         ),
       ];
@@ -672,7 +482,7 @@ class _LanguageDropdown extends StatelessWidget {
           child: Text(
             selected != null
                 ? filteredLanguages.firstWhere((l) => l.id == selected).name
-                : '— Choose language —',
+                : 'Choose language',
             style: TextStyle(
               fontSize: 16,
               color: selected != null
@@ -741,7 +551,7 @@ class _CultureDropdown extends StatelessWidget {
         Future<void> openSearch() async {
           final options = <_SearchOption<String?>>[
             const _SearchOption<String?>(
-              label: '— Choose —',
+              label: 'Choose',
               value: null,
             ),
             ...items.map(
@@ -785,7 +595,7 @@ class _CultureDropdown extends StatelessWidget {
                         horizontal: 12, vertical: 10),
                   ),
                   child: Text(
-                    selectedItem != null ? selectedItem.name : '— Choose —',
+                    selectedItem != null ? selectedItem.name : 'Choose',
                     style: TextStyle(
                       fontSize: 16,
                       color: selectedItem != null
@@ -905,7 +715,7 @@ class _CultureSkillChooser extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: '— Choose skill —',
+          label: 'Choose skill',
           value: null,
         ),
       ];
@@ -962,7 +772,7 @@ class _CultureSkillChooser extends StatelessWidget {
                   ? eligible
                       .firstWhere((s) => s.id == validSelected)
                       .name
-                  : '— Choose skill —',
+                  : 'Choose skill',
               style: TextStyle(
                 fontSize: 16,
                 color: validSelected != null

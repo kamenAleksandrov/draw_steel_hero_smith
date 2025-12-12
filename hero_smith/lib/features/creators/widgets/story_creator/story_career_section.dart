@@ -226,7 +226,7 @@ class _CareerContentState extends State<_CareerContent> {
       (c) => c.id == widget.careerId,
       orElse: () => _careers.isNotEmpty
           ? _careers.first
-          : const model.Component(id: '', type: 'career', name: 'G현'),
+          : const model.Component(id: '', type: 'career', name: ''),
     );
 
     final data = selectedCareer.data;
@@ -474,7 +474,7 @@ class _CareerContentState extends State<_CareerContent> {
                   int currentIndex, List<String?> slots) {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'G현 Choose skill G현',
+                    label: 'Choose skill',
                     value: null,
                   ),
                 ];
@@ -578,7 +578,7 @@ class _CareerContentState extends State<_CareerContent> {
                         child: Text(
                           slots[index] != null
                               ? skillMap[slots[index]]!.name
-                              : 'G현 Choose skill G현',
+                              : 'Choose skill',
                           style: TextStyle(
                             fontSize: 16,
                             color: slots[index] != null
@@ -648,7 +648,7 @@ class _CareerContentState extends State<_CareerContent> {
               onTap: () async {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'G현 Choose incident G현',
+                    label: 'Choose incident',
                     value: null,
                   ),
                   ...incidents.map(
@@ -675,7 +675,7 @@ class _CareerContentState extends State<_CareerContent> {
                   suffixIcon: Icon(Icons.search),
                 ),
                 child: Text(
-                  widget.incidentName ?? 'G현 Choose incident G현',
+                  widget.incidentName ?? 'Choose incident',
                   style: TextStyle(
                     fontSize: 16,
                     color: widget.incidentName != null
@@ -749,7 +749,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: 'G현 Choose language G현',
+          label: 'Choose language',
           value: null,
         ),
       ];
@@ -791,7 +791,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
         child: Text(
           validValue != null
               ? languages.firstWhere((l) => l.id == validValue).name
-              : 'G현 Choose language G현',
+              : 'Choose language',
           style: TextStyle(
             fontSize: 16,
             color: validValue != null

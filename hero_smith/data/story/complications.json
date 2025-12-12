@@ -90,7 +90,9 @@
     "effects": {
       "benefit": "Whenever you don’t know what to do, you can appeal to your loved one’s spirit for help. You spend a hero token to let the Director determine the next thing you do, whether in or out of combat. The Director chooses the best course of action they can think of for you, even if it relies on information you don’t have. If the Director can’t think of a particularly good course of action for you to take, you don’t spend the hero token.",
       "drawback": "You have corruption weakness 5.",
-      "both": null,
+      "both": null
+    },
+    "grants": {
       "increase_total": {
         "stat": "weakness",
         "type": "corruption",

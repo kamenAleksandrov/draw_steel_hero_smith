@@ -256,14 +256,14 @@ class HeroAssemblyService {
 
   /// Merge stat modifications from all hero_entries with entry_type='stat_mod'.
   /// 
-  /// Each stat_mod entry should have a payload like:
-  /// { "mods": { "speed": 1, "stability": -2 } }
-  /// or individual entries per stat.
+  /// Supports two formats:
+  /// 1. Batch format: { "mods": { "speed": 1, "stability": -2 } }
+  /// 2. Individual format (entryId = stat name): { "mods": [{ "value": 1, "source": "..." }] }
   HeroStatModifications _mergeStatMods(List<db.HeroEntry> entries) {
     final mods = <String, List<StatModification>>{};
 
     for (final entry in entries) {
-      final source = '${entry.sourceType}:${entry.sourceId}';
+      final defaultSource = '${entry.sourceType}:${entry.sourceId}';
       
       if (entry.payload == null) continue;
       
@@ -271,8 +271,27 @@ class HeroAssemblyService {
         final payload = jsonDecode(entry.payload!);
         if (payload is! Map) continue;
 
-        // Handle nested 'mods' format: { "mods": { "speed": 1, ... } }
-        final modsMap = payload['mods'] ?? payload;
+        final modsData = payload['mods'];
+        
+        // Format 2: Individual entry where entryId is the stat name
+        // Payload: { "mods": [{ "value": 1, "source": "Curse of Caution" }] }
+        if (modsData is List) {
+          final stat = entry.entryId.toLowerCase();
+          for (final modItem in modsData) {
+            if (modItem is! Map) continue;
+            final value = (modItem['value'] is num)
+                ? (modItem['value'] as num).toInt()
+                : int.tryParse(modItem['value']?.toString() ?? '') ?? 0;
+            if (value == 0) continue;
+            final source = modItem['source']?.toString() ?? defaultSource;
+            mods.putIfAbsent(stat, () => []);
+            mods[stat]!.add(StatModification(value: value, source: source));
+          }
+          continue;
+        }
+
+        // Format 1: Batch format { "mods": { "speed": 1, ... } } or just { "speed": 1, ... }
+        final modsMap = modsData ?? payload;
         if (modsMap is! Map) continue;
 
         for (final statEntry in modsMap.entries) {
@@ -284,7 +303,7 @@ class HeroAssemblyService {
           if (value == 0) continue;
           
           mods.putIfAbsent(stat, () => []);
-          mods[stat]!.add(StatModification(value: value, source: source));
+          mods[stat]!.add(StatModification(value: value, source: defaultSource));
         }
       } catch (_) {
         // Skip malformed entries

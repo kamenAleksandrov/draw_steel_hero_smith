@@ -100,7 +100,7 @@ class StoryAncestrySection extends ConsumerWidget {
               items: [
                 const DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('— Choose ancestry —'),
+                  child: Text('Choose ancestry'),
                 ),
                 ...ancestries.map(
                   (a) => DropdownMenuItem<String?>(
@@ -129,7 +129,7 @@ class StoryAncestrySection extends ConsumerWidget {
                   orElse: () => traitsComps.isNotEmpty
                       ? traitsComps.first
                       : const model.Component(
-                          id: '', type: 'ancestry_trait', name: '—'),
+                          id: '', type: 'ancestry_trait', name: ''),
                 ),
               );
               return _AncestryDetails(
@@ -419,7 +419,7 @@ class _AncestryDetails extends StatelessWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('— Select immunity —'),
+          child: Text('Select immunity'),
         ),
         ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
@@ -450,7 +450,7 @@ class _AncestryDetails extends StatelessWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('— Select ability —'),
+          child: Text('Select ability'),
         ),
         ...options.map(
           (ability) => DropdownMenuItem<String>(

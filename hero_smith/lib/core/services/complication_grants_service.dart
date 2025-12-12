@@ -236,26 +236,35 @@ class ComplicationGrantsService {
 
   /// Load complication stat modifications.
   Future<HeroStatModifications> loadComplicationStatMods(String heroId) async {
-    final entries = await _entries.listEntriesByType(heroId, 'stat_mod');
-    final mods = <String, List<StatModification>>{};
-    for (final e in entries.where((e) => e.sourceType == 'complication')) {
-      if (e.payload == null) continue;
-      try {
-        final decoded = jsonDecode(e.payload!);
-        if (decoded is Map && decoded['mods'] is List) {
-          final list = (decoded['mods'] as List)
-              .whereType<Map>()
-              .map((m) => StatModification(
-                    value: (m['value'] as num?)?.toInt() ?? 0,
-                    source: m['source']?.toString() ?? '',
-                  ))
-              .toList();
-          mods[e.entryId] = list;
-        }
-      } catch (_) {}
+    final values = await _db.getHeroValues(heroId);
+    final modsValue = values.firstWhereOrNull((v) => v.key == _kComplicationStatMods);
+    
+    if (modsValue?.jsonValue == null && modsValue?.textValue == null) {
+      return const HeroStatModifications.empty();
     }
-    if (mods.isEmpty) return const HeroStatModifications.empty();
-    return HeroStatModifications(modifications: mods);
+    
+    try {
+      final jsonStr = modsValue!.jsonValue ?? modsValue.textValue!;
+      return HeroStatModifications.fromJsonString(jsonStr);
+    } catch (_) {
+      return const HeroStatModifications.empty();
+    }
+  }
+
+  /// Watch complication stat modifications - automatically updates when values change.
+  Stream<HeroStatModifications> watchComplicationStatMods(String heroId) {
+    return _db.watchHeroValues(heroId).map((values) {
+      final modsValue = values.firstWhereOrNull((v) => v.key == _kComplicationStatMods);
+      if (modsValue?.jsonValue == null && modsValue?.textValue == null) {
+        return const HeroStatModifications.empty();
+      }
+      try {
+        final jsonStr = modsValue!.jsonValue ?? modsValue.textValue!;
+        return HeroStatModifications.fromJsonString(jsonStr);
+      } catch (_) {
+        return const HeroStatModifications.empty();
+      }
+    });
   }
 
   /// Load recovery bonus from complication.
@@ -263,6 +272,33 @@ class ComplicationGrantsService {
     final values = await _db.getHeroValues(heroId);
     final value = values.firstWhereOrNull((v) => v.key == _kComplicationRecoveryBonus);
     return value?.value ?? 0;
+  }
+
+  /// Load damage resistances for a hero.
+  Future<HeroDamageResistances> loadDamageResistances(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final value = values.firstWhereOrNull((v) => v.key == _kDamageResistances);
+    if (value?.jsonValue == null && value?.textValue == null) {
+      return HeroDamageResistances.empty;
+    }
+    try {
+      final jsonStr = value!.jsonValue ?? value.textValue!;
+      return HeroDamageResistances.fromJsonString(jsonStr);
+    } catch (_) {
+      return HeroDamageResistances.empty;
+    }
+  }
+
+  /// Save damage resistances for a hero.
+  Future<void> saveDamageResistances(
+    String heroId,
+    HeroDamageResistances resistances,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _kDamageResistances,
+      textValue: resistances.toJsonString(),
+    );
   }
 
   // Private implementation methods
@@ -324,9 +360,7 @@ class ComplicationGrantsService {
     }
 
     // Apply stat modifications with sources
-    if (statMods.isNotEmpty) {
-      await _setComplicationStatMods(heroId, statMods);
-    }
+    await _setComplicationStatMods(heroId, statMods);
   }
 
   Future<void> _applyTokenGrants(
@@ -474,12 +508,6 @@ class ComplicationGrantsService {
   }
 
   Future<void> _clearComplicationStatMods(String heroId) async {
-    await (_db.delete(_db.heroEntries)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.entryType.equals('stat_mod') &
-              t.sourceType.equals('complication')))
-        .go();
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kComplicationStatMods,
@@ -540,6 +568,9 @@ class ComplicationGrantsService {
     AppliedComplicationGrants grants,
     int heroLevel,
   ) async {
+    // Clear old complication resistance entries first
+    await _clearDamageResistanceGrants(heroId);
+
     // Collect all resistance bonuses
     final resistanceBonuses = <String, DamageResistanceBonus>{};
 
@@ -578,11 +609,7 @@ class ComplicationGrantsService {
       }
     }
 
-    if (resistanceBonuses.isEmpty) {
-      await _rebuildDamageResistances(heroId);
-      return;
-    }
-
+    // Store each resistance bonus in hero_entries for tracking
     for (final entry in resistanceBonuses.entries) {
       final type = entry.key;
       final bonus = entry.value;
@@ -612,112 +639,6 @@ class ComplicationGrantsService {
               t.sourceType.equals('complication')))
         .go();
     await _rebuildDamageResistances(heroId);
-  }
-
-  // ignore: unused_element
-  Future<Map<String, dynamic>> _loadDamageResistancesJson(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final value = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
-    if (value?.jsonValue == null && value?.textValue == null) {
-      return {'resistances': []};
-    }
-    try {
-      return jsonDecode(value!.jsonValue ?? value.textValue!) as Map<String, dynamic>;
-    } catch (_) {
-      return {'resistances': []};
-    }
-  }
-
-  Future<void> _saveDamageResistancesJson(String heroId, Map<String, dynamic> json) async {
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: 'resistances.damage',
-      textValue: jsonEncode(json),
-    );
-  }
-
-  // ignore: unused_element
-  Map<String, dynamic> _applyResistanceBonuses(
-    Map<String, dynamic> current,
-    Map<String, DamageResistanceBonus> bonuses,
-  ) {
-    final resistances = List<Map<String, dynamic>>.from(
-      (current['resistances'] as List?)?.map((e) => Map<String, dynamic>.from(e as Map)) ?? [],
-    );
-
-    for (final entry in bonuses.entries) {
-      final type = entry.key;
-      final bonus = entry.value;
-      
-      final existingIndex = resistances.indexWhere(
-        (r) => (r['damageType'] as String?)?.toLowerCase() == type.toLowerCase(),
-      );
-
-      if (existingIndex >= 0) {
-        // Update existing resistance
-        final existing = resistances[existingIndex];
-        existing['bonusImmunity'] = ((existing['bonusImmunity'] as num?) ?? 0).toInt() + bonus.immunity;
-        existing['bonusWeakness'] = ((existing['bonusWeakness'] as num?) ?? 0).toInt() + bonus.weakness;
-        final sources = List<String>.from(existing['sources'] as List? ?? []);
-        for (final s in bonus.sources) {
-          if (!sources.contains(s)) sources.add(s);
-        }
-        existing['sources'] = sources;
-      } else {
-        // Add new resistance
-        resistances.add({
-          'damageType': bonus.damageType,
-          'baseImmunity': 0,
-          'baseWeakness': 0,
-          'bonusImmunity': bonus.immunity,
-          'bonusWeakness': bonus.weakness,
-          'sources': bonus.sources,
-        });
-      }
-    }
-
-    return {'resistances': resistances};
-  }
-
-  // ignore: unused_element
-  Map<String, dynamic> _removeResistanceBonuses(
-    Map<String, dynamic> current,
-    Map<String, dynamic> bonusesToRemove,
-  ) {
-    final resistances = List<Map<String, dynamic>>.from(
-      (current['resistances'] as List?)?.map((e) => Map<String, dynamic>.from(e as Map)) ?? [],
-    );
-
-    for (final entry in bonusesToRemove.entries) {
-      final type = entry.key;
-      final bonus = entry.value as Map<String, dynamic>;
-      
-      final existingIndex = resistances.indexWhere(
-        (r) => (r['damageType'] as String?)?.toLowerCase() == type.toLowerCase(),
-      );
-
-      if (existingIndex >= 0) {
-        final existing = resistances[existingIndex];
-        existing['bonusImmunity'] = ((existing['bonusImmunity'] as num?) ?? 0).toInt() - ((bonus['immunity'] as num?) ?? 0).toInt();
-        existing['bonusWeakness'] = ((existing['bonusWeakness'] as num?) ?? 0).toInt() - ((bonus['weakness'] as num?) ?? 0).toInt();
-        
-        // Remove sources
-        final sources = List<String>.from(existing['sources'] as List? ?? []);
-        final bonusSources = List<String>.from(bonus['sources'] as List? ?? []);
-        sources.removeWhere((s) => bonusSources.contains(s));
-        existing['sources'] = sources;
-
-        // Remove entry if no values remain
-        if ((existing['baseImmunity'] as num?) == 0 &&
-            (existing['baseWeakness'] as num?) == 0 &&
-            (existing['bonusImmunity'] as num?) == 0 &&
-            (existing['bonusWeakness'] as num?) == 0) {
-          resistances.removeAt(existingIndex);
-        }
-      }
-    }
-
-    return {'resistances': resistances};
   }
 
   Future<void> _applyLanguageGrants(
@@ -752,16 +673,7 @@ class ComplicationGrantsService {
   /// and complication sourced) and combines them into the final resistances.damage.
   Future<void> _rebuildDamageResistances(String heroId) async {
     // Load existing resistances to preserve base values
-    final values = await _db.getHeroValues(heroId);
-    final existingValue = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
-    
-    HeroDamageResistances existing = HeroDamageResistances.empty;
-    if (existingValue?.jsonValue != null || existingValue?.textValue != null) {
-      try {
-        final jsonStr = existingValue!.jsonValue ?? existingValue.textValue!;
-        existing = HeroDamageResistances.fromJsonString(jsonStr);
-      } catch (_) {}
-    }
+    final current = await loadDamageResistances(heroId);
     
     // Collect ALL resistance entries from hero_entries (ancestry + complication)
     final entries = await _entries.listEntriesByType(heroId, 'resistance');
@@ -792,18 +704,8 @@ class ComplicationGrantsService {
     }
     
     // Apply all combined bonuses (this replaces bonus values with the totals from all sources)
-    final updated = existing.applyBonuses(combinedBonuses);
-    
-    await _saveDamageResistancesJson(heroId, {
-      'resistances': updated.resistances.map((r) => {
-        'damageType': r.damageType,
-        'baseImmunity': r.baseImmunity,
-        'baseWeakness': r.baseWeakness,
-        'bonusImmunity': r.bonusImmunity,
-        'bonusWeakness': r.bonusWeakness,
-        'sources': r.sources,
-      }).toList(),
-    });
+    final updated = current.applyBonuses(combinedBonuses);
+    await saveDamageResistances(heroId, updated);
   }
 
   Future<void> _clearLanguageGrants(String heroId) async {
@@ -1020,37 +922,10 @@ class ComplicationGrantsService {
     String heroId,
     Map<String, List<StatModification>> statMods,
   ) async {
-    // Replace all existing complication stat_mod entries
-    await (_db.delete(_db.heroEntries)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.entryType.equals('stat_mod') &
-              t.sourceType.equals('complication')))
-        .go();
+    if (statMods.isEmpty) return;
 
-    for (final entry in statMods.entries) {
-      final stat = entry.key;
-      final mods = entry.value;
-      await _entries.addEntry(
-        heroId: heroId,
-        entryType: 'stat_mod',
-        entryId: stat,
-        sourceType: 'complication',
-        sourceId: 'complication',
-        gainedBy: 'grant',
-        payload: {
-          'mods': mods
-              .map((m) => {
-                    'value': m.value,
-                    'source': m.source,
-                  })
-              .toList(),
-        },
-      );
-    }
-
-    // Compatibility: keep aggregate stat mods as state until downstream parsing moves fully to hero_entries.
     final modsModel = HeroStatModifications(modifications: statMods);
+    
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kComplicationStatMods,
@@ -1161,6 +1036,7 @@ class ComplicationGrantsService {
   // ignore: unused_field
   static const _kComplicationLanguages = 'complication.languages';
   static const _kComplicationFeatures = 'complication.features';
+  static const _kDamageResistances = 'resistances.damage';
 }
 
   class _SkillLookup {
