@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../../../core/db/app_database.dart';
 import '../../../../core/models/component.dart' as model;
+import '../../../../core/services/class_data_service.dart';
 import 'gear_utils.dart';
 
 /// Dialog for adding treasures.
@@ -37,7 +42,8 @@ class _AddTreasureDialogState extends State<AddTreasureDialog> {
             treasure.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
             description.toLowerCase().contains(_searchQuery.toLowerCase());
 
-        final matchesType = _filterType == 'all' || treasure.type == _filterType;
+        final matchesType =
+            _filterType == 'all' || treasure.type == _filterType;
 
         return matchesSearch && matchesType;
       }).toList();
@@ -76,10 +82,13 @@ class _AddTreasureDialogState extends State<AddTreasureDialog> {
               ),
               items: const [
                 DropdownMenuItem(value: 'all', child: Text('All Types')),
-                DropdownMenuItem(value: 'consumable', child: Text('Consumables')),
+                DropdownMenuItem(
+                    value: 'consumable', child: Text('Consumables')),
                 DropdownMenuItem(value: 'trinket', child: Text('Trinkets')),
                 DropdownMenuItem(value: 'artifact', child: Text('Artifacts')),
-                DropdownMenuItem(value: 'leveled_treasure', child: Text('Leveled Equipment')),
+                DropdownMenuItem(
+                    value: 'leveled_treasure',
+                    child: Text('Leveled Equipment')),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -105,8 +114,9 @@ class _AddTreasureDialogState extends State<AddTreasureDialog> {
                       itemBuilder: (context, index) {
                         final treasure = _filteredTreasures[index];
                         final echelon = treasure.data['echelon'] as int?;
-                        final description = treasure.data['description']?.toString() ?? '';
-                        
+                        final description =
+                            treasure.data['description']?.toString() ?? '';
+
                         return ListTile(
                           leading: Icon(
                             getTreasureIcon(treasure.type),
@@ -117,8 +127,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(getTreasureTypeName(treasure.type)),
-                              if (echelon != null)
-                                Text('Echelon $echelon'),
+                              if (echelon != null) Text('Echelon $echelon'),
                               if (description.isNotEmpty)
                                 Text(
                                   description,
@@ -128,164 +137,6 @@ class _AddTreasureDialogState extends State<AddTreasureDialog> {
                             ],
                           ),
                           onTap: () => widget.onTreasureSelected(treasure.id),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-      ],
-    );
-  }
-}
-
-/// Dialog for adding kit favorites.
-class AddKitFavoriteDialog extends StatefulWidget {
-  const AddKitFavoriteDialog({
-    super.key,
-    required this.availableKits,
-    required this.allowedTypes,
-    required this.onKitSelected,
-    this.classId,
-  });
-
-  final List<model.Component> availableKits;
-  final List<String> allowedTypes;
-  final Function(String) onKitSelected;
-  /// The class ID to filter equipment with class restrictions (e.g., psionic_augmentation)
-  final String? classId;
-
-  @override
-  State<AddKitFavoriteDialog> createState() => _AddKitFavoriteDialogState();
-}
-
-class _AddKitFavoriteDialogState extends State<AddKitFavoriteDialog> {
-  String _searchQuery = '';
-  String _filterType = 'all';
-  List<model.Component> _filteredKits = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredKits = _applyClassFilter(widget.availableKits);
-  }
-
-  /// Filter items by class restrictions (available_to_classes) - same logic as choose_equipment_widget
-  List<model.Component> _applyClassFilter(List<model.Component> items) {
-    if (widget.classId == null) return items;
-    
-    return items.where((item) {
-      final availableToClasses = item.data['available_to_classes'];
-      if (availableToClasses == null) {
-        // No class restriction, available to all
-        return true;
-      }
-      if (availableToClasses is List) {
-        // Normalize the class ID for comparison (strip 'class_' prefix, lowercase)
-        final normalizedClassId = widget.classId!
-            .toLowerCase()
-            .replaceFirst('class_', '');
-        return availableToClasses
-            .map((e) => e.toString().toLowerCase())
-            .contains(normalizedClassId);
-      }
-      return true;
-    }).toList();
-  }
-
-  void _filterKits() {
-    setState(() {
-      final classFiltered = _applyClassFilter(widget.availableKits);
-      _filteredKits = classFiltered.where((kit) {
-        final matchesSearch = _searchQuery.isEmpty ||
-            kit.name.toLowerCase().contains(_searchQuery.toLowerCase());
-        final matchesType = _filterType == 'all' || kit.type == _filterType;
-        return matchesSearch && matchesType;
-      }).toList();
-    });
-  }
-
-  List<DropdownMenuItem<String>> _buildTypeDropdownItems() {
-    final items = <DropdownMenuItem<String>>[
-      const DropdownMenuItem(value: 'all', child: Text('All Types')),
-    ];
-
-    // Only add types that the hero has access to
-    for (final type in widget.allowedTypes) {
-      final label = kitTypeLabels[type] ?? type;
-      items.add(DropdownMenuItem(value: type, child: Text(label)));
-    }
-
-    return items;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return AlertDialog(
-      title: const Text('Add Favorite'),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 500,
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                _searchQuery = value;
-                _filterKits();
-              },
-            ),
-            if (widget.allowedTypes.length > 1) ...[
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: _filterType,
-                decoration: const InputDecoration(
-                  labelText: 'Filter by type',
-                  border: OutlineInputBorder(),
-                ),
-                items: _buildTypeDropdownItems(),
-                onChanged: (value) {
-                  if (value != null) {
-                    _filterType = value;
-                    _filterKits();
-                  }
-                },
-              ),
-            ],
-            const SizedBox(height: 16),
-            Expanded(
-              child: _filteredKits.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No equipment found',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _filteredKits.length,
-                      itemBuilder: (context, index) {
-                        final kit = _filteredKits[index];
-                        final icon = kitTypeIcons[kit.type] ?? Icons.inventory_2;
-                        final typeLabel = kitTypeLabels[kit.type] ?? kit.type;
-                        return ListTile(
-                          leading: Icon(icon, color: theme.colorScheme.primary),
-                          title: Text(kit.name),
-                          subtitle: Text(typeLabel),
-                          onTap: () => widget.onKitSelected(kit.id),
                         );
                       },
                     ),
@@ -414,6 +265,393 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
             });
           },
           child: const Text('Add'),
+        ),
+      ],
+    );
+  }
+}
+
+/// Dialog for adding favorite kits, wards, prayers, enchantments, or augmentations.
+/// Loads available options based on the hero's class and subclass.
+class AddFavoriteKitDialog extends StatefulWidget {
+  final String heroId;
+  final AppDatabase db;
+  final Set<String> existingFavoriteIds;
+  final Function(String) onKitSelected;
+
+  const AddFavoriteKitDialog({
+    super.key,
+    required this.heroId,
+    required this.db,
+    required this.existingFavoriteIds,
+    required this.onKitSelected,
+  });
+
+  @override
+  State<AddFavoriteKitDialog> createState() => _AddFavoriteKitDialogState();
+}
+
+class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
+  bool _isLoading = true;
+  String? _error;
+  List<model.Component> _availableKits = [];
+  List<model.Component> _filteredKits = [];
+  String _searchQuery = '';
+  String _filterType = 'all';
+  Set<String> _availableTypes = {};
+  String? _heroClassName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAvailableKits();
+  }
+
+  Future<void> _loadAvailableKits() async {
+    try {
+      // 1. Get hero's class from hero_entries table
+      final classId = await widget.db.getSingleHeroEntryId(widget.heroId, 'class');
+      final subclassId = await widget.db.getSingleHeroEntryId(widget.heroId, 'subclass');
+
+      if (classId == null || classId.isEmpty) {
+        setState(() {
+          _error = 'Hero has no class selected. Please set a class first.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // 2. Normalize class ID and get class data
+      final normalizedClassId = _normalizeClassId(classId);
+      final classDataService = ClassDataService();
+      await classDataService.initialize();
+      final classData = classDataService.getClassById(normalizedClassId);
+
+      if (classData == null) {
+        setState(() {
+          _error = 'Could not find class data for "$classId".';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      _heroClassName = classData.name;
+      final normalizedClassName = normalizedClassId.replaceFirst('class_', '').toLowerCase();
+
+      // 3. Check for Fury Stormwight special case
+      final normalizedSubclass = subclassId?.toLowerCase().trim() ?? '';
+      final isStormwight = normalizedClassId == 'class_fury' && 
+          normalizedSubclass.contains('stormwight');
+
+      if (isStormwight) {
+        // Only load stormwight kits
+        final stormwightKits = await _loadKitsFromJson('stormwight_kits.json');
+        setState(() {
+          _availableKits = stormwightKits
+              .where((k) => !widget.existingFavoriteIds.contains(k.id))
+              .toList()
+            ..sort((a, b) => a.name.compareTo(b.name));
+          _filteredKits = _availableKits;
+          _availableTypes = {'stormwight_kit'};
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // 4. Parse level 1 features to find allowed equipment types
+      final allowedKitTypes = _parseAllowedKitTypes(classData);
+
+      if (allowedKitTypes.isEmpty) {
+        setState(() {
+          _error = 'This class has no available kit/ward/prayer/enchantment/augmentation options.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // 5. Load items from corresponding JSON files
+      final allKits = <model.Component>[];
+      
+      for (final kitType in allowedKitTypes) {
+        final jsonFile = _getJsonFileForType(kitType);
+        if (jsonFile != null) {
+          final kits = await _loadKitsFromJson(jsonFile);
+          // Filter by available_to_classes
+          final filteredByClass = kits.where((kit) {
+            final availableToClasses = kit.data['available_to_classes'];
+            if (availableToClasses == null) return true;
+            if (availableToClasses is List) {
+              return availableToClasses
+                  .map((e) => e.toString().toLowerCase())
+                  .contains(normalizedClassName);
+            }
+            return true;
+          }).toList();
+          allKits.addAll(filteredByClass);
+        }
+      }
+
+      // Remove duplicates and already favorited items
+      final uniqueKits = <String, model.Component>{};
+      for (final kit in allKits) {
+        if (!widget.existingFavoriteIds.contains(kit.id)) {
+          uniqueKits[kit.id] = kit;
+        }
+      }
+
+      setState(() {
+        _availableKits = uniqueKits.values.toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
+        _filteredKits = _availableKits;
+        _availableTypes = allowedKitTypes;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load kits: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  String _normalizeClassId(String raw) {
+    final trimmed = raw.trim().toLowerCase();
+    if (trimmed.startsWith('class_')) return trimmed;
+    return 'class_$trimmed';
+  }
+
+  Set<String> _parseAllowedKitTypes(dynamic classData) {
+    final types = <String>{};
+    
+    // Access level 1 features
+    final levels = classData.levels as List<dynamic>;
+    if (levels.isEmpty) return types;
+
+    for (final level in levels) {
+      final features = level.features as List<dynamic>;
+      for (final feature in features) {
+        final name = (feature.name as String).trim().toLowerCase();
+        
+        // Check for kit-related features
+        if (name == 'kit') {
+          types.add('kit');
+        } else if (name.contains('prayer')) {
+          types.add('prayer');
+        } else if (name.contains('ward')) {
+          types.add('ward');
+        } else if (name.contains('enchantment')) {
+          types.add('enchantment');
+        } else if (name.contains('augmentation') || name.contains('psionic augmentation')) {
+          types.add('psionic_augmentation');
+        }
+      }
+    }
+
+    return types;
+  }
+
+  String? _getJsonFileForType(String type) {
+    switch (type) {
+      case 'kit':
+        return 'kits.json';
+      case 'prayer':
+        return 'prayers.json';
+      case 'ward':
+        return 'wards.json';
+      case 'enchantment':
+        return 'enchantments.json';
+      case 'psionic_augmentation':
+        return 'augmentations.json';
+      case 'stormwight_kit':
+        return 'stormwight_kits.json';
+      default:
+        return null;
+    }
+  }
+
+  Future<List<model.Component>> _loadKitsFromJson(String filename) async {
+    try {
+      final jsonString = await rootBundle.loadString('data/kits/$filename');
+      final jsonData = jsonDecode(jsonString) as List<dynamic>;
+      return jsonData
+          .map((item) => model.Component.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      // File might not exist or be malformed
+      return [];
+    }
+  }
+
+  void _filterKits() {
+    setState(() {
+      _filteredKits = _availableKits.where((kit) {
+        final description = kit.data['description']?.toString() ?? '';
+        final matchesSearch = _searchQuery.isEmpty ||
+            kit.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            description.toLowerCase().contains(_searchQuery.toLowerCase());
+
+        final matchesType = _filterType == 'all' || kit.type == _filterType;
+
+        return matchesSearch && matchesType;
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    if (_isLoading) {
+      return AlertDialog(
+        title: const Text('Add Favorite'),
+        content: const SizedBox(
+          height: 100,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    }
+
+    if (_error != null) {
+      return AlertDialog(
+        title: const Text('Add Favorite'),
+        content: Text(
+          _error!,
+          style: TextStyle(color: theme.colorScheme.error),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+    }
+
+    // Build filter dropdown items
+    final filterItems = <DropdownMenuItem<String>>[
+      const DropdownMenuItem(value: 'all', child: Text('All Types')),
+    ];
+    for (final type in _availableTypes) {
+      final label = kitTypeLabels[type] ?? kitTypeDisplayName(type);
+      final icon = kitTypeIcons[type] ?? kitTypeIcon(type);
+      filterItems.add(
+        DropdownMenuItem(
+          value: type,
+          child: Row(
+            children: [
+              Icon(icon, size: 18),
+              const SizedBox(width: 8),
+              Text(label),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return AlertDialog(
+      title: Text('Add Favorite${_heroClassName != null ? ' ($_heroClassName)' : ''}'),
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 500,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                _searchQuery = value;
+                _filterKits();
+              },
+            ),
+            const SizedBox(height: 12),
+            if (_availableTypes.length > 1)
+              DropdownButtonFormField<String>(
+                value: _filterType,
+                decoration: const InputDecoration(
+                  labelText: 'Filter by type',
+                  border: OutlineInputBorder(),
+                ),
+                items: filterItems,
+                onChanged: (value) {
+                  if (value != null) {
+                    _filterType = value;
+                    _filterKits();
+                  }
+                },
+              ),
+            if (_availableTypes.length > 1) const SizedBox(height: 16),
+            Expanded(
+              child: _filteredKits.isEmpty
+                  ? Center(
+                      child: Text(
+                        _availableKits.isEmpty
+                            ? 'All available items are already in favorites.'
+                            : 'No items match your search.',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _filteredKits.length,
+                      itemBuilder: (context, index) {
+                        final kit = _filteredKits[index];
+                        final description =
+                            kit.data['description']?.toString() ?? '';
+                        final icon = kitTypeIcons[kit.type] ?? kitTypeIcon(kit.type);
+
+                        return ListTile(
+                          leading: Icon(
+                            icon,
+                            color: theme.colorScheme.primary,
+                          ),
+                          title: Text(kit.name),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                kitTypeDisplayName(kit.type),
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (description.isNotEmpty)
+                                Text(
+                                  description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                            ],
+                          ),
+                          isThreeLine: description.isNotEmpty,
+                          onTap: () {
+                            widget.onKitSelected(kit.id);
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
         ),
       ],
     );

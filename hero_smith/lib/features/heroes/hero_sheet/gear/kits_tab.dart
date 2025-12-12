@@ -11,6 +11,7 @@ import '../../../../core/services/class_data_service.dart';
 import '../../../../core/services/kit_grants_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../main_stats/hero_main_stats_providers.dart';
+import 'gear_dialogs.dart';
 import 'gear_utils.dart';
 import 'kit_widgets.dart';
 
@@ -691,25 +692,51 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     final favoriteKits =
         _allKits.where((k) => _favoriteKitIds.contains(k.id)).toList();
 
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'Favorite Kits (${favoriteKits.length})',
-            style: AppTextStyles.subtitle,
-          ),
-        ),
-        Expanded(
-          child: favoriteKits.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No favorite kits yet.\nAdd kits to quickly swap between them.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Favorite Kits (${favoriteKits.length})',
+                    style: AppTextStyles.subtitle,
                   ),
-                )
-              : ListView.builder(
+                ],
+              ),
+            ),
+            Expanded(
+              child: favoriteKits.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.inventory_2_outlined,
+                            size: 64,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No favorite kits yet',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tap + to add kits for quick swapping',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: favoriteKits.length,
                   itemBuilder: (context, index) {
@@ -729,8 +756,82 @@ class _KitsTabState extends ConsumerState<KitsTab> {
                     );
                   },
                 ),
+            ),
+          ],
+        ),
+        // Floating Action Button for adding favorites
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton(
+            heroTag: 'kits_tab_fab',
+            onPressed: _showAddFavoriteDialog,
+            tooltip: 'Add Favorite Kit',
+            child: const Icon(Icons.add),
+          ),
         ),
       ],
     );
+  }
+
+  Future<void> _showAddFavoriteDialog() async {
+    final db = ref.read(appDatabaseProvider);
+    
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AddFavoriteKitDialog(
+        heroId: widget.heroId,
+        db: db,
+        existingFavoriteIds: _favoriteKitIds.toSet(),
+        onKitSelected: (kitId) async {
+          await _addKitToFavorites(kitId);
+        },
+      ),
+    );
+  }
+
+  Future<void> _addKitToFavorites(String kitId) async {
+    final heroRepo = ref.read(heroRepositoryProvider);
+    final db = ref.read(appDatabaseProvider);
+    
+    // Add to favorites
+    final newFavorites = [..._favoriteKitIds, kitId];
+    
+    try {
+      await heroRepo.saveFavoriteKitIds(widget.heroId, newFavorites);
+      
+      // Load the kit component to add to cache
+      final component = await db.getComponentById(kitId);
+      if (component != null && mounted) {
+        setState(() {
+          _favoriteKitIds = newFavorites;
+          // Add to allKits if not already present
+          if (!_allKits.any((k) => k.id == kitId)) {
+            _allKits.add(model.Component(
+              id: component.id,
+              name: component.name,
+              type: component.type,
+            ));
+          }
+          _kitCache[kitId] = _allKits.firstWhere((k) => k.id == kitId);
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${component.name} to favorites.'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add favorite: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
