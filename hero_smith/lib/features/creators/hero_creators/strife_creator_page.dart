@@ -1490,6 +1490,17 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       
       // Also save equipment IDs separately for other screens
       updates.add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
+      
+      // Auto-favorite the selected equipment so it shows up in the gear page favorites
+      final equipmentIdsToFavorite = slotOrderedEquipmentIds
+          .whereType<String>()
+          .toList();
+      if (equipmentIdsToFavorite.isNotEmpty) {
+        // Get existing favorites and merge with new equipment
+        final existingFavorites = await repo.getFavoriteKitIds(widget.heroId);
+        final mergedFavorites = <String>{...existingFavorites, ...equipmentIdsToFavorite}.toList();
+        updates.add(repo.saveFavoriteKitIds(widget.heroId, mergedFavorites));
+      }
 
       // 4. Save selected characteristic array name
       if (_selectedArray != null) {
