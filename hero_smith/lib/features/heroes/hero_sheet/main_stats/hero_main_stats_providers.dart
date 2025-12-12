@@ -13,6 +13,7 @@ import '../../../../core/models/stat_modification_model.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/services/ancestry_bonus_service.dart';
 import '../../../../core/services/heroic_resource_progression_service.dart';
+import '../../../../core/services/psi_boost_service.dart';
 
 /// Provider that combines hero_values (base stats) with HeroAssembly (mods/bonuses)
 /// to produce the complete HeroMainStats.
@@ -486,4 +487,26 @@ final heroResourceProgressionProvider =
     subclassName: context.subclassName,
     kitId: context.kitId,
   );
+});
+
+/// Provider to check if a hero has the Psi Boost feature.
+/// Returns true if the hero's class features include psi_boost (Talent level 6 or Null level 7).
+final heroPsiBoostProvider =
+    FutureProvider.family<bool, String>((ref, heroId) async {
+  final assembly = await ref.watch(heroAssemblyProvider(heroId).future);
+  if (assembly == null) return false;
+
+  // Check if any class feature entry contains "psi_boost"
+  for (final feature in assembly.classFeatures) {
+    if (feature.entryId.contains('psi_boost')) {
+      return true;
+    }
+  }
+  return false;
+});
+
+/// Provider to load psi boost data (cached).
+final psiBoostDataProvider = FutureProvider<PsiBoostData>((ref) async {
+  final service = PsiBoostService();
+  return service.loadPsiBoostData();
 });

@@ -226,7 +226,7 @@ class _CareerContentState extends State<_CareerContent> {
       (c) => c.id == widget.careerId,
       orElse: () => _careers.isNotEmpty
           ? _careers.first
-          : const model.Component(id: '', type: 'career', name: 'â€”'),
+          : const model.Component(id: '', type: 'career', name: 'GÇö'),
     );
 
     final data = selectedCareer.data;
@@ -269,7 +269,7 @@ class _CareerContentState extends State<_CareerContent> {
           onTap: () async {
             final options = <_SearchOption<String?>>[
               const _SearchOption<String?>(
-                label: 'â€” Choose career â€”',
+                label: 'Choose career',
                 value: null,
               ),
               ..._careers.map(
@@ -298,7 +298,7 @@ class _CareerContentState extends State<_CareerContent> {
             child: Text(
               widget.careerId != null
                   ? selectedCareer.name
-                  : 'â€” Choose career â€”',
+                  : 'Choose career',
               style: TextStyle(
                 fontSize: 16,
                 color: widget.careerId != null
@@ -474,7 +474,7 @@ class _CareerContentState extends State<_CareerContent> {
                   int currentIndex, List<String?> slots) {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'â€” Choose skill â€”',
+                    label: 'GÇö Choose skill GÇö',
                     value: null,
                   ),
                 ];
@@ -578,7 +578,7 @@ class _CareerContentState extends State<_CareerContent> {
                         child: Text(
                           slots[index] != null
                               ? skillMap[slots[index]]!.name
-                              : 'â€” Choose skill â€”',
+                              : 'GÇö Choose skill GÇö',
                           style: TextStyle(
                             fontSize: 16,
                             color: slots[index] != null
@@ -648,7 +648,7 @@ class _CareerContentState extends State<_CareerContent> {
               onTap: () async {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'â€” Choose incident â€”',
+                    label: 'GÇö Choose incident GÇö',
                     value: null,
                   ),
                   ...incidents.map(
@@ -675,7 +675,7 @@ class _CareerContentState extends State<_CareerContent> {
                   suffixIcon: Icon(Icons.search),
                 ),
                 child: Text(
-                  widget.incidentName ?? 'â€” Choose incident â€”',
+                  widget.incidentName ?? 'GÇö Choose incident GÇö',
                   style: TextStyle(
                     fontSize: 16,
                     color: widget.incidentName != null
@@ -749,7 +749,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: 'â€” Choose language â€”',
+          label: 'GÇö Choose language GÇö',
           value: null,
         ),
       ];
@@ -791,7 +791,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
         child: Text(
           validValue != null
               ? languages.firstWhere((l) => l.id == validValue).name
-              : 'â€” Choose language â€”',
+              : 'GÇö Choose language GÇö',
           style: TextStyle(
             fontSize: 16,
             color: validValue != null

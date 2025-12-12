@@ -13,6 +13,7 @@ import '../../../core/models/perks_models.dart';
 import '../../../core/models/skills_models.dart';
 import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_feature_data_service.dart';
+import '../../../core/services/class_feature_grants_service.dart';
 import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
@@ -1769,6 +1770,25 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Execute all updates
       await Future.wait(updates);
+
+      if (!mounted) return;
+
+      // 14. Apply class feature grants so bonuses apply even without visiting the Strength page
+      // Load any existing feature selections and apply the grants
+      try {
+        final savedFeatureSelections = await repo.getFeatureSelections(widget.heroId);
+        final grantService = ClassFeatureGrantsService(db);
+        await grantService.applyClassFeatureSelections(
+          heroId: widget.heroId,
+          classData: classData,
+          level: _selectedLevel,
+          selections: savedFeatureSelections,
+          subclassSelection: _selectedSubclass,
+        );
+      } catch (e) {
+        // Best-effort: class feature grants are non-critical for the main save
+        debugPrint('Failed to apply class feature grants: $e');
+      }
 
       if (!mounted) return;
 

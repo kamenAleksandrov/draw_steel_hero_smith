@@ -48,8 +48,8 @@ class _SheetGearState extends ConsumerState<SheetGear>
         TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.auto_awesome), text: 'Treasures'),
             Tab(icon: Icon(Icons.shield), text: 'Kits'),
+            Tab(icon: Icon(Icons.auto_awesome), text: 'Treasures'),
             Tab(icon: Icon(Icons.inventory_2), text: 'Inventory'),
           ],
         ),
@@ -57,8 +57,8 @@ class _SheetGearState extends ConsumerState<SheetGear>
           child: TabBarView(
             controller: _tabController,
             children: [
-              TreasuresTab(heroId: widget.heroId),
               KitsTab(heroId: widget.heroId),
+              TreasuresTab(heroId: widget.heroId),
               InventoryTab(heroId: widget.heroId),
             ],
           ),

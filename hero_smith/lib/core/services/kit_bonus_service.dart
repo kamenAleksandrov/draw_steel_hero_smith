@@ -16,7 +16,7 @@ class EquipmentBonuses {
     this.equipmentIds = const [],
   });
 
-  /// Total stamina bonus from all equipment (already scaled by level)
+  /// Total stamina bonus from equipped equipment (highest value only, scaled by level)
   final int staminaBonus;
 
   /// Speed bonus (highest across all equipment)
@@ -182,8 +182,8 @@ class KitBonusService {
   }
 
   /// Extract and combine bonuses from multiple equipment components.
-  /// For stats like stamina, we ADD all bonuses together.
-  /// For stats like speed, stability, disengage, we take the HIGHEST value.
+  /// For all stat bonuses (stamina, speed, stability, disengage), we take the HIGHEST value only.
+  /// Equipment bonuses do not stack - only the best bonus from equipped items applies.
   /// For damage/distance bonuses, we take the HIGHEST value per tier/echelon.
   EquipmentBonuses calculateBonuses({
     required List<Component> equipment,
@@ -210,11 +210,10 @@ class KitBonusService {
     }
 
     // Combine bonuses according to the rules:
-    // - Stamina: SUM all bonuses (each scaled by level)
-    // - Speed, Stability, Disengage: HIGHEST value
+    // - Stamina, Speed, Stability, Disengage: HIGHEST value only (not stacking)
     // - Damage, Distance: HIGHEST value for current tier/echelon
 
-    int totalStamina = 0;
+    int maxStamina = 0;
     int maxSpeed = 0;
     int maxStability = 0;
     int maxDisengage = 0;
@@ -227,10 +226,8 @@ class KitBonusService {
     for (final bonus in allBonuses) {
       ids.add(bonus.id);
       
-      // Stamina: sum all (each scaled)
-      totalStamina += bonus.staminaForLevel(heroLevel);
-      
-      // Others: take highest
+      // Take highest value for all stat bonuses (no stacking)
+      maxStamina = math.max(maxStamina, bonus.staminaForLevel(heroLevel));
       maxSpeed = math.max(maxSpeed, bonus.speed);
       maxStability = math.max(maxStability, bonus.stability);
       maxDisengage = math.max(maxDisengage, bonus.disengage);
@@ -241,7 +238,7 @@ class KitBonusService {
     }
 
     return EquipmentBonuses(
-      staminaBonus: totalStamina,
+      staminaBonus: maxStamina,
       speedBonus: maxSpeed,
       stabilityBonus: maxStability,
       disengageBonus: maxDisengage,

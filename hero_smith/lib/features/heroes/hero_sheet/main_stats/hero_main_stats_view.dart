@@ -15,6 +15,7 @@ import '../../../../core/services/resource_generation_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/semantic/semantic_tokens.dart';
 import '../../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
+import '../../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../../widgets/creature stat block/hero_green_form_widget.dart';
 import '../downtime/hero_downtime_tracking_page.dart';
 import 'hero_main_stats_providers.dart';
@@ -1303,6 +1304,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             ),
             // Heroic Resource Progression Widget (Fury/Null only)
             _buildHeroicResourceProgression(context, stats),
+            // Psi Boost Widget (Talent/Null only)
+            _buildPsiBoostSection(context, stats),
             const SizedBox(height: 12),
             // End of Combat button
             Center(
@@ -2354,6 +2357,34 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           currentResource: stats.heroicResourceCurrent,
           heroLevel: stats.level,
           showCompact: true,
+        ),
+      ],
+    );
+  }
+
+  /// Build the Psi Boost widget for Talent and Null classes
+  Widget _buildPsiBoostSection(BuildContext context, HeroMainStats stats) {
+    final hasPsiBoostAsync = ref.watch(heroPsiBoostProvider(widget.heroId));
+
+    // Only show if hero has the psi boost feature
+    final hasPsiBoost = hasPsiBoostAsync.valueOrNull ?? false;
+    if (!hasPsiBoost) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: [
+        const Divider(height: 20),
+        PsiBoostWidget(
+          currentResource: stats.heroicResourceCurrent,
+          resourceName: stats.heroicResourceName ?? 'Focus',
+          onSpendResource: (cost, boostName) {
+            final newValue = stats.heroicResourceCurrent - cost;
+            if (newValue >= 0) {
+              _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
+              _showSnack('Used $boostName (-$cost ${stats.heroicResourceName ?? 'Focus'})');
+            }
+          },
         ),
       ],
     );

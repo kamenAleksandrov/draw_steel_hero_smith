@@ -152,21 +152,11 @@ would be cool to have the mantle of essence like the fury or null growing resour
 
 ### fury
 
-the primordial storm type and its damage type in the kits should be displayed better
 ### null
-
-the null must get bonus to speed and disengage equal to agility
-
-the psi boosts are not loaded into the class, i think creating a ui for them would be appropriate.
-
-null 9th level am the weapon gives +21 stamina which should be reflected in the hero sheet
 
 ### shadow
 
 ### tactician
-
-tacticison healt not right, has 2 kits must have both and gain the biggest bonus. swaping favourites does not swap the 2 kits properly it gives only 1 and i cant see the 2 kits in the abilities
-
 ### talent
 
 ### troubadour

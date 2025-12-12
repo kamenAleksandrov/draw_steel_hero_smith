@@ -803,6 +803,11 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       // Load the kit component to add to cache
       final component = await db.getComponentById(kitId);
       if (component != null && mounted) {
+        // Parse the JSON data from the DB component
+        final Map<String, dynamic> parsedData = component.dataJson.isNotEmpty
+            ? jsonDecode(component.dataJson) as Map<String, dynamic>
+            : <String, dynamic>{};
+        
         setState(() {
           _favoriteKitIds = newFavorites;
           // Add to allKits if not already present
@@ -811,6 +816,9 @@ class _KitsTabState extends ConsumerState<KitsTab> {
               id: component.id,
               name: component.name,
               type: component.type,
+              data: parsedData,
+              source: component.source,
+              parentId: component.parentId,
             ));
           }
           _kitCache[kitId] = _allKits.firstWhere((k) => k.id == kitId);
