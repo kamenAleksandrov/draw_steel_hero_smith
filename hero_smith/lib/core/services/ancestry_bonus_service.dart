@@ -142,15 +142,16 @@ class AncestryBonusService {
   }
 
   /// Remove all ancestry bonuses from a hero.
+  /// 
+  /// This clears all entries with sourceType='ancestry' from hero_entries,
+  /// regardless of whether the bonuses config exists. This ensures orphaned
+  /// entries are always cleaned up.
   Future<void> removeBonuses(String heroId) async {
-    final currentBonuses = await loadBonuses(heroId);
-    if (currentBonuses == null) return;
+    // Remove condition immunities - always clear even if config is null
+    await _clearConditionImmunities(heroId);
 
-    // Remove condition immunities
-    await _removeConditionImmunities(heroId, currentBonuses);
-
-    // Remove granted abilities
-    await _removeGrantedAbilities(heroId, currentBonuses);
+    // Remove granted abilities - always clear even if config is null
+    await _clearGrantedAbilities(heroId);
 
     // Clear stat modifications from ancestry
     await _clearAncestryStatMods(heroId);
@@ -158,12 +159,32 @@ class AncestryBonusService {
     // Clear damage resistance bonuses (but keep base values)
     await _clearDamageResistanceBonuses(heroId);
 
-    // Clear stored bonuses
+    // Clear stored bonuses config
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kAncestryBonuses,
       textValue: null,
     );
+  }
+
+  /// Clear all condition immunities from ancestry source.
+  Future<void> _clearConditionImmunities(String heroId) async {
+    await (_db.delete(_db.heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals('condition_immunity') &
+              t.sourceType.equals('ancestry')))
+        .go();
+  }
+
+  /// Clear all granted abilities from ancestry source.
+  Future<void> _clearGrantedAbilities(String heroId) async {
+    await (_db.delete(_db.heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals('ability') &
+              t.sourceType.equals('ancestry')))
+        .go();
   }
 
   /// Load currently applied bonuses for a hero.
@@ -511,30 +532,6 @@ class AncestryBonusService {
     // Verify the entries were actually added
     final verifyEntries = await _entries.listEntriesByType(heroId, 'ability');
     print('[AncestryBonusService] VERIFY: Current ability entries in DB: ${verifyEntries.map((e) => '${e.entryId} (source: ${e.sourceType})').toList()}');
-  }
-
-  Future<void> _removeConditionImmunities(
-    String heroId,
-    AppliedAncestryBonuses bonuses,
-  ) async {
-    await (_db.delete(_db.heroEntries)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.entryType.equals('condition_immunity') &
-              t.sourceType.equals('ancestry')))
-        .go();
-  }
-
-  Future<void> _removeGrantedAbilities(
-    String heroId,
-    AppliedAncestryBonuses bonuses,
-  ) async {
-    await (_db.delete(_db.heroEntries)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.entryType.equals('ability') &
-              t.sourceType.equals('ancestry')))
-        .go();
   }
 
   Future<void> _clearAncestryStatMods(String heroId) async {

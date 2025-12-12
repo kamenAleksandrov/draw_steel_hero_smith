@@ -994,6 +994,10 @@ class AppDatabase extends _$AppDatabase {
   // --- Hero entries helpers -------------------------------------------------
 
   /// Insert (or replace existing) hero content entry.
+  /// 
+  /// Entries are unique per (heroId, entryType, entryId, sourceType, sourceId).
+  /// This allows the same skill/ability/etc to be granted from multiple sources
+  /// (e.g., culture and complication can both grant the same skill).
   Future<void> upsertHeroEntry({
     required String heroId,
     required String entryType,
@@ -1003,13 +1007,24 @@ class AppDatabase extends _$AppDatabase {
     String gainedBy = 'grant',
     Map<String, dynamic>? payload,
   }) async {
+    // Debug: Track ability entry upserts with stack trace for manual_choice
+    if (entryType == 'ability') {
+      print('[AppDatabase] upsertHeroEntry(ability): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
+      if (sourceType == 'manual_choice') {
+        print('[AppDatabase] STACK TRACE for manual_choice ability:');
+        print(StackTrace.current);
+      }
+    }
     final now = DateTime.now();
-    // Remove duplicates for same hero/type/id combo to keep rows unique-ish.
+    // Remove duplicates for same hero/type/id/source combo.
+    // This preserves entries from other sources for the same entryId.
     await (delete(heroEntries)
           ..where((t) =>
               t.heroId.equals(heroId) &
               t.entryType.equals(entryType) &
-              t.entryId.equals(entryId)))
+              t.entryId.equals(entryId) &
+              t.sourceType.equals(sourceType) &
+              t.sourceId.equals(sourceId)))
         .go();
     await into(heroEntries).insert(
       HeroEntriesCompanion.insert(
@@ -1086,14 +1101,16 @@ class AppDatabase extends _$AppDatabase {
     final rows = await (select(heroEntries)
           ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .get();
-    return rows.map((e) => e.entryId).toList();
+    // Return unique entry IDs (same entry might be granted from multiple sources)
+    return rows.map((e) => e.entryId).toSet().toList();
   }
 
   Stream<List<String>> watchHeroEntryIds(String heroId, String entryType) {
     return (select(heroEntries)
           ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .watch()
-        .map((rows) => rows.map((e) => e.entryId).toList());
+        // Return unique entry IDs (same entry might be granted from multiple sources)
+        .map((rows) => rows.map((e) => e.entryId).toSet().toList());
   }
 
   Future<void> clearHeroEntryType(String heroId, String entryType) async {

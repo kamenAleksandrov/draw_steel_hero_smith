@@ -1438,6 +1438,12 @@ class HeroRepository {
     String? organisationSkillId,
     String? upbringingSkillId,
   }) async {
+    // Clear all previous culture entries before adding new ones
+    await _entries.removeEntriesFromSource(
+      heroId: heroId,
+      sourceType: 'culture',
+    );
+
     if (environmentId != null && environmentId.isNotEmpty) {
       await _entries.addEntriesFromSource(
         heroId: heroId,
@@ -1981,27 +1987,24 @@ class HeroRepository {
           _k.modifications, hero.modifications.map((k, v) => MapEntry(k, v))),
     ]);
 
-    // Components by category
-    await _db.setHeroComponents(
-        heroId: hero.id,
-        category: 'class_feature',
-        componentIds: hero.classFeatures);
-    await _db.setHeroComponents(
-        heroId: hero.id,
-        category: 'ancestry_trait',
-        componentIds: hero.ancestryTraits);
-    await _db.setHeroComponents(
-        heroId: hero.id, category: 'language', componentIds: hero.languages);
-    await _db.setHeroComponents(
-        heroId: hero.id, category: 'skill', componentIds: hero.skills);
-    await _db.setHeroComponents(
-        heroId: hero.id, category: 'perk', componentIds: hero.perks);
+    // NOTE: Components (abilities, skills, languages, perks, ancestry_traits,
+    // class_features, titles) are NOT saved here because they are managed by
+    // specific grant services and creators:
+    // - abilities: complication_grants, ancestry_bonus, class_feature_grants,
+    //              kit_grants, strife_creator
+    // - skills: complication_grants, subclass, career, culture, strife_creator
+    // - languages: complication_grants, ancestry, culture
+    // - perks: complication_grants, strife_creator
+    // - ancestry_traits: story_creator via saveAncestryTraits()
+    // - class_features: strife_creator
+    // - titles: title grants service
+    //
+    // Saving them here would cause stale data from the HeroModel to overwrite
+    // properly sourced entries with incorrect 'manual_choice' source.
+    //
+    // Only 'project' is saved here as it's purely user-managed.
     await _db.setHeroComponents(
         heroId: hero.id, category: 'project', componentIds: hero.projects);
-    await _db.setHeroComponents(
-        heroId: hero.id, category: 'title', componentIds: hero.titles);
-    await _db.setHeroComponents(
-        heroId: hero.id, category: 'ability', componentIds: hero.abilities);
   }
 
   /// Export a hero aggregate to a portable JSON string.

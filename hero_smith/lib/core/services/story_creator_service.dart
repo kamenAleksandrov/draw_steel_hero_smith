@@ -48,9 +48,13 @@ class StoryCreatorService {
   }
 
   Future<void> saveStory(StoryCreatorSavePayload payload) async {
-    print('[StoryCreatorService] saveStory called');
-    print('[StoryCreatorService] payload.ancestryId: ${payload.ancestryId}');
-    print('[StoryCreatorService] payload.ancestryTraitIds: ${payload.ancestryTraitIds}');
+    print('[StoryCreatorService] ========== saveStory START ==========');
+    print('[StoryCreatorService] payload.complicationId: ${payload.complicationId}');
+    
+    // Debug: List all ability entries BEFORE any changes
+    final entriesBefore = await _db.select(_db.heroEntries).get();
+    final abilitiesBefore = entriesBefore.where((e) => e.heroId == payload.heroId && e.entryType == 'ability').toList();
+    print('[StoryCreatorService] BEFORE: Abilities in DB: ${abilitiesBefore.map((e) => '${e.entryId} (source: ${e.sourceType}/${e.sourceId})').toList()}');
     
     final hero = await _heroRepository.load(payload.heroId);
     if (hero == null) {
@@ -83,9 +87,20 @@ class StoryCreatorService {
     final complicationChanged = oldComplicationId != payload.complicationId;
     final complicationChoicesChanged = !_mapEquals(oldComplicationChoices, payload.complicationChoices);
 
+    print('[StoryCreatorService] oldComplicationId: $oldComplicationId, newComplicationId: ${payload.complicationId}');
+    print('[StoryCreatorService] complicationChanged: $complicationChanged, complicationChoicesChanged: $complicationChoicesChanged');
+
     // Remove old complication grants if complication or choices changed
     if (complicationChanged || complicationChoicesChanged) {
+      print('[StoryCreatorService] Calling removeGrants...');
       await _complicationGrantsService.removeGrants(payload.heroId);
+      
+      // Debug: List ability entries AFTER removeGrants
+      final entriesAfterRemove = await _db.select(_db.heroEntries).get();
+      final abilitiesAfterRemove = entriesAfterRemove.where((e) => e.heroId == payload.heroId && e.entryType == 'ability').toList();
+      print('[StoryCreatorService] AFTER removeGrants: Abilities in DB: ${abilitiesAfterRemove.map((e) => '${e.entryId} (source: ${e.sourceType}/${e.sourceId})').toList()}');
+    } else {
+      print('[StoryCreatorService] No complication changes, skipping removeGrants');
     }
 
     hero.name = payload.name;

@@ -111,9 +111,20 @@ class ComplicationGrantsService {
   }
 
   /// Remove all complication grants from a hero.
+  /// 
+  /// This clears all entries with sourceType='complication' from hero_entries,
+  /// regardless of whether the grants config exists. This ensures orphaned
+  /// entries are always cleaned up.
   Future<void> removeGrants(String heroId) async {
+    print('[ComplicationGrantsService] removeGrants called for heroId: $heroId');
+    
+    // Debug: List ability entries BEFORE clearing
+    final entriesBefore = await (_db.select(_db.heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals('ability')))
+        .get();
+    print('[ComplicationGrantsService] BEFORE _clearAbilityGrants: ${entriesBefore.map((e) => '${e.entryId} (source: ${e.sourceType})').toList()}');
+    
     final currentGrants = await loadGrants(heroId);
-    if (currentGrants == null) return;
 
     // Clear stat modifications from complication
     await _clearComplicationStatMods(heroId);
@@ -124,31 +135,39 @@ class ComplicationGrantsService {
     // Clear token grants
     await _clearTokenGrants(heroId);
 
-    // Clear ability grants
+    // Clear ability grants - always clear even if config is null
     await _clearAbilityGrants(heroId);
+    
+    // Debug: List ability entries AFTER clearing
+    final entriesAfter = await (_db.select(_db.heroEntries)
+          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals('ability')))
+        .get();
+    print('[ComplicationGrantsService] AFTER _clearAbilityGrants: ${entriesAfter.map((e) => '${e.entryId} (source: ${e.sourceType})').toList()}');
 
-    // Clear skill grants
+    // Clear skill grants - always clear even if config is null
     await _clearSkillGrants(heroId);
 
     // Clear recovery grants (legacy static storage)
     await _clearRecoveryGrants(heroId);
 
-    // Clear dynamic modifiers from this complication
-    await _dynamicModifiers.removeModifiersFromSource(
-      heroId,
-      'complication_${currentGrants.complicationId}',
-    );
+    // Clear dynamic modifiers from this complication (only if we know the ID)
+    if (currentGrants != null) {
+      await _dynamicModifiers.removeModifiersFromSource(
+        heroId,
+        'complication_${currentGrants.complicationId}',
+      );
+    }
 
-    // Clear treasure grants
+    // Clear treasure grants - always clear even if config is null
     await _clearTreasureGrants(heroId);
 
-    // Clear language grants
+    // Clear language grants - always clear even if config is null
     await _clearLanguageGrants(heroId);
 
-    // Clear feature grants
+    // Clear feature grants - always clear even if config is null
     await _clearFeatureGrants(heroId);
 
-    // Clear stored grants
+    // Clear stored grants config
     await _db.deleteHeroConfig(heroId, _kComplicationGrants);
   }
 
@@ -524,12 +543,14 @@ class ComplicationGrantsService {
   }
 
   Future<void> _clearAbilityGrants(String heroId) async {
-    await (_db.delete(_db.heroEntries)
+    print('[ComplicationGrantsService] _clearAbilityGrants: Deleting where heroId=$heroId, entryType=ability, sourceType=complication');
+    final deleted = await (_db.delete(_db.heroEntries)
           ..where((t) =>
               t.heroId.equals(heroId) &
               t.entryType.equals('ability') &
               t.sourceType.equals('complication')))
         .go();
+    print('[ComplicationGrantsService] _clearAbilityGrants: Deleted $deleted rows');
   }
 
   Future<void> _clearSkillGrants(String heroId) async {

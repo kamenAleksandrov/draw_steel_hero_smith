@@ -326,6 +326,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (_selectedClass != null) {
         final abilityIds =
             await db.getHeroComponentIds(widget.heroId, 'ability');
+        print('[StrifeCreatorPage] _loadHeroData: All abilityIds from DB: $abilityIds');
+        
         final languageIds =
             await db.getHeroComponentIds(widget.heroId, 'language');
         final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
@@ -334,6 +336,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
         // First try to load saved strife ability selections directly
         final savedStrifeAbilitySelections = await _loadStrifeSelections('strife.ability_selections');
+        print('[StrifeCreatorPage] _loadHeroData: savedStrifeAbilitySelections: $savedStrifeAbilitySelections');
+        
         if (savedStrifeAbilitySelections.isNotEmpty) {
           _selectedAbilities = savedStrifeAbilitySelections;
         } else {
@@ -344,6 +348,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             abilityIds: abilityIds,
           );
         }
+        print('[StrifeCreatorPage] _loadHeroData: _selectedAbilities after load: $_selectedAbilities');
+        
         // ignore: unused_local_variable
         final assignedAbilityIds =
             _selectedAbilities.values.whereType<String>().toSet();
@@ -1672,6 +1678,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           .whereType<String>()
           .where((id) => id.isNotEmpty)
           .toList();
+
+      print('[StrifeCreatorPage] _handleSave: Saving abilities: $selectedAbilityIds');
+      print('[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
 
       // Always save abilities (even if empty, to clear old ones)
       updates.add(
