@@ -138,7 +138,7 @@ class HeroAssembly {
   /// Get the final computed value for a stat, applying all modifiers.
   int getComputedStat(String stat) {
     final base = stats[stat] ?? 0;
-    final modTotal = statMods.getTotalForStat(stat);
+    final modTotal = statMods.getTotalForStatAtLevel(stat, level);
     final userMod = userMods[stat] ?? 0;
     return base + modTotal + userMod;
   }
@@ -147,7 +147,7 @@ class HeroAssembly {
   Map<String, int> getStatBreakdown(String stat) {
     return {
       'base': stats[stat] ?? 0,
-      'mods': statMods.getTotalForStat(stat),
+      'mods': statMods.getTotalForStatAtLevel(stat, level),
       'user': userMods[stat] ?? 0,
       'total': getComputedStat(stat),
     };
@@ -218,10 +218,10 @@ class HeroAssembly {
   // RESISTANCE HELPERS
   // ===========================================================================
 
-  /// Get net resistance value for a damage type.
+  /// Get net resistance value for a damage type (uses hero level for dynamic resistances).
   int getResistanceFor(String damageType) {
     final resistance = resistances.forType(damageType);
-    return resistance?.netValue ?? 0;
+    return resistance?.netValueAtLevel(level) ?? 0;
   }
 
   /// Check if hero has immunity to a damage type.

@@ -17,10 +17,13 @@ class HeroEntryRepository {
     String gainedBy = 'grant',
     Map<String, dynamic>? payload,
   }) {
-    // Debug: Track ability entry additions
+    // Debug: Track entry additions
     if (entryType == 'ability') {
       print('[HeroEntryRepository] addEntry(ability): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
       print(StackTrace.current);
+    }
+    if (entryType == 'skill') {
+      print('[HeroEntryRepository] addEntry(skill): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
     }
     return _db.upsertHeroEntry(
       heroId: heroId,

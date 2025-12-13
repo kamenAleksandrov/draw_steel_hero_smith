@@ -563,6 +563,11 @@ class HeroRepository {
     return [];
   }
 
+  /// Get all skill entries for a hero.
+  Future<List<db.HeroEntry>> getSkillEntries(String heroId) async {
+    return _entries.listEntriesByType(heroId, 'skill');
+  }
+
   /// Save equipment bonuses that have been applied to the hero.
   /// Stores in hero_values as the source of truth. Legacy hero_entries are cleared.
   Future<void> saveEquipmentBonuses(

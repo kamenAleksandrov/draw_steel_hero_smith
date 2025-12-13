@@ -77,12 +77,20 @@ class _OptionsSection extends StatelessWidget {
           const SizedBox(height: 10),
           ...optionsContext.options.map((option) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _AutoAppliedContent(option: option, widget: widget),
+            child: _AutoAppliedContent(
+              option: option,
+              widget: widget,
+              featureId: feature.id,
+            ),
           )),
         ]
         // For options: use existing behavior
         else if (isAutoApplied && optionsContext.options.isNotEmpty)
-          _AutoAppliedContent(option: optionsContext.options.first, widget: widget)
+          _AutoAppliedContent(
+            option: optionsContext.options.first,
+            widget: widget,
+            featureId: feature.id,
+          )
         else if (optionsContext.options.isNotEmpty) ...[
           Text(
             _headingText(selectionLimit),
@@ -295,18 +303,156 @@ class _InfoMessage extends StatelessWidget {
   }
 }
 
-class _AutoAppliedContent extends StatelessWidget {
-  const _AutoAppliedContent({required this.option, required this.widget});
+class _AutoAppliedContent extends StatefulWidget {
+  const _AutoAppliedContent({
+    required this.option,
+    required this.widget,
+    required this.featureId,
+  });
 
   final Map<String, dynamic> option;
   final ClassFeaturesWidget widget;
+  final String featureId;
+
+  @override
+  State<_AutoAppliedContent> createState() => _AutoAppliedContentState();
+}
+
+class _AutoAppliedContentState extends State<_AutoAppliedContent> {
+  final SkillDataService _skillDataService = SkillDataService();
+  List<SkillOption>? _allSkills;
+  bool _isLoadingSkills = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkillsIfNeeded();
+  }
+
+  void _loadSkillsIfNeeded() async {
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    if (skillGroup == null || skillGroup.isEmpty) return;
+    
+    setState(() {
+      _isLoadingSkills = true;
+    });
+    
+    try {
+      final skills = await _skillDataService.loadSkills();
+      if (mounted) {
+        setState(() {
+          _allSkills = skills;
+          _isLoadingSkills = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingSkills = false;
+        });
+      }
+    }
+  }
+
+  /// Get a unique key for this grant within the feature
+  String _getGrantKey() {
+    // Use domain/subclass/name as the unique key for this grant
+    final domain = widget.option['domain']?.toString().trim();
+    final subclass = widget.option['subclass']?.toString().trim();
+    final name = widget.option['name']?.toString().trim();
+    return domain ?? subclass ?? name ?? 'default';
+  }
+
+  String? _getCurrentSkillId() {
+    final featureSelections = widget.widget.skillGroupSelections[widget.featureId];
+    if (featureSelections == null) return null;
+    return featureSelections[_getGrantKey()];
+  }
+
+  List<SkillOption> _getFilteredSkills() {
+    if (_allSkills == null) return [];
+    
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    if (skillGroup == null || skillGroup.isEmpty) return [];
+    
+    final normalizedGroup = skillGroup.toLowerCase();
+    final currentSkillId = _getCurrentSkillId();
+    
+    // Get all reserved skill IDs (from other features and grants)
+    final excludedIds = <String>{
+      ...widget.widget.reservedSkillIds,
+    };
+    
+    // Also exclude skills selected in other grants within this widget
+    for (final entry in widget.widget.skillGroupSelections.entries) {
+      for (final skillEntry in entry.value.entries) {
+        // Don't exclude our own current selection
+        if (entry.key == widget.featureId && skillEntry.key == _getGrantKey()) {
+          continue;
+        }
+        if (skillEntry.value.isNotEmpty) {
+          excludedIds.add(skillEntry.value);
+        }
+      }
+    }
+    
+    return _allSkills!.where((skill) {
+      // Filter by group
+      if (skill.group.toLowerCase() != normalizedGroup) return false;
+      
+      // Check if blocked (but allow current selection)
+      if (ComponentSelectionGuard.isBlocked(
+        skill.id,
+        excludedIds,
+        currentId: currentSkillId,
+      )) {
+        return false;
+      }
+      
+      return true;
+    }).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  Future<void> _showSkillPicker() async {
+    final filteredSkills = _getFilteredSkills();
+    final currentSkillId = _getCurrentSkillId();
+    
+    final options = <_SearchOption<String?>>[
+      const _SearchOption<String?>(label: 'Choose skill', value: null),
+      ...filteredSkills.map(
+        (skill) => _SearchOption<String?>(
+          label: skill.name,
+          value: skill.id,
+          subtitle: skill.group,
+        ),
+      ),
+    ];
+    
+    final result = await _showSearchablePicker<String?>(
+      context: context,
+      title: 'Select Skill',
+      options: options,
+      selected: currentSkillId,
+    );
+    
+    if (result == null) return;
+    
+    print('[_AutoAppliedContentState] Calling onSkillGroupSelectionChanged: featureId=${widget.featureId}, grantKey=${_getGrantKey()}, skillId=${result.value}');
+    widget.widget.onSkillGroupSelectionChanged?.call(
+      widget.featureId,
+      _getGrantKey(),
+      result.value,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final description = option['description']?.toString().trim();
+    final description = widget.option['description']?.toString().trim();
     final ability = _resolveAbility();
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    final hasSkillGroup = skillGroup != null && skillGroup.isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -348,26 +494,133 @@ class _AutoAppliedContent extends StatelessWidget {
               component: _abilityMapToComponent(ability),
             ),
           ],
+          // Skill group picker section
+          if (hasSkillGroup) ...[
+            const SizedBox(height: 12),
+            _buildSkillGroupPicker(context, skillGroup),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkillGroupPicker(BuildContext context, String skillGroup) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final currentSkillId = _getCurrentSkillId();
+    final hasCallback = widget.widget.onSkillGroupSelectionChanged != null;
+    
+    print('[_AutoAppliedContentState] _buildSkillGroupPicker: hasCallback=$hasCallback, currentSkillId=$currentSkillId, featureId=${widget.featureId}');
+    
+    // Find the current skill name
+    String? currentSkillName;
+    if (currentSkillId != null && _allSkills != null) {
+      final skill = _allSkills!.firstWhere(
+        (s) => s.id == currentSkillId,
+        orElse: () => SkillOption(id: '', name: '', group: '', description: ''),
+      );
+      if (skill.id.isNotEmpty) {
+        currentSkillName = skill.name;
+      }
+    }
+    
+    final needsSelection = currentSkillId == null || currentSkillId.isEmpty;
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: needsSelection 
+            ? Colors.orange.withValues(alpha: 0.1) 
+            : scheme.primaryContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: needsSelection 
+              ? Colors.orange.withValues(alpha: 0.4) 
+              : scheme.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.psychology_alt,
+                size: 18,
+                color: needsSelection ? Colors.orange : scheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Skill from $skillGroup',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: needsSelection ? Colors.orange.shade700 : scheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (_isLoadingSkills)
+            const LinearProgressIndicator()
+          else if (hasCallback)
+            InkWell(
+              onTap: _showSkillPicker,
+              borderRadius: BorderRadius.circular(8),
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Choose skill',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  suffixIcon: const Icon(Icons.search),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  fillColor: scheme.surface,
+                  filled: true,
+                ),
+                child: Text(
+                  currentSkillName ?? 'Select a skill',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: currentSkillName != null
+                        ? theme.textTheme.bodyLarge?.color
+                        : theme.hintColor,
+                  ),
+                ),
+              ),
+            )
+          else
+            Text(
+              currentSkillName ?? 'No skill selected',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+                fontStyle: currentSkillName == null ? FontStyle.italic : null,
+              ),
+            ),
         ],
       ),
     );
   }
 
   Map<String, dynamic>? _resolveAbility() {
-    String? id = option['ability_id']?.toString().trim();
+    String? id = widget.option['ability_id']?.toString().trim();
     if (id != null && id.isNotEmpty) {
-      final ability = widget.abilityDetailsById[id];
+      final ability = widget.widget.abilityDetailsById[id];
       if (ability != null) return ability;
       final slugId = ClassFeatureDataService.slugify(id);
-      final slugAbility = widget.abilityDetailsById[slugId];
+      final slugAbility = widget.widget.abilityDetailsById[slugId];
       if (slugAbility != null) return slugAbility;
     }
 
-    final abilityName = option['ability']?.toString().trim();
+    final abilityName = widget.option['ability']?.toString().trim();
     if (abilityName != null && abilityName.isNotEmpty) {
       final slug = ClassFeatureDataService.slugify(abilityName);
-      final resolvedId = widget.abilityIdByName[slug] ?? slug;
-      return widget.abilityDetailsById[resolvedId];
+      final resolvedId = widget.widget.abilityIdByName[slug] ?? slug;
+      return widget.widget.abilityDetailsById[resolvedId];
     }
     return null;
   }
@@ -381,6 +634,133 @@ class _AutoAppliedContent extends StatelessWidget {
       source: 'seed',
     );
   }
+}
+
+/// Searchable picker dialog for skill selection
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+}) {
+  return showDialog<_PickerSelection<T>>(
+    context: context,
+    builder: (dialogContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          final normalizedQuery = query.trim().toLowerCase();
+          final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+              ? options
+              : options
+                  .where(
+                    (option) =>
+                        option.label.toLowerCase().contains(normalizedQuery) ||
+                        (option.subtitle?.toLowerCase().contains(
+                              normalizedQuery,
+                            ) ??
+                            false),
+                  )
+                  .toList();
+
+          return Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: 500,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: TextField(
+                      controller: controller,
+                      autofocus: false,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          query = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: filtered.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.all(24),
+                            child: Center(child: Text('No matches found')),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final option = filtered[index];
+                              final isSelected = option.value == selected ||
+                                  (option.value == null && selected == null);
+                              return ListTile(
+                                title: Text(option.label),
+                                subtitle: option.subtitle != null
+                                    ? Text(option.subtitle!)
+                                    : null,
+                                trailing: isSelected
+                                    ? const Icon(Icons.check)
+                                    : null,
+                                onTap: () => Navigator.of(context).pop(
+                                  _PickerSelection<T>(value: option.value),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }
 
 class _OptionTile extends StatefulWidget {

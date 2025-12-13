@@ -11,6 +11,11 @@ class DamageResistance {
     this.bonusImmunity = 0,
     this.bonusWeakness = 0,
     this.sources = const [],
+    // Dynamic immunity/weakness fields
+    this.dynamicImmunity,
+    this.dynamicWeakness,
+    this.immunityPerEchelon = 0,
+    this.weaknessPerEchelon = 0,
   });
 
   /// The damage type (e.g., "fire", "cold", "corruption", "psychic")
@@ -31,13 +36,60 @@ class DamageResistance {
   /// List of sources contributing to this resistance (trait names, etc.)
   final List<String> sources;
 
-  /// Total immunity before netting against weakness
+  /// Dynamic immunity value (e.g., "level" means immunity = hero level)
+  final String? dynamicImmunity;
+
+  /// Dynamic weakness value (e.g., "level" means weakness = hero level)
+  final String? dynamicWeakness;
+
+  /// Immunity value per echelon (calculated as valuePerEchelon * echelon)
+  final int immunityPerEchelon;
+
+  /// Weakness value per echelon (calculated as valuePerEchelon * echelon)
+  final int weaknessPerEchelon;
+
+  /// Whether this resistance has dynamic scaling
+  bool get hasDynamicImmunity => dynamicImmunity != null || immunityPerEchelon > 0;
+  bool get hasDynamicWeakness => dynamicWeakness != null || weaknessPerEchelon > 0;
+
+  /// Calculate total immunity at a given hero level
+  int totalImmunityAtLevel(int heroLevel) {
+    int total = baseImmunity + bonusImmunity;
+    if (dynamicImmunity == 'level') {
+      total += heroLevel;
+    }
+    if (immunityPerEchelon > 0) {
+      final echelon = ((heroLevel - 1) ~/ 3) + 1;
+      total += immunityPerEchelon * echelon;
+    }
+    return total;
+  }
+
+  /// Calculate total weakness at a given hero level
+  int totalWeaknessAtLevel(int heroLevel) {
+    int total = baseWeakness + bonusWeakness;
+    if (dynamicWeakness == 'level') {
+      total += heroLevel;
+    }
+    if (weaknessPerEchelon > 0) {
+      final echelon = ((heroLevel - 1) ~/ 3) + 1;
+      total += weaknessPerEchelon * echelon;
+    }
+    return total;
+  }
+
+  /// Net resistance value at a given hero level
+  int netValueAtLevel(int heroLevel) {
+    return totalImmunityAtLevel(heroLevel) - totalWeaknessAtLevel(heroLevel);
+  }
+
+  /// Total immunity before netting against weakness (static, for backward compat)
   int get totalImmunity => baseImmunity + bonusImmunity;
 
-  /// Total weakness before netting against immunity
+  /// Total weakness before netting against immunity (static, for backward compat)
   int get totalWeakness => baseWeakness + bonusWeakness;
 
-  /// Net resistance value. Positive = immunity, Negative = weakness
+  /// Net resistance value. Positive = immunity, Negative = weakness (static)
   int get netValue => totalImmunity - totalWeakness;
 
   /// Whether this results in immunity (net positive)
@@ -46,9 +98,17 @@ class DamageResistance {
   /// Whether this results in weakness (net negative)
   bool get hasWeakness => netValue < 0;
 
-  /// Display string for the net value
+  /// Display string for the net value (static)
   String get displayValue {
     final net = netValue;
+    if (net > 0) return 'Immunity $net';
+    if (net < 0) return 'Weakness ${net.abs()}';
+    return 'None';
+  }
+
+  /// Display string for the net value at a given hero level
+  String displayValueAtLevel(int heroLevel) {
+    final net = netValueAtLevel(heroLevel);
     if (net > 0) return 'Immunity $net';
     if (net < 0) return 'Weakness ${net.abs()}';
     return 'None';
@@ -61,6 +121,10 @@ class DamageResistance {
     int? bonusImmunity,
     int? bonusWeakness,
     List<String>? sources,
+    String? dynamicImmunity,
+    String? dynamicWeakness,
+    int? immunityPerEchelon,
+    int? weaknessPerEchelon,
   }) {
     return DamageResistance(
       damageType: damageType ?? this.damageType,
@@ -69,6 +133,10 @@ class DamageResistance {
       bonusImmunity: bonusImmunity ?? this.bonusImmunity,
       bonusWeakness: bonusWeakness ?? this.bonusWeakness,
       sources: sources ?? this.sources,
+      dynamicImmunity: dynamicImmunity ?? this.dynamicImmunity,
+      dynamicWeakness: dynamicWeakness ?? this.dynamicWeakness,
+      immunityPerEchelon: immunityPerEchelon ?? this.immunityPerEchelon,
+      weaknessPerEchelon: weaknessPerEchelon ?? this.weaknessPerEchelon,
     );
   }
 
@@ -79,6 +147,10 @@ class DamageResistance {
         'bonusImmunity': bonusImmunity,
         'bonusWeakness': bonusWeakness,
         'sources': sources,
+        if (dynamicImmunity != null) 'dynamicImmunity': dynamicImmunity,
+        if (dynamicWeakness != null) 'dynamicWeakness': dynamicWeakness,
+        if (immunityPerEchelon > 0) 'immunityPerEchelon': immunityPerEchelon,
+        if (weaknessPerEchelon > 0) 'weaknessPerEchelon': weaknessPerEchelon,
       };
 
   factory DamageResistance.fromJson(Map<String, dynamic> json) {
@@ -92,6 +164,10 @@ class DamageResistance {
               ?.map((e) => e.toString())
               .toList() ??
           const [],
+      dynamicImmunity: json['dynamicImmunity'] as String?,
+      dynamicWeakness: json['dynamicWeakness'] as String?,
+      immunityPerEchelon: (json['immunityPerEchelon'] as num?)?.toInt() ?? 0,
+      weaknessPerEchelon: (json['weaknessPerEchelon'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -113,9 +189,14 @@ class HeroDamageResistances {
         );
   }
 
-  /// Get all types that have any immunity or weakness
+  /// Get all types that have any immunity or weakness (static check)
   List<DamageResistance> get activeResistances {
     return resistances.where((r) => r.netValue != 0).toList();
+  }
+
+  /// Get all types that have any immunity or weakness at a given hero level
+  List<DamageResistance> activeResistancesAtLevel(int heroLevel) {
+    return resistances.where((r) => r.netValueAtLevel(heroLevel) != 0).toList();
   }
 
   /// Add or update a resistance for a damage type
@@ -165,6 +246,10 @@ class HeroDamageResistances {
           bonusImmunity: bonus.immunity,
           bonusWeakness: bonus.weakness,
           sources: bonus.sources,
+          dynamicImmunity: bonus.dynamicImmunity,
+          dynamicWeakness: bonus.dynamicWeakness,
+          immunityPerEchelon: bonus.immunityPerEchelon,
+          weaknessPerEchelon: bonus.weaknessPerEchelon,
         ));
       } else if (clearMissing) {
         // Clear bonus values for types not in the bonus map
@@ -187,6 +272,10 @@ class HeroDamageResistances {
           bonusImmunity: entry.value.immunity,
           bonusWeakness: entry.value.weakness,
           sources: entry.value.sources,
+          dynamicImmunity: entry.value.dynamicImmunity,
+          dynamicWeakness: entry.value.dynamicWeakness,
+          immunityPerEchelon: entry.value.immunityPerEchelon,
+          weaknessPerEchelon: entry.value.weaknessPerEchelon,
         ));
       }
     }
@@ -268,12 +357,20 @@ class DamageResistanceBonus {
     this.immunity = 0,
     this.weakness = 0,
     List<String>? sources,
+    this.dynamicImmunity,
+    this.dynamicWeakness,
+    this.immunityPerEchelon = 0,
+    this.weaknessPerEchelon = 0,
   }) : sources = sources ?? [];
 
   final String damageType;
   int immunity;
   int weakness;
   final List<String> sources;
+  String? dynamicImmunity;
+  String? dynamicWeakness;
+  int immunityPerEchelon;
+  int weaknessPerEchelon;
 
   void addImmunity(int value, String source) {
     immunity += value;
@@ -284,6 +381,34 @@ class DamageResistanceBonus {
 
   void addWeakness(int value, String source) {
     weakness += value;
+    if (!sources.contains(source)) {
+      sources.add(source);
+    }
+  }
+
+  void setDynamicImmunity(String value, String source) {
+    dynamicImmunity = value;
+    if (!sources.contains(source)) {
+      sources.add(source);
+    }
+  }
+
+  void setDynamicWeakness(String value, String source) {
+    dynamicWeakness = value;
+    if (!sources.contains(source)) {
+      sources.add(source);
+    }
+  }
+
+  void addImmunityPerEchelon(int valuePerEchelon, String source) {
+    immunityPerEchelon += valuePerEchelon;
+    if (!sources.contains(source)) {
+      sources.add(source);
+    }
+  }
+
+  void addWeaknessPerEchelon(int valuePerEchelon, String source) {
+    weaknessPerEchelon += valuePerEchelon;
     if (!sources.contains(source)) {
       sources.add(source);
     }

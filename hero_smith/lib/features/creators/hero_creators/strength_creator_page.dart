@@ -37,6 +37,8 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
   int _selectedLevel = 1;
   Map<String, Set<String>> _featureSelections = const {};
   List<String?> _equipmentIds = const [];
+  Map<String, Map<String, String>> _skillGroupSelections = const {};
+  Set<String> _reservedSkillIds = const {};
 
   @override
   void initState() {
@@ -128,6 +130,21 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       
       // Load equipment IDs for kit detection
       final equipmentIds = await repo.getEquipmentIds(widget.heroId);
+      
+      // Load skill_group selections
+      Map<String, Map<String, String>> skillGroupSelections = const {};
+      Set<String> reservedSkillIds = const {};
+      try {
+        final db = ref.read(appDatabaseProvider);
+        final grantService = ClassFeatureGrantsService(db);
+        skillGroupSelections = await grantService.loadSkillGroupSelections(widget.heroId);
+        
+        // Get reserved skill IDs (skills from all sources)
+        final allSkillEntries = await repo.getSkillEntries(widget.heroId);
+        reservedSkillIds = allSkillEntries.map((e) => e.entryId).toSet();
+      } catch (_) {
+        // Best-effort: continue without skill group data
+      }
 
       // Re-apply class feature grants on load so new grant handlers (like
       // grants[] speed/disengage bonuses) take effect even if the user doesn't
@@ -157,6 +174,8 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
             ? savedFeatureSelections
             : const {};
         _equipmentIds = equipmentIds;
+        _skillGroupSelections = skillGroupSelections;
+        _reservedSkillIds = reservedSkillIds;
         _hasLoadedOnce = true;
         _isLoading = false;
         _isRefreshing = false;
@@ -212,6 +231,70 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to save feature selections: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleSkillGroupSelectionChanged(
+    String featureId,
+    String grantKey,
+    String? skillId,
+  ) async {
+    print('[StrengthCreatorPage] _handleSkillGroupSelectionChanged: featureId=$featureId, grantKey=$grantKey, skillId=$skillId');
+    // Update local state immediately for responsiveness
+    setState(() {
+      final updated = Map<String, Map<String, String>>.from(_skillGroupSelections);
+      if (skillId == null || skillId.isEmpty) {
+        // Remove the selection
+        if (updated.containsKey(featureId)) {
+          updated[featureId]!.remove(grantKey);
+          if (updated[featureId]!.isEmpty) {
+            updated.remove(featureId);
+          }
+        }
+      } else {
+        // Add/update the selection
+        updated.putIfAbsent(featureId, () => {});
+        updated[featureId]![grantKey] = skillId;
+      }
+      _skillGroupSelections = updated;
+      
+      // Update reserved skill IDs
+      final updatedReserved = Set<String>.from(_reservedSkillIds);
+      // Remove the old skill from reserved if it was replaced
+      // (we'll re-add the new one)
+      if (skillId != null && skillId.isNotEmpty) {
+        updatedReserved.add(skillId);
+      }
+      _reservedSkillIds = updatedReserved;
+    });
+    
+    // Save to database
+    try {
+      final db = ref.read(appDatabaseProvider);
+      final grantService = ClassFeatureGrantsService(db);
+      await grantService.setSkillGroupSelection(
+        heroId: widget.heroId,
+        featureId: featureId,
+        grantKey: grantKey,
+        skillId: skillId,
+      );
+      
+      // Reload reserved skills to ensure consistency
+      final repo = ref.read(heroRepositoryProvider);
+      final allSkillEntries = await repo.getSkillEntries(widget.heroId);
+      if (mounted) {
+        setState(() {
+          _reservedSkillIds = allSkillEntries.map((e) => e.entryId).toSet();
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save skill selection: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -285,6 +368,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
           initialSelections: _featureSelections,
           equipmentIds: _equipmentIds,
           onSelectionsChanged: _handleSelectionsChanged,
+          skillGroupSelections: _skillGroupSelections,
+          onSkillGroupSelectionChanged: _handleSkillGroupSelectionChanged,
+          reservedSkillIds: _reservedSkillIds,
         )
       else
         const Padding(

@@ -19,8 +19,6 @@ the A in ability cards sometimes is not colored properly
 
 chaging fury subclass must remove stormwight kits
 
-the hero card in the starting screen does not uptade changes to class (maybe more)
-
 save 6+ must be save 6 or save >= 6
 
 some hero classes and features grant skills. those skills may have been picked in another choice nod earlier. if there is such an occurence the logic should accomudate. 
@@ -35,8 +33,6 @@ automatically applied must be as a divider instead as another box that boxes the
 
 project add points button can be made into a roll button.
 ## medium
-
-growing ferocity tabels are not implemented
 
 need to add a loading screen noting that this is not an official product and is working on their rules.
 
@@ -54,19 +50,15 @@ some features need their abilities: covenant of the hearth
 
 sometimes heros cant load certain features
 
-the features tab in features sheet deos not tailor to the choices of the user for the her, instead it shows ALL features.
-
 there is some scroll error in the strenght. when i try to go back up a bit faster and let the screen flow on its own by pulling faster and letting it go it starts twitching in one place and a reloadis seen
-
-need to add a perks field to the features sheet
 
 there should be a way to show what condition immunities does a hero have
 
-add a gold/silver/copper to the wealth stat and make it have both.1
+add a gold/silver/copper to the wealth stat and make it have both.
 
-Characteristics in the ability cards color only the first characteristics letter.
+invoentory tab should be eble to edit ALL its elements
 
-favourite kits dont show all bonuses
+modification popuots should not have an already set value of 0
 ## hard
 
 on my phone some elements do not update on time
@@ -75,25 +67,9 @@ the storing of equasion and calculation must be applied accross the board. not j
 
 there are false save and duplication flags on the strife page
 
-there is a visible reload in the growing ferocity widget and i need it gone
-
-the growing ferocity tabel should show only the reached and unlocked values, the rest should be idden behind a dropdown,
-
 the gear page should look through every item in the heros inventory  and check the grants and their conditions to summ them all and add to the hero stats
 
 when picking a class and chosing the same class as the current the choises should not reset.
-
-we are targeting the complications and the processes around them
-
-- when a complication is removed, i need to code to run a check at the json for this complication, this check must see if the removed complication had a ability to grant, if it does - use the ability name to search the hero_entries for this ability and remove it. it should have entry_type ability
-
-- dragon dreams still not granting the ability. it load the ancestry traits of the dragon knight ancestry and they in their place add the abilities.
-
-- elemental incide must grant the hp per echelon. to achive this in the complications.stat_mods save the "per_echelon" too, then adapt the code to check if the hero is levels 1,4,7,10 and fro each milestone add +3
-
-- mundane still has the same error. you are saving a flat value when you need to be savign the string "level" and the code must be adapted to increase per level. we alreaady have this functionality in other widgets, do it here again
-
-- ivory tower still cant find dead languages from the jsons in here: C:\dev\projects\draw_steel_hero_smith\hero_smith\data\story\languages.json
 
 ## need testing
 

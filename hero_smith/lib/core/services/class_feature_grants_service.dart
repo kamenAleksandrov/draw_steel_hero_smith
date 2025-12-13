@@ -30,6 +30,9 @@ class ClassFeatureGrantsService {
   
   /// Config key for storing subclass key.
   static const _kSubclassKey = 'class_feature.subclass_key';
+  
+  /// Config key for storing skill_group skill selections.
+  static const _kSkillGroupSelections = 'class_feature.skill_group_selections';
 
   /// Apply class feature selections to a hero.
   /// 
@@ -103,6 +106,7 @@ class ClassFeatureGrantsService {
     await _clearAllClassFeatureGrants(heroId);
     await _config.removeConfigKey(heroId, _kFeatureSelections);
     await _config.removeConfigKey(heroId, _kSubclassKey);
+    await _config.removeConfigKey(heroId, _kSkillGroupSelections);
   }
 
   /// Remove grants for a specific feature.
@@ -141,6 +145,115 @@ class ClassFeatureGrantsService {
   Future<String?> loadSubclassKey(String heroId) async {
     final config = await _config.getConfigValue(heroId, _kSubclassKey);
     return config?['key']?.toString();
+  }
+
+  /// Load skill_group skill selections.
+  /// Returns Map<featureId, Map<grantKey, skillId>>.
+  Future<Map<String, Map<String, String>>> loadSkillGroupSelections(
+    String heroId,
+  ) async {
+    final config = await _config.getConfigValue(heroId, _kSkillGroupSelections);
+    if (config == null) return const {};
+    
+    final result = <String, Map<String, String>>{};
+    config.forEach((featureId, grantMap) {
+      if (grantMap is! Map) return;
+      final innerMap = <String, String>{};
+      grantMap.forEach((grantKey, skillId) {
+        final keyStr = grantKey.toString().trim();
+        final skillStr = skillId?.toString().trim() ?? '';
+        if (keyStr.isNotEmpty && skillStr.isNotEmpty) {
+          innerMap[keyStr] = skillStr;
+        }
+      });
+      if (innerMap.isNotEmpty) {
+        result[featureId.toString().trim()] = innerMap;
+      }
+    });
+    return result;
+  }
+
+  /// Save skill_group skill selections.
+  Future<void> saveSkillGroupSelections(
+    String heroId,
+    Map<String, Map<String, String>> selections,
+  ) async {
+    // Convert to JSON-serializable map
+    final jsonMap = <String, dynamic>{
+      for (final entry in selections.entries)
+        entry.key: entry.value,
+    };
+    await _config.setConfigValue(
+      heroId: heroId,
+      key: _kSkillGroupSelections,
+      value: jsonMap,
+    );
+  }
+
+  /// Save a single skill_group skill selection and update hero_entries.
+  /// This removes the old skill entry (if any) and adds the new one.
+  Future<void> setSkillGroupSelection({
+    required String heroId,
+    required String featureId,
+    required String grantKey,
+    required String? skillId,
+  }) async {
+    print('[ClassFeatureGrantsService] setSkillGroupSelection: heroId=$heroId, featureId=$featureId, grantKey=$grantKey, skillId=$skillId');
+    
+    // Load current selections
+    final current = await loadSkillGroupSelections(heroId);
+    // Deep copy to avoid modifying the original
+    final updated = <String, Map<String, String>>{
+      for (final entry in current.entries)
+        entry.key: Map<String, String>.from(entry.value),
+    };
+    
+    // Get the old skill ID (if any) to remove it from hero_entries
+    final oldSkillId = updated[featureId]?[grantKey];
+    
+    // Update the selection
+    if (skillId == null || skillId.isEmpty) {
+      // Remove the selection
+      if (updated.containsKey(featureId)) {
+        updated[featureId]!.remove(grantKey);
+        if (updated[featureId]!.isEmpty) {
+          updated.remove(featureId);
+        }
+      }
+    } else {
+      // Add/update the selection
+      updated.putIfAbsent(featureId, () => {});
+      updated[featureId]![grantKey] = skillId;
+    }
+    
+    // Save updated selections
+    await saveSkillGroupSelections(heroId, updated);
+    
+    // Remove old skill entry from hero_entries if it exists
+    if (oldSkillId != null && oldSkillId.isNotEmpty && oldSkillId != skillId) {
+      // The source ID includes the grant key to differentiate from other grants
+      final sourceId = '${featureId}_skill_group_$grantKey';
+      await _entries.removeEntriesFromSource(
+        heroId: heroId,
+        sourceType: 'class_feature',
+        sourceId: sourceId,
+      );
+    }
+    
+    // Add new skill entry to hero_entries
+    if (skillId != null && skillId.isNotEmpty) {
+      final sourceId = '${featureId}_skill_group_$grantKey';
+      print('[ClassFeatureGrantsService] Adding skill entry: entryId=$skillId, sourceType=class_feature, sourceId=$sourceId');
+      await _entries.addEntry(
+        heroId: heroId,
+        entryType: 'skill',
+        entryId: skillId,
+        sourceType: 'class_feature',
+        sourceId: sourceId,
+        gainedBy: 'skill_group',
+      );
+      print('[ClassFeatureGrantsService] Skill entry added successfully');
+    }
   }
 
   /// Get all abilities granted by class features.

@@ -168,7 +168,8 @@ class HeroAssemblyService {
       ...byType['weakness'] ?? const <db.HeroEntry>[],
     ];
     final resistancesBySource = groupBySource(resistanceEntries);
-    final resistances = _loadResistances(values);
+    final heroLevel = intVal('basics.level', 1);
+    final resistances = _loadResistances(values, resistanceEntries, heroLevel);
 
     return HeroAssembly(
       heroId: heroRow.id,
@@ -274,18 +275,20 @@ class HeroAssemblyService {
         final modsData = payload['mods'];
         
         // Format 2: Individual entry where entryId is the stat name
-        // Payload: { "mods": [{ "value": 1, "source": "Curse of Caution" }] }
+        // Payload: { "mods": [{ "value": 1, "source": "...", "dynamicValue": "level", "perEchelon": true, ... }] }
         if (modsData is List) {
           final stat = entry.entryId.toLowerCase();
           for (final modItem in modsData) {
             if (modItem is! Map) continue;
-            final value = (modItem['value'] is num)
-                ? (modItem['value'] as num).toInt()
-                : int.tryParse(modItem['value']?.toString() ?? '') ?? 0;
-            if (value == 0) continue;
-            final source = modItem['source']?.toString() ?? defaultSource;
+            // Use fromJson to parse all fields including dynamic ones
+            final mod = StatModification.fromJson(
+              Map<String, dynamic>.from(modItem),
+              defaultSource: defaultSource,
+            );
+            // Skip mods with no value and no dynamic properties
+            if (mod.value == 0 && !mod.isDynamic) continue;
             mods.putIfAbsent(stat, () => []);
-            mods[stat]!.add(StatModification(value: value, source: source));
+            mods[stat]!.add(mod);
           }
           continue;
         }
@@ -314,13 +317,22 @@ class HeroAssemblyService {
   }
 
   /// Load resistances aggregate from hero_values.
-  HeroDamageResistances _loadResistances(List<db.HeroValue> values) {
-    final value = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
-    if (value?.jsonValue == null && value?.textValue == null) {
+  /// Load resistances from hero_values.
+  /// 
+  /// The resistances now store dynamic metadata (dynamicImmunity, immunityPerEchelon, etc.)
+  /// which is calculated at display time using DamageResistance.netValueAtLevel(heroLevel).
+  HeroDamageResistances _loadResistances(
+    List<db.HeroValue> values,
+    List<db.HeroEntry> resistanceEntries,
+    int heroLevel,
+  ) {
+    // Load resistances from hero_values - they already contain dynamic metadata
+    final baseValue = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
+    if (baseValue?.jsonValue == null && baseValue?.textValue == null) {
       return HeroDamageResistances.empty;
     }
     try {
-      final jsonStr = value!.jsonValue ?? value.textValue!;
+      final jsonStr = baseValue!.jsonValue ?? baseValue.textValue!;
       return HeroDamageResistances.fromJsonString(jsonStr);
     } catch (_) {
       return HeroDamageResistances.empty;

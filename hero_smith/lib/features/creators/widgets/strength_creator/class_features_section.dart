@@ -15,6 +15,9 @@ class ClassFeaturesSection extends StatefulWidget {
     this.initialSelections = const {},
     this.onSelectionsChanged,
     this.equipmentIds = const [],
+    this.skillGroupSelections = const {},
+    this.onSkillGroupSelectionChanged,
+    this.reservedSkillIds = const {},
   });
 
   final ClassData classData;
@@ -25,6 +28,15 @@ class ClassFeaturesSection extends StatefulWidget {
   
   /// Equipment IDs for determining kit (used for Stormwight progression)
   final List<String?> equipmentIds;
+  
+  /// skill_group skill selections: Map<featureId, Map<grantKey, skillId>>
+  final Map<String, Map<String, String>> skillGroupSelections;
+  
+  /// Callback when a skill_group skill selection changes
+  final SkillGroupSelectionChanged? onSkillGroupSelectionChanged;
+  
+  /// Set of skill IDs that are already selected elsewhere (for duplicate prevention)
+  final Set<String> reservedSkillIds;
 
   @override
   State<ClassFeaturesSection> createState() => _ClassFeaturesSectionState();
@@ -356,6 +368,9 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
         grantTypeByFeatureName: grantTypeMap,
         className: widget.classData.name,
         equipmentIds: widget.equipmentIds,
+        skillGroupSelections: widget.skillGroupSelections,
+        onSkillGroupSelectionChanged: widget.onSkillGroupSelectionChanged,
+        reservedSkillIds: widget.reservedSkillIds,
       ),
     );
   }

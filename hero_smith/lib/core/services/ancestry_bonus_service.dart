@@ -535,6 +535,15 @@ class AncestryBonusService {
   }
 
   Future<void> _clearAncestryStatMods(String heroId) async {
+    // Clear from hero_entries (new storage)
+    await (_db.delete(_db.heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals('stat_mod') &
+              t.sourceType.equals('ancestry')))
+        .go();
+    
+    // Also clear legacy hero_values for backwards compatibility
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kAncestryStatMods,
@@ -555,13 +564,26 @@ class AncestryBonusService {
   ) async {
     if (statMods.isEmpty) return;
 
-    final modsModel = HeroStatModifications(modifications: statMods);
-    
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: _kAncestryStatMods,
-      textValue: modsModel.toJsonString(),
-    );
+    // Store each stat as a separate hero_entry with entryType='stat_mod'
+    // Format: entryId = stat name, payload = { "mods": [{ "value": X, "source": "..." }] }
+    for (final entry in statMods.entries) {
+      final stat = entry.key.toLowerCase();
+      final mods = entry.value;
+      
+      if (mods.isEmpty) continue;
+      
+      await _entries.addEntry(
+        heroId: heroId,
+        entryType: 'stat_mod',
+        entryId: stat,
+        sourceType: 'ancestry',
+        sourceId: 'ancestry_grant',
+        gainedBy: 'grant',
+        payload: {
+          'mods': mods.map((m) => {'value': m.value, 'source': m.source}).toList(),
+        },
+      );
+    }
   }
 
   /// Load ancestry stat modifications with sources for a hero.

@@ -26,11 +26,18 @@ class DamageResistanceTrackerWidget extends ConsumerStatefulWidget {
 class _DamageResistanceTrackerWidgetState
     extends ConsumerState<DamageResistanceTrackerWidget> {
   HeroDamageResistances _resistances = HeroDamageResistances.empty;
+  int _heroLevel = 1;
 
   @override
   Widget build(BuildContext context) {
     // Watch the stream provider for automatic updates
     final resistancesAsync = ref.watch(heroDamageResistancesProvider(widget.heroId));
+    
+    // Get hero level for dynamic resistance calculations
+    final mainStats = ref.watch(heroMainStatsProvider(widget.heroId));
+    mainStats.whenData((stats) {
+      _heroLevel = stats.level;
+    });
     
     return resistancesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -431,7 +438,8 @@ class _DamageResistanceTrackerWidgetState
 
   Widget _buildResistanceTile(BuildContext context, DamageResistance resistance) {
     final theme = Theme.of(context);
-    final net = resistance.netValue;
+    // Use netValueAtLevel to calculate dynamic resistances based on hero level
+    final net = resistance.netValueAtLevel(_heroLevel);
     final color = net > 0 ? Colors.green : net < 0 ? Colors.red : null;
     final typeColor = _getDamageTypeColor(resistance.damageType);
 

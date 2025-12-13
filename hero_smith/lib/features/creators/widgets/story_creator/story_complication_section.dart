@@ -592,7 +592,7 @@ class _ComplicationDetails extends ConsumerWidget {
       case SetBaseStatIfNotLowerGrant():
         return _buildGrantItem(
           context,
-          'Sets ${grant.stat.replaceAll('_', ' ')} to ${grant.value} if lower',
+          'Base ${grant.stat.replaceAll('_', ' ')}: ${grant.value}',
           Icons.adjust_outlined,
         );
       
@@ -1409,7 +1409,7 @@ class _ComplicationDetails extends ConsumerWidget {
             }
             // Filter for dead languages only
             final deadLanguages = allLanguages.where((lang) {
-              final langType = (lang.data['type'] as String?)?.toLowerCase() ?? '';
+              final langType = (lang.data['language_type'] as String?)?.toLowerCase() ?? '';
               return langType == 'dead';
             }).toList()
               ..sort((a, b) => a.name.compareTo(b.name));
@@ -1698,6 +1698,10 @@ class _ComplicationDetails extends ConsumerWidget {
                   final selected = selectedIds.contains(id);
                   final canSelect = selected || remaining - cost >= 0;
                   
+                  // Check for trait choices (immunity picks, ability picks)
+                  final hasImmunityChoice = _traitHasImmunityChoice(traitData);
+                  final abilityOptions = _getAbilityOptions(traitData);
+                  
                   // Exclude traits already selected by hero in ancestry section
                   final alreadyPickedByHero = heroAncestryTraitIds.contains(id);
                   if (alreadyPickedByHero) {
@@ -1734,41 +1738,78 @@ class _ComplicationDetails extends ConsumerWidget {
                       );
                     }
 
-                    return CheckboxListTile(
-                      value: selected,
-                      onChanged: canSelect
-                          ? (value) {
-                              if (value == null) return;
-                              final newSelected = Set<String>.from(selectedIds);
-                              if (value) {
-                                newSelected.add(id);
-                              } else {
-                                newSelected.remove(id);
-                              }
-                              _updateChoice(choiceKey, newSelected.join(','));
-                            }
-                          : null,
-                      title: Text(name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
-                            desc,
-                            softWrap: true,
+                    // Get trait-specific choice value
+                    final traitChoiceKey = '${complicationId}_trait_$id';
+                    final currentTraitChoice = choices[traitChoiceKey];
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CheckboxListTile(
+                          value: selected,
+                          onChanged: canSelect
+                              ? (value) {
+                                  if (value == null) return;
+                                  final newSelected = Set<String>.from(selectedIds);
+                                  if (value) {
+                                    newSelected.add(id);
+                                  } else {
+                                    newSelected.remove(id);
+                                    // Clear trait-specific choice when deselected
+                                    final newChoices = Map<String, String>.from(choices);
+                                    newChoices.remove(traitChoiceKey);
+                                    onChoicesChanged(newChoices);
+                                  }
+                                  _updateChoice(choiceKey, newSelected.join(','));
+                                }
+                              : null,
+                          title: Text(name),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 4),
+                              Text(
+                                desc,
+                                softWrap: true,
+                              ),
+                            ],
+                          ),
+                          isThreeLine: true,
+                          secondary: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text('$cost'),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        // Show immunity dropdown for selected traits with immunity choice
+                        if (selected && hasImmunityChoice) ...[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
+                            child: _buildImmunityDropdown(
+                              traitId: id,
+                              complicationId: complicationId,
+                              currentValue: currentTraitChoice,
+                              excludedValues: _getExcludedImmunities(id, complicationId, choices),
+                            ),
                           ),
                         ],
-                      ),
-                      isThreeLine: true,
-                      secondary: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.deepPurple.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text('$cost'),
-                      ),
-                      contentPadding: EdgeInsets.zero,
+                        // Show ability dropdown for selected traits with ability choice
+                        if (selected && abilityOptions.isNotEmpty) ...[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
+                            child: _buildAbilityDropdown(
+                              traitId: id,
+                              complicationId: complicationId,
+                              options: abilityOptions,
+                              currentValue: currentTraitChoice,
+                            ),
+                          ),
+                        ],
+                      ],
                     );
                   }),
                 ],
@@ -1867,5 +1908,125 @@ class _ComplicationDetails extends ConsumerWidget {
           children: const [],
         );
     }
+  }
+
+  /// Check if trait has immunity choice (type: "pick_one")
+  bool _traitHasImmunityChoice(Map<String, dynamic> trait) {
+    final increaseTotal = trait['increase_total'] as Map?;
+    if (increaseTotal == null) return false;
+    return increaseTotal['type'] == 'pick_one' && increaseTotal['stat'] == 'immunity';
+  }
+
+  /// Get ability options for pick_ability_name traits
+  List<String> _getAbilityOptions(Map<String, dynamic> trait) {
+    final options = trait['pick_ability_name'] as List?;
+    if (options == null) return [];
+    return options.cast<String>();
+  }
+
+  static const _immunityTypes = [
+    'acid',
+    'cold',
+    'corruption',
+    'fire',
+    'lightning',
+    'poison',
+  ];
+
+  /// Get immunity types that should be excluded from a trait's dropdown.
+  Set<String> _getExcludedImmunities(String currentTraitId, String complicationId, Map<String, String> choices) {
+    final excluded = <String>{};
+    
+    // Exclude other traits' immunity choices (but not the current trait's choice)
+    for (final entry in choices.entries) {
+      if (entry.key == '${complicationId}_trait_$currentTraitId') continue;
+      if (!entry.key.startsWith('${complicationId}_trait_')) continue;
+      // Only add if it's likely an immunity type
+      if (_immunityTypes.contains(entry.value.toLowerCase())) {
+        excluded.add(entry.value.toLowerCase());
+      }
+    }
+    
+    return excluded;
+  }
+
+  Widget _buildImmunityDropdown({
+    required String traitId,
+    required String complicationId,
+    required String? currentValue,
+    required Set<String> excludedValues,
+  }) {
+    // Filter out excluded immunity types (but keep current value if it was previously selected)
+    final availableTypes = _immunityTypes.where((type) {
+      if (type == currentValue) return true; // Always show current selection
+      return !excludedValues.contains(type);
+    }).toList();
+
+    final choiceKey = '${complicationId}_trait_$traitId';
+
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      decoration: InputDecoration(
+        labelText: 'Choose Immunity Type',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        filled: true,
+        fillColor: Colors.deepPurple.withOpacity(0.05),
+      ),
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('Select immunity'),
+        ),
+        ...availableTypes.map(
+          (type) => DropdownMenuItem<String>(
+            value: type,
+            child: Text(type[0].toUpperCase() + type.substring(1)),
+          ),
+        ),
+      ],
+      onChanged: (value) {
+        if (value != null) {
+          _updateChoice(choiceKey, value);
+        }
+      },
+    );
+  }
+
+  Widget _buildAbilityDropdown({
+    required String traitId,
+    required String complicationId,
+    required List<String> options,
+    required String? currentValue,
+  }) {
+    final choiceKey = '${complicationId}_trait_$traitId';
+
+    return DropdownButtonFormField<String>(
+      value: currentValue,
+      decoration: InputDecoration(
+        labelText: 'Choose Ability',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        filled: true,
+        fillColor: Colors.teal.withOpacity(0.05),
+      ),
+      items: [
+        const DropdownMenuItem<String>(
+          value: null,
+          child: Text('Select ability'),
+        ),
+        ...options.map(
+          (ability) => DropdownMenuItem<String>(
+            value: ability,
+            child: Text(ability),
+          ),
+        ),
+      ],
+      onChanged: (value) {
+        if (value != null) {
+          _updateChoice(choiceKey, value);
+        }
+      },
+    );
   }
 }

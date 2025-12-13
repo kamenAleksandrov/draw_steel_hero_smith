@@ -133,8 +133,8 @@ class _ConditionsTrackerWidgetState
         final assemblyAsync = ref.read(heroAssemblyProvider(widget.heroId));
         final assembly = assemblyAsync.valueOrNull;
         if (assembly != null) {
-          // Check for saving_throw stat mod
-          assemblyMod = assembly.statMods.getTotalForStat('saving_throw');
+          // Check for saving_throw stat mod, using hero level for dynamic mods
+          assemblyMod = assembly.statMods.getTotalForStatAtLevel('saving_throw', assembly.level);
         }
       } catch (_) {
         // Assembly not available yet, ignore

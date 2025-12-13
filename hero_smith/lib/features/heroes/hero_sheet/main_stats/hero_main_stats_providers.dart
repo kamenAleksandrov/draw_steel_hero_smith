@@ -168,7 +168,7 @@ Map<String, int> _buildChoiceModifications(
     for (final stat in ['might', 'agility', 'reason', 'intuition', 'presence', 
                         'speed', 'disengage', 'stability', 'size', 'stamina', 
                         'recoveries', 'surges', 'wealth', 'renown']) {
-      final modTotal = assembly.statMods.getTotalForStat(stat);
+      final modTotal = assembly.statMods.getTotalForStatAtLevel(stat, assembly.level);
       if (modTotal != 0) {
         final modKey = _statToModKey(stat);
         if (modKey != null) {

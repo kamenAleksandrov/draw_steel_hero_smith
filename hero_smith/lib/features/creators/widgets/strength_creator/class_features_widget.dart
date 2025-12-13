@@ -3,11 +3,14 @@
 import 'package:hero_smith/core/models/feature.dart';
 import 'package:hero_smith/core/models/component.dart';
 import 'package:hero_smith/core/models/heroic_resource_progression.dart';
+import 'package:hero_smith/core/models/skills_models.dart';
 import 'package:hero_smith/core/models/subclass_models.dart';
 import 'package:hero_smith/core/repositories/feature_repository.dart';
 import 'package:hero_smith/core/services/class_feature_data_service.dart';
 import 'package:hero_smith/core/services/heroic_resource_progression_service.dart';
+import 'package:hero_smith/core/services/skill_data_service.dart';
 import 'package:hero_smith/core/theme/feature_tokens.dart';
+import 'package:hero_smith/core/utils/selection_guard.dart';
 import 'package:hero_smith/widgets/abilities/ability_expandable_item.dart';
 import 'package:hero_smith/widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 
@@ -21,6 +24,15 @@ part 'options_section.dart';
 typedef FeatureSelectionChanged = void Function(
   String featureId,
   Set<String> selections,
+);
+
+/// Callback for skill_group skill selection changes.
+/// [featureId] is the feature ID, [grantKey] uniquely identifies the grant
+/// within the feature (e.g., domain name), and [skillId] is the selected skill.
+typedef SkillGroupSelectionChanged = void Function(
+  String featureId,
+  String grantKey,
+  String? skillId,
 );
 
 class ClassFeaturesWidget extends StatelessWidget {
@@ -43,6 +55,9 @@ class ClassFeaturesWidget extends StatelessWidget {
     this.grantTypeByFeatureName = const {},
     this.className,
     this.equipmentIds = const [],
+    this.skillGroupSelections = const {},
+    this.onSkillGroupSelectionChanged,
+    this.reservedSkillIds = const {},
   });
 
   final int level;
@@ -66,6 +81,15 @@ class ClassFeaturesWidget extends StatelessWidget {
   
   /// Equipment IDs for determining kit (used for Stormwight progression)
   final List<String?> equipmentIds;
+  
+  /// skill_group skill selections: Map<featureId, Map<grantKey, skillId>>
+  final Map<String, Map<String, String>> skillGroupSelections;
+  
+  /// Callback when a skill_group skill selection changes
+  final SkillGroupSelectionChanged? onSkillGroupSelectionChanged;
+  
+  /// Set of skill IDs that are already selected elsewhere (for duplicate prevention)
+  final Set<String> reservedSkillIds;
 
   static const List<String> _widgetSubclassOptionKeys = [
     'subclass', 'subclass_name', 'tradition', 'order', 'doctrine',
