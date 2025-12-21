@@ -16,8 +16,8 @@ class ProjectDetailCard extends StatefulWidget {
     this.onAddToGear,
     this.isTreasureProject = false,
     this.treasureData,
-    this.isEnhancementProject = false,
-    this.enhancementData,
+    this.isImbuementProject = false,
+    this.imbuementData,
   });
 
   final HeroDowntimeProject project;
@@ -29,8 +29,8 @@ class ProjectDetailCard extends StatefulWidget {
   final VoidCallback? onAddToGear;
   final bool isTreasureProject;
   final Map<String, dynamic>? treasureData;
-  final bool isEnhancementProject;
-  final Map<String, dynamic>? enhancementData;
+  final bool isImbuementProject;
+  final Map<String, dynamic>? imbuementData;
 
   @override
   State<ProjectDetailCard> createState() => _ProjectDetailCardState();
@@ -141,9 +141,9 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     _buildTreasureEffects(theme),
                   ],
 
-                  // Effect description from enhancement data
-                  if (widget.enhancementData != null) ...[
-                    _buildEnhancementEffects(theme),
+                  // Effect description from imbuement data
+                  if (widget.imbuementData != null) ...[
+                    _buildImbuementEffects(theme),
                   ],
 
                   // Progress bar
@@ -379,8 +379,8 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     ),
                   ],
 
-                  // Add Enhancement to Gear button for enhancement projects that reached their goal
-                  if (widget.isEnhancementProject &&
+                  // Add Imbuement to Gear button for imbuement projects that reached their goal
+                  if (widget.isImbuementProject &&
                       widget.onAddToGear != null) ...[
                     const SizedBox(height: 12),
                     SizedBox(
@@ -388,7 +388,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                       child: FilledButton.icon(
                         onPressed: widget.onAddToGear,
                         icon: const Icon(Icons.auto_fix_high, size: 20),
-                        label: const Text('Add Enhancement to Gear'),
+                        label: const Text('Add Imbuement to Gear'),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.deepPurple.shade800,
                           foregroundColor: Colors.grey.shade300,
@@ -473,37 +473,37 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
     );
   }
 
-  Widget _buildEnhancementEffects(ThemeData theme) {
-    final data = widget.enhancementData!;
+  Widget _buildImbuementEffects(ThemeData theme) {
+    final data = widget.imbuementData!;
     final description = data['description'] as String?;
-    final enhancementType = data['type'] as String?;
+    final imbuementType = data['type'] as String?;
     final level = data['level'] as int?;
     
-    // Get display name for enhancement type
+    // Get display name for imbuement type
     String typeDisplay = '';
-    if (enhancementType != null) {
-      switch (enhancementType) {
-        case 'armor_enhancement':
-          typeDisplay = 'Armor Enhancement';
+    if (imbuementType != null) {
+      switch (imbuementType) {
+        case 'armor_imbuement':
+          typeDisplay = 'Armor Imbuement';
           break;
-        case 'weapon_enhancement':
-          typeDisplay = 'Weapon Enhancement';
+        case 'weapon_imbuement':
+          typeDisplay = 'Weapon Imbuement';
           break;
-        case 'implement_enhancement':
-          typeDisplay = 'Implement Enhancement';
+        case 'implement_imbuement':
+          typeDisplay = 'Implement Imbuement';
           break;
-        case 'shield_enhancement':
-          typeDisplay = 'Shield Enhancement';
+        case 'shield_imbuement':
+          typeDisplay = 'Shield Imbuement';
           break;
         default:
-          typeDisplay = enhancementType.replaceAll('_', ' ');
+          typeDisplay = imbuementType.replaceAll('_', ' ');
       }
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Enhancement type and level badge
+        // Imbuement type and level badge
         if (typeDisplay.isNotEmpty || level != null) ...[
           Row(
             children: [
@@ -570,7 +570,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'ENHANCEMENT EFFECT',
+                      'IMBUEMENT EFFECT',
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: Colors.deepPurple.shade400,
                         fontWeight: FontWeight.bold,

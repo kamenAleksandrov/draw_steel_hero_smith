@@ -11,10 +11,10 @@ final projectTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async
   return await dataSource.loadProjects();
 });
 
-/// Provider for loading enhancement templates from JSON
-final enhancementTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async {
+/// Provider for loading imbuement templates from JSON
+final imbuementTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async {
   final dataSource = DowntimeDataSource();
-  return await dataSource.loadEnhancements();
+  return await dataSource.loadImbuements();
 });
 
 /// Provider for loading craftable treasures from JSON
@@ -29,7 +29,7 @@ class SearchableProject {
   final String name;
   final String description;
   final int? projectGoal;
-  final String category; // 'project', 'enhancement', 'treasure'
+  final String category; // 'project', 'imbuement', 'treasure'
   final dynamic source; // Original DowntimeEntry or CraftableTreasure
   
   SearchableProject({
@@ -190,7 +190,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 indicatorColor: HeroTheme.primarySection,
                 tabs: const [
                   Tab(text: 'Projects'),
-                  Tab(text: 'Enhancements'),
+                  Tab(text: 'Imbuements'),
                   Tab(text: 'Treasures'),
                 ],
               ),
@@ -201,7 +201,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   controller: _tabController,
                   children: [
                     _buildProjectsTab(),
-                    _buildEnhancementsTab(),
+                    _buildImbuementsTab(),
                     _buildTreasuresTab(),
                   ],
                 ),
@@ -215,11 +215,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   
   Widget _buildSearchResults() {
     final projectsAsync = ref.watch(projectTemplatesProvider);
-    final enhancementsAsync = ref.watch(enhancementTemplatesProvider);
+    final imbuementsAsync = ref.watch(imbuementTemplatesProvider);
     final treasuresAsync = ref.watch(craftableTreasuresProvider);
     
     // Check if any are still loading
-    if (projectsAsync.isLoading || enhancementsAsync.isLoading || treasuresAsync.isLoading) {
+    if (projectsAsync.isLoading || imbuementsAsync.isLoading || treasuresAsync.isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: HeroTheme.primarySection),
       );
@@ -235,10 +235,10 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
       }
     }
     
-    // Add enhancements
-    if (enhancementsAsync.hasValue) {
-      for (final entry in enhancementsAsync.value!) {
-        allProjects.add(SearchableProject.fromDowntimeEntry(entry, 'enhancement'));
+    // Add imbuements
+    if (imbuementsAsync.hasValue) {
+      for (final entry in imbuementsAsync.value!) {
+        allProjects.add(SearchableProject.fromDowntimeEntry(entry, 'imbuement'));
       }
     }
     
@@ -411,7 +411,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     switch (category) {
       case 'project':
         return Colors.blue;
-      case 'enhancement':
+      case 'imbuement':
         return Colors.purple;
       case 'treasure':
         return Colors.amber.shade700;
@@ -424,7 +424,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     switch (category) {
       case 'project':
         return Icons.assignment;
-      case 'enhancement':
+      case 'imbuement':
         return Icons.build;
       case 'treasure':
         return Icons.diamond;
@@ -437,8 +437,8 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     switch (category) {
       case 'project':
         return 'Project';
-      case 'enhancement':
-        return 'Enhancement';
+      case 'imbuement':
+        return 'Imbuement';
       case 'treasure':
         return 'Treasure';
       default:
@@ -487,8 +487,8 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     );
   }
 
-  Widget _buildEnhancementsTab() {
-    final enhancementsAsync = ref.watch(enhancementTemplatesProvider);
+  Widget _buildImbuementsTab() {
+    final imbuementsAsync = ref.watch(imbuementTemplatesProvider);
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -496,15 +496,15 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select an enhancement project to add to your hero',
+            'Select an imbuement project to add to your hero',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: enhancementsAsync.when(
-              data: (enhancements) => _buildEnhancementsGrouped(context, enhancements),
+            child: imbuementsAsync.when(
+              data: (imbuements) => _buildImbuementsGrouped(context, imbuements),
               loading: () => const Center(
                 child: CircularProgressIndicator(color: HeroTheme.primarySection),
               ),
@@ -970,11 +970,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     }
   }
 
-  Widget _buildEnhancementsGrouped(
+  Widget _buildImbuementsGrouped(
     BuildContext context,
-    List<DowntimeEntry> enhancements,
+    List<DowntimeEntry> imbuements,
   ) {
-    if (enhancements.isEmpty) {
+    if (imbuements.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -982,7 +982,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             const Icon(Icons.inbox, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No enhancements found',
+              'No imbuements found',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ],
@@ -990,16 +990,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
       );
     }
 
-    // Group enhancements by level and type
+    // Group imbuements by level and type
     final grouped = <int, Map<String, List<DowntimeEntry>>>{};
     
-    for (final enhancement in enhancements) {
-      final level = enhancement.raw['level'] as int? ?? 1;
-      final type = enhancement.raw['type'] as String? ?? 'unknown';
+    for (final imbuement in imbuements) {
+      final level = imbuement.raw['level'] as int? ?? 1;
+      final type = imbuement.raw['type'] as String? ?? 'unknown';
       
       grouped.putIfAbsent(level, () => <String, List<DowntimeEntry>>{});
       grouped[level]!.putIfAbsent(type, () => <DowntimeEntry>[]);
-      grouped[level]![type]!.add(enhancement);
+      grouped[level]![type]!.add(imbuement);
     }
 
     // Sort by level
@@ -1038,13 +1038,13 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
                 childrenPadding: const EdgeInsets.symmetric(horizontal: 8),
                 title: Text(
-                  _getEnhancementTypeName(type),
+                  _getImbuementTypeName(type),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                 ),
-                children: items.map((enhancement) => _buildTemplateCard(context, enhancement)).toList(),
+                children: items.map((imbuement) => _buildTemplateCard(context, imbuement)).toList(),
               );
             }).toList(),
           ),
@@ -1056,24 +1056,24 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getLevelName(int level) {
     switch (level) {
       case 1:
-        return '1st Level Enhancements';
+        return '1st Level Imbuements';
       case 5:
-        return '5th Level Enhancements';
+        return '5th Level Imbuements';
       case 9:
-        return '9th Level Enhancements';
+        return '9th Level Imbuements';
       default:
-        return '${level}th Level Enhancements';
+        return '${level}th Level Imbuements';
     }
   }
 
-  String _getEnhancementTypeName(String type) {
+  String _getImbuementTypeName(String type) {
     switch (type) {
-      case 'armor_enhancement':
-        return 'Armor Enhancements';
-      case 'weapon_enhancement':
-        return 'Weapon Enhancements';
-      case 'implement_enhancement':
-        return 'Implement Enhancements';
+      case 'armor_imbuement':
+        return 'Armor Imbuements';
+      case 'weapon_imbuement':
+        return 'Weapon Imbuements';
+      case 'implement_imbuement':
+        return 'Implement Imbuements';
       default:
         return type
             .replaceAll('_', ' ')

@@ -71,7 +71,7 @@ class CraftableTreasure {
 
 class DowntimeDataSource {
   static const _projectsPath = 'data/downtime/downtime_projects.json';
-  static const _enhancementsPath = 'data/downtime/item_enhancements.json';
+  static const _imbuementsPath = 'data/downtime/item_imbuements.json';
   static const _eventsPath = 'data/downtime/downtime_events.json';
   static const _consumablesPath = 'data/treasures/consumables.json';
   static const _trinketsPath = 'data/treasures/trinkets.json';
@@ -94,8 +94,8 @@ class DowntimeDataSource {
         .toList();
   }
 
-  Future<List<DowntimeEntry>> loadEnhancements() async {
-    final txt = await rootBundle.loadString(_enhancementsPath);
+  Future<List<DowntimeEntry>> loadImbuements() async {
+    final txt = await rootBundle.loadString(_imbuementsPath);
     final list = decodeJsonList(txt);
     return list
         .whereType<Map<String, dynamic>>()
@@ -128,19 +128,19 @@ class DowntimeDataSource {
     );
   }
 
-  /// Groups enhancements by echelon (level) and then by type
+  /// Groups imbuements by echelon (level) and then by type
   Future<Map<int, Map<String, List<DowntimeEntry>>>>
-      loadEnhancementsByLevelAndType() async {
-    final enhancements = await loadEnhancements();
+      loadImbuementsByLevelAndType() async {
+    final imbuements = await loadImbuements();
     final grouped = <int, Map<String, List<DowntimeEntry>>>{};
 
-    for (final enhancement in enhancements) {
-      final level = enhancement.raw['level'] as int? ?? 1;
-      final type = enhancement.raw['type'] as String? ?? 'unknown';
+    for (final imbuement in imbuements) {
+      final level = imbuement.raw['level'] as int? ?? 1;
+      final type = imbuement.raw['type'] as String? ?? 'unknown';
 
       grouped.putIfAbsent(level, () => <String, List<DowntimeEntry>>{});
       grouped[level]!.putIfAbsent(type, () => <DowntimeEntry>[]);
-      grouped[level]![type]!.add(enhancement);
+      grouped[level]![type]!.add(imbuement);
     }
 
     // Sort by level
@@ -153,15 +153,15 @@ class DowntimeDataSource {
     return sortedGrouped;
   }
 
-  /// Get a human-readable name for enhancement types
-  String getEnhancementTypeName(String type) {
+  /// Get a human-readable name for imbuement types
+  String getImbuementTypeName(String type) {
     switch (type) {
-      case 'armor_enhancement':
-        return 'Armor Enhancements';
-      case 'weapon_enhancement':
-        return 'Weapon Enhancements';
-      case 'implement_enhancement':
-        return 'Implement Enhancements';
+      case 'armor_imbuement':
+        return 'Armor Imbuements';
+      case 'weapon_imbuement':
+        return 'Weapon Imbuements';
+      case 'implement_imbuement':
+        return 'Implement Imbuements';
       default:
         return type
             .replaceAll('_', ' ')

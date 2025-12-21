@@ -4,7 +4,7 @@ import '../../core/models/downtime.dart';
 import '../../core/data/downtime_data_source.dart';
 import '../shared/expandable_card.dart';
 import '../../features/downtime/project_category_detail_page.dart';
-import '../../features/downtime/enhancement_echelon_detail_page.dart';
+import '../../features/downtime/imbuement_echelon_detail_page.dart';
 import '../../features/downtime/craftable_treasure_type_detail_page.dart';
 
 class ProjectsTab extends StatefulWidget {
@@ -315,28 +315,28 @@ class _ProjectCategoryCard extends StatelessWidget {
 
 
 
-class EnhancementsTab extends StatefulWidget {
-  const EnhancementsTab({super.key});
+class ImbuementsTab extends StatefulWidget {
+  const ImbuementsTab({super.key});
 
   @override
-  State<EnhancementsTab> createState() => _EnhancementsTabState();
+  State<ImbuementsTab> createState() => _ImbuementsTabState();
 }
 
-class _EnhancementsTabState extends State<EnhancementsTab> {
+class _ImbuementsTabState extends State<ImbuementsTab> {
   final _ds = DowntimeDataSource();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<int, Map<String, List<DowntimeEntry>>>>(
-      future: _ds.loadEnhancementsByLevelAndType(),
+      future: _ds.loadImbuementsByLevelAndType(),
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final enhancementsByEchelon =
+        final imbuementsByEchelon =
             snap.data ?? <int, Map<String, List<DowntimeEntry>>>{};
-        if (enhancementsByEchelon.isEmpty) {
+        if (imbuementsByEchelon.isEmpty) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -344,13 +344,13 @@ class _EnhancementsTabState extends State<EnhancementsTab> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    AppIcons.enhancements,
+                    AppIcons.imbuements,
                     size: 64,
                     color: Theme.of(context).colorScheme.outline,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No item enhancements found',
+                    'No item imbuements found',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -361,7 +361,7 @@ class _EnhancementsTabState extends State<EnhancementsTab> {
           );
         }
 
-        final sortedEchelons = enhancementsByEchelon.keys.toList()..sort();
+        final sortedEchelons = imbuementsByEchelon.keys.toList()..sort();
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -369,24 +369,24 @@ class _EnhancementsTabState extends State<EnhancementsTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item Enhancements by Echelon',
+                'Item Imbuements by Echelon',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Choose an echelon level to view available item enhancements',
+                'Choose an echelon level to view available item imbuements',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
               const SizedBox(height: 24),
               ...sortedEchelons.map((echelonLevel) {
-                final enhancementsByType = enhancementsByEchelon[echelonLevel]!;
+                final imbuementsByType = imbuementsByEchelon[echelonLevel]!;
                 return _EchelonNavigationCard(
                   echelonLevel: echelonLevel,
-                  enhancementsByType: enhancementsByType,
+                  imbuementsByType: imbuementsByType,
                   dataSource: _ds,
                 );
               }),
@@ -400,12 +400,12 @@ class _EnhancementsTabState extends State<EnhancementsTab> {
 
 class _EchelonNavigationCard extends StatelessWidget {
   final int echelonLevel;
-  final Map<String, List<DowntimeEntry>> enhancementsByType;
+  final Map<String, List<DowntimeEntry>> imbuementsByType;
   final DowntimeDataSource dataSource;
 
   const _EchelonNavigationCard({
     required this.echelonLevel,
-    required this.enhancementsByType,
+    required this.imbuementsByType,
     required this.dataSource,
   });
 
@@ -431,19 +431,19 @@ class _EchelonNavigationCard extends StatelessWidget {
   String _getEchelonDescription(int level) {
     switch (level) {
       case 1:
-        return 'Basic enhancements for starting adventurers';
+        return 'Basic imbuements for starting adventurers';
       case 2:
-        return 'Improved enhancements for developing heroes';
+        return 'Improved imbuements for developing heroes';
       case 3:
-        return 'Advanced enhancements for experienced adventurers';
+        return 'Advanced imbuements for experienced adventurers';
       case 4:
-        return 'Superior enhancements for veteran heroes';
+        return 'Superior imbuements for veteran heroes';
       case 5:
-        return 'Legendary enhancements for master adventurers';
+        return 'Legendary imbuements for master adventurers';
       case 9:
-        return 'Mythical enhancements of extraordinary power';
+        return 'Mythical imbuements of extraordinary power';
       default:
-        return 'Specialized item enhancements';
+        return 'Specialized item imbuements';
     }
   }
 
@@ -468,8 +468,8 @@ class _EchelonNavigationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalCount = enhancementsByType.values.fold(0, (sum, list) => sum + list.length);
-    final typeCount = enhancementsByType.length;
+    final totalCount = imbuementsByType.values.fold(0, (sum, list) => sum + list.length);
+    final typeCount = imbuementsByType.length;
 
     return Card(
       elevation: 2,
@@ -485,9 +485,9 @@ class _EchelonNavigationCard extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => EnhancementEchelonDetailPage(
+              builder: (context) => ImbuementEchelonDetailPage(
                 echelonLevel: echelonLevel,
-                enhancementsByType: enhancementsByType,
+                imbuementsByType: imbuementsByType,
                 dataSource: dataSource,
               ),
             ),
@@ -540,7 +540,7 @@ class _EchelonNavigationCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$totalCount enhancements',
+                          '$totalCount imbuements',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w500,
@@ -879,7 +879,7 @@ class DowntimeTabsScaffold extends StatelessWidget {
               tabAlignment: TabAlignment.fill,
               tabs: const [
                 Tab(icon: Icon(AppIcons.projects), text: 'Projects'),
-                Tab(icon: Icon(AppIcons.enhancements), text: 'Enhancements'),
+                Tab(icon: Icon(AppIcons.imbuements), text: 'Imbuements'),
                 Tab(icon: Icon(AppIcons.treasures), text: 'Treasures'),
                 Tab(icon: Icon(Icons.event_note), text: 'Events'),
               ],
@@ -889,7 +889,7 @@ class DowntimeTabsScaffold extends StatelessWidget {
             child: TabBarView(
               children: [
                 ProjectsTab(),
-                EnhancementsTab(),
+                ImbuementsTab(),
                 TreasuresTab(),
                 EventsTab(),
               ],

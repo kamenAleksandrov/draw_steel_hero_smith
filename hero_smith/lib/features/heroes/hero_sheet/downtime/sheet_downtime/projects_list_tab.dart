@@ -8,7 +8,7 @@ import '../../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';
 import 'project_roll_dialog.dart';
-import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider and enhancementTemplatesProvider
+import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider and imbuementTemplatesProvider
 
 /// Provider for hero's downtime projects
 final heroProjectsProvider =
@@ -63,14 +63,14 @@ class ProjectsListTab extends ConsumerWidget {
     return null;
   }
 
-  /// Try to find the matching enhancement for a project (by templateProjectId or name)
-  DowntimeEntry? _findMatchingEnhancement(
+  /// Try to find the matching imbuement for a project (by templateProjectId or name)
+  DowntimeEntry? _findMatchingImbuement(
     HeroDowntimeProject project, 
-    List<DowntimeEntry> enhancements,
+    List<DowntimeEntry> imbuements,
   ) {
     // First try by templateProjectId
     if (project.templateProjectId != null) {
-      for (final e in enhancements) {
+      for (final e in imbuements) {
         if (e.id == project.templateProjectId) {
           return e;
         }
@@ -78,7 +78,7 @@ class ProjectsListTab extends ConsumerWidget {
     }
     // Fall back to name matching (case-insensitive)
     final nameLower = project.name.toLowerCase();
-    for (final e in enhancements) {
+    for (final e in imbuements) {
       if (e.name.toLowerCase() == nameLower) {
         return e;
       }
@@ -95,9 +95,9 @@ class ProjectsListTab extends ConsumerWidget {
     final treasuresAsync = ref.watch(craftableTreasuresProvider);
     final treasures = treasuresAsync.valueOrNull ?? <CraftableTreasure>[];
     
-    // Also watch for enhancements
-    final enhancementsAsync = ref.watch(enhancementTemplatesProvider);
-    final enhancements = enhancementsAsync.valueOrNull ?? <DowntimeEntry>[];
+    // Also watch for imbuements
+    final imbuementsAsync = ref.watch(imbuementTemplatesProvider);
+    final imbuements = imbuementsAsync.valueOrNull ?? <DowntimeEntry>[];
     
     return CustomScrollView(
       slivers: [
@@ -127,9 +127,9 @@ class ProjectsListTab extends ConsumerWidget {
                 final project = activeProjects[index];
                 final hasReachedGoal = project.currentPoints >= project.projectGoal;
                 final matchingTreasure = _findMatchingTreasure(project, treasures);
-                final matchingEnhancement = _findMatchingEnhancement(project, enhancements);
+                final matchingImbuement = _findMatchingImbuement(project, imbuements);
                 final isTreasureProject = matchingTreasure != null;
-                final isEnhancementProject = matchingEnhancement != null;
+                final isImbuementProject = matchingImbuement != null;
                 return ProjectDetailCard(
                   project: project,
                   heroId: heroId,
@@ -139,12 +139,12 @@ class ProjectsListTab extends ConsumerWidget {
                   onDelete: () => _deleteProject(context, ref, project),
                   isTreasureProject: isTreasureProject,
                   treasureData: matchingTreasure?.raw,
-                  isEnhancementProject: isEnhancementProject,
-                  enhancementData: matchingEnhancement?.raw,
+                  isImbuementProject: isImbuementProject,
+                  imbuementData: matchingImbuement?.raw,
                   onAddToGear: (isTreasureProject && hasReachedGoal)
                       ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
-                      : (isEnhancementProject && hasReachedGoal)
-                          ? () => _addEnhancementToGear(context, ref, project, matchingEnhancement)
+                      : (isImbuementProject && hasReachedGoal)
+                          ? () => _addImbuementToGear(context, ref, project, matchingImbuement)
                           : null,
                 );
               },
@@ -174,9 +174,9 @@ class ProjectsListTab extends ConsumerWidget {
                     projects.where((p) => p.isCompleted).toList();
                 final project = completedProjects[index];
                 final matchingTreasure = _findMatchingTreasure(project, treasures);
-                final matchingEnhancement = _findMatchingEnhancement(project, enhancements);
+                final matchingImbuement = _findMatchingImbuement(project, imbuements);
                 final isTreasureProject = matchingTreasure != null;
-                final isEnhancementProject = matchingEnhancement != null;
+                final isImbuementProject = matchingImbuement != null;
                 return ProjectDetailCard(
                   project: project,
                   heroId: heroId,
@@ -184,12 +184,12 @@ class ProjectsListTab extends ConsumerWidget {
                   onDelete: () => _deleteProject(context, ref, project),
                   isTreasureProject: isTreasureProject,
                   treasureData: matchingTreasure?.raw,
-                  isEnhancementProject: isEnhancementProject,
-                  enhancementData: matchingEnhancement?.raw,
+                  isImbuementProject: isImbuementProject,
+                  imbuementData: matchingImbuement?.raw,
                   onAddToGear: isTreasureProject
                       ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
-                      : isEnhancementProject
-                          ? () => _addEnhancementToGear(context, ref, project, matchingEnhancement)
+                      : isImbuementProject
+                          ? () => _addImbuementToGear(context, ref, project, matchingImbuement)
                           : null,
                 );
               },
@@ -554,24 +554,24 @@ class ProjectsListTab extends ConsumerWidget {
     }
   }
 
-  void _addEnhancementToGear(
+  void _addImbuementToGear(
     BuildContext context,
     WidgetRef ref,
     HeroDowntimeProject project,
-    DowntimeEntry enhancement,
+    DowntimeEntry imbuement,
   ) async {
-    final enhancementId = enhancement.id;
+    final imbuementId = imbuement.id;
     
-    // Get current hero enhancements (stored in 'enhancement' category)
+    // Get current hero imbuements (stored in 'imbuement' category)
     final db = ref.read(appDatabaseProvider);
-    final existingEnhancements = await db.getHeroComponentIds(heroId, 'enhancement');
+    final existingImbuements = await db.getHeroComponentIds(heroId, 'imbuement');
     
     // Check if already added
-    if (existingEnhancements.contains(enhancementId)) {
+    if (existingImbuements.contains(imbuementId)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('"${enhancement.name}" is already in your gear!'),
+            content: Text('"${imbuement.name}" is already in your gear!'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -579,18 +579,18 @@ class ProjectsListTab extends ConsumerWidget {
       return;
     }
 
-    // Add enhancement to hero's gear
+    // Add imbuement to hero's gear
     try {
       await db.addHeroComponentId(
         heroId: heroId,
-        componentId: enhancementId,
-        category: 'enhancement',
+        componentId: imbuementId,
+        category: 'imbuement',
       );
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Added "${enhancement.name}" to your gear!'),
+            content: Text('Added "${imbuement.name}" to your gear!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -599,7 +599,7 @@ class ProjectsListTab extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add enhancement: $e'),
+            content: Text('Failed to add imbuement: $e'),
             backgroundColor: Colors.red,
           ),
         );

@@ -123,7 +123,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
   }
 
   Future<void> _addItemToContainer(String containerId) async {
-    final itemData = await showDialog<Map<String, String>>(
+    final itemData = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => const CreateItemDialog(),
     );
@@ -145,6 +145,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
         'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'name': itemData['name'],
         'description': itemData['description'],
+        'quantity': int.tryParse(itemData['quantity']?.toString() ?? '1') ?? 1,
       });
 
       container['items'] = items;
@@ -195,6 +196,138 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to delete item: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _editContainer(String containerId) async {
+    final containerIndex =
+        _containers.indexWhere((c) => c['id'] == containerId);
+    if (containerIndex == -1) return;
+
+    final currentName =
+        _containers[containerIndex]['name'] as String? ?? 'Container';
+
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) => EditContainerDialog(currentName: currentName),
+    );
+
+    if (newName == null || newName.isEmpty || newName == currentName) return;
+
+    try {
+      final heroRepo = ref.read(heroRepositoryProvider);
+      final container =
+          Map<String, dynamic>.from(_containers[containerIndex]);
+      container['name'] = newName;
+
+      final updated = List<Map<String, dynamic>>.from(_containers);
+      updated[containerIndex] = container;
+
+      await heroRepo.saveInventoryContainers(widget.heroId, updated);
+      setState(() {
+        _containers = updated;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update container: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _editItem(
+      String containerId, String itemId, Map<String, dynamic> currentItem) async {
+    final updatedItem = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => EditItemDialog(item: currentItem),
+    );
+
+    if (updatedItem == null) return;
+
+    try {
+      final heroRepo = ref.read(heroRepositoryProvider);
+      final containerIndex =
+          _containers.indexWhere((c) => c['id'] == containerId);
+      if (containerIndex == -1) return;
+
+      final container =
+          Map<String, dynamic>.from(_containers[containerIndex]);
+      final items =
+          List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
+
+      final itemIndex = items.indexWhere((item) => item['id'] == itemId);
+      if (itemIndex == -1) return;
+
+      items[itemIndex] = {
+        'id': itemId,
+        'name': updatedItem['name'],
+        'description': updatedItem['description'],
+        'quantity': updatedItem['quantity'],
+      };
+      container['items'] = items;
+
+      final updated = List<Map<String, dynamic>>.from(_containers);
+      updated[containerIndex] = container;
+
+      await heroRepo.saveInventoryContainers(widget.heroId, updated);
+      setState(() {
+        _containers = updated;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update item: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _updateItemQuantity(
+      String containerId, String itemId, int newQuantity) async {
+    if (newQuantity < 1) return;
+
+    try {
+      final heroRepo = ref.read(heroRepositoryProvider);
+      final containerIndex =
+          _containers.indexWhere((c) => c['id'] == containerId);
+      if (containerIndex == -1) return;
+
+      final container =
+          Map<String, dynamic>.from(_containers[containerIndex]);
+      final items =
+          List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
+
+      final itemIndex = items.indexWhere((item) => item['id'] == itemId);
+      if (itemIndex == -1) return;
+
+      final item = Map<String, dynamic>.from(items[itemIndex]);
+      item['quantity'] = newQuantity;
+      items[itemIndex] = item;
+      container['items'] = items;
+
+      final updated = List<Map<String, dynamic>>.from(_containers);
+      updated[containerIndex] = container;
+
+      await heroRepo.saveInventoryContainers(widget.heroId, updated);
+      setState(() {
+        _containers = updated;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update quantity: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -261,14 +394,18 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
                   itemCount: _containers.length,
                   itemBuilder: (context, index) {
                     final container = _containers[index];
+                    final containerId = container['id'] as String;
                     return ContainerCard(
                       container: container,
-                      onAddItem: () =>
-                          _addItemToContainer(container['id'] as String),
-                      onDeleteContainer: () =>
-                          _deleteContainer(container['id'] as String),
+                      onAddItem: () => _addItemToContainer(containerId),
+                      onDeleteContainer: () => _deleteContainer(containerId),
                       onDeleteItem: (itemId) =>
-                          _deleteItem(container['id'] as String, itemId),
+                          _deleteItem(containerId, itemId),
+                      onEditItem: (itemId, itemMap) =>
+                          _editItem(containerId, itemId, itemMap),
+                      onEditContainer: () => _editContainer(containerId),
+                      onUpdateItemQuantity: (itemId, newQty) =>
+                          _updateItemQuantity(containerId, itemId, newQty),
                     );
                   },
                 ),

@@ -46,17 +46,9 @@ titles must grant their abilities
 
 must add treasure abilities
 
-some features need their abilities: covenant of the hearth
-
-sometimes heros cant load certain features
-
-there is some scroll error in the strenght. when i try to go back up a bit faster and let the screen flow on its own by pulling faster and letting it go it starts twitching in one place and a reloadis seen
-
 there should be a way to show what condition immunities does a hero have
 
 add a gold/silver/copper to the wealth stat and make it have both.
-
-invoentory tab should be eble to edit ALL its elements
 
 modification popuots should not have an already set value of 0
 ## hard
@@ -82,6 +74,8 @@ treasures that are already in the gear of a hero should not be removed when i tr
 Reload flicker came from the async providers returning to their loading states on every hero update. I removed the nested `AsyncValue.when` blocks and now we reuse the latest progression/context values via `valueOrNull`, so the gauge keeps showing stale data while Riverpod refreshes in the background. If both values are still null (first load) the section stays hidden just like before. This should eliminate the twitching when only the resource value changes.
 
 strenght tab lack the option to save choises which leads to lost picks
+
+some features need their abilities: covenant of the hearth
 
 ## hero creation testing
 

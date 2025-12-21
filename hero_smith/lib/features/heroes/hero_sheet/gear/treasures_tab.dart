@@ -25,27 +25,27 @@ class TreasuresTab extends ConsumerStatefulWidget {
 
 class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   List<model.Component> _allTreasures = [];
-  List<DowntimeEntry> _allEnhancements = [];
+  List<DowntimeEntry> _allImbuements = [];
   bool _isLoadingTreasures = true;
   String? _error;
   StreamSubscription<List<String>>? _treasureIdsSubscription;
-  StreamSubscription<List<String>>? _enhancementIdsSubscription;
+  StreamSubscription<List<String>>? _imbuementIdsSubscription;
   List<String> _heroTreasureIds = [];
-  List<String> _heroEnhancementIds = [];
+  List<String> _heroImbuementIds = [];
 
   @override
   void initState() {
     super.initState();
     _loadAllTreasures();
-    _loadAllEnhancements();
+    _loadAllImbuements();
     _watchHeroTreasureIds();
-    _watchHeroEnhancementIds();
+    _watchHeroImbuementIds();
   }
 
   @override
   void dispose() {
     _treasureIdsSubscription?.cancel();
-    _enhancementIdsSubscription?.cancel();
+    _imbuementIdsSubscription?.cancel();
     super.dispose();
   }
 
@@ -70,34 +70,34 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     );
   }
 
-  void _watchHeroEnhancementIds() {
+  void _watchHeroImbuementIds() {
     final db = ref.read(appDatabaseProvider);
-    _enhancementIdsSubscription =
-        db.watchHeroComponentIds(widget.heroId, 'enhancement').listen(
+    _imbuementIdsSubscription =
+        db.watchHeroComponentIds(widget.heroId, 'imbuement').listen(
       (ids) {
         if (mounted) {
           setState(() {
-            _heroEnhancementIds = ids;
+            _heroImbuementIds = ids;
           });
         }
       },
       onError: (e) {
-        // Ignore enhancement errors - they're optional
+        // Ignore imbuement errors - they're optional
       },
     );
   }
 
-  Future<void> _loadAllEnhancements() async {
+  Future<void> _loadAllImbuements() async {
     try {
       final dataSource = DowntimeDataSource();
-      final enhancements = await dataSource.loadEnhancements();
+      final imbuements = await dataSource.loadImbuements();
       if (mounted) {
         setState(() {
-          _allEnhancements = enhancements;
+          _allImbuements = imbuements;
         });
       }
     } catch (e) {
-      // Ignore enhancement loading errors - they're optional
+      // Ignore imbuement loading errors - they're optional
     }
   }
 
@@ -196,17 +196,57 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   void _showAddTreasureDialog() {
     final availableTreasures =
         _allTreasures.where((t) => !_heroTreasureIds.contains(t.id)).toList();
+    final availableImbuements =
+        _allImbuements.where((i) => !_heroImbuementIds.contains(i.id)).toList();
 
     showDialog(
       context: context,
       builder: (context) => AddTreasureDialog(
         availableTreasures: availableTreasures,
+        availableImbuements: availableImbuements,
         onTreasureSelected: (treasureId) {
           _addTreasure(treasureId);
           Navigator.of(context).pop();
         },
+        onImbuementSelected: (imbuementId) {
+          _addImbuement(imbuementId);
+          Navigator.of(context).pop();
+        },
       ),
     );
+  }
+
+  Future<void> _addImbuement(String imbuementId) async {
+    if (_heroImbuementIds.contains(imbuementId)) return;
+
+    final db = ref.read(appDatabaseProvider);
+    final updated = [..._heroImbuementIds, imbuementId];
+
+    try {
+      await db.setHeroComponentIds(
+        heroId: widget.heroId,
+        category: 'imbuement',
+        componentIds: updated,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Imbuement added'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add imbuement: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -238,9 +278,9 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     final heroTreasures =
         _allTreasures.where((t) => _heroTreasureIds.contains(t.id)).toList();
 
-    // Get hero's enhancements
-    final heroEnhancements =
-        _allEnhancements.where((e) => _heroEnhancementIds.contains(e.id)).toList();
+    // Get hero's imbuements
+    final heroImbuements =
+        _allImbuements.where((e) => _heroImbuementIds.contains(e.id)).toList();
 
     // Group treasures by type
     final groupedTreasures = <String, List<model.Component>>{};
@@ -249,8 +289,8 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       groupedTreasures.putIfAbsent(groupKey, () => []).add(treasure);
     }
 
-    // Total count includes both treasures and enhancements
-    final totalCount = heroTreasures.length + heroEnhancements.length;
+    // Total count includes both treasures and imbuements
+    final totalCount = heroTreasures.length + heroImbuements.length;
 
     return Column(
       children: [
@@ -259,7 +299,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
           child: Row(
             children: [
               Text(
-                'Treasures & Enhancements ($totalCount)',
+                'Treasures & Imbuements ($totalCount)',
                 style: AppTextStyles.subtitle,
               ),
               const Spacer(),
@@ -272,10 +312,10 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
           ),
         ),
         Expanded(
-          child: (heroTreasures.isEmpty && heroEnhancements.isEmpty)
+          child: (heroTreasures.isEmpty && heroImbuements.isEmpty)
               ? const Center(
                   child: Text(
-                    'No treasures or enhancements yet.\nTap "Add" to begin or complete a downtime project.',
+                    'No treasures or imbuements yet.\nTap "Add" to begin or complete a downtime project.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey),
                   ),
@@ -283,12 +323,12 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
               : ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    // Enhancements section (if any)
-                    if (heroEnhancements.isNotEmpty) ...[
+                    // Imbuements section (if any)
+                    if (heroImbuements.isNotEmpty) ...[
                       Padding(
                         padding: const EdgeInsets.only(top: 16, bottom: 8),
                         child: Text(
-                          'Item Enhancements',
+                          'Item Imbuements',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -298,12 +338,12 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                               ),
                         ),
                       ),
-                      ...heroEnhancements.map((enhancement) {
+                      ...heroImbuements.map((imbuement) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Stack(
                             children: [
-                              EnhancementCard(enhancement: enhancement),
+                              ImbuementCard(imbuement: imbuement),
                               Positioned(
                                 top: 8,
                                 right: 8,
@@ -311,7 +351,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                                   icon: const Icon(Icons.delete,
                                       color: Colors.red),
                                   onPressed: () =>
-                                      _removeEnhancement(enhancement.id),
+                                      _removeImbuement(imbuement.id),
                                   style: IconButton.styleFrom(
                                     backgroundColor:
                                         Colors.white.withOpacity(0.9),
@@ -381,21 +421,21 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     );
   }
 
-  Future<void> _removeEnhancement(String enhancementId) async {
+  Future<void> _removeImbuement(String imbuementId) async {
     final db = ref.read(appDatabaseProvider);
-    final updated = _heroEnhancementIds.where((id) => id != enhancementId).toList();
+    final updated = _heroImbuementIds.where((id) => id != imbuementId).toList();
 
     try {
       await db.setHeroComponentIds(
         heroId: widget.heroId,
-        category: 'enhancement',
+        category: 'imbuement',
         componentIds: updated,
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Enhancement removed'),
+            content: Text('Imbuement removed'),
             duration: Duration(seconds: 2),
           ),
         );
@@ -404,7 +444,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to remove enhancement: $e'),
+            content: Text('Failed to remove imbuement: $e'),
             backgroundColor: Colors.red,
           ),
         );

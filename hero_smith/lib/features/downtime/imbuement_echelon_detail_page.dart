@@ -3,15 +3,15 @@ import '../../core/models/downtime.dart';
 import '../../core/data/downtime_data_source.dart';
 import '../../widgets/shared/expandable_card.dart';
 
-class EnhancementEchelonDetailPage extends StatelessWidget {
+class ImbuementEchelonDetailPage extends StatelessWidget {
   final int echelonLevel;
-  final Map<String, List<DowntimeEntry>> enhancementsByType;
+  final Map<String, List<DowntimeEntry>> imbuementsByType;
   final DowntimeDataSource dataSource;
 
-  const EnhancementEchelonDetailPage({
+  const ImbuementEchelonDetailPage({
     super.key,
     required this.echelonLevel,
-    required this.enhancementsByType,
+    required this.imbuementsByType,
     required this.dataSource,
   });
 
@@ -30,8 +30,8 @@ class EnhancementEchelonDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedTypes = enhancementsByType.keys.toList()..sort();
-    final totalCount = enhancementsByType.values.fold(0, (sum, list) => sum + list.length);
+    final sortedTypes = imbuementsByType.keys.toList()..sort();
+    final totalCount = imbuementsByType.values.fold(0, (sum, list) => sum + list.length);
 
     return DefaultTabController(
       length: sortedTypes.length,
@@ -72,7 +72,7 @@ class EnhancementEchelonDetailPage extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        '$totalCount enhancements across ${enhancementsByType.length} categories',
+                        '$totalCount imbuements across ${imbuementsByType.length} categories',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w500,
@@ -86,10 +86,10 @@ class EnhancementEchelonDetailPage extends StatelessWidget {
               Expanded(
                 child: TabBarView(
                   children: sortedTypes.map((type) {
-                    final enhancements = enhancementsByType[type]!;
-                    return _EnhancementTypeTab(
+                    final imbuements = imbuementsByType[type]!;
+                    return _ImbuementTypeTab(
                       type: type,
-                      enhancements: enhancements,
+                      imbuements: imbuements,
                       dataSource: dataSource,
                     );
                   }).toList(),
@@ -104,11 +104,11 @@ class EnhancementEchelonDetailPage extends StatelessWidget {
 
   IconData _getTypeIcon(String type) {
     switch (type) {
-      case 'armor_enhancement':
+      case 'armor_imbuement':
         return Icons.shield;
-      case 'weapon_enhancement':
+      case 'weapon_imbuement':
         return Icons.gavel;
-      case 'implement_enhancement':
+      case 'implement_imbuement':
         return Icons.auto_fix_high;
       default:
         return Icons.build;
@@ -117,36 +117,36 @@ class EnhancementEchelonDetailPage extends StatelessWidget {
 
   String _getShortTypeName(String type) {
     switch (type) {
-      case 'armor_enhancement':
+      case 'armor_imbuement':
         return 'Armor';
-      case 'weapon_enhancement':
+      case 'weapon_imbuement':
         return 'Weapon';
-      case 'implement_enhancement':
+      case 'implement_imbuement':
         return 'Implement';
       default:
-        return type.replaceAll('_enhancement', '').toUpperCase();
+        return type.replaceAll('_imbuement', '').toUpperCase();
     }
   }
 }
 
-class _EnhancementTypeTab extends StatelessWidget {
+class _ImbuementTypeTab extends StatelessWidget {
   final String type;
-  final List<DowntimeEntry> enhancements;
+  final List<DowntimeEntry> imbuements;
   final DowntimeDataSource dataSource;
 
-  const _EnhancementTypeTab({
+  const _ImbuementTypeTab({
     required this.type,
-    required this.enhancements,
+    required this.imbuements,
     required this.dataSource,
   });
 
   Color _getTypeColor(String type) {
     switch (type) {
-      case 'armor_enhancement':
+      case 'armor_imbuement':
         return Colors.indigo; // Blue
-      case 'weapon_enhancement':
+      case 'weapon_imbuement':
         return Colors.deepOrange; // Reddish
-      case 'implement_enhancement':
+      case 'implement_imbuement':
         return Colors.teal; // Greenish
       default:
         return Colors.grey;
@@ -162,10 +162,10 @@ class _EnhancementTypeTab extends StatelessWidget {
       ),
       child: ListView.separated(
         padding: const EdgeInsets.all(8),
-        itemCount: enhancements.length,
+        itemCount: imbuements.length,
         separatorBuilder: (context, index) => const SizedBox(height: 8),
         itemBuilder: (context, index) {
-          final enhancement = enhancements[index];
+          final imbuement = imbuements[index];
           return Card(
             elevation: 2,
             shape: RoundedRectangleBorder(
@@ -176,11 +176,11 @@ class _EnhancementTypeTab extends StatelessWidget {
               ),
             ),
             child: ExpandableCard(
-              title: enhancement.name.replaceAll(
-                  ' - ${dataSource.getLevelName((enhancement.raw['level'] as int? ?? 1))}-Level ${dataSource.getEnhancementTypeName(enhancement.type).replaceAll('s', '')}',
+              title: imbuement.name.replaceAll(
+                  ' - ${dataSource.getLevelName((imbuement.raw['level'] as int? ?? 1))}-Level ${dataSource.getImbuementTypeName(imbuement.type).replaceAll('s', '')}',
                   ''),
               borderColor: _getTypeColor(type),
-              expandedContent: _EntryDetails(entry: enhancement),
+              expandedContent: _EntryDetails(entry: imbuement),
             ),
           );
         },
@@ -196,7 +196,7 @@ class _EntryDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final desc = (entry.raw['description'] ?? '').toString();
-    final enhancement = entry.raw['enhancement']?.toString() ?? '';
+    final imbuement = entry.raw['imbuement']?.toString() ?? '';
     final cost = entry.raw['cost']?.toString() ?? '';
     final projectGoal = entry.raw['project_goal'];
     final prerequisites = entry.raw['prerequisites'] as Map<String, dynamic>?;
@@ -215,7 +215,7 @@ class _EntryDetails extends StatelessWidget {
             const SizedBox(height: 12),
           ],
           
-          if (enhancement.isNotEmpty) ...[
+          if (imbuement.isNotEmpty) ...[
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -229,14 +229,14 @@ class _EntryDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Enhancement Effect',
+                    'Imbuement Effect',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    enhancement,
+                    imbuement,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

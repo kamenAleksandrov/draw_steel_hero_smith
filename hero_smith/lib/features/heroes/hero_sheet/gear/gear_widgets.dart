@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import '../../../../core/models/downtime.dart';
 import 'gear_utils.dart';
 
-/// Card displaying an item enhancement with expandable details.
-class EnhancementCard extends StatefulWidget {
-  final DowntimeEntry enhancement;
+/// Card displaying an item imbuement with expandable details.
+class ImbuementCard extends StatefulWidget {
+  final DowntimeEntry imbuement;
 
-  const EnhancementCard({super.key, required this.enhancement});
+  const ImbuementCard({super.key, required this.imbuement});
 
   @override
-  State<EnhancementCard> createState() => _EnhancementCardState();
+  State<ImbuementCard> createState() => _ImbuementCardState();
 }
 
-class _EnhancementCardState extends State<EnhancementCard>
+class _ImbuementCardState extends State<ImbuementCard>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
   late AnimationController _animationController;
@@ -49,30 +49,30 @@ class _EnhancementCardState extends State<EnhancementCard>
     });
   }
 
-  String _getTypeDisplay(String enhancementType) {
-    switch (enhancementType) {
-      case 'armor_enhancement':
+  String _getTypeDisplay(String imbuementType) {
+    switch (imbuementType) {
+      case 'armor_imbuement':
         return 'Armor';
-      case 'weapon_enhancement':
+      case 'weapon_imbuement':
         return 'Weapon';
-      case 'implement_enhancement':
+      case 'implement_imbuement':
         return 'Implement';
-      case 'shield_enhancement':
+      case 'shield_imbuement':
         return 'Shield';
       default:
-        return enhancementType.replaceAll('_', ' ');
+        return imbuementType.replaceAll('_', ' ');
     }
   }
 
-  IconData _getTypeIcon(String enhancementType) {
-    switch (enhancementType) {
-      case 'armor_enhancement':
+  IconData _getTypeIcon(String imbuementType) {
+    switch (imbuementType) {
+      case 'armor_imbuement':
         return Icons.shield;
-      case 'weapon_enhancement':
+      case 'weapon_imbuement':
         return Icons.sports_martial_arts;
-      case 'implement_enhancement':
+      case 'implement_imbuement':
         return Icons.auto_awesome;
-      case 'shield_enhancement':
+      case 'shield_imbuement':
         return Icons.security;
       default:
         return Icons.auto_fix_high;
@@ -82,11 +82,11 @@ class _EnhancementCardState extends State<EnhancementCard>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final enhancementType = widget.enhancement.raw['type'] as String? ?? '';
-    final level = widget.enhancement.raw['level'] as int?;
-    final description = widget.enhancement.raw['description'] as String? ?? '';
-    final typeDisplay = _getTypeDisplay(enhancementType);
-    final typeIcon = _getTypeIcon(enhancementType);
+    final imbuementType = widget.imbuement.raw['type'] as String? ?? '';
+    final level = widget.imbuement.raw['level'] as int?;
+    final description = widget.imbuement.raw['description'] as String? ?? '';
+    final typeDisplay = _getTypeDisplay(imbuementType);
+    final typeIcon = _getTypeIcon(imbuementType);
 
     // Use orange scheme matching treasure card styling exactly
     const primaryColor = Colors.orange;
@@ -133,7 +133,7 @@ class _EnhancementCardState extends State<EnhancementCard>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      widget.enhancement.name,
+                      widget.imbuement.name,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: theme.colorScheme.onSurface,
