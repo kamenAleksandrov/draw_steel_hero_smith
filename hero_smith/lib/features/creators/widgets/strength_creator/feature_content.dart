@@ -229,7 +229,15 @@ class _FeatureContent extends StatelessWidget {
   }
 
   _OptionFilterResult _applyDomainFilter(List<Map<String, dynamic>> currentOptions) {
-    if (widget.selectedDomainSlugs.isEmpty) {
+    final effectiveDomainSlugs =
+        ClassFeatureDataService.remainingConduitDomainSlugsForFeature(
+      featureId: feature.id,
+      selectedDomainSlugs: widget.selectedDomainSlugs,
+      selections: widget.selectedOptions,
+      featureDetailsById: widget.featureDetailsById,
+    );
+
+    if (effectiveDomainSlugs.isEmpty) {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
@@ -241,7 +249,7 @@ class _FeatureContent extends StatelessWidget {
     final allowedKeys = ClassFeatureDataService.domainOptionKeysFor(
       widget.featureDetailsById,
       feature.id,
-      widget.selectedDomainSlugs,
+      effectiveDomainSlugs,
     );
 
     if (allowedKeys.isEmpty) {
@@ -264,7 +272,8 @@ class _FeatureContent extends StatelessWidget {
       );
     }
 
-    final allowEditing = widget.selectedDomainSlugs.length > 1 && filtered.length > 1;
+    final allowEditing =
+        effectiveDomainSlugs.length > 1 && filtered.length > 1;
     return _OptionFilterResult(
       options: filtered,
       allowEditing: allowEditing,

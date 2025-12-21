@@ -54,7 +54,8 @@ class StartingAbilitiesService {
 
     final mapCopy = Map<String, dynamic>.from(grantMap);
     final includePreviousLevels =
-        mapCopy.remove('grant_previous_levels') == true;
+        mapCopy.remove('grant_previous_levels') == true ||
+        mapCopy.remove('grants_previous_levels') == true;
 
     final allowances = <AbilityAllowance>[];
     var allowanceIndex = 0;

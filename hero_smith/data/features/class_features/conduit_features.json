@@ -168,7 +168,7 @@
       {
         "domain": "Knowledge",
         "piety": "You gain 2 piety the first time in an encounter that the Director spends Malice (see Draw Steel: Monsters).",
-        "prayer_effect": " Choose up to five allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 1 surge."
+        "prayer_effect": "Choose up to five allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 1 surge."
       },
       {
         "domain": "Life",
@@ -178,7 +178,7 @@
       {
         "domain": "Love",
         "piety": "You gain 2 piety the first time in an encounter that you or any ally within 10 squares uses the Aid Attack maneuver or an ability that targets an ally.",
-        "prayer_effect": " Each ally within 10 squares of you gains temporary Stamina equal to two times your Intuition score."
+        "prayer_effect": "Each ally within 10 squares of you gains temporary Stamina equal to two times your Intuition score."
       },
       {
         "domain": "Nature",
@@ -188,7 +188,7 @@
       {
         "domain": "Protection",
         "piety": "You gain 2 piety the first time in an encounter that you or any ally within 10 squares gains temporary Stamina, or uses a triggered action to reduce incoming damage or to impose a bane or double bane on an enemy’s power roll.",
-        "prayer_effect": " One ally within 10 squares gains temporary Stamina equal to four times your Intuition score."
+        "prayer_effect": "One ally within 10 squares gains temporary Stamina equal to four times your Intuition score."
       },
       {
         "domain": "Storm",
@@ -226,55 +226,82 @@
     "name": "Domain Feature",
     "class": "conduit",
     "level": 2,
-    "description": "You gain the 1st-level domain feature and ability to choose a skill for the domain you selected at 1st level but whose domain feature you didn't take at that level.",
+    "description": "You gain the 1st-level domain feature and ability to choose a skill for the domain you selected at 1st level but whose domain feature you didn’t take at that level (see 1st-Level Domain Feature)",
     "grants": [
       {
         "domain": "Creation",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares uses an area ability.\nPrayer Effect: You summon the forces of creation and create a wall of stone within 10 squares whose size is 5 + your Intuition score. The wall lasts until the end of the encounter."
+        "name": "Hands of the Maker",
+        "skill_group": "Crafting",
+        "description": "You have the following ability.",
+        "ability": "Hands of the Maker"
       },
       {
         "domain": "Death",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares who isn’t a minion is reduced to 0 Stamina, or the first time in an encounter that a solo creature within 10 squares becomes winded.\nPrayer Effect: You inflict a deadly curse on up to two enemies within 10 squares of you. Each target takes corruption damage equal to twice your Intuition score."
+        "name": "Grave Speech",
+        "skill_group": "Lore",
+        "description": "You have the following ability.",
+        "ability": "Grave Speech"
       },
       {
         "domain": "Fate",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an ally within 10 squares obtains a tier 3 outcome on a power roll, or an enemy within 10 squares obtains a tier 1 outcome on a power roll.\nPrayer Effect: You call on the forces of fate to create a reliable future. Choose a creature within 10 squares. That creature automatically obtains a tier 1 or tier 3 outcome (your choice) on their next power roll made before the end of the encounter."
+        "name": "Oracular Visions",
+        "skill_group": "Lore",
+        "description": "Your deity rewards you with hazy visions of things to come. Each time you earn 1 or more Victories, you earn an equal number of fate points. Whenever you or a creature within 10 squares makes a test, you can spend 1 fate point to tap into a vision of the outcome, granting that creature an edge on the test. You lose any remaining fate points when you finish a respite."
       },
       {
         "domain": "Knowledge",
-        "description": "Piety: You gain 2 piety the first time in an encounter that the Director spends Malice (see Draw Steel: Monsters).\nPrayer Effect: Choose up to five allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 1 surge."
+        "name": "Blessing of Comprehension",
+        "skill_group": "Lore",
+        "description": "You can interpret diagrams and charts even if you don't understand the language associated with them. You are considered fluent in all languages for the purpose of understanding the project source for any research or crafting project (see Chapter 12: Downtime Projects)."
       },
       {
         "domain": "Life",
-        "description": "Piety: You gain 2 piety the first time in an encounter that a creature within 10 squares regains Stamina.\nPrayer Effect: Choose yourself or one ally within 10 squares. That character can spend a Recovery, can end one effect on them that is ended by a saving throw or that ends at the end of their turn, or can stand up if they are prone. Alternatively, you or one ally within 10 squares gains temporary Stamina equal to two times your Intuition score."
+        "name": "Revitalizing Ritual",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. The chosen character gains a bonus to their recovery value equal to your level that lasts until you finish another respite."
       },
       {
         "domain": "Love",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or any ally within 10 squares uses the Aid Attack maneuver or an ability that targets an ally.\nPrayer Effect: Each ally within 10 squares of you gains temporary Stamina equal to two times your Intuition score."
+        "name": "Blessing of Compassion",
+        "skill_group": "Interpersonal",
+        "description": "You exude a magic presence that can soothe those willing to socially engage with you. You gain an edge on any test made to assist another creature with a test.\n\nAdditionally, when you are present at the start of a negotiation, one NPC of your choice has their patience increased by 1 (to a maximum of 5), and the first test made to influence them gains an edge."
       },
       {
         "domain": "Nature",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes acid, cold, fire, lightning, poison, or sonic damage.\nPrayer Effect: Vines whip up from the floor or ground within 10 squares, wrapping around a number of creatures equal to your Intuition score. You can slide each creature up to a number of squares equal to your Intuition score. The vines then fade away."
+        "name": "Faithful Friend",
+        "skill_group": "Exploration",
+        "description": "You have the following ability.",
+        "ability": "Faithful Friend"
       },
       {
         "domain": "Protection",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or any ally within 10 squares gains temporary Stamina, or uses a triggered action to reduce incoming damage or to impose a bane or double bane on an enemy’s power roll.\nPrayer Effect: One ally within 10 squares gains temporary Stamina equal to four times your Intuition score."
+        "name": "Protective Circle",
+        "skill_group": "Exploration",
+        "description": "You can spend 10 uninterrupted minutes to create a protective circle on the ground large enough to hold one size 1 creature. The circle lasts for 24 hours, until you create another, or until you dismiss it (no action required). Only creatures you designate at the time of drawing the circle can enter and exit the area. While in the protective circle, a creature can't be targeted by strikes."
       },
       {
         "domain": "Storm",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an enemy within 10 squares is force moved.\nPrayer Effect: Each enemy in a 3 cube within 10 squares takes lightning damage equal to twice your Intuition score."
+        "name": "Blessing of Fortunate Weather",
+        "skill_group": "Exploration",
+        "description": "Each time you finish a respite, you can decide the weather conditions within 100 squares. Until you finish another respite, the weather conditions you establish follow you through any mundane outdoor locations. Choose one of the following types of weather, each of which grants a benefit to you and your allies:\n\nYou and your allies gain an edge on tests that use the Search or Navigate skills.\n\nYou and your allies gain an edge on tests that use the Hide skill. **Overcast:** You and your allies gain an edge on tests that use the Endurance skill.\n\nWhen the ground is muddy or snowy, you and your allies gain an edge on tests that use the Track skill.\nIf you are in the same area as a creature using this or a similar feature who has chosen a different weather effect, the features negate each other where their areas overlap."
       },
       {
         "domain": "Sun",
-        "description": "Piety: You gain 2 piety the first time in an encounter that an enemy within 10 squares takes fire or holy damage.\nPrayer Effect: One enemy within 10 squares takes fire damage equal to three times your Intuition score."
+        "name": "Inner Light",
+        "skill_group": "Lore",
+        "description": "Each time you finish a respite, you can choose yourself or one ally who is also finishing a respite to gain the benefit of a divine ritual. You place a ray of morning light into the chosen character's soul, granting them a +1 bonus to saving throws that lasts until you finish another respite."
       },
       {
         "domain": "Trickery",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes the Aid Attack or Hide maneuver.\nPrayer Effect: You slide one creature within 10 squares of you up to a number of squares equal to 5 + your conduit level."
+        "name": "Inspired Deception",
+        "skill_group": "Intrigue",
+        "description": "The gods favor your thievery with magic. Whenever you make a test that uses a skill you have from the intrigue skill group, you can use Intuition on the test instead of another characteristic."
       },
       {
         "domain": "War",
-        "description": "Piety: You gain 2 piety the first time in an encounter that you or a creature within 10 squares takes damage greater than 10 + your level in a single turn.\nPrayer Effect: Choose up to three allies within 10 squares of you, or choose yourself instead of one ally. Each target gains 2 surges."
+        "name": "Sanctified Weapon",
+        "skill_group": "Exploration",
+        "description": "As a respite activity, you can bless a weapon. Any creature who wields the weapon gains a +1 bonus to rolled damage with abilities that use the weapon. This benefit lasts until you finish another respite."
       }
     ]
   },

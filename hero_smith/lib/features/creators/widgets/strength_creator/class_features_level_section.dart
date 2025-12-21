@@ -76,21 +76,21 @@ class _LevelSectionState extends State<_LevelSection>
               ),
               Padding(
                 padding: const EdgeInsets.all(12),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.features.length,
-                  itemBuilder: (context, index) {
-                    final feature = widget.features[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: index < widget.features.length - 1 ? 12 : 0),
-                      child: _FeatureCard(
-                        key: ValueKey(feature.id),
-                        feature: feature,
-                        widget: widget.widget,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var index = 0; index < widget.features.length; index++)
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: index < widget.features.length - 1 ? 12 : 0,
+                        ),
+                        child: _FeatureCard(
+                          key: ValueKey(widget.features[index].id),
+                          feature: widget.features[index],
+                          widget: widget.widget,
+                        ),
                       ),
-                    );
-                  },
+                  ],
                 ),
               ),
             ],

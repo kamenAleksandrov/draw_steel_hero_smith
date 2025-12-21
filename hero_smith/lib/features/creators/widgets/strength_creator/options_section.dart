@@ -303,7 +303,7 @@ class _InfoMessage extends StatelessWidget {
   }
 }
 
-class _AutoAppliedContent extends StatefulWidget {
+class _AutoAppliedContent extends StatelessWidget {
   const _AutoAppliedContent({
     required this.option,
     required this.widget,
@@ -315,143 +315,12 @@ class _AutoAppliedContent extends StatefulWidget {
   final String featureId;
 
   @override
-  State<_AutoAppliedContent> createState() => _AutoAppliedContentState();
-}
-
-class _AutoAppliedContentState extends State<_AutoAppliedContent> {
-  final SkillDataService _skillDataService = SkillDataService();
-  List<SkillOption>? _allSkills;
-  bool _isLoadingSkills = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSkillsIfNeeded();
-  }
-
-  void _loadSkillsIfNeeded() async {
-    final skillGroup = widget.option['skill_group']?.toString().trim();
-    if (skillGroup == null || skillGroup.isEmpty) return;
-    
-    setState(() {
-      _isLoadingSkills = true;
-    });
-    
-    try {
-      final skills = await _skillDataService.loadSkills();
-      if (mounted) {
-        setState(() {
-          _allSkills = skills;
-          _isLoadingSkills = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoadingSkills = false;
-        });
-      }
-    }
-  }
-
-  /// Get a unique key for this grant within the feature
-  String _getGrantKey() {
-    // Use domain/subclass/name as the unique key for this grant
-    final domain = widget.option['domain']?.toString().trim();
-    final subclass = widget.option['subclass']?.toString().trim();
-    final name = widget.option['name']?.toString().trim();
-    return domain ?? subclass ?? name ?? 'default';
-  }
-
-  String? _getCurrentSkillId() {
-    final featureSelections = widget.widget.skillGroupSelections[widget.featureId];
-    if (featureSelections == null) return null;
-    return featureSelections[_getGrantKey()];
-  }
-
-  List<SkillOption> _getFilteredSkills() {
-    if (_allSkills == null) return [];
-    
-    final skillGroup = widget.option['skill_group']?.toString().trim();
-    if (skillGroup == null || skillGroup.isEmpty) return [];
-    
-    final normalizedGroup = skillGroup.toLowerCase();
-    final currentSkillId = _getCurrentSkillId();
-    
-    // Get all reserved skill IDs (from other features and grants)
-    final excludedIds = <String>{
-      ...widget.widget.reservedSkillIds,
-    };
-    
-    // Also exclude skills selected in other grants within this widget
-    for (final entry in widget.widget.skillGroupSelections.entries) {
-      for (final skillEntry in entry.value.entries) {
-        // Don't exclude our own current selection
-        if (entry.key == widget.featureId && skillEntry.key == _getGrantKey()) {
-          continue;
-        }
-        if (skillEntry.value.isNotEmpty) {
-          excludedIds.add(skillEntry.value);
-        }
-      }
-    }
-    
-    return _allSkills!.where((skill) {
-      // Filter by group
-      if (skill.group.toLowerCase() != normalizedGroup) return false;
-      
-      // Check if blocked (but allow current selection)
-      if (ComponentSelectionGuard.isBlocked(
-        skill.id,
-        excludedIds,
-        currentId: currentSkillId,
-      )) {
-        return false;
-      }
-      
-      return true;
-    }).toList()..sort((a, b) => a.name.compareTo(b.name));
-  }
-
-  Future<void> _showSkillPicker() async {
-    final filteredSkills = _getFilteredSkills();
-    final currentSkillId = _getCurrentSkillId();
-    
-    final options = <_SearchOption<String?>>[
-      const _SearchOption<String?>(label: 'Choose skill', value: null),
-      ...filteredSkills.map(
-        (skill) => _SearchOption<String?>(
-          label: skill.name,
-          value: skill.id,
-          subtitle: skill.group,
-        ),
-      ),
-    ];
-    
-    final result = await _showSearchablePicker<String?>(
-      context: context,
-      title: 'Select Skill',
-      options: options,
-      selected: currentSkillId,
-    );
-    
-    if (result == null) return;
-    
-    print('[_AutoAppliedContentState] Calling onSkillGroupSelectionChanged: featureId=${widget.featureId}, grantKey=${_getGrantKey()}, skillId=${result.value}');
-    widget.widget.onSkillGroupSelectionChanged?.call(
-      widget.featureId,
-      _getGrantKey(),
-      result.value,
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final description = widget.option['description']?.toString().trim();
-    final ability = _resolveAbility();
-    final skillGroup = widget.option['skill_group']?.toString().trim();
+    final abilities = _resolveAbilities();
+    final textSections = _extractOptionTextSections(option);
+    final skillGroup = option['skill_group']?.toString().trim();
     final hasSkillGroup = skillGroup != null && skillGroup.isNotEmpty;
 
     return Container(
@@ -479,40 +348,245 @@ class _AutoAppliedContentState extends State<_AutoAppliedContent> {
               ),
             ],
           ),
-          if (description?.isNotEmpty ?? false) ...[
+          if (textSections.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(
-              description!,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
-              ),
+            _OptionTextContent(
+              sections: textSections,
+              textColor: scheme.onSurfaceVariant,
+              titleColor: scheme.primary,
             ),
           ],
-          if (ability != null) ...[
-            const SizedBox(height: 12),
-            AbilityExpandableItem(
-              component: _abilityMapToComponent(ability),
-            ),
+          if (abilities.isNotEmpty) ...[
+            for (final ability in abilities) ...[
+              const SizedBox(height: 12),
+              AbilityExpandableItem(
+                component: _abilityMapToComponent(ability),
+              ),
+            ],
           ],
           // Skill group picker section
           if (hasSkillGroup) ...[
             const SizedBox(height: 12),
-            _buildSkillGroupPicker(context, skillGroup),
+            _SkillGroupPicker(
+              option: option,
+              featureId: featureId,
+              featuresWidget: widget,
+            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildSkillGroupPicker(BuildContext context, String skillGroup) {
+  /// Resolves abilities from the option - handles both single ability strings
+  /// and arrays of ability names (e.g., ["Moonlight Sonata", "Radical Fantasia"])
+  List<Map<String, dynamic>> _resolveAbilities() {
+    final abilities = <Map<String, dynamic>>[];
+    
+    // Check for ability_id first (single ID)
+    String? id = option['ability_id']?.toString().trim();
+    if (id != null && id.isNotEmpty) {
+      final ability = widget.abilityDetailsById[id];
+      if (ability != null) {
+        abilities.add(ability);
+        return abilities;
+      }
+      final slugId = ClassFeatureDataService.slugify(id);
+      final slugAbility = widget.abilityDetailsById[slugId];
+      if (slugAbility != null) {
+        abilities.add(slugAbility);
+        return abilities;
+      }
+    }
+
+    // Check for ability field - can be a string or a list
+    final abilityField = option['ability'];
+    if (abilityField == null) return abilities;
+    
+    // Handle array of ability names
+    if (abilityField is List) {
+      for (final item in abilityField) {
+        final abilityName = item?.toString().trim();
+        if (abilityName != null && abilityName.isNotEmpty) {
+          final resolved = _resolveAbilityByName(abilityName);
+          if (resolved != null) {
+            abilities.add(resolved);
+          }
+        }
+      }
+      return abilities;
+    }
+    
+    // Handle single ability name string
+    final abilityName = abilityField.toString().trim();
+    if (abilityName.isNotEmpty) {
+      final resolved = _resolveAbilityByName(abilityName);
+      if (resolved != null) {
+        abilities.add(resolved);
+      }
+    }
+    
+    return abilities;
+  }
+  
+  Map<String, dynamic>? _resolveAbilityByName(String abilityName) {
+    final slug = ClassFeatureDataService.slugify(abilityName);
+    final resolvedId = widget.abilityIdByName[slug] ?? slug;
+    return widget.abilityDetailsById[resolvedId];
+  }
+
+  Component _abilityMapToComponent(Map<String, dynamic> abilityData) {
+    return Component(
+      id: abilityData['id']?.toString() ?? abilityData['resolved_id']?.toString() ?? '',
+      type: abilityData['type']?.toString() ?? 'ability',
+      name: abilityData['name']?.toString() ?? '',
+      data: abilityData,
+      source: 'seed',
+    );
+  }
+}
+
+class _SkillGroupPicker extends StatefulWidget {
+  const _SkillGroupPicker({
+    required this.option,
+    required this.featureId,
+    required this.featuresWidget,
+  });
+
+  final Map<String, dynamic> option;
+  final String featureId;
+  final ClassFeaturesWidget featuresWidget;
+
+  @override
+  State<_SkillGroupPicker> createState() => _SkillGroupPickerState();
+}
+
+class _SkillGroupPickerState extends State<_SkillGroupPicker> {
+  final SkillDataService _skillDataService = SkillDataService();
+  List<SkillOption>? _allSkills;
+  bool _isLoadingSkills = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkillsIfNeeded();
+  }
+
+  void _loadSkillsIfNeeded() async {
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    if (skillGroup == null || skillGroup.isEmpty) return;
+
+    setState(() {
+      _isLoadingSkills = true;
+    });
+
+    try {
+      final skills = await _skillDataService.loadSkills();
+      if (mounted) {
+        setState(() {
+          _allSkills = skills;
+          _isLoadingSkills = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoadingSkills = false;
+        });
+      }
+    }
+  }
+
+  String get _grantKey => ClassFeatureDataService.optionGrantKey(widget.option);
+
+  String? _getCurrentSkillId() {
+    final featureSelections =
+        widget.featuresWidget.skillGroupSelections[widget.featureId];
+    if (featureSelections == null) return null;
+    return featureSelections[_grantKey];
+  }
+
+  List<SkillOption> _getFilteredSkills() {
+    if (_allSkills == null) return [];
+
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    if (skillGroup == null || skillGroup.isEmpty) return [];
+
+    final normalizedGroup = skillGroup.toLowerCase();
+    final currentSkillId = _getCurrentSkillId();
+
+    final excludedIds = <String>{
+      ...widget.featuresWidget.reservedSkillIds,
+    };
+
+    for (final entry in widget.featuresWidget.skillGroupSelections.entries) {
+      for (final skillEntry in entry.value.entries) {
+        if (entry.key == widget.featureId && skillEntry.key == _grantKey) {
+          continue;
+        }
+        if (skillEntry.value.isNotEmpty) {
+          excludedIds.add(skillEntry.value);
+        }
+      }
+    }
+
+    return _allSkills!.where((skill) {
+      if (skill.group.toLowerCase() != normalizedGroup) return false;
+      if (ComponentSelectionGuard.isBlocked(
+        skill.id,
+        excludedIds,
+        currentId: currentSkillId,
+      )) {
+        return false;
+      }
+      return true;
+    }).toList()..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  Future<void> _showSkillPicker() async {
+    final filteredSkills = _getFilteredSkills();
+    final currentSkillId = _getCurrentSkillId();
+
+    final options = <_SearchOption<String?>>[
+      const _SearchOption<String?>(label: 'Choose skill', value: null),
+      ...filteredSkills.map(
+        (skill) => _SearchOption<String?>(
+          label: skill.name,
+          value: skill.id,
+          subtitle: skill.group,
+        ),
+      ),
+    ];
+
+    final result = await _showSearchablePicker<String?>(
+      context: context,
+      title: 'Select Skill',
+      options: options,
+      selected: currentSkillId,
+    );
+
+    if (result == null) return;
+
+    widget.featuresWidget.onSkillGroupSelectionChanged?.call(
+      widget.featureId,
+      _grantKey,
+      result.value,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    if (skillGroup == null || skillGroup.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final currentSkillId = _getCurrentSkillId();
-    final hasCallback = widget.widget.onSkillGroupSelectionChanged != null;
-    
-    print('[_AutoAppliedContentState] _buildSkillGroupPicker: hasCallback=$hasCallback, currentSkillId=$currentSkillId, featureId=${widget.featureId}');
-    
-    // Find the current skill name
+    final hasCallback = widget.featuresWidget.onSkillGroupSelectionChanged != null;
+    final needsSelection = currentSkillId == null || currentSkillId.isEmpty;
+
     String? currentSkillName;
     if (currentSkillId != null && _allSkills != null) {
       final skill = _allSkills!.firstWhere(
@@ -523,19 +597,17 @@ class _AutoAppliedContentState extends State<_AutoAppliedContent> {
         currentSkillName = skill.name;
       }
     }
-    
-    final needsSelection = currentSkillId == null || currentSkillId.isEmpty;
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: needsSelection 
-            ? Colors.orange.withValues(alpha: 0.1) 
+        color: needsSelection
+            ? Colors.orange.withValues(alpha: 0.1)
             : scheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: needsSelection 
-              ? Colors.orange.withValues(alpha: 0.4) 
+          color: needsSelection
+              ? Colors.orange.withValues(alpha: 0.4)
               : scheme.primary.withValues(alpha: 0.3),
         ),
       ),
@@ -555,7 +627,8 @@ class _AutoAppliedContentState extends State<_AutoAppliedContent> {
                   'Skill from $skillGroup',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: needsSelection ? Colors.orange.shade700 : scheme.primary,
+                    color:
+                        needsSelection ? Colors.orange.shade700 : scheme.primary,
                   ),
                 ),
               ),
@@ -605,33 +678,90 @@ class _AutoAppliedContentState extends State<_AutoAppliedContent> {
       ),
     );
   }
+}
 
-  Map<String, dynamic>? _resolveAbility() {
-    String? id = widget.option['ability_id']?.toString().trim();
-    if (id != null && id.isNotEmpty) {
-      final ability = widget.widget.abilityDetailsById[id];
-      if (ability != null) return ability;
-      final slugId = ClassFeatureDataService.slugify(id);
-      final slugAbility = widget.widget.abilityDetailsById[slugId];
-      if (slugAbility != null) return slugAbility;
-    }
+class _OptionTextSection {
+  const _OptionTextSection({this.title, required this.text});
 
-    final abilityName = widget.option['ability']?.toString().trim();
-    if (abilityName != null && abilityName.isNotEmpty) {
-      final slug = ClassFeatureDataService.slugify(abilityName);
-      final resolvedId = widget.widget.abilityIdByName[slug] ?? slug;
-      return widget.widget.abilityDetailsById[resolvedId];
-    }
-    return null;
+  final String? title;
+  final String text;
+}
+
+String? _normalizeOptionText(dynamic value) {
+  if (value == null) return null;
+  if (value is String) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
+  if (value is List) {
+    final parts = value
+        .whereType<String>()
+        .map((entry) => entry.trim())
+        .where((entry) => entry.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? null : parts.join('\n\n');
+  }
+  final text = value.toString().trim();
+  return text.isEmpty ? null : text;
+}
 
-  Component _abilityMapToComponent(Map<String, dynamic> abilityData) {
-    return Component(
-      id: abilityData['id']?.toString() ?? abilityData['resolved_id']?.toString() ?? '',
-      type: abilityData['type']?.toString() ?? 'ability',
-      name: abilityData['name']?.toString() ?? '',
-      data: abilityData,
-      source: 'seed',
+List<_OptionTextSection> _extractOptionTextSections(
+  Map<String, dynamic> option,
+) {
+  final sections = <_OptionTextSection>[];
+  final description = _normalizeOptionText(option['description']);
+  if (description != null) {
+    sections.add(_OptionTextSection(text: description));
+  }
+  final piety = _normalizeOptionText(option['piety']);
+  if (piety != null) {
+    sections.add(_OptionTextSection(title: 'Piety', text: piety));
+  }
+  final prayerEffect =
+      _normalizeOptionText(option['prayer_effect'] ?? option['prayerEffect']);
+  if (prayerEffect != null) {
+    sections.add(_OptionTextSection(title: 'Prayer Effect', text: prayerEffect));
+  }
+  return sections;
+}
+
+class _OptionTextContent extends StatelessWidget {
+  const _OptionTextContent({
+    required this.sections,
+    required this.textColor,
+    this.titleColor,
+    this.spacing = 8,
+  });
+
+  final List<_OptionTextSection> sections;
+  final Color textColor;
+  final Color? titleColor;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (sections.isEmpty) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    final labelStyle = theme.textTheme.labelSmall?.copyWith(
+      color: titleColor ?? textColor,
+      fontWeight: FontWeight.w600,
+    );
+    final bodyStyle = theme.textTheme.bodyMedium?.copyWith(
+      color: textColor,
+      height: 1.5,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var i = 0; i < sections.length; i++) ...[
+          if (i > 0) SizedBox(height: spacing),
+          if (sections[i].title != null) ...[
+            Text(sections[i].title!, style: labelStyle),
+            const SizedBox(height: 4),
+          ],
+          Text(sections[i].text, style: bodyStyle),
+        ],
+      ],
     );
   }
 }
@@ -827,9 +957,13 @@ class _OptionTileState extends State<_OptionTile>
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final label = ClassFeatureDataService.featureOptionLabel(widget.option);
-    final description = widget.option['description']?.toString().trim();
-    final ability = _resolveAbility();
-    final hasDetails = (description?.isNotEmpty ?? false) || ability != null;
+    final abilities = _resolveAbilities();
+    final textSections = _extractOptionTextSections(widget.option);
+    final skillGroup = widget.option['skill_group']?.toString().trim();
+    final showSkillPicker =
+        widget.isSelected && skillGroup != null && skillGroup.isNotEmpty;
+    final hasDetails = textSections.isNotEmpty || abilities.isNotEmpty;
+    final hasExtraContent = _isExpanded || showSkillPicker;
 
     Color borderColor;
     Color bgColor;
@@ -866,7 +1000,7 @@ class _OptionTileState extends State<_OptionTile>
             onTap: widget.canEdit ? () => widget.onChanged(!widget.isSelected) : null,
             borderRadius: BorderRadius.vertical(
               top: const Radius.circular(12),
-              bottom: _isExpanded ? Radius.zero : const Radius.circular(12),
+              bottom: hasExtraContent ? Radius.zero : const Radius.circular(12),
             ),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -942,20 +1076,20 @@ class _OptionTileState extends State<_OptionTile>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (description?.isNotEmpty ?? false) ...[
-                                Text(
-                                  description!,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: scheme.onSurfaceVariant,
-                                    height: 1.5,
-                                  ),
+                              if (textSections.isNotEmpty) ...[
+                                _OptionTextContent(
+                                  sections: textSections,
+                                  textColor: scheme.onSurfaceVariant,
+                                  titleColor: scheme.primary,
                                 ),
-                                if (ability != null) const SizedBox(height: 12),
+                                if (abilities.isNotEmpty) const SizedBox(height: 12),
                               ],
-                              if (ability != null)
+                              for (int i = 0; i < abilities.length; i++) ...[
+                                if (i > 0) const SizedBox(height: 8),
                                 AbilityExpandableItem(
-                                  component: _abilityMapToComponent(ability),
+                                  component: _abilityMapToComponent(abilities[i]),
                                 ),
+                              ],
                             ],
                           ),
                         ),
@@ -964,6 +1098,30 @@ class _OptionTileState extends State<_OptionTile>
                   : const SizedBox.shrink(),
             ),
           ),
+          if (showSkillPicker) ...[
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!_isExpanded && textSections.isNotEmpty) ...[
+                    _OptionTextContent(
+                      sections: textSections,
+                      textColor: scheme.onSurfaceVariant,
+                      titleColor: scheme.primary,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  _SkillGroupPicker(
+                    option: widget.option,
+                    featureId: widget.feature.id,
+                    featuresWidget: widget.widget,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1022,23 +1180,61 @@ class _OptionTileState extends State<_OptionTile>
     );
   }
 
-  Map<String, dynamic>? _resolveAbility() {
+  /// Resolves abilities from the option - handles both single ability strings
+  /// and arrays of ability names (e.g., ["Moonlight Sonata", "Radical Fantasia"])
+  List<Map<String, dynamic>> _resolveAbilities() {
+    final abilities = <Map<String, dynamic>>[];
+    
+    // Check for ability_id first (single ID)
     String? id = widget.option['ability_id']?.toString().trim();
     if (id != null && id.isNotEmpty) {
       final ability = widget.widget.abilityDetailsById[id];
-      if (ability != null) return ability;
+      if (ability != null) {
+        abilities.add(ability);
+        return abilities;
+      }
       final slugId = ClassFeatureDataService.slugify(id);
       final slugAbility = widget.widget.abilityDetailsById[slugId];
-      if (slugAbility != null) return slugAbility;
+      if (slugAbility != null) {
+        abilities.add(slugAbility);
+        return abilities;
+      }
     }
 
-    final abilityName = widget.option['ability']?.toString().trim();
-    if (abilityName != null && abilityName.isNotEmpty) {
-      final slug = ClassFeatureDataService.slugify(abilityName);
-      final resolvedId = widget.widget.abilityIdByName[slug] ?? slug;
-      return widget.widget.abilityDetailsById[resolvedId];
+    // Check for ability field - can be a string or a list
+    final abilityField = widget.option['ability'];
+    if (abilityField == null) return abilities;
+    
+    // Handle array of ability names
+    if (abilityField is List) {
+      for (final item in abilityField) {
+        final abilityName = item?.toString().trim();
+        if (abilityName != null && abilityName.isNotEmpty) {
+          final resolved = _resolveAbilityByName(abilityName);
+          if (resolved != null) {
+            abilities.add(resolved);
+          }
+        }
+      }
+      return abilities;
     }
-    return null;
+    
+    // Handle single ability name string
+    final abilityName = abilityField.toString().trim();
+    if (abilityName.isNotEmpty) {
+      final resolved = _resolveAbilityByName(abilityName);
+      if (resolved != null) {
+        abilities.add(resolved);
+      }
+    }
+    
+    return abilities;
+  }
+  
+  Map<String, dynamic>? _resolveAbilityByName(String abilityName) {
+    final slug = ClassFeatureDataService.slugify(abilityName);
+    final resolvedId = widget.widget.abilityIdByName[slug] ?? slug;
+    return widget.widget.abilityDetailsById[resolvedId];
   }
 
   Component _abilityMapToComponent(Map<String, dynamic> abilityData) {

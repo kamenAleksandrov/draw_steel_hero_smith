@@ -1936,6 +1936,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedSubclassName: _selectedSubclass?.subclassName,
+              selectedDomainNames: _selectedSubclass?.domainNames ?? const [],
               selectedAbilities: _selectedAbilities,
               reservedAbilityIds: _reservedAbilityIds,
               onSelectionChanged: _handleAbilitySelectionsChanged,

@@ -64,6 +64,8 @@ class ClassFeatureGrantsService {
     final featureDetails = await _loadFeatureDetails(classSlug);
     final activeSubclassSlugs =
         ClassFeatureDataService.activeSubclassSlugs(subclassSelection);
+    final domainSlugs =
+        ClassFeatureDataService.selectedDomainSlugs(subclassSelection);
 
     // Load all features for this class up to the hero's level
     final allFeatures = await FeatureRepository.loadClassFeatures(classSlug);
@@ -97,8 +99,19 @@ class ClassFeatureGrantsService {
         featureDetails: featureDetails,
         selections: selections,
         activeSubclassSlugs: activeSubclassSlugs,
+        domainSlugs: domainSlugs,
       );
     }
+
+    await _applySkillGroupSelections(
+      heroId: heroId,
+      selections: await loadSkillGroupSelections(heroId),
+      featureDetails: featureDetails,
+      applicableFeatures: applicableFeatures,
+      featureSelections: selections,
+      activeSubclassSlugs: activeSubclassSlugs,
+      domainSlugs: domainSlugs,
+    );
   }
 
   /// Remove all class feature grants for a hero.
@@ -250,7 +263,7 @@ class ClassFeatureGrantsService {
         entryId: skillId,
         sourceType: 'class_feature',
         sourceId: sourceId,
-        gainedBy: 'skill_group',
+        gainedBy: 'choice',
       );
       print('[ClassFeatureGrantsService] Skill entry added successfully');
     }
@@ -322,6 +335,7 @@ class ClassFeatureGrantsService {
     required Map<String, Map<String, dynamic>> featureDetails,
     required Map<String, Set<String>> selections,
     required Set<String> activeSubclassSlugs,
+    required Set<String> domainSlugs,
   }) async {
     final details = featureDetails[feature.id];
     
@@ -349,9 +363,27 @@ class ClassFeatureGrantsService {
     final options = ClassFeatureDataService.extractOptionMaps(details);
 
     if (isGrants && options.isNotEmpty) {
+      final remainingDomainSlugs =
+          ClassFeatureDataService.remainingConduitDomainSlugsForFeature(
+        featureId: feature.id,
+        selectedDomainSlugs: domainSlugs,
+        selections: selections,
+        featureDetailsById: featureDetails,
+      );
+      final filterSecondaryDomains = remainingDomainSlugs.isNotEmpty;
       // Auto-grant all items that match the active subclass
       for (final option in options) {
         if (_optionMatchesSubclass(option, activeSubclassSlugs)) {
+          if (filterSecondaryDomains) {
+            final domain = option['domain']?.toString().trim();
+            if (domain == null || domain.isEmpty) {
+              continue;
+            }
+            final slug = ClassFeatureDataService.slugify(domain);
+            if (!remainingDomainSlugs.contains(slug)) {
+              continue;
+            }
+          }
           await _applyOptionGrants(heroId, feature.id, option);
         }
       }
@@ -382,6 +414,74 @@ class ClassFeatureGrantsService {
 
     // Process top-level grants array (for stat bonuses, condition immunities, etc.)
     await _processGrantsArray(heroId, feature.id, details, activeSubclassSlugs);
+  }
+
+  Future<void> _applySkillGroupSelections({
+    required String heroId,
+    required Map<String, Map<String, String>> selections,
+    required Map<String, Map<String, dynamic>> featureDetails,
+    required List<feature_model.Feature> applicableFeatures,
+    required Map<String, Set<String>> featureSelections,
+    required Set<String> activeSubclassSlugs,
+    required Set<String> domainSlugs,
+  }) async {
+    if (selections.isEmpty) return;
+    final applicableIds = {
+      for (final feature in applicableFeatures) feature.id,
+    };
+
+    for (final entry in selections.entries) {
+      final featureId = entry.key.trim();
+      if (featureId.isEmpty || !applicableIds.contains(featureId)) {
+        continue;
+      }
+      final details = featureDetails[featureId];
+      if (details == null) continue;
+
+      final options = ClassFeatureDataService.extractOptionMaps(details);
+      if (options.isEmpty) continue;
+
+      final selectedKeys = featureSelections[featureId] ?? const <String>{};
+      final isGrants = ClassFeatureDataService.hasGrants(details);
+      final remainingDomainSlugs =
+          ClassFeatureDataService.remainingConduitDomainSlugsForFeature(
+        featureId: featureId,
+        selectedDomainSlugs: domainSlugs,
+        selections: featureSelections,
+        featureDetailsById: featureDetails,
+      );
+      final filterSecondaryDomains = remainingDomainSlugs.isNotEmpty;
+
+      for (final option in options) {
+        final skillGroup = option['skill_group']?.toString().trim();
+        if (skillGroup == null || skillGroup.isEmpty) continue;
+
+        final optionKey = ClassFeatureDataService.featureOptionKey(option);
+        final isSelected = isGrants
+            ? _optionMatchesSubclass(option, activeSubclassSlugs)
+            : selectedKeys.contains(optionKey);
+        if (!isSelected) continue;
+        if (filterSecondaryDomains) {
+          final domain = option['domain']?.toString().trim();
+          if (domain == null || domain.isEmpty) continue;
+          final slug = ClassFeatureDataService.slugify(domain);
+          if (!remainingDomainSlugs.contains(slug)) continue;
+        }
+
+        final grantKey = ClassFeatureDataService.optionGrantKey(option);
+        final skillId = entry.value[grantKey];
+        if (skillId == null || skillId.trim().isEmpty) continue;
+
+        await _entries.addEntry(
+          heroId: heroId,
+          entryType: 'skill',
+          entryId: skillId,
+          sourceType: 'class_feature',
+          sourceId: '${featureId}_skill_group_$grantKey',
+          gainedBy: 'choice',
+        );
+      }
+    }
   }
 
   bool _optionMatchesSubclass(
@@ -436,36 +536,21 @@ class ClassFeatureGrantsService {
       }
     }
 
-    // Grant ability if specified
-    final ability = option['ability']?.toString();
-    if (ability != null && ability.isNotEmpty) {
-      final abilityId = await _resolveAbilityId(ability);
-      await _entries.addEntry(
-        heroId: heroId,
-        entryType: 'ability',
-        entryId: abilityId,
-        sourceType: 'class_feature',
-        sourceId: featureId,
-        gainedBy: 'grant',
-      );
-    }
-
-    // Grant abilities (plural) if specified
-    final abilities = option['abilities'];
-    if (abilities is List) {
-      for (final ab in abilities) {
-        final abilityName = ab?.toString();
-        if (abilityName != null && abilityName.isNotEmpty) {
-          final abilityId = await _resolveAbilityId(abilityName);
-          await _entries.addEntry(
-            heroId: heroId,
-            entryType: 'ability',
-            entryId: abilityId,
-            sourceType: 'class_feature',
-            sourceId: featureId,
-            gainedBy: 'grant',
-          );
-        }
+    // Grant ability or abilities if specified
+    final abilityNames = <String>{};
+    _collectAbilityNames(abilityNames, option['ability']);
+    _collectAbilityNames(abilityNames, option['abilities']);
+    if (abilityNames.isNotEmpty) {
+      for (final abilityName in abilityNames) {
+        final abilityId = await _resolveAbilityId(abilityName);
+        await _entries.addEntry(
+          heroId: heroId,
+          entryType: 'ability',
+          entryId: abilityId,
+          sourceType: 'class_feature',
+          sourceId: featureId,
+          gainedBy: 'grant',
+        );
       }
     }
 
@@ -592,18 +677,21 @@ class ClassFeatureGrantsService {
     String featureId,
     Map<String, dynamic> details,
   ) async {
-    final ability = details['ability']?.toString();
-    if (ability == null || ability.isEmpty) return;
+    final abilityNames = <String>{};
+    _collectAbilityNames(abilityNames, details['ability']);
+    if (abilityNames.isEmpty) return;
 
-    final abilityId = await _resolveAbilityId(ability);
-    await _entries.addEntry(
-      heroId: heroId,
-      entryType: 'ability',
-      entryId: abilityId,
-      sourceType: 'class_feature',
-      sourceId: featureId,
-      gainedBy: 'grant',
-    );
+    for (final abilityName in abilityNames) {
+      final abilityId = await _resolveAbilityId(abilityName);
+      await _entries.addEntry(
+        heroId: heroId,
+        entryType: 'ability',
+        entryId: abilityId,
+        sourceType: 'class_feature',
+        sourceId: featureId,
+        gainedBy: 'grant',
+      );
+    }
   }
 
   /// Process the top-level "grants" array in a feature.
@@ -662,8 +750,10 @@ class ClassFeatureGrantsService {
 
           // Ability grant
           case 'ability':
-            if (value is String && value.isNotEmpty) {
-              final abilityId = await _resolveAbilityId(value);
+            final abilityNames = <String>{};
+            _collectAbilityNames(abilityNames, value);
+            for (final abilityName in abilityNames) {
+              final abilityId = await _resolveAbilityId(abilityName);
               await _entries.addEntry(
                 heroId: heroId,
                 entryType: 'ability',
@@ -765,6 +855,15 @@ class ClassFeatureGrantsService {
       return value.map((e) => e?.toString() ?? '').where((e) => e.isNotEmpty).toList();
     }
     return const [];
+  }
+
+  void _collectAbilityNames(Set<String> target, dynamic value) {
+    for (final name in _normalizeToList(value)) {
+      final trimmed = name.trim();
+      if (trimmed.isNotEmpty) {
+        target.add(trimmed);
+      }
+    }
   }
 
   Future<String?> _resolveSkillId(String skillName) async {

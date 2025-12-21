@@ -32,6 +32,8 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 automatically applied must be as a divider instead as another box that boxes the box
 
 project add points button can be made into a roll button.
+
+the heal button should have a temp stamina button next to it that assigns the value to temp hp 
 ## medium
 
 need to add a loading screen noting that this is not an official product and is working on their rules.
@@ -102,6 +104,8 @@ some abilities may deserve a main stats ui examples are: judgement, mantle of es
 changing class should prompt for confirmation
 
 level 10 features have more work to be fully functional.
+
+would be nice to have it receed the jsons on updates. this will make it easier to update without losing info
 ### necessary changes
 
 remove duplication finding
@@ -113,28 +117,9 @@ the hero class skill and ther features bonuses do not save or grant their bonuse
 features must have ui updated to handle options, grants and other such cases better.
 ### censor
 
-features do not grant the bonus skill form the domain.
 ### conduit
 
-cconduit wards show too and bastion ward does not grant its bonus to the save throws  
-
-the conduit has extra generation methods and prayer effects that must take their information from the features file where we have the piety generation and the prayer effect. the prayer must be seen in the 1d3 generation and the piety in the piety feature
-
-the strenght triggered actions mark the 2 options
-
-the "id": "feature_conduit_domain_piety_and_effects", now devides the grants in domain, piety and prayer effect.
-
-the domain feature must grant the option fo chosing a skill from the group
-
-level 2,5,8 domain feature should be the same as the previous level one but instantly grant the one that the user DIDNT pick the previous level.
-
-the level 2,6 5 csot abilities widget should load the 2 abilities that match the name of the domains and let the user pick one.
-
 ### elementalist
-
-1rts level feature doan not find the void spec. could be fixed on reinstall but would be nice to have it receed the jsons on updates. this will make it easier to update without losing info
-
-elementalist 2nd, 6th, 9th levels does not have subclass dependent abilities but it lets the user pick from the new and old x cost abilities that the user dindt take.
 
 would be cool to have the mantle of essence like the fury or null growing resource.
 
@@ -148,14 +133,4 @@ would be cool to have the mantle of essence like the fury or null growing resour
 ### talent
 
 ### troubadour
-
-routines dont grant the two starting reoutines
-
-level 4 melodrama has the option to choose 2 options and i don think i handle this at the moment
-
-level 4 zeitergeit is a feature example that the sheet page should let the user repick choices and keep them saved
-
-level 5 feature lets the user pick 2 features of their subclass but the widget in strength lets them pick 1 of all an just shows the subclass
-
-;level 8 feature does not load the virtuoso crowd favourites
 

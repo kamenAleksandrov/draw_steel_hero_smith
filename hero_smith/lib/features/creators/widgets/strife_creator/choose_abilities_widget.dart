@@ -21,6 +21,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
     required this.classData,
     required this.selectedLevel,
     this.selectedSubclassName,
+    this.selectedDomainNames = const <String>[],
     this.selectedAbilities = const <String, String?>{},
     this.reservedAbilityIds = const <String>{},
     this.onSelectionChanged,
@@ -29,6 +30,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
   final ClassData classData;
   final int selectedLevel;
   final String? selectedSubclassName;
+  final List<String> selectedDomainNames;
   final Map<String, String?> selectedAbilities;
   final Set<String> reservedAbilityIds;
   final AbilitySelectionChanged? onSelectionChanged;
@@ -76,6 +78,10 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     final levelChanged = oldWidget.selectedLevel != widget.selectedLevel;
     final subclassChanged =
         oldWidget.selectedSubclassName != widget.selectedSubclassName;
+    final domainsChanged = !_setEquality.equals(
+      _normalizedDomainNames(oldWidget.selectedDomainNames),
+      _normalizedDomainNames(widget.selectedDomainNames),
+    );
     final reservedChanged = !_setEquality.equals(
       oldWidget.reservedAbilityIds,
       widget.reservedAbilityIds,
@@ -84,9 +90,11 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
       _loadAbilities();
       return;
     }
-    if ((levelChanged || subclassChanged) && !_isLoading && _error == null) {
+    if ((levelChanged || subclassChanged || domainsChanged) &&
+        !_isLoading &&
+        _error == null) {
       _rebuildPlan(
-        preserveSelections: !subclassChanged,
+        preserveSelections: !(subclassChanged || domainsChanged),
         externalSelections: widget.selectedAbilities,
       );
     } else if (!_mapEquality.equals(
@@ -358,6 +366,27 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     });
   }
 
+  Set<String> _selectedAbilityIds({
+    String? exceptAllowanceId,
+    int? exceptSlotIndex,
+  }) {
+    final ids = <String>{};
+    for (final entry in _selections.entries) {
+      final allowanceId = entry.key;
+      final slots = entry.value;
+      for (var i = 0; i < slots.length; i++) {
+        if (allowanceId == exceptAllowanceId && i == exceptSlotIndex) {
+          continue;
+        }
+        final value = slots[i];
+        if (value != null && value.isNotEmpty) {
+          ids.add(value);
+        }
+      }
+    }
+    return ids;
+  }
+
   List<AbilityOption> _optionsForAllowance(AbilityAllowance allowance) {
     return _abilityOptions.where((option) {
       if (allowance.isSignature && !option.isSignature) return false;
@@ -371,15 +400,26 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         if (option.subclass == null || option.subclass!.isEmpty) {
           return false;
         }
-        // Only show abilities matching the hero's selected subclass
-        final selectedSubclass = widget.selectedSubclassName;
-        if (selectedSubclass == null || selectedSubclass.isEmpty) {
-          // No subclass selected, don't show any subclass abilities
-          return false;
-        }
-        // Case-insensitive comparison for subclass matching
-        if (option.subclass!.toLowerCase() != selectedSubclass.toLowerCase()) {
-          return false;
+        if (_isConduitClass) {
+          final selectedDomains =
+              _normalizedDomainNames(widget.selectedDomainNames);
+          if (selectedDomains.isEmpty) {
+            return false;
+          }
+          if (!selectedDomains.contains(option.subclass!.toLowerCase())) {
+            return false;
+          }
+        } else {
+          // Only show abilities matching the hero's selected subclass
+          final selectedSubclass = widget.selectedSubclassName;
+          if (selectedSubclass == null || selectedSubclass.isEmpty) {
+            // No subclass selected, don't show any subclass abilities
+            return false;
+          }
+          // Case-insensitive comparison for subclass matching
+          if (option.subclass!.toLowerCase() != selectedSubclass.toLowerCase()) {
+            return false;
+          }
         }
       } else {
         if (option.subclass != null && option.subclass!.isNotEmpty) {
@@ -526,16 +566,12 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
           else
             ...List.generate(slots.length, (index) {
               final current = slots[index];
-              final otherSelected = slots
-                  .asMap()
-                  .entries
-                  .where((entry) => entry.key != index)
-                  .map((entry) => entry.value)
-                  .whereType<String>()
-                  .toSet();
               final reservedIds = <String>{
                 ...widget.reservedAbilityIds,
-                ...otherSelected,
+                ..._selectedAbilityIds(
+                  exceptAllowanceId: allowance.id,
+                  exceptSlotIndex: index,
+                ),
               };
               final availableOptions = ComponentSelectionGuard.filterAllowed(
                 options: options,
@@ -627,7 +663,11 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     }
 
     if (allowance.requiresSubclass) {
-      buffer.write(' Includes subclass abilities.');
+      buffer.write(
+        _isConduitClass
+            ? ' Includes domain abilities.'
+            : ' Includes subclass abilities.',
+      );
     }
     if (allowance.includePreviousLevels) {
       buffer.write(
@@ -644,6 +684,15 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
       return normalized.substring('class_'.length);
     }
     return normalized;
+  }
+
+  bool get _isConduitClass => _classSlug(widget.classData.classId) == 'conduit';
+
+  Set<String> _normalizedDomainNames(Iterable<String> domains) {
+    return domains
+        .map((domain) => domain.trim().toLowerCase())
+        .where((domain) => domain.isNotEmpty)
+        .toSet();
   }
 
   int _resolveAbilityLevel(Component component) {

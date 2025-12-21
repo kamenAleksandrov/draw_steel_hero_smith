@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/db/app_database.dart' as db;
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
+import '../../../../core/models/hero_assembled_model.dart';
 
 /// Information about a condition immunity and its source
 class ConditionImmunityInfo {
@@ -91,6 +93,8 @@ class _ConditionsTrackerWidgetState
     extends ConsumerState<ConditionsTrackerWidget> {
   int _saveEndsBase = 6;
   int _saveEndsMod = 0;
+  List<db.HeroValue> _latestValues = const [];
+  HeroAssembly? _latestAssembly;
   final List<TrackedCondition> _trackedConditions = [];
   List<ConditionImmunityInfo> _conditionImmunities = [];
 
@@ -103,52 +107,85 @@ class _ConditionsTrackerWidgetState
     _loadConditionImmunities();
   }
 
+  void _handleProviderUpdates() {
+    // Listen for hero values changes
+    ref.listen<AsyncValue<List<db.HeroValue>>>(
+      heroValuesProvider(widget.heroId),
+      (previous, next) {
+        next.whenData((values) {
+          _latestValues = values;
+          _recalculateSaveEnds();
+        });
+      },
+    );
+
+    // Listen for assembly changes
+    ref.listen<AsyncValue<HeroAssembly?>>(
+      heroAssemblyProvider(widget.heroId),
+      (previous, next) {
+        final assembly = next.valueOrNull;
+        if (assembly == null) return;
+        _latestAssembly = assembly;
+        _recalculateSaveEnds();
+      },
+    );
+
+    // Read current values for initial state
+    final valuesAsync = ref.watch(heroValuesProvider(widget.heroId));
+    valuesAsync.whenData((values) {
+      if (_latestValues != values) {
+        _latestValues = values;
+        // Schedule recalculation after build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _recalculateSaveEnds();
+        });
+      }
+    });
+
+    final assemblyAsync = ref.watch(heroAssemblyProvider(widget.heroId));
+    final assembly = assemblyAsync.valueOrNull;
+    if (assembly != null && _latestAssembly != assembly) {
+      _latestAssembly = assembly;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _recalculateSaveEnds();
+      });
+    }
+  }
+
+  void _recalculateSaveEnds() {
+    if (!mounted) return;
+
+    final values = _latestValues;
+    final saveEndsBase = values.isEmpty
+        ? 6
+        : _readInt(values, 'conditions.save_ends', defaultValue: 6);
+    final userMod = values.isEmpty
+        ? 0
+        : _readModFromValues(values, 'conditions_save_ends_mod');
+    final assembly = _latestAssembly;
+    final assemblyMod = assembly == null
+        ? 0
+        : assembly.statMods.getTotalForStatAtLevel('saving_throw', assembly.level);
+    final totalMod = userMod + assemblyMod;
+
+    if (_saveEndsBase != saveEndsBase || _saveEndsMod != totalMod) {
+      setState(() {
+        _saveEndsBase = saveEndsBase;
+        _saveEndsMod = totalMod;
+      });
+    }
+  }
+
   Future<void> _loadTrackedConditions() async {
     try {
       final repo = ref.read(heroRepositoryProvider);
       final hero = await repo.load(widget.heroId);
       if (hero == null || !mounted) return;
 
-      // Load base save ends value
-      // Note: We'll need to get this from HeroValues, not hero model
-      // For now, we'll fetch it directly
       final db = ref.read(appDatabaseProvider);
       final values = await db.getHeroValues(widget.heroId);
-      
-      int readInt(String key, {int defaultValue = 0}) {
-        final v = values.firstWhereOrNull((e) => e.key == key);
-        if (v == null) return defaultValue;
-        return v.value ?? int.tryParse(v.textValue ?? '') ?? defaultValue;
-      }
-
-      // Load save ends base value
-      final saveEndsBase = readInt('conditions.save_ends', defaultValue: 6);
-      
-      // Load user's manual modifier
-      final userMod = hero.modifications['conditions_save_ends_mod'] ?? 0;
-      
-      // Load modifiers from assembly (ancestry, kit, complication sources)
-      int assemblyMod = 0;
-      try {
-        final assemblyAsync = ref.read(heroAssemblyProvider(widget.heroId));
-        final assembly = assemblyAsync.valueOrNull;
-        if (assembly != null) {
-          // Check for saving_throw stat mod, using hero level for dynamic mods
-          assemblyMod = assembly.statMods.getTotalForStatAtLevel('saving_throw', assembly.level);
-        }
-      } catch (_) {
-        // Assembly not available yet, ignore
-      }
-      
-      // Total mod is user mod + assembly mod
-      final totalMod = userMod + assemblyMod;
-      
-      if (mounted) {
-        setState(() {
-          _saveEndsBase = saveEndsBase;
-          _saveEndsMod = totalMod;
-        });
-      }
+      _latestValues = values;
+      _recalculateSaveEnds();
 
       // Load tracked conditions from conditions list with metadata
       final conditionsData = hero.conditions;
@@ -175,6 +212,33 @@ class _ConditionsTrackerWidgetState
     } catch (e) {
       // Failed to load, but that's okay - start with empty state
     }
+  }
+
+  int _readInt(List<db.HeroValue> values, String key, {int defaultValue = 0}) {
+    final v = values.firstWhereOrNull((e) => e.key == key);
+    if (v == null) return defaultValue;
+    return v.value ?? int.tryParse(v.textValue ?? '') ?? defaultValue;
+  }
+
+  int _readModFromValues(List<db.HeroValue> values, String modKey) {
+    final modsEntry = values.firstWhereOrNull((e) => e.key == 'mods.map');
+    final raw = modsEntry?.jsonValue ?? modsEntry?.textValue;
+    if (raw == null || raw.isEmpty) return 0;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        return _toInt(decoded[modKey]) ?? 0;
+      }
+    } catch (_) {}
+    return 0;
+  }
+
+  int? _toInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   /// Load condition immunities from hero_entries via HeroAssembly
@@ -673,6 +737,9 @@ class _ConditionsTrackerWidgetState
 
   @override
   Widget build(BuildContext context) {
+    // Set up listeners in build (required by Riverpod)
+    _handleProviderUpdates();
+    
     final theme = Theme.of(context);
     // For save ends, lower is better, so invert colors
     final modColor = _saveEndsMod < 0 

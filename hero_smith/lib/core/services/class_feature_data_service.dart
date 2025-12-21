@@ -37,6 +37,25 @@ class ClassFeatureDataService {
 
   final Map<String, dynamic> _additionalFeatureCache = {};
 
+  static const String conduitPrimaryDomainFeatureId =
+      'feature_conduit_domain_feature_1';
+  static const String conduitSecondaryDomainFeatureId =
+      'feature_conduit_2nd_level_domain_feature';
+  static const String conduitFourthDomainFeatureId =
+      'feature_conduit_domain_feature_4';
+  static const String conduitFifthDomainFeatureId =
+      'feature_conduit_5th_level_domain_feature';
+  static const String conduitSeventhDomainFeatureId =
+      'feature_conduit_domain_feature_7';
+  static const String conduitEighthDomainFeatureId =
+      'feature_conduit_8th_level_domain_feature';
+
+  static const Map<String, String> _conduitSecondaryToPrimary = {
+    conduitSecondaryDomainFeatureId: conduitPrimaryDomainFeatureId,
+    conduitFifthDomainFeatureId: conduitFourthDomainFeatureId,
+    conduitEighthDomainFeatureId: conduitSeventhDomainFeatureId,
+  };
+
   Future<ClassFeatureDataResult> loadFeatures({
     required ClassData classData,
     required int level,
@@ -380,6 +399,14 @@ class ClassFeatureDataService {
         return value.trim();
       }
     }
+    final ability = option['ability']?.toString();
+    if (ability != null && ability.trim().isNotEmpty) {
+      return ability.trim();
+    }
+    final abilityId = option['ability_id']?.toString();
+    if (abilityId != null && abilityId.trim().isNotEmpty) {
+      return abilityId.trim();
+    }
     final skill = option['skill']?.toString();
     if (skill != null && skill.trim().isNotEmpty) {
       return skill.trim();
@@ -389,6 +416,16 @@ class ClassFeatureDataService {
       return benefit.trim();
     }
     return 'Option';
+  }
+
+  /// Returns a stable key for identifying skill_group selections per option.
+  static String optionGrantKey(Map<String, dynamic> option) {
+    final domain = option['domain']?.toString().trim();
+    final subclass = option['subclass']?.toString().trim();
+    final name = option['name']?.toString().trim();
+    final ability = option['ability']?.toString().trim();
+    final abilityId = option['ability_id']?.toString().trim();
+    return domain ?? subclass ?? name ?? ability ?? abilityId ?? 'default';
   }
 
   static Set<String> identifyDomainLinkedFeatures(
@@ -452,6 +489,69 @@ class ClassFeatureDataService {
       }
     }
     return keys;
+  }
+
+  static Set<String> selectedDomainSlugsForFeature({
+    required Map<String, Set<String>> selections,
+    required Map<String, Map<String, dynamic>> featureDetailsById,
+    required String featureId,
+  }) {
+    final selectedKeys = selections[featureId];
+    if (selectedKeys == null || selectedKeys.isEmpty) return const <String>{};
+
+    final details = featureDetailsById[featureId];
+    if (details == null) return const <String>{};
+
+    final options = extractOptionMaps(details);
+    if (options.isEmpty) return const <String>{};
+
+    final optionByKey = <String, Map<String, dynamic>>{};
+    for (final option in options) {
+      optionByKey[featureOptionKey(option)] = option;
+    }
+
+    final result = <String>{};
+    for (final key in selectedKeys) {
+      final option = optionByKey[key];
+      if (option != null) {
+        final domain = option['domain']?.toString().trim();
+        if (domain != null && domain.isNotEmpty) {
+          final slug = slugify(domain);
+          if (slug.isNotEmpty) result.add(slug);
+        }
+        continue;
+      }
+      for (final fallback in options) {
+        final domain = fallback['domain']?.toString().trim();
+        if (domain == null || domain.isEmpty) continue;
+        final slug = slugify(domain);
+        if (slug == key) {
+          result.add(slug);
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  static Set<String> remainingConduitDomainSlugsForFeature({
+    required String featureId,
+    required Set<String> selectedDomainSlugs,
+    required Map<String, Set<String>> selections,
+    required Map<String, Map<String, dynamic>> featureDetailsById,
+  }) {
+    if (selectedDomainSlugs.isEmpty) return const <String>{};
+    final primaryFeatureId = _conduitSecondaryToPrimary[featureId];
+    if (primaryFeatureId == null) return selectedDomainSlugs;
+    final chosen = selectedDomainSlugsForFeature(
+      selections: selections,
+      featureDetailsById: featureDetailsById,
+      featureId: primaryFeatureId,
+    );
+    if (chosen.isEmpty) return selectedDomainSlugs;
+    final remaining = selectedDomainSlugs.difference(chosen);
+    return remaining.isEmpty ? selectedDomainSlugs : remaining;
   }
 
   static Set<String> subclassOptionKeysFor(
@@ -525,7 +625,14 @@ class ClassFeatureDataService {
     required Set<String> domainSlugs,
   }) {
     for (final featureId in domainLinkedFeatureIds) {
-      if (domainSlugs.isEmpty) {
+      final effectiveDomainSlugs = remainingConduitDomainSlugsForFeature(
+        featureId: featureId,
+        selectedDomainSlugs: domainSlugs,
+        selections: selections,
+        featureDetailsById: featureDetailsById,
+      );
+
+      if (effectiveDomainSlugs.isEmpty) {
         selections.remove(featureId);
         continue;
       }
@@ -536,13 +643,13 @@ class ClassFeatureDataService {
       final matchingKeys = domainOptionKeysFor(
         featureDetailsById,
         featureId,
-        domainSlugs,
+        effectiveDomainSlugs,
       );
       if (matchingKeys.isNotEmpty) {
         // For grants: auto-select ALL matching keys
         // For options with single domain: auto-select all matching
         // For options with multiple domains: preserve existing or require choice
-        if (isGrants || domainSlugs.length == 1) {
+        if (isGrants || effectiveDomainSlugs.length == 1) {
           selections[featureId] = ClassFeatureDataService.clampSelectionKeys(
             matchingKeys,
             details,

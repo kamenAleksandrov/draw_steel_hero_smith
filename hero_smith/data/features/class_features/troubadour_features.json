@@ -109,7 +109,8 @@
         "ability": "Power Chord"
       },
       {
-        "name": " Virtuoso Performances",
+        "name": "Virtuoso Performances",
+        "subclass_name": "Virtuoso",
         "description": " You have the following performance abilities, which are usable with your Routines feature.",
         "ability": ["“Thunder Mother”", "“Ballad of the Beast”"]
       }
@@ -257,8 +258,8 @@
     "class": "troubadour",
     "is_subclass_feature": true,
     "level": 5,
-    "description": "Your class act grants additional benefits at 5th level.",
-    "grants": [
+    "description": "Your troubadour class act grants your choice of one of two features.",
+    "options": [
       {
         "subclass_name": "Auteur",
         "name": "Fix It in Post",
