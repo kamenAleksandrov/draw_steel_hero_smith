@@ -7,6 +7,7 @@ import '../../../../../core/theme/hero_theme.dart';
 import '../../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';
+import 'project_roll_dialog.dart';
 import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider and enhancementTemplatesProvider
 
 /// Provider for hero's downtime projects
@@ -134,6 +135,7 @@ class ProjectsListTab extends ConsumerWidget {
                   heroId: heroId,
                   onTap: () => _editProject(context, ref, project),
                   onAddPoints: () => _addPointsToProject(context, ref, project),
+                  onRoll: () => _rollForProject(context, ref, project),
                   onDelete: () => _deleteProject(context, ref, project),
                   isTreasureProject: isTreasureProject,
                   treasureData: matchingTreasure?.raw,
@@ -219,7 +221,7 @@ class ProjectsListTab extends ConsumerWidget {
             child: FilledButton.icon(
               onPressed: () => _createCustomProject(context, ref),
               icon: const Icon(Icons.add),
-              label: const Text('Create Custom Project'),
+              label: const Text('Create Project'),
               style: HeroTheme.primaryActionButtonStyle(context),
             ),
           ),
@@ -241,13 +243,7 @@ class ProjectsListTab extends ConsumerWidget {
       context,
       icon: Icons.assignment_outlined,
       title: 'No Projects Yet',
-      subtitle: 'Create a custom project or choose from templates',
-      action: FilledButton.icon(
-        onPressed: () => _createCustomProject(context, ref),
-        icon: const Icon(Icons.add),
-        label: const Text('Create First Project'),
-        style: HeroTheme.primaryActionButtonStyle(context),
-      ),
+      subtitle: 'Create a project or browse templates using the buttons above',
     );
   }
 
@@ -444,6 +440,38 @@ class ProjectsListTab extends ConsumerWidget {
             child: const Text('Add'),
           ),
         ],
+      ),
+    );
+
+    if (result != null && result > 0) {
+      final repo = ref.read(downtimeRepositoryProvider);
+      final newTotal = project.currentPoints + result;
+      await repo.updateProjectPoints(project.id, newTotal);
+      
+      // Refresh the list
+      ref.invalidate(heroProjectsProvider(heroId));
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added $result points to ${project.name}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  void _rollForProject(
+    BuildContext context,
+    WidgetRef ref,
+    HeroDowntimeProject project,
+  ) async {
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) => ProjectRollDialog(
+        heroId: heroId,
+        project: project,
       ),
     );
 

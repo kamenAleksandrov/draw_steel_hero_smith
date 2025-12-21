@@ -11,6 +11,7 @@ class ProjectDetailCard extends StatefulWidget {
     required this.heroId,
     this.onTap,
     this.onAddPoints,
+    this.onRoll,
     this.onDelete,
     this.onAddToGear,
     this.isTreasureProject = false,
@@ -23,6 +24,7 @@ class ProjectDetailCard extends StatefulWidget {
   final String heroId;
   final VoidCallback? onTap;
   final VoidCallback? onAddPoints;
+  final VoidCallback? onRoll;
   final VoidCallback? onDelete;
   final VoidCallback? onAddToGear;
   final bool isTreasureProject;
@@ -324,22 +326,38 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     ),
                   ],
 
-                  // Add Points button (show if not completed and goal not yet reached)
+                  // Add Points and Roll buttons (show if not completed and goal not yet reached)
                   if (!isCompleted &&
                       widget.onAddPoints != null &&
                       widget.onAddToGear == null) ...[
                     const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: widget.onAddPoints,
-                        icon: const Icon(Icons.add, size: 20),
-                        label: const Text('Add Points'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: HeroTheme.primarySection,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: widget.onAddPoints,
+                            icon: const Icon(Icons.add, size: 20),
+                            label: const Text('Add Points'),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: HeroTheme.primarySection,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                          ),
                         ),
-                      ),
+                        if (widget.onRoll != null) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: widget.onRoll,
+                              icon: const Icon(Icons.casino, size: 20),
+                              label: const Text('Roll'),
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
 

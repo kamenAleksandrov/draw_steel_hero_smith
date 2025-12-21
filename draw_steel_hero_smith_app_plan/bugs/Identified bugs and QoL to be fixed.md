@@ -31,8 +31,6 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 
 automatically applied must be as a divider instead as another box that boxes the box
 
-project add points button can be made into a roll button.
-
 the heal button should have a temp stamina button next to it that assigns the value to temp hp 
 ## medium
 
