@@ -1,6 +1,6 @@
 {
-    "name": "hero_smith",
-    "short_name": "hero_smith",
+    "name": "Hero Smith",
+    "short_name": "Hero Smith",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

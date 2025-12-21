@@ -5,6 +5,7 @@ import 'features/strife/strife_page.dart';
 import 'features/story/story_page.dart';
 import 'features/gear/gear_page.dart';
 import 'features/downtime/downtime_projects_page.dart';
+import 'features/splash/splash_screen.dart';
 import 'core/theme/ds_theme.dart';
 import 'core/db/providers.dart';
 import 'core/db/app_database.dart';
@@ -44,8 +45,64 @@ class HeroSmithApp extends StatelessWidget {
         );
       })(),
       themeMode: ThemeMode.dark,
-      home: const RootNavPage(),
+      home: const SplashWrapper(),
     );
+  }
+}
+
+/// Wrapper that shows splash screen during initialization, then transitions to main app.
+class SplashWrapper extends ConsumerStatefulWidget {
+  const SplashWrapper({super.key});
+
+  @override
+  ConsumerState<SplashWrapper> createState() => _SplashWrapperState();
+}
+
+class _SplashWrapperState extends ConsumerState<SplashWrapper> {
+  bool _showSplash = true;
+  bool _initialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _initializeApp();
+    }
+  }
+
+  Future<void> _initializeApp() async {
+    // Skip splash in test mode (when auto-seed is disabled)
+    final shouldShowSplash = ref.read(autoSeedEnabledProvider);
+    if (!shouldShowSplash) {
+      if (mounted) {
+        setState(() {
+          _showSplash = false;
+        });
+      }
+      return;
+    }
+    
+    // Minimum splash duration for branding visibility
+    await Future.delayed(const Duration(seconds: 2));
+    
+    if (mounted) {
+      setState(() {
+        _showSplash = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showSplash) {
+      return SplashScreen(onComplete: () {
+        setState(() {
+          _showSplash = false;
+        });
+      });
+    }
+    return const RootNavPage();
   }
 }
 

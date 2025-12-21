@@ -39,9 +39,9 @@
     "power_roll": "Power Roll + Agility",
     "tier_effects": [
       {
-        "tier1": "8 + **A** psychic damage; M < WEAK, weakened (save ends)",
-        "tier2": "12 + **A** psychic damage; M < AVERAGE, weakened (save ends)",
-        "tier3": "16 + **A** psychic damage; M < STRONG, weakened (save ends)"
+        "tier1": "8 + A psychic damage; M < WEAK, weakened (save ends)",
+        "tier2": "12 + A psychic damage; M < AVERAGE, weakened (save ends)",
+        "tier3": "16 + A psychic damage; M < STRONG, weakened (save ends)"
       }
     ],
     "effect": "While weakened this way, the target takes damage equal to your Intuition score whenever they use a supernatural ability that costs Malice.",

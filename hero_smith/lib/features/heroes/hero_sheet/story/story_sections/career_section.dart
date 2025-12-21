@@ -22,6 +22,15 @@ final _componentByIdProvider =
   );
 });
 
+// Provider to get career project points used status
+final _careerProjectPointsUsedProvider =
+    FutureProvider.family<bool, String>((ref, heroId) async {
+  final db = ref.read(appDatabaseProvider);
+  final values = await db.getHeroValues(heroId);
+  final value = values.where((v) => v.key == 'career.project_points_used').firstOrNull;
+  return value?.value == 1;
+});
+
 /// Data class for career selection.
 class CareerSelectionData {
   const CareerSelectionData({
@@ -106,6 +115,7 @@ class _CareerContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final projectPoints = careerComponent.data['project_points'] as int? ?? 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,6 +135,13 @@ class _CareerContent extends ConsumerWidget {
                 color: theme.colorScheme.onSurface.withOpacity(0.8),
               ),
             ),
+          ),
+        ],
+        if (projectPoints > 0) ...[
+          const SizedBox(height: 16),
+          _ProjectPointsDisplay(
+            projectPoints: projectPoints,
+            heroId: heroId,
           ),
         ],
         if (career.incitingIncidentName != null &&
@@ -275,6 +292,132 @@ class _HeroPerkCard extends ConsumerWidget {
           child: PerkCard(perk: component, heroId: heroId),
         );
       },
+    );
+  }
+}
+
+/// Widget to display project points from career with used toggle.
+class _ProjectPointsDisplay extends ConsumerStatefulWidget {
+  const _ProjectPointsDisplay({
+    required this.projectPoints,
+    required this.heroId,
+  });
+
+  final int projectPoints;
+  final String heroId;
+
+  @override
+  ConsumerState<_ProjectPointsDisplay> createState() => _ProjectPointsDisplayState();
+}
+
+class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
+  bool _isUsed = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsedState();
+  }
+
+  Future<void> _loadUsedState() async {
+    final db = ref.read(appDatabaseProvider);
+    final values = await db.getHeroValues(widget.heroId);
+    final value = values.where((v) => v.key == 'career.project_points_used').firstOrNull;
+    if (mounted) {
+      setState(() {
+        _isUsed = value?.value == 1;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _toggleUsed() async {
+    final newValue = !_isUsed;
+    setState(() => _isUsed = newValue);
+    
+    final db = ref.read(appDatabaseProvider);
+    await db.upsertHeroValue(
+      heroId: widget.heroId,
+      key: 'career.project_points_used',
+      value: newValue ? 1 : 0,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _isUsed 
+            ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
+            : theme.colorScheme.primaryContainer.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: _isUsed
+              ? theme.colorScheme.outline.withOpacity(0.3)
+              : theme.colorScheme.primary.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.build_circle,
+            size: 24,
+            color: _isUsed
+                ? theme.colorScheme.onSurface.withOpacity(0.5)
+                : theme.colorScheme.primary,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Project Points',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: _isUsed
+                        ? theme.colorScheme.onSurface.withOpacity(0.5)
+                        : null,
+                    decoration: _isUsed ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+                Text(
+                  '${widget.projectPoints} points from career',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: _isUsed
+                        ? theme.colorScheme.onSurface.withOpacity(0.4)
+                        : theme.colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_isLoading)
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else
+            Checkbox(
+              value: _isUsed,
+              onChanged: (_) => _toggleUsed(),
+            ),
+          Text(
+            _isUsed ? 'Used' : 'Available',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: _isUsed
+                  ? theme.colorScheme.onSurface.withOpacity(0.5)
+                  : theme.colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

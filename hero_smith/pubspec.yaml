@@ -22,6 +22,31 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   drift_dev: ^2.17.0
   build_runner: ^2.4.9
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "data/images/logo/logo.png"
+  adaptive_icon_background: "#1a1a2e"
+  adaptive_icon_foreground: "data/images/logo/logo.png"
+  web:
+    generate: true
+    image_path: "data/images/logo/logo.png"
+  windows:
+    generate: true
+    image_path: "data/images/logo/logo.png"
+  macos:
+    generate: true
+    image_path: "data/images/logo/logo.png"
+
+flutter_native_splash:
+  color: "#000000"
+  image: "data/images/logo/logo.png"
+  android_12:
+    color: "#000000"
+    image: "data/images/logo/logo.png"
 
 flutter:
   uses-material-design: true
@@ -61,3 +86,6 @@ flutter:
     - data/treasures/
     # Downtime projects data
     - data/downtime/
+    # Images
+    - data/images/loading_screen/
+    - data/images/logo/

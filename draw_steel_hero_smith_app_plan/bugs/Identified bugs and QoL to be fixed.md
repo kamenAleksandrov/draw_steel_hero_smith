@@ -1,21 +1,13 @@
 
 ## easy
 
-project points from background should be availavable?
-
 the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
 
-need to add an icon.
-
 when clicking any field that accepts values in the creator the ap should not defopult to typing in the field
-
-cannot save the word of guidance in the features panel
 
 features that require a choise need to be noted
 
 recoveries must better show their value
-
-the A in ability cards sometimes is not colored properly
 
 chaging fury subclass must remove stormwight kits
 
@@ -34,8 +26,6 @@ automatically applied must be as a divider instead as another box that boxes the
 the heal button should have a temp stamina button next to it that assigns the value to temp hp 
 ## medium
 
-need to add a loading screen noting that this is not an official product and is working on their rules.
-
 most popouts should be wider
 
 abilities cards inside should strech the whole width, example: kits
@@ -47,8 +37,6 @@ titles must grant their abilities
 must add treasure abilities
 
 there should be a way to show what condition immunities does a hero have
-
-add a gold/silver/copper to the wealth stat and make it have both.
 
 modification popuots should not have an already set value of 0
 ## hard
@@ -75,11 +63,13 @@ Reload flicker came from the async providers returning to their loading states o
 
 strenght tab lack the option to save choises which leads to lost picks
 
-some features need their abilities: covenant of the hearth
+some features need their abilities: covenant of the heart
 
-## hero creation testing
+the A in ability cards sometimes is not colored properly
 
 ### unnecessary changes
+
+add a gold/silver/copper to the wealth stat and make it have both.
 
 reorder the tabs: strife => strength => story?
 
@@ -107,6 +97,8 @@ auto granted features must have theri names shown too
 the hero class skill and ther features bonuses do not save or grant their bonuses
 
 features must have ui updated to handle options, grants and other such cases better.
+## hero creation testing
+
 ### censor
 
 ### conduit
