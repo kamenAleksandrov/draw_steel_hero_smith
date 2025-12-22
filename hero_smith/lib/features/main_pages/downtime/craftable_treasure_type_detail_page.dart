@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/data/downtime_data_source.dart';
-import '../../widgets/shared/expandable_card.dart';
+import '../../../core/data/downtime_data_source.dart';
+import '../../../widgets/shared/expandable_card.dart';
 
 /// Detail page for a specific type of craftable treasure (consumable, trinket, or leveled)
 class CraftableTreasureTypeDetailPage extends StatelessWidget {

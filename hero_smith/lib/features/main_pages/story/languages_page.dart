@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/providers.dart';
-import '../../core/models/component.dart';
-import '../../widgets/languages/language_card.dart';
+import '../../../core/db/providers.dart';
+import '../../../core/models/component.dart';
+import '../../../widgets/languages/language_card.dart';
 
 class LanguagesPage extends ConsumerWidget {
   const LanguagesPage({super.key});

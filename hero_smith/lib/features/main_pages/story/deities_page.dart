@@ -1,35 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/providers.dart';
-import '../../core/models/component.dart';
-import '../../widgets/titles/title_card.dart';
+import '../../../core/db/providers.dart';
+import '../../../core/models/component.dart';
+import '../../../widgets/deities/deity_card.dart';
 
-class TitlesPage extends ConsumerWidget {
-  const TitlesPage({super.key});
+class DeitiesPage extends ConsumerWidget {
+  const DeitiesPage({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titlesAsync = ref.watch(componentsByTypeProvider('title'));
+    final deitiesAsync = ref.watch(componentsByTypeProvider('deity'));
     return Scaffold(
-      appBar: AppBar(title: const Text('Titles')),
-      body: titlesAsync.when(
+      appBar: AppBar(title: const Text('Deities')),
+      body: deitiesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (titles) {
-          if (titles.isEmpty) {
-            return const Center(child: Text('No titles found.'));
+        data: (deities) {
+          if (deities.isEmpty) {
+            return const Center(child: Text('No deities found.'));
           }
 
-          // Group by echelon (1..4) others as 0/unknown
-          final Map<int, List<Component>> grouped = {};
-          for (final t in titles) {
-            final echelon = (t.data['echelon'] as num?)?.toInt() ?? 0;
-            grouped.putIfAbsent(echelon, () => []).add(t);
+          // Group by category (e.g., god, saint)
+          final Map<String, List<Component>> grouped = {};
+          for (final d in deities) {
+            final cat = (d.data['category'] as String?) ?? 'other';
+            grouped.putIfAbsent(cat, () => []).add(d);
           }
 
-          const order = [1, 2, 3, 4, 0];
-          final sorted = <MapEntry<int, List<Component>>>[];
-          for (final i in order) {
-            if (grouped.containsKey(i)) sorted.add(MapEntry(i, grouped[i]!));
+          // Order: gods first, then saints, then others alphabetically
+          const order = ['god', 'saint', 'other'];
+          final sorted = <MapEntry<String, List<Component>>>[];
+          for (final k in order) {
+            if (grouped.containsKey(k)) sorted.add(MapEntry(k, grouped[k]!));
           }
           final remaining = grouped.keys.where((k) => !order.contains(k)).toList()..sort();
           for (final k in remaining) {
@@ -48,9 +50,13 @@ class TitlesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildGroup(BuildContext context, int echelon, List<Component> titles) {
-    titles.sort((a, b) => a.name.compareTo(b.name));
-    final title = echelon > 0 ? 'Echelon $echelon' : 'Other Titles';
+  Widget _buildGroup(BuildContext context, String category, List<Component> items) {
+    items.sort((a, b) => a.name.compareTo(b.name));
+    final title = switch (category) {
+      'god' => 'Gods',
+      'saint' => 'Saints',
+      _ => 'Other',
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -58,10 +64,7 @@ class TitlesPage extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 12, top: 16),
           child: Row(
             children: [
-              Text(
-                title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -70,7 +73,7 @@ class TitlesPage extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${titles.length}',
+                  '${items.length}',
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
                 ),
               ),
@@ -78,10 +81,10 @@ class TitlesPage extends ConsumerWidget {
           ),
         ),
         Column(
-          children: titles.map((t) {
+          children: items.map((d) {
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
-              child: TitleCard(titleComp: t),
+              child: DeityCard(deity: d),
             );
           }).toList(),
         ),

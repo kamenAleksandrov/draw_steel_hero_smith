@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/providers.dart';
-import '../../core/models/component.dart' as model;
-import '../../widgets/treasures/treasures.dart';
+import '../../../core/db/providers.dart';
+import '../../../core/models/component.dart' as model;
+import '../../../widgets/treasures/treasures.dart';
 import 'echelon_treasure_detail_page.dart';
 import 'leveled_treasure_type_page.dart';
 

@@ -1,94 +1,189 @@
 import 'package:flutter/material.dart';
-import '../../core/models/downtime.dart';
-import '../../widgets/shared/expandable_card.dart';
+import '../../../core/models/downtime.dart';
+import '../../../core/data/downtime_data_source.dart';
+import '../../../widgets/shared/expandable_card.dart';
 
-class ProjectCategoryDetailPage extends StatelessWidget {
-  final int category;
-  final List<DowntimeEntry> projects;
-  final Color Function(DowntimeEntry) getProjectCardColor;
-  final String Function(int) getDifficultyTitle;
+class ImbuementEchelonDetailPage extends StatelessWidget {
+  final int echelonLevel;
+  final Map<String, List<DowntimeEntry>> imbuementsByType;
+  final DowntimeDataSource dataSource;
 
-  const ProjectCategoryDetailPage({
+  const ImbuementEchelonDetailPage({
     super.key,
-    required this.category,
-    required this.projects,
-    required this.getProjectCardColor,
-    required this.getDifficultyTitle,
+    required this.echelonLevel,
+    required this.imbuementsByType,
+    required this.dataSource,
   });
 
-  Color _getCategoryColor(int category) {
-    switch (category) {
-      case 4:
-        return Colors.deepPurple; // Epic
-      case 3:
-        return Colors.indigo; // Major
-      case 2:
-        return Colors.blue; // Medium
+  Color _getEchelonColor(int level) {
+    switch (level) {
       case 1:
-        return Colors.teal; // Small
+        return Colors.green;
+      case 5:
+        return Colors.blue;
+      case 9:
+        return Colors.purple;
       default:
-        return Colors.blueGrey; // Other
+        return Colors.grey;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(getDifficultyTitle(category)),
-        backgroundColor: _getCategoryColor(category).withOpacity(0.1),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withOpacity(0.3),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '${projects.length} projects in this category',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.separated(
-                itemCount: projects.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final project = projects[index];
-                  return ExpandableCard(
-                    title: project.name,
-                    borderColor: getProjectCardColor(project),
-                    expandedContent: _EntryDetails(entry: project),
-                  );
-                },
-              ),
-            ),
-          ],
+    final sortedTypes = imbuementsByType.keys.toList()..sort();
+    final totalCount = imbuementsByType.values.fold(0, (sum, list) => sum + list.length);
+
+    return DefaultTabController(
+      length: sortedTypes.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(dataSource.getLevelName(echelonLevel)),
+          backgroundColor: _getEchelonColor(echelonLevel).withOpacity(0.1),
+          bottom: TabBar(
+            tabs: sortedTypes.map((type) {
+              return Tab(
+                icon: Icon(_getTypeIcon(type)),
+                text: _getShortTypeName(type),
+              );
+            }).toList(),
+          ),
         ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primaryContainer
+                      .withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.auto_fix_high,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '$totalCount imbuements across ${imbuementsByType.length} categories',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: TabBarView(
+                  children: sortedTypes.map((type) {
+                    final imbuements = imbuementsByType[type]!;
+                    return _ImbuementTypeTab(
+                      type: type,
+                      imbuements: imbuements,
+                      dataSource: dataSource,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  IconData _getTypeIcon(String type) {
+    switch (type) {
+      case 'armor_imbuement':
+        return Icons.shield;
+      case 'weapon_imbuement':
+        return Icons.gavel;
+      case 'implement_imbuement':
+        return Icons.auto_fix_high;
+      default:
+        return Icons.build;
+    }
+  }
+
+  String _getShortTypeName(String type) {
+    switch (type) {
+      case 'armor_imbuement':
+        return 'Armor';
+      case 'weapon_imbuement':
+        return 'Weapon';
+      case 'implement_imbuement':
+        return 'Implement';
+      default:
+        return type.replaceAll('_imbuement', '').toUpperCase();
+    }
+  }
+}
+
+class _ImbuementTypeTab extends StatelessWidget {
+  final String type;
+  final List<DowntimeEntry> imbuements;
+  final DowntimeDataSource dataSource;
+
+  const _ImbuementTypeTab({
+    required this.type,
+    required this.imbuements,
+    required this.dataSource,
+  });
+
+  Color _getTypeColor(String type) {
+    switch (type) {
+      case 'armor_imbuement':
+        return Colors.indigo; // Blue
+      case 'weapon_imbuement':
+        return Colors.deepOrange; // Reddish
+      case 'implement_imbuement':
+        return Colors.teal; // Greenish
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _getTypeColor(type).withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(8),
+        itemCount: imbuements.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 8),
+        itemBuilder: (context, index) {
+          final imbuement = imbuements[index];
+          return Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color: _getTypeColor(type).withOpacity(0.3),
+                width: 2,
+              ),
+            ),
+            child: ExpandableCard(
+              title: imbuement.name.replaceAll(
+                  ' - ${dataSource.getLevelName((imbuement.raw['level'] as int? ?? 1))}-Level ${dataSource.getImbuementTypeName(imbuement.type).replaceAll('s', '')}',
+                  ''),
+              borderColor: _getTypeColor(type),
+              expandedContent: _EntryDetails(entry: imbuement),
+            ),
+          );
+        },
       ),
     );
   }
@@ -101,10 +196,11 @@ class _EntryDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final desc = (entry.raw['description'] ?? '').toString();
+    final imbuement = entry.raw['imbuement']?.toString() ?? '';
+    final cost = entry.raw['cost']?.toString() ?? '';
     final projectGoal = entry.raw['project_goal'];
     final prerequisites = entry.raw['prerequisites'] as Map<String, dynamic>?;
-    final rollCharacteristics =
-        entry.raw['project_roll_characteristic'] as List<dynamic>?;
+    final rollCharacteristics = entry.raw['project_roll_characteristic'] as List<dynamic>?;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -116,11 +212,41 @@ class _EntryDetails extends StatelessWidget {
               desc,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
           ],
           
+          if (imbuement.isNotEmpty) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Imbuement Effect',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    imbuement,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
           // Project details section
-          if (projectGoal != null || rollCharacteristics != null) ...[
+          if (projectGoal != null || rollCharacteristics != null || cost.isNotEmpty) ...[
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -141,17 +267,29 @@ class _EntryDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   
-                  if (projectGoal != null) ...[
-                    _InfoChip(
-                      icon: Icons.flag,
-                      label: 'Goal',
-                      value: '$projectGoal points',
-                      color: _getProjectGoalColor(projectGoal),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (projectGoal != null)
+                        _InfoChip(
+                          icon: Icons.flag,
+                          label: 'Goal',
+                          value: '$projectGoal points',
+                          color: _getProjectGoalColor(projectGoal),
+                        ),
+                      if (cost.isNotEmpty)
+                        _InfoChip(
+                          icon: Icons.monetization_on,
+                          label: 'Cost',
+                          value: cost,
+                          color: Colors.amber,
+                        ),
+                    ],
+                  ),
                   
                   if (rollCharacteristics != null && rollCharacteristics.isNotEmpty) ...[
+                    const SizedBox(height: 12),
                     Text(
                       'Roll Characteristics:',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -171,9 +309,9 @@ class _EntryDetails extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
           ],
-          
+
           // Prerequisites section
           if (prerequisites != null && prerequisites.isNotEmpty) ...[
             Container(

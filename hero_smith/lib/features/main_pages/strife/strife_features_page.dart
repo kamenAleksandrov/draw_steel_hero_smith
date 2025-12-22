@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../core/models/feature.dart';
-import '../../core/repositories/feature_repository.dart';
-import '../../core/theme/feature_tokens.dart';
-import '../../widgets/features/class_navigation_card.dart';
-import '../../widgets/features/features_overview_stats.dart';
+import '../../../core/models/feature.dart';
+import '../../../core/repositories/feature_repository.dart';
+import '../../../core/theme/feature_tokens.dart';
+import '../../../widgets/features/class_navigation_card.dart';
+import '../../../widgets/features/features_overview_stats.dart';
 import 'class_detail_page.dart';
 
 class StrifeFeaturesPage extends StatefulWidget {

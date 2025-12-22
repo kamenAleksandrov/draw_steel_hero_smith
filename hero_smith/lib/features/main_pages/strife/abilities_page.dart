@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/db/providers.dart';
-import '../../core/models/component.dart';
-import '../../core/theme/strife_theme.dart';
-import '../../widgets/abilities/abilities_shared.dart';
-import '../../widgets/abilities/ability_expandable_item.dart';
+import '../../../core/db/providers.dart';
+import '../../../core/models/component.dart';
+import '../../../core/theme/strife_theme.dart';
+import '../../../widgets/abilities/abilities_shared.dart';
+import '../../../widgets/abilities/ability_expandable_item.dart';
 
 class AbilitiesPage extends ConsumerWidget {
   const AbilitiesPage({super.key});

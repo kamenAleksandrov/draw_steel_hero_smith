@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/models/feature.dart';
-import '../../core/theme/feature_tokens.dart';
-import '../../core/repositories/feature_repository.dart';
-import '../../widgets/features/feature_dropdown_section.dart';
+import '../../../core/models/feature.dart';
+import '../../../core/theme/feature_tokens.dart';
+import '../../../core/repositories/feature_repository.dart';
+import '../../../widgets/features/feature_dropdown_section.dart';
 
 class LevelDetailPage extends StatelessWidget {
   final int level;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../core/models/feature.dart';
-import '../../core/repositories/feature_repository.dart';
-import '../../core/theme/feature_tokens.dart';
-import '../../widgets/features/level_dropdown_card.dart';
-import '../../widgets/features/feature_search_delegate.dart';
+import '../../../core/models/feature.dart';
+import '../../../core/repositories/feature_repository.dart';
+import '../../../core/theme/feature_tokens.dart';
+import '../../../widgets/features/level_dropdown_card.dart';
+import '../../../widgets/features/feature_search_delegate.dart';
 
 class ClassDetailPage extends StatelessWidget {
   final String className;

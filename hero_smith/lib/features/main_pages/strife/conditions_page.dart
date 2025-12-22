@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/providers.dart';
-import '../../widgets/conditions/condition_card.dart';
+import '../../../core/db/providers.dart';
+import '../../../widgets/conditions/condition_card.dart';
 
 class ConditionsPage extends ConsumerWidget {
   const ConditionsPage({super.key});

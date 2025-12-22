@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/db/providers.dart';
-import '../../core/models/component.dart';
-import '../../widgets/deities/deity_card.dart';
+import '../../../core/db/providers.dart';
+import '../../../core/models/component.dart';
+import '../../../widgets/titles/title_card.dart';
 
-class DeitiesPage extends ConsumerWidget {
-  const DeitiesPage({super.key});
-
+class TitlesPage extends ConsumerWidget {
+  const TitlesPage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final deitiesAsync = ref.watch(componentsByTypeProvider('deity'));
+    final titlesAsync = ref.watch(componentsByTypeProvider('title'));
     return Scaffold(
-      appBar: AppBar(title: const Text('Deities')),
-      body: deitiesAsync.when(
+      appBar: AppBar(title: const Text('Titles')),
+      body: titlesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (deities) {
-          if (deities.isEmpty) {
-            return const Center(child: Text('No deities found.'));
+        data: (titles) {
+          if (titles.isEmpty) {
+            return const Center(child: Text('No titles found.'));
           }
 
-          // Group by category (e.g., god, saint)
-          final Map<String, List<Component>> grouped = {};
-          for (final d in deities) {
-            final cat = (d.data['category'] as String?) ?? 'other';
-            grouped.putIfAbsent(cat, () => []).add(d);
+          // Group by echelon (1..4) others as 0/unknown
+          final Map<int, List<Component>> grouped = {};
+          for (final t in titles) {
+            final echelon = (t.data['echelon'] as num?)?.toInt() ?? 0;
+            grouped.putIfAbsent(echelon, () => []).add(t);
           }
 
-          // Order: gods first, then saints, then others alphabetically
-          const order = ['god', 'saint', 'other'];
-          final sorted = <MapEntry<String, List<Component>>>[];
-          for (final k in order) {
-            if (grouped.containsKey(k)) sorted.add(MapEntry(k, grouped[k]!));
+          const order = [1, 2, 3, 4, 0];
+          final sorted = <MapEntry<int, List<Component>>>[];
+          for (final i in order) {
+            if (grouped.containsKey(i)) sorted.add(MapEntry(i, grouped[i]!));
           }
           final remaining = grouped.keys.where((k) => !order.contains(k)).toList()..sort();
           for (final k in remaining) {
@@ -50,13 +48,9 @@ class DeitiesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildGroup(BuildContext context, String category, List<Component> items) {
-    items.sort((a, b) => a.name.compareTo(b.name));
-    final title = switch (category) {
-      'god' => 'Gods',
-      'saint' => 'Saints',
-      _ => 'Other',
-    };
+  Widget _buildGroup(BuildContext context, int echelon, List<Component> titles) {
+    titles.sort((a, b) => a.name.compareTo(b.name));
+    final title = echelon > 0 ? 'Echelon $echelon' : 'Other Titles';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -64,7 +58,10 @@ class DeitiesPage extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 12, top: 16),
           child: Row(
             children: [
-              Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -73,7 +70,7 @@ class DeitiesPage extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${items.length}',
+                  '${titles.length}',
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
                 ),
               ),
@@ -81,10 +78,10 @@ class DeitiesPage extends ConsumerWidget {
           ),
         ),
         Column(
-          children: items.map((d) {
+          children: titles.map((t) {
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
-              child: DeityCard(deity: d),
+              child: TitleCard(titleComp: t),
             );
           }).toList(),
         ),

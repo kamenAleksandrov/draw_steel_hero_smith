@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/models/feature.dart';
 import '../../core/theme/feature_tokens.dart';
-import '../../features/strife/level_detail_page.dart';
+import '../../features/main_pages/strife/level_detail_page.dart';
 
 class LevelDropdownCard extends StatelessWidget {
   final int level;
