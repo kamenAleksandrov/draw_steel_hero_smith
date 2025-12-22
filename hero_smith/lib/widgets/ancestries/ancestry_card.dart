@@ -106,12 +106,9 @@ class AncestryCard extends StatelessWidget {
   }
 
   Widget _buildStatsContent(BuildContext context, Map<String, dynamic> data) {
-    final heightRaw = data['height'];
-    final height = heightRaw is Map ? Map<String, dynamic>.from(heightRaw) : null;
-    final weightRaw = data['weight'];
-    final weight = weightRaw is Map ? Map<String, dynamic>.from(weightRaw) : null;
-    final lifeExpectancyRaw = data['life_expectancy'];
-    final lifeExpectancy = lifeExpectancyRaw is Map ? Map<String, dynamic>.from(lifeExpectancyRaw) : null;
+    final height = data['height'] as Map<String, dynamic>?;
+    final weight = data['weight'] as Map<String, dynamic>?;
+    final lifeExpectancy = data['life_expectancy'] as Map<String, dynamic>?;
     final size = data['size'] as String? ?? 'Unknown';
     final speed = data['speed'] as int? ?? 0;
     final stability = data['stability'] as int? ?? 0;
@@ -160,26 +157,19 @@ class AncestryCard extends StatelessWidget {
   }
 
   Widget _buildExampleNamesContent(BuildContext context, Map<String, dynamic> data) {
-    final exampleNamesRaw = data['exampleNames'];
-    final exampleNames = exampleNamesRaw is Map ? Map<String, dynamic>.from(exampleNamesRaw) : null;
+    final exampleNames = data['exampleNames'] as Map<String, dynamic>?;
     
     if (exampleNames == null) {
       return const Text('No example names available.');
     }
 
     final notes = exampleNames['notes'] as String?;
-    final feminineRaw = exampleNames['feminine'];
-    final feminine = feminineRaw is List ? List<dynamic>.from(feminineRaw) : null;
-    final masculineRaw = exampleNames['masculine'];
-    final masculine = masculineRaw is List ? List<dynamic>.from(masculineRaw) : null;
-    final genderNeutralRaw = exampleNames['genderNeutral'];
-    final genderNeutral = genderNeutralRaw is List ? List<dynamic>.from(genderNeutralRaw) : null;
-    final examplesRaw = exampleNames['examples'];
-    final examples = examplesRaw is List ? List<dynamic>.from(examplesRaw) : null;
-    final epithetsRaw = exampleNames['epithets'];
-    final epithets = epithetsRaw is List ? List<dynamic>.from(epithetsRaw) : null;
-    final surnamesRaw = exampleNames['surnames'];
-    final surnames = surnamesRaw is List ? List<dynamic>.from(surnamesRaw) : null;
+    final feminine = exampleNames['feminine'] as List<dynamic>?;
+    final masculine = exampleNames['masculine'] as List<dynamic>?;
+    final genderNeutral = exampleNames['genderNeutral'] as List<dynamic>?;
+    final examples = exampleNames['examples'] as List<dynamic>?;
+    final epithets = exampleNames['epithets'] as List<dynamic>?;
+    final surnames = exampleNames['surnames'] as List<dynamic>?;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,10 +255,7 @@ class AncestryCard extends StatelessWidget {
   }
 
   Widget _buildSignatureContent(BuildContext context, Map<String, dynamic> traitsData) {
-    final signatureRaw = traitsData['signature'];
-    final Map<String, dynamic>? signature = signatureRaw is Map 
-        ? Map<String, dynamic>.from(signatureRaw) 
-        : null;
+    final signature = traitsData['signature'] as Map<String, dynamic>?;
     
     if (signature == null) {
       return const Text('No signature ability available.');
@@ -312,8 +299,7 @@ class AncestryCard extends StatelessWidget {
   }
 
   Widget _buildTraitsContent(BuildContext context, Map<String, dynamic> traitsData) {
-    final traitsRaw = traitsData['traits'];
-    final traits = traitsRaw is List ? List<dynamic>.from(traitsRaw) : null;
+    final traits = traitsData['traits'] as List<dynamic>?;
     final points = traitsData['points'] as int? ?? 0;
     
     if (traits == null || traits.isEmpty) {
@@ -340,7 +326,7 @@ class AncestryCard extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         ...traits.map((trait) {
-          final traitMap = trait is Map ? Map<String, dynamic>.from(trait) : <String, dynamic>{};
+          final traitMap = trait as Map<String, dynamic>;
           return _AncestryTraitDropdown(
             name: traitMap['name'] as String? ?? 'Unknown Trait',
             description: traitMap['description'] as String? ?? '',
