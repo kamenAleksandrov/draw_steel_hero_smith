@@ -8,6 +8,7 @@ import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/class_feature_grants_service.dart';
+import '../../../core/theme/text/strength_creator_page_text.dart';
 import '../widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 
@@ -61,7 +62,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
 
       if (hero == null) {
         setState(() {
-          _error = 'Hero data could not be found.';
+          _error = StrengthCreatorPageText.heroDataNotFoundMessage;
           _isLoading = false;
         });
         return;
@@ -185,7 +186,8 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       if (!mounted) return;
       if (!_hasLoadedOnce || showFullScreenLoader) {
         setState(() {
-          _error = 'Failed to load strength data: $e';
+          _error =
+              '${StrengthCreatorPageText.failedToLoadStrengthDataPrefix}$e';
           _isLoading = false;
           _isRefreshing = false;
         });
@@ -196,7 +198,8 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to refresh features: $e'),
+            content:
+                Text('${StrengthCreatorPageText.failedToRefreshFeaturesPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -230,7 +233,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save feature selections: $e'),
+          content: Text(
+            '${StrengthCreatorPageText.failedToSaveFeatureSelectionsPrefix}$e',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -294,7 +299,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save skill selection: $e'),
+          content: Text(
+            '${StrengthCreatorPageText.failedToSaveSkillSelectionPrefix}$e',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -312,12 +319,12 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       return _NoticeCard(
         icon: Icons.error_outline,
         color: Colors.red,
-        title: 'Something went wrong',
+        title: StrengthCreatorPageText.noticeTitleSomethingWentWrong,
         message: _error!,
         action: TextButton.icon(
           onPressed: _load,
           icon: const Icon(Icons.refresh),
-          label: const Text('Retry'),
+          label: const Text(StrengthCreatorPageText.noticeActionRetryLabel),
         ),
       );
     }
@@ -328,9 +335,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         _NoticeCard(
           icon: Icons.info_outline,
           color: Colors.orange,
-          title: 'Class required',
+          title: StrengthCreatorPageText.noticeTitleClassRequired,
           message:
-              'Select a class on the Strife tab to load class features. A class is required before features can be shown.',
+              StrengthCreatorPageText.noticeMessageClassRequired,
         ),
       );
     }
@@ -339,9 +346,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         _NoticeCard(
           icon: Icons.error_outline,
           color: Colors.amber,
-          title: 'Subclass missing',
+          title: StrengthCreatorPageText.noticeTitleSubclassMissing,
           message:
-              'Subclass features cannot be loaded until a subclass is chosen on the Strife tab.',
+              StrengthCreatorPageText.noticeMessageSubclassMissing,
         ),
       );
     }
@@ -356,7 +363,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AutoHeroGreenFormWidget(
             heroId: widget.heroId,
-            sectionTitle: 'Green Elementalist Forms',
+            sectionTitle: StrengthCreatorPageText.greenFormSectionTitle,
             sectionSpacing: 12,
           ),
         ),
@@ -376,7 +383,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         const Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'Choose a class first to load features.',
+            StrengthCreatorPageText.chooseClassFirstMessage,
             textAlign: TextAlign.center,
           ),
       ),

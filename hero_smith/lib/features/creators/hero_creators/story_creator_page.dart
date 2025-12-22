@@ -7,6 +7,7 @@ import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/core/models/hero_model.dart';
 import 'package:hero_smith/core/models/story_creator_models.dart';
 import 'package:hero_smith/core/services/story_creator_service.dart';
+import 'package:hero_smith/core/theme/text/story_creator_page_text.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_ancestry_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_career_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_complication_section.dart';
@@ -180,19 +181,20 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Duplicate selections'),
+        title: const Text(StoryCreatorPageText.duplicateDialogTitle),
         content: Text(
-          'You have duplicate ${categories.join(' and ')}. '
-          'These choices will overwrite each other. Do you want to continue?',
+          '${StoryCreatorPageText.duplicateDialogContentPrefix}'
+          '${categories.join(' and ')}'
+          '${StoryCreatorPageText.duplicateDialogContentSuffix}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Go back'),
+            child: const Text(StoryCreatorPageText.duplicateDialogGoBack),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Continue'),
+            child: const Text(StoryCreatorPageText.duplicateDialogContinue),
           ),
         ],
       ),
@@ -271,7 +273,9 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
       widget.onDirtyChanged(false);
     }
     widget.onTitleChanged(
-      payload.name.isNotEmpty ? payload.name : 'Hero Creator',
+      payload.name.isNotEmpty
+          ? payload.name
+          : StoryCreatorPageText.heroTitleFallbackOnSave,
     );
   }
 
@@ -336,7 +340,8 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
   }
 
   void _handleNameChanged() {
-    final fallback = _hero?.name ?? 'Hero Creator';
+    final fallback =
+        _hero?.name ?? StoryCreatorPageText.heroTitleFallbackOnNameChanged;
     final trimmed = _nameCtrl.text.trim();
     widget.onTitleChanged(trimmed.isNotEmpty ? trimmed : fallback);
   }
@@ -519,7 +524,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
 
     if (_hero == null) {
       return _ErrorView(
-        message: 'Hero data could not be found.',
+        message: StoryCreatorPageText.heroNotFoundMessage,
         onRetry: _load,
       );
     }
@@ -635,7 +640,7 @@ class _ErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text(StoryCreatorPageText.errorViewRetry),
             ),
           ],
         ),

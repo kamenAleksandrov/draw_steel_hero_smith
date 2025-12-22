@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/text/hero_creator_page_text.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strength_creator_page.dart';
@@ -27,7 +28,7 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
 
   bool _storyDirty = false;
   bool _strifeDirty = false;
-  String _heroTitle = 'Hero Creator';
+  String _heroTitle = HeroCreatorPageText.heroTitleInitial;
   String? _heroName;
   bool _suppressTabNotification = false;
   bool _handlingTabPrompt = false;
@@ -68,23 +69,27 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
       final result = await showDialog<String>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Unsaved changes'),
+          title: const Text(HeroCreatorPageText.tabChangeDialogTitle),
           content: Text(
-              'You have unsaved changes in the ${oldIndex == 0 ? 'Story' : 'Strife'} tab. '
-              'Do you want to save before switching?'),
+            '${HeroCreatorPageText.tabChangeDialogContentPrefix}'
+            '${oldIndex == 0 ? HeroCreatorPageText.tabChangeDialogContentStoryLabel : HeroCreatorPageText.tabChangeDialogContentStrifeLabel}'
+            '${HeroCreatorPageText.tabChangeDialogContentSuffix}',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop('cancel'),
-              child: const Text('Cancel'),
+              child:
+                  const Text(HeroCreatorPageText.tabChangeDialogCancelLabel),
             ),
             TextButton(
               onPressed: () => Navigator.of(ctx).pop('discard'),
-              child: const Text('Discard'),
+              child:
+                  const Text(HeroCreatorPageText.tabChangeDialogDiscardLabel),
             ),
             FilledButton.icon(
               onPressed: () => Navigator.of(ctx).pop('save'),
               icon: const Icon(Icons.save),
-              label: const Text('Save'),
+              label: const Text(HeroCreatorPageText.tabChangeDialogSaveLabel),
             ),
           ],
         ),
@@ -133,7 +138,9 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
   }
 
   void _handleStoryTitleChanged(String title) {
-    final normalized = title.trim().isEmpty ? 'Hero Creator' : title.trim();
+    final normalized = title.trim().isEmpty
+        ? HeroCreatorPageText.heroTitleFallback
+        : title.trim();
     if (_heroTitle == normalized) return;
     setState(() {
       _heroTitle = normalized;
@@ -153,8 +160,9 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
     if (state == null) return;
     await state.save();
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Story saved')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text(HeroCreatorPageText.storySavedSnackBar)),
+    );
   }
 
   Future<void> _saveStrife() async {
@@ -178,21 +186,21 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('You have unsaved changes'),
-        content: const Text('Do you want to save your changes before leaving?'),
+        title: const Text(HeroCreatorPageText.willPopDialogTitle),
+        content: const Text(HeroCreatorPageText.willPopDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('cancel'),
-            child: const Text('Cancel'),
+            child: const Text(HeroCreatorPageText.willPopDialogCancelLabel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('discard'),
-            child: const Text('Discard'),
+            child: const Text(HeroCreatorPageText.willPopDialogDiscardLabel),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.of(ctx).pop('save'),
             icon: const Icon(Icons.save),
-            label: const Text('Save'),
+            label: const Text(HeroCreatorPageText.willPopDialogSaveLabel),
           ),
         ],
       ),
@@ -239,22 +247,26 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
                   final result = await showDialog<String>(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: const Text('Unsaved changes'),
+                      title:
+                          const Text(HeroCreatorPageText.viewSheetDialogTitle),
                       content: const Text(
-                          'You have unsaved changes. Do you want to save before viewing the hero sheet?'),
+                          HeroCreatorPageText.viewSheetDialogContent),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop('cancel'),
-                          child: const Text('Cancel'),
+                          child: const Text(
+                              HeroCreatorPageText.viewSheetDialogCancelLabel),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop('discard'),
-                          child: const Text('Discard'),
+                          child: const Text(
+                              HeroCreatorPageText.viewSheetDialogDiscardLabel),
                         ),
                         FilledButton.icon(
                           onPressed: () => Navigator.of(ctx).pop('save'),
                           icon: const Icon(Icons.save),
-                          label: const Text('Save'),
+                          label: const Text(
+                              HeroCreatorPageText.viewSheetDialogSaveLabel),
                         ),
                       ],
                     ),
@@ -275,27 +287,27 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
                 );
               },
               icon: const Icon(Icons.visibility),
-              tooltip: 'View Hero Sheet',
+              tooltip: HeroCreatorPageText.viewHeroSheetTooltip,
             ),
             if (_tabController.index == 0 && _storyDirty)
               IconButton(
                 onPressed: _saveStory,
                 icon: const Icon(Icons.save),
-                tooltip: 'Save Hero',
+                tooltip: HeroCreatorPageText.saveHeroTooltip,
               )
             else if (_tabController.index == 1 && _strifeDirty)
               IconButton(
                 onPressed: _saveStrife,
                 icon: const Icon(Icons.save),
-                tooltip: 'Save Strife',
+                tooltip: HeroCreatorPageText.saveStrifeTooltip,
               ),
           ],
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
-              Tab(text: 'Story'),
-              Tab(text: 'Strife'),
-              Tab(text: 'Strenght'),
+              Tab(text: HeroCreatorPageText.tabLabelStory),
+              Tab(text: HeroCreatorPageText.tabLabelStrife),
+              Tab(text: HeroCreatorPageText.tabLabelStrength),
             ],
           ),
         ),

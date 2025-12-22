@@ -26,6 +26,7 @@ import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/subclass_service.dart';
+import '../../../core/theme/text/strife_creator_page_text.dart';
 import '../../heroes_sheet/main_stats/hero_main_stats_providers.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
@@ -186,7 +187,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage = 'Failed to load class data: $e';
+        _errorMessage = '${StrifeCreatorPageText.failedToLoadClassDataPrefix}$e';
       });
     }
   }
@@ -1279,7 +1280,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   bool _validateSelections() {
     if (_selectedClass == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a class')),
+        const SnackBar(
+          content: Text(StrifeCreatorPageText.pleaseSelectClassSnackBar),
+        ),
       );
       return false;
     }
@@ -1374,19 +1377,22 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Duplicate selections'),
+        title: const Text(StrifeCreatorPageText.duplicateSelectionsDialogTitle),
         content: Text(
-          'Some $categories are already assigned to this hero. '
-          'Do you want to keep these duplicates?',
+          '${StrifeCreatorPageText.duplicateSelectionsDialogContentPrefix}'
+          '$categories'
+          '${StrifeCreatorPageText.duplicateSelectionsDialogContentSuffix}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Go back'),
+            child: const Text(
+                StrifeCreatorPageText.duplicateSelectionsDialogGoBack),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Continue'),
+            child: const Text(
+                StrifeCreatorPageText.duplicateSelectionsDialogContinue),
           ),
         ],
       ),
@@ -1825,10 +1831,17 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Saved: Level $_selectedLevel ${classData.name}\n'
-            'Stamina: $displayStamina${equipmentBonuses.staminaBonus > 0 ? ' (+${equipmentBonuses.staminaBonus} kit)' : ''}, '
-            'Speed: $displaySpeed${equipmentBonuses.speedBonus > 0 ? ' (+${equipmentBonuses.speedBonus})' : ''}, '
-            'Stability: $displayStability${equipmentBonuses.stabilityBonus > 0 ? ' (+${equipmentBonuses.stabilityBonus})' : ''}',
+            '${StrifeCreatorPageText.savedSnackBarHeaderPrefix}'
+            '$_selectedLevel ${classData.name}\n'
+            '${StrifeCreatorPageText.savedSnackBarStaminaPrefix}'
+            '$displayStamina'
+            "${equipmentBonuses.staminaBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarStaminaBonusPrefix}${equipmentBonuses.staminaBonus}${StrifeCreatorPageText.savedSnackBarStaminaBonusSuffix}' : ''}, "
+            '${StrifeCreatorPageText.savedSnackBarSpeedPrefix}'
+            '$displaySpeed'
+            "${equipmentBonuses.speedBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarSpeedBonusPrefix}${equipmentBonuses.speedBonus}${StrifeCreatorPageText.savedSnackBarSpeedBonusSuffix}' : ''}, "
+            '${StrifeCreatorPageText.savedSnackBarStabilityPrefix}'
+            '$displayStability'
+            "${equipmentBonuses.stabilityBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarStabilityBonusPrefix}${equipmentBonuses.stabilityBonus}${StrifeCreatorPageText.savedSnackBarStabilityBonusSuffix}' : ''}",
           ),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.green,
@@ -1838,7 +1851,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save: $e'),
+          content: Text('${StrifeCreatorPageText.failedToSavePrefix}$e'),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
@@ -1878,7 +1891,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
                   });
                   _initializeData();
                 },
-                child: const Text('Retry'),
+                child: const Text(StrifeCreatorPageText.retryLabel),
               ),
             ],
           ),
