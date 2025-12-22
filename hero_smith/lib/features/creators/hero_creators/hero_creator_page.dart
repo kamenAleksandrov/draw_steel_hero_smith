@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strength_creator_page.dart';
-import 'package:hero_smith/features/heroes/hero_sheet/hero_sheet_page.dart';
+import 'package:hero_smith/features/heroes_sheet/hero_sheet_page.dart';
 
 class HeroCreatorPage extends ConsumerStatefulWidget {
   const HeroCreatorPage({super.key, required this.heroId});

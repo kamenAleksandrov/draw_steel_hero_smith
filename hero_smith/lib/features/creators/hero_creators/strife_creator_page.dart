@@ -26,7 +26,7 @@ import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/subclass_service.dart';
-import '../../heroes/hero_sheet/main_stats/hero_main_stats_providers.dart';
+import '../../heroes_sheet/main_stats/hero_main_stats_providers.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
 import '../widgets/strife_creator/choose_perks_widget.dart';

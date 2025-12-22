@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/heroes/heroes_page.dart';
+import 'features/main_pages/heroes_page.dart';
 import 'features/main_pages/strife/strife_page.dart';
 import 'features/main_pages/story/story_page.dart';
 import 'features/main_pages/gear/gear_page.dart';
