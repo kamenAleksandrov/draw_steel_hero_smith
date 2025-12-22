@@ -1897,7 +1897,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           return const SizedBox.shrink();
         }
 
-        final options = snapshot.data!;
+        // Filter out 'victories' option if victories is 0 (would give +0)
+        final options = snapshot.data!
+            .where((option) => option.key != 'victories' || stats.victories > 0)
+            .toList();
+        
+        if (options.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        
         final theme = Theme.of(context);
 
         return Wrap(
