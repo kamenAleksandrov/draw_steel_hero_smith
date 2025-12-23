@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/text/heroes_sheet/story/sheet_story_culture_section_text.dart';
+
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
@@ -69,30 +71,33 @@ class CultureSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Culture',
+              SheetStoryCultureSectionText.sectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-            if (culture.environmentId != null && culture.environmentId!.isNotEmpty)
+            if (culture.environmentId != null &&
+                culture.environmentId!.isNotEmpty)
               _ComponentDisplay(
-                label: 'Environment',
+                label: SheetStoryCultureSectionText.environmentLabel,
                 componentId: culture.environmentId!,
                 icon: Icons.terrain,
               ),
-            if (culture.organisationId != null && culture.organisationId!.isNotEmpty) ...[
+            if (culture.organisationId != null &&
+                culture.organisationId!.isNotEmpty) ...[
               const SizedBox(height: 8),
               _ComponentDisplay(
-                label: 'Organization',
+                label: SheetStoryCultureSectionText.organizationLabel,
                 componentId: culture.organisationId!,
                 icon: Icons.groups,
               ),
             ],
-            if (culture.upbringingId != null && culture.upbringingId!.isNotEmpty) ...[
+            if (culture.upbringingId != null &&
+                culture.upbringingId!.isNotEmpty) ...[
               const SizedBox(height: 8),
               _ComponentDisplay(
-                label: 'Upbringing',
+                label: SheetStoryCultureSectionText.upbringingLabel,
                 componentId: culture.upbringingId!,
                 icon: Icons.home,
               ),
@@ -102,7 +107,7 @@ class CultureSection extends ConsumerWidget {
                 culture.upbringingSkillId != null) ...[
               const SizedBox(height: 16),
               Text(
-                'Culture Skills',
+                SheetStoryCultureSectionText.cultureSkillsTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -110,14 +115,14 @@ class CultureSection extends ConsumerWidget {
               const SizedBox(height: 8),
               if (culture.environmentSkillId != null)
                 _ComponentDisplay(
-                  label: 'Environment Skill',
+                  label: SheetStoryCultureSectionText.environmentSkillLabel,
                   componentId: culture.environmentSkillId!,
                   icon: Icons.school,
                 ),
               if (culture.organisationSkillId != null) ...[
                 const SizedBox(height: 4),
                 _ComponentDisplay(
-                  label: 'Organization Skill',
+                  label: SheetStoryCultureSectionText.organizationSkillLabel,
                   componentId: culture.organisationSkillId!,
                   icon: Icons.school,
                 ),
@@ -125,7 +130,7 @@ class CultureSection extends ConsumerWidget {
               if (culture.upbringingSkillId != null) ...[
                 const SizedBox(height: 4),
                 _ComponentDisplay(
-                  label: 'Upbringing Skill',
+                  label: SheetStoryCultureSectionText.upbringingSkillLabel,
                   componentId: culture.upbringingSkillId!,
                   icon: Icons.school,
                 ),
@@ -161,7 +166,8 @@ class _ComponentDisplay extends ConsumerWidget {
         width: 20,
         child: CircularProgressIndicator(strokeWidth: 2),
       ),
-      error: (e, _) => Text('Error: $e', style: const TextStyle(color: Colors.red)),
+      error: (e, _) =>
+          Text('Error: $e', style: const TextStyle(color: Colors.red)),
       data: (component) {
         if (component == null) return Text('$label not found');
 

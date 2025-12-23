@@ -64,7 +64,7 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
     if (_selectedSkillIds.contains(skillId)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Skill already added')),
+          const SnackBar(content: Text(SheetStorySkillsTabText.skillAlreadyAdded)),
         );
       }
       return;
@@ -146,7 +146,7 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
-              child: const Text('Retry'),
+              child: const Text(SheetStoryCommonText.retry),
             ),
           ],
         ),
@@ -171,14 +171,14 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
           Row(
             children: [
               Text(
-                'Skills',
+                SheetStorySkillsTabText.skillsTitle,
                 style: AppTextStyles.title,
               ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _showAddSkillDialog,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add Skill'),
+                label: const Text(SheetStorySkillsTabText.addSkill),
               ),
             ],
           ),
@@ -188,7 +188,7 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
               child: Padding(
                 padding: const EdgeInsets.all(32),
                 child: Text(
-                  'No skills selected. Tap "Add Skill" to get started.',
+                  SheetStorySkillsTabText.emptyState,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -226,7 +226,7 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
                           trailing: IconButton(
                             icon: const Icon(Icons.close),
                             onPressed: () => _removeSkill(skill.id),
-                            tooltip: 'Remove skill',
+                            tooltip: SheetStorySkillsTabText.removeSkillTooltip,
                           ),
                         ),
                       )),
@@ -283,7 +283,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Add Skill'),
+      title: const Text(SheetStorySkillsTabText.addSkillDialogTitle),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -291,7 +291,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search skills',
+                labelText: SheetStorySkillsTabText.searchSkillsLabel,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -302,7 +302,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
               child: _filteredSkills.isEmpty
                   ? Center(
                       child: Text(
-                        'No skills found',
+                        SheetStorySkillsTabText.noSkillsFound,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
@@ -329,7 +329,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(SheetStoryCommonText.cancel),
         ),
       ],
     );

@@ -8,6 +8,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/text/gear/treasures_tab_text.dart';
 import '../../../widgets/treasures/treasures.dart';
 import 'gear_dialogs.dart';
 import 'gear_utils.dart';
@@ -63,7 +64,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       onError: (e) {
         if (mounted) {
           setState(() {
-            _error = 'Failed to watch treasures: $e';
+            _error = '${TreasuresTabText.watchTreasuresFailedPrefix}$e';
           });
         }
       },
@@ -123,7 +124,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         setState(() {
           _isLoadingTreasures = false;
-          _error = 'Failed to load treasures: $e';
+          _error = '${TreasuresTabText.loadTreasuresFailedPrefix}$e';
         });
       }
     }
@@ -145,7 +146,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Treasure added'),
+            content: Text(TreasuresTabText.treasureAddedSnack),
             duration: Duration(seconds: 2),
           ),
         );
@@ -154,7 +155,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add treasure: $e'),
+            content: Text('${TreasuresTabText.addTreasureFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -176,7 +177,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Treasure removed'),
+            content: Text(TreasuresTabText.treasureRemovedSnack),
             duration: Duration(seconds: 2),
           ),
         );
@@ -185,7 +186,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to remove treasure: $e'),
+            content: Text('${TreasuresTabText.removeTreasureFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -232,7 +233,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Imbuement added'),
+            content: Text(TreasuresTabText.imbuementAddedSnack),
             duration: Duration(seconds: 2),
           ),
         );
@@ -241,7 +242,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add imbuement: $e'),
+            content: Text('${TreasuresTabText.addImbuementFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -299,14 +300,14 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
           child: Row(
             children: [
               Text(
-                'Treasures & Imbuements ($totalCount)',
+                '${TreasuresTabText.treasuresAndImbuementsHeaderPrefix}$totalCount${TreasuresTabText.treasuresAndImbuementsHeaderSuffix}',
                 style: AppTextStyles.subtitle,
               ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _showAddTreasureDialog,
                 icon: const Icon(Icons.add),
-                label: const Text('Add'),
+                label: const Text(TreasuresTabText.addButtonLabel),
               ),
             ],
           ),
@@ -315,7 +316,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
           child: (heroTreasures.isEmpty && heroImbuements.isEmpty)
               ? const Center(
                   child: Text(
-                    'No treasures or imbuements yet.\nTap "Add" to begin or complete a downtime project.',
+                    TreasuresTabText.emptyStateMessage,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey),
                   ),
@@ -328,7 +329,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                       Padding(
                         padding: const EdgeInsets.only(top: 16, bottom: 8),
                         child: Text(
-                          'Item Imbuements',
+                          TreasuresTabText.itemImbuementsHeader,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -435,7 +436,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Imbuement removed'),
+            content: Text(TreasuresTabText.imbuementRemovedSnack),
             duration: Duration(seconds: 2),
           ),
         );
@@ -444,7 +445,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to remove imbuement: $e'),
+            content: Text('${TreasuresTabText.removeImbuementFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );

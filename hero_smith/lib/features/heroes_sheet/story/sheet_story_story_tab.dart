@@ -24,7 +24,7 @@ extension _StoryTabBuilders on _SheetStoryState {
               FilledButton.icon(
                 onPressed: _loadStoryData,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: const Text(SheetStoryCommonText.retry),
               ),
             ],
           ),
@@ -34,7 +34,7 @@ extension _StoryTabBuilders on _SheetStoryState {
 
     if (_storyData == null) {
       return const Center(
-        child: Text('No story data available'),
+        child: Text(SheetStoryStoryTabText.noStoryDataAvailable),
       );
     }
 
@@ -115,16 +115,16 @@ extension _StoryTabBuilders on _SheetStoryState {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hero',
+              SheetStoryStoryTabText.heroSectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-            InfoRow(label: 'Name', value: hero.name, icon: Icons.person),
+            InfoRow(label: SheetStoryStoryTabText.nameLabel, value: hero.name, icon: Icons.person),
             const SizedBox(height: 4),
             InfoRow(
-              label: 'Level',
+              label: SheetStoryStoryTabText.levelLabel,
               value: hero.level.toString(),
               icon: Icons.trending_up,
             ),
@@ -134,8 +134,8 @@ extension _StoryTabBuilders on _SheetStoryState {
                 loading: () => const CircularProgressIndicator(),
                 error: (e, _) => Text('Error loading class: $e'),
                 data: (classComp) => InfoRow(
-                  label: 'Class',
-                  value: classComp?.name ?? 'Unknown',
+                  label: SheetStoryStoryTabText.classLabel,
+                  value: classComp?.name ?? SheetStoryStoryTabText.unknown,
                   icon: Icons.shield,
                 ),
               ),
@@ -146,8 +146,8 @@ extension _StoryTabBuilders on _SheetStoryState {
                 loading: () => const CircularProgressIndicator(),
                 error: (e, _) => Text('Error loading subclass: $e'),
                 data: (subclassComp) => InfoRow(
-                  label: 'Subclass',
-                  value: subclassComp?.name ?? 'Unknown',
+                  label: SheetStoryStoryTabText.subclassLabel,
+                  value: subclassComp?.name ?? SheetStoryStoryTabText.unknown,
                   icon: Icons.bolt,
                 ),
               ),

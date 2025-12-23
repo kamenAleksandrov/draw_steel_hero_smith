@@ -73,7 +73,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
     if (_selectedTitles.containsKey(titleId)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Title already added')),
+          const SnackBar(content: Text(SheetStoryTitlesTabText.titleAlreadyAdded)),
         );
       }
       return;
@@ -208,7 +208,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
             Text(_errorMessage!),
             ElevatedButton(
               onPressed: _loadData,
-              child: const Text('Retry'),
+              child: const Text(SheetStoryCommonText.retry),
             ),
           ],
         ),
@@ -230,7 +230,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
           Row(
             children: [
               Text(
-                'Titles',
+                SheetStoryTitlesTabText.titlesTitle,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -239,7 +239,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
               ElevatedButton.icon(
                 onPressed: _showAddTitleDialog,
                 icon: const Icon(Icons.add),
-                label: const Text('Add Title'),
+                label: const Text(SheetStoryTitlesTabText.addTitle),
               ),
             ],
           ),
@@ -248,7 +248,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(32),
-                child: Text('No titles selected'),
+                child: Text(SheetStoryTitlesTabText.noTitlesSelected),
               ),
             )
           else
@@ -299,7 +299,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title['name'] as String? ?? 'Unknown',
+                        title['name'] as String? ?? SheetStoryTitlesTabText.unknown,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -320,7 +320,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                 IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () => _removeTitle(titleId),
-                  tooltip: 'Remove Title',
+                  tooltip: SheetStoryTitlesTabText.removeTitleTooltip,
                 ),
               ],
             ),
@@ -356,7 +356,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                       TextButton.icon(
                         onPressed: () => _showChangeBenefitDialog(titleId, benefits),
                         icon: const Icon(Icons.swap_horiz, size: 18),
-                        label: const Text('Change Benefit'),
+                        label: const Text(SheetStoryTitlesTabText.changeBenefit),
                       ),
                     ],
                   ],
@@ -474,7 +474,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Change Benefit'),
+        title: const Text(SheetStoryTitlesTabText.changeBenefit),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
@@ -529,7 +529,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text(SheetStoryCommonText.cancel),
           ),
         ],
       ),
@@ -638,7 +638,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text(SheetStoryCommonText.cancel),
           ),
         ],
       ),
@@ -650,7 +650,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Add Title'),
+      title: const Text(SheetStoryTitlesTabText.addTitleDialogTitle),
       content: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.of(context).size.height * 0.7,
@@ -658,7 +658,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search titles',
+                labelText: SheetStoryTitlesTabText.searchTitlesLabel,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -672,7 +672,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
               spacing: 8,
               children: [
                 FilterChip(
-                  label: const Text('All'),
+                  label: const Text(SheetStoryTitlesTabText.allFilter),
                   selected: _selectedEchelon == null,
                   onSelected: (selected) {
                     _selectedEchelon = null;
@@ -695,7 +695,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
             const SizedBox(height: 12),
             Expanded(
               child: _filteredTitles.isEmpty
-                  ? const Center(child: Text('No titles found'))
+                  ? const Center(child: Text(SheetStoryTitlesTabText.noTitlesFound))
                   : ListView.builder(
                       itemCount: _filteredTitles.length,
                       itemBuilder: (context, index) {
@@ -704,7 +704,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                         return Card(
                           child: ListTile(
                             title: Text(
-                              title['name'] as String? ?? 'Unknown',
+                              title['name'] as String? ?? SheetStoryTitlesTabText.unknown,
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Column(
@@ -737,7 +737,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(SheetStoryCommonText.cancel),
         ),
       ],
     );

@@ -9,6 +9,7 @@ import '../../../core/db/app_database.dart' as db;
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
 import '../../../core/models/hero_assembled_model.dart';
+import '../../../core/theme/text/conditions_tracker_text.dart';
 
 /// Information about a condition immunity and its source
 class ConditionImmunityInfo {
@@ -315,16 +316,16 @@ class _ConditionsTrackerWidgetState
             ).join(' ');
           }
         }
-        return 'Feature: $name';
+        return '${ConditionsTrackerText.immunitySourceFeaturePrefix}$name';
       case 'ancestry':
-        return 'Ancestry Trait';
+        return ConditionsTrackerText.immunitySourceAncestry;
       case 'perk':
-        return 'Perk';
+        return ConditionsTrackerText.immunitySourcePerk;
       case 'title':
-        return 'Title';
+        return ConditionsTrackerText.immunitySourceTitle;
       case 'equipment':
       case 'kit':
-        return 'Equipment';
+        return ConditionsTrackerText.immunitySourceEquipment;
       default:
         return sourceType;
     }
@@ -356,7 +357,7 @@ class _ConditionsTrackerWidgetState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving conditions: $e'),
+            content: Text('${ConditionsTrackerText.saveErrorPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -372,7 +373,7 @@ class _ConditionsTrackerWidgetState
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Edit Save Ends Modifier'),
+            title: const Text(ConditionsTrackerText.saveEndsEditTitle),
             content: StatefulBuilder(
               builder: (context, setState) {
                 final currentMod = int.tryParse(modController.text) ?? _saveEndsMod;
@@ -383,12 +384,12 @@ class _ConditionsTrackerWidgetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Base: $_saveEndsBase',
+                      '${ConditionsTrackerText.saveEndsBaseLabelPrefix}$_saveEndsBase',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Total: $total',
+                      '${ConditionsTrackerText.saveEndsTotalLabelPrefix}$total',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary,
@@ -400,9 +401,9 @@ class _ConditionsTrackerWidgetState
                       autofocus: true,
                       keyboardType: const TextInputType.numberWithOptions(signed: true),
                       decoration: const InputDecoration(
-                        labelText: 'Modifier',
+                        labelText: ConditionsTrackerText.saveEndsModifierLabel,
                         border: OutlineInputBorder(),
-                        helperText: 'Adjustments (-99 to +99)',
+                        helperText: ConditionsTrackerText.saveEndsHelperText,
                       ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
@@ -419,11 +420,11 @@ class _ConditionsTrackerWidgetState
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text(ConditionsTrackerText.saveEndsCancelLabel),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Save'),
+                child: const Text(ConditionsTrackerText.saveEndsSaveLabel),
               ),
             ],
           );
@@ -483,7 +484,7 @@ class _ConditionsTrackerWidgetState
             final conditionsAsync = ref.watch(componentsByTypeProvider('condition'));
             
             return AlertDialog(
-              title: const Text('Add Condition'),
+              title: const Text(ConditionsTrackerText.addConditionDialogTitle),
               content: SizedBox(
                 width: double.maxFinite,
                 height: 400,
@@ -497,7 +498,7 @@ class _ConditionsTrackerWidgetState
                           return ListTile(
                             leading: const Icon(Icons.add_circle_outline),
                             title: const Text(
-                              'Create Custom Condition',
+                              ConditionsTrackerText.addConditionCustomOptionLabel,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             onTap: () {
@@ -522,14 +523,16 @@ class _ConditionsTrackerWidgetState
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),
                   error: (error, _) => Center(
-                    child: Text('Error loading conditions: $error'),
+                    child: Text(
+                      '${ConditionsTrackerText.addConditionErrorPrefix}$error',
+                    ),
                   ),
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: const Text(ConditionsTrackerText.addConditionCancelLabel),
                 ),
               ],
             );
@@ -549,7 +552,7 @@ class _ConditionsTrackerWidgetState
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Create Custom Condition'),
+            title: const Text(ConditionsTrackerText.customConditionDialogTitle),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -557,7 +560,7 @@ class _ConditionsTrackerWidgetState
                   TextField(
                     controller: nameController,
                     decoration: const InputDecoration(
-                      labelText: 'Condition Name *',
+                      labelText: ConditionsTrackerText.customConditionNameLabel,
                       border: OutlineInputBorder(),
                     ),
                     textCapitalization: TextCapitalization.words,
@@ -566,9 +569,9 @@ class _ConditionsTrackerWidgetState
                   TextField(
                     controller: shortDescController,
                     decoration: const InputDecoration(
-                      labelText: 'Short Description',
+                      labelText: ConditionsTrackerText.customConditionShortDescLabel,
                       border: OutlineInputBorder(),
-                      hintText: 'Brief summary of the condition',
+                      hintText: ConditionsTrackerText.customConditionShortDescHint,
                     ),
                     maxLines: 2,
                   ),
@@ -576,9 +579,9 @@ class _ConditionsTrackerWidgetState
                   TextField(
                     controller: longDescController,
                     decoration: const InputDecoration(
-                      labelText: 'Detailed Description',
+                      labelText: ConditionsTrackerText.customConditionLongDescLabel,
                       border: OutlineInputBorder(),
-                      hintText: 'Full details and effects',
+                      hintText: ConditionsTrackerText.customConditionLongDescHint,
                     ),
                     maxLines: 4,
                   ),
@@ -588,7 +591,7 @@ class _ConditionsTrackerWidgetState
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text(ConditionsTrackerText.customConditionCancelLabel),
               ),
               FilledButton(
                 onPressed: () {
@@ -596,7 +599,7 @@ class _ConditionsTrackerWidgetState
                     Navigator.of(context).pop(true);
                   }
                 },
-                child: const Text('Create'),
+                child: const Text(ConditionsTrackerText.customConditionCreateLabel),
               ),
             ],
           );
@@ -629,7 +632,9 @@ class _ConditionsTrackerWidgetState
             
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Custom condition "${customCondition.name}" created'),
+                content: Text(
+                  '${ConditionsTrackerText.customConditionCreatedPrefix}${customCondition.name}${ConditionsTrackerText.customConditionCreatedSuffix}',
+                ),
                 backgroundColor: Colors.green,
               ),
             );
@@ -638,7 +643,9 @@ class _ConditionsTrackerWidgetState
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error creating condition: $e'),
+                content: Text(
+                  '${ConditionsTrackerText.customConditionErrorPrefix}$e',
+                ),
                 backgroundColor: Colors.red,
               ),
             );
@@ -688,7 +695,7 @@ class _ConditionsTrackerWidgetState
                         children: [
                           if (shortDesc.isNotEmpty) ...[
                             const Text(
-                              'Summary',
+                              ConditionsTrackerText.conditionDetailsSummaryTitle,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -700,7 +707,7 @@ class _ConditionsTrackerWidgetState
                           ],
                           if (longDesc.isNotEmpty) ...[
                             const Text(
-                              'Details',
+                              ConditionsTrackerText.conditionDetailsTitle,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -718,14 +725,14 @@ class _ConditionsTrackerWidgetState
                     child: Center(child: CircularProgressIndicator()),
                   ),
                   error: (error, _) => const Center(
-                    child: Text('Could not load condition details'),
+                    child: Text(ConditionsTrackerText.conditionDetailsError),
                   ),
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
+                  child: const Text(ConditionsTrackerText.conditionDetailsCloseLabel),
                 ),
               ],
             );
@@ -760,7 +767,7 @@ class _ConditionsTrackerWidgetState
                 Icon(Icons.warning_amber_rounded, size: 18, color: theme.colorScheme.error),
                 const SizedBox(width: 6),
                 Text(
-                  'Conditions',
+                  ConditionsTrackerText.conditionsHeaderTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -780,7 +787,7 @@ class _ConditionsTrackerWidgetState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Save ',
+                          ConditionsTrackerText.saveEndsLabelPrefix,
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -813,7 +820,7 @@ class _ConditionsTrackerWidgetState
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'No active conditions',
+                    ConditionsTrackerText.conditionsEmptyLabel,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -835,7 +842,7 @@ class _ConditionsTrackerWidgetState
               child: TextButton.icon(
                 onPressed: _showAddConditionDialog,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add Condition'),
+                label: const Text(ConditionsTrackerText.conditionsAddButtonLabel),
               ),
             ),
             
@@ -863,7 +870,7 @@ class _ConditionsTrackerWidgetState
             Icon(Icons.shield_outlined, size: 16, color: theme.colorScheme.primary),
             const SizedBox(width: 6),
             Text(
-              'Condition Immunities',
+              ConditionsTrackerText.conditionImmunitiesHeader,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.primary,
@@ -888,7 +895,8 @@ class _ConditionsTrackerWidgetState
     final theme = Theme.of(context);
     
     return Tooltip(
-      message: immunity.sourceName ?? 'Unknown source',
+      message: immunity.sourceName ??
+          ConditionsTrackerText.conditionImmunitiesUnknownSource,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
@@ -961,9 +969,24 @@ class _ConditionsTrackerWidgetState
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildEndTypeChip(context, index, ConditionEndType.endOfTurn, 'EoT'),
-                  _buildEndTypeChip(context, index, ConditionEndType.saveEnds, 'Save'),
-                  _buildEndTypeChip(context, index, ConditionEndType.endOfEncounter, 'EoE'),
+                  _buildEndTypeChip(
+                    context,
+                    index,
+                    ConditionEndType.endOfTurn,
+                    ConditionsTrackerText.endTypeEotLabel,
+                  ),
+                  _buildEndTypeChip(
+                    context,
+                    index,
+                    ConditionEndType.saveEnds,
+                    ConditionsTrackerText.endTypeSaveLabel,
+                  ),
+                  _buildEndTypeChip(
+                    context,
+                    index,
+                    ConditionEndType.endOfEncounter,
+                    ConditionsTrackerText.endTypeEoeLabel,
+                  ),
                 ],
               ),
             ),
@@ -974,7 +997,7 @@ class _ConditionsTrackerWidgetState
               constraints: const BoxConstraints(),
               visualDensity: VisualDensity.compact,
               onPressed: () => _removeCondition(index),
-              tooltip: 'Remove',
+              tooltip: ConditionsTrackerText.conditionRemoveTooltip,
             ),
           ],
         ),

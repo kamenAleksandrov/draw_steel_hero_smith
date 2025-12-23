@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/text/heroes_sheet/story/sheet_story_token_tracker_text.dart';
+
 import '../../../../core/services/complication_grants_service.dart';
+
+part '../../../../widgets/heroes_sheet/story/story_sections/token_tracker/_token_row.dart';
 
 /// Widget for tracking complication tokens (e.g., antihero tokens).
 /// Shows current/max values with +/- buttons.
@@ -91,10 +95,11 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
       children: [
         Row(
           children: [
-            Icon(Icons.token_outlined, size: 18, color: theme.colorScheme.primary),
+            Icon(Icons.token_outlined,
+                size: 18, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
             Text(
-              'Tokens',
+              SheetStoryTokenTrackerText.sectionTitle,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -103,7 +108,7 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
             TextButton.icon(
               onPressed: _resetTokens,
               icon: const Icon(Icons.refresh, size: 16),
-              label: const Text('Reset'),
+              label: const Text(SheetStoryTokenTrackerText.resetLabel),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 minimumSize: const Size(0, 32),
@@ -137,95 +142,9 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
     return tokenType
         .replaceAll('_', ' ')
         .split(' ')
-        .map((word) => word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
+        .map((word) => word.isNotEmpty
+            ? '${word[0].toUpperCase()}${word.substring(1)}'
+            : '')
         .join(' ');
-  }
-}
-
-class _TokenRow extends StatelessWidget {
-  const _TokenRow({
-    required this.name,
-    required this.current,
-    required this.max,
-    required this.onDecrement,
-    required this.onIncrement,
-  });
-
-  final String name;
-  final int current;
-  final int max;
-  final VoidCallback onDecrement;
-  final VoidCallback onIncrement;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final canDecrement = current > 0;
-    final canIncrement = current < max;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  '$current / $max',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: canDecrement ? onDecrement : null,
-            icon: const Icon(Icons.remove_circle_outline),
-            iconSize: 28,
-            color: canDecrement ? theme.colorScheme.error : theme.colorScheme.outline.withOpacity(0.3),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-          ),
-          Container(
-            width: 48,
-            alignment: Alignment.center,
-            child: Text(
-              current.toString(),
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: current == 0 
-                    ? theme.colorScheme.error 
-                    : current == max 
-                        ? theme.colorScheme.primary 
-                        : null,
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: canIncrement ? onIncrement : null,
-            icon: const Icon(Icons.add_circle_outline),
-            iconSize: 28,
-            color: canIncrement ? theme.colorScheme.primary : theme.colorScheme.outline.withOpacity(0.3),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-          ),
-        ],
-      ),
-    );
   }
 }

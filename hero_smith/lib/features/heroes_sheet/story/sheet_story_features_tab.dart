@@ -49,7 +49,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _error = 'No class assigned to this hero';
+            _error = SheetStoryFeaturesTabText.noClassAssignedToHero;
           });
         }
         return;
@@ -150,7 +150,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = 'Failed to load features: $e';
+          _error = SheetStoryFeaturesTabText.failedToLoadFeatures(e);
         });
       }
     }
@@ -186,7 +186,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
 
     if (_classData == null) {
       return const Center(
-        child: Text('No features available'),
+        child: Text(SheetStoryFeaturesTabText.noFeaturesAvailable),
       );
     }
 
@@ -242,7 +242,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save feature selections: $e'),
+          content: Text(SheetStoryFeaturesTabText.failedToSaveFeatureSelections(e)),
           backgroundColor: Colors.red,
         ),
       );
@@ -301,7 +301,7 @@ class _FeaturesTabState extends ConsumerState<_FeaturesTab> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to save skill selection: $e'),
+          content: Text(SheetStoryFeaturesTabText.failedToSaveSkillSelection(e)),
           backgroundColor: Colors.red,
         ),
       );

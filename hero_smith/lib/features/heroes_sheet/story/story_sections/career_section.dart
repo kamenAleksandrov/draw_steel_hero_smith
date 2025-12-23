@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/text/heroes_sheet/story/sheet_story_career_section_text.dart';
+
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/perks/perk_card.dart';
@@ -27,7 +29,8 @@ final _careerProjectPointsUsedProvider =
     FutureProvider.family<bool, String>((ref, heroId) async {
   final db = ref.read(appDatabaseProvider);
   final values = await db.getHeroValues(heroId);
-  final value = values.where((v) => v.key == 'career.project_points_used').firstOrNull;
+  final value =
+      values.where((v) => v.key == 'career.project_points_used').firstOrNull;
   return value?.value == 1;
 });
 
@@ -75,7 +78,7 @@ class CareerSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Career',
+              SheetStoryCareerSectionText.sectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -83,9 +86,13 @@ class CareerSection extends ConsumerWidget {
             const SizedBox(height: 12),
             careerAsync.when(
               loading: () => const CircularProgressIndicator(),
-              error: (e, _) => Text('Error loading career: $e'),
+              error: (e, _) => Text(
+                '${SheetStoryCareerSectionText.errorLoadingCareerPrefix}$e',
+              ),
               data: (careerComp) {
-                if (careerComp == null) return const Text('Career not found');
+                if (careerComp == null) {
+                  return const Text(SheetStoryCareerSectionText.careerNotFound);
+                }
 
                 return _CareerContent(
                   career: career,
@@ -121,7 +128,7 @@ class _CareerContent extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InfoRow(
-          label: 'Career',
+          label: SheetStoryCareerSectionText.careerLabel,
           value: careerComponent.name,
           icon: Icons.work,
         ),
@@ -148,7 +155,7 @@ class _CareerContent extends ConsumerWidget {
             career.incitingIncidentName!.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            'Inciting Incident',
+            SheetStoryCareerSectionText.incitingIncidentTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -162,7 +169,7 @@ class _CareerContent extends ConsumerWidget {
         if (career.chosenSkillIds.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            'Career Skills',
+            SheetStoryCareerSectionText.careerSkillsTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -182,7 +189,7 @@ class _CareerContent extends ConsumerWidget {
         if (career.chosenPerkIds.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
-            'Career Perks',
+            SheetStoryCareerSectionText.careerPerksTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -277,14 +284,17 @@ class _HeroPerkCard extends ConsumerWidget {
       ),
       error: (e, _) => Padding(
         padding: const EdgeInsets.only(bottom: 8),
-        child:
-            Text('Error loading perk: $e', style: const TextStyle(color: Colors.red)),
+        child: Text(
+          '${SheetStoryCareerSectionText.errorLoadingPerkPrefix}$e',
+          style: const TextStyle(color: Colors.red),
+        ),
       ),
       data: (component) {
         if (component == null || component.id.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: Text('Perk not found: $perkId'),
+            child: Text(
+                '${SheetStoryCareerSectionText.perkNotFoundPrefix}$perkId'),
           );
         }
         return Padding(
@@ -307,7 +317,8 @@ class _ProjectPointsDisplay extends ConsumerStatefulWidget {
   final String heroId;
 
   @override
-  ConsumerState<_ProjectPointsDisplay> createState() => _ProjectPointsDisplayState();
+  ConsumerState<_ProjectPointsDisplay> createState() =>
+      _ProjectPointsDisplayState();
 }
 
 class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
@@ -323,7 +334,8 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
   Future<void> _loadUsedState() async {
     final db = ref.read(appDatabaseProvider);
     final values = await db.getHeroValues(widget.heroId);
-    final value = values.where((v) => v.key == 'career.project_points_used').firstOrNull;
+    final value =
+        values.where((v) => v.key == 'career.project_points_used').firstOrNull;
     if (mounted) {
       setState(() {
         _isUsed = value?.value == 1;
@@ -335,7 +347,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
   Future<void> _toggleUsed() async {
     final newValue = !_isUsed;
     setState(() => _isUsed = newValue);
-    
+
     final db = ref.read(appDatabaseProvider);
     await db.upsertHeroValue(
       heroId: widget.heroId,
@@ -351,7 +363,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _isUsed 
+        color: _isUsed
             ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
             : theme.colorScheme.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(8),
@@ -376,7 +388,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Project Points',
+                  SheetStoryCareerSectionText.projectPointsTitle,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: _isUsed
@@ -386,7 +398,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
                   ),
                 ),
                 Text(
-                  '${widget.projectPoints} points from career',
+                  '${widget.projectPoints}${SheetStoryCareerSectionText.projectPointsDescriptionSuffix}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: _isUsed
                         ? theme.colorScheme.onSurface.withOpacity(0.4)
@@ -408,7 +420,9 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
               onChanged: (_) => _toggleUsed(),
             ),
           Text(
-            _isUsed ? 'Used' : 'Available',
+            _isUsed
+                ? SheetStoryCareerSectionText.usedLabel
+                : SheetStoryCareerSectionText.availableLabel,
             style: theme.textTheme.bodySmall?.copyWith(
               color: _isUsed
                   ? theme.colorScheme.onSurface.withOpacity(0.5)

@@ -7,6 +7,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../../core/repositories/hero_repository.dart';
+import '../../../core/theme/text/hero_main_stats_models_text.dart';
 import 'hero_main_stats_models.dart';
 
 /// Calculates the current stamina state based on stats.
@@ -17,15 +18,27 @@ StaminaState calculateStaminaState(HeroMainStats stats) {
   final half = (max / 2).floor();
   final current = stats.staminaCurrent;
   if (current > half) {
-    return const StaminaState('Healthy', Colors.green);
+    return const StaminaState(
+      HeroMainStatsModelsText.staminaStateHealthy,
+      Colors.green,
+    );
   }
   if (current > 0) {
-    return const StaminaState('Winded', Colors.orange);
+    return const StaminaState(
+      HeroMainStatsModelsText.staminaStateWinded,
+      Colors.orange,
+    );
   }
   if (current > -half) {
-    return const StaminaState('Dying', Colors.redAccent);
+    return const StaminaState(
+      HeroMainStatsModelsText.staminaStateDying,
+      Colors.redAccent,
+    );
   }
-  return const StaminaState('Dead', Colors.red);
+  return const StaminaState(
+    HeroMainStatsModelsText.staminaStateDead,
+    Colors.red,
+  );
 }
 
 /// Gets the value from stats corresponding to a numeric field.

@@ -166,6 +166,12 @@ class HeroNotes extends Table {
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._internal() : super(_openConnection());
+
+  /// Creates an AppDatabase backed by the provided Drift [QueryExecutor].
+  ///
+  /// Intended for tests to supply an in-memory database (e.g.
+  /// `NativeDatabase.memory()`) without relying on platform directories.
+  AppDatabase.forTesting(QueryExecutor executor) : super(executor);
   static final AppDatabase instance = AppDatabase._internal();
   // Indicates whether the database file existed before this process opened it.
   // This is set during database path resolution and read by the seeder to

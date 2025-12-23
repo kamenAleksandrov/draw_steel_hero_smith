@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/text/gear/inventory_tab_text.dart';
 import 'gear_dialogs.dart';
 import 'inventory_widgets.dart';
 
@@ -40,7 +41,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Failed to load inventory: $e';
+          _error = '${InventoryTabText.loadInventoryFailedPrefix}$e';
           _isLoading = false;
         });
       }
@@ -71,7 +72,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create container: $e'),
+            content: Text('${InventoryTabText.createContainerFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -83,18 +84,17 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Container'),
-        content: const Text(
-            'Delete this container and all items inside? This cannot be undone.'),
+        title: const Text(InventoryTabText.deleteContainerDialogTitle),
+        content: const Text(InventoryTabText.deleteContainerDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(InventoryTabText.deleteContainerCancelAction),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text(InventoryTabText.deleteContainerConfirmAction),
           ),
         ],
       ),
@@ -114,7 +114,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to delete container: $e'),
+            content: Text('${InventoryTabText.deleteContainerFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -161,7 +161,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add item: $e'),
+            content: Text('${InventoryTabText.addItemFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -195,7 +195,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to delete item: $e'),
+            content: Text('${InventoryTabText.deleteItemFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -208,8 +208,8 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
         _containers.indexWhere((c) => c['id'] == containerId);
     if (containerIndex == -1) return;
 
-    final currentName =
-        _containers[containerIndex]['name'] as String? ?? 'Container';
+    final currentName = _containers[containerIndex]['name'] as String? ??
+        InventoryTabText.defaultContainerName;
 
     final newName = await showDialog<String>(
       context: context,
@@ -235,7 +235,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update container: $e'),
+            content: Text('${InventoryTabText.updateContainerFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -285,7 +285,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update item: $e'),
+            content: Text('${InventoryTabText.updateItemFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -327,7 +327,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update quantity: $e'),
+            content: Text('${InventoryTabText.updateQuantityFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -368,14 +368,14 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           child: Row(
             children: [
               Text(
-                'Inventory',
+                InventoryTabText.inventoryTitle,
                 style: AppTextStyles.subtitle,
               ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _createContainer,
                 icon: const Icon(Icons.create_new_folder),
-                label: const Text('New Container'),
+                label: const Text(InventoryTabText.newContainerButtonLabel),
               ),
             ],
           ),
@@ -384,7 +384,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           child: _containers.isEmpty
               ? const Center(
                   child: Text(
-                    'No containers yet.\nCreate a container to organize your items.',
+                    InventoryTabText.emptyContainersMessage,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey),
                   ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/models/damage_resistance_model.dart';
 import '../../../core/services/ancestry_bonus_service.dart';
+import '../../../core/theme/text/damage_resistance_tracker_text.dart';
 import 'hero_main_stats_providers.dart';
 
 /// Widget for tracking damage immunities and weaknesses.
@@ -45,10 +46,12 @@ class _DamageResistanceTrackerWidgetState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Error loading resistances: $error'),
+            Text(
+              '${DamageResistanceTrackerText.errorLoadingResistancesPrefix}$error',
+            ),
             ElevatedButton(
               onPressed: () => ref.invalidate(heroDamageResistancesProvider(widget.heroId)),
-              child: const Text('Retry'),
+              child: const Text(DamageResistanceTrackerText.errorRetryLabel),
             ),
           ],
         ),
@@ -69,7 +72,7 @@ class _DamageResistanceTrackerWidgetState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving resistances: $e'),
+            content: Text('${DamageResistanceTrackerText.saveErrorPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -82,7 +85,7 @@ class _DamageResistanceTrackerWidgetState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Add Damage Type'),
+          title: const Text(DamageResistanceTrackerText.addDamageTypeDialogTitle),
           content: SizedBox(
             width: double.maxFinite,
             height: 400,
@@ -115,11 +118,15 @@ class _DamageResistanceTrackerWidgetState
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text(
+                DamageResistanceTrackerText.addDamageTypeCancelLabel,
+              ),
             ),
             TextButton(
               onPressed: () => _showCustomDamageTypeDialog(context),
-              child: const Text('Custom...'),
+              child: const Text(
+                DamageResistanceTrackerText.addDamageTypeCustomLabel,
+              ),
             ),
           ],
         );
@@ -136,12 +143,14 @@ class _DamageResistanceTrackerWidgetState
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Custom Damage Type'),
+            title:
+                const Text(DamageResistanceTrackerText.customDamageTypeDialogTitle),
             content: TextField(
               controller: controller,
               decoration: const InputDecoration(
-                labelText: 'Damage Type Name',
-                hintText: 'e.g., Radiant',
+                labelText:
+                    DamageResistanceTrackerText.customDamageTypeNameLabel,
+                hintText: DamageResistanceTrackerText.customDamageTypeNameHint,
               ),
               autofocus: true,
               textCapitalization: TextCapitalization.words,
@@ -149,11 +158,15 @@ class _DamageResistanceTrackerWidgetState
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text(
+                  DamageResistanceTrackerText.customDamageTypeCancelLabel,
+                ),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Add'),
+                child: const Text(
+                  DamageResistanceTrackerText.customDamageTypeAddLabel,
+                ),
               ),
             ],
           );
@@ -198,7 +211,9 @@ class _DamageResistanceTrackerWidgetState
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Edit ${DamageTypes.displayName(resistance.damageType)}'),
+            title: Text(
+              '${DamageResistanceTrackerText.editResistanceTitlePrefix}${DamageTypes.displayName(resistance.damageType)}',
+            ),
             content: StatefulBuilder(
               builder: (context, setState) {
                 final baseImm =
@@ -224,7 +239,7 @@ class _DamageResistanceTrackerWidgetState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Net Result: ${_formatNetValue(net)}',
+                            '${DamageResistanceTrackerText.netResultPrefix}${_formatNetValue(net)}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -236,15 +251,19 @@ class _DamageResistanceTrackerWidgetState
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text('Total Immunity: $totalImm (Base: $baseImm + Bonus: ${resistance.bonusImmunity})'),
-                          Text('Total Weakness: $totalWeak (Base: $baseWeak + Bonus: ${resistance.bonusWeakness})'),
+                          Text(
+                            '${DamageResistanceTrackerText.totalImmunityPrefix}$totalImm (Base: $baseImm + Bonus: ${resistance.bonusImmunity})',
+                          ),
+                          Text(
+                            '${DamageResistanceTrackerText.totalWeaknessPrefix}$totalWeak (Base: $baseWeak + Bonus: ${resistance.bonusWeakness})',
+                          ),
                         ],
                       ),
                     ),
                     if (resistance.sources.isNotEmpty) ...[
                       const SizedBox(height: 12),
                       Text(
-                        'Sources:',
+                        DamageResistanceTrackerText.sourcesLabel,
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 12,
@@ -272,7 +291,8 @@ class _DamageResistanceTrackerWidgetState
                           child: TextField(
                             controller: immunityController,
                             decoration: const InputDecoration(
-                              labelText: 'Base Immunity',
+                              labelText:
+                                  DamageResistanceTrackerText.baseImmunityLabel,
                               border: OutlineInputBorder(),
                             ),
                             keyboardType: TextInputType.number,
@@ -287,7 +307,8 @@ class _DamageResistanceTrackerWidgetState
                           child: TextField(
                             controller: weaknessController,
                             decoration: const InputDecoration(
-                              labelText: 'Base Weakness',
+                              labelText:
+                                  DamageResistanceTrackerText.baseWeaknessLabel,
                               border: OutlineInputBorder(),
                             ),
                             keyboardType: TextInputType.number,
@@ -306,11 +327,15 @@ class _DamageResistanceTrackerWidgetState
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text(
+                  DamageResistanceTrackerText.editResistanceCancelLabel,
+                ),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Save'),
+                child: const Text(
+                  DamageResistanceTrackerText.editResistanceSaveLabel,
+                ),
               ),
             ],
           );
@@ -338,9 +363,13 @@ class _DamageResistanceTrackerWidgetState
   }
 
   String _formatNetValue(int net) {
-    if (net > 0) return 'Immunity $net';
-    if (net < 0) return 'Weakness ${net.abs()}';
-    return 'None';
+    if (net > 0) {
+      return '${DamageResistanceTrackerText.netImmunityPrefix}$net';
+    }
+    if (net < 0) {
+      return '${DamageResistanceTrackerText.netWeaknessPrefix}${net.abs()}';
+    }
+    return DamageResistanceTrackerText.netNoneLabel;
   }
 
   IconData _getDamageTypeIcon(String type) {
@@ -388,7 +417,7 @@ class _DamageResistanceTrackerWidgetState
             Row(
               children: [
                 Text(
-                  'Damage Resistances',
+                  DamageResistanceTrackerText.damageResistancesTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -396,7 +425,7 @@ class _DamageResistanceTrackerWidgetState
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.add, size: 20),
-                  tooltip: 'Add damage type',
+                  tooltip: DamageResistanceTrackerText.addDamageTypeTooltip,
                   onPressed: _showAddDamageTypeDialog,
                   visualDensity: VisualDensity.compact,
                 ),
@@ -404,7 +433,7 @@ class _DamageResistanceTrackerWidgetState
             ),
             const SizedBox(height: 8),
             Text(
-              'Immunity - Weakness = Net Value',
+              DamageResistanceTrackerText.damageResistancesFormulaLabel,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: Colors.grey.shade600,
               ),
@@ -417,7 +446,7 @@ class _DamageResistanceTrackerWidgetState
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'No damage resistances tracked',
+                    DamageResistanceTrackerText.emptyResistancesLabel,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -502,7 +531,7 @@ class _DamageResistanceTrackerWidgetState
                 constraints: const BoxConstraints(),
                 visualDensity: VisualDensity.compact,
                 onPressed: () => _removeDamageType(resistance.damageType),
-                tooltip: 'Remove',
+                tooltip: DamageResistanceTrackerText.removeDamageTypeTooltip,
               ),
             ],
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/text/gear/inventory_widgets_text.dart';
+
 /// Card displaying an inventory container with its items.
 class ContainerCard extends StatefulWidget {
   const ContainerCard({
@@ -44,7 +46,8 @@ class _ContainerCardState extends State<ContainerCard> {
     final theme = Theme.of(context);
     final items =
         widget.container['items'] as List<dynamic>? ?? <Map<String, dynamic>>[];
-    final name = widget.container['name'] as String? ?? 'Container';
+    final name = widget.container['name'] as String? ??
+        InventoryWidgetsText.defaultContainerName;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -61,24 +64,26 @@ class _ContainerCardState extends State<ContainerCard> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text('${items.length} items'),
+            subtitle: Text(
+              '${items.length}${InventoryWidgetsText.containerItemsSuffix}',
+            ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: widget.onAddItem,
-                  tooltip: 'Add item',
+                  tooltip: InventoryWidgetsText.addItemTooltip,
                 ),
                 IconButton(
                   icon: const Icon(Icons.edit, size: 20),
                   onPressed: widget.onEditContainer,
-                  tooltip: 'Edit container name',
+                  tooltip: InventoryWidgetsText.editContainerTooltip,
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: widget.onDeleteContainer,
-                  tooltip: 'Delete container',
+                  tooltip: InventoryWidgetsText.deleteContainerTooltip,
                 ),
                 IconButton(
                   icon: Icon(
@@ -103,7 +108,10 @@ class _ContainerCardState extends State<ContainerCard> {
                     title: Row(
                       children: [
                         Expanded(
-                          child: Text(itemMap['name'] as String? ?? 'Item'),
+                          child: Text(
+                            itemMap['name'] as String? ??
+                                InventoryWidgetsText.defaultItemName,
+                          ),
                         ),
                         // Quantity controls
                         Container(
@@ -169,12 +177,12 @@ class _ContainerCardState extends State<ContainerCard> {
                         IconButton(
                           icon: const Icon(Icons.edit, size: 18),
                           onPressed: () => widget.onEditItem(itemId, itemMap),
-                          tooltip: 'Edit item',
+                          tooltip: InventoryWidgetsText.editItemTooltip,
                         ),
                         IconButton(
                           icon: const Icon(Icons.close, size: 18),
                           onPressed: () => widget.onDeleteItem(itemId),
-                          tooltip: 'Delete item',
+                          tooltip: InventoryWidgetsText.deleteItemTooltip,
                         ),
                       ],
                     ),
@@ -187,7 +195,7 @@ class _ContainerCardState extends State<ContainerCard> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'No items. Tap + to add one.',
+                InventoryWidgetsText.emptyItemsMessage,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
             ),
@@ -245,13 +253,13 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Set Quantity'),
+      title: const Text(InventoryWidgetsText.quantityDialogTitle),
       content: TextField(
         controller: _controller,
         focusNode: _focusNode,
         keyboardType: TextInputType.number,
         decoration: const InputDecoration(
-          labelText: 'Quantity (1-999)',
+          labelText: InventoryWidgetsText.quantityDialogLabel,
           border: OutlineInputBorder(),
         ),
         onSubmitted: (_) => _submit(),
@@ -259,11 +267,11 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(InventoryWidgetsText.quantityDialogCancelAction),
         ),
         ElevatedButton(
           onPressed: _submit,
-          child: const Text('Set'),
+          child: const Text(InventoryWidgetsText.quantityDialogSetAction),
         ),
       ],
     );

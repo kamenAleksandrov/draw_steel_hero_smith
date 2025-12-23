@@ -18,6 +18,7 @@ import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/title_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/text/heroes_sheet/story/sheet_story_text.dart';
 import '../../creators/widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/shared/story_display_widgets.dart';
 import '../../../widgets/perks/perks_selection_widget.dart';
@@ -112,12 +113,12 @@ class _SheetStoryState extends ConsumerState<SheetStory>
         TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(text: 'Features'),
-            Tab(text: 'Story'),
-            Tab(text: 'Skills'),
-            Tab(text: 'Languages'),
-            Tab(text: 'Perks'),
-            Tab(text: 'Titles'),
+            Tab(text: SheetStoryTabsText.features),
+            Tab(text: SheetStoryTabsText.story),
+            Tab(text: SheetStoryTabsText.skills),
+            Tab(text: SheetStoryTabsText.languages),
+            Tab(text: SheetStoryTabsText.perks),
+            Tab(text: SheetStoryTabsText.titles),
           ],
         ),
         Expanded(

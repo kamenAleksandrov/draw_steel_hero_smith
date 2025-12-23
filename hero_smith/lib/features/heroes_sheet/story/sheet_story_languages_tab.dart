@@ -63,7 +63,7 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
     if (_selectedLanguageIds.contains(languageId)) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Language already added')),
+          const SnackBar(content: Text(SheetStoryLanguagesTabText.languageAlreadyAdded)),
         );
       }
       return;
@@ -145,7 +145,7 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
-              child: const Text('Retry'),
+              child: const Text(SheetStoryCommonText.retry),
             ),
           ],
         ),
@@ -159,7 +159,9 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
     // Group languages by type
     final groupedLanguages = <String, List<_LanguageOption>>{};
     for (final lang in selectedLanguages) {
-      final groupKey = lang.languageType.isNotEmpty ? lang.languageType : 'Other';
+      final groupKey = lang.languageType.isNotEmpty
+          ? lang.languageType
+          : SheetStoryLanguagesTabText.otherGroup;
       groupedLanguages.putIfAbsent(groupKey, () => []).add(lang);
     }
 
@@ -171,14 +173,14 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
           Row(
             children: [
               Text(
-                'Languages',
+                SheetStoryLanguagesTabText.languagesTitle,
                 style: AppTextStyles.title,
               ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: _showAddLanguageDialog,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add Language'),
+                label: const Text(SheetStoryLanguagesTabText.addLanguage),
               ),
             ],
           ),
@@ -188,7 +190,7 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
               child: Padding(
                 padding: const EdgeInsets.all(32),
                 child: Text(
-                  'No languages selected. Tap "Add Language" to get started.',
+                  SheetStoryLanguagesTabText.emptyState,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -233,7 +235,7 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
                         trailing: IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () => _removeLanguage(lang.id),
-                          tooltip: 'Remove language',
+                          tooltip: SheetStoryLanguagesTabText.removeLanguageTooltip,
                         ),
                       ),
                     );
@@ -292,7 +294,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Add Language'),
+      title: const Text(SheetStoryLanguagesTabText.addLanguageDialogTitle),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -300,7 +302,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search languages',
+                labelText: SheetStoryLanguagesTabText.searchLanguagesLabel,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -311,7 +313,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
               child: _filteredLanguages.isEmpty
                   ? Center(
                       child: Text(
-                        'No languages found',
+                        SheetStoryLanguagesTabText.noLanguagesFound,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
@@ -346,7 +348,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(SheetStoryCommonText.cancel),
         ),
       ],
     );

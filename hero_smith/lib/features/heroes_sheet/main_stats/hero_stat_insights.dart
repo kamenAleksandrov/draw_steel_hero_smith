@@ -1,31 +1,36 @@
 /// Insight generators for hero stats display.
-/// 
-/// Pure functions that generate informative text about wealth, renown, 
+///
+/// Pure functions that generate informative text about wealth, renown,
 /// and XP progression based on the game system rules.
 library;
 
 import 'package:collection/collection.dart';
 
+import '../../../core/theme/text/hero_stat_insights_text.dart';
 import 'hero_main_stats_models.dart';
 
 /// Generates insight strings about wealth based on current wealth score.
 List<String> generateWealthInsights(int wealth) {
   if (wealth <= 0) {
     return const [
-      'No notable wealth recorded yet.',
-      'Increase wealth to unlock lifestyle perks.',
+      HeroStatInsightsText.wealthNonePrimary,
+      HeroStatInsightsText.wealthNoneSecondary,
     ];
   }
   final tier = wealthTiers.lastWhereOrNull((t) => wealth >= t.score);
   final nextTier = wealthTiers.firstWhereOrNull((t) => wealth < t.score);
   final lines = <String>[];
   if (tier != null) {
-    lines.add('Score ${tier.score}: ${tier.description}');
+    lines.add(
+        HeroStatInsightsText.wealthScoreLine(tier.score, tier.description));
   }
   if (nextTier != null) {
-    lines.add('Next tier at ${nextTier.score}: ${nextTier.description}');
+    lines.add(
+      HeroStatInsightsText.wealthNextTierLine(
+          nextTier.score, nextTier.description),
+    );
   } else if (wealth > wealthTiers.last.score) {
-    lines.add('You have surpassed all recorded wealth tiers.');
+    lines.add(HeroStatInsightsText.wealthSurpassedAll);
   }
   return lines;
 }
@@ -40,17 +45,19 @@ List<String> generateRenownInsights(int renown) {
       impressionTiers.lastWhereOrNull((tier) => renown >= tier.value);
   final lines = <String>[];
   if (followers > 0) {
-    lines.add(
-      'Followers: $followers loyal ${followers == 1 ? 'supporter' : 'supporters'}.',
-    );
+    lines.add(HeroStatInsightsText.renownFollowersLine(followers));
   } else {
-    lines.add('Followers: none yet - grow your renown to attract allies.');
+    lines.add(HeroStatInsightsText.renownNoFollowers);
   }
   if (impressionTier != null) {
     lines.add(
-        'Impression ${impressionTier.value}: ${impressionTier.description}');
+      HeroStatInsightsText.impressionTierLine(
+        impressionTier.value,
+        impressionTier.description,
+      ),
+    );
   } else {
-    lines.add('Impression: your deeds are still largely unknown.');
+    lines.add(HeroStatInsightsText.impressionUnknown);
   }
   return lines;
 }
@@ -63,24 +70,37 @@ List<String> generateXpInsights(int xp, int currentLevel) {
   final nextTier = xpAdvancementTiers.firstWhereOrNull(
     (tier) => tier.level == currentLevel + 1,
   );
-  
+
   final lines = <String>[];
   if (currentTier != null) {
     if (currentTier.maxXp == -1) {
-      lines.add('Level ${currentTier.level}: ${currentTier.minXp}+ XP');
+      lines.add(
+        HeroStatInsightsText.xpLevelMinPlusLine(
+          currentTier.level,
+          currentTier.minXp,
+        ),
+      );
     } else {
-      lines.add('Level ${currentTier.level}: ${currentTier.minXp}-${currentTier.maxXp} XP');
+      lines.add(
+        HeroStatInsightsText.xpLevelRangeLine(
+          currentTier.level,
+          currentTier.minXp,
+          currentTier.maxXp,
+        ),
+      );
     }
   }
   if (nextTier != null) {
     final xpNeeded = nextTier.minXp - xp;
     if (xpNeeded > 0) {
-      lines.add('Next level at ${nextTier.minXp} XP ($xpNeeded more needed)');
+      lines.add(
+        HeroStatInsightsText.xpNextLevelNeededLine(nextTier.minXp, xpNeeded),
+      );
     } else {
-      lines.add('Ready to level up! (${nextTier.minXp} XP threshold reached)');
+      lines.add(HeroStatInsightsText.xpReadyToLevelUpLine(nextTier.minXp));
     }
   } else if (currentLevel >= 10) {
-    lines.add('Maximum level reached!');
+    lines.add(HeroStatInsightsText.maxLevelReached);
   }
   return lines;
 }

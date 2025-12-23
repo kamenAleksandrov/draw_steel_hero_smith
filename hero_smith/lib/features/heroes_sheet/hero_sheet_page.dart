@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../creators/hero_creators/hero_creator_page.dart';
+import '../../core/theme/text/heroes_sheet/hero_sheet_page_text.dart';
 import 'abilities/sheet_abilities.dart';
 import 'gear/sheet_gear.dart';
 import 'main_stats/sheet_main_stats.dart';
@@ -51,11 +52,11 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hero Sheet - ${widget.heroName}'),
+        title: Text(HeroSheetPageText.appBarTitle(widget.heroName)),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            tooltip: 'Edit Hero',
+            tooltip: HeroSheetPageText.editHeroTooltip,
             onPressed: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
@@ -77,23 +78,23 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Main',
+            label: HeroSheetPageText.navMain,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.flash_on),
-            label: 'Abilities',
+            label: HeroSheetPageText.navAbilities,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.backpack),
-            label: 'Gear',
+            label: HeroSheetPageText.navGear,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.auto_awesome),
-            label: 'Features',
+            label: HeroSheetPageText.navFeatures,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sticky_note_2),
-            label: 'Notes',
+            label: HeroSheetPageText.navNotes,
           ),
         ],
       ),

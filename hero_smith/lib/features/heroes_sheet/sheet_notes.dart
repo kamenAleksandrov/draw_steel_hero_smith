@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/app_database.dart';
 import '../../core/repositories/hero_notes_repository.dart' as notes_repo;
+import '../../core/theme/text/heroes_sheet/sheet_notes_text.dart';
 
 // Provider for the notes repository
 final heroNotesRepositoryProvider = Provider<notes_repo.HeroNotesRepository>((ref) {
@@ -36,7 +37,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
   Future<void> _createNewNote() async {
     final noteId = await ref.read(heroNotesRepositoryProvider).createNote(
       heroId: widget.heroId,
-      title: 'Untitled Note',
+      title: SheetNotesText.untitledNote,
       content: '',
       folderId: _currentFolderId,
     );
@@ -60,9 +61,9 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
   Future<void> _createNewFolder() async {
     final name = await _showTextInputDialog(
       context: context,
-      title: 'Create Folder',
-      hint: 'Folder name',
-      initialValue: 'New Folder',
+      title: SheetNotesText.createFolderDialogTitle,
+      hint: SheetNotesText.createFolderDialogHint,
+      initialValue: SheetNotesText.createFolderInitialValue,
     );
 
     if (name == null || name.trim().isEmpty) return;
@@ -79,8 +80,8 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
   Future<void> _deleteNote(String noteId) async {
     final confirmed = await _showConfirmDialog(
       context: context,
-      title: 'Delete Note',
-      message: 'Are you sure you want to delete this note?',
+      title: SheetNotesText.deleteNoteDialogTitle,
+      message: SheetNotesText.deleteNoteDialogMessage,
     );
 
     if (!confirmed) return;
@@ -92,8 +93,8 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
   Future<void> _deleteFolder(String folderId) async {
     final confirmed = await _showConfirmDialog(
       context: context,
-      title: 'Delete Folder',
-      message: 'Are you sure? This will delete all notes inside this folder.',
+      title: SheetNotesText.deleteFolderDialogTitle,
+      message: SheetNotesText.deleteFolderDialogMessage,
     );
 
     if (!confirmed) return;
@@ -148,7 +149,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search notes...',
+                hintText: SheetNotesText.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -181,22 +182,22 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                     child: DropdownButtonFormField<notes_repo.NoteSortOrder>(
                       value: _sortOrder,
                       decoration: const InputDecoration(
-                        labelText: 'Sort by',
+                        labelText: SheetNotesText.sortByLabel,
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
                       items: const [
                         DropdownMenuItem(
                           value: notes_repo.NoteSortOrder.newestFirst,
-                          child: Text('Newest First'),
+                          child: Text(SheetNotesText.sortNewestFirst),
                         ),
                         DropdownMenuItem(
                           value: notes_repo.NoteSortOrder.oldestFirst,
-                          child: Text('Oldest First'),
+                          child: Text(SheetNotesText.sortOldestFirst),
                         ),
                         DropdownMenuItem(
                           value: notes_repo.NoteSortOrder.alphabetical,
-                          child: Text('Alphabetical'),
+                          child: Text(SheetNotesText.sortAlphabetical),
                         ),
                       ],
                       onChanged: (value) {
@@ -225,14 +226,14 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
             FloatingActionButton(
               heroTag: 'createFolder',
               onPressed: _createNewFolder,
-              tooltip: 'Create Folder',
+              tooltip: SheetNotesText.fabCreateFolderTooltip,
               child: const Icon(Icons.create_new_folder),
             ),
           const SizedBox(height: 8),
           FloatingActionButton(
             heroTag: 'createNote',
             onPressed: _createNewNote,
-            tooltip: 'Create Note',
+            tooltip: SheetNotesText.fabCreateNoteTooltip,
             child: const Icon(Icons.add),
           ),
         ],
@@ -254,7 +255,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('No matching notes found'),
+              child: Text(SheetNotesText.searchNoMatches),
             ),
           );
         }
@@ -279,7 +280,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
         children: [
           ListTile(
             leading: const Icon(Icons.arrow_back),
-            title: const Text('Back to Notes'),
+            title: const Text(SheetNotesText.backToNotes),
             tileColor: Theme.of(context).colorScheme.surfaceVariant,
             onTap: _navigateBack,
           ),
@@ -297,7 +298,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Text('No notes in this folder.\nTap + to create one!'),
+                      child: Text(SheetNotesText.folderEmpty),
                     ),
                   );
                 }
@@ -330,7 +331,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
             child: Padding(
               padding: EdgeInsets.all(24.0),
               child: Text(
-                'No notes or folders yet.\nTap + to create a note\nor the folder icon to create a folder!',
+                SheetNotesText.rootEmpty,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -348,7 +349,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Text(
-                  'FOLDERS',
+                  SheetNotesText.sectionFolders,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -363,7 +364,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Text(
-                  'NOTES',
+                  SheetNotesText.sectionNotes,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -389,13 +390,13 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Created ${_formatDate(folder.createdAt)}',
+          SheetNotesText.created(_formatDate(folder.createdAt)),
           style: const TextStyle(fontSize: 12),
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline),
           onPressed: () => _deleteFolder(folder.id),
-          tooltip: 'Delete folder',
+          tooltip: SheetNotesText.tooltipDeleteFolder,
         ),
         onTap: () => _openFolder(folder.id),
       ),
@@ -425,7 +426,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               ),
             const SizedBox(height: 4),
             Text(
-              'Updated ${_formatDate(note.updatedAt)}',
+              SheetNotesText.updated(_formatDate(note.updatedAt)),
               style: TextStyle(fontSize: 11, color: Colors.grey[600]),
             ),
           ],
@@ -433,7 +434,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
         trailing: IconButton(
           icon: const Icon(Icons.delete_outline),
           onPressed: () => _deleteNote(note.id),
-          tooltip: 'Delete note',
+          tooltip: SheetNotesText.tooltipDeleteNote,
         ),
         onTap: () => _openNote(note),
       ),
@@ -446,14 +447,14 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
 
     if (diff.inDays == 0) {
       if (diff.inHours == 0) {
-        if (diff.inMinutes == 0) return 'just now';
-        return '${diff.inMinutes}m ago';
+        if (diff.inMinutes == 0) return SheetNotesText.dateJustNow;
+        return SheetNotesText.dateMinutesAgo(diff.inMinutes);
       }
-      return '${diff.inHours}h ago';
+      return SheetNotesText.dateHoursAgo(diff.inHours);
     } else if (diff.inDays == 1) {
-      return 'yesterday';
+      return SheetNotesText.dateYesterday;
     } else if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return SheetNotesText.dateDaysAgo(diff.inDays);
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
@@ -526,7 +527,9 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
     final repo = ref.read(heroNotesRepositoryProvider);
     await repo.updateNote(
       noteId: widget.noteId,
-      title: _titleController.text.trim().isEmpty ? 'Untitled Note' : _titleController.text.trim(),
+      title: _titleController.text.trim().isEmpty
+          ? SheetNotesText.untitledNote
+          : _titleController.text.trim(),
       content: _contentController.text,
     );
 
@@ -537,7 +540,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Note saved'),
+          content: Text(SheetNotesText.noteSavedSnack),
           duration: Duration(seconds: 1),
         ),
       );
@@ -563,12 +566,12 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Edit Note'),
+          title: const Text(SheetNotesText.editNoteTitle),
           actions: [
             if (_isDirty)
               IconButton(
                 icon: const Icon(Icons.save),
-                tooltip: 'Save',
+                tooltip: SheetNotesText.saveTooltip,
                 onPressed: _saveNote,
               ),
           ],
@@ -581,7 +584,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Title',
+                  labelText: SheetNotesText.fieldTitleLabel,
                   border: OutlineInputBorder(),
                 ),
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -592,7 +595,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
                 child: TextField(
                   controller: _contentController,
                   decoration: const InputDecoration(
-                    labelText: 'Content',
+                    labelText: SheetNotesText.fieldContentLabel,
                     border: OutlineInputBorder(),
                     alignLabelWithHint: true,
                   ),
@@ -630,11 +633,11 @@ Future<String?> _showTextInputDialog({
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text(SheetNotesText.actionCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Create'),
+            child: const Text(SheetNotesText.actionCreate),
           ),
         ],
       );
@@ -656,12 +659,12 @@ Future<bool> _showConfirmDialog({
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text(SheetNotesText.actionCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text(SheetNotesText.actionDelete),
           ),
         ],
       );

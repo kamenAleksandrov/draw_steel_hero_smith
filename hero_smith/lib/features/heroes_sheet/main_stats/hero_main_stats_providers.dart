@@ -14,6 +14,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/ancestry_bonus_service.dart';
 import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/psi_boost_service.dart';
+import '../../../core/theme/text/hero_main_stats_models_text.dart';
 
 /// Provider that combines hero_values (base stats) with HeroAssembly (mods/bonuses)
 /// to produce the complete HeroMainStats.
@@ -27,16 +28,20 @@ final heroMainStatsProvider =
   final equipmentBonusesAsync = ref.watch(heroEquipmentBonusesProvider(heroId));
 
   // Propagate loading/error states if any dependency is not ready
-  if (valuesAsync.isLoading || assemblyAsync.isLoading || equipmentBonusesAsync.isLoading) {
+  if (valuesAsync.isLoading ||
+      assemblyAsync.isLoading ||
+      equipmentBonusesAsync.isLoading) {
     return const AsyncLoading();
   }
 
   // Errors: surface the first one encountered
   if (valuesAsync.hasError) {
-    return AsyncError(valuesAsync.error!, valuesAsync.stackTrace ?? StackTrace.current);
+    return AsyncError(
+        valuesAsync.error!, valuesAsync.stackTrace ?? StackTrace.current);
   }
   if (assemblyAsync.hasError) {
-    return AsyncError(assemblyAsync.error!, assemblyAsync.stackTrace ?? StackTrace.current);
+    return AsyncError(
+        assemblyAsync.error!, assemblyAsync.stackTrace ?? StackTrace.current);
   }
   if (equipmentBonusesAsync.hasError) {
     return AsyncError(
@@ -49,7 +54,8 @@ final heroMainStatsProvider =
   final assembly = assemblyAsync.value; // may be null
   final equipmentBonuses = equipmentBonusesAsync.requireValue;
 
-  final stats = _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses);
+  final stats =
+      _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses);
   return AsyncData(stats);
 });
 
@@ -74,10 +80,12 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
   final userModifications = _extractUserModifications(values);
 
   // Choice modifications: stat mods from assembly + equipment bonuses
-  final choiceModifications = _buildChoiceModifications(assembly, equipmentBonuses);
+  final choiceModifications =
+      _buildChoiceModifications(assembly, equipmentBonuses);
 
   // Combined modifications
-  final modifications = _combineModificationMaps(choiceModifications, userModifications);
+  final modifications =
+      _combineModificationMaps(choiceModifications, userModifications);
 
   // Class ID comes from assembly (hero_entries), fallback to legacy hero_values
   final classId = assembly?.classId ?? readText('basics.className');
@@ -91,11 +99,13 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
   );
 
   final featureBonusMap = _parseFeatureStatBonusMap(values);
-  var featureDynamicMods = _buildFeatureStatBonusDynamicModifiersFromMap(featureBonusMap);
+  var featureDynamicMods =
+      _buildFeatureStatBonusDynamicModifiersFromMap(featureBonusMap);
 
   // Fallback to assembly-derived entries for backward compatibility
   if (featureDynamicMods.modifiers.isEmpty) {
-    featureDynamicMods = _buildFeatureStatBonusDynamicModifiersFromAssembly(assembly);
+    featureDynamicMods =
+        _buildFeatureStatBonusDynamicModifiersFromAssembly(assembly);
   }
 
   final dynamicModifiers = baseDynamicMods.add(featureDynamicMods.modifiers);
@@ -111,7 +121,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
     reasonBase: readInt('stats.reason'),
     intuitionBase: readInt('stats.intuition'),
     presenceBase: readInt('stats.presence'),
-    sizeBase: readText('stats.size') ?? '1M',
+    sizeBase: readText('stats.size') ?? HeroMainStatsModelsText.defaultSizeBase,
     speedBase: readInt('stats.speed'),
     disengageBase: readInt('stats.disengage'),
     stabilityBase: readInt('stats.stability'),
@@ -165,10 +175,24 @@ Map<String, int> _buildChoiceModifications(
 
   // Add stat mods from assembly (ancestry, complication, perks, etc.)
   if (assembly != null) {
-    for (final stat in ['might', 'agility', 'reason', 'intuition', 'presence', 
-                        'speed', 'disengage', 'stability', 'size', 'stamina', 
-                        'recoveries', 'surges', 'wealth', 'renown']) {
-      final modTotal = assembly.statMods.getTotalForStatAtLevel(stat, assembly.level);
+    for (final stat in [
+      'might',
+      'agility',
+      'reason',
+      'intuition',
+      'presence',
+      'speed',
+      'disengage',
+      'stability',
+      'size',
+      'stamina',
+      'recoveries',
+      'surges',
+      'wealth',
+      'renown'
+    ]) {
+      final modTotal =
+          assembly.statMods.getTotalForStatAtLevel(stat, assembly.level);
       if (modTotal != 0) {
         final modKey = _statToModKey(stat);
         if (modKey != null) {
@@ -235,7 +259,8 @@ String? _normalizeCharacteristic(String value) {
 /// Parse feature stat bonuses stored in hero_values under strife.feature_stat_bonuses.
 /// Returns a map keyed by featureId -> payload map.
 Map<String, dynamic> _parseFeatureStatBonusMap(List<db.HeroValue> values) {
-  final row = values.firstWhereOrNull((v) => v.key == 'strife.feature_stat_bonuses');
+  final row =
+      values.firstWhereOrNull((v) => v.key == 'strife.feature_stat_bonuses');
   final raw = row?.jsonValue ?? row?.textValue;
   if (raw == null || raw.isEmpty) return const {};
   try {
@@ -438,7 +463,7 @@ final heroProgressionContextProvider =
     FutureProvider.family<HeroProgressionContext, String>((ref, heroId) async {
   // Use assembly as the source of truth for class/subclass/kit
   final assembly = await ref.watch(heroAssemblyProvider(heroId).future);
-  
+
   if (assembly == null) {
     return const HeroProgressionContext(className: null, subclassName: null);
   }
@@ -478,8 +503,10 @@ final heroProgressionContextProvider =
 
 /// Provider to load the heroic resource progression for a hero
 final heroResourceProgressionProvider =
-    FutureProvider.family<HeroicResourceProgression?, String>((ref, heroId) async {
-  final context = await ref.watch(heroProgressionContextProvider(heroId).future);
+    FutureProvider.family<HeroicResourceProgression?, String>(
+        (ref, heroId) async {
+  final context =
+      await ref.watch(heroProgressionContextProvider(heroId).future);
   final service = HeroicResourceProgressionService();
 
   return service.getProgression(

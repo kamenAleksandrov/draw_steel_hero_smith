@@ -10,6 +10,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/text/gear/kits_tab_text.dart';
 import '../main_stats/hero_main_stats_providers.dart';
 import 'gear_dialogs.dart';
 import 'gear_utils.dart';
@@ -183,7 +184,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Failed to load kits: $e';
+          _error = '${KitsTabText.loadKitsFailedPrefix}$e';
           _isLoading = false;
         });
       }
@@ -196,7 +197,11 @@ class _KitsTabState extends ConsumerState<KitsTab> {
   ) {
     if (classData == null) {
       return [
-        const EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0),
+        const EquipmentSlotConfig(
+          label: KitsTabText.equipmentSlotKitLabel,
+          allowedTypes: ['kit'],
+          index: 0,
+        ),
       ];
     }
 
@@ -204,7 +209,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     if (classData.classId == 'class_fury' && subclass == 'stormwight') {
       return [
         const EquipmentSlotConfig(
-          label: 'Stormwight Kit',
+          label: KitsTabText.equipmentSlotStormwightLabel,
           allowedTypes: ['stormwight_kit'],
           index: 0,
         ),
@@ -232,7 +237,11 @@ class _KitsTabState extends ConsumerState<KitsTab> {
 
     if (kitFeatures.isEmpty) {
       return [
-        const EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0),
+        const EquipmentSlotConfig(
+          label: KitsTabText.equipmentSlotKitLabel,
+          allowedTypes: ['kit'],
+          index: 0,
+        ),
       ];
     }
 
@@ -250,7 +259,11 @@ class _KitsTabState extends ConsumerState<KitsTab> {
 
     if (totalCount <= 0) {
       return [
-        const EquipmentSlotConfig(label: 'Kit', allowedTypes: ['kit'], index: 0),
+        const EquipmentSlotConfig(
+          label: KitsTabText.equipmentSlotKitLabel,
+          allowedTypes: ['kit'],
+          index: 0,
+        ),
       ];
     }
 
@@ -269,7 +282,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       final sortedTypes = sortKitTypesByPriority(uniqueTypes);
       final displayName = sortedTypes.isNotEmpty
           ? kitTypeDisplayName(sortedTypes.first)
-          : 'Kit';
+          : KitsTabText.equipmentSlotKitLabel;
       for (var i = 0; i < totalCount; i++) {
         final label = totalCount > 1 ? '$displayName ${i + 1}' : displayName;
         slots.add(EquipmentSlotConfig(
@@ -283,7 +296,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     return slots.isEmpty
         ? [
             const EquipmentSlotConfig(
-              label: 'Kit',
+              label: KitsTabText.equipmentSlotKitLabel,
               allowedTypes: ['kit'],
               index: 0,
             ),
@@ -369,7 +382,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update favorites: $e'),
+            content: Text('${KitsTabText.updateFavoritesFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -381,7 +394,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     if (_equipmentSlots.isEmpty && _equippedKitIds.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('This hero cannot equip modifications.')),
+          const SnackBar(content: Text(KitsTabText.noEquipModsSnack)),
         );
       }
       return;
@@ -418,7 +431,11 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Cannot equip ${kit.name}; no ${kitTypeDisplayName(kit.type)} slot available.'),
+            content: Text(
+              '${KitsTabText.cannotEquipKitPrefix}${kit.name}'
+              '${KitsTabText.cannotEquipKitInfix}${kitTypeDisplayName(kit.type)}'
+              '${KitsTabText.cannotEquipKitSuffix}',
+            ),
           ),
         );
       }
@@ -446,16 +463,18 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Equip Kit'),
-        content: Text('Equip "${kit.name}"?'),
+        title: const Text(KitsTabText.equipKitDialogTitle),
+        content: Text(
+          '${KitsTabText.equipKitDialogContentPrefix}${kit.name}${KitsTabText.equipKitDialogContentSuffix}',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(KitsTabText.equipKitDialogCancelAction),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Equip'),
+            child: const Text(KitsTabText.equipKitDialogConfirmAction),
           ),
         ],
       ),
@@ -464,22 +483,22 @@ class _KitsTabState extends ConsumerState<KitsTab> {
 
   Future<bool?> _showSwapConfirmation(model.Component newKit, model.Component? existingKit) {
     final message = existingKit != null
-        ? 'Replace "${existingKit.name}" with "${newKit.name}"?'
-        : 'Equip "${newKit.name}"?';
+        ? '${KitsTabText.swapKitDialogReplacePrefix}${existingKit.name}${KitsTabText.swapKitDialogReplaceInfix}${newKit.name}${KitsTabText.swapKitDialogReplaceSuffix}'
+        : '${KitsTabText.swapKitDialogEquipPrefix}${newKit.name}${KitsTabText.swapKitDialogEquipSuffix}';
 
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Swap Kit'),
+        title: const Text(KitsTabText.swapKitDialogTitle),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(KitsTabText.swapKitDialogCancelAction),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Swap'),
+            child: const Text(KitsTabText.swapKitDialogConfirmAction),
           ),
         ],
       ),
@@ -492,7 +511,9 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       builder: (context) {
         final theme = Theme.of(context);
         return AlertDialog(
-          title: Text('Replace which kit with "${newKit.name}"?'),
+          title: Text(
+            '${KitsTabText.selectKitToReplaceTitlePrefix}${newKit.name}${KitsTabText.selectKitToReplaceTitleSuffix}',
+          ),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
@@ -501,7 +522,8 @@ class _KitsTabState extends ConsumerState<KitsTab> {
               itemBuilder: (context, index) {
                 final kitId = equippedKitIds[index];
                 final existingKit = _findKitById(kitId);
-                final kitName = existingKit?.name ?? 'Unknown Kit';
+                final kitName =
+                    existingKit?.name ?? KitsTabText.unknownKitLabel;
                 final kitType = existingKit != null 
                     ? kitTypeDisplayName(existingKit.type) 
                     : '';
@@ -521,7 +543,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text(KitsTabText.selectKitToReplaceCancelAction),
             ),
           ],
         );
@@ -600,12 +622,12 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           _equippedKitIds = updatedKitIds;
         });
         
-        final replacedName = kitIdToReplace != null 
-            ? _findKitById(kitIdToReplace)?.name ?? 'previous kit'
+        final replacedName = kitIdToReplace != null
+            ? _findKitById(kitIdToReplace)?.name ?? KitsTabText.previousKitLabel
             : null;
         final message = replacedName != null
-            ? 'Replaced $replacedName with ${kit.name}.'
-            : 'Equipped ${kit.name}.';
+            ? '${KitsTabText.replacedKitSnackPrefix}$replacedName${KitsTabText.replacedKitSnackInfix}${kit.name}${KitsTabText.replacedKitSnackSuffix}'
+            : '${KitsTabText.equippedKitSnackPrefix}${kit.name}${KitsTabText.equippedKitSnackSuffix}';
             
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -618,7 +640,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to swap kit: $e'),
+            content: Text('${KitsTabText.swapKitFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -702,7 +724,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Favorite Kits (${favoriteKits.length})',
+                    '${KitsTabText.favoriteKitsHeaderPrefix}${favoriteKits.length}${KitsTabText.favoriteKitsHeaderSuffix}',
                     style: AppTextStyles.subtitle,
                   ),
                 ],
@@ -721,14 +743,14 @@ class _KitsTabState extends ConsumerState<KitsTab> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No favorite kits yet',
+                            KitsTabText.noFavoriteKitsTitle,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Theme.of(context).colorScheme.outline,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Tap + to add kits for quick swapping',
+                            KitsTabText.noFavoriteKitsSubtitle,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Theme.of(context).colorScheme.outline,
                             ),
@@ -766,7 +788,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           child: FloatingActionButton(
             heroTag: 'kits_tab_fab',
             onPressed: _showAddFavoriteDialog,
-            tooltip: 'Add Favorite Kit',
+            tooltip: KitsTabText.addFavoriteFabTooltip,
             child: const Icon(Icons.add),
           ),
         ),
@@ -826,7 +848,9 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Added ${component.name} to favorites.'),
+            content: Text(
+              '${KitsTabText.addedFavoriteSnackPrefix}${component.name}${KitsTabText.addedFavoriteSnackSuffix}',
+            ),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -835,7 +859,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add favorite: $e'),
+            content: Text('${KitsTabText.addFavoriteFailedPrefix}$e'),
             backgroundColor: Colors.red,
           ),
         );

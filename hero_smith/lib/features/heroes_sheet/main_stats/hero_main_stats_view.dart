@@ -14,6 +14,7 @@ import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/resource_generation_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/semantic/semantic_tokens.dart';
+import '../../../core/theme/text/hero_main_stats_view_text.dart';
 import '../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
@@ -287,7 +288,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       }
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to update ${field.label.toLowerCase()}: $err');
+      _showSnack(
+        '${HeroMainStatsViewText.updateNumberFieldErrorPrefix}${field.label.toLowerCase()}${HeroMainStatsViewText.updateNumberFieldErrorSuffix}$err',
+      );
     }
   }
 
@@ -311,7 +314,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       await repo.setModification(widget.heroId, key: key, value: value);
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to update modifier: $err');
+      _showSnack(
+        '${HeroMainStatsViewText.updateModifierErrorPrefix}$err',
+      );
     }
   }
 
@@ -375,7 +380,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
             const SizedBox(height: 12),
             Text(
-              'Unable to load hero statistics.',
+              HeroMainStatsViewText.errorStateTitle,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -390,7 +395,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               onPressed: () =>
                   ref.invalidate(heroMainStatsProvider(widget.heroId)),
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text(HeroMainStatsViewText.errorStateRetryLabel),
             ),
           ],
         ),
@@ -418,7 +423,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           const SizedBox(height: 12),
           AutoHeroGreenFormWidget(
             heroId: widget.heroId,
-            sectionTitle: 'Green Elementalist Forms',
+            sectionTitle: HeroMainStatsViewText.greenElementalistFormsTitle,
             sectionSpacing: 12,
           ),
           ConditionsTrackerWidget(heroId: widget.heroId),
@@ -452,7 +457,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'LVL',
+                    HeroMainStatsViewText.progressionLevelLabel,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onPrimaryContainer,
                       fontWeight: FontWeight.w500,
@@ -477,13 +482,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   _buildProgressionItem(
                     context,
                     icon: Icons.star_outline,
-                    label: 'XP',
+                    label: HeroMainStatsViewText.progressionXpLabel,
                     field: _NumericField.exp,
                   ),
                   _buildProgressionItem(
                     context,
                     icon: Icons.emoji_events_outlined,
-                    label: 'Victories',
+                    label: HeroMainStatsViewText.progressionVictoriesLabel,
                     field: _NumericField.victories,
                   ),
                 ],
@@ -502,7 +507,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   _buildEconomyItem(
                     context,
                     icon: Icons.paid_outlined,
-                    label: 'Wealth',
+                    label: HeroMainStatsViewText.progressionWealthLabel,
                     baseValue: stats?.wealthBase ?? 0,
                     totalValue: stats?.wealthTotal ?? 0,
                     modKey: HeroModKeys.wealth,
@@ -511,7 +516,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   _buildEconomyItem(
                     context,
                     icon: Icons.military_tech_outlined,
-                    label: 'Renown',
+                    label: HeroMainStatsViewText.progressionRenownLabel,
                     baseValue: stats?.renownBase ?? 0,
                     totalValue: stats?.renownTotal ?? 0,
                     modKey: HeroModKeys.renown,
@@ -536,7 +541,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           child: OutlinedButton.icon(
             onPressed: () => _showRespiteConfirmDialog(context, stats),
             icon: const Icon(Icons.bedtime_outlined, size: 18),
-            label: const Text('Take Respite'),
+            label: const Text(HeroMainStatsViewText.respiteButtonLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
               side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
@@ -549,7 +554,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           child: OutlinedButton.icon(
             onPressed: () => _navigateToDowntime(context),
             icon: const Icon(Icons.assignment_outlined, size: 18),
-            label: const Text('Downtime'),
+            label: const Text(HeroMainStatsViewText.downtimeButtonLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.secondary,
               side: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.5)),
@@ -589,14 +594,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             children: [
               Icon(Icons.bedtime_outlined),
               SizedBox(width: 8),
-              Text('Take Respite'),
+              Text(HeroMainStatsViewText.respiteDialogTitle),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Taking a respite will:'),
+              const Text(HeroMainStatsViewText.respiteDialogIntro),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -613,7 +618,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Convert $victories ${victories == 1 ? 'victory' : 'victories'} to XP',
+                            '${HeroMainStatsViewText.respiteDialogConvertPrefix}$victories ${victories == 1 ? HeroMainStatsViewText.respiteDialogConvertSingular : HeroMainStatsViewText.respiteDialogConvertPlural}${HeroMainStatsViewText.respiteDialogConvertSuffix}',
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -626,7 +631,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'XP: $currentXp → $newXp',
+                            '${HeroMainStatsViewText.respiteDialogXpPrefix}$currentXp${HeroMainStatsViewText.respiteDialogArrowSeparator}$newXp',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
@@ -641,7 +646,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Regain all recoveries (→ $recoveriesMax)',
+                            '${HeroMainStatsViewText.respiteDialogRecoveriesPrefix}${HeroMainStatsViewText.respiteDialogRecoveriesArrow}$recoveriesMax${HeroMainStatsViewText.respiteDialogRecoveriesSuffix}',
                             style: theme.textTheme.bodyMedium,
                           ),
                         ),
@@ -655,11 +660,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: const Text(HeroMainStatsViewText.respiteDialogCancelLabel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Take Respite'),
+              child: const Text(HeroMainStatsViewText.respiteDialogConfirmLabel),
             ),
           ],
         );
@@ -690,7 +695,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     await _persistNumberField(_NumericField.staminaCurrent, staminaMax.toString());
     
     if (mounted) {
-      _showSnack('Respite complete: +$victories XP, stamina & recoveries restored');
+      _showSnack(
+        '${HeroMainStatsViewText.respiteCompletePrefix}$victories${HeroMainStatsViewText.respiteCompleteSuffix}',
+      );
     }
   }
 
@@ -804,7 +811,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Icon(Icons.person_outline, size: 16, color: theme.colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
-                  'Characteristics',
+                  HeroMainStatsViewText.characteristicsSectionTitle,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.primary,
@@ -816,11 +823,46 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // 5-column characteristic grid
             Row(
               children: [
-                _buildGridStatItem(context, 'M', stats.mightBase, stats.mightTotal, HeroModKeys.might, 'Might'),
-                _buildGridStatItem(context, 'A', stats.agilityBase, stats.agilityTotal, HeroModKeys.agility, 'Agility'),
-                _buildGridStatItem(context, 'R', stats.reasonBase, stats.reasonTotal, HeroModKeys.reason, 'Reason'),
-                _buildGridStatItem(context, 'I', stats.intuitionBase, stats.intuitionTotal, HeroModKeys.intuition, 'Intuition'),
-                _buildGridStatItem(context, 'P', stats.presenceBase, stats.presenceTotal, HeroModKeys.presence, 'Presence'),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.characteristicShortLabelM,
+                  stats.mightBase,
+                  stats.mightTotal,
+                  HeroModKeys.might,
+                  HeroMainStatsViewText.characteristicFullLabelMight,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.characteristicShortLabelA,
+                  stats.agilityBase,
+                  stats.agilityTotal,
+                  HeroModKeys.agility,
+                  HeroMainStatsViewText.characteristicFullLabelAgility,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.characteristicShortLabelR,
+                  stats.reasonBase,
+                  stats.reasonTotal,
+                  HeroModKeys.reason,
+                  HeroMainStatsViewText.characteristicFullLabelReason,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.characteristicShortLabelI,
+                  stats.intuitionBase,
+                  stats.intuitionTotal,
+                  HeroModKeys.intuition,
+                  HeroMainStatsViewText.characteristicFullLabelIntuition,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.characteristicShortLabelP,
+                  stats.presenceBase,
+                  stats.presenceTotal,
+                  HeroModKeys.presence,
+                  HeroMainStatsViewText.characteristicFullLabelPresence,
+                ),
               ],
             ),
             // Potency section
@@ -832,7 +874,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Icon(Icons.shield_outlined, size: 16, color: theme.colorScheme.secondary),
                 const SizedBox(width: 6),
                 Text(
-                  'Attributes',
+                  HeroMainStatsViewText.attributesSectionTitle,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.secondary,
@@ -845,9 +887,33 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             Row(
               children: [
                 _buildGridSizeItem(context, stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
-                _buildGridStatItem(context, 'SPD', stats.speedBase, stats.speedTotal, HeroModKeys.speed, 'Speed', featureBonus: stats.speedFeatureBonus),
-                _buildGridStatItem(context, 'DIS', stats.disengageBase, stats.disengageTotal, HeroModKeys.disengage, 'Disengage', featureBonus: stats.disengageFeatureBonus),
-                _buildGridStatItem(context, 'STB', stats.stabilityBase, stats.stabilityTotal, HeroModKeys.stability, 'Stability', featureBonus: stats.stabilityFeatureBonus),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.attributeShortLabelSpeed,
+                  stats.speedBase,
+                  stats.speedTotal,
+                  HeroModKeys.speed,
+                  HeroMainStatsViewText.attributeFullLabelSpeed,
+                  featureBonus: stats.speedFeatureBonus,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.attributeShortLabelDisengage,
+                  stats.disengageBase,
+                  stats.disengageTotal,
+                  HeroModKeys.disengage,
+                  HeroMainStatsViewText.attributeFullLabelDisengage,
+                  featureBonus: stats.disengageFeatureBonus,
+                ),
+                _buildGridStatItem(
+                  context,
+                  HeroMainStatsViewText.attributeShortLabelStability,
+                  stats.stabilityBase,
+                  stats.stabilityTotal,
+                  HeroModKeys.stability,
+                  HeroMainStatsViewText.attributeFullLabelStability,
+                  featureBonus: stats.stabilityFeatureBonus,
+                ),
               ],
             ),
           ],
@@ -1069,11 +1135,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'SIZE',
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                HeroMainStatsViewText.sizeShortLabel,
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: theme.colorScheme.onSurfaceVariant,
@@ -1146,7 +1212,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Icon(Icons.favorite_outline, size: 16, color: staminaState.color),
                 const SizedBox(width: 6),
                 Text(
-                  'Stamina',
+                  HeroMainStatsViewText.staminaSectionTitle,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: staminaState.color,
@@ -1179,7 +1245,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         children: [
                           _buildVitalItem(
                             context,
-                            label: 'Current',
+                            label: HeroMainStatsViewText.vitalsStaminaCurrentLabel,
                             value: stats.staminaCurrent,
                             field: _NumericField.staminaCurrent,
                             allowNegative: true,
@@ -1187,14 +1253,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                           const SizedBox(width: 12),
                           _buildVitalItem(
                             context,
-                            label: 'Temp',
+                            label: HeroMainStatsViewText.vitalsStaminaTempLabel,
                             value: stats.staminaTemp,
                             field: _NumericField.staminaTemp,
                           ),
                           const SizedBox(width: 12),
                           _buildMaxVitalItem(
                             context,
-                            label: 'Max',
+                            label: HeroMainStatsViewText.vitalsStaminaMaxLabel,
                             value: stats.staminaMaxEffective,
                             modKey: HeroModKeys.staminaMax,
                             choiceValue: staminaChoice,
@@ -1216,7 +1282,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     _buildCompactActionButton(
                       context,
                       icon: Icons.flash_on,
-                      label: 'Dmg',
+                      label: HeroMainStatsViewText.vitalsDamageLabel,
                       onPressed: () => _handleDealDamage(stats),
                       color: theme.colorScheme.error,
                     ),
@@ -1224,7 +1290,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     _buildCompactActionButton(
                       context,
                       icon: Icons.healing,
-                      label: 'Heal',
+                      label: HeroMainStatsViewText.vitalsHealLabel,
                       onPressed: () => _handleApplyHealing(stats),
                       color: Colors.green,
                     ),
@@ -1239,7 +1305,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Icon(Icons.local_hospital_outlined, size: 16, color: theme.colorScheme.tertiary),
                 const SizedBox(width: 6),
                 Text(
-                  'Recoveries',
+                  HeroMainStatsViewText.recoveriesSectionTitle,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: theme.colorScheme.tertiary,
@@ -1252,14 +1318,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               children: [
                 _buildVitalItem(
                   context,
-                  label: 'Current',
+                  label: HeroMainStatsViewText.vitalsRecoveriesCurrentLabel,
                   value: stats.recoveriesCurrent,
                   field: _NumericField.recoveriesCurrent,
                 ),
                 const SizedBox(width: 12),
                 _buildMaxVitalItem(
                   context,
-                  label: 'Max',
+                  label: HeroMainStatsViewText.vitalsRecoveriesMaxLabel,
                   value: stats.recoveriesMaxEffective,
                   modKey: HeroModKeys.recoveriesMax,
                   choiceValue: recoveriesChoice,
@@ -1278,7 +1344,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     children: [
                       const Icon(Icons.add_circle_outline, size: 16),
                       const SizedBox(width: 4),
-                      Text('Use (+$healAmount)', style: const TextStyle(fontSize: 12)),
+                      Text(
+                        '${HeroMainStatsViewText.vitalsRecoveriesUsePrefix}$healAmount${HeroMainStatsViewText.vitalsRecoveriesUseSuffix}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ],
                   ),
                 ),
@@ -1312,7 +1381,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               child: OutlinedButton.icon(
                 onPressed: () => _handleEndOfCombat(stats),
                 icon: const Icon(Icons.flag_outlined, size: 16),
-                label: const Text('End of Combat'),
+                label: const Text(HeroMainStatsViewText.endOfCombatLabel),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: theme.colorScheme.error,
                   side: BorderSide(color: theme.colorScheme.error.withOpacity(0.5)),
@@ -1511,13 +1580,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             context: context,
             builder: (dialogContext) {
               return AlertDialog(
-                title: Text('Edit $label'),
+                title: Text(
+                  '${HeroMainStatsViewText.vitalItemEditTitlePrefix}$label',
+                ),
                 content: TextField(
                   controller: controller,
                   keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Value',
+                    labelText: HeroMainStatsViewText.vitalItemValueLabel,
                     border: OutlineInputBorder(),
                   ),
                   inputFormatters: _formatters(allowNegative, 4),
@@ -1525,11 +1596,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Cancel'),
+                    child: const Text(HeroMainStatsViewText.vitalItemCancelLabel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(controller.text),
-                    child: const Text('Save'),
+                    child: const Text(HeroMainStatsViewText.vitalItemSaveLabel),
                   ),
                 ],
               );
@@ -1667,45 +1738,56 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('$label Breakdown'),
+          title: Text(
+            '$label${HeroMainStatsViewText.maxVitalBreakdownTitleSuffix}',
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildBreakdownRow(theme, 'Class (Base + Level)', classBase),
+              _buildBreakdownRow(
+                theme,
+                HeroMainStatsViewText.breakdownClassBaseLabel,
+                classBase,
+              ),
               if (equipmentBonus > 0)
                 _buildBreakdownRow(
                   theme,
-                  'Equipment',
+                  HeroMainStatsViewText.breakdownEquipmentLabel,
                   equipmentBonus,
                   isBonus: equipmentBonus > 0,
                 ),
               if (hasFeature)
                 _buildBreakdownRow(
                   theme,
-                  'Features & Abilities',
+                  HeroMainStatsViewText.breakdownFeaturesLabel,
                   featureBonus,
                   isBonus: featureBonus > 0,
                 ),
               if (hasChoice)
                 _buildBreakdownRow(
                   theme,
-                  'Other choice mods',
+                  HeroMainStatsViewText.breakdownChoiceModsLabel,
                   choiceValue,
                   isBonus: choiceValue >= 0,
                 ),
               if (hasUser)
                 _buildBreakdownRow(
                   theme,
-                  'Manual mods',
+                  HeroMainStatsViewText.breakdownManualModsLabel,
                   userValue,
                   isBonus: userValue >= 0,
                 ),
               const Divider(),
-              _buildBreakdownRow(theme, 'Total', total, isBold: true),
+              _buildBreakdownRow(
+                theme,
+                HeroMainStatsViewText.breakdownTotalLabel,
+                total,
+                isBold: true,
+              ),
               const SizedBox(height: 16),
               Text(
-                'Tap "Edit Modifier" to adjust manual modifications.',
+                HeroMainStatsViewText.breakdownEditHint,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -1715,20 +1797,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Close'),
+              child: const Text(HeroMainStatsViewText.breakdownCloseLabel),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 await _showStatEditDialog(
                   context,
-                  label: '$label Modifier',
+                  label: '$label${HeroMainStatsViewText.breakdownModifierSuffix}',
                   modKey: modKey,
                   baseValue: classBase + equipmentBonus + featureBonus + choiceValue,
                   currentModValue: userValue,
                 );
               },
-              child: const Text('Edit Modifier'),
+              child: const Text(HeroMainStatsViewText.breakdownEditModifierLabel),
             ),
           ],
         );
@@ -1806,9 +1888,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     return resourceDetails.when(
       loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      error: (_, __) => _buildResourceDisplay(context, stats, stats.heroicResourceName ?? 'Resource', value),
+      error: (_, __) => _buildResourceDisplay(
+        context,
+        stats,
+        stats.heroicResourceName ?? HeroMainStatsViewText.resourceFallbackErrorName,
+        value,
+      ),
       data: (details) {
-        final resourceName = details?.name ?? stats.heroicResourceName ?? 'Resource';
+        final resourceName = details?.name ??
+            stats.heroicResourceName ??
+            HeroMainStatsViewText.resourceFallbackName;
         final hasDetails = (details?.description ?? '').isNotEmpty ||
             (details?.inCombatDescription ?? '').isNotEmpty ||
             (details?.outCombatDescription ?? '').isNotEmpty ||
@@ -1867,7 +1956,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       if (canBeNegative) ...[
                         const SizedBox(width: 4),
                         Text(
-                          '(min: $minValue)',
+                          '${HeroMainStatsViewText.resourceMinPrefix}$minValue${HeroMainStatsViewText.resourceMinSuffix}',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
@@ -2017,7 +2106,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context,
         rolledValue: result.value,
         alternatives: result.alternativeValues!,
-        diceType: '1d3',
+        diceType: HeroMainStatsViewText.diceTypeOneDThree,
         diceToValueMapping: result.diceToValueMapping,
       );
 
@@ -2058,7 +2147,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             children: [
               Icon(Icons.casino, color: theme.colorScheme.primary),
               const SizedBox(width: 8),
-              Text('$diceType Roll'),
+              Text('$diceType${HeroMainStatsViewText.diceRollTitleSuffix}'),
             ],
           ),
           content: Column(
@@ -2066,7 +2155,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             children: [
               if (rolledDice != null && diceToValueMapping != null) ...[
                 Text(
-                  'You rolled: $rolledDice',
+                  '${HeroMainStatsViewText.diceRolledDicePrefix}$rolledDice',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
@@ -2074,14 +2163,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Gain +$rolledValue resource',
+                  '${HeroMainStatsViewText.diceGainPrefix}$rolledValue${HeroMainStatsViewText.diceGainSuffix}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.secondary,
                   ),
                 ),
               ] else
                 Text(
-                  'You rolled: $rolledValue',
+                  '${HeroMainStatsViewText.diceRolledValuePrefix}$rolledValue',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
@@ -2099,7 +2188,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: Column(
                     children: [
                       Text(
-                        'Roll Values',
+                        HeroMainStatsViewText.diceRollValuesTitle,
                         style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -2153,7 +2242,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(height: 16),
               ],
               Text(
-                'Accept this roll or choose a different value:',
+                HeroMainStatsViewText.diceAcceptPrompt,
                 style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
@@ -2183,11 +2272,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(null),
-              child: const Text('Cancel'),
+              child: const Text(HeroMainStatsViewText.diceCancelLabel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(rolledValue),
-              child: Text('Accept +$rolledValue'),
+              child: Text(
+                '${HeroMainStatsViewText.diceAcceptPrefix}$rolledValue',
+              ),
             ),
           ],
         );
@@ -2205,10 +2296,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             widget.heroId,
             heroicResourceCurrent: newValue,
           );
-      _showSnack('+$amount resource');
+      _showSnack(
+        '${HeroMainStatsViewText.resourceAddedPrefix}$amount${HeroMainStatsViewText.resourceAddedSuffix}',
+      );
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to add resource: $err');
+      _showSnack('${HeroMainStatsViewText.resourceAddErrorPrefix}$err');
     }
   }
 
@@ -2277,7 +2370,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               Icon(Icons.electric_bolt_outlined, size: 14, color: theme.colorScheme.tertiary),
               const SizedBox(width: 4),
               Text(
-                'Surges',
+                HeroMainStatsViewText.surgesSectionTitle,
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
@@ -2286,7 +2379,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           ),
           const SizedBox(height: 4),
           InkWell(
-            onTap: () => _showNumberEditDialog(context, 'Surges', _NumericField.surgesCurrent),
+            onTap: () => _showNumberEditDialog(
+              context,
+              HeroMainStatsViewText.surgesEditLabel,
+              _NumericField.surgesCurrent,
+            ),
             borderRadius: BorderRadius.circular(6),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -2315,7 +2412,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 child: _buildSurgeButton(
                   context,
                   cost: 1,
-                  label: '+$highestAttribute dmg',
+                  label:
+                      '+$highestAttribute${HeroMainStatsViewText.surgesDamageSuffix}',
                   enabled: value >= 1,
                   onPressed: () => _spendSurges(1),
                 ),
@@ -2325,7 +2423,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 child: _buildSurgeButton(
                   context,
                   cost: 2,
-                  label: '+1 potency',
+                  label: HeroMainStatsViewText.surgesPotencyLabel,
                   enabled: value >= 2,
                   onPressed: () => _spendSurges(2),
                 ),
@@ -2385,12 +2483,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         const Divider(height: 20),
         PsiBoostWidget(
           currentResource: stats.heroicResourceCurrent,
-          resourceName: stats.heroicResourceName ?? 'Focus',
+          resourceName: stats.heroicResourceName ??
+              HeroMainStatsViewText.psiBoostResourceFallbackName,
           onSpendResource: (cost, boostName) {
             final newValue = stats.heroicResourceCurrent - cost;
             if (newValue >= 0) {
               _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
-              _showSnack('Used $boostName (-$cost ${stats.heroicResourceName ?? 'Focus'})');
+              _showSnack(
+                '${HeroMainStatsViewText.psiBoostUsedPrefix}$boostName${HeroMainStatsViewText.psiBoostUsedCostPrefix}$cost ${stats.heroicResourceName ?? HeroMainStatsViewText.psiBoostSnackResourceFallbackName}${HeroMainStatsViewText.psiBoostUsedSuffix}',
+              );
             }
           },
         ),
@@ -2454,7 +2555,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '$cost→',
+              '$cost${HeroMainStatsViewText.surgeCostSuffix}',
               style: theme.textTheme.labelSmall?.copyWith(
                 fontSize: 9,
                 fontWeight: FontWeight.bold,
@@ -2533,12 +2634,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             _buildCompactNumberDisplay(
               context,
-              label: 'Victories',
+              label: HeroMainStatsViewText.summaryVictoriesLabel,
               field: _NumericField.victories,
             ),
             _buildCompactNumberDisplay(
               context,
-              label: 'XP',
+              label: HeroMainStatsViewText.summaryXpLabel,
               field: _NumericField.exp,
             ),
             // Level - read-only display
@@ -2548,7 +2649,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Level',
+                    HeroMainStatsViewText.summaryLevelLabel,
                     style: theme.textTheme.labelSmall,
                   ),
                   const SizedBox(height: 2),
@@ -2577,7 +2678,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             Expanded(
               child: _buildCompactEconomyTile(
                 context,
-                title: 'Wealth',
+                title: HeroMainStatsViewText.wealthCardTitle,
                 baseValue: stats.wealthBase,
                 totalValue: stats.wealthTotal,
                 modKey: HeroModKeys.wealth,
@@ -2588,7 +2689,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             Expanded(
               child: _buildCompactEconomyTile(
                 context,
-                title: 'Renown',
+                title: HeroMainStatsViewText.renownCardTitle,
                 baseValue: stats.renownBase,
                 totalValue: stats.renownTotal,
                 modKey: HeroModKeys.renown,
@@ -2628,14 +2729,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             spacing: 8,
             runSpacing: 4,
             children: [
-              Chip(label: Text('Base $baseValue')),
-              Chip(label: Text('Mod ${_formatSigned(currentMod)}')),
+              Chip(
+                label: Text(
+                  '${HeroMainStatsViewText.economyTileBasePrefix}$baseValue',
+                ),
+              ),
+              Chip(
+                label: Text(
+                  '${HeroMainStatsViewText.economyTileModPrefix}${_formatSigned(currentMod)}',
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           _buildModificationInput(
             context,
-            label: 'Adjust mod',
+            label: HeroMainStatsViewText.economyTileAdjustModLabel,
             modKey: modKey,
           ),
           if (insights.isNotEmpty) ...[
@@ -2665,23 +2774,48 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Core Attributes',
+              HeroMainStatsViewText.primaryStatsTitle,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildCompactStatTile(context, 'Might', stats.mightBase,
-                    stats.mightTotal, HeroModKeys.might),
-                _buildCompactStatTile(context, 'Agility', stats.agilityBase,
-                    stats.agilityTotal, HeroModKeys.agility),
-                _buildCompactStatTile(context, 'Reason', stats.reasonBase,
-                    stats.reasonTotal, HeroModKeys.reason),
-                _buildCompactStatTile(context, 'Intuition', stats.intuitionBase,
-                    stats.intuitionTotal, HeroModKeys.intuition),
-                _buildCompactStatTile(context, 'Presence', stats.presenceBase,
-                    stats.presenceTotal, HeroModKeys.presence),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.primaryStatsMightLabel,
+                  stats.mightBase,
+                  stats.mightTotal,
+                  HeroModKeys.might,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.primaryStatsAgilityLabel,
+                  stats.agilityBase,
+                  stats.agilityTotal,
+                  HeroModKeys.agility,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.primaryStatsReasonLabel,
+                  stats.reasonBase,
+                  stats.reasonTotal,
+                  HeroModKeys.reason,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.primaryStatsIntuitionLabel,
+                  stats.intuitionBase,
+                  stats.intuitionTotal,
+                  HeroModKeys.intuition,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.primaryStatsPresenceLabel,
+                  stats.presenceBase,
+                  stats.presenceTotal,
+                  HeroModKeys.presence,
+                ),
               ],
             ),
           ],
@@ -2699,7 +2833,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Combat Readiness',
+              HeroMainStatsViewText.secondaryStatsTitle,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
@@ -2708,12 +2842,27 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               children: [
                 _buildCompactSizeTile(context, stats.sizeBase,
                     stats.sizeTotal, HeroModKeys.size),
-                _buildCompactStatTile(context, 'Speed', stats.speedBase,
-                    stats.speedTotal, HeroModKeys.speed),
-                _buildCompactStatTile(context, 'Disengage', stats.disengageBase,
-                    stats.disengageTotal, HeroModKeys.disengage),
-                _buildCompactStatTile(context, 'Stability', stats.stabilityBase,
-                    stats.stabilityTotal, HeroModKeys.stability),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.secondaryStatsSpeedLabel,
+                  stats.speedBase,
+                  stats.speedTotal,
+                  HeroModKeys.speed,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.secondaryStatsDisengageLabel,
+                  stats.disengageBase,
+                  stats.disengageTotal,
+                  HeroModKeys.disengage,
+                ),
+                _buildCompactStatTile(
+                  context,
+                  HeroMainStatsViewText.secondaryStatsStabilityLabel,
+                  stats.stabilityBase,
+                  stats.stabilityTotal,
+                  HeroModKeys.stability,
+                ),
               ],
             ),
           ],
@@ -2769,14 +2918,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             spacing: 8,
             runSpacing: 4,
             children: [
-              Chip(label: Text('Base ${_formatSigned(data.baseValue)}')),
-              Chip(label: Text('Mod ${_formatSigned(currentMod)}')),
+              Chip(
+                label: Text(
+                  '${HeroMainStatsViewText.statTileBasePrefix}${_formatSigned(data.baseValue)}',
+                ),
+              ),
+              Chip(
+                label: Text(
+                  '${HeroMainStatsViewText.statTileModPrefix}${_formatSigned(currentMod)}',
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           _buildModificationInput(
             context,
-            label: 'Adjust mod',
+            label: HeroMainStatsViewText.statTileAdjustModLabel,
             modKey: data.modKey,
           ),
         ],
@@ -2831,7 +2988,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Row(
               children: [
-                Text('Stamina', style: theme.textTheme.titleSmall),
+                Text(
+                  HeroMainStatsViewText.staminaCardTitle,
+                  style: theme.textTheme.titleSmall,
+                ),
                 const Spacer(),
                 Text(
                   state.label,
@@ -2845,7 +3005,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Expanded(
                   child: _buildCompactVitalDisplay(
                     context,
-                    label: 'Current',
+                    label: HeroMainStatsViewText.staminaCardCurrentLabel,
                     field: _NumericField.staminaCurrent,
                     allowNegative: true,
                   ),
@@ -2854,7 +3014,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Expanded(
                   child: _buildCompactVitalDisplay(
                     context,
-                    label: 'Temp',
+                    label: HeroMainStatsViewText.staminaCardTempLabel,
                     field: _NumericField.staminaTemp,
                   ),
                 ),
@@ -2865,7 +3025,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       if (!mounted) return;
                       await _showMaxVitalBreakdownDialog(
                         context,
-                        label: 'Stamina Max',
+                        label: HeroMainStatsViewText.staminaCardMaxLabel,
                         modKey: HeroModKeys.staminaMax,
                         classBase: stats.staminaMaxBase,
                         equipmentBonus: equipmentStaminaBonus,
@@ -2880,7 +3040,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       padding: const EdgeInsets.all(8),
                       child: Column(
                         children: [
-                          Text('Max', style: theme.textTheme.labelSmall),
+                          Text(
+                            HeroMainStatsViewText.staminaCardMaxShortLabel,
+                            style: theme.textTheme.labelSmall,
+                          ),
                           const SizedBox(height: 2),
                           Text(
                             effectiveMax.toString(),
@@ -2908,7 +3071,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: OutlinedButton.icon(
                     onPressed: () => _handleDealDamage(stats),
                     icon: const Icon(Icons.flash_on, size: 16),
-                    label: const Text('Damage', style: TextStyle(fontSize: 12)),
+                    label: const Text(
+                      HeroMainStatsViewText.staminaCardDamageLabel,
+                      style: TextStyle(fontSize: 12),
+                    ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     ),
@@ -2919,7 +3085,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: OutlinedButton.icon(
                     onPressed: () => _handleApplyHealing(stats),
                     icon: const Icon(Icons.healing, size: 16),
-                    label: const Text('Heal', style: TextStyle(fontSize: 12)),
+                    label: const Text(
+                      HeroMainStatsViewText.staminaCardHealLabel,
+                      style: TextStyle(fontSize: 12),
+                    ),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     ),
@@ -2947,7 +3116,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Recoveries', style: theme.textTheme.titleSmall),
+            Text(
+              HeroMainStatsViewText.recoveriesCardTitle,
+              style: theme.textTheme.titleSmall,
+            ),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -2955,7 +3127,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   flex: 2,
                   child: _buildCompactVitalDisplay(
                     context,
-                    label: 'Current',
+                    label: HeroMainStatsViewText.recoveriesCardCurrentLabel,
                     field: _NumericField.recoveriesCurrent,
                   ),
                 ),
@@ -2967,7 +3139,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       if (!mounted) return;
                       await _showMaxVitalBreakdownDialog(
                         context,
-                        label: 'Recoveries Max',
+                        label: HeroMainStatsViewText.recoveriesCardMaxLabel,
                         modKey: HeroModKeys.recoveriesMax,
                         classBase: stats.recoveriesMaxBase,
                         equipmentBonus: 0,
@@ -2982,7 +3154,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       padding: const EdgeInsets.all(8),
                       child: Column(
                         children: [
-                          Text('Max', style: theme.textTheme.labelSmall),
+                          Text(
+                            HeroMainStatsViewText.recoveriesCardMaxShortLabel,
+                            style: theme.textTheme.labelSmall,
+                          ),
                           const SizedBox(height: 2),
                           Text(
                             stats.recoveriesMaxEffective.toString(),
@@ -3007,7 +3182,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: FilledButton.icon(
                     onPressed: () => _handleUseRecovery(stats),
                     icon: const Icon(Icons.local_hospital, size: 16),
-                    label: Text('Use (+$healAmount)', style: const TextStyle(fontSize: 12)),
+                    label: Text(
+                      '${HeroMainStatsViewText.recoveriesCardUsePrefix}$healAmount${HeroMainStatsViewText.recoveriesCardUseSuffix}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     ),
@@ -3060,19 +3238,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                stats.heroicResourceName ?? 'Heroic Resource',
+                stats.heroicResourceName ??
+                    HeroMainStatsViewText.heroicResourceCardFallbackNameError,
                 style: theme.textTheme.titleSmall,
               ),
               const SizedBox(height: 8),
               _buildCompactVitalDisplay(
                 context,
-                label: 'Current',
+                label: HeroMainStatsViewText.heroicResourceCardCurrentLabelError,
                 field: _NumericField.heroicResourceCurrent,
               ),
             ],
           ),
           data: (details) {
-            final resourceName = details?.name ?? stats.heroicResourceName ?? 'Heroic Resource';
+            final resourceName = details?.name ??
+                stats.heroicResourceName ??
+                HeroMainStatsViewText.heroicResourceCardFallbackName;
             final hasDetails = (details?.description ?? '').isNotEmpty ||
                 (details?.inCombatDescription ?? '').isNotEmpty ||
                 (details?.outCombatDescription ?? '').isNotEmpty;
@@ -3106,7 +3287,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(height: 8),
                 _buildCompactVitalDisplay(
                   context,
-                  label: 'Current',
+                  label: HeroMainStatsViewText.heroicResourceCardCurrentLabel,
                   field: _NumericField.heroicResourceCurrent,
                 ),
               ],
@@ -3143,7 +3324,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ],
                 if ((details?.inCombatDescription ?? '').isNotEmpty) ...[
                   Text(
-                    details?.inCombatName ?? 'In Combat',
+                    details?.inCombatName ??
+                        HeroMainStatsViewText.resourceDetailsInCombatFallback,
                     style: theme.textTheme.titleSmall,
                   ),
                   const SizedBox(height: 4),
@@ -3155,7 +3337,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ],
                 if ((details?.outCombatDescription ?? '').isNotEmpty) ...[
                   Text(
-                    details?.outCombatName ?? 'Out of Combat',
+                    details?.outCombatName ??
+                        HeroMainStatsViewText.resourceDetailsOutCombatFallback,
                     style: theme.textTheme.titleSmall,
                   ),
                   const SizedBox(height: 4),
@@ -3167,7 +3350,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ],
                 if ((details?.strainDescription ?? '').isNotEmpty) ...[
                   Text(
-                    details?.strainName ?? 'Strain',
+                    details?.strainName ??
+                        HeroMainStatsViewText.resourceDetailsStrainFallback,
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: Colors.red.shade700,
                     ),
@@ -3184,7 +3368,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Close'),
+              child: const Text(HeroMainStatsViewText.resourceDetailsCloseLabel),
             ),
           ],
         );
@@ -3214,10 +3398,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Row(
               children: [
-                Text('Surges', style: theme.textTheme.titleSmall),
+                Text(
+                  HeroMainStatsViewText.surgesCardTitle,
+                  style: theme.textTheme.titleSmall,
+                ),
                 const Spacer(),
                 Text(
-                  'Total: ${stats.surgesTotal}',
+                  '${HeroMainStatsViewText.surgesCardTotalPrefix}${stats.surgesTotal}',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -3227,7 +3414,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             const SizedBox(height: 8),
             _buildCompactVitalDisplay(
               context,
-              label: 'Current',
+              label: HeroMainStatsViewText.surgesCardCurrentLabel,
               field: _NumericField.surgesCurrent,
             ),
             const SizedBox(height: 8),
@@ -3243,13 +3430,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     child: Column(
                       children: [
                         Text(
-                          '1 Surge',
+                          HeroMainStatsViewText.surgesCardOneSurgeLabel,
                           style: theme.textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          '$surgeDamage Damage',
+                          '$surgeDamage${HeroMainStatsViewText.surgesCardDamageSuffix}',
                           style: theme.textTheme.labelSmall,
                         ),
                       ],
@@ -3267,13 +3454,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     child: Column(
                       children: [
                         Text(
-                          '2 Surges',
+                          HeroMainStatsViewText.surgesCardTwoSurgesLabel,
                           style: theme.textTheme.labelSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'Potency +1',
+                          HeroMainStatsViewText.surgesCardPotencyLabel,
                           style: theme.textTheme.labelSmall,
                         ),
                       ],
@@ -3444,7 +3631,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('Edit $label'),
+            title:
+                Text('${HeroMainStatsViewText.numberEditTitlePrefix}$label'),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
@@ -3460,7 +3648,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.numberEditCancelLabel),
               ),
               TextButton(
                 onPressed: () {
@@ -3469,7 +3657,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(HeroMainStatsViewText.numberEditSaveLabel),
               ),
             ],
           );
@@ -3502,19 +3690,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: const Text('Edit XP'),
+            title: const Text(HeroMainStatsViewText.xpEditTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Current Level: $currentLevel'),
+                Text(
+                  '${HeroMainStatsViewText.xpEditCurrentLevelPrefix}$currentLevel',
+                ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Experience Points',
+                    labelText: HeroMainStatsViewText.xpEditExperienceLabel,
                     border: OutlineInputBorder(),
                   ),
                   inputFormatters: _formatters(false, 3),
@@ -3539,7 +3729,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Heroic Advancement',
+                              HeroMainStatsViewText.xpEditInsightsTitle,
                               style: Theme.of(dialogContext).textTheme.labelMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -3563,7 +3753,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.xpEditCancelLabel),
               ),
               TextButton(
                 onPressed: () {
@@ -3572,7 +3762,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(HeroMainStatsViewText.xpEditSaveLabel),
               ),
             ],
           );
@@ -3614,12 +3804,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('Edit $title'),
+            title:
+                Text('${HeroMainStatsViewText.modEditTitlePrefix}$title'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Base: $baseValue'),
+                Text('${HeroMainStatsViewText.modEditBasePrefix}$baseValue'),
                 if (sourcesDesc.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
@@ -3655,9 +3846,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType: const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Modification',
+                    labelText: HeroMainStatsViewText.modEditModificationLabel,
                     border: OutlineInputBorder(),
-                    helperText: 'Enter modifier (-99 to +99)',
+                    helperText: HeroMainStatsViewText.modEditHelperText,
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -3676,7 +3867,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.modEditCancelLabel),
               ),
               TextButton(
                 onPressed: () {
@@ -3685,7 +3876,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(HeroMainStatsViewText.modEditSaveLabel),
               ),
             ],
           );
@@ -3788,11 +3979,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Size',
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                HeroMainStatsViewText.compactSizeLabel,
                 style: theme.textTheme.labelSmall,
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -3840,13 +4031,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             context: context,
             builder: (dialogContext) {
               return AlertDialog(
-                title: Text('Edit $label'),
+                title: Text(
+                  '${HeroMainStatsViewText.compactVitalEditTitlePrefix}$label',
+                ),
                 content: TextField(
                   controller: controller,
                   keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Value',
+                    labelText: HeroMainStatsViewText.compactVitalValueLabel,
                     border: OutlineInputBorder(),
                   ),
                   inputFormatters: _formatters(allowNegative, 4),
@@ -3854,11 +4047,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Cancel'),
+                    child:
+                        const Text(HeroMainStatsViewText.compactVitalCancelLabel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(controller.text),
-                    child: const Text('Save'),
+                    child:
+                        const Text(HeroMainStatsViewText.compactVitalSaveLabel),
                   ),
                 ],
               );
@@ -3920,15 +4115,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     final autoBonusParts = <String>[];
     if (equipmentBonus != 0) {
-      autoBonusParts.add('${_formatSigned(equipmentBonus)} from equipment');
+      autoBonusParts.add(
+        '${_formatSigned(equipmentBonus)}${HeroMainStatsViewText.statEditFromEquipmentSuffix}',
+      );
     }
     if (featureBonus != 0) {
-      autoBonusParts.add('${_formatSigned(featureBonus)} from features');
+      autoBonusParts.add(
+        '${_formatSigned(featureBonus)}${HeroMainStatsViewText.statEditFromFeaturesSuffix}',
+      );
     }
     if (sourcesDesc.isNotEmpty) {
       autoBonusParts.add(sourcesDesc);
     } else if (remainingChoice != 0) {
-      autoBonusParts.add('${_formatSigned(remainingChoice)} from bonuses');
+      autoBonusParts.add(
+        '${_formatSigned(remainingChoice)}${HeroMainStatsViewText.statEditFromBonusesSuffix}',
+      );
     }
     final autoBonusDescription = autoBonusParts.join('; ');
 
@@ -3937,12 +4138,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('Edit $label'),
+            title:
+                Text('${HeroMainStatsViewText.statEditTitlePrefix}$label'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Base: $baseValue'),
+                Text('${HeroMainStatsViewText.statEditBasePrefix}$baseValue'),
                 if (autoBonusDescription.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
@@ -3978,9 +4180,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType: const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Modification',
+                    labelText: HeroMainStatsViewText.statEditModificationLabel,
                     border: OutlineInputBorder(),
-                    helperText: 'Enter modifier (-99 to +99)',
+                    helperText: HeroMainStatsViewText.statEditHelperText,
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -3989,7 +4191,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.statEditCancelLabel),
               ),
               TextButton(
                 onPressed: () {
@@ -3998,7 +4200,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(HeroMainStatsViewText.statEditSaveLabel),
               ),
             ],
           );
@@ -4029,10 +4231,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final sourcesDesc = _getModSourceDescription(HeroModKeys.size, _ancestryMods);
     final parsed = HeroMainStats.parseSize(sizeBase);
     final categoryName = switch (parsed.category) {
-      'T' => 'Tiny',
-      'S' => 'Small',
-      'M' => 'Medium',
-      'L' => 'Large',
+      'T' => HeroMainStatsViewText.sizeCategoryTiny,
+      'S' => HeroMainStatsViewText.sizeCategorySmall,
+      'M' => HeroMainStatsViewText.sizeCategoryMedium,
+      'L' => HeroMainStatsViewText.sizeCategoryLarge,
       _ => '',
     };
     final baseDisplay = categoryName.isNotEmpty 
@@ -4044,12 +4246,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: const Text('Edit Size'),
+            title: const Text(HeroMainStatsViewText.sizeEditTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Base: $baseDisplay'),
+                Text('${HeroMainStatsViewText.sizeEditBasePrefix}$baseDisplay'),
                 if (sourcesDesc.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
@@ -4085,9 +4287,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType: const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Size Modification',
+                    labelText: HeroMainStatsViewText.sizeEditModificationLabel,
                     border: OutlineInputBorder(),
-                    helperText: 'Enter modifier (affects numeric portion)',
+                    helperText: HeroMainStatsViewText.sizeEditHelperText,
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -4096,7 +4298,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.sizeEditCancelLabel),
               ),
               TextButton(
                 onPressed: () {
@@ -4105,7 +4307,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Save'),
+                child: const Text(HeroMainStatsViewText.sizeEditSaveLabel),
               ),
             ],
           );
@@ -4144,12 +4346,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Future<void> _handleUseRecovery(HeroMainStats stats) async {
     if (!mounted) return;
     if (stats.recoveriesCurrent <= 0) {
-      _showSnack('No recoveries remaining.');
+      _showSnack(HeroMainStatsViewText.noRecoveriesRemainingMessage);
       return;
     }
     final healAmount = _recoveryHealAmount(stats);
     if (healAmount <= 0) {
-      _showSnack('Cannot spend a recovery while stamina max is zero.');
+      _showSnack(HeroMainStatsViewText.cannotSpendRecoveryMessage);
       return;
     }
     final newRecoveries = stats.recoveriesCurrent - 1;
@@ -4166,14 +4368,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           );
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to spend recovery: $err');
+      _showSnack('${HeroMainStatsViewText.spendRecoveryErrorPrefix}$err');
     }
   }
 
   Future<void> _handleDealDamage(HeroMainStats stats) async {
     final amount = await _promptForAmount(
-      title: 'Apply Damage',
-      description: 'Temporary stamina is removed before current stamina.',
+      title: HeroMainStatsViewText.applyDamageTitle,
+      description: HeroMainStatsViewText.applyDamageDescription,
     );
     if (amount == null || amount <= 0) return;
     if (!mounted) return;
@@ -4197,14 +4399,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           );
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to apply damage: $err');
+      _showSnack('${HeroMainStatsViewText.applyDamageErrorPrefix}$err');
     }
   }
 
   Future<void> _handleApplyHealing(HeroMainStats stats) async {
     final amount = await _promptForAmount(
-      title: 'Apply Healing',
-      description: 'Healing restores current stamina up to its effective max.',
+      title: HeroMainStatsViewText.applyHealingTitle,
+      description: HeroMainStatsViewText.applyHealingDescription,
     );
     if (amount == null || amount <= 0) return;
     if (!mounted) return;
@@ -4222,7 +4424,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           );
     } catch (err) {
       if (!mounted) return;
-      _showSnack('Failed to apply healing: $err');
+      _showSnack('${HeroMainStatsViewText.applyHealingErrorPrefix}$err');
     }
   }
 
@@ -4254,7 +4456,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType: TextInputType.number,
                   inputFormatters: _formatters(false, 3),
                   decoration: const InputDecoration(
-                    labelText: 'Amount',
+                    labelText: HeroMainStatsViewText.promptAmountLabel,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -4263,7 +4465,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancel'),
+                child: const Text(HeroMainStatsViewText.promptCancelLabel),
               ),
               FilledButton(
                 onPressed: () {
@@ -4274,7 +4476,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
-                child: const Text('Apply'),
+                child: const Text(HeroMainStatsViewText.promptApplyLabel),
               ),
             ],
           );
@@ -4350,7 +4552,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (includeEquipment) {
       final equipmentBonus = _latestStats?.equipmentBonusFor(modKey) ?? 0;
       if (equipmentBonus != 0) {
-        parts.add('${_formatSigned(equipmentBonus)} from equipment');
+        parts.add(
+          '${_formatSigned(equipmentBonus)}${HeroMainStatsViewText.modSourceEquipmentSuffix}',
+        );
       }
     }
     return parts.join('; ');

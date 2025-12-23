@@ -7,6 +7,7 @@ import '../../../core/db/app_database.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/services/class_data_service.dart';
+import '../../../core/theme/text/gear/gear_dialogs_text.dart';
 import 'gear_utils.dart';
 
 /// Dialog for adding treasures and imbuements.
@@ -76,8 +77,8 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
             description.toLowerCase().contains(_searchQuery.toLowerCase());
 
         final imbuementType = imbuement.raw['type']?.toString() ?? '';
-        final matchesType =
-            _imbuementFilterType == 'all' || imbuementType == _imbuementFilterType;
+        final matchesType = _imbuementFilterType == 'all' ||
+            imbuementType == _imbuementFilterType;
 
         return matchesSearch && matchesType;
       }).toList();
@@ -89,7 +90,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Add Treasure or Imbuement'),
+      title: const Text(GearDialogsText.addTreasureOrImbuementTitle),
       content: SizedBox(
         width: double.maxFinite,
         height: 600,
@@ -103,11 +104,13 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
               tabs: [
                 Tab(
                   icon: const Icon(Icons.diamond),
-                  text: 'Treasures (${widget.availableTreasures.length})',
+                  text:
+                      '${GearDialogsText.treasuresTabLabel} (${widget.availableTreasures.length})',
                 ),
                 Tab(
                   icon: const Icon(Icons.auto_fix_high),
-                  text: 'Imbuements (${widget.availableImbuements.length})',
+                  text:
+                      '${GearDialogsText.imbuementsTabLabel} (${widget.availableImbuements.length})',
                 ),
               ],
             ),
@@ -115,7 +118,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
             // Search field
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search',
+                labelText: GearDialogsText.addTreasureSearchLabel,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -142,7 +145,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.addTreasureCancelAction),
         ),
       ],
     );
@@ -154,17 +157,31 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
         DropdownButtonFormField<String>(
           value: _filterType,
           decoration: const InputDecoration(
-            labelText: 'Filter by type',
+            labelText: GearDialogsText.treasureFilterLabel,
             border: OutlineInputBorder(),
             isDense: true,
           ),
           items: const [
-            DropdownMenuItem(value: 'all', child: Text('All Types')),
-            DropdownMenuItem(value: 'consumable', child: Text('Consumables')),
-            DropdownMenuItem(value: 'trinket', child: Text('Trinkets')),
-            DropdownMenuItem(value: 'artifact', child: Text('Artifacts')),
             DropdownMenuItem(
-                value: 'leveled_treasure', child: Text('Leveled Equipment')),
+              value: 'all',
+              child: Text(GearDialogsText.treasureFilterAllTypesLabel),
+            ),
+            DropdownMenuItem(
+              value: 'consumable',
+              child: Text(GearDialogsText.treasureFilterConsumablesLabel),
+            ),
+            DropdownMenuItem(
+              value: 'trinket',
+              child: Text(GearDialogsText.treasureFilterTrinketsLabel),
+            ),
+            DropdownMenuItem(
+              value: 'artifact',
+              child: Text(GearDialogsText.treasureFilterArtifactsLabel),
+            ),
+            DropdownMenuItem(
+              value: 'leveled_treasure',
+              child: Text(GearDialogsText.treasureFilterLeveledEquipmentLabel),
+            ),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -178,7 +195,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
           child: _filteredTreasures.isEmpty
               ? Center(
                   child: Text(
-                    'No treasures found',
+                    GearDialogsText.treasuresEmptyMessage,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -202,7 +219,10 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(getTreasureTypeName(treasure.type)),
-                          if (echelon != null) Text('Echelon $echelon'),
+                          if (echelon != null)
+                            Text(
+                              '${GearDialogsText.treasureEchelonPrefix}$echelon',
+                            ),
                           if (description.isNotEmpty)
                             Text(
                               description,
@@ -226,15 +246,27 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
         DropdownButtonFormField<String>(
           value: _imbuementFilterType,
           decoration: const InputDecoration(
-            labelText: 'Filter by type',
+            labelText: GearDialogsText.imbuementFilterLabel,
             border: OutlineInputBorder(),
             isDense: true,
           ),
           items: const [
-            DropdownMenuItem(value: 'all', child: Text('All Types')),
-            DropdownMenuItem(value: 'armor_imbuement', child: Text('Armor')),
-            DropdownMenuItem(value: 'weapon_imbuement', child: Text('Weapon')),
-            DropdownMenuItem(value: 'implement_imbuement', child: Text('Implement')),
+            DropdownMenuItem(
+              value: 'all',
+              child: Text(GearDialogsText.imbuementFilterAllTypesLabel),
+            ),
+            DropdownMenuItem(
+              value: 'armor_imbuement',
+              child: Text(GearDialogsText.imbuementFilterArmorLabel),
+            ),
+            DropdownMenuItem(
+              value: 'weapon_imbuement',
+              child: Text(GearDialogsText.imbuementFilterWeaponLabel),
+            ),
+            DropdownMenuItem(
+              value: 'implement_imbuement',
+              child: Text(GearDialogsText.imbuementFilterImplementLabel),
+            ),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -248,7 +280,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
           child: _filteredImbuements.isEmpty
               ? Center(
                   child: Text(
-                    'No imbuements found',
+                    GearDialogsText.imbuementsEmptyMessage,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -285,7 +317,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
-                                    'Level $level',
+                                    '${GearDialogsText.imbuementLevelPrefix}$level',
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: getLevelColor(level),
@@ -330,11 +362,11 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
   String _getImbuementTypeDisplay(String type) {
     switch (type) {
       case 'armor_imbuement':
-        return 'Armor';
+        return GearDialogsText.imbuementTypeArmorDisplay;
       case 'weapon_imbuement':
-        return 'Weapon';
+        return GearDialogsText.imbuementTypeWeaponDisplay;
       case 'implement_imbuement':
-        return 'Implement';
+        return GearDialogsText.imbuementTypeImplementDisplay;
       default:
         return type.replaceAll('_', ' ');
     }
@@ -361,12 +393,12 @@ class _CreateContainerDialogState extends State<CreateContainerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('New Container'),
+      title: const Text(GearDialogsText.createContainerTitle),
       content: TextField(
         controller: _controller,
         decoration: const InputDecoration(
-          labelText: 'Container name',
-          hintText: 'e.g., Backpack, Belt Pouch...',
+          labelText: GearDialogsText.createContainerNameLabel,
+          hintText: GearDialogsText.createContainerNameHint,
           border: OutlineInputBorder(),
         ),
         autofocus: true,
@@ -375,11 +407,11 @@ class _CreateContainerDialogState extends State<CreateContainerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.createContainerCancelAction),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text('Create'),
+          child: const Text(GearDialogsText.createContainerCreateAction),
         ),
       ],
     );
@@ -409,7 +441,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Item'),
+      title: const Text(GearDialogsText.createItemTitle),
       content: SizedBox(
         width: 300,
         child: Column(
@@ -418,8 +450,8 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Item name',
-                hintText: 'e.g., Rope, Torch...',
+                labelText: GearDialogsText.createItemNameLabel,
+                hintText: GearDialogsText.createItemNameHint,
                 border: OutlineInputBorder(),
               ),
               autofocus: true,
@@ -429,8 +461,8 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
             TextField(
               controller: _descController,
               decoration: const InputDecoration(
-                labelText: 'Description (optional)',
-                hintText: 'e.g., 50ft hemp rope',
+                labelText: GearDialogsText.createItemDescriptionLabel,
+                hintText: GearDialogsText.createItemDescriptionHint,
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
@@ -438,7 +470,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Text('Quantity:'),
+                const Text(GearDialogsText.createItemQuantityLabel),
                 const SizedBox(width: 16),
                 IconButton(
                   icon: const Icon(Icons.remove_circle_outline),
@@ -477,7 +509,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.createItemCancelAction),
         ),
         ElevatedButton(
           onPressed: () {
@@ -489,7 +521,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
               'quantity': _quantity.toString(),
             });
           },
-          child: const Text('Add'),
+          child: const Text(GearDialogsText.createItemAddAction),
         ),
       ],
     );
@@ -543,7 +575,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Item'),
+      title: const Text(GearDialogsText.editItemTitle),
       content: SizedBox(
         width: 300,
         child: Column(
@@ -552,8 +584,8 @@ class _EditItemDialogState extends State<EditItemDialog> {
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'Item name',
-                hintText: 'e.g., Rope, Torch...',
+                labelText: GearDialogsText.editItemNameLabel,
+                hintText: GearDialogsText.editItemNameHint,
                 border: OutlineInputBorder(),
               ),
               autofocus: true,
@@ -563,8 +595,8 @@ class _EditItemDialogState extends State<EditItemDialog> {
             TextField(
               controller: _descController,
               decoration: const InputDecoration(
-                labelText: 'Description (optional)',
-                hintText: 'e.g., 50ft hemp rope',
+                labelText: GearDialogsText.editItemDescriptionLabel,
+                hintText: GearDialogsText.editItemDescriptionHint,
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
@@ -572,7 +604,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Text('Quantity:'),
+                const Text(GearDialogsText.editItemQuantityLabel),
                 const SizedBox(width: 16),
                 IconButton(
                   icon: const Icon(Icons.remove_circle_outline),
@@ -611,7 +643,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.editItemCancelAction),
         ),
         ElevatedButton(
           onPressed: () {
@@ -623,7 +655,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
               'quantity': _quantity,
             });
           },
-          child: const Text('Save'),
+          child: const Text(GearDialogsText.editItemSaveAction),
         ),
       ],
     );
@@ -668,12 +700,12 @@ class _EditContainerDialogState extends State<EditContainerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Container'),
+      title: const Text(GearDialogsText.editContainerTitle),
       content: TextField(
         controller: _controller,
         decoration: const InputDecoration(
-          labelText: 'Container name',
-          hintText: 'e.g., Backpack, Belt Pouch...',
+          labelText: GearDialogsText.editContainerNameLabel,
+          hintText: GearDialogsText.editContainerNameHint,
           border: OutlineInputBorder(),
         ),
         autofocus: true,
@@ -682,11 +714,11 @@ class _EditContainerDialogState extends State<EditContainerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.editContainerCancelAction),
         ),
         ElevatedButton(
           onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text('Save'),
+          child: const Text(GearDialogsText.editContainerSaveAction),
         ),
       ],
     );
@@ -737,7 +769,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
       if (classId == null || classId.isEmpty) {
         setState(() {
-          _error = 'Hero has no class selected. Please set a class first.';
+          _error = GearDialogsText.addFavoriteNoClassError;
           _isLoading = false;
         });
         return;
@@ -751,7 +783,8 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
       if (classData == null) {
         setState(() {
-          _error = 'Could not find class data for "$classId".';
+          _error =
+              '${GearDialogsText.addFavoriteClassDataNotFoundPrefix}$classId${GearDialogsText.addFavoriteClassDataNotFoundSuffix}';
           _isLoading = false;
         });
         return;
@@ -762,7 +795,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
       // 3. Check for Fury Stormwight special case
       final normalizedSubclass = subclassId?.toLowerCase().trim() ?? '';
-      final isStormwight = normalizedClassId == 'class_fury' && 
+      final isStormwight = normalizedClassId == 'class_fury' &&
           normalizedSubclass.contains('stormwight');
 
       if (isStormwight) {
@@ -785,7 +818,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
       if (allowedKitTypes.isEmpty) {
         setState(() {
-          _error = 'This class has no available kit/ward/prayer/enchantment/augmentation options.';
+          _error = GearDialogsText.addFavoriteNoOptionsError;
           _isLoading = false;
         });
         return;
@@ -793,7 +826,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
       // 5. Load items from corresponding JSON files
       final allKits = <model.Component>[];
-      
+
       for (final kitType in allowedKitTypes) {
         final jsonFile = _getJsonFileForType(kitType);
         if (jsonFile != null) {
@@ -830,7 +863,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
       });
     } catch (e) {
       setState(() {
-        _error = 'Failed to load kits: $e';
+        _error = '${GearDialogsText.addFavoriteLoadKitsFailedPrefix}$e';
         _isLoading = false;
       });
     }
@@ -844,7 +877,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
   Set<String> _parseAllowedKitTypes(dynamic classData) {
     final types = <String>{};
-    
+
     // Access level 1 features
     final levels = classData.levels as List<dynamic>;
     if (levels.isEmpty) return types;
@@ -853,7 +886,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
       final features = level.features as List<dynamic>;
       for (final feature in features) {
         final name = (feature.name as String).trim().toLowerCase();
-        
+
         // Check for kit-related features
         if (name == 'kit') {
           types.add('kit');
@@ -925,7 +958,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
     if (_isLoading) {
       return AlertDialog(
-        title: const Text('Add Favorite'),
+        title: const Text(GearDialogsText.addFavoriteLoadingTitle),
         content: const SizedBox(
           height: 100,
           child: Center(child: CircularProgressIndicator()),
@@ -933,7 +966,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text(GearDialogsText.addFavoriteLoadingCancelAction),
           ),
         ],
       );
@@ -941,7 +974,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
     if (_error != null) {
       return AlertDialog(
-        title: const Text('Add Favorite'),
+        title: const Text(GearDialogsText.addFavoriteErrorTitle),
         content: Text(
           _error!,
           style: TextStyle(color: theme.colorScheme.error),
@@ -949,7 +982,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text(GearDialogsText.addFavoriteErrorCloseAction),
           ),
         ],
       );
@@ -957,7 +990,10 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
 
     // Build filter dropdown items
     final filterItems = <DropdownMenuItem<String>>[
-      const DropdownMenuItem(value: 'all', child: Text('All Types')),
+      const DropdownMenuItem(
+        value: 'all',
+        child: Text(GearDialogsText.addFavoriteFilterAllTypesLabel),
+      ),
     ];
     for (final type in _availableTypes) {
       final label = kitTypeLabels[type] ?? kitTypeDisplayName(type);
@@ -977,7 +1013,9 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
     }
 
     return AlertDialog(
-      title: Text('Add Favorite${_heroClassName != null ? ' ($_heroClassName)' : ''}'),
+      title: Text(
+        '${GearDialogsText.addFavoriteMainTitle}${_heroClassName != null ? '${GearDialogsText.addFavoriteMainTitleClassPrefix}$_heroClassName${GearDialogsText.addFavoriteMainTitleClassSuffix}' : ''}',
+      ),
       content: SizedBox(
         width: double.maxFinite,
         height: 500,
@@ -986,7 +1024,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search',
+                labelText: GearDialogsText.addFavoriteSearchLabel,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
@@ -1000,7 +1038,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
               DropdownButtonFormField<String>(
                 value: _filterType,
                 decoration: const InputDecoration(
-                  labelText: 'Filter by type',
+                  labelText: GearDialogsText.addFavoriteFilterLabel,
                   border: OutlineInputBorder(),
                 ),
                 items: filterItems,
@@ -1017,8 +1055,9 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
                   ? Center(
                       child: Text(
                         _availableKits.isEmpty
-                            ? 'All available items are already in favorites.'
-                            : 'No items match your search.',
+                            ? GearDialogsText
+                                .addFavoriteAllItemsAlreadyFavoritedMessage
+                            : GearDialogsText.addFavoriteNoItemsMatchMessage,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
@@ -1073,7 +1112,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.addFavoriteMainCancelAction),
         ),
       ],
     );
@@ -1127,13 +1166,13 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Set Quantity'),
+      title: const Text(GearDialogsText.quantityDialogTitle),
       content: TextField(
         controller: _controller,
         focusNode: _focusNode,
         keyboardType: TextInputType.number,
         decoration: const InputDecoration(
-          labelText: 'Quantity (1-999)',
+          labelText: GearDialogsText.quantityDialogLabel,
           border: OutlineInputBorder(),
         ),
         onSubmitted: (_) => _submit(),
@@ -1141,11 +1180,11 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(GearDialogsText.quantityDialogCancelAction),
         ),
         ElevatedButton(
           onPressed: _submit,
-          child: const Text('Set'),
+          child: const Text(GearDialogsText.quantityDialogSetAction),
         ),
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/downtime.dart';
+import '../../../core/theme/text/gear/gear_widgets_text.dart';
 import 'gear_utils.dart';
 
 /// Card displaying an item imbuement with expandable details.
@@ -52,13 +53,13 @@ class _ImbuementCardState extends State<ImbuementCard>
   String _getTypeDisplay(String imbuementType) {
     switch (imbuementType) {
       case 'armor_imbuement':
-        return 'Armor';
+        return GearWidgetsText.imbuementTypeArmor;
       case 'weapon_imbuement':
-        return 'Weapon';
+        return GearWidgetsText.imbuementTypeWeapon;
       case 'implement_imbuement':
-        return 'Implement';
+        return GearWidgetsText.imbuementTypeImplement;
       case 'shield_imbuement':
-        return 'Shield';
+        return GearWidgetsText.imbuementTypeShield;
       default:
         return imbuementType.replaceAll('_', ' ');
     }
@@ -175,7 +176,7 @@ class _ImbuementCardState extends State<ImbuementCard>
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        'LEVEL $level',
+                        '${GearWidgetsText.imbuementLevelPrefix}$level',
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -220,7 +221,7 @@ class _ImbuementCardState extends State<ImbuementCard>
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'EFFECT',
+                                  GearWidgetsText.imbuementEffectLabel,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: primaryColor.shade400,
                                     fontWeight: FontWeight.bold,

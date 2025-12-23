@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/text/heroes_sheet/story/sheet_story_complication_section_text.dart';
+
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
@@ -43,7 +45,8 @@ class ComplicationSection extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final complicationAsync = ref.watch(_componentByIdProvider(complicationId!));
+    final complicationAsync =
+        ref.watch(_componentByIdProvider(complicationId!));
 
     return Card(
       child: Padding(
@@ -52,7 +55,7 @@ class ComplicationSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Complication',
+              SheetStoryComplicationSectionText.sectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -60,9 +63,15 @@ class ComplicationSection extends ConsumerWidget {
             const SizedBox(height: 12),
             complicationAsync.when(
               loading: () => const CircularProgressIndicator(),
-              error: (e, _) => Text('Error loading complication: $e'),
+              error: (e, _) => Text(
+                '${SheetStoryComplicationSectionText.errorLoadingComplicationPrefix}$e',
+              ),
               data: (comp) {
-                if (comp == null) return const Text('Complication not found');
+                if (comp == null) {
+                  return const Text(
+                    SheetStoryComplicationSectionText.complicationNotFound,
+                  );
+                }
 
                 return _ComplicationDetails(
                   complication: comp,
@@ -167,7 +176,7 @@ class _EffectsDisplay extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Effects',
+          SheetStoryComplicationSectionText.effectsTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -175,7 +184,7 @@ class _EffectsDisplay extends StatelessWidget {
         const SizedBox(height: 8),
         if (benefit != null && benefit.isNotEmpty) ...[
           EffectItemDisplay(
-            label: 'Benefit',
+            label: SheetStoryComplicationSectionText.effectBenefitLabel,
             text: benefit,
             color: theme.colorScheme.primary,
             icon: Icons.add_circle_outline,
@@ -184,7 +193,7 @@ class _EffectsDisplay extends StatelessWidget {
         ],
         if (drawback != null && drawback.isNotEmpty) ...[
           EffectItemDisplay(
-            label: 'Drawback',
+            label: SheetStoryComplicationSectionText.effectDrawbackLabel,
             text: drawback,
             color: theme.colorScheme.error,
             icon: Icons.remove_circle_outline,
@@ -193,7 +202,7 @@ class _EffectsDisplay extends StatelessWidget {
         ],
         if (both != null && both.isNotEmpty) ...[
           EffectItemDisplay(
-            label: 'Mixed Effect',
+            label: SheetStoryComplicationSectionText.effectMixedLabel,
             text: both,
             color: theme.colorScheme.tertiary,
             icon: Icons.swap_horiz,
@@ -249,7 +258,8 @@ class _GrantsDisplay extends ConsumerWidget {
       tokens.forEach((key, value) {
         items.add(
           GrantItemDisplay(
-            text: '$value ${key.toString().replaceAll('_', ' ')} token${value == 1 ? '' : 's'}',
+            text:
+                '$value ${key.toString().replaceAll('_', ' ')} token${value == 1 ? '' : 's'}',
             icon: Icons.token_outlined,
           ),
         );
@@ -325,7 +335,8 @@ class _GrantsDisplay extends ConsumerWidget {
           final text = perEchelon
               ? '+$value ${stat.replaceAll('_', ' ')} per echelon'
               : '+$value ${stat.replaceAll('_', ' ')}';
-          items.add(GrantItemDisplay(text: text, icon: Icons.trending_up_outlined));
+          items.add(
+              GrantItemDisplay(text: text, icon: Icons.trending_up_outlined));
         }
       }
     }
@@ -364,7 +375,7 @@ class _GrantsDisplay extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Grants',
+          SheetStoryComplicationSectionText.grantsTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -397,8 +408,10 @@ class _LanguageGrantsDisplay extends ConsumerWidget {
     final choicePrefix = isDead ? 'dead_language' : 'language';
 
     return languagesAsync.when(
-      loading: () => GrantItemDisplay(text: '${label}s: Loading...', icon: icon),
-      error: (e, _) => GrantItemDisplay(text: '${label}s: Error loading', icon: icon),
+      loading: () =>
+          GrantItemDisplay(text: '${label}s: Loading...', icon: icon),
+      error: (e, _) =>
+          GrantItemDisplay(text: '${label}s: Error loading', icon: icon),
       data: (allLanguages) {
         final selectedNames = <String>[];
         for (int i = 0; i < count; i++) {
@@ -407,7 +420,8 @@ class _LanguageGrantsDisplay extends ConsumerWidget {
           if (selectedId != null && selectedId.isNotEmpty) {
             final lang = allLanguages.firstWhere(
               (l) => l.id == selectedId,
-              orElse: () => model.Component(id: '', type: '', name: selectedId, data: const {}),
+              orElse: () => model.Component(
+                  id: '', type: '', name: selectedId, data: const {}),
             );
             selectedNames.add(lang.name);
           }
@@ -421,7 +435,8 @@ class _LanguageGrantsDisplay extends ConsumerWidget {
         }
 
         return GrantItemDisplay(
-          text: '$label${selectedNames.length == 1 ? '' : 's'}: ${selectedNames.join(', ')}',
+          text:
+              '$label${selectedNames.length == 1 ? '' : 's'}: ${selectedNames.join(', ')}',
           icon: icon,
         );
       },
@@ -448,28 +463,29 @@ class _SkillChoiceDisplay extends ConsumerWidget {
 
     return skillsAsync.when(
       loading: () => const GrantItemDisplay(
-        text: 'Skill: Loading...',
+        text: SheetStoryComplicationSectionText.skillLoading,
         icon: Icons.psychology_outlined,
       ),
       error: (e, _) => const GrantItemDisplay(
-        text: 'Skill: Error loading',
+        text: SheetStoryComplicationSectionText.skillErrorLoading,
         icon: Icons.psychology_outlined,
       ),
       data: (allSkills) {
         if (selectedId == null || selectedId.isEmpty) {
           return const GrantItemDisplay(
-            text: 'Choose a skill',
+            text: SheetStoryComplicationSectionText.chooseASkill,
             icon: Icons.psychology_outlined,
           );
         }
 
         final skill = allSkills.firstWhere(
           (s) => s.id == selectedId,
-          orElse: () => model.Component(id: '', type: '', name: selectedId, data: const {}),
+          orElse: () => model.Component(
+              id: '', type: '', name: selectedId, data: const {}),
         );
 
         return GrantItemDisplay(
-          text: 'Skill: ${skill.name}',
+          text: '${SheetStoryComplicationSectionText.skillPrefix}${skill.name}',
           icon: Icons.psychology_outlined,
         );
       },
@@ -500,15 +516,19 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
     final theme = Theme.of(context);
     final ancestry = ancestryTraitsData['ancestry'] as String? ?? '';
     final points = ancestryTraitsData['ancestry_points'] as int? ?? 0;
-    final ancestryTraitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
+    final ancestryTraitsAsync =
+        ref.watch(componentsByTypeProvider('ancestry_trait'));
 
     final choiceKey = '${complicationId}_ancestry_traits';
     final selectedIdsStr = choices[choiceKey] ?? '';
-    final selectedIds = selectedIdsStr.isNotEmpty ? selectedIdsStr.split(',').toSet() : <String>{};
+    final selectedIds = selectedIdsStr.isNotEmpty
+        ? selectedIdsStr.split(',').toSet()
+        : <String>{};
 
     if (selectedIds.isEmpty) {
       return GrantItemDisplay(
-        text: 'Choose $points ${_formatAncestryName(ancestry)} ancestry trait point${points == 1 ? '' : 's'}',
+        text:
+            'Choose $points ${_formatAncestryName(ancestry)} ancestry trait point${points == 1 ? '' : 's'}',
         icon: Icons.person_outline,
       );
     }
@@ -525,11 +545,13 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
       data: (allAncestryTraits) {
         final targetAncestryId = 'ancestry_$ancestry';
         final traitsComp = allAncestryTraits.cast<model.Component>().firstWhere(
-          (t) => t.data['ancestry_id'] == targetAncestryId,
-          orElse: () => model.Component(id: '', type: '', name: '', data: const {}),
-        );
+              (t) => t.data['ancestry_id'] == targetAncestryId,
+              orElse: () =>
+                  model.Component(id: '', type: '', name: '', data: const {}),
+            );
 
-        final traitsList = (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
+        final traitsList =
+            (traitsComp.data['traits'] as List?)?.cast<Map>() ?? const <Map>[];
         final selectedTraits = <Map<String, dynamic>>[];
 
         for (final id in selectedIds) {
@@ -547,14 +569,16 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.primaryContainer.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+            border:
+                Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.person_outline, size: 18, color: theme.colorScheme.primary),
+                  Icon(Icons.person_outline,
+                      size: 18, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -604,7 +628,8 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
@@ -649,7 +674,8 @@ class _PickOneDisplay extends StatelessWidget {
     final theme = Theme.of(context);
     final choiceKey = '${complicationId}_pick_one';
     final selectedIndexStr = choices[choiceKey];
-    final selectedIndex = selectedIndexStr != null ? int.tryParse(selectedIndexStr) : null;
+    final selectedIndex =
+        selectedIndexStr != null ? int.tryParse(selectedIndexStr) : null;
 
     if (pickOneData is! List || (pickOneData as List).isEmpty) {
       return const SizedBox.shrink();
@@ -657,15 +683,18 @@ class _PickOneDisplay extends StatelessWidget {
 
     final dataList = pickOneData as List;
 
-    if (selectedIndex == null || selectedIndex < 0 || selectedIndex >= dataList.length) {
+    if (selectedIndex == null ||
+        selectedIndex < 0 ||
+        selectedIndex >= dataList.length) {
       return const GrantItemDisplay(
-        text: 'Choose one option',
+        text: SheetStoryComplicationSectionText.chooseOneOption,
         icon: Icons.check_circle_outline,
       );
     }
 
     final selectedOption = dataList[selectedIndex] as Map<String, dynamic>;
-    final description = selectedOption['description'] as String? ?? 'Option ${selectedIndex + 1}';
+    final description = selectedOption['description'] as String? ??
+        'Option ${selectedIndex + 1}';
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -677,7 +706,8 @@ class _PickOneDisplay extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle, size: 16, color: theme.colorScheme.secondary),
+          Icon(Icons.check_circle,
+              size: 16, color: theme.colorScheme.secondary),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

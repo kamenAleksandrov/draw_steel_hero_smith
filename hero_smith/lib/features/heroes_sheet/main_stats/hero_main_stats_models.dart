@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/text/hero_main_stats_models_text.dart';
 // ============================================================================
 // Numeric Field Enum
 // ============================================================================
@@ -27,21 +28,21 @@ extension NumericFieldLabel on NumericField {
   String get label {
     switch (this) {
       case NumericField.victories:
-        return 'Victories';
+        return HeroMainStatsModelsText.numericFieldVictoriesLabel;
       case NumericField.exp:
-        return 'Experience';
+        return HeroMainStatsModelsText.numericFieldExperienceLabel;
       case NumericField.level:
-        return 'Level';
+        return HeroMainStatsModelsText.numericFieldLevelLabel;
       case NumericField.staminaCurrent:
-        return 'Stamina';
+        return HeroMainStatsModelsText.numericFieldStaminaLabel;
       case NumericField.staminaTemp:
-        return 'Temporary stamina';
+        return HeroMainStatsModelsText.numericFieldTemporaryStaminaLabel;
       case NumericField.recoveriesCurrent:
-        return 'Recoveries';
+        return HeroMainStatsModelsText.numericFieldRecoveriesLabel;
       case NumericField.heroicResourceCurrent:
-        return 'Heroic resource';
+        return HeroMainStatsModelsText.numericFieldHeroicResourceLabel;
       case NumericField.surgesCurrent:
-        return 'Surges';
+        return HeroMainStatsModelsText.numericFieldSurgesLabel;
     }
   }
 }
@@ -165,12 +166,12 @@ class WealthTier {
 
 /// Wealth tier definitions for the game system.
 const List<WealthTier> wealthTiers = [
-  WealthTier(1, 'Common gear, lodging, and travel'),
-  WealthTier(2, 'Fine dining, fine lodging, horse and cart'),
-  WealthTier(3, 'Catapult, small house'),
-  WealthTier(4, 'Library, tavern, manor home, sailing boat'),
-  WealthTier(5, 'Church, keep, wizard tower'),
-  WealthTier(6, 'Castle, shipyard'),
+  WealthTier(1, HeroMainStatsModelsText.wealthTier1Description),
+  WealthTier(2, HeroMainStatsModelsText.wealthTier2Description),
+  WealthTier(3, HeroMainStatsModelsText.wealthTier3Description),
+  WealthTier(4, HeroMainStatsModelsText.wealthTier4Description),
+  WealthTier(5, HeroMainStatsModelsText.wealthTier5Description),
+  WealthTier(6, HeroMainStatsModelsText.wealthTier6Description),
 ];
 
 // ============================================================================
@@ -203,18 +204,18 @@ class RenownImpressionTier {
 
 /// Renown impression tier definitions.
 const List<RenownImpressionTier> impressionTiers = [
-  RenownImpressionTier(1, 'Brigand leader, commoner, shop owner'),
-  RenownImpressionTier(2, 'Knight, local guildmaster, professor'),
-  RenownImpressionTier(3, 'Cult leader, locally known mage, noble lord'),
-  RenownImpressionTier(4, 'Assassin, baron, locally famous entertainer'),
-  RenownImpressionTier(5, 'Captain of the watch, high priest, viscount'),
-  RenownImpressionTier(6, 'Count, warlord'),
-  RenownImpressionTier(7, 'Marquis, world-renowned entertainer'),
-  RenownImpressionTier(8, 'Duke, spymaster'),
-  RenownImpressionTier(9, 'Archmage, prince'),
-  RenownImpressionTier(10, 'Demon lord, monarch'),
-  RenownImpressionTier(11, 'Archdevil, archfey, demigod'),
-  RenownImpressionTier(12, 'Deity, titan'),
+  RenownImpressionTier(1, HeroMainStatsModelsText.impressionTier1Description),
+  RenownImpressionTier(2, HeroMainStatsModelsText.impressionTier2Description),
+  RenownImpressionTier(3, HeroMainStatsModelsText.impressionTier3Description),
+  RenownImpressionTier(4, HeroMainStatsModelsText.impressionTier4Description),
+  RenownImpressionTier(5, HeroMainStatsModelsText.impressionTier5Description),
+  RenownImpressionTier(6, HeroMainStatsModelsText.impressionTier6Description),
+  RenownImpressionTier(7, HeroMainStatsModelsText.impressionTier7Description),
+  RenownImpressionTier(8, HeroMainStatsModelsText.impressionTier8Description),
+  RenownImpressionTier(9, HeroMainStatsModelsText.impressionTier9Description),
+  RenownImpressionTier(10, HeroMainStatsModelsText.impressionTier10Description),
+  RenownImpressionTier(11, HeroMainStatsModelsText.impressionTier11Description),
+  RenownImpressionTier(12, HeroMainStatsModelsText.impressionTier12Description),
 ];
 
 // ============================================================================

@@ -93,7 +93,7 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
-              child: const Text('Retry'),
+              child: const Text(SheetStoryCommonText.retry),
             ),
           ],
         ),
@@ -112,10 +112,10 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
         reservedLanguageIds: _reservedLanguageIds,
         reservedSkillIds: _reservedSkillIds,
         showHeader: true,
-        headerTitle: 'Perks',
-        headerSubtitle: 'Special abilities and bonuses from your career and titles',
+        headerTitle: SheetStoryPerksTabText.headerTitle,
+        headerSubtitle: SheetStoryPerksTabText.headerSubtitle,
         allowAddingNew: true,
-        emptyStateMessage: 'No perks selected. Tap "Add Perk" to get started.',
+        emptyStateMessage: SheetStoryPerksTabText.emptyState,
         persistToDatabase: true,
       ),
     );

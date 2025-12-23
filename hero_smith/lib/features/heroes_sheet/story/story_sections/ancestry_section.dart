@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hero_smith/core/theme/heroes_sheet/story/sheet_story_ancestry_theme.dart';
+import 'package:hero_smith/core/theme/text/heroes_sheet/story/sheet_story_ancestry_section_text.dart';
+
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
@@ -50,7 +53,7 @@ class AncestrySection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Ancestry',
+              SheetStoryAncestrySectionText.sectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -58,15 +61,20 @@ class AncestrySection extends ConsumerWidget {
             const SizedBox(height: 12),
             ancestryAsync.when(
               loading: () => const CircularProgressIndicator(),
-              error: (e, _) => Text('Error loading ancestry: $e'),
+              error: (e, _) => Text(
+                '${SheetStoryAncestrySectionText.errorLoadingAncestryPrefix}$e',
+              ),
               data: (ancestry) {
-                if (ancestry == null) return const Text('Ancestry not found');
+                if (ancestry == null) {
+                  return const Text(
+                      SheetStoryAncestrySectionText.ancestryNotFound);
+                }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InfoRow(
-                      label: 'Ancestry',
+                      label: SheetStoryAncestrySectionText.ancestryLabel,
                       value: ancestry.name,
                       icon: Icons.family_restroom,
                     ),
@@ -95,20 +103,23 @@ class AncestrySection extends ConsumerWidget {
     );
   }
 
-  Widget _buildTraitsContent(BuildContext context, List<model.Component> allTraits) {
+  Widget _buildTraitsContent(
+    BuildContext context,
+    List<model.Component> allTraits,
+  ) {
     final theme = Theme.of(context);
-    
+
     final ancestryTraitComponent = allTraits.cast<dynamic>().firstWhere(
-      (t) => t.data['ancestry_id'] == ancestryId,
-      orElse: () => null,
-    );
+          (t) => t.data['ancestry_id'] == ancestryId,
+          orElse: () => null,
+        );
 
     if (ancestryTraitComponent == null && allTraits.isNotEmpty) {
-      return const Text('No trait data available for this ancestry');
+      return const Text(SheetStoryAncestrySectionText.noTraitDataAvailable);
     }
 
     if (ancestryTraitComponent == null) {
-      return const Text('No traits available');
+      return const Text(SheetStoryAncestrySectionText.noTraitsAvailable);
     }
 
     final signature =
@@ -126,7 +137,7 @@ class AncestrySection extends ConsumerWidget {
       children: [
         if (signature != null) ...[
           Text(
-            '✨ Signature Ability',
+            SheetStoryAncestrySectionText.signatureAbilityTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -135,17 +146,20 @@ class AncestrySection extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
+              color:
+                  SheetStoryAncestryTheme.signatureAccentColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.amber.withOpacity(0.3),
+                color: SheetStoryAncestryTheme.signatureAccentColor
+                    .withOpacity(0.3),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  signature['name']?.toString() ?? 'Unknown',
+                  signature['name']?.toString() ??
+                      SheetStoryAncestrySectionText.signatureUnknownName,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.amber.shade800,
@@ -165,7 +179,7 @@ class AncestrySection extends ConsumerWidget {
         ],
         if (selectedTraits.isNotEmpty) ...[
           Text(
-            'Optional Traits',
+            SheetStoryAncestrySectionText.optionalTraitsTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),

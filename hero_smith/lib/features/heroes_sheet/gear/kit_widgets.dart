@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart' as model;
+import '../../../core/theme/text/gear/kit_widgets_text.dart';
 import '../../../widgets/kits/kit_card.dart';
 import '../../../widgets/kits/modifier_card.dart';
 import '../../../widgets/kits/stormwight_kit_card.dart';
@@ -28,11 +29,11 @@ class FavoriteKitCardWrapper extends StatelessWidget {
   String _getBadgeLabel(String type) {
     switch (type) {
       case 'psionic_augmentation':
-        return 'Augmentation';
+        return KitWidgetsText.badgeAugmentation;
       case 'prayer':
-        return 'Prayer';
+        return KitWidgetsText.badgePrayer;
       case 'enchantment':
-        return 'Enchantment';
+        return KitWidgetsText.badgeEnchantment;
       default:
         return type;
     }
@@ -122,8 +123,8 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           equippedSlotLabel != null
-                              ? 'EQUIPPED: $equippedSlotLabel'
-                              : 'EQUIPPED',
+                              ? '${KitWidgetsText.equippedBadgeWithSlotPrefix}$equippedSlotLabel'
+                              : KitWidgetsText.equippedBadgeLabel,
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: theme.colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
@@ -138,7 +139,7 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                   TextButton.icon(
                     onPressed: onSwap,
                     icon: const Icon(Icons.swap_horiz, size: 16),
-                    label: const Text('Swap'),
+                    label: const Text(KitWidgetsText.swapButtonLabel),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       visualDensity: VisualDensity.compact,
@@ -152,7 +153,7 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.favorite, color: Colors.red, size: 20),
                   onPressed: onRemoveFavorite,
-                  tooltip: 'Remove from favorites',
+                  tooltip: KitWidgetsText.removeFavoriteTooltip,
                   constraints: const BoxConstraints(),
                   padding: const EdgeInsets.all(4),
                   visualDensity: VisualDensity.compact,

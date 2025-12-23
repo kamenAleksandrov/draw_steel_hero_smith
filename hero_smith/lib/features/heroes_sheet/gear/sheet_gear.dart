@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/text/gear/sheet_gear_text.dart';
 import 'inventory_tab.dart';
 import 'kits_tab.dart';
 import 'treasures_tab.dart';
@@ -48,9 +49,9 @@ class _SheetGearState extends ConsumerState<SheetGear>
         TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.shield), text: 'Kits'),
-            Tab(icon: Icon(Icons.auto_awesome), text: 'Treasures'),
-            Tab(icon: Icon(Icons.inventory_2), text: 'Inventory'),
+            Tab(icon: Icon(Icons.shield), text: SheetGearText.tabKitsLabel),
+            Tab(icon: Icon(Icons.auto_awesome), text: SheetGearText.tabTreasuresLabel),
+            Tab(icon: Icon(Icons.inventory_2), text: SheetGearText.tabInventoryLabel),
           ],
         ),
         Expanded(
