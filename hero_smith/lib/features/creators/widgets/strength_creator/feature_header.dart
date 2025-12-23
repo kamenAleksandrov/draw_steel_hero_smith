@@ -98,19 +98,19 @@ class _FeatureHeader extends StatelessWidget {
                       icon: Icons.star_rounded,
                       label: widget.subclassLabel?.isNotEmpty == true
                           ? widget.subclassLabel!
-                          : 'Subclass',
+                          : FeatureHeaderText.subclassLabelFallback,
                       color: Colors.purple,
                     ),
                   if (isDomainLinked)
                     _SmallTag(
                       icon: Icons.account_tree_rounded,
-                      label: 'Domain',
+                      label: FeatureHeaderText.domainLabel,
                       color: Colors.teal,
                     ),
                   if (isDeityLinked)
                     _SmallTag(
                       icon: Icons.auto_awesome,
-                      label: 'Deity',
+                      label: FeatureHeaderText.deityLabel,
                       color: Colors.amber.shade700,
                     ),
                 ],

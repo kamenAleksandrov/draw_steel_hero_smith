@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/models/class_data.dart';
 import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/class_feature_data_service.dart';
+import '../../../../core/theme/text/class_features_section_text.dart';
 import 'class_features_widget.dart';
 
 class ClassFeaturesSection extends StatefulWidget {
@@ -168,7 +169,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
       if (!mounted || requestId != _loadRequestId) return;
       setState(() {
         _isLoading = false;
-        _error = 'Failed to load class features: $e';
+        _error = '${ClassFeaturesSectionText.loadErrorPrefix}$e';
         _data = null;
         _selections = const {};
       });
@@ -295,7 +296,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: Text('Loading class features...'),
+                  child: Text(ClassFeaturesSectionText.loadingMessage),
                 ),
               ],
             ),

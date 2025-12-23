@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/models/class_data.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/class_selector_widget_text.dart';
 
 /// Widget for selecting hero class
 class ClassSelectorWidget extends StatelessWidget {
@@ -29,19 +30,19 @@ class ClassSelectorWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hero Class',
+              ClassSelectorWidgetText.title,
               style: AppTextStyles.title,
             ),
             const SizedBox(height: 4),
             Text(
-              'Choose your hero\'s class',
+              ClassSelectorWidgetText.subtitle,
               style: AppTextStyles.caption,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<ClassData>(
               value: selectedClass,
               decoration: const InputDecoration(
-                labelText: 'Class',
+                labelText: ClassSelectorWidgetText.classLabel,
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 12,
@@ -113,11 +114,11 @@ class ClassSelectorWidget extends StatelessWidget {
                       runSpacing: 8,
                       children: [
                         _buildStatChip(
-                          'Stamina',
-                          '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)} (Base ${selectedClass!.startingCharacteristics.baseStamina} + ${selectedClass!.startingCharacteristics.staminaPerLevel} per lvl)',
+                          ClassSelectorWidgetText.staminaLabel,
+                          '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)}${ClassSelectorWidgetText.staminaValueSuffixPrefix}${selectedClass!.startingCharacteristics.baseStamina}${ClassSelectorWidgetText.staminaValueSuffixMiddle}${selectedClass!.startingCharacteristics.staminaPerLevel}${ClassSelectorWidgetText.staminaValueSuffixSuffix}',
                         ),
                         _buildStatChip(
-                          'Recoveries',
+                          ClassSelectorWidgetText.recoveriesLabel,
                           '${selectedClass!.startingCharacteristics.baseRecoveries}',
                         ),
                       ],
@@ -152,7 +153,7 @@ class ClassSelectorWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '$label: ',
+            '$label${ClassSelectorWidgetText.statLabelSuffix}',
             style: AppTextStyles.caption.copyWith(
               fontWeight: FontWeight.w600,
             ),

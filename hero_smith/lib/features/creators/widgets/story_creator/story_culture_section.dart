@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/story_culture_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
 class _SearchOption<T> {
@@ -75,7 +76,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: false,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: StoryCultureSectionText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -91,7 +92,9 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child: Center(
+                                child: Text(
+                                    StoryCultureSectionText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -119,7 +122,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(StoryCultureSectionText.cancelLabel),
                     ),
                   ),
                 ],
@@ -192,8 +195,8 @@ class StoryCultureSection extends ConsumerWidget {
           children: [
             HeroTheme.buildSectionHeader(
               context,
-              title: 'Culture',
-              subtitle: 'Your hero\'s upbringing and environment',
+              title: StoryCultureSectionText.sectionTitle,
+              subtitle: StoryCultureSectionText.sectionSubtitle,
               icon: Icons.public,
               color: HeroTheme.getStepColor('culture'),
             ),
@@ -205,7 +208,8 @@ class StoryCultureSection extends ConsumerWidget {
   
                   langsAsync.when(
                     loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text('Failed to load languages: $e'),
+                    error: (e, _) => Text(
+                        '${StoryCultureSectionText.failedToLoadLanguagesPrefix}$e'),
                     data: (langs) => _LanguageDropdown(
                       languages: langs,
                       selectedLanguageId: selectedLanguageId,
@@ -232,7 +236,7 @@ class StoryCultureSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _CultureDropdown(
-                          label: 'Environment',
+                          label: StoryCultureSectionText.environmentLabel,
                           icon: Icons.park,
                           asyncList: envAsync,
                           selectedId: environmentId,
@@ -250,7 +254,8 @@ class StoryCultureSection extends ConsumerWidget {
                               loading: () => const SizedBox.shrink(),
                               error: (_, __) => const SizedBox.shrink(),
                               data: (envs) => _CultureSkillChooser(
-                                label: 'Environment Skill',
+                                label:
+                                    StoryCultureSectionText.environmentSkillLabel,
                                 selectedCultureId: environmentId,
                                 cultureItems: envs,
                                 selectedSkillId: environmentSkillId,
@@ -283,7 +288,7 @@ class StoryCultureSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _CultureDropdown(
-                          label: 'Organization',
+                          label: StoryCultureSectionText.organizationLabel,
                           icon: Icons.apartment,
                           asyncList: orgAsync,
                           selectedId: organisationId,
@@ -301,7 +306,8 @@ class StoryCultureSection extends ConsumerWidget {
                               loading: () => const SizedBox.shrink(),
                               error: (_, __) => const SizedBox.shrink(),
                               data: (orgs) => _CultureSkillChooser(
-                                label: 'Organization Skill',
+                                label:
+                                    StoryCultureSectionText.organizationSkillLabel,
                                 selectedCultureId: organisationId,
                                 cultureItems: orgs,
                                 selectedSkillId: organisationSkillId,
@@ -334,7 +340,7 @@ class StoryCultureSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _CultureDropdown(
-                          label: 'Upbringing',
+                          label: StoryCultureSectionText.upbringingLabel,
                           icon: Icons.family_restroom,
                           asyncList: upAsync,
                           selectedId: upbringingId,
@@ -352,7 +358,8 @@ class StoryCultureSection extends ConsumerWidget {
                               loading: () => const SizedBox.shrink(),
                               error: (_, __) => const SizedBox.shrink(),
                               data: (ups) => _CultureSkillChooser(
-                                label: 'Upbringing Skill',
+                                label:
+                                    StoryCultureSectionText.upbringingSkillLabel,
                                 selectedCultureId: upbringingId,
                                 cultureItems: ups,
                                 selectedSkillId: upbringingSkillId,
@@ -433,7 +440,7 @@ class _LanguageDropdown extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: 'Choose language',
+          label: StoryCultureSectionText.chooseLanguageOption,
           value: null,
         ),
       ];
@@ -452,7 +459,7 @@ class _LanguageDropdown extends StatelessWidget {
 
       final result = await _showSearchablePicker<String?>(
         context: context,
-        title: 'Select Language',
+        title: StoryCultureSectionText.selectLanguageTitle,
         options: options,
         selected: selected,
       );
@@ -467,7 +474,7 @@ class _LanguageDropdown extends StatelessWidget {
         onTap: openSearch,
         child: InputDecorator(
           decoration: InputDecoration(
-            labelText: 'Language',
+            labelText: StoryCultureSectionText.languageLabel,
             labelStyle: const TextStyle(
               color: languageColor,
               fontWeight: FontWeight.w600,
@@ -482,7 +489,7 @@ class _LanguageDropdown extends StatelessWidget {
           child: Text(
             selected != null
                 ? filteredLanguages.firstWhere((l) => l.id == selected).name
-                : 'Choose language',
+                : StoryCultureSectionText.chooseLanguagePlaceholder,
             style: TextStyle(
               fontSize: 16,
               color: selected != null
@@ -498,11 +505,11 @@ class _LanguageDropdown extends StatelessWidget {
   String _languageGroupTitle(String key) {
     switch (key) {
       case 'ancestral':
-        return 'Ancestral Languages';
+        return StoryCultureSectionText.ancestralLanguagesGroup;
       case 'dead':
-        return 'Dead Languages';
+        return StoryCultureSectionText.deadLanguagesGroup;
       default:
-        return 'Human Languages';
+        return StoryCultureSectionText.humanLanguagesGroup;
     }
   }
 }
@@ -529,7 +536,8 @@ class _CultureDropdown extends StatelessWidget {
 
     return asyncList.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Failed to load $label: $e',
+      error: (e, _) => Text(
+          '${StoryCultureSectionText.failedToLoadLabelPrefix}$label${StoryCultureSectionText.failedToLoadLabelSeparator}$e',
           style: TextStyle(color: theme.colorScheme.error)),
       data: (items) {
         items = List.of(items)..sort((a, b) => a.name.compareTo(b.name));
@@ -551,7 +559,7 @@ class _CultureDropdown extends StatelessWidget {
         Future<void> openSearch() async {
           final options = <_SearchOption<String?>>[
             const _SearchOption<String?>(
-              label: 'Choose',
+              label: StoryCultureSectionText.chooseOption,
               value: null,
             ),
             ...items.map(
@@ -564,7 +572,8 @@ class _CultureDropdown extends StatelessWidget {
 
           final result = await _showSearchablePicker<String?>(
             context: context,
-            title: 'Select $label',
+            title:
+                '${StoryCultureSectionText.selectLabelPrefix}$label',
             options: options,
             selected: validSelected,
           );
@@ -595,7 +604,9 @@ class _CultureDropdown extends StatelessWidget {
                         horizontal: 12, vertical: 10),
                   ),
                   child: Text(
-                    selectedItem != null ? selectedItem.name : 'Choose',
+                    selectedItem != null
+                        ? selectedItem.name
+                        : StoryCultureSectionText.choosePlaceholder,
                     style: TextStyle(
                       fontSize: 16,
                       color: selectedItem != null
@@ -715,7 +726,7 @@ class _CultureSkillChooser extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: 'Choose skill',
+          label: StoryCultureSectionText.chooseSkillOption,
           value: null,
         ),
       ];
@@ -737,7 +748,7 @@ class _CultureSkillChooser extends StatelessWidget {
           _SearchOption<String?>(
             label: skill.name,
             value: skill.id,
-            subtitle: 'Other',
+            subtitle: StoryCultureSectionText.otherGroupLabel,
           ),
         );
       }
@@ -767,16 +778,16 @@ class _CultureSkillChooser extends StatelessWidget {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             ),
-            child: Text(
-              validSelected != null
-                  ? eligible
-                      .firstWhere((s) => s.id == validSelected)
-                      .name
-                  : 'Choose skill',
-              style: TextStyle(
-                fontSize: 16,
-                color: validSelected != null
-                    ? Theme.of(context).textTheme.bodyLarge?.color
+          child: Text(
+            validSelected != null
+                ? eligible
+                    .firstWhere((s) => s.id == validSelected)
+                    .name
+                : StoryCultureSectionText.chooseSkillPlaceholder,
+            style: TextStyle(
+              fontSize: 16,
+              color: validSelected != null
+                  ? Theme.of(context).textTheme.bodyLarge?.color
                     : Theme.of(context).hintColor,
               ),
             ),

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/story_career_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
 
@@ -70,8 +71,8 @@ class StoryCareerSection extends ConsumerWidget {
           children: [
             HeroTheme.buildSectionHeader(
               context,
-              title: 'Career',
-              subtitle: 'Your hero\'s profession and background',
+              title: StoryCareerSectionText.sectionTitle,
+              subtitle: StoryCareerSectionText.sectionSubtitle,
               icon: Icons.work,
               color: HeroTheme.getStepColor('career'),
             ),
@@ -79,7 +80,8 @@ class StoryCareerSection extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               child: careersAsync.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Failed to load careers: $e'),
+                error: (e, _) => Text(
+                    '${StoryCareerSectionText.failedToLoadCareersPrefix}$e'),
                 data: (careers) => _CareerContent(
                   heroId: heroId,
                   careers: careers,
@@ -269,7 +271,7 @@ class _CareerContentState extends State<_CareerContent> {
           onTap: () async {
             final options = <_SearchOption<String?>>[
               const _SearchOption<String?>(
-                label: 'Choose career',
+                label: StoryCareerSectionText.chooseCareerOption,
                 value: null,
               ),
               ..._careers.map(
@@ -281,7 +283,7 @@ class _CareerContentState extends State<_CareerContent> {
             ];
             final result = await _showSearchablePicker<String?>(
               context: context,
-              title: 'Select Career',
+              title: StoryCareerSectionText.selectCareerTitle,
               options: options,
               selected: widget.careerId,
             );
@@ -291,14 +293,14 @@ class _CareerContentState extends State<_CareerContent> {
           },
           child: InputDecorator(
             decoration: const InputDecoration(
-              labelText: 'Career',
+              labelText: StoryCareerSectionText.careerLabel,
               prefixIcon: Icon(Icons.work_outline),
               suffixIcon: Icon(Icons.search),
             ),
             child: Text(
               widget.careerId != null
                   ? selectedCareer.name
-                  : 'Choose career',
+                  : StoryCareerSectionText.chooseCareerPlaceholder,
               style: TextStyle(
                 fontSize: 16,
                 color: widget.careerId != null
@@ -323,17 +325,23 @@ class _CareerContentState extends State<_CareerContent> {
             children: [
               if (renown > 0)
                 Chip(
-                  label: Text('+${renown.toString()} Renown'),
+                  label: Text(
+                    '${StoryCareerSectionText.renownChipPrefix}${renown.toString()}${StoryCareerSectionText.renownChipSuffix}',
+                  ),
                   avatar: const Icon(Icons.stars, size: 18),
                 ),
               if (wealth > 0)
                 Chip(
-                  label: Text('+${wealth.toString()} Wealth'),
+                  label: Text(
+                    '${StoryCareerSectionText.wealthChipPrefix}${wealth.toString()}${StoryCareerSectionText.wealthChipSuffix}',
+                  ),
                   avatar: const Icon(Icons.attach_money, size: 18),
                 ),
               if (projectPoints > 0)
                 Chip(
-                  label: Text('+${projectPoints.toString()} Project Points'),
+                  label: Text(
+                    '${StoryCareerSectionText.projectPointsChipPrefix}${projectPoints.toString()}${StoryCareerSectionText.projectPointsChipSuffix}',
+                  ),
                   avatar: const Icon(Icons.engineering, size: 18),
                 ),
             ],
@@ -342,7 +350,8 @@ class _CareerContentState extends State<_CareerContent> {
           if (languagesGrant > 0)
             widget.langsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Failed to load languages: $e'),
+              error: (e, _) => Text(
+                  '${StoryCareerSectionText.failedToLoadLanguagesPrefix}$e'),
               data: (languages) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -363,7 +372,8 @@ class _CareerContentState extends State<_CareerContent> {
                               j++)
                             if (j != i) widget.careerLanguageIds[j],
                         },
-                        label: 'Bonus Language ${i + 1}',
+                        label:
+                            '${StoryCareerSectionText.bonusLanguageLabelPrefix}${i + 1}',
                         onChanged: (val) {
                           widget.onCareerLanguageChanged(i, val);
                           widget.onDirty();
@@ -384,11 +394,13 @@ class _CareerContentState extends State<_CareerContent> {
             const SizedBox(height: 8),
           ],
           if (grantedSkills.isNotEmpty)
-            Text('Granted Skills: ${grantedSkills.join(', ')}'),
+            Text(
+                '${StoryCareerSectionText.grantedSkillsPrefix}${grantedSkills.join(', ')}'),
           const SizedBox(height: 8),
           widget.skillsAsync.when(
             loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text('Failed to load skills: $e'),
+            error: (e, _) => Text(
+                '${StoryCareerSectionText.failedToLoadSkillsPrefix}$e'),
             data: (skills) {
               // Resolve granted skill names to IDs for exclusion
               final grantedSkillIds = <String>{};
@@ -474,7 +486,7 @@ class _CareerContentState extends State<_CareerContent> {
                   int currentIndex, List<String?> slots) {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'Choose skill',
+                    label: StoryCareerSectionText.chooseSkillOption,
                     value: null,
                   ),
                 ];
@@ -523,7 +535,7 @@ class _CareerContentState extends State<_CareerContent> {
                     _SearchOption<String?>(
                       label: skill.name,
                       value: skill.id,
-                      subtitle: 'Other',
+                      subtitle: StoryCareerSectionText.otherGroupLabel,
                     ),
                   );
                 }
@@ -557,7 +569,9 @@ class _CareerContentState extends State<_CareerContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Choose $picksNeeded skill${picksNeeded == 1 ? '' : 's'} from the approved list.',
+                    '${StoryCareerSectionText.skillPickInstructionPrefix}$picksNeeded'
+                    '${picksNeeded == 1 ? StoryCareerSectionText.skillPickInstructionSingularSuffix : StoryCareerSectionText.skillPickInstructionPluralSuffix}'
+                    '${StoryCareerSectionText.skillPickInstructionSuffix}',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 6),
@@ -566,7 +580,8 @@ class _CareerContentState extends State<_CareerContent> {
                       onTap: () => openSearchForIndex(index),
                       child: InputDecorator(
                         decoration: InputDecoration(
-                          labelText: 'Skill pick ${index + 1}',
+                          labelText:
+                              '${StoryCareerSectionText.skillPickLabelPrefix}${index + 1}',
                           border: border,
                           enabledBorder: border,
                           suffixIcon: const Icon(Icons.search),
@@ -578,7 +593,7 @@ class _CareerContentState extends State<_CareerContent> {
                         child: Text(
                           slots[index] != null
                               ? skillMap[slots[index]]!.name
-                              : 'Choose skill',
+                              : StoryCareerSectionText.chooseSkillPlaceholder,
                           style: TextStyle(
                             fontSize: 16,
                             color: slots[index] != null
@@ -592,7 +607,9 @@ class _CareerContentState extends State<_CareerContent> {
                   ],
                   if (remaining > 0)
                     Text(
-                        '$remaining pick${remaining == 1 ? '' : 's'} remaining.'),
+                        '${StoryCareerSectionText.remainingPicksPrefix}$remaining'
+                        '${remaining == 1 ? StoryCareerSectionText.remainingPicksSingularSuffix : StoryCareerSectionText.remainingPicksPluralSuffix}'
+                        '${StoryCareerSectionText.remainingPicksSuffix}'),
                 ],
               );
             },
@@ -601,10 +618,12 @@ class _CareerContentState extends State<_CareerContent> {
           if (perksNumber > 0)
             widget.langsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Failed to load languages: $e'),
+              error: (e, _) => Text(
+                  '${StoryCareerSectionText.failedToLoadLanguagesPrefix}$e'),
               data: (languages) => widget.skillsAsync.when(
                 loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text('Failed to load skills: $e'),
+                error: (e, _) => Text(
+                    '${StoryCareerSectionText.failedToLoadSkillsPrefix}$e'),
                 data: (skills) {
                   final hasPerkType = perkType.trim().isNotEmpty;
                   final allowedGroups =
@@ -632,9 +651,11 @@ class _CareerContentState extends State<_CareerContent> {
                         onSelectionChanged: widget.onPerkSelectionChanged,
                         onDirty: widget.onDirty,
                         showHeader: true,
-                        headerTitle: 'Career Perks',
+                        headerTitle: StoryCareerSectionText.careerPerksTitle,
                         headerSubtitle:
-                            hasPerkType ? 'Allowed type: $perkType' : null,
+                            hasPerkType
+                                ? '${StoryCareerSectionText.allowedTypePrefix}$perkType'
+                                : null,
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -648,19 +669,20 @@ class _CareerContentState extends State<_CareerContent> {
               onTap: () async {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'Choose incident',
+                    label: StoryCareerSectionText.chooseIncidentOption,
                     value: null,
                   ),
                   ...incidents.map(
                     (incident) => _SearchOption<String?>(
-                      label: incident['name']?.toString() ?? 'Unknown',
+                      label: incident['name']?.toString() ??
+                          StoryCareerSectionText.unknownIncidentLabel,
                       value: incident['name']?.toString(),
                     ),
                   ),
                 ];
                 final result = await _showSearchablePicker<String?>(
                   context: context,
-                  title: 'Select Inciting Incident',
+                  title: StoryCareerSectionText.selectIncitingIncidentTitle,
                   options: options,
                   selected: widget.incidentName,
                 );
@@ -670,12 +692,13 @@ class _CareerContentState extends State<_CareerContent> {
               },
               child: InputDecorator(
                 decoration: const InputDecoration(
-                  labelText: 'Inciting Incident',
+                  labelText: StoryCareerSectionText.incitingIncidentLabel,
                   prefixIcon: Icon(Icons.auto_fix_high_outlined),
                   suffixIcon: Icon(Icons.search),
                 ),
                 child: Text(
-                  widget.incidentName ?? 'Choose incident',
+                  widget.incidentName ??
+                      StoryCareerSectionText.chooseIncidentPlaceholder,
                   style: TextStyle(
                     fontSize: 16,
                     color: widget.incidentName != null
@@ -749,7 +772,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: 'Choose language',
+          label: StoryCareerSectionText.chooseLanguageOption,
           value: null,
         ),
       ];
@@ -791,7 +814,7 @@ class _CareerLanguageDropdown extends StatelessWidget {
         child: Text(
           validValue != null
               ? languages.firstWhere((l) => l.id == validValue).name
-              : 'Choose language',
+              : StoryCareerSectionText.chooseLanguagePlaceholder,
           style: TextStyle(
             fontSize: 16,
             color: validValue != null
@@ -806,11 +829,11 @@ class _CareerLanguageDropdown extends StatelessWidget {
   String _titleForGroup(String key) {
     switch (key) {
       case 'ancestral':
-        return 'Ancestral Languages';
+        return StoryCareerSectionText.ancestralLanguagesGroup;
       case 'dead':
-        return 'Dead Languages';
+        return StoryCareerSectionText.deadLanguagesGroup;
       default:
-        return 'Human Languages';
+        return StoryCareerSectionText.humanLanguagesGroup;
     }
   }
 }
@@ -884,7 +907,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: false,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: StoryCareerSectionText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -900,7 +923,9 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child: Center(
+                                child: Text(
+                                    StoryCareerSectionText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -928,7 +953,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(StoryCareerSectionText.cancelLabel),
                     ),
                   ),
                 ],

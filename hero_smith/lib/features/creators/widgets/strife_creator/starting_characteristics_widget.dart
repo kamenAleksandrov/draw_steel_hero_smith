@@ -5,6 +5,7 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/starting_characteristics_widget_text.dart';
 
 class StartingCharacteristicsWidget extends StatefulWidget {
   const StartingCharacteristicsWidget({
@@ -192,7 +193,7 @@ class _StartingCharacteristicsWidgetState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Starting Characteristics',
+              StartingCharacteristicsWidgetText.title,
               style: AppTextStyles.title,
             ),
             const SizedBox(height: 4),
@@ -208,7 +209,7 @@ class _StartingCharacteristicsWidgetState
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Select an array to unlock assignable values.',
+                      StartingCharacteristicsWidgetText.selectArrayHint,
                       style: AppTextStyles.caption
                           .copyWith(color: Colors.orangeAccent, fontSize: 11),
                     ),
@@ -386,7 +387,10 @@ class _StartingCharacteristicsWidgetState
                   if (assignedToken != null)
                     _buildValueTag('${_formatSigned(arrayValue)}', color)
                   else
-                    _buildValueOutlineTag('?', color),
+                    _buildValueOutlineTag(
+                      StartingCharacteristicsWidgetText.valueOutlinePlaceholder,
+                      color,
+                    ),
                   if (levelBonus != 0)
                     _buildValueTag('+$levelBonus', color),
                 ],
@@ -411,7 +415,7 @@ class _StartingCharacteristicsWidgetState
           color: Colors.grey.withOpacity(0.12),
         ),
         child: const Text(
-          'All starting characteristics are fixed for this class.',
+          StartingCharacteristicsWidgetText.allFixedMessage,
           style: AppTextStyles.caption,
         ),
       );
@@ -420,14 +424,14 @@ class _StartingCharacteristicsWidgetState
     return DropdownButtonFormField<CharacteristicArray?>(
       value: _controller.selectedArray,
       decoration: const InputDecoration(
-        labelText: 'Characteristic array',
+        labelText: StartingCharacteristicsWidgetText.arrayLabel,
         border: OutlineInputBorder(),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       items: [
         const DropdownMenuItem<CharacteristicArray?>(
           value: null,
-          child: Text('Select characteristic array'),
+          child: Text(StartingCharacteristicsWidgetText.arrayPlaceholder),
         ),
         ...arrays.map((array) {
           final preview = array.values.map(_formatSigned).join(' / ');
@@ -452,7 +456,9 @@ class _StartingCharacteristicsWidgetState
     final backgroundColor =
         highlight ? color.withOpacity(0.18) : color.withOpacity(0.1);
     final message =
-        _controller.selectedArray == null ? '?' : 'Drop';
+        _controller.selectedArray == null
+            ? StartingCharacteristicsWidgetText.dropHintEmpty
+            : StartingCharacteristicsWidgetText.dropHintDrop;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
@@ -574,10 +580,10 @@ class _StartingCharacteristicsWidgetState
     }
     final parts = <String>[];
     if (!assignmentsComplete) {
-      parts.add('Assign all array values');
+      parts.add(StartingCharacteristicsWidgetText.assignmentMissingArray);
     }
     if (!choicesComplete) {
-      parts.add('Choose level-up bonuses');
+      parts.add(StartingCharacteristicsWidgetText.assignmentMissingChoices);
     }
     return Padding(
       padding: const EdgeInsets.only(top: 4),
@@ -587,7 +593,7 @@ class _StartingCharacteristicsWidgetState
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              parts.join(' \u2022 '),
+              parts.join(StartingCharacteristicsWidgetText.assignmentStatusSeparator),
               style: AppTextStyles.caption.copyWith(color: Colors.orangeAccent),
             ),
           ),
@@ -620,7 +626,7 @@ class _StartingCharacteristicsWidgetState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Available values',
+                StartingCharacteristicsWidgetText.availableValuesTitle,
                 style: AppTextStyles.subtitle.copyWith(
                   color: accent,
                   fontWeight: FontWeight.bold,
@@ -630,13 +636,13 @@ class _StartingCharacteristicsWidgetState
               if (available.isEmpty)
                 Text(
                   isActive
-                      ? 'Release to clear this value.'
-                      : 'All values assigned. Drag a chip here to clear it.',
+                      ? StartingCharacteristicsWidgetText.releaseToClearValue
+                      : StartingCharacteristicsWidgetText.allValuesAssigned,
                   style: AppTextStyles.caption,
                 )
               else ...[
                 Text(
-                  'Hold and drag to assign',
+                  StartingCharacteristicsWidgetText.holdAndDragToAssign,
                   style: AppTextStyles.caption.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -661,7 +667,7 @@ class _StartingCharacteristicsWidgetState
               if (isActive) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Release to clear from its current slot.',
+                  StartingCharacteristicsWidgetText.releaseToClearSlot,
                   style: AppTextStyles.caption.copyWith(
                     color: accent,
                     fontWeight: FontWeight.w600,
@@ -695,7 +701,7 @@ class _StartingCharacteristicsWidgetState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Potency (based on $baseName)',
+            '${StartingCharacteristicsWidgetText.potencyTitlePrefix}$baseName${StartingCharacteristicsWidgetText.potencyTitleSuffix}',
             style: AppTextStyles.subtitle.copyWith(
               color: AppColors.accent,
               fontWeight: FontWeight.bold,
@@ -748,7 +754,7 @@ class _StartingCharacteristicsWidgetState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Level bonuses',
+            StartingCharacteristicsWidgetText.levelBonusesTitle,
             style: AppTextStyles.subtitle.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
@@ -768,7 +774,8 @@ class _StartingCharacteristicsWidgetState
       child: DropdownButtonFormField<String?>(
         value: current,
         decoration: InputDecoration(
-          labelText: 'Level ${choice.level} bonus',
+          labelText:
+              '${StartingCharacteristicsWidgetText.levelBonusLabelPrefix}${choice.level}${StartingCharacteristicsWidgetText.levelBonusLabelSuffix}',
           border: const OutlineInputBorder(),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -776,7 +783,8 @@ class _StartingCharacteristicsWidgetState
         items: [
           const DropdownMenuItem<String?>(
             value: null,
-            child: Text('Select characteristic'),
+            child:
+                Text(StartingCharacteristicsWidgetText.selectCharacteristicPlaceholder),
           ),
           ...CharacteristicUtils.characteristicOrder.map((stat) {
             final label = _displayName(stat);

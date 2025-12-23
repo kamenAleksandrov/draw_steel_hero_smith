@@ -10,6 +10,7 @@ import '../../../../core/models/component.dart' as model;
 import '../../../../core/models/perks_models.dart';
 import '../../../../core/services/perks_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/choose_perks_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
 
@@ -269,10 +270,16 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
 
     return languagesAsync.when(
       loading: () => _buildLoadingCard(),
-      error: (e, _) => _buildErrorCard('Failed to load languages', e.toString()),
+      error: (e, _) => _buildErrorCard(
+        ChoosePerksWidgetText.loadLanguagesErrorTitle,
+        e.toString(),
+      ),
       data: (languages) => skillsAsync.when(
         loading: () => _buildLoadingCard(),
-        error: (e, _) => _buildErrorCard('Failed to load skills', e.toString()),
+        error: (e, _) => _buildErrorCard(
+          ChoosePerksWidgetText.loadSkillsErrorTitle,
+          e.toString(),
+        ),
         data: (skills) => _buildContent(
           context,
           languages,
@@ -340,11 +347,11 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(
-          'Perks',
+          ChoosePerksWidgetText.expansionTitle,
           style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Selected $assigned of $totalSlots options',
+          '${ChoosePerksWidgetText.selectionSubtitlePrefix}$assigned${ChoosePerksWidgetText.selectionSubtitleMiddle}$totalSlots${ChoosePerksWidgetText.selectionSubtitleSuffix}',
           style: AppTextStyles.caption,
         ),
         children: [
@@ -395,7 +402,9 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
         .toSet();
 
     final allowedGroupsText =
-        allowedGroups.isEmpty ? 'Any perk' : allowedGroups.map(_formatGroupLabel).join(', ');
+        allowedGroups.isEmpty
+            ? ChoosePerksWidgetText.anyPerkLabel
+            : allowedGroups.map(_formatGroupLabel).join(', ');
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -411,7 +420,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
           ),
           const SizedBox(height: 4),
           Text(
-            'Pick ${allowance.pickCount} perk${allowance.pickCount == 1 ? '' : 's'} from: $allowedGroupsText',
+            '${ChoosePerksWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? ChoosePerksWidgetText.allowancePickSingularSuffix : ChoosePerksWidgetText.allowancePickPluralSuffix}${ChoosePerksWidgetText.allowancePickFromPrefix}$allowedGroupsText',
             style: AppTextStyles.caption,
           ),
           const SizedBox(height: 8),
@@ -433,7 +442,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
                 _handleAllowanceSelectionChanged(allowance, selection),
             onDirty: () => setState(() {}),
             showHeader: true,
-            headerTitle: 'Perks',
+            headerTitle: ChoosePerksWidgetText.headerTitle,
           ),
         ],
       ),
@@ -443,7 +452,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
   String _formatGroupLabel(String? raw) {
     final value = raw?.trim();
     if (value == null || value.isEmpty) {
-      return 'General';
+      return ChoosePerksWidgetText.generalLabel;
     }
     return value
         .replaceAll('_', ' ')

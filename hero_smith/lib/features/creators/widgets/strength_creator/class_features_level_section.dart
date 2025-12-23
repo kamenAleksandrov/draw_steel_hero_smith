@@ -55,7 +55,9 @@ class _LevelSectionState extends State<_LevelSection>
             collapsedBackgroundColor: scheme.surface,
             leading: _LevelBadge(level: widget.levelNumber, isUnlocked: isUnlocked),
             title: Text(
-              'Level ${widget.levelNumber} Features',
+              '${ClassFeaturesLevelSectionText.levelTitlePrefix}'
+              '${widget.levelNumber}'
+              '${ClassFeaturesLevelSectionText.levelTitleSuffix}',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isUnlocked
@@ -64,7 +66,8 @@ class _LevelSectionState extends State<_LevelSection>
               ),
             ),
             subtitle: Text(
-              '${widget.features.length} feature${widget.features.length == 1 ? '' : 's'}',
+              '${widget.features.length}'
+              '${widget.features.length == 1 ? ClassFeaturesLevelSectionText.featureCountSingularSuffix : ClassFeaturesLevelSectionText.featureCountPluralSuffix}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),

@@ -68,7 +68,7 @@ class _OptionsSection extends StatelessWidget {
         // For grants: display all matching as auto-applied content
         if (isGrantsFeature && optionsContext.options.isNotEmpty) ...[
           Text(
-            'Granted Features',
+            OptionsSectionText.grantedFeaturesTitle,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
@@ -122,12 +122,12 @@ class _OptionsSection extends StatelessWidget {
   }
 
   String _headingText(int selectionLimit) {
-    if (selectionLimit == 1) return 'Choose One';
-    if (selectionLimit == 2) return 'Choose Two';
+    if (selectionLimit == 1) return OptionsSectionText.chooseOneHeading;
+    if (selectionLimit == 2) return OptionsSectionText.chooseTwoHeading;
     if (selectionLimit > 1 && selectionLimit < 99) {
-      return 'Select up to $selectionLimit';
+      return '${OptionsSectionText.selectUpToPrefix}$selectionLimit';
     }
-    return 'Select Options';
+    return OptionsSectionText.selectOptionsHeading;
   }
 
   bool _isAutoAppliedSelection() {
@@ -225,7 +225,7 @@ class _SelectionPrompt extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selection Required',
+                  OptionsSectionText.selectionRequiredTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.orange.shade800,
@@ -251,21 +251,21 @@ class _SelectionPrompt extends StatelessWidget {
   String _promptText() {
     final requiredCount = minimumRequired <= 0 ? 1 : minimumRequired;
 
-    if (selectionLimit == 1) return 'Choose one option below';
+    if (selectionLimit == 1) return OptionsSectionText.promptChooseOne;
     if (selectionLimit == 2) {
       return requiredCount >= 2
-          ? 'Choose two options below'
-          : 'Choose up to two options below';
+          ? OptionsSectionText.promptChooseTwo
+          : OptionsSectionText.promptChooseUpToTwo;
     }
 
     if (selectionLimit > 1 && selectionLimit < 99) {
       if (requiredCount >= selectionLimit) {
-        return 'Choose $selectionLimit options below';
+        return '${OptionsSectionText.promptChooseCountPrefix}$selectionLimit${OptionsSectionText.promptChooseCountSuffix}';
       }
-      return 'Choose up to $selectionLimit options below';
+      return '${OptionsSectionText.promptChooseUpToPrefix}$selectionLimit${OptionsSectionText.promptChooseUpToSuffix}';
     }
 
-    return 'Choose one or more options below';
+    return OptionsSectionText.promptChooseOneOrMore;
   }
 }
 
@@ -340,7 +340,7 @@ class _AutoAppliedContent extends StatelessWidget {
               const Icon(Icons.check_circle, size: 18, color: Colors.green),
               const SizedBox(width: 8),
               Text(
-                'Automatically Applied',
+                OptionsSectionText.autoAppliedLabel,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: Colors.green.shade700,
@@ -548,7 +548,10 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
     final currentSkillId = _getCurrentSkillId();
 
     final options = <_SearchOption<String?>>[
-      const _SearchOption<String?>(label: 'Choose skill', value: null),
+      const _SearchOption<String?>(
+        label: OptionsSectionText.chooseSkillOption,
+        value: null,
+      ),
       ...filteredSkills.map(
         (skill) => _SearchOption<String?>(
           label: skill.name,
@@ -560,7 +563,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
 
     final result = await _showSearchablePicker<String?>(
       context: context,
-      title: 'Select Skill',
+      title: OptionsSectionText.selectSkillTitle,
       options: options,
       selected: currentSkillId,
     );
@@ -624,7 +627,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Skill from $skillGroup',
+                  '${OptionsSectionText.skillFromGroupPrefix}$skillGroup',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color:
@@ -643,7 +646,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
               borderRadius: BorderRadius.circular(8),
               child: InputDecorator(
                 decoration: InputDecoration(
-                  labelText: 'Choose skill',
+                  labelText: OptionsSectionText.chooseSkillLabel,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -656,7 +659,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
                   filled: true,
                 ),
                 child: Text(
-                  currentSkillName ?? 'Select a skill',
+                  currentSkillName ?? OptionsSectionText.selectSkillPlaceholder,
                   style: TextStyle(
                     fontSize: 16,
                     color: currentSkillName != null
@@ -668,7 +671,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
             )
           else
             Text(
-              currentSkillName ?? 'No skill selected',
+              currentSkillName ?? OptionsSectionText.noSkillSelected,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurfaceVariant,
                 fontStyle: currentSkillName == null ? FontStyle.italic : null,
@@ -715,12 +718,18 @@ List<_OptionTextSection> _extractOptionTextSections(
   }
   final piety = _normalizeOptionText(option['piety']);
   if (piety != null) {
-    sections.add(_OptionTextSection(title: 'Piety', text: piety));
+    sections.add(_OptionTextSection(
+      title: OptionsSectionText.pietyTitle,
+      text: piety,
+    ));
   }
   final prayerEffect =
       _normalizeOptionText(option['prayer_effect'] ?? option['prayerEffect']);
   if (prayerEffect != null) {
-    sections.add(_OptionTextSection(title: 'Prayer Effect', text: prayerEffect));
+    sections.add(_OptionTextSection(
+      title: OptionsSectionText.prayerEffectTitle,
+      text: prayerEffect,
+    ));
   }
   return sections;
 }
@@ -836,7 +845,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: false,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: OptionsSectionText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -852,7 +861,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child: Center(
+                                child: Text(OptionsSectionText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -880,7 +890,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(OptionsSectionText.cancelLabel),
                     ),
                   ),
                 ],
@@ -1030,7 +1040,7 @@ class _OptionTileState extends State<_OptionTile>
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              'Matches your subclass',
+                              OptionsSectionText.matchesSubclassLabel,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.secondary,
                                 fontStyle: FontStyle.italic,
@@ -1053,7 +1063,9 @@ class _OptionTileState extends State<_OptionTile>
                       ),
                       onPressed: _toggleExpanded,
                       visualDensity: VisualDensity.compact,
-                      tooltip: _isExpanded ? 'Collapse' : 'Expand',
+                      tooltip: _isExpanded
+                          ? OptionsSectionText.collapseTooltip
+                          : OptionsSectionText.expandTooltip,
                     ),
                 ],
               ),

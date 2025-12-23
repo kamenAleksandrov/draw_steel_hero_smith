@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/level_selector_widget_text.dart';
 
 /// Widget for selecting hero level (1-10)
 class LevelSelectorWidget extends StatelessWidget {
@@ -28,7 +29,7 @@ class LevelSelectorWidget extends StatelessWidget {
                   child: DropdownButtonFormField<int>(
                     value: selectedLevel,
                     decoration: const InputDecoration(
-                      labelText: 'Hero Level',
+                      labelText: LevelSelectorWidgetText.heroLevelLabel,
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 12,
@@ -39,7 +40,7 @@ class LevelSelectorWidget extends StatelessWidget {
                         .map((level) => DropdownMenuItem(
                               value: level,
                               child: Text(
-                                'Level $level',
+                                '${LevelSelectorWidgetText.levelOptionPrefix}$level',
                                 style: AppTextStyles.body,
                               ),
                             ))

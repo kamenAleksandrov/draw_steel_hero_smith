@@ -174,7 +174,7 @@ class _HeroicResourceProgressionFeatureState
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Granted Feature',
+                    HeroicResourceProgressionFeatureText.grantedFeatureLabel,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: featureStyle.borderColor,
                       fontSize: 11,
@@ -257,14 +257,14 @@ class _HeroicResourceProgressionFeatureState
           ),
           const SizedBox(height: 8),
           Text(
-            'Select a Stormwight Kit',
+            HeroicResourceProgressionFeatureText.stormwightTitle,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Choose a Stormwight kit in the Strife tab to view your Growing Ferocity progression.',
+            HeroicResourceProgressionFeatureText.stormwightSubtitle,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -292,7 +292,7 @@ class _HeroicResourceProgressionFeatureState
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Select a subclass in the Strife tab to view progression benefits.',
+              HeroicResourceProgressionFeatureText.noProgressionMessage,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),

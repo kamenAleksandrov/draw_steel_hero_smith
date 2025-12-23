@@ -29,5 +29,5 @@ class HeroCreatorPageText {
   static const String saveStrifeTooltip = 'Save Strife';
   static const String tabLabelStory = 'Story';
   static const String tabLabelStrife = 'Strife';
-  static const String tabLabelStrength = 'Strenght';
+  static const String tabLabelStrength = 'Strength';
 }

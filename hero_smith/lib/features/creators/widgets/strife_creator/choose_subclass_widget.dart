@@ -6,6 +6,7 @@ import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/services/subclass_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/choose_subclass_widget_text.dart';
 
 class _SearchOption<T> {
   const _SearchOption({
@@ -76,7 +77,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: false,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: ChooseSubclassWidgetText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -92,7 +93,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child: Center(child: Text(ChooseSubclassWidgetText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -120,7 +121,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(ChooseSubclassWidgetText.cancelLabel),
                     ),
                   ),
                 ],
@@ -282,7 +283,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     } catch (e) {
       if (!mounted || requestId != _loadRequestId) return;
       setState(() {
-        _error = 'Failed to load subclass data: $e';
+        _error = '${ChooseSubclassWidgetText.loadErrorPrefix}$e';
         _isLoading = false;
       });
     }
@@ -413,13 +414,13 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         ? null
         : _deities.firstWhere(
             (entry) => entry.id == _selectedDeityId,
-            orElse: () => DeityOption(
-              id: _selectedDeityId!,
-              name: _selectedDeityId!,
-              category: 'god',
-              domains: const [],
-            ),
-          );
+          orElse: () => DeityOption(
+            id: _selectedDeityId!,
+            name: _selectedDeityId!,
+            category: ChooseSubclassWidgetText.deityCategoryFallback,
+            domains: const [],
+          ),
+        );
 
     // Get the skill from the selected subclass option
     final selectedOption = _selectedSubclassKey == null
@@ -486,14 +487,14 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
 
     children.add(
       Text(
-        'Subclass & Calling',
+        ChooseSubclassWidgetText.sectionTitle,
         style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.w600),
       ),
     );
     children.add(const SizedBox(height: 4));
     children.add(
       Text(
-        'Pick your order, oath, or domains to define your specialization.',
+        ChooseSubclassWidgetText.sectionSubtitle,
         style: AppTextStyles.caption,
       ),
     );
@@ -506,7 +507,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     } else if (plan.combineDomainsAsSubclass && plan.domainPickCount > 0) {
       children.add(
         Text(
-          'Your subclass is determined by the domains you select below.',
+          ChooseSubclassWidgetText.domainsDetermineSubclass,
           style: AppTextStyles.caption,
         ),
       );
@@ -558,7 +559,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     Future<void> openSearch() async {
       final searchOptions = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: '-- Choose subclass --',
+          label: ChooseSubclassWidgetText.subclassPlaceholderOption,
           value: null,
         ),
         ...options.map(
@@ -572,7 +573,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
 
       final result = await _showSearchablePicker<String?>(
         context: context,
-        title: 'Select Subclass',
+        title: ChooseSubclassWidgetText.subclassPickerTitle,
         options: searchOptions,
         selected: validatedValue,
       );
@@ -586,12 +587,14 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         onTap: openSearch,
         child: InputDecorator(
           decoration: const InputDecoration(
-            labelText: 'Subclass',
+            labelText: ChooseSubclassWidgetText.subclassLabel,
             border: OutlineInputBorder(),
             suffixIcon: Icon(Icons.search),
           ),
           child: Text(
-            selectedOption != null ? selectedOption.name : '-- Choose subclass --',
+            selectedOption != null
+                ? selectedOption.name
+                : ChooseSubclassWidgetText.subclassPlaceholderDisplay,
             style: TextStyle(
               fontSize: 16,
               color: selectedOption != null
@@ -648,7 +651,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         if (ability != null && ability.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
-            'Grants ability: $ability',
+            '${ChooseSubclassWidgetText.grantsAbilityPrefix}$ability',
             style: AppTextStyles.caption,
           ),
         ],
@@ -677,7 +680,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    'You already have the $skillInfo skill from a previous selection.',
+                    '${ChooseSubclassWidgetText.reservedSkillWarningPrefix}$skillInfo${ChooseSubclassWidgetText.reservedSkillWarningSuffix}',
                     style: AppTextStyles.caption.copyWith(
                       color: Colors.orange.shade800,
                     ),
@@ -695,7 +698,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     Future<void> openSearch() async {
       final searchOptions = <_SearchOption<String?>>[
         const _SearchOption<String?>(
-          label: '-- Choose deity --',
+          label: ChooseSubclassWidgetText.deityPlaceholderOption,
           value: null,
         ),
         ..._deities.map(
@@ -709,7 +712,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
 
       final result = await _showSearchablePicker<String?>(
         context: context,
-        title: 'Select Deity',
+        title: ChooseSubclassWidgetText.deityPickerTitle,
         options: searchOptions,
         selected: _selectedDeityId,
       );
@@ -723,7 +726,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
             (deity) => deity.id == _selectedDeityId,
             orElse: () => DeityOption(
               id: _selectedDeityId!,
-              name: 'Unknown',
+              name: ChooseSubclassWidgetText.deityUnknownName,
               category: '',
               domains: const [],
             ),
@@ -735,14 +738,14 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         onTap: openSearch,
         child: InputDecorator(
           decoration: const InputDecoration(
-            labelText: 'Deity',
+            labelText: ChooseSubclassWidgetText.deityLabel,
             border: OutlineInputBorder(),
             suffixIcon: Icon(Icons.search),
           ),
           child: Text(
             selectedDeity != null
-                ? '${selectedDeity.name} (${selectedDeity.category})'
-                : '-- Choose deity --',
+                ? '${selectedDeity.name}${ChooseSubclassWidgetText.deityDisplayPrefix}${selectedDeity.category}${ChooseSubclassWidgetText.deityDisplaySuffix}'
+                : ChooseSubclassWidgetText.deityPlaceholderDisplay,
             style: TextStyle(
               fontSize: 16,
               color: selectedDeity != null
@@ -766,7 +769,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         orElse: () => DeityOption(
           id: _selectedDeityId!,
           name: _selectedDeityId!,
-          category: 'god',
+          category: ChooseSubclassWidgetText.deityCategoryFallback,
           domains: const [],
         ),
       );
@@ -781,8 +784,8 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     return [
       Text(
         required > 0
-            ? 'Choose $required domain${required == 1 ? '' : 's'}'
-            : 'Choose domains',
+            ? '${ChooseSubclassWidgetText.domainHeaderRequiredPrefix}$required${required == 1 ? ChooseSubclassWidgetText.domainHeaderRequiredSingularSuffix : ChooseSubclassWidgetText.domainHeaderRequiredPluralSuffix}'
+            : ChooseSubclassWidgetText.domainHeaderNoRequired,
         style: AppTextStyles.subtitle.copyWith(fontSize: 14),
       ),
       const SizedBox(height: 8),
@@ -805,7 +808,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       if (remaining > 0) ...[
         const SizedBox(height: 8),
         Text(
-          '$remaining pick${remaining == 1 ? '' : 's'} remaining.',
+          '$remaining${ChooseSubclassWidgetText.remainingPicksPrefix}${remaining == 1 ? ChooseSubclassWidgetText.remainingPicksSingularSuffix : ChooseSubclassWidgetText.remainingPicksPluralSuffix}',
           style: AppTextStyles.caption,
         ),
       ],

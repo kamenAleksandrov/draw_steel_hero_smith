@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/story_ancestry_section_text.dart';
 
 class StoryAncestrySection extends ConsumerWidget {
   const StoryAncestrySection({
@@ -40,8 +41,8 @@ class StoryAncestrySection extends ConsumerWidget {
           children: [
             HeroTheme.buildSectionHeader(
               context,
-              title: 'Ancestry',
-              subtitle: 'Your hero\'s biological and cultural heritage',
+              title: StoryAncestrySectionText.sectionTitle,
+              subtitle: StoryAncestrySectionText.sectionSubtitle,
               icon: Icons.family_restroom,
               color: HeroTheme.getStepColor('ancestry'),
             ),
@@ -52,7 +53,8 @@ class StoryAncestrySection extends ConsumerWidget {
                 children: [
                   ancestriesAsync.when(
                     loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text('Error: $e',
+                    error: (e, _) => Text(
+                        '${StoryAncestrySectionText.errorPrefix}$e',
                         style: TextStyle(color: theme.colorScheme.error)),
                     data: (ancestries) => _buildAncestryDropdown(
                       context,
@@ -81,7 +83,11 @@ class StoryAncestrySection extends ConsumerWidget {
       (a) => a.id == selectedAncestryId,
       orElse: () => ancestries.isNotEmpty
           ? ancestries.first
-          : const model.Component(id: '', type: 'ancestry', name: 'Unknown'),
+          : const model.Component(
+              id: '',
+              type: 'ancestry',
+              name: StoryAncestrySectionText.unknownAncestryName,
+            ),
     );
 
     return Column(
@@ -89,7 +95,7 @@ class StoryAncestrySection extends ConsumerWidget {
       children: [
         InputDecorator(
           decoration: InputDecoration(
-            labelText: 'Choose Ancestry',
+            labelText: StoryAncestrySectionText.chooseAncestryLabel,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
@@ -100,7 +106,7 @@ class StoryAncestrySection extends ConsumerWidget {
               items: [
                 const DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Choose ancestry'),
+                  child: Text(StoryAncestrySectionText.chooseAncestryOption),
                 ),
                 ...ancestries.map(
                   (a) => DropdownMenuItem<String?>(
@@ -120,7 +126,8 @@ class StoryAncestrySection extends ConsumerWidget {
           const SizedBox(height: 16),
           traitsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Text('Error loading ancestry traits: $e'),
+            error: (e, _) => Text(
+                '${StoryAncestrySectionText.errorLoadingTraitsPrefix}$e'),
             data: (traitsComps) {
               final traitsForSelected = traitsComps.firstWhere(
                 (t) => t.data['ancestry_id'] == selectedAncestryId,
@@ -207,20 +214,41 @@ class _AncestryDetails extends StatelessWidget {
           runSpacing: 8,
           children: [
             if (height != null)
-              _chip('Height: ${height['min']}–${height['max']}', Colors.blue),
+              _chip(
+                '${StoryAncestrySectionText.heightChipPrefix}${height['min']}–${height['max']}',
+                Colors.blue,
+              ),
             if (weight != null)
-              _chip('Weight: ${weight['min']}–${weight['max']}', Colors.green),
+              _chip(
+                '${StoryAncestrySectionText.weightChipPrefix}${weight['min']}–${weight['max']}',
+                Colors.green,
+              ),
             if (life != null)
-              _chip('Lifespan: ${life['min']}–${life['max']}', Colors.purple),
-            if (size != null) _chip('Size: $size', Colors.orange),
-            if (speed != null) _chip('Speed: $speed', Colors.teal),
+              _chip(
+                '${StoryAncestrySectionText.lifespanChipPrefix}${life['min']}–${life['max']}',
+                Colors.purple,
+              ),
+            if (size != null)
+              _chip(
+                '${StoryAncestrySectionText.sizeChipPrefix}$size',
+                Colors.orange,
+              ),
+            if (speed != null)
+              _chip(
+                '${StoryAncestrySectionText.speedChipPrefix}$speed',
+                Colors.teal,
+              ),
             if (stability != null)
-              _chip('Stability: $stability', Colors.redAccent),
+              _chip(
+                '${StoryAncestrySectionText.stabilityChipPrefix}$stability',
+                Colors.redAccent,
+              ),
           ],
         ),
         const SizedBox(height: 16),
         if (signature != null) ...[
-          Text('Signature: ${signature['name'] ?? ''}',
+          Text(
+              '${StoryAncestrySectionText.signatureLabelPrefix}${signature['name'] ?? ''}',
               style: const TextStyle(fontWeight: FontWeight.w600)),
           if ((signature['description'] as String?)?.isNotEmpty == true) ...[
             const SizedBox(height: 4),
@@ -246,9 +274,13 @@ class _AncestryDetails extends StatelessWidget {
         ],
         Row(
           children: [
-            Chip(label: Text('Points: $points')),
+            Chip(
+                label: Text(
+                    '${StoryAncestrySectionText.pointsLabelPrefix}$points')),
             const SizedBox(width: 8),
-            Chip(label: Text('Remaining: $remaining')),
+            Chip(
+                label: Text(
+                    '${StoryAncestrySectionText.remainingLabelPrefix}$remaining')),
           ],
         ),
         const SizedBox(height: 8),
@@ -386,14 +418,8 @@ class _AncestryDetails extends StatelessWidget {
     return excluded;
   }
 
-  static const _immunityTypes = [
-    'acid',
-    'cold',
-    'corruption',
-    'fire',
-    'lightning',
-    'poison',
-  ];
+  static const List<String> _immunityTypes =
+      StoryAncestrySectionText.immunityTypes;
 
   Widget _buildImmunityDropdown({
     required String signatureId,
@@ -410,7 +436,7 @@ class _AncestryDetails extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: currentValue,
       decoration: InputDecoration(
-        labelText: 'Choose Immunity Type',
+        labelText: StoryAncestrySectionText.immunityDropdownLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         filled: true,
@@ -419,7 +445,7 @@ class _AncestryDetails extends StatelessWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('Select immunity'),
+          child: Text(StoryAncestrySectionText.immunityDropdownHint),
         ),
         ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
@@ -441,7 +467,7 @@ class _AncestryDetails extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: currentValue,
       decoration: InputDecoration(
-        labelText: 'Choose Ability',
+        labelText: StoryAncestrySectionText.abilityDropdownLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         filled: true,
@@ -450,7 +476,7 @@ class _AncestryDetails extends StatelessWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('Select ability'),
+          child: Text(StoryAncestrySectionText.abilityDropdownHint),
         ),
         ...options.map(
           (ability) => DropdownMenuItem<String>(

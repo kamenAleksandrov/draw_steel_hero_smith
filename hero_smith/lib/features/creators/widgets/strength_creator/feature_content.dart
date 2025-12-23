@@ -241,7 +241,7 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['Choose domains above to unlock this feature.'],
+        messages: [FeatureContentText.domainUnlockMessage],
         requiresExternalSelection: true,
       );
     }
@@ -256,7 +256,7 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['No options match your selected domains.'],
+        messages: [FeatureContentText.domainNoOptionsMessage],
       );
     }
 
@@ -268,7 +268,7 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['No options match your selected domains.'],
+        messages: [FeatureContentText.domainNoOptionsMessage],
       );
     }
 
@@ -278,8 +278,8 @@ class _FeatureContent extends StatelessWidget {
       options: filtered,
       allowEditing: allowEditing,
       messages: allowEditing
-          ? ['Pick the option that fits your chosen domains.']
-          : ['Automatically applied for your domain.'],
+          ? [FeatureContentText.domainPickMessage]
+          : [FeatureContentText.domainAutoMessage],
     );
   }
 
@@ -288,7 +288,7 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['Choose a deity above to unlock this feature.'],
+        messages: [FeatureContentText.deityUnlockMessage],
         requiresExternalSelection: true,
       );
     }
@@ -312,17 +312,17 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['No options match your chosen deity.'],
+        messages: [FeatureContentText.deityNoOptionsMessage],
       );
     }
 
     final allowEditing = filtered.length > 1;
     final deityName = widget.subclassSelection?.deityName?.trim();
     final message = allowEditing
-        ? 'Pick the option that matches your deity.'
+        ? FeatureContentText.deityPickMessage
         : (deityName?.isEmpty ?? true
-            ? 'Automatically applied for your deity.'
-            : 'Automatically applied for $deityName.');
+            ? FeatureContentText.deityAutoMessage
+            : '${FeatureContentText.deityAutoMessagePrefix}$deityName${FeatureContentText.deityAutoMessageSuffix}');
 
     return _OptionFilterResult(
       options: filtered,
@@ -336,7 +336,7 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['Choose a subclass above to unlock this feature.'],
+        messages: [FeatureContentText.subclassUnlockMessage],
         requiresExternalSelection: true,
       );
     }
@@ -360,17 +360,17 @@ class _FeatureContent extends StatelessWidget {
       return const _OptionFilterResult(
         options: [],
         allowEditing: false,
-        messages: ['No options match your selected subclass.'],
+        messages: [FeatureContentText.subclassNoOptionsMessage],
       );
     }
 
     final allowEditing = filtered.length > 1;
     final subclassName = widget.subclassSelection?.subclassName?.trim();
     final message = allowEditing
-        ? 'Pick the option that fits your subclass.'
+        ? FeatureContentText.subclassPickMessage
         : (subclassName?.isEmpty ?? true
-            ? 'Automatically applied for your subclass.'
-            : 'Automatically applied for $subclassName.');
+            ? FeatureContentText.subclassAutoMessage
+            : '${FeatureContentText.subclassAutoMessagePrefix}$subclassName${FeatureContentText.subclassAutoMessageSuffix}');
 
     return _OptionFilterResult(
       options: filtered,
@@ -462,10 +462,26 @@ class _FeatureContent extends StatelessWidget {
       sections.add(_DetailBlock(title: title, icon: icon, content: content!));
     }
 
-    addSection('In Combat', Icons.sports_kabaddi, details!['in_combat']);
-    addSection('Out of Combat', Icons.explore, details!['out_of_combat']);
-    addSection('Special', Icons.auto_awesome, details!['special']);
-    addSection('Notes', Icons.sticky_note_2, details!['notes']);
+    addSection(
+      FeatureContentText.detailTitleInCombat,
+      Icons.sports_kabaddi,
+      details!['in_combat'],
+    );
+    addSection(
+      FeatureContentText.detailTitleOutOfCombat,
+      Icons.explore,
+      details!['out_of_combat'],
+    );
+    addSection(
+      FeatureContentText.detailTitleSpecial,
+      Icons.auto_awesome,
+      details!['special'],
+    );
+    addSection(
+      FeatureContentText.detailTitleNotes,
+      Icons.sticky_note_2,
+      details!['notes'],
+    );
 
     return sections;
   }

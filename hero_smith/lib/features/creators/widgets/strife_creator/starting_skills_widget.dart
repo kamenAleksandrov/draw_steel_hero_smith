@@ -7,6 +7,7 @@ import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/starting_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
 typedef SkillSelectionChanged = void Function(
@@ -110,7 +111,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _error = 'Failed to load skills: $e';
+        _error = '${StartingSkillsWidgetText.loadErrorPrefix}$e';
       });
     }
   }
@@ -344,7 +345,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Failed to load skills',
+                StartingSkillsWidgetText.loadErrorTitle,
                 style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
               ),
               const SizedBox(height: 8),
@@ -364,7 +365,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         child: const Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'This class does not grant additional skill picks.',
+            StartingSkillsWidgetText.noSkillsMessage,
             style: AppTextStyles.caption,
           ),
         ),
@@ -385,11 +386,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(
-          'Skills',
+          StartingSkillsWidgetText.expansionTitle,
           style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Selected $assigned of $totalSlots options',
+          '${StartingSkillsWidgetText.selectionSubtitlePrefix}$assigned${StartingSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${StartingSkillsWidgetText.selectionSubtitleSuffix}',
           style: AppTextStyles.caption,
         ),
         children: [
@@ -426,7 +427,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Granted Skills',
+            StartingSkillsWidgetText.grantedSkillsTitle,
             style: AppTextStyles.caption.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
@@ -468,7 +469,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Build Suggestions',
+            StartingSkillsWidgetText.quickBuildTitle,
             style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
@@ -495,7 +496,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     final slots = _selections[allowance.id] ?? const [];
 
     final allowedGroupsText = allowance.allowedGroups.isEmpty
-        ? 'Any skill'
+        ? StartingSkillsWidgetText.anySkillLabel
         : allowance.allowedGroups
             .map((group) => group[0].toUpperCase() + group.substring(1))
             .join(', ');
@@ -514,7 +515,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Pick ${allowance.pickCount} skill${allowance.pickCount == 1 ? '' : 's'} from: $allowedGroupsText',
+            '${StartingSkillsWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? StartingSkillsWidgetText.allowancePickSingularSuffix : StartingSkillsWidgetText.allowancePickPluralSuffix}${StartingSkillsWidgetText.allowancePickFromPrefix}$allowedGroupsText',
             style: AppTextStyles.caption,
           ),
           const SizedBox(height: 8),
@@ -543,7 +544,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
               child: DropdownButtonFormField<String?>(
                 initialValue: current,
                 decoration: InputDecoration(
-                  labelText: 'Choice ${index + 1}',
+                  labelText:
+                      '${StartingSkillsWidgetText.choiceLabelPrefix}${index + 1}',
                   border: const OutlineInputBorder(),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -551,12 +553,14 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                 items: [
                   const DropdownMenuItem<String?>(
                     value: null,
-                    child: Text('Unassigned'),
+                    child: Text(StartingSkillsWidgetText.unassignedLabel),
                   ),
                   ...availableOptions.map(
                     (option) => DropdownMenuItem<String?>(
                       value: option.id,
-                      child: Text('${option.name} (${option.group})'),
+                      child: Text(
+                        '${option.name}${StartingSkillsWidgetText.selectedOptionGroupPrefix}${option.group}${StartingSkillsWidgetText.selectedOptionGroupSuffix}',
+                      ),
                     ),
                   ),
                 ],

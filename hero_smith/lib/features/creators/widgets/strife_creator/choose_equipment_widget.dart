@@ -5,6 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
 import '../../../../core/theme/hero_theme.dart';
 import '../../../../core/theme/kit_theme.dart';
+import '../../../../core/theme/text/choose_equipment_widget_text.dart';
 import '../../../../widgets/kits/kit_card.dart';
 import '../../../../widgets/kits/modifier_card.dart';
 import '../../../../widgets/kits/stormwight_kit_card.dart';
@@ -49,21 +50,23 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
   ];
 
   static const Map<String, String> _equipmentTypeTitles = <String, String>{
-    'kit': 'Standard Kits',
-    'psionic_augmentation': 'Psionic Augmentations',
-    'enchantment': 'Enchantments',
-    'prayer': 'Prayers',
-    'ward': 'Wards',
-    'stormwight_kit': 'Stormwight Kits',
+    'kit': ChooseEquipmentWidgetText.equipmentTypeTitleKit,
+    'psionic_augmentation': ChooseEquipmentWidgetText.equipmentTypeTitlePsionic,
+    'enchantment': ChooseEquipmentWidgetText.equipmentTypeTitleEnchantment,
+    'prayer': ChooseEquipmentWidgetText.equipmentTypeTitlePrayer,
+    'ward': ChooseEquipmentWidgetText.equipmentTypeTitleWard,
+    'stormwight_kit': ChooseEquipmentWidgetText.equipmentTypeTitleStormwight,
   };
 
   static const Map<String, String> _equipmentTypeChipTitles = <String, String>{
-    'kit': 'Standard Kit',
-    'psionic_augmentation': 'Augmentation',
-    'enchantment': 'Enchantment',
-    'prayer': 'Prayer',
-    'ward': 'Ward',
-    'stormwight_kit': 'Stormwight Kit',
+    'kit': ChooseEquipmentWidgetText.equipmentTypeChipTitleKit,
+    'psionic_augmentation':
+        ChooseEquipmentWidgetText.equipmentTypeChipTitlePsionic,
+    'enchantment': ChooseEquipmentWidgetText.equipmentTypeChipTitleEnchantment,
+    'prayer': ChooseEquipmentWidgetText.equipmentTypeChipTitlePrayer,
+    'ward': ChooseEquipmentWidgetText.equipmentTypeChipTitleWard,
+    'stormwight_kit':
+        ChooseEquipmentWidgetText.equipmentTypeChipTitleStormwight,
   };
 
   static const Map<String, IconData> _equipmentTypeIcons = <String, IconData>{
@@ -93,8 +96,8 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
           children: [
             HeroTheme.buildSectionHeader(
               context,
-              title: 'Equipment & Modifications',
-              subtitle: 'Select the loadout required by your class',
+              title: ChooseEquipmentWidgetText.sectionTitle,
+              subtitle: ChooseEquipmentWidgetText.sectionSubtitle,
               icon: Icons.inventory_2,
               color: HeroTheme.getStepColor('kit'),
             ),
@@ -233,10 +236,10 @@ class _EquipmentSlotTile extends ConsumerWidget {
                 icon: const Icon(Icons.add_shopping_cart),
                 label: Text(
                   isLoading
-                      ? 'Loading...'
+                      ? ChooseEquipmentWidgetText.buttonLoadingLabel
                       : (selectedItem == null
-                          ? 'Select ${slot.label}'
-                          : 'Change ${slot.label}'),
+                          ? '${ChooseEquipmentWidgetText.buttonSelectPrefix}${slot.label}'
+                          : '${ChooseEquipmentWidgetText.buttonChangePrefix}${slot.label}'),
                 ),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
@@ -300,7 +303,7 @@ class _EquipmentSlotTile extends ConsumerWidget {
             ] else if (snapshot.hasError) ...[
               const SizedBox(height: 8),
               Text(
-                'Unable to load selected item',
+                ChooseEquipmentWidgetText.unableToLoadSelectedItem,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.error,
                 ),
@@ -390,7 +393,9 @@ class _EquipmentCategoryData {
       data: (items) => items.length,
       orElse: () => null,
     );
-    return count == null ? label : '$label ($count)';
+    return count == null
+        ? label
+        : '$label${ChooseEquipmentWidgetText.categoryCountPrefix}$count${ChooseEquipmentWidgetText.categoryCountSuffix}';
   }
 }
 
@@ -462,7 +467,9 @@ class _EquipmentSelectionDialogState
             mainAxisSize: MainAxisSize.min,
             children: [
               AppBar(
-                title: Text('Select ${widget.slotLabel}'),
+                title: Text(
+                  '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
+                ),
                 automaticallyImplyLeading: false,
                 actions: [
                   IconButton(
@@ -473,7 +480,7 @@ class _EquipmentSelectionDialogState
               ),
               const Padding(
                 padding: EdgeInsets.all(24.0),
-                child: Text('No items available'),
+                child: Text(ChooseEquipmentWidgetText.noItemsAvailable),
               ),
             ],
           ),
@@ -492,7 +499,9 @@ class _EquipmentSelectionDialogState
           child: Column(
             children: [
               AppBar(
-                title: Text('Select ${widget.slotLabel}'),
+                title: Text(
+                  '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
+                ),
                 automaticallyImplyLeading: false,
                 actions: [
                   if (widget.canRemove)
@@ -501,7 +510,7 @@ class _EquipmentSelectionDialogState
                           .pop(EquipmentAndModificationsWidget._removeSignal),
                       icon: const Icon(Icons.clear, color: Colors.white),
                       label: const Text(
-                        'Remove',
+                        ChooseEquipmentWidgetText.removeLabel,
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -517,7 +526,7 @@ class _EquipmentSelectionDialogState
                   controller: _searchController,
                   autofocus: false,
                   decoration: InputDecoration(
-                    hintText: 'Search equipment...',
+                    hintText: ChooseEquipmentWidgetText.searchHint,
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchQuery.isEmpty
                         ? null
@@ -618,8 +627,8 @@ class _EquipmentSelectionDialogState
               padding: const EdgeInsets.all(24.0),
               child: Text(
                 query.isEmpty
-                    ? 'No ${category.label.toLowerCase()} available'
-                    : 'No results for "${_searchController.text}"',
+                    ? '${ChooseEquipmentWidgetText.noItemsPrefix}${category.label.toLowerCase()}${ChooseEquipmentWidgetText.noItemsSuffix}'
+                    : '${ChooseEquipmentWidgetText.noResultsPrefix}${_searchController.text}${ChooseEquipmentWidgetText.noResultsSuffix}',
               ),
             ),
           );
@@ -717,7 +726,9 @@ class _EquipmentSelectionDialogState
       error: (error, stack) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Text('Error loading ${category.label.toLowerCase()}: $error'),
+          child: Text(
+            '${ChooseEquipmentWidgetText.errorLoadingPrefix}${category.label.toLowerCase()}${ChooseEquipmentWidgetText.errorLoadingSuffix}$error',
+          ),
         ),
       ),
     );

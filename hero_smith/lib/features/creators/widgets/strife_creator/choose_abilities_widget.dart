@@ -8,6 +8,7 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/choose_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
@@ -134,7 +135,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _error = 'Failed to load abilities: $e';
+        _error = '${ChooseAbilitiesWidgetText.loadErrorPrefix}$e';
       });
     }
   }
@@ -464,7 +465,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Failed to load abilities',
+                ChooseAbilitiesWidgetText.loadErrorTitle,
                 style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
               ),
               const SizedBox(height: 8),
@@ -484,7 +485,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         child: const Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'This class does not provide ability selections at this level.',
+            ChooseAbilitiesWidgetText.noAbilitiesMessage,
             style: AppTextStyles.caption,
           ),
         ),
@@ -507,11 +508,11 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(
-          'Abilities',
+          ChooseAbilitiesWidgetText.expansionTitle,
           style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Selected $selectedCount of $totalSlots options',
+          '${ChooseAbilitiesWidgetText.selectionSubtitlePrefix}$selectedCount${ChooseAbilitiesWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseAbilitiesWidgetText.selectionSubtitleSuffix}',
           style: AppTextStyles.caption,
         ),
         children: [
@@ -560,7 +561,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
           const SizedBox(height: 8),
           if (options.isEmpty)
             Text(
-              'No abilities available for this allowance.',
+              ChooseAbilitiesWidgetText.noAllowanceOptionsMessage,
               style: AppTextStyles.caption,
             )
           else
@@ -590,7 +591,8 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                     DropdownButtonFormField<String?>(
                       initialValue: current,
                       decoration: InputDecoration(
-                        labelText: 'Choice ${index + 1}',
+                        labelText:
+                            '${ChooseAbilitiesWidgetText.choiceLabelPrefix}${index + 1}',
                         border: const OutlineInputBorder(),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -600,7 +602,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                       items: [
                         const DropdownMenuItem<String?>(
                           value: null,
-                          child: Text('Unassigned'),
+                          child: Text(ChooseAbilitiesWidgetText.unassignedLabel),
                         ),
                         ...availableOptions.map(
                           (option) => DropdownMenuItem<String?>(
@@ -629,19 +631,27 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
   String _abilityOptionLabel(AbilityOption option) {
     final buffer = StringBuffer(option.name);
     if (option.isSignature) {
-      buffer.write(' (Signature)');
+      buffer.write(ChooseAbilitiesWidgetText.signatureSuffix);
     } else if (option.costAmount != null && option.costAmount! > 0) {
       final resource = option.resource;
       if (resource != null && resource.isNotEmpty) {
-        buffer.write(' ($resource ${option.costAmount})');
+        buffer.write(
+          '${ChooseAbilitiesWidgetText.resourceCostPrefix}$resource${ChooseAbilitiesWidgetText.resourceCostMiddle}${option.costAmount}${ChooseAbilitiesWidgetText.resourceCostSuffix}',
+        );
       } else {
-        buffer.write(' (Cost ${option.costAmount})');
+        buffer.write(
+          '${ChooseAbilitiesWidgetText.costPrefix}${option.costAmount}${ChooseAbilitiesWidgetText.costSuffix}',
+        );
       }
     } else if (option.resource != null && option.resource!.isNotEmpty) {
-      buffer.write(' (${option.resource})');
+      buffer.write(
+        '${ChooseAbilitiesWidgetText.resourceOnlyPrefix}${option.resource}${ChooseAbilitiesWidgetText.resourceOnlySuffix}',
+      );
     }
     if (option.subclass != null && option.subclass!.isNotEmpty) {
-      buffer.write(' - ${option.subclass}');
+      buffer.write(
+        '${ChooseAbilitiesWidgetText.subclassSuffixPrefix}${option.subclass}',
+      );
     }
     return buffer.toString();
   }
@@ -649,29 +659,35 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
   String _buildAllowanceHelperText(AbilityAllowance allowance) {
     final buffer = StringBuffer();
     buffer.write(
-        'Pick ${allowance.pickCount} ability${allowance.pickCount == 1 ? '' : 'ies'}');
+      '${ChooseAbilitiesWidgetText.helperPickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? ChooseAbilitiesWidgetText.helperPickSingularSuffix : ChooseAbilitiesWidgetText.helperPickPluralSuffix}',
+    );
     if (allowance.isSignature) {
-      buffer.write(' from the signature list.');
+      buffer.write(ChooseAbilitiesWidgetText.helperSignatureSuffix);
     } else if (allowance.costAmount != null) {
-      buffer.write(' costing ${allowance.costAmount}');
+      buffer.write(
+        '${ChooseAbilitiesWidgetText.helperCostPrefix}${allowance.costAmount}',
+      );
       if (allowance.resource != null && allowance.resource!.isNotEmpty) {
-        buffer.write(' ${allowance.resource}');
+        buffer.write(
+          '${ChooseAbilitiesWidgetText.helperCostResourcePrefix}${allowance.resource}',
+        );
       }
-      buffer.write('.');
+      buffer.write(ChooseAbilitiesWidgetText.helperCostSuffix);
     } else {
-      buffer.write('.');
+      buffer.write(ChooseAbilitiesWidgetText.helperDefaultSuffix);
     }
 
     if (allowance.requiresSubclass) {
       buffer.write(
         _isConduitClass
-            ? ' Includes domain abilities.'
-            : ' Includes subclass abilities.',
+            ? ChooseAbilitiesWidgetText.helperIncludeDomainAbilities
+            : ChooseAbilitiesWidgetText.helperIncludeSubclassAbilities,
       );
     }
     if (allowance.includePreviousLevels) {
       buffer.write(
-          ' Unchosen abilities from previous levels are also available.');
+        ChooseAbilitiesWidgetText.helperIncludePreviousLevels,
+      );
     }
     return buffer.toString();
   }

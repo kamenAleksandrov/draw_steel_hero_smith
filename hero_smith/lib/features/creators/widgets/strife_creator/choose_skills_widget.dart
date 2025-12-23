@@ -8,6 +8,7 @@ import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/text/choose_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
 class _SearchOption<T> {
@@ -79,7 +80,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: false,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: ChooseSkillsWidgetText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -95,7 +96,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child:
+                                Center(child: Text(ChooseSkillsWidgetText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -123,7 +125,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(ChooseSkillsWidgetText.cancelLabel),
                     ),
                   ),
                 ],
@@ -257,7 +259,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _error = 'Failed to load skills: $e';
+        _error = '${ChooseSkillsWidgetText.loadErrorPrefix}$e';
       });
     }
   }
@@ -595,7 +597,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Failed to load skills',
+                ChooseSkillsWidgetText.loadErrorTitle,
                 style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
               ),
               const SizedBox(height: 8),
@@ -615,7 +617,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         child: const Padding(
           padding: EdgeInsets.all(16),
           child: Text(
-            'This class does not grant additional skill picks.',
+            ChooseSkillsWidgetText.noSkillsMessage,
             style: AppTextStyles.caption,
           ),
         ),
@@ -638,11 +640,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         onExpansionChanged: (expanded) =>
             setState(() => _isExpanded = expanded),
         title: Text(
-          'Skills',
+          ChooseSkillsWidgetText.expansionTitle,
           style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          'Selected $assigned of $totalSlots options',
+          '${ChooseSkillsWidgetText.selectionSubtitlePrefix}$assigned${ChooseSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseSkillsWidgetText.selectionSubtitleSuffix}',
           style: AppTextStyles.caption,
         ),
         children: [
@@ -681,7 +683,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Granted Skills',
+            ChooseSkillsWidgetText.grantedSkillsTitle,
             style: AppTextStyles.caption.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
@@ -714,8 +716,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
           if (duplicateGrantNames.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
-              'Already assigned: ${duplicateGrantNames.join(', ')}. '
-              'Change another pick if you don\'t want to waste this grant.',
+              '${ChooseSkillsWidgetText.duplicateGrantPrefix}${duplicateGrantNames.join(', ')}${ChooseSkillsWidgetText.duplicateGrantSuffix}',
               style: AppTextStyles.caption.copyWith(
                 color: Colors.orange,
               ),
@@ -733,7 +734,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Quick Build Suggestions',
+            ChooseSkillsWidgetText.quickBuildTitle,
             style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
@@ -760,7 +761,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     final slots = _selections[allowance.id] ?? const [];
 
     final allowedGroupsText = allowance.allowedGroups.isEmpty
-        ? 'Any skill'
+        ? ChooseSkillsWidgetText.anySkillLabel
         : allowance.allowedGroups
             .map((group) => group[0].toUpperCase() + group.substring(1))
             .join(', ');
@@ -779,7 +780,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
           ),
           const SizedBox(height: 4),
           Text(
-            'Pick ${allowance.pickCount} skill${allowance.pickCount == 1 ? '' : 's'} from: $allowedGroupsText',
+            '${ChooseSkillsWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? ChooseSkillsWidgetText.allowancePickSingularSuffix : ChooseSkillsWidgetText.allowancePickPluralSuffix}${ChooseSkillsWidgetText.allowancePickFromPrefix}$allowedGroupsText',
             style: AppTextStyles.caption,
           ),
           const SizedBox(height: 8),
@@ -814,7 +815,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                     orElse: () => availableOptions.firstOrNull ??
                         SkillOption(
                           id: current,
-                          name: 'Unknown',
+                          name: ChooseSkillsWidgetText.unassignedFallbackName,
                           group: '',
                           description: '',
                         ),
@@ -824,7 +825,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
             Future<void> openSearch() async {
               final searchOptions = <_SearchOption<String?>>[
                 const _SearchOption<String?>(
-                  label: 'Unassigned',
+                  label: ChooseSkillsWidgetText.unassignedSearchOptionLabel,
                   value: null,
                 ),
                 ...availableOptions.map(
@@ -838,7 +839,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
 
               final result = await _showSearchablePicker<String?>(
                 context: context,
-                title: '${allowance.label} - Choice ${index + 1}',
+                title: '${allowance.label}${ChooseSkillsWidgetText.searchTitleSeparator}${index + 1}',
                 options: searchOptions,
                 selected: current,
               );
@@ -854,7 +855,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                 onTap: openSearch,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Choice ${index + 1}',
+                    labelText:
+                        '${ChooseSkillsWidgetText.choiceLabelPrefix}${index + 1}',
                     border: const OutlineInputBorder(),
                     suffixIcon: const Icon(Icons.search),
                     contentPadding: const EdgeInsets.symmetric(
@@ -864,8 +866,8 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                   ),
                   child: Text(
                     selectedOption != null
-                        ? '${selectedOption.name} (${selectedOption.group})'
-                        : 'Unassigned',
+                        ? '${selectedOption.name}${ChooseSkillsWidgetText.selectedOptionGroupPrefix}${selectedOption.group}${ChooseSkillsWidgetText.selectedOptionGroupSuffix}'
+                        : ChooseSkillsWidgetText.unassignedDisplayLabel,
                     style: TextStyle(
                       fontSize: 16,
                       color: selectedOption != null

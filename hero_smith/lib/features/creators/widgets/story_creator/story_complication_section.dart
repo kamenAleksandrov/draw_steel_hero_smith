@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/complication_grant_models.dart';
 import '../../../../core/models/component.dart' as model;
+import '../../../../core/theme/text/story_complication_section_text.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/treasures/treasures.dart';
 
@@ -77,7 +78,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       controller: controller,
                       autofocus: true,
                       decoration: const InputDecoration(
-                        hintText: 'Search...',
+                        hintText: StoryComplicationSectionText.searchHint,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -93,7 +94,9 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? const Padding(
                             padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                            child: Center(
+                                child: Text(
+                                    StoryComplicationSectionText.noMatchesFound)),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -121,7 +124,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child:
+                          const Text(StoryComplicationSectionText.cancelLabel),
                     ),
                   ),
                 ],
@@ -173,14 +177,14 @@ class _StoryComplicationSectionState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Complication',
+              StoryComplicationSectionText.sectionTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Choose a complication that adds depth to your character',
+              StoryComplicationSectionText.sectionSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -194,7 +198,7 @@ class _StoryComplicationSectionState
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text(
-                        'Failed to load complications: ${complicationsAsync.error}',
+                        '${StoryComplicationSectionText.failedToLoadComplicationsPrefix}${complicationsAsync.error}',
                         style: TextStyle(color: theme.colorScheme.error),
                       ),
                     ),
@@ -211,7 +215,7 @@ class _StoryComplicationSectionState
               if (complications.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Text('No complications available'),
+                  child: Text(StoryComplicationSectionText.noComplicationsAvailable),
                 );
               }
 
@@ -228,7 +232,7 @@ class _StoryComplicationSectionState
               Future<void> openSearch() async {
                 final options = <_SearchOption<String?>>[
                   const _SearchOption<String?>(
-                    label: 'None',
+                    label: StoryComplicationSectionText.noneOptionLabel,
                     value: null,
                   ),
                   ...sorted.map(
@@ -241,7 +245,7 @@ class _StoryComplicationSectionState
 
                 final result = await _showSearchablePicker<String?>(
                   context: context,
-                  title: 'Select Complication',
+                  title: StoryComplicationSectionText.selectComplicationTitle,
                   options: options,
                   selected: widget.selectedComplicationId,
                 );
@@ -258,12 +262,14 @@ class _StoryComplicationSectionState
                     onTap: openSearch,
                     child: InputDecorator(
                       decoration: const InputDecoration(
-                        labelText: 'Select Complication',
+                        labelText: StoryComplicationSectionText.selectComplicationLabel,
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.search),
                       ),
                       child: Text(
-                        selectedComp != null ? selectedComp.name : 'None',
+                        selectedComp != null
+                            ? selectedComp.name
+                            : StoryComplicationSectionText.nonePlaceholder,
                         style: TextStyle(
                           fontSize: 16,
                           color: selectedComp != null
@@ -388,7 +394,7 @@ class _ComplicationDetails extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Effects',
+          StoryComplicationSectionText.effectsTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -397,7 +403,7 @@ class _ComplicationDetails extends ConsumerWidget {
         if (benefit != null && benefit.isNotEmpty) ...[
           _buildEffectItem(
             context,
-            'Benefit',
+            StoryComplicationSectionText.effectBenefitLabel,
             benefit,
             theme.colorScheme.primary,
             Icons.add_circle_outline,
@@ -407,7 +413,7 @@ class _ComplicationDetails extends ConsumerWidget {
         if (drawback != null && drawback.isNotEmpty) ...[
           _buildEffectItem(
             context,
-            'Drawback',
+            StoryComplicationSectionText.effectDrawbackLabel,
             drawback,
             theme.colorScheme.error,
             Icons.remove_circle_outline,
@@ -417,7 +423,7 @@ class _ComplicationDetails extends ConsumerWidget {
         if (both != null && both.isNotEmpty) ...[
           _buildEffectItem(
             context,
-            'Mixed Effect',
+            StoryComplicationSectionText.effectMixedLabel,
             both,
             theme.colorScheme.tertiary,
             Icons.swap_horiz,
@@ -494,8 +500,14 @@ class _ComplicationDetails extends ConsumerWidget {
         if (grant.requiresChoice) {
           widget = _buildTreasureChoiceGrant(context, ref, grant, complicationId, treasureIndex);
         } else {
-          final echelonStr = grant.echelon != null ? ' (echelon ${grant.echelon})' : '';
-          widget = _buildGrantItem(context, '${grant.treasureType.replaceAll('_', ' ')}$echelonStr', Icons.diamond_outlined);
+          final echelonStr = grant.echelon != null
+              ? '${StoryComplicationSectionText.echelonPrefix}${grant.echelon}${StoryComplicationSectionText.echelonSuffix}'
+              : '';
+          widget = _buildGrantItem(
+            context,
+            '${grant.treasureType.replaceAll('_', ' ')}$echelonStr',
+            Icons.diamond_outlined,
+          );
         }
         treasureIndex++;
       } else if (grant is LeveledTreasureGrant) {
@@ -517,7 +529,7 @@ class _ComplicationDetails extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Grants',
+          StoryComplicationSectionText.grantsTitle,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -536,7 +548,11 @@ class _ComplicationDetails extends ConsumerWidget {
   ) {
     switch (grant) {
       case SkillGrant():
-        return _buildGrantItem(context, 'Skill: ${grant.skillName}', Icons.psychology_outlined);
+        return _buildGrantItem(
+          context,
+          '${StoryComplicationSectionText.skillGrantPrefix}${grant.skillName}',
+          Icons.psychology_outlined,
+        );
       
       case SkillFromGroupGrant():
         return _buildSkillFromGroupGrant(context, ref, grant, complicationId);
@@ -557,7 +573,7 @@ class _ComplicationDetails extends ConsumerWidget {
       case TokenGrant():
         return _buildGrantItem(
           context,
-          '${grant.count} ${grant.tokenType.replaceAll('_', ' ')} token${grant.count == 1 ? '' : 's'}',
+          '${grant.count} ${grant.tokenType.replaceAll('_', ' ')}${StoryComplicationSectionText.tokenSuffixSingular}${grant.count == 1 ? '' : StoryComplicationSectionText.tokenSuffixPlural}',
           Icons.token_outlined,
         );
       
@@ -568,31 +584,33 @@ class _ComplicationDetails extends ConsumerWidget {
         return _buildDeadLanguageGrant(context, ref, grant, complicationId);
       
       case IncreaseTotalGrant():
-        final typeStr = grant.damageType != null ? ' (${grant.damageType})' : '';
+        final typeStr = grant.damageType != null
+            ? '${StoryComplicationSectionText.damageTypePrefix}${grant.damageType}${StoryComplicationSectionText.damageTypeSuffix}'
+            : '';
         return _buildGrantItem(
           context,
-          '+${grant.value} ${grant.stat.replaceAll('_', ' ')}$typeStr',
+          '${StoryComplicationSectionText.increasePrefix}${grant.value} ${grant.stat.replaceAll('_', ' ')}$typeStr',
           Icons.trending_up_outlined,
         );
       
       case IncreaseTotalPerEchelonGrant():
         return _buildGrantItem(
           context,
-          '+${grant.valuePerEchelon} ${grant.stat.replaceAll('_', ' ')} per echelon',
+          '${StoryComplicationSectionText.increasePrefix}${grant.valuePerEchelon} ${grant.stat.replaceAll('_', ' ')}${StoryComplicationSectionText.perEchelonSuffix}',
           Icons.trending_up_outlined,
         );
       
       case DecreaseTotalGrant():
         return _buildGrantItem(
           context,
-          '-${grant.value} ${grant.stat.replaceAll('_', ' ')}',
+          '${StoryComplicationSectionText.decreasePrefix}${grant.value} ${grant.stat.replaceAll('_', ' ')}',
           Icons.trending_down_outlined,
         );
       
       case SetBaseStatIfNotLowerGrant():
         return _buildGrantItem(
           context,
-          'Base ${grant.stat.replaceAll('_', ' ')}: ${grant.value}',
+          '${StoryComplicationSectionText.baseStatPrefix}${grant.stat.replaceAll('_', ' ')}${StoryComplicationSectionText.baseStatSeparator}${grant.value}',
           Icons.adjust_outlined,
         );
       
@@ -604,9 +622,13 @@ class _ComplicationDetails extends ConsumerWidget {
       
       case IncreaseRecoveryGrant():
         final valueStr = grant.value == 'highest_characteristic'
-            ? 'by highest characteristic'
-            : 'by ${grant.value}';
-        return _buildGrantItem(context, 'Increase recovery $valueStr', Icons.healing_outlined);
+            ? StoryComplicationSectionText.recoveryHighestCharacteristic
+            : '${StoryComplicationSectionText.recoveryByPrefix}${grant.value}';
+        return _buildGrantItem(
+          context,
+          '${StoryComplicationSectionText.increaseRecoveryPrefix}$valueStr',
+          Icons.healing_outlined,
+        );
       
       case FeatureGrant():
         final featureTypeDisplay = grant.featureType == 'mount' 
@@ -616,7 +638,7 @@ class _ComplicationDetails extends ConsumerWidget {
                 : '✨';
         return _buildGrantItem(
           context,
-          '$featureTypeDisplay ${grant.featureName} (${grant.featureType})',
+          '${StoryComplicationSectionText.featureTypeDisplayPrefix}$featureTypeDisplay ${grant.featureName}${StoryComplicationSectionText.featureTypeTypePrefix}${grant.featureType}${StoryComplicationSectionText.featureTypeTypeSuffix}',
           Icons.auto_awesome_outlined,
         );
     }
@@ -648,7 +670,9 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose ${grant.count} skill${grant.count > 1 ? 's' : ''} from: $groupsStr',
+                  '${StoryComplicationSectionText.chooseSkillFromGroupPrefix}${grant.count}'
+                  '${grant.count > 1 ? StoryComplicationSectionText.skillPluralSuffix : StoryComplicationSectionText.skillSingularSuffix}'
+                  '${StoryComplicationSectionText.chooseSkillFromGroupSuffix}$groupsStr',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -661,7 +685,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final allSkills = skillsAsync.valueOrNull;
             if (allSkills == null) {
               if (skillsAsync.hasError) {
-                return Text('Error loading skills: ${skillsAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -679,7 +704,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (filteredSkills.isEmpty) {
               return Text(
-                'No skills available for: $groupsStr',
+                '${StoryComplicationSectionText.noSkillsAvailablePrefix}$groupsStr',
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
               }
@@ -710,13 +735,15 @@ class _ComplicationDetails extends ConsumerWidget {
                           return _SearchOption<String>(
                             label: s.name,
                             value: s.id,
-                            subtitle: '[$group] $description',
+                            subtitle:
+                                '${StoryComplicationSectionText.groupSubtitlePrefix}$group${StoryComplicationSectionText.groupSubtitleSuffix}$description',
                           );
                         }).toList();
 
                         final result = await _showSearchablePicker<String>(
                           context: context,
-                          title: 'Select Skill ${index + 1}',
+                          title:
+                              '${StoryComplicationSectionText.selectSkillTitlePrefix}${index + 1}',
                           options: options,
                           selected: selectedId,
                         );
@@ -748,7 +775,8 @@ class _ComplicationDetails extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                selectedSkill?.name ?? 'Tap to select skill ${index + 1}...',
+                                selectedSkill?.name ??
+                                    '${StoryComplicationSectionText.tapToSelectSkillPrefix}${index + 1}${StoryComplicationSectionText.tapToSelectSkillSuffix}',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: selectedSkill != null ? null : theme.colorScheme.outline,
                                   fontStyle: selectedSkill != null ? null : FontStyle.italic,
@@ -795,7 +823,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose skill from: ${grant.options.join(', ')}',
+                  '${StoryComplicationSectionText.chooseSkillFromOptionsPrefix}${grant.options.join(', ')}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -808,7 +836,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final allSkills = skillsAsync.valueOrNull;
             if (allSkills == null) {
               if (skillsAsync.hasError) {
-                return Text('Error loading skills: ${skillsAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -824,7 +853,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (filteredSkills.isEmpty) {
               return Text(
-                'No matching skills found for: ${grant.options.join(', ')}',
+                '${StoryComplicationSectionText.noMatchingSkillsPrefix}${grant.options.join(', ')}',
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
             }
@@ -841,13 +870,14 @@ class _ComplicationDetails extends ConsumerWidget {
                   return _SearchOption<String>(
                     label: s.name,
                     value: s.id,
-                    subtitle: '[$group] $description',
+                    subtitle:
+                        '${StoryComplicationSectionText.groupSubtitlePrefix}$group${StoryComplicationSectionText.groupSubtitleSuffix}$description',
                   );
                 }).toList();
 
                 final result = await _showSearchablePicker<String>(
                   context: context,
-                  title: 'Select Skill',
+                  title: StoryComplicationSectionText.selectSkillTitle,
                   options: options,
                   selected: grant.selectedSkillId,
                 );
@@ -879,7 +909,8 @@ class _ComplicationDetails extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          selectedSkill?.name ?? 'Tap to select skill...',
+                          selectedSkill?.name ??
+                              StoryComplicationSectionText.tapToSelectSkill,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: selectedSkill != null ? null : theme.colorScheme.outline,
                             fontStyle: selectedSkill != null ? null : FontStyle.italic,
@@ -926,7 +957,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose ${treasureType.replaceAll('_', ' ')}${grant.echelon != null ? ' (echelon ${grant.echelon})' : ''}',
+                  '${StoryComplicationSectionText.chooseTreasurePrefix}${treasureType.replaceAll('_', ' ')}${grant.echelon != null ? '${StoryComplicationSectionText.echelonPrefix}${grant.echelon}${StoryComplicationSectionText.echelonSuffix}' : ''}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -939,7 +970,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final components = componentsAsync.valueOrNull;
             if (components == null) {
               if (componentsAsync.hasError) {
-                return Text('Error loading treasures: ${componentsAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -960,7 +992,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (treasures.isEmpty) {
               return Text(
-                'No ${treasureType.replaceAll('_', ' ')}s available',
+                '${StoryComplicationSectionText.noTreasureAvailablePrefix}${treasureType.replaceAll('_', ' ')}${StoryComplicationSectionText.treasurePluralSuffix}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
@@ -990,7 +1022,8 @@ class _ComplicationDetails extends ConsumerWidget {
 
                     final result = await _showSearchablePicker<String>(
                       context: context,
-                      title: 'Select ${treasureType.replaceAll('_', ' ')}',
+                      title:
+                          '${StoryComplicationSectionText.selectTreasureTitlePrefix}${treasureType.replaceAll('_', ' ')}',
                       options: options,
                       selected: selectedId,
                     );
@@ -1022,7 +1055,8 @@ class _ComplicationDetails extends ConsumerWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              selectedTreasure?.name ?? 'Tap to select...',
+                              selectedTreasure?.name ??
+                                  StoryComplicationSectionText.tapToSelect,
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: selectedTreasure != null 
                                     ? null 
@@ -1066,7 +1100,8 @@ class _ComplicationDetails extends ConsumerWidget {
     
     // The category to filter by (e.g., "weapon", "armor")
     final category = grant.category?.toLowerCase();
-    final categoryLabel = category?.replaceAll('_', ' ') ?? 'treasure';
+    final categoryLabel = category?.replaceAll('_', ' ') ??
+        StoryComplicationSectionText.defaultTreasureCategory;
     
     return Container(
       padding: const EdgeInsets.all(12),
@@ -1084,7 +1119,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose leveled $categoryLabel',
+                  '${StoryComplicationSectionText.chooseLeveledTreasurePrefix}$categoryLabel',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -1097,7 +1132,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final components = componentsAsync.valueOrNull;
             if (components == null) {
               if (componentsAsync.hasError) {
-                return Text('Error loading treasures: ${componentsAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -1118,7 +1154,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (treasures.isEmpty) {
               return Text(
-                'No leveled ${categoryLabel}s available',
+                '${StoryComplicationSectionText.noLeveledTreasurePrefix}$categoryLabel${StoryComplicationSectionText.treasurePluralSuffix}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontStyle: FontStyle.italic,
                 ),
@@ -1148,7 +1184,8 @@ class _ComplicationDetails extends ConsumerWidget {
 
                     final result = await _showSearchablePicker<String>(
                       context: context,
-                      title: 'Select leveled $categoryLabel',
+                      title:
+                          '${StoryComplicationSectionText.selectLeveledTreasureTitlePrefix}$categoryLabel',
                       options: options,
                       selected: selectedId,
                     );
@@ -1180,7 +1217,8 @@ class _ComplicationDetails extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            selectedTreasure?.name ?? 'Tap to select...',
+                            selectedTreasure?.name ??
+                                StoryComplicationSectionText.tapToSelect,
                             style: theme.textTheme.bodyMedium?.copyWith(
                                 color: selectedTreasure != null 
                                     ? null 
@@ -1237,7 +1275,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose ${grant.count} language${grant.count > 1 ? 's' : ''}',
+                  '${StoryComplicationSectionText.chooseLanguagePrefix}${grant.count}${grant.count > 1 ? StoryComplicationSectionText.languagePluralSuffix : StoryComplicationSectionText.languageSingularSuffix}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -1250,7 +1288,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final allLanguages = languagesAsync.valueOrNull;
             if (allLanguages == null) {
               if (languagesAsync.hasError) {
-                return Text('Error loading languages: ${languagesAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -1266,7 +1305,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (livingLanguages.isEmpty) {
               return Text(
-                'No languages available',
+                StoryComplicationSectionText.noLanguagesAvailable,
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
             }
@@ -1296,10 +1335,10 @@ class _ComplicationDetails extends ConsumerWidget {
                         final region = l.data['region'] as String?;
                         final ancestry = l.data['ancestry'] as String?;
                         final subtitle = region != null 
-                            ? '[$langType] Region: $region' 
+                            ? '${StoryComplicationSectionText.languageGroupPrefix}$langType${StoryComplicationSectionText.languageGroupSuffix}${StoryComplicationSectionText.languageRegionPrefix}$region' 
                             : ancestry != null 
-                                ? '[$langType] Ancestry: $ancestry' 
-                                : '[$langType]';
+                                ? '${StoryComplicationSectionText.languageGroupPrefix}$langType${StoryComplicationSectionText.languageGroupSuffix}${StoryComplicationSectionText.languageAncestryPrefix}$ancestry' 
+                                : '${StoryComplicationSectionText.languageGroupPrefix}$langType${StoryComplicationSectionText.languageGroupSuffixOnly}';
                         return _SearchOption<String>(
                           label: l.name,
                           value: l.id,
@@ -1309,7 +1348,8 @@ class _ComplicationDetails extends ConsumerWidget {
 
                       final result = await _showSearchablePicker<String>(
                         context: context,
-                        title: 'Select Language ${index + 1}',
+                        title:
+                            '${StoryComplicationSectionText.selectLanguageTitlePrefix}${index + 1}',
                         options: options,
                         selected: selectedId,
                       );
@@ -1341,7 +1381,8 @@ class _ComplicationDetails extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                selectedLanguage?.name ?? 'Tap to select language ${index + 1}...',
+                                selectedLanguage?.name ??
+                                    '${StoryComplicationSectionText.tapToSelectLanguagePrefix}${index + 1}${StoryComplicationSectionText.tapToSelectLanguageSuffix}',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: selectedLanguage != null ? null : theme.colorScheme.outline,
                                   fontStyle: selectedLanguage != null ? null : FontStyle.italic,
@@ -1387,7 +1428,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose ${grant.count} dead language${grant.count > 1 ? 's' : ''}',
+                  '${StoryComplicationSectionText.chooseDeadLanguagePrefix}${grant.count}${grant.count > 1 ? StoryComplicationSectionText.deadLanguagePluralSuffix : StoryComplicationSectionText.deadLanguageSingularSuffix}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -1400,7 +1441,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final allLanguages = languagesAsync.valueOrNull;
             if (allLanguages == null) {
               if (languagesAsync.hasError) {
-                return Text('Error loading languages: ${languagesAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -1416,7 +1458,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (deadLanguages.isEmpty) {
               return Text(
-                'No dead languages available',
+                StoryComplicationSectionText.noDeadLanguagesAvailable,
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
             }
@@ -1446,8 +1488,8 @@ class _ComplicationDetails extends ConsumerWidget {
                         final commonTopics = l.data['common_topics'] as List?;
                         final topicsStr = commonTopics != null ? commonTopics.join(', ') : '';
                         final subtitle = topicsStr.isNotEmpty 
-                            ? 'Ancestry: $ancestry • Topics: $topicsStr' 
-                            : 'Ancestry: $ancestry';
+                            ? '${StoryComplicationSectionText.deadLanguageAncestryPrefix}$ancestry${StoryComplicationSectionText.deadLanguageTopicsSeparator}$topicsStr' 
+                            : '${StoryComplicationSectionText.deadLanguageAncestryPrefix}$ancestry';
                         return _SearchOption<String>(
                           label: l.name,
                           value: l.id,
@@ -1457,7 +1499,8 @@ class _ComplicationDetails extends ConsumerWidget {
 
                       final result = await _showSearchablePicker<String>(
                         context: context,
-                        title: 'Select Dead Language ${index + 1}',
+                        title:
+                            '${StoryComplicationSectionText.selectDeadLanguageTitlePrefix}${index + 1}',
                         options: options,
                         selected: selectedId,
                       );
@@ -1489,7 +1532,8 @@ class _ComplicationDetails extends ConsumerWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              selectedLanguage?.name ?? 'Tap to select dead language ${index + 1}...',
+                              selectedLanguage?.name ??
+                                  '${StoryComplicationSectionText.tapToSelectDeadLanguagePrefix}${index + 1}${StoryComplicationSectionText.tapToSelectDeadLanguageSuffix}',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: selectedLanguage != null ? null : theme.colorScheme.outline,
                                 fontStyle: selectedLanguage != null ? null : FontStyle.italic,
@@ -1534,7 +1578,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Choose one:',
+                  StoryComplicationSectionText.chooseOneLabel,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -1612,7 +1656,7 @@ class _ComplicationDetails extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '${grant.ancestryPoints} ${_formatAncestryName(grant.ancestry)} ancestry trait point${grant.ancestryPoints == 1 ? '' : 's'}',
+                  '${grant.ancestryPoints} ${_formatAncestryName(grant.ancestry)}${grant.ancestryPoints == 1 ? StoryComplicationSectionText.ancestryTraitPointSingularSuffix : StoryComplicationSectionText.ancestryTraitPointPluralSuffix}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -1625,7 +1669,8 @@ class _ComplicationDetails extends ConsumerWidget {
             final allAncestryTraits = ancestryTraitsAsync.valueOrNull;
             if (allAncestryTraits == null) {
               if (ancestryTraitsAsync.hasError) {
-                return Text('Error loading ancestry traits: ${ancestryTraitsAsync.error}');
+                return Text(
+                    '${StoryComplicationSectionText.errorLoadingAncestryTraitsPrefix}${ancestryTraitsAsync.error}');
               }
               return const SizedBox(
                 height: 48,
@@ -1641,7 +1686,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
             if (traitsComp == null) {
               return Text(
-                'No traits found for ${grant.ancestry}',
+                '${StoryComplicationSectionText.noTraitsFoundPrefix}${grant.ancestry}',
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
             }
@@ -1650,7 +1695,7 @@ class _ComplicationDetails extends ConsumerWidget {
             
             if (traitsList.isEmpty) {
               return Text(
-                'No traits available for ${grant.ancestry}',
+                '${StoryComplicationSectionText.noTraitsAvailablePrefix}${grant.ancestry}',
                 style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               );
             }
@@ -1678,10 +1723,13 @@ class _ComplicationDetails extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Chip(label: Text('Points: ${grant.ancestryPoints}')),
+                    Chip(
+                        label: Text(
+                            '${StoryComplicationSectionText.pointsLabelPrefix}${grant.ancestryPoints}')),
                     const SizedBox(width: 8),
                     Chip(
-                      label: Text('Remaining: $remaining'),
+                      label: Text(
+                          '${StoryComplicationSectionText.remainingLabelPrefix}$remaining'),
                       backgroundColor: remaining < 0
                           ? theme.colorScheme.errorContainer
                           : null,
@@ -1720,7 +1768,7 @@ class _ComplicationDetails extends ConsumerWidget {
                           ),
                         ),
                         subtitle: Text(
-                          '(Already selected in ancestry)',
+                          StoryComplicationSectionText.alreadySelectedAncestry,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontStyle: FontStyle.italic,
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
@@ -1861,7 +1909,11 @@ class _ComplicationDetails extends ConsumerWidget {
     final ability = abilityAsync.valueOrNull;
     if (ability == null) {
       if (abilityAsync.hasError) {
-        return _buildGrantItem(context, 'Ability: $abilityName', Icons.auto_awesome_outlined);
+        return _buildGrantItem(
+          context,
+          '${StoryComplicationSectionText.abilityGrantPrefix}$abilityName',
+          Icons.auto_awesome_outlined,
+        );
       }
       return Padding(
         padding: const EdgeInsets.only(bottom: 4),
@@ -1877,7 +1929,7 @@ class _ComplicationDetails extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              'Loading $abilityName...',
+              '${StoryComplicationSectionText.loadingAbilityPrefix}$abilityName${StoryComplicationSectionText.loadingAbilitySuffix}',
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
@@ -1924,14 +1976,8 @@ class _ComplicationDetails extends ConsumerWidget {
     return options.cast<String>();
   }
 
-  static const _immunityTypes = [
-    'acid',
-    'cold',
-    'corruption',
-    'fire',
-    'lightning',
-    'poison',
-  ];
+  static const List<String> _immunityTypes =
+      StoryComplicationSectionText.immunityTypes;
 
   /// Get immunity types that should be excluded from a trait's dropdown.
   Set<String> _getExcludedImmunities(String currentTraitId, String complicationId, Map<String, String> choices) {
@@ -1967,7 +2013,7 @@ class _ComplicationDetails extends ConsumerWidget {
     return DropdownButtonFormField<String>(
       value: currentValue,
       decoration: InputDecoration(
-        labelText: 'Choose Immunity Type',
+        labelText: StoryComplicationSectionText.immunityDropdownLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         filled: true,
@@ -1976,7 +2022,7 @@ class _ComplicationDetails extends ConsumerWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('Select immunity'),
+          child: Text(StoryComplicationSectionText.immunityDropdownHint),
         ),
         ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
@@ -2004,7 +2050,7 @@ class _ComplicationDetails extends ConsumerWidget {
     return DropdownButtonFormField<String>(
       value: currentValue,
       decoration: InputDecoration(
-        labelText: 'Choose Ability',
+        labelText: StoryComplicationSectionText.abilityDropdownLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         filled: true,
@@ -2013,7 +2059,7 @@ class _ComplicationDetails extends ConsumerWidget {
       items: [
         const DropdownMenuItem<String>(
           value: null,
-          child: Text('Select ability'),
+          child: Text(StoryComplicationSectionText.abilityDropdownHint),
         ),
         ...options.map(
           (ability) => DropdownMenuItem<String>(

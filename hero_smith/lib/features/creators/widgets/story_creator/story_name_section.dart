@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/story_name_section_text.dart';
 
 class StoryNameSection extends ConsumerWidget {
   const StoryNameSection({
@@ -35,8 +36,8 @@ class StoryNameSection extends ConsumerWidget {
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: 'Hero Name',
-                      hintText: 'Enter your hero\'s name...',
+                      labelText: StoryNameSectionText.heroNameLabel,
+                      hintText: StoryNameSectionText.heroNameHint,
                       prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -46,7 +47,7 @@ class StoryNameSection extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Choose an ancestry below for name suggestions!',
+                    StoryNameSectionText.ancestrySuggestionPrompt,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontStyle: FontStyle.italic,
@@ -73,7 +74,11 @@ class StoryNameSection extends ConsumerWidget {
       data: (ancestries) {
         final selected = ancestries.firstWhere(
           (a) => a.id == selectedAncestryId,
-          orElse: () => const model.Component(id: '', type: 'ancestry', name: 'Unknown'),
+          orElse: () => const model.Component(
+            id: '',
+            type: 'ancestry',
+            name: StoryNameSectionText.unknownAncestryName,
+          ),
         );
         if (selected.id.isEmpty) {
           return const SizedBox.shrink();
@@ -112,7 +117,7 @@ class _ExampleNameGroups extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
         child: Text(
-          'Revenants often keep their names from life; new names reflect their reasons or culture.',
+          StoryNameSectionText.revenantNote,
           style: TextStyle(
             color: Colors.grey.shade600,
             fontStyle: FontStyle.italic,
@@ -123,12 +128,12 @@ class _ExampleNameGroups extends StatelessWidget {
 
     final exampleLists = <String, List<String>>{};
     const groupLabels = <String, String>{
-      'examples': 'Examples',
-      'feminine': 'Feminine',
-      'masculine': 'Masculine',
-      'genderNeutral': 'Gender Neutral',
-      'epithets': 'Epithets',
-      'surnames': 'Surnames',
+      'examples': StoryNameSectionText.groupLabelExamples,
+      'feminine': StoryNameSectionText.groupLabelFeminine,
+      'masculine': StoryNameSectionText.groupLabelMasculine,
+      'genderNeutral': StoryNameSectionText.groupLabelGenderNeutral,
+      'epithets': StoryNameSectionText.groupLabelEpithets,
+      'surnames': StoryNameSectionText.groupLabelSurnames,
     };
 
     for (final key in groupLabels.keys) {
@@ -151,7 +156,7 @@ class _ExampleNameGroups extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Example names from ${ancestry.name}',
+          '${StoryNameSectionText.exampleNamesTitlePrefix}${ancestry.name}',
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),

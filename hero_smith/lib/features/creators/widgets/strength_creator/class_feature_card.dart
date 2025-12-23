@@ -159,32 +159,32 @@ class _FeatureStyle {
         return _FeatureStyle(
           borderColor: Colors.green.shade600,
           icon: Icons.check_circle_outline,
-          label: 'Granted Feature',
+          label: ClassFeatureCardText.grantedLabel,
         );
       case 'pick':
         return _FeatureStyle(
           borderColor: Colors.orange.shade600,
           icon: Icons.touch_app_outlined,
-          label: 'Choice Required',
+          label: ClassFeatureCardText.choiceRequiredLabel,
         );
       case 'ability':
         return _FeatureStyle(
           borderColor: Colors.blue.shade600,
           icon: Icons.auto_awesome_outlined,
-          label: 'Ability Granted',
+          label: ClassFeatureCardText.abilityGrantedLabel,
         );
       default:
         if (isSubclass) {
           return _FeatureStyle(
             borderColor: Colors.purple.shade500,
             icon: Icons.star_outline_rounded,
-            label: 'Subclass Feature',
+            label: ClassFeatureCardText.subclassFeatureLabel,
           );
         }
         return _FeatureStyle(
           borderColor: Colors.blueGrey.shade400,
           icon: Icons.category_outlined,
-          label: 'Class Feature',
+          label: ClassFeatureCardText.classFeatureLabel,
         );
     }
   }
