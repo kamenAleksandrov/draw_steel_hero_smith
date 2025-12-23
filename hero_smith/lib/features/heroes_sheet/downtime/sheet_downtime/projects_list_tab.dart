@@ -4,6 +4,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/projects_list_tab_text.dart';
 import '../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';
@@ -112,7 +113,7 @@ class ProjectsListTab extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Text(
-                'Active Projects',
+                ProjectsListTabText.activeProjectsHeader,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -159,7 +160,7 @@ class ProjectsListTab extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
               child: Text(
-                'Completed Projects',
+                ProjectsListTabText.completedProjectsHeader,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.outline,
@@ -221,7 +222,7 @@ class ProjectsListTab extends ConsumerWidget {
             child: FilledButton.icon(
               onPressed: () => _createCustomProject(context, ref),
               icon: const Icon(Icons.add),
-              label: const Text('Create Project'),
+              label: const Text(ProjectsListTabText.createProjectButtonLabel),
               style: HeroTheme.primaryActionButtonStyle(context),
             ),
           ),
@@ -230,7 +231,7 @@ class ProjectsListTab extends ConsumerWidget {
             child: OutlinedButton.icon(
               onPressed: () => _browseTemplates(context, ref),
               icon: const Icon(Icons.library_books),
-              label: const Text('Browse Projects'),
+              label: const Text(ProjectsListTabText.browseProjectsButtonLabel),
             ),
           ),
         ],
@@ -242,8 +243,8 @@ class ProjectsListTab extends ConsumerWidget {
     return HeroTheme.buildEmptyState(
       context,
       icon: Icons.assignment_outlined,
-      title: 'No Projects Yet',
-      subtitle: 'Create a project or browse templates using the buttons above',
+      title: ProjectsListTabText.emptyTitle,
+      subtitle: ProjectsListTabText.emptySubtitle,
     );
   }
 
@@ -269,7 +270,7 @@ class ProjectsListTab extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Failed to load projects',
+              ProjectsListTabText.errorTitle,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -284,7 +285,7 @@ class ProjectsListTab extends ConsumerWidget {
                 ref.invalidate(heroProjectsProvider(heroId));
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: const Text(ProjectsListTabText.retryButtonLabel),
             ),
           ],
         ),
@@ -326,21 +327,21 @@ class ProjectsListTab extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove Project'),
+        title: const Text(ProjectsListTabText.deleteDialogTitle),
         content: Text(
           'Are you sure you want to remove "${project.name}"? This action cannot be undone.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(ProjectsListTabText.deleteDialogCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Remove'),
+            child: const Text(ProjectsListTabText.deleteDialogConfirm),
           ),
         ],
       ),
@@ -396,7 +397,7 @@ class ProjectsListTab extends ConsumerWidget {
     final result = await showDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Points'),
+        title: const Text(ProjectsListTabText.addPointsDialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,9 +417,9 @@ class ProjectsListTab extends ConsumerWidget {
             TextField(
               controller: pointsController,
               decoration: const InputDecoration(
-                labelText: 'Points to Add',
+                labelText: ProjectsListTabText.addPointsFieldLabel,
                 border: OutlineInputBorder(),
-                hintText: 'Enter amount',
+                hintText: ProjectsListTabText.addPointsFieldHint,
               ),
               keyboardType: TextInputType.number,
               autofocus: true,
@@ -428,7 +429,7 @@ class ProjectsListTab extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: const Text(ProjectsListTabText.addPointsDialogCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -437,7 +438,7 @@ class ProjectsListTab extends ConsumerWidget {
                 Navigator.of(context).pop(points);
               }
             },
-            child: const Text('Add'),
+            child: const Text(ProjectsListTabText.addPointsDialogConfirm),
           ),
         ],
       ),

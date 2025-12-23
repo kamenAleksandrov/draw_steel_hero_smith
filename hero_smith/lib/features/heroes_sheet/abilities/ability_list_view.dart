@@ -7,6 +7,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/ability_data_service.dart';
+import '../../../core/theme/text/ability_list_view_text.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
 /// Enum for action type categories
@@ -20,11 +21,11 @@ extension ActionCategoryLabel on ActionCategory {
   String get label {
     switch (this) {
       case ActionCategory.actions:
-        return 'Actions';
+        return AbilityListViewText.actionLabelActions;
       case ActionCategory.maneuvers:
-        return 'Maneuvers';
+        return AbilityListViewText.actionLabelManeuvers;
       case ActionCategory.triggered:
-        return 'Triggered';
+        return AbilityListViewText.actionLabelTriggered;
     }
   }
   
@@ -121,7 +122,7 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Error loading ability details',
+                    AbilityListViewText.errorTitle,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -143,7 +144,7 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
             child: Padding(
               padding: EdgeInsets.all(24.0),
               child: Text(
-                'No ability details found',
+                AbilityListViewText.emptyDetailsMessage,
                 style: TextStyle(color: Colors.grey),
               ),
             ),
@@ -239,14 +240,14 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
               Icon(category.icon, size: 48, color: theme.colorScheme.outline),
               const SizedBox(height: 12),
               Text(
-                'No ${category.label}',
+                '${AbilityListViewText.emptyCategoryPrefix}${category.label}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.outline,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Abilities of this type will appear here',
+                AbilityListViewText.emptyCategorySubtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.outline,
                 ),
@@ -284,7 +285,7 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
                 padding: const EdgeInsets.all(6),
                 minimumSize: const Size(32, 32),
               ),
-              tooltip: 'Remove ability',
+              tooltip: AbilityListViewText.removeTooltip,
             ),
           ),
         ],
@@ -297,16 +298,16 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove Ability'),
-        content: const Text('Are you sure you want to remove this ability from your hero?'),
+        title: const Text(AbilityListViewText.removeDialogTitle),
+        content: const Text(AbilityListViewText.removeDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(AbilityListViewText.removeDialogCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Remove'),
+            child: const Text(AbilityListViewText.removeDialogConfirm),
           ),
         ],
       ),
@@ -335,13 +336,19 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ability removed')),
+          const SnackBar(
+            content: Text(AbilityListViewText.snackAbilityRemoved),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to remove ability: $e')),
+          SnackBar(
+            content: Text(
+              '${AbilityListViewText.snackRemoveFailedPrefix}$e',
+            ),
+          ),
         );
       }
     }

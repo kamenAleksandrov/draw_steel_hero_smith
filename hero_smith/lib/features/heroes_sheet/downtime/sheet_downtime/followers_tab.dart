@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/followers_tab_text.dart';
 import 'follower_editor_dialog.dart';
 
 /// Provider for hero followers
@@ -64,7 +65,7 @@ class FollowersTab extends ConsumerWidget {
       child: FilledButton.icon(
         onPressed: () => _addFollower(context, ref),
         icon: const Icon(Icons.person_add),
-        label: const Text('Add Follower'),
+        label: const Text(FollowersTabText.addFollowerButtonLabel),
         style: HeroTheme.primaryActionButtonStyle(context),
       ),
     );
@@ -117,7 +118,7 @@ class FollowersTab extends ConsumerWidget {
                         children: [
                           Icon(Icons.edit, size: 18),
                           SizedBox(width: 8),
-                          Text('Edit'),
+                          Text(FollowersTabText.editMenuLabel),
                         ],
                       ),
                     ),
@@ -127,7 +128,7 @@ class FollowersTab extends ConsumerWidget {
                         children: [
                           Icon(Icons.delete, color: Colors.red, size: 18),
                           SizedBox(width: 8),
-                          Text('Delete'),
+                          Text(FollowersTabText.deleteMenuLabel),
                         ],
                       ),
                     ),
@@ -258,12 +259,12 @@ class FollowersTab extends ConsumerWidget {
     return HeroTheme.buildEmptyState(
       context,
       icon: Icons.people_outline,
-      title: 'No Followers Yet',
-      subtitle: 'Add NPCs who can assist with your projects',
+      title: FollowersTabText.emptyTitle,
+      subtitle: FollowersTabText.emptySubtitle,
       action: FilledButton.icon(
         onPressed: () => _addFollower(context, ref),
         icon: const Icon(Icons.person_add),
-        label: const Text('Add First Follower'),
+        label: const Text(FollowersTabText.emptyActionLabel),
         style: HeroTheme.primaryActionButtonStyle(context),
       ),
     );
@@ -313,17 +314,17 @@ class FollowersTab extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Follower'),
+        title: const Text(FollowersTabText.deleteDialogTitle),
         content: Text('Remove ${follower.name}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text(FollowersTabText.deleteDialogCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text(FollowersTabText.deleteDialogConfirm),
           ),
         ],
       ),

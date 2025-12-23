@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
+import '../../../core/theme/text/add_ability_dialog_text.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
+import '../../../widgets/abilities/ability_filter_dropdown.dart';
 import '../../../widgets/abilities/ability_summary.dart';
 
 /// Dialog for adding abilities to a hero with search and filters.
@@ -177,7 +179,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
         child: Column(
           children: [
             AppBar(
-              title: const Text('Add Ability'),
+              title: const Text(AddAbilityDialogText.dialogTitle),
               automaticallyImplyLeading: false,
               actions: [IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop())],
             ),
@@ -210,7 +212,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                               Icon(Icons.search, size: 64, color: Colors.grey.shade400), 
                               const SizedBox(height: 16), 
                               Text(
-                                'Search by name or select filters to load abilities', 
+                                AddAbilityDialogText.searchPrompt, 
                                 style: TextStyle(color: Colors.grey), 
                                 textAlign: TextAlign.center,
                               ),
@@ -229,7 +231,10 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                             children: [
                               Icon(Icons.search_off, size: 64, color: Colors.grey.shade400), 
                               const SizedBox(height: 16), 
-                              Text('No abilities found', style: TextStyle(color: Colors.grey)),
+                              Text(
+                                AddAbilityDialogText.noAbilitiesFound,
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ],
                           ),
                         ),
@@ -285,7 +290,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: 'Search abilities by name...', 
+                hintText: AddAbilityDialogText.searchHint, 
                 prefixIcon: const Icon(Icons.search), 
                 suffixIcon: _searchQuery.isNotEmpty 
                     ? IconButton(
@@ -301,7 +306,10 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
               },
             ), 
             const SizedBox(height: 16), 
-            Text('Filters', style: TextStyle(fontWeight: FontWeight.bold)), 
+            Text(
+              AddAbilityDialogText.filtersTitle,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ), 
             const SizedBox(height: 12), 
             Wrap(
               spacing: 8, 
@@ -309,12 +317,12 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
               children: [
                 GestureDetector(
                   onTap: !isEnabled ? _triggerSearch : null,
-                  child: _buildFilterDropdown(
-                    context, 
-                    label: 'Resource', 
+                  child: AbilityFilterDropdown(
+                    label: AddAbilityDialogText.filterResourceLabel, 
                     value: _resourceFilter, 
                     options: resourceOptions, 
                     enabled: isEnabled,
+                    allLabelPrefix: AddAbilityDialogText.allFilterPrefix,
                     onChanged: (value) { 
                       setState(() => _resourceFilter = value); 
                       _triggerSearch(); 
@@ -323,26 +331,39 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                 ), 
                 GestureDetector(
                   onTap: !isEnabled ? _triggerSearch : null,
-                  child: _buildFilterDropdown(
-                    context, 
-                    label: 'Cost', 
-                    value: _costFilter == null ? null : (_costFilter == 'signature' ? 'Signature' : _costFilter), 
-                    options: costOptions.map((c) => c == 'signature' ? 'Signature' : c).toList(), 
+                  child: AbilityFilterDropdown(
+                    label: AddAbilityDialogText.filterCostLabel, 
+                    value: _costFilter == null
+                        ? null
+                        : (_costFilter == 'signature'
+                            ? AddAbilityDialogText.signatureLabel
+                            : _costFilter), 
+                    options: costOptions
+                        .map((c) => c == 'signature'
+                            ? AddAbilityDialogText.signatureLabel
+                            : c)
+                        .toList(), 
                     enabled: isEnabled,
+                    allLabelPrefix: AddAbilityDialogText.allFilterPrefix,
                     onChanged: (value) { 
-                      setState(() => _costFilter = value == 'Signature' ? 'signature' : value); 
+                      setState(
+                        () => _costFilter =
+                            value == AddAbilityDialogText.signatureLabel
+                                ? 'signature'
+                                : value,
+                      ); 
                       _triggerSearch(); 
                     },
                   ),
                 ), 
                 GestureDetector(
                   onTap: !isEnabled ? _triggerSearch : null,
-                  child: _buildFilterDropdown(
-                    context, 
-                    label: 'Action Type', 
+                  child: AbilityFilterDropdown(
+                    label: AddAbilityDialogText.filterActionTypeLabel, 
                     value: _actionTypeFilter, 
                     options: actionTypeOptions, 
                     enabled: isEnabled,
+                    allLabelPrefix: AddAbilityDialogText.allFilterPrefix,
                     onChanged: (value) { 
                       setState(() => _actionTypeFilter = value); 
                       _triggerSearch(); 
@@ -351,12 +372,12 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                 ), 
                 GestureDetector(
                   onTap: !isEnabled ? _triggerSearch : null,
-                  child: _buildFilterDropdown(
-                    context, 
-                    label: 'Distance', 
+                  child: AbilityFilterDropdown(
+                    label: AddAbilityDialogText.filterDistanceLabel, 
                     value: _distanceFilter, 
                     options: distanceOptions, 
                     enabled: isEnabled,
+                    allLabelPrefix: AddAbilityDialogText.allFilterPrefix,
                     onChanged: (value) { 
                       setState(() => _distanceFilter = value); 
                       _triggerSearch(); 
@@ -365,12 +386,12 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                 ), 
                 GestureDetector(
                   onTap: !isEnabled ? _triggerSearch : null,
-                  child: _buildFilterDropdown(
-                    context, 
-                    label: 'Targets', 
+                  child: AbilityFilterDropdown(
+                    label: AddAbilityDialogText.filterTargetsLabel, 
                     value: _targetsFilter, 
                     options: targetsOptions, 
                     enabled: isEnabled,
+                    allLabelPrefix: AddAbilityDialogText.allFilterPrefix,
                     onChanged: (value) { 
                       setState(() => _targetsFilter = value); 
                       _triggerSearch(); 
@@ -381,42 +402,6 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFilterDropdown(
-    BuildContext context, {
-    required String label, 
-    required String? value, 
-    required List<String> options, 
-    required void Function(String?) onChanged, 
-    bool enabled = true,
-  }) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), 
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8), 
-        border: Border.all(
-          color: value != null 
-              ? theme.colorScheme.primary 
-              : (enabled ? theme.colorScheme.outline : theme.colorScheme.outline.withValues(alpha: 0.5)), 
-          width: value != null ? 2 : 1,
-        ),
-      ), 
-      child: DropdownButton<String>(
-        value: value, 
-        hint: Text(label, style: TextStyle(color: enabled ? null : theme.disabledColor)), 
-        underline: const SizedBox.shrink(), 
-        isDense: true, 
-        items: enabled 
-            ? [
-                DropdownMenuItem<String>(value: null, child: Text('All $label')), 
-                ...options.map((option) => DropdownMenuItem<String>(value: option, child: Text(option))),
-              ] 
-            : null, 
-        onChanged: enabled ? onChanged : null,
       ),
     );
   }

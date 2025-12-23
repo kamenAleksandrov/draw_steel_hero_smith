@@ -5,6 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/project_roll_dialog_text.dart';
 import '../../main_stats/hero_main_stats_providers.dart';
 import 'followers_tab.dart';
 
@@ -236,7 +237,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Roll for Project',
+                          ProjectRollDialogText.dialogTitle,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -294,7 +295,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: const Text(ProjectRollDialogText.cancelButtonLabel),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -331,7 +332,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                 Icon(Icons.person, color: HeroTheme.primarySection),
                 const SizedBox(width: 8),
                 Text(
-                  'Hero Roll',
+                  ProjectRollDialogText.heroSectionTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -344,7 +345,11 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             FilledButton.icon(
               onPressed: _rollForHero,
               icon: const Icon(Icons.casino),
-              label: Text(_heroHasRolled ? 'Re-roll (Reset)' : 'Roll 2d10'),
+              label: Text(
+                _heroHasRolled
+                    ? ProjectRollDialogText.heroRerollButtonLabel
+                    : ProjectRollDialogText.heroRollButtonLabel,
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: HeroTheme.primarySection,
               ),
@@ -390,7 +395,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                           Icon(Icons.casino, size: 18, color: theme.colorScheme.primary),
                           const SizedBox(width: 6),
                           Text(
-                            'Initial Roll:',
+                            ProjectRollDialogText.heroInitialRollLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -413,7 +418,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
-                              '19+!',
+                              ProjectRollDialogText.heroBreakthroughBadgeLabel,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -435,7 +440,9 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   child: FilledButton.icon(
                     onPressed: _rollBreakthrough,
                     icon: const Icon(Icons.bolt),
-                    label: const Text('Roll Breakthrough!'),
+                    label: const Text(
+                      ProjectRollDialogText.heroBreakthroughButtonLabel,
+                    ),
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.amber.shade700,
                       foregroundColor: Colors.black,
@@ -459,7 +466,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Roll Total: ',
+                          ProjectRollDialogText.heroRollTotalLabel,
                           style: theme.textTheme.bodyLarge,
                         ),
                         Text(
@@ -502,7 +509,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                 children: [
                   // Edge button
                   _ModifierButton(
-                    label: 'Edge',
+                    label: ProjectRollDialogText.heroEdgeLabel,
                     count: _edgeCount,
                     maxCount: _maxEdges,
                     isPositive: true,
@@ -512,7 +519,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   
                   // Bane button
                   _ModifierButton(
-                    label: 'Bane',
+                    label: ProjectRollDialogText.heroBaneLabel,
                     count: _baneCount,
                     maxCount: _maxBanes,
                     isPositive: false,
@@ -522,7 +529,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   
                   // Skill button (now a counter, not toggle)
                   _ModifierButton(
-                    label: 'Skill',
+                    label: ProjectRollDialogText.heroSkillLabel,
                     count: _skillCount,
                     maxCount: _maxSkillUses,
                     isPositive: true,
@@ -562,12 +569,12 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             isDense: true,
           ),
-          hint: const Text('Select characteristic'),
+          hint: const Text(ProjectRollDialogText.heroCharacteristicHint),
           isExpanded: true,
           items: [
             const DropdownMenuItem<String?>(
               value: null,
-              child: Text('None'),
+              child: Text(ProjectRollDialogText.heroCharacteristicNoneLabel),
             ),
             ...characteristics.map((char) {
               final baseValue = _getCharacteristicValue(char);
@@ -604,7 +611,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             Icon(Icons.group, color: HeroTheme.primarySection),
             const SizedBox(width: 8),
             Text(
-              'Follower Contributions',
+              ProjectRollDialogText.followerSectionTitle,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -630,7 +637,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'No followers available',
+                      ProjectRollDialogText.noFollowersLabel,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -683,7 +690,11 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                 OutlinedButton.icon(
                   onPressed: () => _rollForFollower(follower),
                   icon: const Icon(Icons.casino, size: 16),
-                  label: Text(rollState.hasRolled ? 'Re-roll' : 'Roll'),
+                  label: Text(
+                    rollState.hasRolled
+                        ? ProjectRollDialogText.followerRerollButtonLabel
+                        : ProjectRollDialogText.followerRollButtonLabel,
+                  ),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     visualDensity: VisualDensity.compact,
@@ -719,7 +730,9 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          isBreakthrough ? 'B${index}: ' : 'Roll: ',
+                          isBreakthrough
+                              ? 'B${index}: '
+                              : ProjectRollDialogText.followerRollPrefixLabel,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: isBreakthrough ? Colors.amber.shade700 : null,
@@ -749,7 +762,10 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   child: OutlinedButton.icon(
                     onPressed: () => _rollFollowerBreakthrough(follower.id),
                     icon: const Icon(Icons.bolt, size: 14),
-                    label: const Text('Breakthrough!', style: TextStyle(fontSize: 12)),
+                    label: const Text(
+                      ProjectRollDialogText.followerBreakthroughButtonLabel,
+                      style: TextStyle(fontSize: 12),
+                    ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.amber.shade700,
                       side: BorderSide(color: Colors.amber.shade700),
@@ -808,7 +824,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                 runSpacing: 6,
                 children: [
                   _SmallModifierButton(
-                    label: 'Edge',
+                    label: ProjectRollDialogText.followerEdgeLabel,
                     count: rollState.edgeCount,
                     maxCount: rollState.maxEdges,
                     isPositive: true,
@@ -816,7 +832,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     onRemove: () => _removeFollowerEdge(follower.id),
                   ),
                   _SmallModifierButton(
-                    label: 'Bane',
+                    label: ProjectRollDialogText.followerBaneLabel,
                     count: rollState.baneCount,
                     maxCount: rollState.maxBanes,
                     isPositive: false,
@@ -824,7 +840,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     onRemove: () => _removeFollowerBane(follower.id),
                   ),
                   _SmallModifierButton(
-                    label: 'Skill',
+                    label: ProjectRollDialogText.followerSkillLabel,
                     count: rollState.skillCount,
                     maxCount: rollState.maxSkillUses,
                     isPositive: true,
@@ -875,7 +891,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
       items: [
         const DropdownMenuItem<String?>(
           value: null,
-          child: Text('None'),
+          child: Text(ProjectRollDialogText.followerCharacteristicNoneLabel),
         ),
         ...characteristics.map((char) {
           final baseValue = getFollowerCharValue(char);
@@ -995,7 +1011,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Total Points: ',
+            ProjectRollDialogText.totalPointsLabel,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
             ),

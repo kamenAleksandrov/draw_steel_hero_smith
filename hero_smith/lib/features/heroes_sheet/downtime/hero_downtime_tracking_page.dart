@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/hero_theme.dart';
+import '../../../core/theme/text/downtime/hero_downtime_tracking_page_text.dart';
 import '../../../widgets/downtime/downtime_tabs.dart';
 import 'sheet_downtime/projects_list_tab.dart';
 import 'sheet_downtime/followers_tab.dart';
@@ -46,15 +47,15 @@ class _HeroDowntimeTrackingPageState
                 tabs: const [
                   Tab(
                     icon: Icon(Icons.assignment),
-                    text: 'Projects',
+                    text: HeroDowntimeTrackingPageText.tabProjectsLabel,
                   ),
                   Tab(
                     icon: Icon(Icons.people),
-                    text: 'Followers',
+                    text: HeroDowntimeTrackingPageText.tabFollowersLabel,
                   ),
                   Tab(
                     icon: Icon(Icons.book),
-                    text: 'Sources',
+                    text: HeroDowntimeTrackingPageText.tabSourcesLabel,
                   ),
                 ],
               ),
@@ -80,7 +81,7 @@ class _HeroDowntimeTrackingPageState
         actions: [
           IconButton(
             icon: const Icon(Icons.event_note),
-            tooltip: 'View Event Tables',
+            tooltip: HeroDowntimeTrackingPageText.viewEventTablesTooltip,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -107,15 +108,15 @@ class _HeroDowntimeTrackingPageState
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.assignment),
-            label: 'Projects',
+            label: HeroDowntimeTrackingPageText.bottomNavProjectsLabel,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
-            label: 'Followers',
+            label: HeroDowntimeTrackingPageText.bottomNavFollowersLabel,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
-            label: 'Sources',
+            label: HeroDowntimeTrackingPageText.bottomNavSourcesLabel,
           ),
         ],
       ),

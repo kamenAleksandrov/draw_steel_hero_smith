@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/project_detail_card_text.dart';
 import '../../../../widgets/downtime/downtime_tabs.dart';
 
 /// Card displaying project details with progress
@@ -98,7 +99,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                       iconSize: 20,
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(4),
-                      tooltip: 'Edit Project',
+                      tooltip: ProjectDetailCardText.editTooltip,
                     ),
                   ],
                   if (widget.onDelete != null) ...[
@@ -109,7 +110,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                       iconSize: 20,
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(4),
-                      tooltip: 'Remove Project',
+                      tooltip: ProjectDetailCardText.removeTooltip,
                     ),
                   ],
                 ],
@@ -284,7 +285,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Notes',
+                                  ProjectDetailCardText.notesLabel,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.bold,
@@ -337,7 +338,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                           child: FilledButton.icon(
                             onPressed: widget.onAddPoints,
                             icon: const Icon(Icons.add, size: 20),
-                            label: const Text('Add Points'),
+                            label: const Text(ProjectDetailCardText.addPointsButtonLabel),
                             style: FilledButton.styleFrom(
                               backgroundColor: HeroTheme.primarySection,
                               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -350,7 +351,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                             child: OutlinedButton.icon(
                               onPressed: widget.onRoll,
                               icon: const Icon(Icons.casino, size: 20),
-                              label: const Text('Roll'),
+                              label: const Text(ProjectDetailCardText.rollButtonLabel),
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                               ),
@@ -370,7 +371,9 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                       child: FilledButton.icon(
                         onPressed: widget.onAddToGear,
                         icon: const Icon(Icons.backpack, size: 20),
-                        label: const Text('Add Crafted Item to Gear'),
+                        label: const Text(
+                          ProjectDetailCardText.addCraftedItemToGearLabel,
+                        ),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.green.shade600,
                           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -388,7 +391,9 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                       child: FilledButton.icon(
                         onPressed: widget.onAddToGear,
                         icon: const Icon(Icons.auto_fix_high, size: 20),
-                        label: const Text('Add Imbuement to Gear'),
+                        label: const Text(
+                          ProjectDetailCardText.addImbuementToGearLabel,
+                        ),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.deepPurple.shade800,
                           foregroundColor: Colors.grey.shade300,
@@ -443,7 +448,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'EFFECT',
+                      ProjectDetailCardText.treasureEffectLabel,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: Colors.deepPurple.shade400,
                         fontWeight: FontWeight.bold,
@@ -481,19 +486,19 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
     
     // Get display name for imbuement type
     String typeDisplay = '';
-    if (imbuementType != null) {
+        if (imbuementType != null) {
       switch (imbuementType) {
         case 'armor_imbuement':
-          typeDisplay = 'Armor Imbuement';
+          typeDisplay = ProjectDetailCardText.imbuementTypeArmorLabel;
           break;
         case 'weapon_imbuement':
-          typeDisplay = 'Weapon Imbuement';
+          typeDisplay = ProjectDetailCardText.imbuementTypeWeaponLabel;
           break;
         case 'implement_imbuement':
-          typeDisplay = 'Implement Imbuement';
+          typeDisplay = ProjectDetailCardText.imbuementTypeImplementLabel;
           break;
         case 'shield_imbuement':
-          typeDisplay = 'Shield Imbuement';
+          typeDisplay = ProjectDetailCardText.imbuementTypeShieldLabel;
           break;
         default:
           typeDisplay = imbuementType.replaceAll('_', ' ');
@@ -570,7 +575,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'IMBUEMENT EFFECT',
+                      ProjectDetailCardText.imbuementEffectLabel,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: Colors.deepPurple.shade400,
                         fontWeight: FontWeight.bold,
@@ -610,7 +615,7 @@ class _ProjectDetailCardState extends State<ProjectDetailCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'LEVEL VARIANTS',
+          ProjectDetailCardText.levelVariantsLabel,
           style: theme.textTheme.labelSmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
@@ -760,7 +765,7 @@ class _EventChip extends StatelessWidget {
         onTap: () => _navigateToEvents(context),
         borderRadius: BorderRadius.circular(16),
         child: Tooltip(
-          message: 'Tap to view event tables',
+          message: ProjectDetailCardText.eventChipTooltipTriggered,
           child: chip,
         ),
       );

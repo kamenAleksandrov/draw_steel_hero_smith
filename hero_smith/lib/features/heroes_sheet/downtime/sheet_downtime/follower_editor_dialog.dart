@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/downtime_tracking.dart';
+import '../../../../core/theme/text/downtime/follower_editor_dialog_text.dart';
 
 class FollowerEditorDialog extends StatefulWidget {
   const FollowerEditorDialog({
@@ -62,7 +63,11 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.existingFollower == null ? 'Add Follower' : 'Edit Follower'),
+      title: Text(
+        widget.existingFollower == null
+            ? FollowerEditorDialogText.titleAddFollower
+            : FollowerEditorDialogText.titleEditFollower,
+      ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.9,
         child: Form(
@@ -74,38 +79,70 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Name *',
+                    labelText: FollowerEditorDialogText.nameLabel,
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  validator: (v) => v == null || v.isEmpty
+                      ? FollowerEditorDialogText.nameRequiredError
+                      : null,
                 ),
                 const SizedBox(height: 12),
                 
                 TextFormField(
                   controller: _typeController,
                   decoration: const InputDecoration(
-                    labelText: 'Follower Type *',
-                    hintText: 'e.g., Artisan, Scholar, Guard',
+                    labelText: FollowerEditorDialogText.followerTypeLabel,
+                    hintText: FollowerEditorDialogText.followerTypeHint,
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  validator: (v) => v == null || v.isEmpty
+                      ? FollowerEditorDialogText.followerTypeRequiredError
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 
-                const Text('Characteristics:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  FollowerEditorDialogText.characteristicsLabel,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 
                 Row(
                   children: [
-                    Expanded(child: _buildStatField('M', _mightController)),
+                    Expanded(
+                      child: _buildStatField(
+                        FollowerEditorDialogText.statLabelM,
+                        _mightController,
+                      ),
+                    ),
                     const SizedBox(width: 6),
-                    Expanded(child: _buildStatField('A', _agilityController)),
+                    Expanded(
+                      child: _buildStatField(
+                        FollowerEditorDialogText.statLabelA,
+                        _agilityController,
+                      ),
+                    ),
                     const SizedBox(width: 6),
-                    Expanded(child: _buildStatField('R', _reasonController)),
+                    Expanded(
+                      child: _buildStatField(
+                        FollowerEditorDialogText.statLabelR,
+                        _reasonController,
+                      ),
+                    ),
                     const SizedBox(width: 6),
-                    Expanded(child: _buildStatField('I', _intuitionController)),
+                    Expanded(
+                      child: _buildStatField(
+                        FollowerEditorDialogText.statLabelI,
+                        _intuitionController,
+                      ),
+                    ),
                     const SizedBox(width: 6),
-                    Expanded(child: _buildStatField('P', _presenceController)),
+                    Expanded(
+                      child: _buildStatField(
+                        FollowerEditorDialogText.statLabelP,
+                        _presenceController,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -113,8 +150,8 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
                 TextFormField(
                   controller: _skillsController,
                   decoration: const InputDecoration(
-                    labelText: 'Skills',
-                    hintText: 'Comma-separated',
+                    labelText: FollowerEditorDialogText.skillsLabel,
+                    hintText: FollowerEditorDialogText.skillsHint,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -123,8 +160,8 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
                 TextFormField(
                   controller: _languagesController,
                   decoration: const InputDecoration(
-                    labelText: 'Languages',
-                    hintText: 'Comma-separated',
+                    labelText: FollowerEditorDialogText.languagesLabel,
+                    hintText: FollowerEditorDialogText.languagesHint,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -136,11 +173,11 @@ class _FollowerEditorDialogState extends State<FollowerEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text(FollowerEditorDialogText.cancelButtonLabel),
         ),
         FilledButton(
           onPressed: _save,
-          child: const Text('Save'),
+          child: const Text(FollowerEditorDialogText.saveButtonLabel),
         ),
       ],
     );

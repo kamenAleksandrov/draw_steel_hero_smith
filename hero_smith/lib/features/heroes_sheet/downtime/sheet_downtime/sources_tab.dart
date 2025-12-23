@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/sources_tab_text.dart';
 
 /// Provider for hero project sources
 final heroSourcesProvider =
@@ -63,7 +64,7 @@ class SourcesTab extends ConsumerWidget {
       child: FilledButton.icon(
         onPressed: () => _addSource(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Add Source'),
+        label: const Text(SourcesTabText.addSourceButtonLabel),
         style: HeroTheme.primaryActionButtonStyle(context),
       ),
     );
@@ -130,7 +131,7 @@ class SourcesTab extends ConsumerWidget {
                 children: [
                   Icon(Icons.edit),
                   SizedBox(width: 8),
-                  Text('Edit'),
+                  Text(SourcesTabText.editMenuLabel),
                 ],
               ),
             ),
@@ -140,7 +141,7 @@ class SourcesTab extends ConsumerWidget {
                 children: [
                   Icon(Icons.delete, color: Colors.red),
                   SizedBox(width: 8),
-                  Text('Delete'),
+                  Text(SourcesTabText.deleteMenuLabel),
                 ],
               ),
             ),
@@ -162,12 +163,12 @@ class SourcesTab extends ConsumerWidget {
     return HeroTheme.buildEmptyState(
       context,
       icon: Icons.book_outlined,
-      title: 'No Sources Yet',
-      subtitle: 'Add books, items, or guides to help with projects',
+      title: SourcesTabText.emptyTitle,
+      subtitle: SourcesTabText.emptySubtitle,
       action: FilledButton.icon(
         onPressed: () => _addSource(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Add First Source'),
+        label: const Text(SourcesTabText.emptyActionLabel),
         style: HeroTheme.primaryActionButtonStyle(context),
       ),
     );
@@ -212,17 +213,17 @@ class SourcesTab extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Source'),
+        title: const Text(SourcesTabText.deleteDialogTitle),
         content: Text('Remove ${source.name}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text(SourcesTabText.deleteDialogCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Text(SourcesTabText.deleteDialogConfirm),
           ),
         ],
       ),
@@ -279,7 +280,11 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.existingSource == null ? 'Add Source' : 'Edit Source'),
+      title: Text(
+        widget.existingSource == null
+            ? SourcesTabText.dialogTitleAdd
+            : SourcesTabText.dialogTitleEdit,
+      ),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -290,23 +295,34 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Name *',
+                  labelText: SourcesTabText.nameLabel,
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                validator: (v) => v == null || v.isEmpty
+                    ? SourcesTabText.nameRequiredError
+                    : null,
               ),
               const SizedBox(height: 16),
               
               DropdownButtonFormField<String>(
                 value: _selectedType,
                 decoration: const InputDecoration(
-                  labelText: 'Type *',
+                  labelText: SourcesTabText.typeLabel,
                   border: OutlineInputBorder(),
                 ),
                 items: const [
-                  DropdownMenuItem(value: 'source', child: Text('Source (Book/Text)')),
-                  DropdownMenuItem(value: 'item', child: Text('Item')),
-                  DropdownMenuItem(value: 'guide', child: Text('Guide (Person)')),
+                  DropdownMenuItem(
+                    value: 'source',
+                    child: Text(SourcesTabText.typeOptionSource),
+                  ),
+                  DropdownMenuItem(
+                    value: 'item',
+                    child: Text(SourcesTabText.typeOptionItem),
+                  ),
+                  DropdownMenuItem(
+                    value: 'guide',
+                    child: Text(SourcesTabText.typeOptionGuide),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) {
@@ -319,7 +335,7 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
               TextFormField(
                 controller: _languageController,
                 decoration: const InputDecoration(
-                  labelText: 'Language',
+                  labelText: SourcesTabText.languageLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -328,7 +344,7 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
-                  labelText: 'Description',
+                  labelText: SourcesTabText.descriptionLabel,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
@@ -340,11 +356,11 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: const Text(SourcesTabText.cancelButtonLabel),
         ),
         FilledButton(
           onPressed: _save,
-          child: const Text('Save'),
+          child: const Text(SourcesTabText.saveButtonLabel),
         ),
       ],
     );

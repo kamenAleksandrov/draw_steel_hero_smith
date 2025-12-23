@@ -4,6 +4,7 @@ import '../../../../core/data/downtime_data_source.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/text/downtime/project_template_browser_text.dart';
 
 /// Provider for loading project templates from JSON
 final projectTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async {
@@ -140,7 +141,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                             controller: _searchController,
                             autofocus: true,
                             decoration: InputDecoration(
-                              hintText: 'Search projects by name...',
+                              hintText: ProjectTemplateBrowserText.searchHint,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -159,7 +160,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                             ),
                           )
                         : Text(
-                            'Downtime Projects',
+                            ProjectTemplateBrowserText.dialogTitle,
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -168,7 +169,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   IconButton(
                     icon: Icon(_isSearching ? Icons.close : Icons.search),
                     onPressed: _toggleSearch,
-                    tooltip: _isSearching ? 'Close search' : 'Search projects',
+                    tooltip: _isSearching
+                        ? ProjectTemplateBrowserText.closeSearchTooltip
+                        : ProjectTemplateBrowserText.openSearchTooltip,
                   ),
                   if (!_isSearching)
                     IconButton(
@@ -189,9 +192,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 labelColor: HeroTheme.primarySection,
                 indicatorColor: HeroTheme.primarySection,
                 tabs: const [
-                  Tab(text: 'Projects'),
-                  Tab(text: 'Imbuements'),
-                  Tab(text: 'Treasures'),
+                  Tab(text: ProjectTemplateBrowserText.tabProjectsLabel),
+                  Tab(text: ProjectTemplateBrowserText.tabImbuementsLabel),
+                  Tab(text: ProjectTemplateBrowserText.tabTreasuresLabel),
                 ],
               ),
 
@@ -396,7 +399,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 child: FilledButton.icon(
                   onPressed: () => _takeOnSearchableProject(context, ref, project),
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Take On Project'),
+                  label: const Text(
+                    ProjectTemplateBrowserText.takeOnSearchResultButtonLabel,
+                  ),
                   style: HeroTheme.primaryActionButtonStyle(context),
                 ),
               ),
@@ -436,11 +441,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getCategoryLabel(String category) {
     switch (category) {
       case 'project':
-        return 'Project';
+        return ProjectTemplateBrowserText.categoryProjectLabel;
       case 'imbuement':
-        return 'Imbuement';
+        return ProjectTemplateBrowserText.categoryImbuementLabel;
       case 'treasure':
-        return 'Treasure';
+        return ProjectTemplateBrowserText.categoryTreasureLabel;
       default:
         return category;
     }
@@ -467,7 +472,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select a project to add to your hero',
+            ProjectTemplateBrowserText.selectProjectPrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -496,7 +501,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select an imbuement project to add to your hero',
+            ProjectTemplateBrowserText.selectImbuementPrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -525,7 +530,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select a craftable treasure to add as a project',
+            ProjectTemplateBrowserText.selectTreasurePrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -557,7 +562,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             const Icon(Icons.inbox, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No craftable treasures found',
+              ProjectTemplateBrowserText.noCraftableTreasuresLabel,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ],
@@ -696,7 +701,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           size: 20,
         ),
         title: Text(
-          'Leveled Treasures',
+          ProjectTemplateBrowserText.leveledTreasuresHeader,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
@@ -812,7 +817,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               if (treasure.itemPrerequisite != null && treasure.itemPrerequisite!.isNotEmpty) ...[
                 _buildSection(
                   context,
-                  'Prerequisites',
+                  ProjectTemplateBrowserText.prerequisitesLabel,
                   [treasure.itemPrerequisite!],
                   Icons.inventory_2_outlined,
                 ),
@@ -843,7 +848,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 child: FilledButton.icon(
                   onPressed: () => _takeOnTreasureProject(context, ref, treasure),
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Take On Project'),
+                  label: const Text(
+                    ProjectTemplateBrowserText.takeOnTreasureButtonLabel,
+                  ),
                   style: HeroTheme.primaryActionButtonStyle(context),
                 ),
               ),
@@ -883,11 +890,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getTreasureTypeName(String type) {
     switch (type) {
       case 'consumable':
-        return 'Consumables';
+        return ProjectTemplateBrowserText.treasureTypeConsumablesLabel;
       case 'trinket':
-        return 'Trinkets';
+        return ProjectTemplateBrowserText.treasureTypeTrinketsLabel;
       case 'leveled_treasure':
-        return 'Leveled Treasures';
+        return ProjectTemplateBrowserText.treasureTypeLeveledLabel;
       default:
         return type;
     }
@@ -896,15 +903,15 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getEchelonName(int echelon) {
     switch (echelon) {
       case 0:
-        return 'No Echelon';
+        return ProjectTemplateBrowserText.echelonNoneLabel;
       case 1:
-        return '1st Echelon';
+        return ProjectTemplateBrowserText.echelon1Label;
       case 2:
-        return '2nd Echelon';
+        return ProjectTemplateBrowserText.echelon2Label;
       case 3:
-        return '3rd Echelon';
+        return ProjectTemplateBrowserText.echelon3Label;
       case 4:
-        return '4th Echelon';
+        return ProjectTemplateBrowserText.echelon4Label;
       default:
         return '${echelon}th Echelon';
     }
@@ -913,13 +920,13 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getEquipmentTypeName(String equipType) {
     switch (equipType) {
       case 'armor':
-        return 'Armor';
+        return ProjectTemplateBrowserText.equipmentArmorLabel;
       case 'weapon':
-        return 'Weapons';
+        return ProjectTemplateBrowserText.equipmentWeaponsLabel;
       case 'implement':
-        return 'Implements';
+        return ProjectTemplateBrowserText.equipmentImplementsLabel;
       case 'shield':
-        return 'Shields';
+        return ProjectTemplateBrowserText.equipmentShieldsLabel;
       default:
         return equipType
             .split('_')
@@ -982,7 +989,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             const Icon(Icons.inbox, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No imbuements found',
+              ProjectTemplateBrowserText.noImbuementsLabel,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ],
@@ -1056,11 +1063,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getLevelName(int level) {
     switch (level) {
       case 1:
-        return '1st Level Imbuements';
+        return ProjectTemplateBrowserText.levelImbuements1Label;
       case 5:
-        return '5th Level Imbuements';
+        return ProjectTemplateBrowserText.levelImbuements5Label;
       case 9:
-        return '9th Level Imbuements';
+        return ProjectTemplateBrowserText.levelImbuements9Label;
       default:
         return '${level}th Level Imbuements';
     }
@@ -1069,11 +1076,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   String _getImbuementTypeName(String type) {
     switch (type) {
       case 'armor_imbuement':
-        return 'Armor Imbuements';
+        return ProjectTemplateBrowserText.imbuementTypeArmorLabel;
       case 'weapon_imbuement':
-        return 'Weapon Imbuements';
+        return ProjectTemplateBrowserText.imbuementTypeWeaponLabel;
       case 'implement_imbuement':
-        return 'Implement Imbuements';
+        return ProjectTemplateBrowserText.imbuementTypeImplementLabel;
       default:
         return type
             .replaceAll('_', ' ')
@@ -1097,7 +1104,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           ),
           const SizedBox(height: 16),
           Text(
-            'Failed to load templates',
+            ProjectTemplateBrowserText.failedToLoadTemplatesLabel,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
@@ -1122,7 +1129,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             const Icon(Icons.inbox, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Text(
-              'No templates found',
+              ProjectTemplateBrowserText.noTemplatesFoundLabel,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ],
@@ -1216,7 +1223,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               if (itemPrereqs.isNotEmpty) ...[
                 _buildSection(
                   context,
-                  'Item Prerequisites',
+                  ProjectTemplateBrowserText.itemPrerequisitesLabel,
                   itemPrereqs.map((p) => p['name'] as String? ?? '').toList(),
                   Icons.inventory_2_outlined,
                 ),
@@ -1227,7 +1234,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               if (sourcePrereqs.isNotEmpty) ...[
                 _buildSection(
                   context,
-                  'Sources',
+                  ProjectTemplateBrowserText.sourcesLabel,
                   sourcePrereqs.map((p) {
                     final name = p['name'] as String? ?? '';
                     final lang = p['language'] as String? ?? '';
@@ -1262,7 +1269,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 child: FilledButton.icon(
                   onPressed: () => _takeOnProject(context, ref, template),
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Take On Project'),
+                  label: const Text(
+                    ProjectTemplateBrowserText.takeOnTemplateButtonLabel,
+                  ),
                   style: HeroTheme.primaryActionButtonStyle(context),
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
+import '../../../core/theme/text/common_abilities_view_text.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
 /// Enum for common ability categories
@@ -15,11 +16,11 @@ extension CommonAbilityCategoryLabel on CommonAbilityCategory {
   String get label {
     switch (this) {
       case CommonAbilityCategory.actions:
-        return 'Actions';
+        return CommonAbilitiesViewText.actionLabelActions;
       case CommonAbilityCategory.move:
-        return 'Move';
+        return CommonAbilitiesViewText.actionLabelMove;
       case CommonAbilityCategory.maneuvers:
-        return 'Maneuvers';
+        return CommonAbilitiesViewText.actionLabelManeuvers;
     }
   }
   
@@ -101,7 +102,7 @@ class _CommonAbilitiesViewState extends State<CommonAbilitiesView>
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Error loading common abilities',
+                    CommonAbilitiesViewText.errorTitle,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -123,7 +124,7 @@ class _CommonAbilitiesViewState extends State<CommonAbilitiesView>
             child: Padding(
               padding: EdgeInsets.all(24.0),
               child: Text(
-                'No common abilities found',
+                CommonAbilitiesViewText.emptyListMessage,
                 style: TextStyle(color: Colors.grey),
               ),
             ),
@@ -215,14 +216,14 @@ class _CommonAbilitiesViewState extends State<CommonAbilitiesView>
               Icon(category.icon, size: 48, color: theme.colorScheme.outline),
               const SizedBox(height: 12),
               Text(
-                'No ${category.label}',
+                '${CommonAbilitiesViewText.emptyCategoryPrefix}${category.label}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.outline,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Common abilities of this type will appear here',
+                CommonAbilitiesViewText.emptyCategorySubtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.outline,
                 ),

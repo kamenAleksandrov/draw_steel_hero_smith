@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/downtime_tracking.dart';
+import '../../../../core/theme/text/downtime/project_editor_dialog_text.dart';
 
 /// Dialog for creating or editing a downtime project
 class ProjectEditorDialog extends StatefulWidget {
@@ -74,7 +75,11 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.existingProject == null ? 'Create Project' : 'Edit Project'),
+      title: Text(
+        widget.existingProject == null
+            ? ProjectEditorDialogText.titleCreateProject
+            : ProjectEditorDialogText.titleEditProject,
+      ),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -82,25 +87,25 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Project Name *',
-                  border: OutlineInputBorder(),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: ProjectEditorDialogText.nameLabel,
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return ProjectEditorDialogText.nameRequiredError;
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
               
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
-                  labelText: 'Description',
+                  labelText: ProjectEditorDialogText.descriptionLabel,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
@@ -110,17 +115,17 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _goalController,
                 decoration: const InputDecoration(
-                  labelText: 'Project Goal (points) *',
+                  labelText: ProjectEditorDialogText.goalLabel,
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a goal';
+                    return ProjectEditorDialogText.goalRequiredError;
                   }
                   if (int.tryParse(value) == null || int.parse(value) <= 0) {
-                    return 'Please enter a valid number';
+                    return ProjectEditorDialogText.goalValidNumberError;
                   }
                   return null;
                 },
@@ -131,7 +136,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
                 TextFormField(
                   controller: _currentPointsController,
                   decoration: const InputDecoration(
-                    labelText: 'Current Points',
+                    labelText: ProjectEditorDialogText.currentPointsLabel,
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.number,
@@ -143,7 +148,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _prerequisitesController,
                 decoration: const InputDecoration(
-                  labelText: 'Prerequisites (comma-separated)',
+                  labelText: ProjectEditorDialogText.prerequisitesLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -152,7 +157,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _sourceController,
                 decoration: const InputDecoration(
-                  labelText: 'Project Source',
+                  labelText: ProjectEditorDialogText.sourceLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -161,7 +166,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _sourceLanguageController,
                 decoration: const InputDecoration(
-                  labelText: 'Source Language',
+                  labelText: ProjectEditorDialogText.sourceLanguageLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -170,7 +175,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _guidesController,
                 decoration: const InputDecoration(
-                  labelText: 'Guides (comma-separated)',
+                  labelText: ProjectEditorDialogText.guidesLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -179,8 +184,8 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _characteristicsController,
                 decoration: const InputDecoration(
-                  labelText: 'Roll Characteristics (comma-separated)',
-                  hintText: 'e.g., might, reason, presence',
+                  labelText: ProjectEditorDialogText.rollCharacteristicsLabel,
+                  hintText: ProjectEditorDialogText.rollCharacteristicsHint,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -189,7 +194,7 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               // Events Section
               if (widget.existingProject != null && _events.isNotEmpty) ...[
                 Text(
-                  'Event Milestones',
+                  ProjectEditorDialogText.eventMilestonesLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -222,8 +227,8 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
               TextFormField(
                 controller: _notesController,
                 decoration: const InputDecoration(
-                  labelText: 'Notes',
-                  hintText: 'Personal notes, ideas, progress tracking...',
+                  labelText: ProjectEditorDialogText.notesLabel,
+                  hintText: ProjectEditorDialogText.notesHint,
                   border: OutlineInputBorder(),
                   alignLabelWithHint: true,
                 ),
@@ -236,11 +241,11 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text(ProjectEditorDialogText.cancelButtonLabel),
         ),
         FilledButton(
           onPressed: _saveProject,
-          child: const Text('Save'),
+          child: const Text(ProjectEditorDialogText.saveButtonLabel),
         ),
       ],
     );
@@ -350,7 +355,7 @@ class _EventEditorTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    'Triggered',
+                    ProjectEditorDialogText.eventTriggeredLabel,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: Colors.amber.shade800,
                     ),
@@ -363,7 +368,7 @@ class _EventEditorTile extends StatelessWidget {
           TextFormField(
             initialValue: event.eventDescription ?? '',
             decoration: InputDecoration(
-              hintText: 'Add event notes or outcome...',
+              hintText: ProjectEditorDialogText.eventNotesHint,
               isDense: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/perk_grants_service.dart';
+import '../../../core/theme/semantic/hero_entry_tokens.dart';
+import '../../../core/theme/text/sheet_abilities_text.dart';
 import 'ability_list_view.dart';
 import 'add_ability_dialog.dart';
 import 'common_abilities_view.dart';
@@ -68,15 +70,16 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
       final entries = HeroEntryRepository(db);
       
       // Check if ability is already added with manual_choice source
-      final existingEntries = await entries.listEntriesByType(widget.heroId, 'ability');
+      final existingEntries =
+          await entries.listEntriesByType(widget.heroId, HeroEntryTypes.ability);
       final alreadyAdded = existingEntries.any(
-        (e) => e.entryId == abilityId && e.sourceType == 'manual_choice',
+        (e) => e.entryId == abilityId && e.sourceType == HeroEntrySourceTypes.manualChoice,
       );
       
       if (alreadyAdded) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Ability already added')),
+            const SnackBar(content: Text(SheetAbilitiesText.snackAbilityAlreadyAdded)),
           );
         }
         return;
@@ -85,22 +88,24 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
       // Add ability to hero_entries with sourceType='manual_choice'
       await entries.addEntry(
         heroId: widget.heroId,
-        entryType: 'ability',
+        entryType: HeroEntryTypes.ability,
         entryId: abilityId,
-        sourceType: 'manual_choice',
-        sourceId: 'sheet_add',
-        gainedBy: 'choice',
+        sourceType: HeroEntrySourceTypes.manualChoice,
+        sourceId: HeroEntrySourceIds.sheetAdd,
+        gainedBy: HeroEntryGainedBy.choice,
       );
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ability added successfully')),
+          const SnackBar(content: Text(SheetAbilitiesText.snackAbilityAdded)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add ability: $e')),
+          SnackBar(
+            content: Text('${SheetAbilitiesText.snackAbilityAddFailedPrefix}$e'),
+          ),
         );
       }
     }
@@ -122,8 +127,8 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
               TabBar(
                 labelPadding: const EdgeInsets.symmetric(horizontal: 8),
                 tabs: const [
-                  Tab(text: 'Hero Abilities'),
-                  Tab(text: 'Common Abilities'),
+                  Tab(text: SheetAbilitiesText.tabHeroAbilities),
+                  Tab(text: SheetAbilitiesText.tabCommonAbilities),
                 ],
               ),
               Expanded(
@@ -143,14 +148,14 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
                                       size: 48, color: theme.colorScheme.outline),
                                   const SizedBox(height: 12),
                                   Text(
-                                    'No Abilities Yet',
+                                    SheetAbilitiesText.emptyHeroTitle,
                                     style: theme.textTheme.titleMedium?.copyWith(
                                       color: theme.colorScheme.outline,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Tap + to add abilities',
+                                    SheetAbilitiesText.emptyHeroSubtitle,
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.outline,
                                     ),
@@ -178,7 +183,7 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
                                   size: 48, color: Colors.red),
                               const SizedBox(height: 12),
                               Text(
-                                'Error loading abilities',
+                                SheetAbilitiesText.errorTitle,
                                 style: theme.textTheme.titleMedium,
                               ),
                               const SizedBox(height: 4),
@@ -209,7 +214,7 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
           child: FloatingActionButton(
             heroTag: 'sheet_abilities_fab',
             onPressed: () => _showAddAbilityDialog(context),
-            tooltip: 'Add Ability',
+            tooltip: SheetAbilitiesText.addAbilityTooltip,
             child: const Icon(Icons.add),
           ),
         ),
