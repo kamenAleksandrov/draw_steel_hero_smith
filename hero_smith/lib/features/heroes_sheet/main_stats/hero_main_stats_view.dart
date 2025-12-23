@@ -14,7 +14,7 @@ import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/resource_generation_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/semantic/semantic_tokens.dart';
-import '../../../core/theme/text/hero_main_stats_view_text.dart';
+import '../../../core/theme/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
 import '../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';

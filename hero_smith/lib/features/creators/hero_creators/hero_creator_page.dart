@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:hero_smith/core/theme/text/hero_creator_page_text.dart';
+import 'package:hero_smith/core/theme/text/creators/hero_creators/hero_creator_page_text.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strength_creator_page.dart';

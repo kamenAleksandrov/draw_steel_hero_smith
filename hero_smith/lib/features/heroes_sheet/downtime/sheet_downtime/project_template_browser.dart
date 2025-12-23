@@ -4,7 +4,7 @@ import '../../../../core/data/downtime_data_source.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/theme/hero_theme.dart';
-import '../../../../core/theme/text/downtime/project_template_browser_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/project_template_browser_text.dart';
 
 /// Provider for loading project templates from JSON
 final projectTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async {

@@ -14,7 +14,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/ancestry_bonus_service.dart';
 import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/psi_boost_service.dart';
-import '../../../core/theme/text/hero_main_stats_models_text.dart';
+import '../../../core/theme/text/heroes_sheet/main_stats/hero_main_stats_models_text.dart';
 
 /// Provider that combines hero_values (base stats) with HeroAssembly (mods/bonuses)
 /// to produce the complete HeroMainStats.

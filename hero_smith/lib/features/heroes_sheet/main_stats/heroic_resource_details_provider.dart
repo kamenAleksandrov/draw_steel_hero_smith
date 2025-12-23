@@ -8,7 +8,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/repositories/feature_repository.dart';
-import '../../../core/theme/text/hero_main_stats_models_text.dart';
+import '../../../core/theme/text/heroes_sheet/main_stats/hero_main_stats_models_text.dart';
 import 'hero_main_stats_models.dart';
 
 /// Cache for heroic resource details by class slug.

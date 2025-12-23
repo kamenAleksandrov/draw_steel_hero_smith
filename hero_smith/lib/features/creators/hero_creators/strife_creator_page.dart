@@ -26,7 +26,7 @@ import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/subclass_service.dart';
-import '../../../core/theme/text/strife_creator_page_text.dart';
+import '../../../core/theme/text/creators/hero_creators/strife_creator_page_text.dart';
 import '../../heroes_sheet/main_stats/hero_main_stats_providers.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';

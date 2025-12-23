@@ -10,7 +10,7 @@ import '../../../../core/models/component.dart' as model;
 import '../../../../core/models/perks_models.dart';
 import '../../../../core/services/perks_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/choose_perks_widget_text.dart';
+import '../../../../core/theme/text/creators/widgets/strife_creator/choose_perks_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
 

@@ -5,7 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/theme/hero_theme.dart';
-import '../../../../core/theme/text/downtime/project_roll_dialog_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/project_roll_dialog_text.dart';
 import '../../main_stats/hero_main_stats_providers.dart';
 import 'followers_tab.dart';
 

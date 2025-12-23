@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/models/class_data.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/class_selector_widget_text.dart';
+import '../../../../core/theme/text/creators/widgets/strife_creator/class_selector_widget_text.dart';
 
 /// Widget for selecting hero class
 class ClassSelectorWidget extends StatelessWidget {

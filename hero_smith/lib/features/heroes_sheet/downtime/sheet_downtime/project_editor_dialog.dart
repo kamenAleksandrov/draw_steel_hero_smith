@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/downtime_tracking.dart';
-import '../../../../core/theme/text/downtime/project_editor_dialog_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/project_editor_dialog_text.dart';
 
 /// Dialog for creating or editing a downtime project
 class ProjectEditorDialog extends StatefulWidget {

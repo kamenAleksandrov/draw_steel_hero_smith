@@ -7,7 +7,7 @@ import 'package:hero_smith/core/db/providers.dart';
 import 'package:hero_smith/core/models/hero_model.dart';
 import 'package:hero_smith/core/models/story_creator_models.dart';
 import 'package:hero_smith/core/services/story_creator_service.dart';
-import 'package:hero_smith/core/theme/text/story_creator_page_text.dart';
+import 'package:hero_smith/core/theme/text/creators/hero_creators/story_creator_page_text.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_ancestry_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_career_section.dart';
 import 'package:hero_smith/features/creators/widgets/story_creator/story_complication_section.dart';

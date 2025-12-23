@@ -6,7 +6,7 @@ import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/services/subclass_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/choose_subclass_widget_text.dart';
+import '../../../../core/theme/text/creators/widgets/strife_creator/choose_subclass_widget_text.dart';
 
 class _SearchOption<T> {
   const _SearchOption({

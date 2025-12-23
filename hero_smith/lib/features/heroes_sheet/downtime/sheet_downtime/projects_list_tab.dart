@@ -4,7 +4,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
-import '../../../../core/theme/text/downtime/projects_list_tab_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/projects_list_tab_text.dart';
 import '../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
 import 'project_detail_card.dart';

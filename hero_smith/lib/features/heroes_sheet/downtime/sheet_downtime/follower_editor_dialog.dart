@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/downtime_tracking.dart';
-import '../../../../core/theme/text/downtime/follower_editor_dialog_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/follower_editor_dialog_text.dart';
 
 class FollowerEditorDialog extends StatefulWidget {
   const FollowerEditorDialog({

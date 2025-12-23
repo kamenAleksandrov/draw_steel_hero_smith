@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
-import '../../../../core/theme/text/downtime/sources_tab_text.dart';
+import '../../../../core/theme/text/heroes_sheet/downtime/sources_tab_text.dart';
 
 /// Provider for hero project sources
 final heroSourcesProvider =

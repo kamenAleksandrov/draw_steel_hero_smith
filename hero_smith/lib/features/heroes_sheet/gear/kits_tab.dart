@@ -10,7 +10,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/text/gear/kits_tab_text.dart';
+import '../../../core/theme/text/heroes_sheet/gear/kits_tab_text.dart';
 import '../main_stats/hero_main_stats_providers.dart';
 import 'gear_dialogs.dart';
 import 'gear_utils.dart';

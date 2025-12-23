@@ -5,7 +5,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/perk_grants_service.dart';
 import '../../../core/theme/semantic/hero_entry_tokens.dart';
-import '../../../core/theme/text/sheet_abilities_text.dart';
+import '../../../core/theme/text/heroes_sheet/abilities/sheet_abilities_text.dart';
 import 'ability_list_view.dart';
 import 'add_ability_dialog.dart';
 import 'common_abilities_view.dart';

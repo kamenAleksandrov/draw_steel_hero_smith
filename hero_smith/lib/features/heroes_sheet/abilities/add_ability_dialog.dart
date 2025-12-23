@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
-import '../../../core/theme/text/add_ability_dialog_text.dart';
+import '../../../core/theme/text/heroes_sheet/abilities/add_ability_dialog_text.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
 import '../../../widgets/abilities/ability_filter_dropdown.dart';
 import '../../../widgets/abilities/ability_summary.dart';

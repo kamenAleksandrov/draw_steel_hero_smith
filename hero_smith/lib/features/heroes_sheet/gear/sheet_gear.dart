@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/text/gear/sheet_gear_text.dart';
+import '../../../core/theme/text/heroes_sheet/gear/sheet_gear_text.dart';
 import 'inventory_tab.dart';
 import 'kits_tab.dart';
 import 'treasures_tab.dart';
