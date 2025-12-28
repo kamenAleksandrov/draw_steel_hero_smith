@@ -6,7 +6,7 @@ library;
 
 import 'package:collection/collection.dart';
 
-import '../../../core/theme/text/heroes_sheet/main_stats/hero_stat_insights_text.dart';
+import '../../../core/text/heroes_sheet/main_stats/hero_stat_insights_text.dart';
 import 'hero_main_stats_models.dart';
 
 /// Generates insight strings about wealth based on current wealth score.

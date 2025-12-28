@@ -8,7 +8,7 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/creators/widgets/strife_creator/choose_abilities_widget_text.dart';
+import '../../../../core/text/creators/widgets/strife_creator/choose_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';

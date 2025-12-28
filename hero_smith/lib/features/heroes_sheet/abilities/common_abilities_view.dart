@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
-import '../../../core/theme/text/heroes_sheet/abilities/common_abilities_view_text.dart';
+import '../../../core/text/heroes_sheet/abilities/common_abilities_view_text.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
 /// Enum for common ability categories

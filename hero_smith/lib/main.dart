@@ -63,12 +63,21 @@ class _SplashWrapperState extends ConsumerState<SplashWrapper> {
   bool _initialized = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Defer initialization until after first frame to avoid lifecycle edge-cases
+    // around didChangeDependencies/first build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_initialized) {
+        _initialized = true;
+        _initializeApp();
+      }
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
-      _initialized = true;
-      _initializeApp();
-    }
   }
 
   Future<void> _initializeApp() async {
@@ -85,7 +94,16 @@ class _SplashWrapperState extends ConsumerState<SplashWrapper> {
     
     // Minimum splash duration for branding visibility
     await Future.delayed(const Duration(seconds: 2));
-    
+
+    // Seed DB while the splash screen is showing so the Heroes page doesn't
+    // appear frozen during heavy first-run initialization.
+    try {
+      await ref.read(seedOnStartupProvider.future);
+    } catch (e) {
+      // Best-effort: allow app to continue; downstream pages can surface errors.
+      debugPrint('Startup seed failed: $e');
+    }
+
     if (mounted) {
       setState(() {
         _showSplash = false;
@@ -124,27 +142,25 @@ class _RootNavPageState extends ConsumerState<RootNavPage> {
     DowntimeProjectsPage(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // Print database path once (skipped in tests where auto-seed is disabled).
-    final shouldShow = ref.read(autoSeedEnabledProvider);
-    if (shouldShow) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final path = await AppDatabase.databasePath();
-        debugPrint('Hero Smith DB path: $path');
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('DB path: $path'), duration: const Duration(seconds: 5)),
-        );
-      });
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // Print database path once (skipped in tests where auto-seed is disabled).
+  //   final shouldShow = ref.read(autoSeedEnabledProvider);
+  //   if (shouldShow) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //       final path = await AppDatabase.databasePath();
+  //       debugPrint('Hero Smith DB path: $path');
+  //       if (!mounted) return;
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('DB path: $path'), duration: const Duration(seconds: 5)),
+  //       );
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    // Kick off seeding (no-op if already seeded or disabled via provider override)
-    ref.watch(seedOnStartupProvider);
     return Scaffold(
       appBar: AppBar(title: Text(_titleForIndex(_index))),
       body: _pages[_index],

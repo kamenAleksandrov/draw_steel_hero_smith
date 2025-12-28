@@ -7,7 +7,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../../core/repositories/hero_repository.dart';
-import '../../../core/theme/text/heroes_sheet/main_stats/hero_main_stats_models_text.dart';
+import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_models_text.dart';
 import 'hero_main_stats_models.dart';
 
 /// Calculates the current stamina state based on stats.

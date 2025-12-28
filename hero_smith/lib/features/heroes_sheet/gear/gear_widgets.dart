@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/downtime.dart';
-import '../../../core/theme/text/heroes_sheet/gear/gear_widgets_text.dart';
+import '../../../core/text/heroes_sheet/gear/gear_widgets_text.dart';
 import 'gear_utils.dart';
 
 /// Card displaying an item imbuement with expandable details.

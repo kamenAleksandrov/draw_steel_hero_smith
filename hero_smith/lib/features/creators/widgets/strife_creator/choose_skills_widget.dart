@@ -8,7 +8,7 @@ import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/creators/widgets/strife_creator/choose_skills_widget_text.dart';
+import '../../../../core/text/creators/widgets/strife_creator/choose_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
 class _SearchOption<T> {

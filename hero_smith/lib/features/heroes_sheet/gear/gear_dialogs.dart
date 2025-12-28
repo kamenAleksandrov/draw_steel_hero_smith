@@ -7,7 +7,7 @@ import '../../../core/db/app_database.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/services/class_data_service.dart';
-import '../../../core/theme/text/heroes_sheet/gear/gear_dialogs_text.dart';
+import '../../../core/text/heroes_sheet/gear/gear_dialogs_text.dart';
 import 'gear_utils.dart';
 
 /// Dialog for adding treasures and imbuements.

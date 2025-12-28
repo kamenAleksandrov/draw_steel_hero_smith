@@ -5,7 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
 import '../../../../core/theme/hero_theme.dart';
 import '../../../../core/theme/kit_theme.dart';
-import '../../../../core/theme/text/creators/widgets/strife_creator/choose_equipment_widget_text.dart';
+import '../../../../core/text/creators/widgets/strife_creator/choose_equipment_widget_text.dart';
 import '../../../../widgets/kits/kit_card.dart';
 import '../../../../widgets/kits/modifier_card.dart';
 import '../../../../widgets/kits/stormwight_kit_card.dart';

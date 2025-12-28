@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/creators/widgets/strife_creator/level_selector_widget_text.dart';
+import '../../../../core/text/creators/widgets/strife_creator/level_selector_widget_text.dart';
 
 /// Widget for selecting hero level (1-10)
 class LevelSelectorWidget extends StatelessWidget {

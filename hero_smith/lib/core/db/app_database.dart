@@ -1013,14 +1013,24 @@ class AppDatabase extends _$AppDatabase {
     String gainedBy = 'grant',
     Map<String, dynamic>? payload,
   }) async {
-    // Debug: Track ability entry upserts with stack trace for manual_choice
-    if (entryType == 'ability') {
-      print('[AppDatabase] upsertHeroEntry(ability): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
-      if (sourceType == 'manual_choice') {
-        print('[AppDatabase] STACK TRACE for manual_choice ability:');
-        print(StackTrace.current);
+    // Optional debug logging. Keep disabled by default to avoid massive
+    // slowdowns when many entries are written (e.g., on seed/migrations).
+    const debugLogAbilityUpserts = false;
+    assert(() {
+      if (debugLogAbilityUpserts && entryType == 'ability') {
+        // ignore: avoid_print
+        print(
+          '[AppDatabase] upsertHeroEntry(ability): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId',
+        );
+        if (sourceType == 'manual_choice') {
+          // ignore: avoid_print
+          print('[AppDatabase] STACK TRACE for manual_choice ability:');
+          // ignore: avoid_print
+          print(StackTrace.current);
+        }
       }
-    }
+      return true;
+    }());
     final now = DateTime.now();
     // Remove duplicates for same hero/type/id/source combo.
     // This preserves entries from other sources for the same entryId.

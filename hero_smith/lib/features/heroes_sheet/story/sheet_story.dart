@@ -18,7 +18,7 @@ import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/title_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/text/heroes_sheet/story/sheet_story_text.dart';
+import '../../../core/text/heroes_sheet/story/sheet_story_text.dart';
 import '../../creators/widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/shared/story_display_widgets.dart';
 import '../../../widgets/perks/perks_selection_widget.dart';

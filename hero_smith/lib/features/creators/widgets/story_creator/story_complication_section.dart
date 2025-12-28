@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/complication_grant_models.dart';
 import '../../../../core/models/component.dart' as model;
-import '../../../../core/theme/text/creators/widgets/story_creator/story_complication_section_text.dart';
+import '../../../../core/text/creators/widgets/story_creator/story_complication_section_text.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/treasures/treasures.dart';
 

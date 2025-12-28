@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/models/class_data.dart';
 import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/class_feature_data_service.dart';
-import '../../../../core/theme/text/creators/widgets/strength_creator/class_features_section_text.dart';
+import '../../../../core/text/creators/widgets/strength_creator/class_features_section_text.dart';
 import 'class_features_widget.dart';
 
 class ClassFeaturesSection extends StatefulWidget {

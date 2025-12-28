@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart' as model;
-import '../../../core/theme/text/heroes_sheet/gear/kit_widgets_text.dart';
+import '../../../core/text/heroes_sheet/gear/kit_widgets_text.dart';
 import '../../../widgets/kits/kit_card.dart';
 import '../../../widgets/kits/modifier_card.dart';
 import '../../../widgets/kits/stormwight_kit_card.dart';

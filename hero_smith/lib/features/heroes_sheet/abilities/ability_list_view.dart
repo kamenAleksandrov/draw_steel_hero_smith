@@ -7,7 +7,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/ability_data_service.dart';
-import '../../../core/theme/text/heroes_sheet/abilities/ability_list_view_text.dart';
+import '../../../core/text/heroes_sheet/abilities/ability_list_view_text.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
 /// Enum for action type categories

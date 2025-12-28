@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/app_database.dart';
 import '../../core/repositories/hero_notes_repository.dart' as notes_repo;
-import '../../core/theme/text/heroes_sheet/sheet_notes_text.dart';
+import '../../core/text/heroes_sheet/sheet_notes_text.dart';
 
 // Provider for the notes repository
 final heroNotesRepositoryProvider = Provider<notes_repo.HeroNotesRepository>((ref) {

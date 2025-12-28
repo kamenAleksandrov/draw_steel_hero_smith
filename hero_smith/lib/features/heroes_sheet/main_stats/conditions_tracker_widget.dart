@@ -9,7 +9,7 @@ import '../../../core/db/app_database.dart' as db;
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
 import '../../../core/models/hero_assembled_model.dart';
-import '../../../core/theme/text/heroes_sheet/main_stats/conditions_tracker_text.dart';
+import '../../../core/text/heroes_sheet/main_stats/conditions_tracker_text.dart';
 
 /// Information about a condition immunity and its source
 class ConditionImmunityInfo {

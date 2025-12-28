@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/hero_theme.dart';
-import '../../../../core/theme/text/creators/widgets/story_creator/story_culture_section_text.dart';
+import '../../../../core/text/creators/widgets/story_creator/story_culture_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
 class _SearchOption<T> {

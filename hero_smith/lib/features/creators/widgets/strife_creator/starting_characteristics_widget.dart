@@ -5,7 +5,7 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
-import '../../../../core/theme/text/creators/widgets/strife_creator/starting_characteristics_widget_text.dart';
+import '../../../../core/text/creators/widgets/strife_creator/starting_characteristics_widget_text.dart';
 
 class StartingCharacteristicsWidget extends StatefulWidget {
   const StartingCharacteristicsWidget({

@@ -26,7 +26,7 @@ import '../../../core/services/skills_service.dart';
 import '../../../core/services/starting_characteristics_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/subclass_service.dart';
-import '../../../core/theme/text/creators/hero_creators/strife_creator_page_text.dart';
+import '../../../core/text/creators/hero_creators/strife_creator_page_text.dart';
 import '../../heroes_sheet/main_stats/hero_main_stats_providers.dart';
 import '../widgets/strife_creator/choose_abilities_widget.dart';
 import '../widgets/strife_creator/choose_equipment_widget.dart';
@@ -1823,26 +1823,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       _syncSnapshot();
       widget.onSaveRequested?.call();
 
-      // Calculate display values for snackbar
-      final displayStamina = baseMaxStamina + equipmentBonuses.staminaBonus;
-      final displaySpeed = startingChars.baseSpeed + equipmentBonuses.speedBonus;
-      final displayStability = startingChars.baseStability + equipmentBonuses.stabilityBonus;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '${StrifeCreatorPageText.savedSnackBarHeaderPrefix}'
-            '$_selectedLevel ${classData.name}\n'
-            '${StrifeCreatorPageText.savedSnackBarStaminaPrefix}'
-            '$displayStamina'
-            "${equipmentBonuses.staminaBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarStaminaBonusPrefix}${equipmentBonuses.staminaBonus}${StrifeCreatorPageText.savedSnackBarStaminaBonusSuffix}' : ''}, "
-            '${StrifeCreatorPageText.savedSnackBarSpeedPrefix}'
-            '$displaySpeed'
-            "${equipmentBonuses.speedBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarSpeedBonusPrefix}${equipmentBonuses.speedBonus}${StrifeCreatorPageText.savedSnackBarSpeedBonusSuffix}' : ''}, "
-            '${StrifeCreatorPageText.savedSnackBarStabilityPrefix}'
-            '$displayStability'
-            "${equipmentBonuses.stabilityBonus > 0 ? '${StrifeCreatorPageText.savedSnackBarStabilityBonusPrefix}${equipmentBonuses.stabilityBonus}${StrifeCreatorPageText.savedSnackBarStabilityBonusSuffix}' : ''}",
-          ),
+          content: const Text('Saved!'),
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.green,
         ),

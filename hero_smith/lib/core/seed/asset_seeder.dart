@@ -6,6 +6,8 @@ import '../db/app_database.dart';
 
 /// Handles discovering JSON assets under data/ and seeding the database.
 class AssetSeeder {
+  static const int _chunkSize = 500;
+
   /// Discover all JSON assets under data/ via AssetManifest
   static Future<List<String>> discoverDataJsonAssets() async {
     final manifest = await rootBundle.loadString('AssetManifest.json');
@@ -30,14 +32,7 @@ class AssetSeeder {
         return;
       }
 
-      final batchOps = await _buildSeedBatch(assets);
-
-      if (batchOps.isEmpty) return;
-      await db.batch((b) {
-        for (final op in batchOps) {
-          b.insert(db.components, op, mode: InsertMode.insertOrReplace);
-        }
-      });
+      await _seedAssetsInChunks(db: db, assetPaths: assets);
       // print('DEBUG: Seeding completed');
     } catch (e) {
       // print('DEBUG: Error in seedFromManifestIfEmpty: $e');
@@ -45,10 +40,26 @@ class AssetSeeder {
     }
   }
 
-  static Future<List<ComponentsCompanion>> _buildSeedBatch(
-      Iterable<String> assetPaths) async {
-    final batchOps = <ComponentsCompanion>[];
-    final seenIds = <String>{}; // Track IDs to prevent duplicates
+  static Future<void> _seedAssetsInChunks({
+    required AppDatabase db,
+    required Iterable<String> assetPaths,
+  }) async {
+    final buffer = <ComponentsCompanion>[];
+    final seenIds = <String>{};
+
+    Future<void> flush() async {
+      if (buffer.isEmpty) return;
+      final ops = List<ComponentsCompanion>.from(buffer);
+      buffer.clear();
+      await db.batch((b) {
+        for (final op in ops) {
+          b.insert(db.components, op, mode: InsertMode.insertOrReplace);
+        }
+      });
+      // Yield to the UI/event loop so first-run seeding doesn't freeze the app.
+      await Future<void>.delayed(Duration.zero);
+    }
+
     for (final path in assetPaths) {
       // Skip legacy class_abilities folder - only load simplified format
       if (path.contains('data/abilities/class_abilities/') &&
@@ -56,9 +67,10 @@ class AssetSeeder {
           !path.contains('class_abilities_dynamic')) {
         continue;
       }
-      
+
       final raw = await rootBundle.loadString(path);
       final decoded = jsonDecode(raw);
+
       Iterable<Map<String, dynamic>> items;
       if (decoded is List) {
         items = decoded.cast<Map>().map((e) => Map<String, dynamic>.from(e));
@@ -68,18 +80,15 @@ class AssetSeeder {
         continue;
       }
 
+      final now = DateTime.now();
       for (final map in items) {
         final work = Map<String, dynamic>.from(map);
         final id = _popComponentId(work);
         if (id == null || id.isEmpty) continue;
-        
-        // Skip if we've already seen this ID (prevents duplicates)
-        if (seenIds.contains(id)) continue;
-        seenIds.add(id);
+        if (!seenIds.add(id)) continue;
 
         String type;
-        if (path.contains('/abilities/') ||
-            path.startsWith('data/abilities/')) {
+        if (path.contains('/abilities/') || path.startsWith('data/abilities/')) {
           // Preserve action label if the source used a generic 'type' field
           final maybeAction = work.remove('type');
           if (maybeAction != null && work['action_type'] == null) {
@@ -92,8 +101,7 @@ class AssetSeeder {
 
         final name = work.remove('name') as String? ?? '';
         final dataJson = jsonEncode(work);
-        final now = DateTime.now();
-        batchOps.add(
+        buffer.add(
           ComponentsCompanion.insert(
             id: id,
             type: type,
@@ -105,9 +113,14 @@ class AssetSeeder {
             updatedAt: Value(now),
           ),
         );
+
+        if (buffer.length >= _chunkSize) {
+          await flush();
+        }
       }
     }
-    return batchOps;
+
+    await flush();
   }
 
   static String? _popComponentId(Map<String, dynamic> source) {
@@ -139,12 +152,6 @@ class AssetSeeder {
     if (existing.isNotEmpty) return;
     final filtered = assets.where(pathPredicate).toList();
     if (filtered.isEmpty) return;
-    final batchOps = await _buildSeedBatch(filtered);
-    if (batchOps.isEmpty) return;
-    await db.batch((b) {
-      for (final op in batchOps) {
-        b.insert(db.components, op, mode: InsertMode.insertOrReplace);
-      }
-    });
+    await _seedAssetsInChunks(db: db, assetPaths: filtered);
   }
 }

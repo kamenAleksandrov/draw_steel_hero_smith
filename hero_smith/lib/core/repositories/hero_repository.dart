@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:drift/drift.dart';
 
 import '../db/app_database.dart' as db;
 import '../models/dynamic_modifier_model.dart';
@@ -1262,52 +1263,116 @@ class HeroRepository {
     StreamSubscription<List<db.Heroe>>? heroesSubscription;
     StreamSubscription<List<db.HeroValue>>? valuesSubscription;
     StreamSubscription<List<db.HeroEntry>>? entriesSubscription;
-    
+
+    // Prevent overlapping rebuilds when the DB is emitting many change events.
+    var buildInFlight = false;
+    var buildPending = false;
+
+    const summaryEntryTypes = <String>[
+      'class',
+      'ancestry',
+      'career',
+      'complication',
+    ];
+
     Future<void> buildSummaries() async {
+      if (buildInFlight) {
+        buildPending = true;
+        return;
+      }
+      buildInFlight = true;
       try {
         final heroes = await _db.getAllHeroes();
+        if (heroes.isEmpty) {
+          if (!controller.isClosed) {
+            controller.add(const <HeroSummary>[]);
+          }
+          return;
+        }
+
+        // Fetch only the values needed for summaries.
+        final values = await (_db.select(_db.heroValues)
+              ..where((t) => t.key.isIn([_k.level, _k.heroicResource])))
+            .get();
+
+        // Fetch only the entry types needed for summaries.
+        final entries = await (_db.select(_db.heroEntries)
+              ..where((t) => t.entryType.isIn(summaryEntryTypes)))
+            .get();
+
+        // Build lookup maps for fast in-memory access.
+        final valuesByHero = <String, Map<String, db.HeroValue>>{};
+        for (final v in values) {
+          final perHero = valuesByHero.putIfAbsent(v.heroId, () => {});
+          final existing = perHero[v.key];
+          if (existing == null || v.updatedAt.isAfter(existing.updatedAt)) {
+            perHero[v.key] = v;
+          }
+        }
+
+        final entriesByHeroType = <String, Map<String, db.HeroEntry>>{};
+        final componentIds = <String>{};
+        for (final e in entries) {
+          componentIds.add(e.entryId);
+          final perHero = entriesByHeroType.putIfAbsent(e.heroId, () => {});
+          final existing = perHero[e.entryType];
+          if (existing == null || e.updatedAt.isAfter(existing.updatedAt)) {
+            perHero[e.entryType] = e;
+          }
+        }
+
+        final components = componentIds.isEmpty
+            ? const <db.Component>[]
+            : await (_db.select(_db.components)
+                  ..where((c) => c.id.isIn(componentIds.toList())))
+                .get();
+
+        final componentNameById = <String, String>{
+          for (final c in components) c.id: c.name,
+        };
+
+        String? nameForComponentId(String? id) {
+          if (id == null || id.isEmpty) return null;
+          return componentNameById[id] ?? id;
+        }
+
         final summaries = <HeroSummary>[];
         for (final h in heroes) {
-          final values = await _db.getHeroValues(h.id);
-          final comps = await _db.getHeroComponents(h.id);
-          String? getText(String key) =>
-              values.firstWhereOrNull((v) => v.key == key)?.textValue;
-          int? getInt(String key) =>
-              values.firstWhereOrNull((v) => v.key == key)?.value;
-          final allComps = await _db.getAllComponents();
-          String? nameForId(String? compId) => compId == null
-              ? null
-              : allComps.firstWhereOrNull((c) => c.id == compId)?.name ?? compId;
-          String? nameForCategory(String category) {
-            final compId = comps.firstWhereOrNull(
-                (c) => c['category'] == category)?['componentId'];
-            return nameForId(compId);
-          }
+          final heroValues = valuesByHero[h.id];
+          final heroEntries = entriesByHeroType[h.id];
 
-          final classId =
-              comps.firstWhereOrNull((c) => c['category'] == 'class')?['componentId'];
-          final ancestryId =
-              comps.firstWhereOrNull((c) => c['category'] == 'ancestry')?['componentId'];
-          final careerId =
-              comps.firstWhereOrNull((c) => c['category'] == 'career')?['componentId'];
+          final level = heroValues?[_k.level]?.value ?? 1;
+          final heroicResource = heroValues?[_k.heroicResource]?.textValue;
+
+          final classId = heroEntries?['class']?.entryId;
+          final ancestryId = heroEntries?['ancestry']?.entryId;
+          final careerId = heroEntries?['career']?.entryId;
+          final complicationId = heroEntries?['complication']?.entryId;
 
           summaries.add(HeroSummary(
             id: h.id,
             name: h.name,
-            className: nameForId(classId),
-            level: getInt(_k.level) ?? 1,
-            ancestryName: nameForId(ancestryId),
-            careerName: nameForId(careerId),
-            complicationName: nameForCategory('complication'),
-            heroicResourceName: getText(_k.heroicResource),
+            className: nameForComponentId(classId),
+            level: level,
+            ancestryName: nameForComponentId(ancestryId),
+            careerName: nameForComponentId(careerId),
+            complicationName: nameForComponentId(complicationId),
+            heroicResourceName: heroicResource,
           ));
         }
+
         if (!controller.isClosed) {
           controller.add(summaries);
         }
-      } catch (e) {
+      } catch (e, st) {
         if (!controller.isClosed) {
-          controller.addError(e);
+          controller.addError(e, st);
+        }
+      } finally {
+        buildInFlight = false;
+        if (buildPending) {
+          buildPending = false;
+          unawaited(buildSummaries());
         }
       }
     }
@@ -1318,12 +1383,19 @@ class HeroRepository {
         buildSummaries();
       });
       
-      // Watch hero_values table for changes
-      valuesSubscription = _db.watchAllHeroValues().listen((_) {
+      // Watch only the subset of hero_values used by the summaries.
+      valuesSubscription = (_db.select(_db.heroValues)
+            ..where((t) => t.key.isIn([_k.level, _k.heroicResource])))
+          .watch()
+          .listen((_) {
         buildSummaries();
       });
-      // Watch hero_entries table for changes
-      entriesSubscription = (_db.select(_db.heroEntries)).watch().listen((_) {
+
+      // Watch only the entry categories used by the summaries.
+      entriesSubscription = (_db.select(_db.heroEntries)
+            ..where((t) => t.entryType.isIn(summaryEntryTypes)))
+          .watch()
+          .listen((_) {
         buildSummaries();
       });
       

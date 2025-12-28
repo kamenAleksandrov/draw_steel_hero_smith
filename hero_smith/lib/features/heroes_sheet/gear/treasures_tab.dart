@@ -8,7 +8,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/text/heroes_sheet/gear/treasures_tab_text.dart';
+import '../../../core/text/heroes_sheet/gear/treasures_tab_text.dart';
 import '../../../widgets/treasures/treasures.dart';
 import 'gear_dialogs.dart';
 import 'gear_utils.dart';

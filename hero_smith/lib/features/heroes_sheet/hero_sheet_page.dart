@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../creators/hero_creators/hero_creator_page.dart';
-import '../../core/theme/text/heroes_sheet/hero_sheet_page_text.dart';
+import '../../core/text/heroes_sheet/hero_sheet_page_text.dart';
 import 'abilities/sheet_abilities.dart';
 import 'gear/sheet_gear.dart';
 import 'main_stats/sheet_main_stats.dart';

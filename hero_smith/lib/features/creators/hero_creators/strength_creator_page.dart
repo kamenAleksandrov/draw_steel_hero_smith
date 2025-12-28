@@ -8,7 +8,7 @@ import '../../../core/models/subclass_models.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/class_feature_grants_service.dart';
-import '../../../core/theme/text/creators/hero_creators/strength_creator_page_text.dart';
+import '../../../core/text/creators/hero_creators/strength_creator_page_text.dart';
 import '../widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 

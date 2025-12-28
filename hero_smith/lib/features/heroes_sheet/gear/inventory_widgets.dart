@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/text/heroes_sheet/gear/inventory_widgets_text.dart';
+import '../../../core/text/heroes_sheet/gear/inventory_widgets_text.dart';
 
 /// Card displaying an inventory container with its items.
 class ContainerCard extends StatefulWidget {
