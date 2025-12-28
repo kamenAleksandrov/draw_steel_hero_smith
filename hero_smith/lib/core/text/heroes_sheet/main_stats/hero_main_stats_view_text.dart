@@ -64,6 +64,8 @@ class HeroMainStatsViewText {
   static const String vitalsRecoveriesMaxLabel = 'Max';
   static const String vitalsRecoveriesUsePrefix = 'Use (+';
   static const String vitalsRecoveriesUseSuffix = ')';
+  static const String vitalsRecoveriesUseLabel = 'Use';
+  static const String vitalsRecoveriesHealValueLabel = 'Stamina';
   static const String endOfCombatLabel = 'End of Combat';
 
   static const String vitalItemEditTitlePrefix = 'Edit ';

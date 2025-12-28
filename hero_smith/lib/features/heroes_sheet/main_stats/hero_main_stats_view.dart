@@ -86,11 +86,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   HeroMainStats? _latestStats;
   HeroStatModifications _ancestryMods = const HeroStatModifications.empty();
   bool _isApplying = false;
-  
+
   /// The minimum value the heroic resource can reach (0 for most classes, negative for Talent).
   /// This is dynamically calculated based on class features and the hero's Reason score.
   int _heroicResourceMinValue = 0;
-  
+
   /// Cached resource details for calculating min value
   HeroicResourceDetails? _cachedResourceDetails;
 
@@ -323,14 +323,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   @override
   Widget build(BuildContext context) {
     final statsAsync = ref.watch(heroMainStatsProvider(widget.heroId));
-    final ancestryModsAsync = ref.watch(heroAncestryStatModsProvider(widget.heroId));
-    
+    final ancestryModsAsync =
+        ref.watch(heroAncestryStatModsProvider(widget.heroId));
+
     // Update ancestry mods state
-    _ancestryMods = ancestryModsAsync.valueOrNull ?? const HeroStatModifications.empty();
+    _ancestryMods =
+        ancestryModsAsync.valueOrNull ?? const HeroStatModifications.empty();
 
     // Use valueOrNull to prevent flicker - show stale data during refresh
     final stats = statsAsync.valueOrNull;
-    
+
     // Only show loading if we have no cached stats at all
     if (stats == null && _latestStats == null) {
       if (statsAsync.hasError) {
@@ -338,14 +340,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       }
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     // Use fresh stats if available, otherwise fall back to cached
     final effectiveStats = stats ?? _latestStats!;
-    
+
     if (_latestStats == null) {
       _applyStats(effectiveStats);
     }
-    
+
     final resourceDetailsAsync = ref.watch(
       heroicResourceDetailsProvider(
         HeroicResourceRequest(
@@ -354,19 +356,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         ),
       ),
     );
-    
+
     // Update heroic resource min value when details or reason score changes
     final resourceDetails = resourceDetailsAsync.valueOrNull;
     if (resourceDetails != null) {
       final newMinValue = resourceDetails.calculateMinValue(
         reasonScore: effectiveStats.reasonTotal,
       );
-      if (_heroicResourceMinValue != newMinValue || _cachedResourceDetails != resourceDetails) {
+      if (_heroicResourceMinValue != newMinValue ||
+          _cachedResourceDetails != resourceDetails) {
         _heroicResourceMinValue = newMinValue;
         _cachedResourceDetails = resourceDetails;
       }
     }
-    
+
     return _buildContent(context, effectiveStats, resourceDetailsAsync);
   }
 
@@ -534,7 +537,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   /// Row with Respite and Downtime buttons
   Widget _buildRespiteDowntimeRow(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
-    
+
     return Row(
       children: [
         Expanded(
@@ -544,7 +547,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             label: const Text(HeroMainStatsViewText.respiteButtonLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
-              side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+              side:
+                  BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -557,7 +561,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             label: const Text(HeroMainStatsViewText.downtimeButtonLabel),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.secondary,
-              side: BorderSide(color: theme.colorScheme.secondary.withOpacity(0.5)),
+              side: BorderSide(
+                  color: theme.colorScheme.secondary.withOpacity(0.5)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -579,12 +584,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Future<void> _showRespiteConfirmDialog(BuildContext context, HeroMainStats stats) async {
+  Future<void> _showRespiteConfirmDialog(
+      BuildContext context, HeroMainStats stats) async {
     final victories = stats.victories;
     final currentXp = stats.exp;
     final newXp = currentXp + victories;
     final recoveriesMax = stats.recoveriesMaxEffective;
-    
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -614,7 +620,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.emoji_events, size: 16, color: theme.colorScheme.primary),
+                        Icon(Icons.emoji_events,
+                            size: 16, color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -627,7 +634,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.star, size: 16, color: theme.colorScheme.primary),
+                        Icon(Icons.star,
+                            size: 16, color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -642,7 +650,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(Icons.favorite, size: 16, color: theme.colorScheme.tertiary),
+                        Icon(Icons.favorite,
+                            size: 16, color: theme.colorScheme.tertiary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -664,13 +673,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text(HeroMainStatsViewText.respiteDialogConfirmLabel),
+              child:
+                  const Text(HeroMainStatsViewText.respiteDialogConfirmLabel),
             ),
           ],
         );
       },
     );
-    
+
     if (confirmed == true && mounted) {
       await _handleTakeRespite(stats);
     }
@@ -681,19 +691,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final victories = stats.victories;
     final currentXp = stats.exp;
     final newXp = currentXp + victories;
-    
+
     // Regain all recoveries
     final recoveriesMax = stats.recoveriesMaxEffective;
-    
+
     // Restore stamina to max
     final staminaMax = stats.staminaMaxEffective;
-    
+
     // Apply changes
     await _persistNumberField(_NumericField.exp, newXp.toString());
     await _persistNumberField(_NumericField.victories, '0');
-    await _persistNumberField(_NumericField.recoveriesCurrent, recoveriesMax.toString());
-    await _persistNumberField(_NumericField.staminaCurrent, staminaMax.toString());
-    
+    await _persistNumberField(
+        _NumericField.recoveriesCurrent, recoveriesMax.toString());
+    await _persistNumberField(
+        _NumericField.staminaCurrent, staminaMax.toString());
+
     if (mounted) {
       _showSnack(
         '${HeroMainStatsViewText.respiteCompletePrefix}$victories${HeroMainStatsViewText.respiteCompleteSuffix}',
@@ -708,9 +720,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required _NumericField field,
   }) {
     final theme = Theme.of(context);
-    final value = _latestStats != null
-        ? _numberValueFromStats(_latestStats!, field)
-        : 0;
+    final value =
+        _latestStats != null ? _numberValueFromStats(_latestStats!, field) : 0;
 
     return InkWell(
       onTap: () {
@@ -808,7 +819,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Characteristics section header (M/A/R/I/P)
             Row(
               children: [
-                Icon(Icons.person_outline, size: 16, color: theme.colorScheme.primary),
+                Icon(Icons.person_outline,
+                    size: 16, color: theme.colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
                   HeroMainStatsViewText.characteristicsSectionTitle,
@@ -871,7 +883,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Attributes section header (Size, Speed, Disengage, Stability)
             Row(
               children: [
-                Icon(Icons.shield_outlined, size: 16, color: theme.colorScheme.secondary),
+                Icon(Icons.shield_outlined,
+                    size: 16, color: theme.colorScheme.secondary),
                 const SizedBox(width: 6),
                 Text(
                   HeroMainStatsViewText.attributesSectionTitle,
@@ -886,7 +899,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // 4-column attributes grid
             Row(
               children: [
-                _buildGridSizeItem(context, stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
+                _buildGridSizeItem(
+                    context, stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
                 _buildGridStatItem(
                   context,
                   HeroMainStatsViewText.attributeShortLabelSpeed,
@@ -926,7 +940,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildPotencyRow(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
     final classId = stats.classId;
-    
+
     if (classId == null || classId.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -961,7 +975,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: color.withOpacity(0.6)),
@@ -1082,8 +1097,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   /// Builds a styled characteristic label (M, A, R, I, P) matching the ability card style.
   Widget _buildCharacteristicLabel(String label, ThemeData theme) {
     // Only apply characteristic colors for M, A, R, I, P
-    final isCharacteristic = ['M', 'A', 'R', 'I', 'P'].contains(label.toUpperCase());
-    
+    final isCharacteristic =
+        ['M', 'A', 'R', 'I', 'P'].contains(label.toUpperCase());
+
     if (!isCharacteristic) {
       // For non-characteristic labels (SPD, DIS, STB), use default styling
       return Text(
@@ -1135,10 +1151,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
                 HeroMainStatsViewText.sizeShortLabel,
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w500,
@@ -1209,7 +1225,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Stamina Section with visual bar
             Row(
               children: [
-                Icon(Icons.favorite_outline, size: 16, color: staminaState.color),
+                Icon(Icons.favorite_outline,
+                    size: 16, color: staminaState.color),
                 const SizedBox(width: 6),
                 Text(
                   HeroMainStatsViewText.staminaSectionTitle,
@@ -1245,7 +1262,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         children: [
                           _buildVitalItem(
                             context,
-                            label: HeroMainStatsViewText.vitalsStaminaCurrentLabel,
+                            label:
+                                HeroMainStatsViewText.vitalsStaminaCurrentLabel,
                             value: stats.staminaCurrent,
                             field: _NumericField.staminaCurrent,
                             allowNegative: true,
@@ -1302,7 +1320,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Recoveries row
             Row(
               children: [
-                Icon(Icons.local_hospital_outlined, size: 16, color: theme.colorScheme.tertiary),
+                Icon(Icons.local_hospital_outlined,
+                    size: 16, color: theme.colorScheme.tertiary),
                 const SizedBox(width: 6),
                 Text(
                   HeroMainStatsViewText.recoveriesSectionTitle,
@@ -1333,11 +1352,35 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   baseValue: stats.recoveriesMaxBase,
                   featureBonus: recoveriesFeatureBonus,
                 ),
+                const SizedBox(width: 12),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        HeroMainStatsViewText.vitalsRecoveriesHealValueLabel,
+                        style: theme.textTheme.labelSmall,
+                      ),
+                      Text(
+                        '+$healAmount',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: healAmount > 0
+                              ? Colors.green
+                              : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const Spacer(),
                 FilledButton.tonal(
                   onPressed: () => _handleUseRecovery(stats),
                   style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -1345,7 +1388,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       const Icon(Icons.add_circle_outline, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        '${HeroMainStatsViewText.vitalsRecoveriesUsePrefix}$healAmount${HeroMainStatsViewText.vitalsRecoveriesUseSuffix}',
+                        HeroMainStatsViewText.vitalsRecoveriesUseLabel,
                         style: const TextStyle(fontSize: 12),
                       ),
                     ],
@@ -1359,7 +1402,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _buildHeroicResourceSection(context, stats, resourceDetails),
+                  child: _buildHeroicResourceSection(
+                      context, stats, resourceDetails),
                 ),
                 Container(
                   width: 1,
@@ -1384,7 +1428,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 label: const Text(HeroMainStatsViewText.endOfCombatLabel),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: theme.colorScheme.error,
-                  side: BorderSide(color: theme.colorScheme.error.withOpacity(0.5)),
+                  side: BorderSide(
+                      color: theme.colorScheme.error.withOpacity(0.5)),
                 ),
               ),
             ),
@@ -1398,36 +1443,37 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   /// - Stamina bar: ranges from -halfMax to maxStamina
   /// - Temp HP bar: ranges from -halfMax to maxStamina (independent track, shown semi-transparent)
   /// Both bars are visible simultaneously with the temp HP bar slightly offset/transparent
-  Widget _buildStaminaBar(BuildContext context, HeroMainStats stats, _StaminaState staminaState) {
+  Widget _buildStaminaBar(
+      BuildContext context, HeroMainStats stats, _StaminaState staminaState) {
     final theme = Theme.of(context);
     final maxStamina = stats.staminaMaxEffective;
     final currentStamina = stats.staminaCurrent;
     final tempHp = stats.staminaTemp;
-    
+
     if (maxStamina <= 0) {
       return const SizedBox(height: 16);
     }
-    
+
     // Range: -halfMax to max (total range = 1.5 * max)
     final halfMax = maxStamina ~/ 2;
     final totalRange = maxStamina + halfMax;
-    
+
     // The "zero point" (stamina = 0) is at halfMax / totalRange
     final zeroPointRatio = halfMax / totalRange;
-    
+
     // Stamina position: from -halfMax to maxStamina
     // When current = -halfMax, position = 0
-    // When current = 0, position = zeroPointRatio  
+    // When current = 0, position = zeroPointRatio
     // When current = max, position = 1
     final clampedCurrent = currentStamina.clamp(-halfMax, maxStamina);
     final staminaPosition = (clampedCurrent + halfMax) / totalRange;
-    
+
     // Temp HP position: independent track from -halfMax to maxStamina (same as stamina)
     // Temp HP of 0 = starts at left edge (position 0)
     // Temp HP of maxStamina + halfMax = fills to right edge (position 1.0)
     final clampedTemp = tempHp.clamp(0, maxStamina + halfMax);
     final tempPosition = clampedTemp / totalRange;
-    
+
     return SizedBox(
       height: 16,
       child: LayoutBuilder(
@@ -1436,7 +1482,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           final zeroX = width * zeroPointRatio;
           final staminaX = width * staminaPosition;
           final tempX = width * tempPosition;
-          
+
           return Stack(
             children: [
               // Background bar
@@ -1455,7 +1501,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   height: 16,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.error.withOpacity(0.1),
-                    borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                    borderRadius:
+                        const BorderRadius.horizontal(left: Radius.circular(8)),
                   ),
                 ),
               ),
@@ -1486,8 +1533,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   height: 8,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: currentStamina >= 0 
-                          ? staminaState.color 
+                      color: currentStamina >= 0
+                          ? staminaState.color
                           : theme.colorScheme.error.withOpacity(0.8),
                       borderRadius: const BorderRadius.horizontal(
                         left: Radius.circular(4),
@@ -1538,7 +1585,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               style: theme.textTheme.labelSmall?.copyWith(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.6),
                               ),
                             ),
                             Text(
@@ -1546,7 +1594,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               style: theme.textTheme.labelSmall?.copyWith(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.6),
                               ),
                             ),
                           ],
@@ -1585,7 +1634,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
                 content: TextField(
                   controller: controller,
-                  keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
+                  keyboardType:
+                      TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: HeroMainStatsViewText.vitalItemValueLabel,
@@ -1596,10 +1646,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text(HeroMainStatsViewText.vitalItemCancelLabel),
+                    child:
+                        const Text(HeroMainStatsViewText.vitalItemCancelLabel),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+                    onPressed: () =>
+                        Navigator.of(dialogContext).pop(controller.text),
                     child: const Text(HeroMainStatsViewText.vitalItemSaveLabel),
                   ),
                 ],
@@ -1649,8 +1701,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }) {
     final theme = Theme.of(context);
     final otherChoice = choiceValue - equipmentBonus;
-    final hasBreakdown =
-        equipmentBonus != 0 || otherChoice != 0 || userValue != 0 || featureBonus != 0;
+    final hasBreakdown = equipmentBonus != 0 ||
+        otherChoice != 0 ||
+        userValue != 0 ||
+        featureBonus != 0;
 
     return InkWell(
       onTap: () async {
@@ -1732,7 +1786,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final hasChoice = equipmentBonus != 0 || choiceValue != 0;
     final hasUser = userValue != 0;
     final hasFeature = featureBonus != 0;
-    
 
     await showDialog(
       context: context,
@@ -1804,13 +1857,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Navigator.of(dialogContext).pop();
                 await _showStatEditDialog(
                   context,
-                  label: '$label${HeroMainStatsViewText.breakdownModifierSuffix}',
+                  label:
+                      '$label${HeroMainStatsViewText.breakdownModifierSuffix}',
                   modKey: modKey,
-                  baseValue: classBase + equipmentBonus + featureBonus + choiceValue,
+                  baseValue:
+                      classBase + equipmentBonus + featureBonus + choiceValue,
                   currentModValue: userValue,
                 );
               },
-              child: const Text(HeroMainStatsViewText.breakdownEditModifierLabel),
+              child:
+                  const Text(HeroMainStatsViewText.breakdownEditModifierLabel),
             ),
           ],
         );
@@ -1818,12 +1874,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Widget _buildBreakdownRow(ThemeData theme, String label, int value, {bool isBonus = false, bool isBold = false}) {
+  Widget _buildBreakdownRow(ThemeData theme, String label, int value,
+      {bool isBonus = false, bool isBold = false}) {
     final valueText = isBonus ? '+$value' : value.toString();
-    final color = isBonus 
-        ? Colors.green 
+    final color = isBonus
+        ? Colors.green
         : (value < 0 ? Colors.red : theme.colorScheme.onSurface);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -1887,11 +1944,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final value = stats.heroicResourceCurrent;
 
     return resourceDetails.when(
-      loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      loading: () =>
+          const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       error: (_, __) => _buildResourceDisplay(
         context,
         stats,
-        stats.heroicResourceName ?? HeroMainStatsViewText.resourceFallbackErrorName,
+        stats.heroicResourceName ??
+            HeroMainStatsViewText.resourceFallbackErrorName,
         value,
       ),
       data: (details) {
@@ -1902,9 +1961,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             (details?.inCombatDescription ?? '').isNotEmpty ||
             (details?.outCombatDescription ?? '').isNotEmpty ||
             (details?.strainDescription ?? '').isNotEmpty;
-        
+
         // Calculate minimum value for resources that can go negative
-        final minValue = details?.calculateMinValue(reasonScore: stats.reasonTotal) ?? 0;
+        final minValue =
+            details?.calculateMinValue(reasonScore: stats.reasonTotal) ?? 0;
         final canBeNegative = details?.canBeNegative ?? false;
 
         return Padding(
@@ -1914,7 +1974,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.bolt_outlined, size: 14, color: theme.colorScheme.primary),
+                  Icon(Icons.bolt_outlined,
+                      size: 14, color: theme.colorScheme.primary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
@@ -1928,21 +1989,25 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   ),
                   if (hasDetails)
                     InkWell(
-                      onTap: () => _showResourceDetailsDialog(context, resourceName, details),
+                      onTap: () => _showResourceDetailsDialog(
+                          context, resourceName, details),
                       borderRadius: BorderRadius.circular(12),
                       child: Padding(
                         padding: const EdgeInsets.all(2),
-                        child: Icon(Icons.info_outline, size: 14, color: theme.colorScheme.primary),
+                        child: Icon(Icons.info_outline,
+                            size: 14, color: theme.colorScheme.primary),
                       ),
                     ),
                 ],
               ),
               const SizedBox(height: 4),
               InkWell(
-                onTap: () => _showNumberEditDialog(context, resourceName, _NumericField.heroicResourceCurrent),
+                onTap: () => _showNumberEditDialog(
+                    context, resourceName, _NumericField.heroicResourceCurrent),
                 borderRadius: BorderRadius.circular(6),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1966,9 +2031,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),       
+              const SizedBox(height: 4),
               _buildResourceGenerationButtons(context, stats),
-              _buildHeroicResourceSpendButtons(context, stats, minValue: minValue),
+              _buildHeroicResourceSpendButtons(context, stats,
+                  minValue: minValue),
               const SizedBox(height: 6),
             ],
           ),
@@ -1978,9 +2044,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   /// Builds the resource generation buttons based on class
-  Widget _buildResourceGenerationButtons(BuildContext context, HeroMainStats stats) {
+  Widget _buildResourceGenerationButtons(
+      BuildContext context, HeroMainStats stats) {
     return FutureBuilder<List<GenerationPreset>>(
-      future: _getResourceGenerationOptions(stats.classId, heroLevel: stats.level),
+      future:
+          _getResourceGenerationOptions(stats.classId, heroLevel: stats.level),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
@@ -1990,11 +2058,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         final options = snapshot.data!
             .where((option) => option.key != 'victories' || stats.victories > 0)
             .toList();
-        
+
         if (options.isEmpty) {
           return const SizedBox.shrink();
         }
-        
+
         final theme = Theme.of(context);
 
         return Wrap(
@@ -2007,7 +2075,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             );
 
             return InkWell(
-              onTap: () => _handleResourceGeneration(context, stats, option.key),
+              onTap: () =>
+                  _handleResourceGeneration(context, stats, option.key),
               borderRadius: BorderRadius.circular(4),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
@@ -2033,7 +2102,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Widget _buildHeroicResourceSpendButtons(BuildContext context, HeroMainStats stats, {int minValue = 0}) {
+  Widget _buildHeroicResourceSpendButtons(
+      BuildContext context, HeroMainStats stats,
+      {int minValue = 0}) {
     const amounts = [1, 3, 5, 7, 9, 11];
     return Wrap(
       spacing: 4,
@@ -2083,9 +2154,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Future<List<GenerationPreset>> _getResourceGenerationOptions(String? classId, {int heroLevel = 1}) async {
+  Future<List<GenerationPreset>> _getResourceGenerationOptions(String? classId,
+      {int heroLevel = 1}) async {
     await ResourceGenerationService.instance.initialize();
-    return ResourceGenerationService.instance.getGenerationOptionsForClass(classId, heroLevel: heroLevel);
+    return ResourceGenerationService.instance
+        .getGenerationOptionsForClass(classId, heroLevel: heroLevel);
   }
 
   Future<void> _handleResourceGeneration(
@@ -2127,7 +2200,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     Map<int, int>? diceToValueMapping,
   }) async {
     final theme = Theme.of(context);
-    
+
     // Find which dice roll corresponds to the rolled value
     int? rolledDice;
     if (diceToValueMapping != null) {
@@ -2254,12 +2327,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     label: Text(
                       '+$value',
                       style: TextStyle(
-                        fontWeight: isRolled ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isRolled ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    backgroundColor: isRolled
-                        ? theme.colorScheme.primaryContainer
-                        : null,
+                    backgroundColor:
+                        isRolled ? theme.colorScheme.primaryContainer : null,
                     side: isRolled
                         ? BorderSide(color: theme.colorScheme.primary, width: 2)
                         : null,
@@ -2305,7 +2378,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     }
   }
 
-  Widget _buildResourceDisplay(BuildContext context, HeroMainStats stats, String name, int value) {
+  Widget _buildResourceDisplay(
+      BuildContext context, HeroMainStats stats, String name, int value) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 12),
@@ -2314,7 +2388,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         children: [
           Row(
             children: [
-              Icon(Icons.bolt_outlined, size: 14, color: theme.colorScheme.primary),
+              Icon(Icons.bolt_outlined,
+                  size: 14, color: theme.colorScheme.primary),
               const SizedBox(width: 4),
               Text(
                 name,
@@ -2326,7 +2401,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           ),
           const SizedBox(height: 4),
           InkWell(
-            onTap: () => _showNumberEditDialog(context, name, _NumericField.heroicResourceCurrent),
+            onTap: () => _showNumberEditDialog(
+                context, name, _NumericField.heroicResourceCurrent),
             borderRadius: BorderRadius.circular(6),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -2367,7 +2443,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         children: [
           Row(
             children: [
-              Icon(Icons.electric_bolt_outlined, size: 14, color: theme.colorScheme.tertiary),
+              Icon(Icons.electric_bolt_outlined,
+                  size: 14, color: theme.colorScheme.tertiary),
               const SizedBox(width: 4),
               Text(
                 HeroMainStatsViewText.surgesSectionTitle,
@@ -2436,9 +2513,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   /// Build the heroic resource progression widget for Fury and Null classes
-  Widget _buildHeroicResourceProgression(BuildContext context, HeroMainStats stats) {
-    final progressionAsync = ref.watch(heroResourceProgressionProvider(widget.heroId));
-    final progressionContextAsync = ref.watch(heroProgressionContextProvider(widget.heroId));
+  Widget _buildHeroicResourceProgression(
+      BuildContext context, HeroMainStats stats) {
+    final progressionAsync =
+        ref.watch(heroResourceProgressionProvider(widget.heroId));
+    final progressionContextAsync =
+        ref.watch(heroProgressionContextProvider(widget.heroId));
 
     // Keep showing the previous progression/context while Riverpod refreshes to avoid UI flicker.
     final progression = progressionAsync.valueOrNull;
@@ -2451,7 +2531,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     // Check if Stormwight without kit
     final service = HeroicResourceProgressionService();
     if (service.isStormwightSubclass(progressionContext.subclassName) &&
-        (progressionContext.kitId == null || progressionContext.kitId!.isEmpty)) {
+        (progressionContext.kitId == null ||
+            progressionContext.kitId!.isEmpty)) {
       return const SizedBox.shrink();
     }
 
@@ -2488,7 +2569,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           onSpendResource: (cost, boostName) {
             final newValue = stats.heroicResourceCurrent - cost;
             if (newValue >= 0) {
-              _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
+              _persistNumberField(
+                  _NumericField.heroicResourceCurrent, newValue.toString());
               _showSnack(
                 '${HeroMainStatsViewText.psiBoostUsedPrefix}$boostName${HeroMainStatsViewText.psiBoostUsedCostPrefix}$cost ${stats.heroicResourceName ?? HeroMainStatsViewText.psiBoostSnackResourceFallbackName}${HeroMainStatsViewText.psiBoostUsedSuffix}',
               );
@@ -2501,7 +2583,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   Widget _buildAddSurgeButton(BuildContext context, int amount) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: () => _addSurges(amount),
       borderRadius: BorderRadius.circular(6),
@@ -2533,7 +2615,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required VoidCallback onPressed,
   }) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: enabled ? onPressed : null,
       borderRadius: BorderRadius.circular(4),
@@ -2542,7 +2624,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: enabled 
+            color: enabled
                 ? theme.colorScheme.tertiary.withOpacity(0.5)
                 : theme.colorScheme.outline.withOpacity(0.3),
           ),
@@ -2588,20 +2670,21 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     final current = stats.heroicResourceCurrent;
     final newValue = current - amount;
-    
+
     // Check against dynamic minimum (can be negative for classes like Talent)
     if (newValue < _heroicResourceMinValue) return;
 
-    await _persistNumberField(_NumericField.heroicResourceCurrent, newValue.toString());
+    await _persistNumberField(
+        _NumericField.heroicResourceCurrent, newValue.toString());
   }
 
   Future<void> _spendSurges(int amount) async {
     final stats = _latestStats;
     if (stats == null) return;
-    
+
     final current = stats.surgesCurrent;
     if (current < amount) return;
-    
+
     final newValue = current - amount;
     await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
   }
@@ -2609,7 +2692,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Future<void> _addSurges(int amount) async {
     final stats = _latestStats;
     if (stats == null) return;
-    
+
     final current = stats.surgesCurrent;
     final newValue = current + amount;
     await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
@@ -2625,7 +2708,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   Widget _buildSummaryCard(BuildContext context) {
     final theme = Theme.of(context);
     final level = _latestStats?.level ?? 1;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -2840,8 +2923,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildCompactSizeTile(context, stats.sizeBase,
-                    stats.sizeTotal, HeroModKeys.size),
+                _buildCompactSizeTile(
+                    context, stats.sizeBase, stats.sizeTotal, HeroModKeys.size),
                 _buildCompactStatTile(
                   context,
                   HeroMainStatsViewText.secondaryStatsSpeedLabel,
@@ -2978,7 +3061,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final effectiveMax = stats.staminaMaxEffective;
     final staminaChoiceMod = stats.choiceModValue(HeroModKeys.staminaMax);
     final staminaManualMod = stats.userModValue(HeroModKeys.staminaMax);
-    final staminaMaxMod = staminaChoiceMod + staminaManualMod + staminaFeatureBonus;
+    final staminaMaxMod =
+        staminaChoiceMod + staminaManualMod + staminaFeatureBonus;
 
     return Card(
       child: Padding(
@@ -2995,7 +3079,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const Spacer(),
                 Text(
                   state.label,
-                  style: theme.textTheme.labelSmall?.copyWith(color: state.color),
+                  style:
+                      theme.textTheme.labelSmall?.copyWith(color: state.color),
                 ),
               ],
             ),
@@ -3076,7 +3161,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       style: TextStyle(fontSize: 12),
                     ),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                     ),
                   ),
                 ),
@@ -3090,7 +3176,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       style: TextStyle(fontSize: 12),
                     ),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                     ),
                   ),
                 ),
@@ -3108,7 +3195,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final recoveriesFeatureBonus = stats.recoveriesFeatureBonus;
     final recoveriesChoiceMod = stats.choiceModValue(HeroModKeys.recoveriesMax);
     final recoveriesManualMod = stats.userModValue(HeroModKeys.recoveriesMax);
-    final recoveriesMaxMod = recoveriesChoiceMod + recoveriesManualMod + recoveriesFeatureBonus;
+    final recoveriesMaxMod =
+        recoveriesChoiceMod + recoveriesManualMod + recoveriesFeatureBonus;
 
     return Card(
       child: Padding(
@@ -3187,7 +3275,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       style: const TextStyle(fontSize: 12),
                     ),
                     style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 12),
                     ),
                   ),
                 ),
@@ -3225,7 +3314,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     AsyncValue<HeroicResourceDetails?> resourceDetails,
   ) {
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -3245,7 +3334,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               const SizedBox(height: 8),
               _buildCompactVitalDisplay(
                 context,
-                label: HeroMainStatsViewText.heroicResourceCardCurrentLabelError,
+                label:
+                    HeroMainStatsViewText.heroicResourceCardCurrentLabelError,
                 field: _NumericField.heroicResourceCurrent,
               ),
             ],
@@ -3257,7 +3347,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             final hasDetails = (details?.description ?? '').isNotEmpty ||
                 (details?.inCombatDescription ?? '').isNotEmpty ||
                 (details?.outCombatDescription ?? '').isNotEmpty;
-            
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3304,7 +3394,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     HeroicResourceDetails? details,
   ) {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -3368,7 +3458,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text(HeroMainStatsViewText.resourceDetailsCloseLabel),
+              child:
+                  const Text(HeroMainStatsViewText.resourceDetailsCloseLabel),
             ),
           ],
         );
@@ -3378,7 +3469,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   Widget _buildSurgesCard(BuildContext context, HeroMainStats stats) {
     final theme = Theme.of(context);
-    
+
     // Calculate surge damage based on highest attribute
     final highestAttribute = [
       stats.mightTotal,
@@ -3387,9 +3478,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       stats.intuitionTotal,
       stats.presenceTotal,
     ].reduce((a, b) => a > b ? a : b);
-    
+
     final surgeDamage = highestAttribute;
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -3424,7 +3515,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withOpacity(0.5),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -3448,7 +3540,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                      color: theme.colorScheme.surfaceContainerHighest
+                          .withOpacity(0.5),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -3518,9 +3611,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required _NumericField field,
   }) {
     final theme = Theme.of(context);
-    final value = _latestStats != null
-        ? _numberValueFromStats(_latestStats!, field)
-        : 0;
+    final value =
+        _latestStats != null ? _numberValueFromStats(_latestStats!, field) : 0;
 
     return InkWell(
       onTap: () async {
@@ -3621,7 +3713,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     _NumericField field,
   ) async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController(
       text: _numberValueFromStats(_latestStats!, field).toString(),
     );
@@ -3631,8 +3723,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title:
-                Text('${HeroMainStatsViewText.numberEditTitlePrefix}$label'),
+            title: Text('${HeroMainStatsViewText.numberEditTitlePrefix}$label'),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
@@ -3680,7 +3771,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   Future<void> _showXpEditDialog(BuildContext context, int currentXp) async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController(text: currentXp.toString());
     final currentLevel = _latestStats?.level ?? 1;
     final insights = _xpInsights(currentXp, currentLevel);
@@ -3714,7 +3805,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(dialogContext).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(dialogContext)
+                          .colorScheme
+                          .surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -3725,25 +3818,30 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             Icon(
                               Icons.auto_graph,
                               size: 16,
-                              color: Theme.of(dialogContext).colorScheme.primary,
+                              color:
+                                  Theme.of(dialogContext).colorScheme.primary,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               HeroMainStatsViewText.xpEditInsightsTitle,
-                              style: Theme.of(dialogContext).textTheme.labelMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(dialogContext)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         ...insights.map((insight) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text(
-                            insight,
-                            style: Theme.of(dialogContext).textTheme.bodySmall,
-                          ),
-                        )),
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                insight,
+                                style:
+                                    Theme.of(dialogContext).textTheme.bodySmall,
+                              ),
+                            )),
                       ],
                     ),
                   ),
@@ -3791,7 +3889,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required List<String> insights,
   }) async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController(text: currentModValue.toString());
     final sourcesDesc = _getModSourceDescription(
       modKey,
@@ -3804,8 +3902,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title:
-                Text('${HeroMainStatsViewText.modEditTitlePrefix}$title'),
+            title: Text('${HeroMainStatsViewText.modEditTitlePrefix}$title'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -3816,7 +3913,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color:
+                          Theme.of(dialogContext).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -3824,14 +3922,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                          color: Theme.of(dialogContext)
+                              .colorScheme
+                              .onPrimaryContainer,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             sourcesDesc,
                             style: TextStyle(
-                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              color: Theme.of(dialogContext)
+                                  .colorScheme
+                                  .onPrimaryContainer,
                               fontSize: 13,
                             ),
                           ),
@@ -3843,7 +3945,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: HeroMainStatsViewText.modEditModificationLabel,
@@ -3906,7 +4009,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final theme = Theme.of(context);
     final modValue = totalValue - baseValue;
     final manualMod = _latestStats?.userModValue(modKey) ?? 0;
-    
+
     return Expanded(
       child: InkWell(
         onTap: () async {
@@ -3965,7 +4068,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final totalIndex = HeroMainStats.sizeToIndex(sizeTotal);
     final modValue = totalIndex - baseIndex;
     final manualMod = _latestStats?.userModValue(modKey) ?? 0;
-    
+
     return Expanded(
       child: InkWell(
         onTap: () async {
@@ -3979,10 +4082,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
                 HeroMainStatsViewText.compactSizeLabel,
                 style: theme.textTheme.labelSmall,
                 textAlign: TextAlign.center,
@@ -4016,16 +4119,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     bool allowNegative = false,
   }) {
     final theme = Theme.of(context);
-    final value = _latestStats != null
-        ? _numberValueFromStats(_latestStats!, field)
-        : 0;
+    final value =
+        _latestStats != null ? _numberValueFromStats(_latestStats!, field) : 0;
 
     return InkWell(
       onTap: () async {
         if (!mounted) return;
-        
+
         final controller = TextEditingController(text: value.toString());
-        
+
         try {
           final result = await showDialog<String>(
             context: context,
@@ -4036,7 +4138,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
                 content: TextField(
                   controller: controller,
-                  keyboardType: TextInputType.numberWithOptions(signed: allowNegative),
+                  keyboardType:
+                      TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: HeroMainStatsViewText.compactVitalValueLabel,
@@ -4047,11 +4150,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child:
-                        const Text(HeroMainStatsViewText.compactVitalCancelLabel),
+                    child: const Text(
+                        HeroMainStatsViewText.compactVitalCancelLabel),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+                    onPressed: () =>
+                        Navigator.of(dialogContext).pop(controller.text),
                     child:
                         const Text(HeroMainStatsViewText.compactVitalSaveLabel),
                   ),
@@ -4059,7 +4163,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               );
             },
           );
-          
+
           // Ensure dialog is fully dismissed before persisting
           if (result != null && result.isNotEmpty && mounted) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -4100,7 +4204,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     int featureBonus = 0,
   }) async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController(text: currentModValue.toString());
     final sourcesDesc = _getModSourceDescription(
       modKey,
@@ -4138,8 +4242,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title:
-                Text('${HeroMainStatsViewText.statEditTitlePrefix}$label'),
+            title: Text('${HeroMainStatsViewText.statEditTitlePrefix}$label'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -4150,7 +4253,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color:
+                          Theme.of(dialogContext).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -4158,14 +4262,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                          color: Theme.of(dialogContext)
+                              .colorScheme
+                              .onPrimaryContainer,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             autoBonusDescription,
                             style: TextStyle(
-                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              color: Theme.of(dialogContext)
+                                  .colorScheme
+                                  .onPrimaryContainer,
                               fontSize: 13,
                             ),
                           ),
@@ -4177,7 +4285,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: HeroMainStatsViewText.statEditModificationLabel,
@@ -4226,9 +4335,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int currentModValue,
   }) async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController(text: currentModValue.toString());
-    final sourcesDesc = _getModSourceDescription(HeroModKeys.size, _ancestryMods);
+    final sourcesDesc =
+        _getModSourceDescription(HeroModKeys.size, _ancestryMods);
     final parsed = HeroMainStats.parseSize(sizeBase);
     final categoryName = switch (parsed.category) {
       'T' => HeroMainStatsViewText.sizeCategoryTiny,
@@ -4237,9 +4347,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       'L' => HeroMainStatsViewText.sizeCategoryLarge,
       _ => '',
     };
-    final baseDisplay = categoryName.isNotEmpty 
-        ? '$sizeBase ($categoryName)'
-        : sizeBase;
+    final baseDisplay =
+        categoryName.isNotEmpty ? '$sizeBase ($categoryName)' : sizeBase;
 
     try {
       final result = await showDialog<int>(
@@ -4257,7 +4366,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color:
+                          Theme.of(dialogContext).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -4265,14 +4375,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                          color: Theme.of(dialogContext)
+                              .colorScheme
+                              .onPrimaryContainer,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             sourcesDesc,
                             style: TextStyle(
-                              color: Theme.of(dialogContext).colorScheme.onPrimaryContainer,
+                              color: Theme.of(dialogContext)
+                                  .colorScheme
+                                  .onPrimaryContainer,
                               fontSize: 13,
                             ),
                           ),
@@ -4284,7 +4398,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: HeroMainStatsViewText.sizeEditModificationLabel,
@@ -4332,7 +4447,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   List<String> _renownInsights(int renown) => generateRenownInsights(renown);
 
-  List<String> _xpInsights(int xp, int currentLevel) => generateXpInsights(xp, currentLevel);
+  List<String> _xpInsights(int xp, int currentLevel) =>
+      generateXpInsights(xp, currentLevel);
 
   // Delegates to extracted helper - wrapped for internal type compatibility
   _StaminaState _calculateStaminaState(HeroMainStats stats) {
@@ -4341,7 +4457,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   // Delegates to extracted helper
-  int _recoveryHealAmount(HeroMainStats stats) => calculateRecoveryHealAmount(stats);
+  int _recoveryHealAmount(HeroMainStats stats) =>
+      calculateRecoveryHealAmount(stats);
 
   Future<void> _handleUseRecovery(HeroMainStats stats) async {
     if (!mounted) return;
@@ -4433,9 +4550,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     String? description,
   }) async {
     if (!mounted) return null;
-    
+
     final controller = TextEditingController(text: '1');
-    
+
     try {
       final result = await showDialog<int>(
         context: context,
@@ -4482,12 +4599,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           );
         },
       );
-      
+
       // Wait for dialog animation to complete before returning result
       if (result != null) {
         await Future.delayed(const Duration(milliseconds: 300));
       }
-      
+
       return result;
     } finally {
       await Future.delayed(const Duration(milliseconds: 100));
@@ -4567,7 +4684,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required ThemeData theme,
   }) {
     if (modValue == 0) return const SizedBox.shrink();
-    
+
     return Text(
       _formatSigned(modValue),
       style: theme.textTheme.labelSmall?.copyWith(

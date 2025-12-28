@@ -793,7 +793,7 @@ class _ConditionsTrackerWidgetState
                           ),
                         ),
                         Text(
-                          '$_saveEndsTotal+',
+                          '>=$_saveEndsTotal',
                           style: theme.textTheme.labelMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

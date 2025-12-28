@@ -1,17 +1,9 @@
 
 ## easy
 
-the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
-
-when clicking any field that accepts values in the creator the ap should not defopult to typing in the field
-
 features that require a choise need to be noted
 
-recoveries must better show their value
-
 chaging fury subclass must remove stormwight kits
-
-save 6+ must be save 6 or save >= 6
 
 some hero classes and features grant skills. those skills may have been picked in another choice nod earlier. if there is such an occurence the logic should accomudate. 
 
@@ -67,6 +59,7 @@ some features need their abilities: covenant of the heart
 
 the A in ability cards sometimes is not colored properly
 
+the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
 ### unnecessary changes
 
 add a gold/silver/copper to the wealth stat and make it have both.
