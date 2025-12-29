@@ -935,6 +935,11 @@ class _PerkGrantsDisplay extends ConsumerWidget {
           'Choose ${count == 1 ? 'a' : count} new language${count == 1 ? '' : 's'}.',
           textColor);
     }
+    
+    // Calculate reserved languages for warning
+    final reservedLangs = languages.where((lang) =>
+        reservedLanguageIds.contains(lang.id)).toList();
+    final reservedCount = reservedLangs.length;
 
     final choicesAsync =
         ref.watch(perkGrantChoicesProvider((heroId: heroId, perkId: perkId)));
@@ -942,6 +947,21 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       data: (choices) {
         final selected = List<String>.from(choices['language'] ?? const []);
         final widgets = <Widget>[];
+        
+        // Add warning if some languages are reserved
+        if (reservedCount > 0) {
+          final reservedNames = reservedLangs
+              .map((l) => l.name)
+              .toList()
+            ..sort();
+          final langsText = reservedCount == 1 
+              ? '${reservedNames.first} is' 
+              : '${reservedNames.join(", ")} are';
+          widgets.add(_buildReservationWarning(
+            '$langsText already selected elsewhere',
+          ));
+        }
+        
         for (var index = 0; index < count; index++) {
           final selectedId = index < selected.length ? selected[index] : null;
           final label =
@@ -1056,12 +1076,22 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     Map<String, model.Component> skillMap,
   ) {
     final normalizedGroup = group.toLowerCase();
-    final available = skills.where((skill) {
+    
+    // Get all skills in the group
+    final allInGroup = skills.where((skill) {
       final skillGroup = (skill.data['group'] as String?)?.toLowerCase();
-      return skillGroup == normalizedGroup &&
-          !reservedSkillIds.contains(skill.id);
-    }).toList()
+      return skillGroup == normalizedGroup;
+    }).toList();
+    
+    // Get available skills (not reserved)
+    final available = allInGroup.where((skill) =>
+        !reservedSkillIds.contains(skill.id)).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
+    
+    // Calculate how many are reserved
+    final reservedInGroup = allInGroup.where((skill) =>
+        reservedSkillIds.contains(skill.id)).toList();
+    final reservedCount = reservedInGroup.length;
 
     if (available.isEmpty) {
       return _buildGrantRow(
@@ -1074,6 +1104,21 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       data: (choices) {
         final selected = List<String>.from(choices['skill_pick'] ?? const []);
         final widgets = <Widget>[];
+        
+        // Add warning if some skills are reserved
+        if (reservedCount > 0) {
+          final reservedNames = reservedInGroup
+              .map((s) => s.name)
+              .toList()
+            ..sort();
+          final skillsText = reservedCount == 1 
+              ? '${reservedNames.first} is' 
+              : '${reservedNames.join(", ")} are';
+          widgets.add(_buildReservationWarning(
+            '$skillsText already selected elsewhere',
+          ));
+        }
+        
         for (var index = 0; index < count; index++) {
           final selectedId = index < selected.length ? selected[index] : null;
           final label = count == 1
@@ -1104,6 +1149,36 @@ class _PerkGrantsDisplay extends ConsumerWidget {
       },
       loading: () => _buildLoadingRow(textColor, 'Loading skills...'),
       error: (e, _) => _buildGrantRow('Failed to load skills: $e', textColor),
+    );
+  }
+  
+  Widget _buildReservationWarning(String message) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.orange.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.info_outline, size: 14, color: Colors.orange.shade700),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                message,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.orange.shade800,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

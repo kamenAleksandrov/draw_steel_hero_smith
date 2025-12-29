@@ -396,6 +396,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       }
 
       _refreshReservedSkills();
+      _refreshReservedPerks();
     } catch (e) {
       debugPrint('Failed to load hero data: $e');
       // Don't fail the whole initialization if hero data can't be loaded
@@ -610,6 +611,21 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     if (!equality.equals(reserved, _reservedSkillIds)) {
       setState(() {
         _reservedSkillIds = reserved;
+      });
+    }
+  }
+
+  void _refreshReservedPerks() {
+    final currentSelections = _selectedPerks.values.whereType<String>().toSet();
+    final reserved = <String>{
+      ...currentSelections, // Current selections on this page
+      ..._dbSavedPerkIds, // Include DB-saved perks from other sources (e.g., Story page)
+    };
+
+    const equality = SetEquality<String>();
+    if (!equality.equals(reserved, _reservedPerkIds)) {
+      setState(() {
+        _reservedPerkIds = reserved;
       });
     }
   }
@@ -935,6 +951,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     });
     _updateGrantIdsForCurrentPlan();
     _refreshReservedSkills();
+    _refreshReservedPerks();
     _markDirty();
   }
 
@@ -959,6 +976,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     });
     _updateGrantIdsForCurrentPlan();
     _refreshReservedSkills();
+    _refreshReservedPerks();
     _markDirty();
   }
 
@@ -1012,6 +1030,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     setState(() {
       _selectedPerks = result.selectionsBySlot;
     });
+    _refreshReservedPerks();
     _markDirty();
   }
 
@@ -1034,6 +1053,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     });
     _updateGrantIdsForCurrentPlan();
     _refreshReservedSkills();
+    _refreshReservedPerks();
     _markDirty();
   }
 
@@ -1922,7 +1942,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedPerks: _selectedPerks,
-              reservedPerkIds: {..._reservedPerkIds, ..._dbSavedPerkIds},
+              reservedPerkIds: _reservedPerkIds,
               reservedLanguageIds: {..._reservedLanguageIds, ..._dbSavedLanguageIds},
               reservedSkillIds: _reservedSkillIds,
               onSelectionChanged: _handlePerkSelectionsChanged,

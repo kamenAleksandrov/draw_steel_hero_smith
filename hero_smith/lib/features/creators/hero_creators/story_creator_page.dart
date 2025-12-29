@@ -170,13 +170,25 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
       ..._careerLanguageIds.whereType<String>(),
     ]);
 
-    if (skillDuplicates.isEmpty && languageDuplicates.isEmpty) {
+    // Check for perk duplicates within this page and conflicts with other pages
+    final perkDuplicates = <String>{
+      ..._findDuplicates(_careerPerkIds),
+      // Check if any career perks are already saved from other pages (Strife)
+      ..._careerPerkIds.where((perkId) => 
+          _dbSavedPerkIds.contains(perkId) && 
+          !(_hero?.perks.contains(perkId) ?? false)), // Exclude hero's own perks
+    };
+
+    if (skillDuplicates.isEmpty && 
+        languageDuplicates.isEmpty && 
+        perkDuplicates.isEmpty) {
       return true;
     }
 
     final categories = <String>[];
     if (skillDuplicates.isNotEmpty) categories.add('skills');
     if (languageDuplicates.isNotEmpty) categories.add('languages');
+    if (perkDuplicates.isNotEmpty) categories.add('perks');
 
     final result = await showDialog<bool>(
       context: context,

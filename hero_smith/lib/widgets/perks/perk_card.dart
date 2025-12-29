@@ -271,6 +271,14 @@ class PerkCard extends ConsumerWidget {
               (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
             ).toList();
             
+            // Find skills reserved by other sources (not owned but reserved)
+            final reservedInGroup = groupSkills.where((s) {
+              final skillId = s['id'] as String?;
+              if (skillId == null) return false;
+              if (heroSkillIds.contains(skillId)) return false; // Already owned, not "reserved"
+              return reservedSkillIds.contains(skillId);
+            }).toList();
+            
             // Exclude skills that are already owned OR reserved by other sources
             final availableSkills = groupSkills.where((s) {
               final skillId = s['id'] as String?;
@@ -283,40 +291,61 @@ class PerkCard extends ConsumerWidget {
             // Get current choices
             final currentChoices = choices['skill_pick'] ?? [];
             
+            // Build warning widget if skills are reserved
+            final warningWidgets = <Widget>[];
+            if (reservedInGroup.isNotEmpty) {
+              final reservedNames = reservedInGroup
+                  .map((s) => s['name'] as String? ?? '')
+                  .where((n) => n.isNotEmpty)
+                  .toList()
+                ..sort();
+              if (reservedNames.isNotEmpty) {
+                final skillsText = reservedNames.length == 1 
+                    ? '${reservedNames.first} is' 
+                    : '${reservedNames.join(", ")} are';
+                warningWidgets.add(_buildReservationWarning(
+                  '$skillsText already selected elsewhere',
+                ));
+              }
+            }
+            
             // Build a widget for each slot
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(count, (index) {
-                final selectedId = index < currentChoices.length ? currentChoices[index] : null;
-                final selectedSkill = selectedId != null
-                  ? groupSkills.firstWhere(
-                      (s) => s['id'] == selectedId,
-                      orElse: () => <String, dynamic>{},
-                    )
-                  : null;
+              children: [
+                ...warningWidgets,
+                ...List.generate(count, (index) {
+                  final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                  final selectedSkill = selectedId != null
+                    ? groupSkills.firstWhere(
+                        (s) => s['id'] == selectedId,
+                        orElse: () => <String, dynamic>{},
+                      )
+                    : null;
 
-                // For available options, exclude already selected ones (from other slots)
-                final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
-                final slotOptions = availableSkills.where((s) =>
-                  !alreadySelected.contains(s['id'] as String?)
-                ).toList();
+                  // For available options, exclude already selected ones (from other slots)
+                  final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
+                  final slotOptions = availableSkills.where((s) =>
+                    !alreadySelected.contains(s['id'] as String?)
+                  ).toList();
 
-                return _buildSkillSelector(
-                  context: context,
-                  ref: ref,
-                  label: count == 1 
-                    ? 'New ${_capitalize(group)} Skill'
-                    : 'New ${_capitalize(group)} Skill ${index + 1}',
-                  skills: slotOptions,
-                  selectedSkillId: selectedId,
-                  selectedSkillName: selectedSkill?['name'] as String?,
-                  grantType: 'skill_pick',
-                  slotIndex: index,
-                  allCurrentChoices: currentChoices,
-                  textColor: textColor,
-                  accentColor: accentColor,
-                );
-              }),
+                  return _buildSkillSelector(
+                    context: context,
+                    ref: ref,
+                    label: count == 1 
+                      ? 'New ${_capitalize(group)} Skill'
+                      : 'New ${_capitalize(group)} Skill ${index + 1}',
+                    skills: slotOptions,
+                    selectedSkillId: selectedId,
+                    selectedSkillName: selectedSkill?['name'] as String?,
+                    grantType: 'skill_pick',
+                    slotIndex: index,
+                    allCurrentChoices: currentChoices,
+                    textColor: textColor,
+                    accentColor: accentColor,
+                  );
+                }),
+              ],
             );
           },
         ),
@@ -345,6 +374,14 @@ class PerkCard extends ConsumerWidget {
           loading: () => _buildLoadingGrant(accentColor, textColor),
           error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
           data: (choices) {
+            // Find languages reserved by other sources (not owned but reserved)
+            final reservedLangs = allLanguages.where((l) {
+              final langId = l['id'] as String?;
+              if (langId == null) return false;
+              if (heroLanguageIds.contains(langId)) return false; // Already owned, not "reserved"
+              return reservedLanguageIds.contains(langId);
+            }).toList();
+            
             // Get languages that hero DOESN'T own AND are not reserved by other sources
             final availableLanguages = allLanguages.where((l) {
               final langId = l['id'] as String?;
@@ -357,37 +394,58 @@ class PerkCard extends ConsumerWidget {
             // Get current choices
             final currentChoices = choices['language'] ?? [];
             
+            // Build warning widget if languages are reserved
+            final warningWidgets = <Widget>[];
+            if (reservedLangs.isNotEmpty) {
+              final reservedNames = reservedLangs
+                  .map((l) => l['name'] as String? ?? '')
+                  .where((n) => n.isNotEmpty)
+                  .toList()
+                ..sort();
+              if (reservedNames.isNotEmpty) {
+                final langsText = reservedNames.length == 1 
+                    ? '${reservedNames.first} is' 
+                    : '${reservedNames.join(", ")} are';
+                warningWidgets.add(_buildReservationWarning(
+                  '$langsText already selected elsewhere',
+                ));
+              }
+            }
+            
             // Build a widget for each slot
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(count, (index) {
-                final selectedId = index < currentChoices.length ? currentChoices[index] : null;
-                final selectedLanguage = selectedId != null
-                  ? allLanguages.firstWhere(
-                      (l) => l['id'] == selectedId,
-                      orElse: () => <String, dynamic>{},
-                    )
-                  : null;
+              children: [
+                ...warningWidgets,
+                ...List.generate(count, (index) {
+                  final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                  final selectedLanguage = selectedId != null
+                    ? allLanguages.firstWhere(
+                        (l) => l['id'] == selectedId,
+                        orElse: () => <String, dynamic>{},
+                      )
+                    : null;
 
-                // For available options, exclude already selected ones (from other slots)
-                final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
-                final slotOptions = availableLanguages.where((l) =>
-                  !alreadySelected.contains(l['id'] as String?)
-                ).toList();
+                  // For available options, exclude already selected ones (from other slots)
+                  final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
+                  final slotOptions = availableLanguages.where((l) =>
+                    !alreadySelected.contains(l['id'] as String?)
+                  ).toList();
 
-                return _buildLanguageSelector(
-                  context: context,
-                  ref: ref,
-                  label: count == 1 ? 'New Language' : 'New Language ${index + 1}',
-                  languages: slotOptions,
-                  selectedLanguageId: selectedId,
-                  selectedLanguageName: selectedLanguage?['name'] as String?,
-                  slotIndex: index,
-                  allCurrentChoices: currentChoices,
-                  textColor: textColor,
-                  accentColor: accentColor,
-                );
-              }),
+                  return _buildLanguageSelector(
+                    context: context,
+                    ref: ref,
+                    label: count == 1 ? 'New Language' : 'New Language ${index + 1}',
+                    languages: slotOptions,
+                    selectedLanguageId: selectedId,
+                    selectedLanguageName: selectedLanguage?['name'] as String?,
+                    slotIndex: index,
+                    allCurrentChoices: currentChoices,
+                    textColor: textColor,
+                    accentColor: accentColor,
+                  );
+                }),
+              ],
             );
           },
         ),
@@ -786,6 +844,36 @@ class PerkCard extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+  
+  Widget _buildReservationWarning(String message) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: Colors.orange.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.info_outline, size: 12, color: Colors.orange.shade700),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                message,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.orange.shade800,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
