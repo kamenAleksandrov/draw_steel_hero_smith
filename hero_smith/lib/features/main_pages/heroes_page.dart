@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
+import '../../core/services/hero_export_service.dart';
 import '../../core/theme/ability_colors.dart';
 import '../../core/theme/hero_theme.dart';
 import '../creators/hero_creators/hero_creator_page.dart';
@@ -112,18 +114,30 @@ class HeroesPage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         children: [
-          FilledButton.icon(
-            onPressed: () async {
-              final repo = ref.read(heroRepositoryProvider);
-              final id = await repo.createHero(name: 'New Hero');
-              if (!context.mounted) return;
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
-              );
-            },
-            icon: const Icon(Icons.add),
-            label: const Text('Create New Hero'),
-            style: HeroTheme.primaryActionButtonStyle(context),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () async {
+                    final repo = ref.read(heroRepositoryProvider);
+                    final id = await repo.createHero(name: 'New Hero');
+                    if (!context.mounted) return;
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Create New Hero'),
+                  style: HeroTheme.primaryActionButtonStyle(context),
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: () => _showImportDialog(context, ref),
+                icon: const Icon(Icons.download),
+                label: const Text('Import'),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
         ],
@@ -222,11 +236,23 @@ class HeroesPage extends ConsumerWidget {
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert),
                 onSelected: (value) async {
-                  if (value == 'delete') {
+                  if (value == 'export') {
+                    await _exportHeroCode(context, ref, hero);
+                  } else if (value == 'delete') {
                     await _deleteHero(context, ref, hero);
                   }
                 },
                 itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'export',
+                    child: Row(
+                      children: [
+                        Icon(Icons.share),
+                        SizedBox(width: 8),
+                        Text('Export Code'),
+                      ],
+                    ),
+                  ),
                   const PopupMenuItem(
                     value: 'delete',
                     child: Row(
@@ -385,6 +411,287 @@ class HeroesPage extends ConsumerWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Deleted ${hero.name}')),
+      );
+    }
+  }
+
+  Future<void> _exportHeroCode(BuildContext context, WidgetRef ref, dynamic hero) async {
+    try {
+      final db = ref.read(appDatabaseProvider);
+      final exportService = HeroExportService(db);
+      final code = await exportService.exportHeroToCode(hero.id);
+      
+      if (!context.mounted) return;
+      
+      await showDialog(
+        context: context,
+        builder: (ctx) {
+          final theme = Theme.of(ctx);
+          final codeLength = code.length;
+          
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.upload_rounded, color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Export ${hero.name}')),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Share this code with a friend so they can import your hero build.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Code preview container with scroll
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 150),
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: SelectableText(
+                      code,
+                      style: TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 10,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 12),
+                
+                // Code info
+                Text(
+                  '${codeLength} characters',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Close'),
+              ),
+              FilledButton.icon(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: code));
+                  ScaffoldMessenger.of(ctx).showSnackBar(
+                    SnackBar(
+                      content: const Row(
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 12),
+                          Text('Code copied to clipboard!'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green.shade700,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  Navigator.of(ctx).pop();
+                },
+                icon: const Icon(Icons.copy),
+                label: const Text('Copy Code'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export hero: $e')),
+      );
+    }
+  }
+
+  Future<void> _showImportDialog(BuildContext context, WidgetRef ref) async {
+    final controller = TextEditingController();
+    
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        
+        return StatefulBuilder(
+          builder: (ctx, setState) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.download_rounded, color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
+                const Text('Import Hero'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Paste a hero code from a friend to add their build to your heroes.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: controller,
+                  maxLines: 5,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 11,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'HERO:H4sIAAAA...',
+                    hintStyle: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    ),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.paste),
+                      tooltip: 'Paste from clipboard',
+                      onPressed: () async {
+                        final data = await Clipboard.getData(Clipboard.kTextPlain);
+                        if (data?.text != null) {
+                          controller.text = data!.text!;
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+                if (controller.text.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    '${controller.text.length} characters',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Cancel'),
+              ),
+              FilledButton.icon(
+                onPressed: controller.text.trim().isEmpty
+                    ? null
+                    : () => Navigator.of(ctx).pop(controller.text.trim()),
+                icon: const Icon(Icons.download),
+                label: const Text('Import'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    
+    if (result == null || result.isEmpty) return;
+    
+    try {
+      final db = ref.read(appDatabaseProvider);
+      final exportService = HeroExportService(db);
+      
+      // Validate first
+      final preview = exportService.validateCode(result);
+      if (preview == null) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error_outline, color: Colors.white),
+                SizedBox(width: 12),
+                Text('Invalid hero code format'),
+              ],
+            ),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+      
+      if (!preview.isCompatible) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.warning_amber, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Incompatible version (v${preview.formatVersion}). Please ask for an updated code.',
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.orange.shade700,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+      
+      // Import the hero
+      final newHeroId = await exportService.importHeroFromCode(result);
+      
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(child: Text('Imported "${preview.name}" successfully!')),
+            ],
+          ),
+          backgroundColor: Colors.green.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      
+      // Navigate to the imported hero
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: newHeroId)),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(child: Text('Failed to import: $e')),
+            ],
+          ),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
