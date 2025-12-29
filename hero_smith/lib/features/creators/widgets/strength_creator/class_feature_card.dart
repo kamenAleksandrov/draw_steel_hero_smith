@@ -50,7 +50,14 @@ class _FeatureCardState extends State<_FeatureCard>
     final scheme = theme.colorScheme;
     final details = w.featureDetailsById[feature.id];
     final grantType = _resolveGrantType();
-    final featureStyle = _FeatureStyle.fromGrantType(grantType, feature.isSubclassFeature);
+    
+    // Check if this feature has options that require a user choice
+    final hasOptionsRequiringChoice = _hasOptionsRequiringChoice(details);
+    final featureStyle = _FeatureStyle.fromGrantType(
+      grantType,
+      feature.isSubclassFeature,
+      hasOptionsRequiringChoice: hasOptionsRequiringChoice,
+    );
     
     // Check if this is a progression feature (Growing Ferocity / Discipline Mastery)
     if (w._isProgressionFeature(feature)) {
@@ -125,6 +132,33 @@ class _FeatureCardState extends State<_FeatureCard>
     return w.grantTypeByFeatureName[featureKey] ?? '';
   }
   
+  /// Determines if this feature has options that require a user choice.
+  /// Returns true if:
+  /// - Feature has 'options' or 'options_X' with multiple entries
+  /// - Feature doesn't use 'grants' (which are auto-applied)
+  /// - No selection has been made yet
+  bool _hasOptionsRequiringChoice(Map<String, dynamic>? details) {
+    if (details == null) return false;
+    
+    // Check if it uses grants (auto-applied, no choice needed)
+    final grants = details['grants'];
+    if (grants is List && grants.isNotEmpty) return false;
+    
+    // Extract options using the service
+    final options = ClassFeatureDataService.extractOptionMaps(details);
+    if (options.isEmpty) return false;
+    
+    // If there's only one option, it's auto-applied (no choice needed)
+    if (options.length <= 1) return false;
+    
+    // Check if user already made a selection
+    final currentSelections = w.selectedOptions[feature.id] ?? const <String>{};
+    final minimumRequired = ClassFeatureDataService.minimumSelections(details);
+    final effectiveMinimum = minimumRequired <= 0 ? 1 : minimumRequired;
+    
+    return currentSelections.length < effectiveMinimum;
+  }
+  
   /// Build a special card for progression features (Growing Ferocity / Discipline Mastery)
   Widget _buildProgressionFeatureCard(
     BuildContext context,
@@ -153,7 +187,11 @@ class _FeatureStyle {
     required this.label,
   });
 
-  factory _FeatureStyle.fromGrantType(String grantType, bool isSubclass) {
+  factory _FeatureStyle.fromGrantType(
+    String grantType,
+    bool isSubclass, {
+    bool hasOptionsRequiringChoice = false,
+  }) {
     switch (grantType) {
       case 'granted':
         return _FeatureStyle(
@@ -174,6 +212,14 @@ class _FeatureStyle {
           label: ClassFeatureCardText.abilityGrantedLabel,
         );
       default:
+        // If no explicit grantType but feature has options requiring choice
+        if (hasOptionsRequiringChoice) {
+          return _FeatureStyle(
+            borderColor: Colors.orange.shade600,
+            icon: Icons.touch_app_outlined,
+            label: ClassFeatureCardText.choiceRequiredLabel,
+          );
+        }
         if (isSubclass) {
           return _FeatureStyle(
             borderColor: Colors.purple.shade500,

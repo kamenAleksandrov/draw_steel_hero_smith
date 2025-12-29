@@ -437,25 +437,54 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
           Wrap(
             spacing: 8,
             runSpacing: 6,
-            children: granted
-                .map(
-                  (skill) => Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                    ),
-                    child: Text(
+            children: granted.map((skill) {
+              // Check if this granted skill is a duplicate (already reserved)
+              final skillId = _resolveSkillId(skill);
+              final isDuplicate = skillId != null &&
+                  widget.reservedSkillIds.contains(skillId);
+
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: isDuplicate
+                      ? Colors.orange.withValues(alpha: 0.15)
+                      : AppColors.primary.withValues(alpha: 0.15),
+                  border: isDuplicate
+                      ? Border.all(color: Colors.orange.withValues(alpha: 0.5))
+                      : null,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isDuplicate) ...[
+                      Icon(Icons.warning_amber_rounded,
+                          size: 14, color: Colors.orange.shade700),
+                      const SizedBox(width: 4),
+                    ],
+                    Text(
                       skill,
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.primary,
+                        color: isDuplicate
+                            ? Colors.orange.shade800
+                            : AppColors.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                )
-                .toList(),
+                    if (isDuplicate) ...[
+                      const SizedBox(width: 4),
+                      Text(
+                        StartingSkillsWidgetText.duplicateLabel,
+                        style: AppTextStyles.caption.copyWith(
+                          color: Colors.orange.shade700,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),

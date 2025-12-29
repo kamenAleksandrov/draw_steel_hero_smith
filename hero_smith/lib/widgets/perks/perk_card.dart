@@ -45,8 +45,18 @@ class PerkCard extends ConsumerWidget {
   final Component perk;
   /// If provided, enables hero-specific grant selection UI
   final String? heroId;
+  /// Skill IDs that are already taken (from other sources) and should be excluded from pickers
+  final Set<String> reservedSkillIds;
+  /// Language IDs that are already taken (from other sources) and should be excluded from pickers
+  final Set<String> reservedLanguageIds;
 
-  const PerkCard({super.key, required this.perk, this.heroId});
+  const PerkCard({
+    super.key,
+    required this.perk,
+    this.heroId,
+    this.reservedSkillIds = const {},
+    this.reservedLanguageIds = const {},
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -261,9 +271,14 @@ class PerkCard extends ConsumerWidget {
               (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
             ).toList();
             
-            final availableSkills = groupSkills.where((s) =>
-              !heroSkillIds.contains(s['id'] as String?)
-            ).toList();
+            // Exclude skills that are already owned OR reserved by other sources
+            final availableSkills = groupSkills.where((s) {
+              final skillId = s['id'] as String?;
+              if (skillId == null) return false;
+              if (heroSkillIds.contains(skillId)) return false;
+              if (reservedSkillIds.contains(skillId)) return false;
+              return true;
+            }).toList();
 
             // Get current choices
             final currentChoices = choices['skill_pick'] ?? [];
@@ -330,10 +345,14 @@ class PerkCard extends ConsumerWidget {
           loading: () => _buildLoadingGrant(accentColor, textColor),
           error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
           data: (choices) {
-            // Get languages that hero DOESN'T own
-            final availableLanguages = allLanguages.where((l) =>
-              !heroLanguageIds.contains(l['id'] as String?)
-            ).toList();
+            // Get languages that hero DOESN'T own AND are not reserved by other sources
+            final availableLanguages = allLanguages.where((l) {
+              final langId = l['id'] as String?;
+              if (langId == null) return false;
+              if (heroLanguageIds.contains(langId)) return false;
+              if (reservedLanguageIds.contains(langId)) return false;
+              return true;
+            }).toList();
 
             // Get current choices
             final currentChoices = choices['language'] ?? [];

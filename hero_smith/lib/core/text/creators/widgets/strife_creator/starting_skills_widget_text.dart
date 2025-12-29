@@ -18,4 +18,5 @@
   static const String unassignedLabel = 'Unassigned';
   static const String selectedOptionGroupPrefix = ' (';
   static const String selectedOptionGroupSuffix = ')';
+  static const String duplicateLabel = '(duplicate)';
 }

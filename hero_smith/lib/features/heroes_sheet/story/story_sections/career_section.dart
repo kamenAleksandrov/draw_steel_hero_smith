@@ -273,6 +273,13 @@ class _HeroPerkCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final componentAsync = ref.watch(_componentByIdProvider(perkId));
+    // Get reserved skills/languages from DB
+    final reservedSkillIds = ref.watch(
+      heroEntryIdsByTypeProvider((heroId: heroId, entryType: 'skill')),
+    );
+    final reservedLanguageIds = ref.watch(
+      heroEntryIdsByTypeProvider((heroId: heroId, entryType: 'language')),
+    );
 
     return componentAsync.when(
       loading: () => const Padding(
@@ -299,7 +306,12 @@ class _HeroPerkCard extends ConsumerWidget {
         }
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: PerkCard(perk: component, heroId: heroId),
+          child: PerkCard(
+            perk: component,
+            heroId: heroId,
+            reservedSkillIds: reservedSkillIds,
+            reservedLanguageIds: reservedLanguageIds,
+          ),
         );
       },
     );

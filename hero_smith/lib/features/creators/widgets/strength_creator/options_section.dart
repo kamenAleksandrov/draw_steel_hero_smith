@@ -34,8 +34,16 @@ class _OptionsSection extends StatelessWidget {
     final grantType = widget.grantTypeByFeatureName[feature.name.toLowerCase().trim()] ?? '';
     final isPickFeature = grantType == 'pick';
     final hasOptions = optionsContext.options.isNotEmpty;
-    // For grants, we don't need user selection - they're all auto-applied
-    final needsSelection = !isGrantsFeature && isPickFeature && hasOptions &&
+    
+    // Determine if this feature requires a selection:
+    // 1. Not a grants feature (auto-applied)
+    // 2. Not auto-applied (single option with no editing)
+    // 3. Has options available
+    // 4. Either explicitly a 'pick' feature OR has multiple options that require choice
+    // 5. Not enough selections have been made yet
+    final hasMultipleOptionsToChoose = hasOptions && optionsContext.options.length > 1;
+    final requiresChoice = isPickFeature || (hasMultipleOptionsToChoose && optionsContext.allowEditing);
+    final needsSelection = !isGrantsFeature && !isAutoApplied && hasOptions && requiresChoice &&
         effectiveSelections.length < (minimumRequired <= 0 ? 1 : minimumRequired);
 
     return Column(
@@ -314,6 +322,26 @@ class _AutoAppliedContent extends StatelessWidget {
   final ClassFeaturesWidget widget;
   final String featureId;
 
+  /// Extracts the display name from the option
+  String? _getOptionName() {
+    // Try common name fields
+    final nameFields = ['name', 'title', 'label', 'option_name', 'ability_name'];
+    for (final field in nameFields) {
+      final value = option[field]?.toString().trim();
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+    }
+    // Try subclass-related fields
+    for (final field in ClassFeaturesWidget._widgetSubclassOptionKeys) {
+      final value = option[field]?.toString().trim();
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -322,6 +350,7 @@ class _AutoAppliedContent extends StatelessWidget {
     final textSections = _extractOptionTextSections(option);
     final skillGroup = option['skill_group']?.toString().trim();
     final hasSkillGroup = skillGroup != null && skillGroup.isNotEmpty;
+    final optionName = _getOptionName();
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -339,11 +368,28 @@ class _AutoAppliedContent extends StatelessWidget {
             children: [
               const Icon(Icons.check_circle, size: 18, color: Colors.green),
               const SizedBox(width: 8),
-              Text(
-                OptionsSectionText.autoAppliedLabel,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.green.shade700,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (optionName != null) ...[
+                      Text(
+                        optionName,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                    ],
+                    Text(
+                      OptionsSectionText.autoAppliedLabel,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green.shade700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
