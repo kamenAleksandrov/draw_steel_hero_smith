@@ -4731,27 +4731,116 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   Future<void> _handleApplyHealing(HeroMainStats stats) async {
-    final amount = await _promptForAmount(
+    final result = await _promptForHealingAmount(
       title: HeroMainStatsViewText.applyHealingTitle,
       description: HeroMainStatsViewText.applyHealingDescription,
     );
-    if (amount == null || amount <= 0) return;
+    if (result == null || result.amount <= 0) return;
     if (!mounted) return;
 
-    final maxStamina = stats.staminaMaxEffective;
-    final newCurrent = math.min(
-      stats.staminaCurrent + amount,
-      maxStamina,
-    );
-
     try {
-      await ref.read(heroRepositoryProvider).updateVitals(
-            widget.heroId,
-            staminaCurrent: newCurrent,
-          );
+      if (result.applyToTemp) {
+        // Temp stamina: replace the value (not add to it)
+        await ref.read(heroRepositoryProvider).updateVitals(
+              widget.heroId,
+              staminaTemp: result.amount,
+            );
+      } else {
+        // Regular stamina: add to current (capped at max)
+        final maxStamina = stats.staminaMaxEffective;
+        final newCurrent = math.min(
+          stats.staminaCurrent + result.amount,
+          maxStamina,
+        );
+        await ref.read(heroRepositoryProvider).updateVitals(
+              widget.heroId,
+              staminaCurrent: newCurrent,
+            );
+      }
     } catch (err) {
       if (!mounted) return;
       _showSnack('${HeroMainStatsViewText.applyHealingErrorPrefix}$err');
+    }
+  }
+
+  Future<({int amount, bool applyToTemp})?> _promptForHealingAmount({
+    required String title,
+    String? description,
+  }) async {
+    if (!mounted) return null;
+
+    final controller = TextEditingController(text: '1');
+
+    try {
+      final result = await showDialog<({int amount, bool applyToTemp})>(
+        context: context,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (description != null) ...[Text(description),
+                  const SizedBox(height: 12),
+                ],
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: _formatters(false, 3),
+                  decoration: const InputDecoration(
+                    labelText: HeroMainStatsViewText.promptAmountLabel,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text(HeroMainStatsViewText.promptCancelLabel),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text.trim());
+                  if (value == null || value <= 0) {
+                    Navigator.of(dialogContext).pop();
+                  } else {
+                    Navigator.of(dialogContext).pop(
+                      (amount: value, applyToTemp: true),
+                    );
+                  }
+                },
+                child: const Text(HeroMainStatsViewText.promptApplyTempLabel),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final value = int.tryParse(controller.text.trim());
+                  if (value == null || value <= 0) {
+                    Navigator.of(dialogContext).pop();
+                  } else {
+                    Navigator.of(dialogContext).pop(
+                      (amount: value, applyToTemp: false),
+                    );
+                  }
+                },
+                child: const Text(HeroMainStatsViewText.promptApplyLabel),
+              ),
+            ],
+          );
+        },
+      );
+
+      // Wait for dialog animation to complete before returning result
+      if (result != null) {
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+
+      return result;
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 100));
+      controller.dispose();
     }
   }
 

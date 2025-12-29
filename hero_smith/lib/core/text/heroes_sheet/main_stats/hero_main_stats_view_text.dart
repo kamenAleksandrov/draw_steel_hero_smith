@@ -236,7 +236,8 @@ class HeroMainStatsViewText {
 
   static const String promptAmountLabel = 'Amount';
   static const String promptCancelLabel = 'Cancel';
-  static const String promptApplyLabel = 'Apply';
+  static const String promptApplyLabel = 'Stamina';
+  static const String promptApplyTempLabel = 'Temp';
 
   static const String psiBoostResourceFallbackName = 'Focus';
   static const String psiBoostSnackResourceFallbackName = 'Focus';
