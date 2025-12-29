@@ -59,6 +59,8 @@ the projects item card has a required items [] when non are present and instead 
 some hero classes and features grant skills. those skills may have been picked in another choice nod earlier. if there is such an occurence the logic should accomudate. 
 
 on my phone some elements do not update on time
+
+the hero class skill and ther features bonuses do not save or grant their bonuses
 ### unnecessary changes
 
 add a gold/silver/copper to the wealth stat and make it have both.
@@ -67,7 +69,7 @@ reorder the tabs: strife => strength => story?
 
 it might be a good idea to have the features that upgrade other features do so in the ui but idk yet
 
-in the creator there are cost categories and they load for each ability, insetead group abilities under one
+in the creator there are cost categories and they load for each ability, insetead group abilities under one?
 
 some features that have multiple new lines must be better organised or atleast spaced one empty row apart.
 
@@ -80,13 +82,11 @@ changing class should prompt for confirmation
 level 10 features have more work to be fully functional.
 
 would be nice to have it receed the jsons on updates. this will make it easier to update without losing info
+
+remove duplication finding?
+
 ### necessary changes
 
-remove duplication finding
-
-auto granted features must have theri names shown too
-
-the hero class skill and ther features bonuses do not save or grant their bonuses
 
 features must have ui updated to handle options, grants and other such cases better.
 ## hero creation testing
