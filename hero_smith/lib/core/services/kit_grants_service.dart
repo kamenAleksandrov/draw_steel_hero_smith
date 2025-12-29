@@ -34,7 +34,10 @@ class KitGrantsService {
   /// 
   /// This processes a list of equipment IDs (kits), extracts their grants,
   /// and stores them in hero_entries.
-  Future<void> applyKitGrants({
+  /// 
+  /// Returns the calculated [EquipmentBonuses] so callers can use them
+  /// without re-loading components.
+  Future<EquipmentBonuses> applyKitGrants({
     required String heroId,
     required List<String?> equipmentIds,
     required int heroLevel,
@@ -105,7 +108,10 @@ class KitGrantsService {
         heroLevel: heroLevel,
       );
       await _storeEquipmentBonuses(heroId, bonuses);
+      return bonuses;
     }
+    
+    return EquipmentBonuses.empty;
   }
 
   /// Remove all kit grants for a hero.

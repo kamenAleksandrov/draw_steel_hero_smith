@@ -17,7 +17,6 @@ import '../../../core/services/class_feature_grants_service.dart';
 import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
-import '../../../core/services/kit_bonus_service.dart';
 import '../../../core/services/kit_grants_service.dart';
 import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
@@ -1466,38 +1465,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // 3.5. Apply kit grants (bonuses, abilities, stat mods like decrease_total) from selected equipment
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
       
-      // Use KitGrantsService to apply all kit grants
+      // Use KitGrantsService to apply all kit grants - this also returns calculated bonuses
       final kitGrantsService = KitGrantsService(db);
-      await kitGrantsService.applyKitGrants(
+      final equipmentBonuses = await kitGrantsService.applyKitGrants(
         heroId: widget.heroId,
         equipmentIds: slotOrderedEquipmentIds,
-        heroLevel: _selectedLevel,
-      );
-      
-      // Calculate equipment bonuses for stamina/speed/stability display
-      final bonusService = const KitBonusService();
-      final selectedEquipment = <Component>[];
-      for (final id in slotOrderedEquipmentIds) {
-        if (id != null) {
-          final dbComponent = await db.getComponentById(id);
-          if (dbComponent != null) {
-            // Convert database Component to model Component
-            final data = dbComponent.dataJson.isNotEmpty
-                ? jsonDecode(dbComponent.dataJson) as Map<String, dynamic>
-                : <String, dynamic>{};
-            selectedEquipment.add(Component(
-              id: dbComponent.id,
-              type: dbComponent.type,
-              name: dbComponent.name,
-              data: data,
-              source: dbComponent.source,
-              parentId: dbComponent.parentId,
-            ));
-          }
-        }
-      }
-      final equipmentBonuses = bonusService.calculateBonuses(
-        equipment: selectedEquipment,
         heroLevel: _selectedLevel,
       );
       

@@ -25,8 +25,6 @@ there should be a way to show what condition immunities does a hero have
 modification popuots should not have an already set value of 0
 ## hard
 
-on my phone some elements do not update on time
-
 the storing of equasion and calculation must be applied accross the board. not just the woadwalker recovery bonus
 
 there are false save and duplication flags on the strife page
@@ -35,6 +33,9 @@ the gear page should look through every item in the heros inventory  and check t
 
 when picking a class and chosing the same class as the current the choises should not reset.
 
+create a equipment functionality where the user can equip items and get their bonuses
+
+update abilities to be dynamic based on the hero stats
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel
@@ -56,6 +57,8 @@ the notifications of saving and or the random displays that pop out of the botto
 the projects item card has a required items [] when non are present and instead it should be none. sam is for knowledge
 
 some hero classes and features grant skills. those skills may have been picked in another choice nod earlier. if there is such an occurence the logic should accomudate. 
+
+on my phone some elements do not update on time
 ### unnecessary changes
 
 add a gold/silver/copper to the wealth stat and make it have both.

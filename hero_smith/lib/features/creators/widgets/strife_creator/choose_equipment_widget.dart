@@ -27,6 +27,7 @@ class EquipmentSlot {
   final String? selectedItemId;
   final ValueChanged<String?> onChanged;
   final String? helperText;
+
   /// The class ID to filter equipment that has class restrictions (e.g., psionic_augmentation)
   final String? classId;
 }
@@ -121,8 +122,7 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
 
   static Future<Component?> _findItemById(WidgetRef ref, String itemId) async {
     for (final type in _allEquipmentTypes) {
-      final components =
-          await ref.read(componentsByTypeProvider(type).future);
+      final components = await ref.read(componentsByTypeProvider(type).future);
       for (final component in components) {
         if (component.id == itemId) {
           return component;
@@ -173,15 +173,22 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
             '${segment[0].toUpperCase()}${segment.substring(1).toLowerCase()}')
         .join(' ');
   }
-
 }
 
-class _EquipmentSlotTile extends ConsumerWidget {
+class _EquipmentSlotTile extends ConsumerStatefulWidget {
   const _EquipmentSlotTile({
     required this.slot,
   });
 
   final EquipmentSlot slot;
+
+  @override
+  ConsumerState<_EquipmentSlotTile> createState() => _EquipmentSlotTileState();
+}
+
+class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
+  Future<Component?>? _cachedFuture;
+  String? _cachedItemId;
 
   Color _getBorderColorForType(String type) {
     final colorScheme = KitTheme.getColorScheme(type);
@@ -189,20 +196,26 @@ class _EquipmentSlotTile extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final allowedTypes =
-        EquipmentAndModificationsWidget._normalizeAllowedTypes(slot.allowedTypes);
+    final slot = widget.slot;
+    final allowedTypes = EquipmentAndModificationsWidget._normalizeAllowedTypes(
+        slot.allowedTypes);
 
-    final future = slot.selectedItemId == null
-        ? Future<Component?>.value(null)
-        : EquipmentAndModificationsWidget._findItemById(
-            ref,
-            slot.selectedItemId!,
-          );
+    // Only create a new Future if the selected item ID has changed
+    // This prevents FutureBuilder from resetting to loading state on every rebuild
+    if (_cachedItemId != slot.selectedItemId) {
+      _cachedItemId = slot.selectedItemId;
+      _cachedFuture = slot.selectedItemId == null
+          ? Future<Component?>.value(null)
+          : EquipmentAndModificationsWidget._findItemById(
+              ref,
+              slot.selectedItemId!,
+            );
+    }
 
     return FutureBuilder<Component?>(
-      future: future,
+      future: _cachedFuture,
       builder: (context, snapshot) {
         final selectedItem = snapshot.data;
         final isLoading = snapshot.connectionState == ConnectionState.waiting &&
@@ -211,20 +224,21 @@ class _EquipmentSlotTile extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    final result = await showDialog<String?>(
-                      context: context,
-                      builder: (dialogContext) => _EquipmentSelectionDialog(
-                        slotLabel: slot.label,
-                        allowedTypes: allowedTypes,
-                        currentItemId: slot.selectedItemId,
-                        canRemove: slot.selectedItemId != null,
-                        classId: slot.classId,
-                      ),
-                    );                  if (result == null) {
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await showDialog<String?>(
+                    context: context,
+                    builder: (dialogContext) => _EquipmentSelectionDialog(
+                      slotLabel: slot.label,
+                      allowedTypes: allowedTypes,
+                      currentItemId: slot.selectedItemId,
+                      canRemove: slot.selectedItemId != null,
+                      classId: slot.classId,
+                    ),
+                  );
+                  if (result == null) {
                     return;
                   }
                   if (result == EquipmentAndModificationsWidget._removeSignal) {
@@ -242,8 +256,8 @@ class _EquipmentSlotTile extends ConsumerWidget {
                           : '${ChooseEquipmentWidgetText.buttonChangePrefix}${slot.label}'),
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -366,7 +380,8 @@ class _KitPreviewDialog extends StatelessWidget {
       case 'psionic_augmentation':
       case 'enchantment':
       case 'prayer':
-        return ModifierCard(component: item, badgeLabel: item.type, initiallyExpanded: true);
+        return ModifierCard(
+            component: item, badgeLabel: item.type, initiallyExpanded: true);
       default:
         return KitCard(component: item, initiallyExpanded: true);
     }
@@ -412,6 +427,7 @@ class _EquipmentSelectionDialog extends ConsumerStatefulWidget {
   final List<String> allowedTypes;
   final String? currentItemId;
   final bool canRemove;
+
   /// The class ID to filter equipment with class restrictions (e.g., psionic_augmentation)
   final String? classId;
 
@@ -600,9 +616,8 @@ class _EquipmentSelectionDialogState
             }
             if (availableToClasses is List) {
               // Normalize the class ID for comparison (strip 'class_' prefix, lowercase)
-              final normalizedClassId = widget.classId!
-                  .toLowerCase()
-                  .replaceFirst('class_', '');
+              final normalizedClassId =
+                  widget.classId!.toLowerCase().replaceFirst('class_', '');
               return availableToClasses
                   .map((e) => e.toString().toLowerCase())
                   .contains(normalizedClassId);
