@@ -1439,177 +1439,387 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  /// Custom stamina bar with two independent overlapping tracks:
-  /// - Stamina bar: ranges from -halfMax to maxStamina
-  /// - Temp HP bar: ranges from -halfMax to maxStamina (independent track, shown semi-transparent)
-  /// Both bars are visible simultaneously with the temp HP bar slightly offset/transparent
+  /// Dual-track stamina bar with clear zone visualization:
+  /// - Top track: Current stamina with smooth blending gradient zones
+  /// - Bottom track: Temp HP (only shown when temp HP > 0)
+  /// - Labels positioned above for maximum clarity
   Widget _buildStaminaBar(
       BuildContext context, HeroMainStats stats, _StaminaState staminaState) {
     final theme = Theme.of(context);
     final maxStamina = stats.staminaMaxEffective;
     final currentStamina = stats.staminaCurrent;
     final tempHp = stats.staminaTemp;
+    final isDark = theme.brightness == Brightness.dark;
 
     if (maxStamina <= 0) {
-      return const SizedBox(height: 16);
+      return const SizedBox(height: 48);
     }
 
-    // Range: -halfMax to max (total range = 1.5 * max)
+    // Zone calculations
     final halfMax = maxStamina ~/ 2;
     final totalRange = maxStamina + halfMax;
 
-    // The "zero point" (stamina = 0) is at halfMax / totalRange
-    final zeroPointRatio = halfMax / totalRange;
+    // Zone boundaries as ratios (for stops)
+    final deadEndRatio = (halfMax / 2) / totalRange;
+    final zeroRatio = halfMax / totalRange;
+    final windedEndRatio = (halfMax + halfMax) / totalRange;
 
-    // Stamina position: from -halfMax to maxStamina
-    // When current = -halfMax, position = 0
-    // When current = 0, position = zeroPointRatio
-    // When current = max, position = 1
+    // Current stamina position
     final clampedCurrent = currentStamina.clamp(-halfMax, maxStamina);
-    final staminaPosition = (clampedCurrent + halfMax) / totalRange;
+    final staminaRatio = (clampedCurrent + halfMax) / totalRange;
 
-    // Temp HP position: independent track from -halfMax to maxStamina (same as stamina)
-    // Temp HP of 0 = starts at left edge (position 0)
-    // Temp HP of maxStamina + halfMax = fills to right edge (position 1.0)
-    final clampedTemp = tempHp.clamp(0, maxStamina + halfMax);
-    final tempPosition = clampedTemp / totalRange;
+    // Temp HP ratio (capped at reasonable max)
+    final tempRatio = tempHp > 0 ? (tempHp / maxStamina).clamp(0.0, 1.0) : 0.0;
+
+    // Zone colors - vibrant and distinct
+    final deadColor =
+        isDark ? const Color(0xFFE53935) : const Color(0xFFC62828);
+    final dyingColor =
+        isDark ? const Color(0xFFFF5722) : const Color(0xFFE64A19);
+    final windedColor =
+        isDark ? const Color(0xFFFFB300) : const Color(0xFFF57C00);
+    final healthyColor =
+        isDark ? const Color(0xFF66BB6A) : const Color(0xFF2E7D32);
+    final tempColor =
+        isDark ? const Color(0xFF4DD0E1) : const Color(0xFF00ACC1);
+
+    final barHeight = 18.0;
+    final tempBarHeight = tempHp > 0 ? 14.0 : 0.0;
+    // Total: labels(14) + gap(2) + bar(18) + gap(4) + temp(14) + padding(4)
+    final totalHeight =
+        14 + 2 + barHeight + (tempHp > 0 ? 4 + tempBarHeight + 4 : 0);
 
     return SizedBox(
-      height: 16,
+      height: totalHeight,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final width = constraints.maxWidth;
-          final zeroX = width * zeroPointRatio;
-          final staminaX = width * staminaPosition;
-          final tempX = width * tempPosition;
+          final zeroX = width * zeroRatio;
+          final windedEndX = width * windedEndRatio;
+          final staminaX = (width * staminaRatio).clamp(0.0, width);
+          final tempWidth = (width * tempRatio)
+              .clamp(0.0, width - 40); // Leave room for label
 
-          return Stack(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Background bar
-              Container(
-                height: 16,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              // Negative zone background (red tint from left to zero point)
-              Positioned(
-                left: 0,
-                width: zeroX,
-                child: Container(
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.error.withOpacity(0.1),
-                    borderRadius:
-                        const BorderRadius.horizontal(left: Radius.circular(8)),
-                  ),
-                ),
-              ),
-              // Temp HP bar (bottom layer, cyan, from left edge)
-              // This is the independent temp HP track starting from -halfMax
-              if (tempHp > 0)
-                Positioned(
-                  left: 0,
-                  width: tempX.clamp(0, width),
-                  top: 8, // Offset to bottom half
-                  height: 8,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.cyan.withOpacity(0.8),
-                      borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(4),
-                        right: Radius.circular(4),
-                      ),
-                    ),
-                  ),
-                ),
-              // Stamina bar (top layer, from left edge)
-              if (staminaX > 0)
-                Positioned(
-                  left: 0,
-                  width: staminaX,
-                  top: 0,
-                  height: 8,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: currentStamina >= 0
-                          ? staminaState.color
-                          : theme.colorScheme.error.withOpacity(0.8),
-                      borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(4),
-                        right: Radius.circular(4),
-                      ),
-                    ),
-                  ),
-                ),
-              // Zero point marker (vertical line)
-              Positioned(
-                left: zeroX - 1,
-                child: Container(
-                  width: 2,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.outline,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-              // Labels overlay
-              Positioned.fill(
-                child: Row(
+              // === Labels row (above bar) ===
+              SizedBox(
+                height: 14,
+                child: Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    // Negative zone label
-                    SizedBox(
-                      width: zeroX,
-                      child: Center(
+                    // Min label (left)
+                    Positioned(
+                      left: 0,
+                      child: Text(
+                        '-$halfMax',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: deadColor,
+                        ),
+                      ),
+                    ),
+                    // Zero label (centered at zero point)
+                    Positioned(
+                      left: zeroX,
+                      child: Transform.translate(
+                        offset: const Offset(-4, 0),
                         child: Text(
-                          '-${halfMax}',
+                          '0',
                           style: theme.textTheme.labelSmall?.copyWith(
                             fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            fontWeight: FontWeight.w800,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                       ),
                     ),
-                    // Positive zone - show stamina and temp if both present
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '0',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.6),
-                              ),
-                            ),
-                            Text(
-                              '$maxStamina',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: theme.colorScheme.onSurface
-                                    .withOpacity(0.6),
-                              ),
-                            ),
-                          ],
+                    // Half max label (centered at winded/healthy boundary)
+                    Positioned(
+                      left: windedEndX,
+                      child: Transform.translate(
+                        offset: Offset(-('$halfMax'.length * 3.0), 0),
+                        child: Text(
+                          '$halfMax',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: windedColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Max label (right)
+                    Positioned(
+                      right: 0,
+                      child: Text(
+                        '$maxStamina',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: healthyColor,
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 2),
+
+              // === Main stamina bar ===
+              SizedBox(
+                height: barHeight,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(barHeight / 2),
+                  child: Stack(
+                    children: [
+                      // === Smooth blending gradient background ===
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              deadColor.withOpacity(0.4),
+                              deadColor.withOpacity(0.3),
+                              windedColor.withOpacity(0.25),
+                              windedColor.withOpacity(0.2),
+                              healthyColor.withOpacity(0.2),
+                              healthyColor.withOpacity(0.35),
+                            ],
+                            stops: [
+                              0.0,
+                              zeroRatio,
+                              zeroRatio,
+                              windedEndRatio,
+                              windedEndRatio,
+                              1.0,
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // === Zone divider lines ===
+                      // Zero point (prominent)
+                      Positioned(
+                        left: zeroX - 1,
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 2,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    theme.colorScheme.surface.withOpacity(0.5),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Winded/Healthy boundary
+                      Positioned(
+                        left: windedEndX - 1,
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 2,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    theme.colorScheme.surface.withOpacity(0.5),
+                                blurRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // === Current stamina fill with horizontal gradient ===
+                      if (staminaX > 0)
+                        Positioned(
+                          left: 0,
+                          width: staminaX,
+                          top: 0,
+                          bottom: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: _getStaminaFillGradient(
+                                  staminaRatio,
+                                  deadEndRatio,
+                                  zeroRatio,
+                                  windedEndRatio,
+                                  deadColor,
+                                  dyingColor,
+                                  windedColor,
+                                  healthyColor,
+                                ),
+                                stops: _getStaminaFillStops(
+                                  staminaRatio,
+                                  deadEndRatio,
+                                  zeroRatio,
+                                  windedEndRatio,
+                                ),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: staminaState.color.withOpacity(0.4),
+                                  blurRadius: 3,
+                                  offset: const Offset(1, 0),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      // === Stamina position marker ===
+                      if (staminaX > 2)
+                        Positioned(
+                          left: staminaX - 2,
+                          top: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 2,
+                                ),
+                                BoxShadow(
+                                  color: staminaState.color,
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // === Temp HP bar (below main bar) ===
+              if (tempHp > 0) ...[
+                const SizedBox(height: 4),
+                SizedBox(
+                  height: tempBarHeight,
+                  child: Row(
+                    children: [
+                      // Temp HP fill bar
+                      Flexible(
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(tempBarHeight / 2),
+                          child: Container(
+                            width: tempWidth,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  tempColor,
+                                  tempColor.withOpacity(0.6),
+                                ],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: tempColor.withOpacity(0.5),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                'TEMP',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white.withOpacity(0.9),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Temp HP value label
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(
+                          '+$tempHp',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: tempColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           );
         },
       ),
     );
+  }
+
+  /// Generates gradient colors for the stamina fill bar based on current position
+  List<Color> _getStaminaFillGradient(
+    double staminaRatio,
+    double deadEndRatio,
+    double zeroRatio,
+    double windedEndRatio,
+    Color deadColor,
+    Color dyingColor,
+    Color windedColor,
+    Color healthyColor,
+  ) {
+    // Build gradient that shows progression through zones (no dying zone)
+    final colors = <Color>[];
+
+    if (staminaRatio <= zeroRatio) {
+      // Only in dead/negative zone - solid red
+      colors.addAll([deadColor, deadColor.withOpacity(0.85)]);
+    } else if (staminaRatio <= windedEndRatio) {
+      // Dead to winded
+      colors.addAll([deadColor, windedColor]);
+    } else {
+      // Full spectrum (dead -> winded -> healthy)
+      colors.addAll([deadColor, windedColor, healthyColor]);
+    }
+
+    return colors;
+  }
+
+  /// Generates gradient stops for the stamina fill bar
+  List<double>? _getStaminaFillStops(
+    double staminaRatio,
+    double deadEndRatio,
+    double zeroRatio,
+    double windedEndRatio,
+  ) {
+    if (staminaRatio <= zeroRatio) {
+      return null; // Simple 2-color gradient for negative zone
+    } else if (staminaRatio <= windedEndRatio) {
+      final zero = zeroRatio / staminaRatio;
+      return [0.0, zero.clamp(0.0, 1.0)];
+    } else {
+      final zero = zeroRatio / staminaRatio;
+      final windedEnd = windedEndRatio / staminaRatio;
+      return [
+        0.0,
+        zero.clamp(0.0, 1.0),
+        windedEnd.clamp(0.0, 1.0),
+      ];
+    }
   }
 
   Widget _buildVitalItem(

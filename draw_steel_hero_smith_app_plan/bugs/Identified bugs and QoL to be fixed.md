@@ -7,10 +7,6 @@ chaging fury subclass must remove stormwight kits
 
 some hero classes and features grant skills. those skills may have been picked in another choice nod earlier. if there is such an occurence the logic should accomudate. 
 
-the stamina gauge shouw be divided into 3 sections based on the dying, winded and helthy values.
-
-the projects item card has a required items [] when non are present and instead it should be none. sam is for knowledge
-
 in the hero creator stranght tab the automaticaly applied appears doubled each time
 
 automatically applied must be as a divider instead as another box that boxes the box
@@ -60,6 +56,8 @@ some features need their abilities: covenant of the heart
 the A in ability cards sometimes is not colored properly
 
 the notifications of saving and or the random displays that pop out of the bottom must be removed upon release
+
+the projects item card has a required items [] when non are present and instead it should be none. sam is for knowledge
 ### unnecessary changes
 
 add a gold/silver/copper to the wealth stat and make it have both.
