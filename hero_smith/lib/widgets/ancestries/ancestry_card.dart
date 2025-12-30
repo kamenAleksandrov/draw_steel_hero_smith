@@ -255,46 +255,61 @@ class AncestryCard extends StatelessWidget {
   }
 
   Widget _buildSignatureContent(BuildContext context, Map<String, dynamic> traitsData) {
-    final signature = traitsData['signature'] as Map<String, dynamic>?;
+    final signatureData = traitsData['signature'];
     
-    if (signature == null) {
+    if (signatureData == null) {
       return const Text('No signature ability available.');
     }
 
-    final name = signature['name'] as String? ?? 'Unknown';
-    final description = signature['description'] as String? ?? '';
+    // Handle both single signature (Map) and multiple signatures (List)
+    final List<Map<String, dynamic>> signatures;
+    if (signatureData is List) {
+      signatures = signatureData.cast<Map<String, dynamic>>();
+    } else if (signatureData is Map<String, dynamic>) {
+      signatures = [signatureData];
+    } else {
+      return const Text('No signature ability available.');
+    }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.amber.shade50,
-        border: Border.all(color: Colors.amber.shade300, width: 1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.amber.shade800,
-              fontSize: 14,
-            ),
+    return Column(
+      children: signatures.map((signature) {
+        final name = signature['name'] as String? ?? 'Unknown';
+        final description = signature['description'] as String? ?? '';
+
+        return Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(bottom: signatures.last == signature ? 0 : 8),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.amber.shade50,
+            border: Border.all(color: Colors.amber.shade300, width: 1),
+            borderRadius: BorderRadius.circular(8),
           ),
-          if (description.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: TextStyle(
-                color: Colors.amber.shade700,
-                height: 1.4,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.amber.shade800,
+                  fontSize: 14,
+                ),
               ),
-            ),
-          ],
-        ],
-      ),
+              if (description.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.amber.shade700,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 

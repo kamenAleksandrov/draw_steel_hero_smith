@@ -52,7 +52,7 @@ class _LeveledTreasureList extends StatelessWidget {
         
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemBuilder: (_, i) => LeveledTreasureCard(component: filteredItems[i]),
+          itemBuilder: (_, i) => TreasureCard(component: filteredItems[i]),
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemCount: filteredItems.length,
         );

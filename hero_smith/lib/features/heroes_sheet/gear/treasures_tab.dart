@@ -454,22 +454,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   }
 
   Widget _buildTreasureCard(model.Component treasure) {
-    switch (treasure.type) {
-      case 'consumable':
-        return ConsumableTreasureCard(component: treasure);
-      case 'trinket':
-        return TrinketTreasureCard(component: treasure);
-      case 'artifact':
-        return ArtifactTreasureCard(component: treasure);
-      case 'leveled_treasure':
-        return LeveledTreasureCard(component: treasure);
-      default:
-        return Card(
-          child: ListTile(
-            title: Text(treasure.name),
-            subtitle: Text(treasure.type),
-          ),
-        );
-    }
+    // Use the unified TreasureCard for all treasure types
+    return TreasureCard(component: treasure);
   }
 }

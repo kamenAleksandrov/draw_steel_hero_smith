@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/navigation_theme.dart';
+import '../../../widgets/shared/nav_card.dart';
 import 'ancestries_page.dart';
 import 'cultures_page.dart';
 import 'careers_page.dart';
@@ -16,137 +18,96 @@ class StoryPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        _NavCard(
+        NavCard(
           icon: Icons.groups,
           title: 'Ancestries',
           subtitle: 'Background origins and lineages',
+          accentColor: NavigationTheme.ancestriesColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const AncestriesPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
+        NavCard(
           icon: Icons.public,
           title: 'Cultures',
           subtitle: 'Peoples and societies of the world',
+          accentColor: NavigationTheme.culturesColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const CulturesPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.work,
+        NavCard(
+          icon: Icons.work_outline,
           title: 'Careers',
           subtitle: 'Occupations and life paths',
+          accentColor: NavigationTheme.careersColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const CareersPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.report,
+        NavCard(
+          icon: Icons.report_problem_outlined,
           title: 'Complications',
           subtitle: 'Entanglements and hardships',
+          accentColor: NavigationTheme.complicationsColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const ComplicationsPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.language,
+        NavCard(
+          icon: Icons.translate,
           title: 'Languages',
           subtitle: 'Tongues spoken across the lands',
+          accentColor: NavigationTheme.languagesColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const LanguagesPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.school,
+        NavCard(
+          icon: Icons.school_outlined,
           title: 'Skills',
           subtitle: 'Capabilities and training',
+          accentColor: NavigationTheme.skillsColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const SkillsPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
+        NavCard(
           icon: Icons.military_tech,
           title: 'Titles',
           subtitle: 'Ranks, honors, and renown',
+          accentColor: NavigationTheme.titlesColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const TitlesPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.star,
+        NavCard(
+          icon: Icons.auto_awesome,
           title: 'Perks',
           subtitle: 'Special boons and edges',
+          accentColor: NavigationTheme.perksColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const PerksPage()),
           ),
         ),
         const SizedBox(height: 12),
-        _NavCard(
-          icon: Icons.wb_sunny,
+        NavCard(
+          icon: Icons.wb_sunny_outlined,
           title: 'Deities',
           subtitle: 'Gods, saints, and higher powers',
+          accentColor: NavigationTheme.deitiesColor,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const DeitiesPage()),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _NavCard extends StatelessWidget {
-  const _NavCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Ink(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: scheme.primaryContainer,
-              child: Icon(icon, color: scheme.onPrimaryContainer),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-                ],
-              ),
-            ),
-            const Icon(Icons.chevron_right),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -31,18 +31,8 @@ class EchelonTreasureDetailPage extends ConsumerWidget {
   }
 
   Widget _buildTreasureCard(model.Component component) {
-    switch (treasureType) {
-      case 'consumable':
-        return ConsumableTreasureCard(component: component);
-      case 'trinket':
-        return TrinketTreasureCard(component: component);
-      case 'leveled_treasure':
-        return LeveledTreasureCard(component: component);
-      case 'artifact':
-        return ArtifactTreasureCard(component: component);
-      default:
-        return Card(child: Text('Unknown treasure type: $treasureType'));
-    }
+    // Use the unified TreasureCard for all treasure types
+    return TreasureCard(component: component);
   }
 
   String _getEchelonName(int echelon) {

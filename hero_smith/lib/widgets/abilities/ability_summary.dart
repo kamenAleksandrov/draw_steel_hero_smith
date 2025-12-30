@@ -17,13 +17,11 @@ class AbilitySummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ability = abilityData ?? AbilityData.fromComponent(component);
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     final resourceColor = ability.resourceType != null
         ? HeroicResourceTokens.color(ability.resourceType!)
-        : scheme.primary;
-    final metadataColor = scheme.onSurfaceVariant;
+        : Colors.grey.shade400;
+    final metadataColor = Colors.grey.shade500;
     final resourceLabel = ability.resourceLabel;
     final costAmount = ability.costAmount;
 
@@ -40,16 +38,18 @@ class AbilitySummary extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       text: ability.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: scheme.onSurface,
+                        fontSize: 16,
+                        color: Colors.grey.shade100,
                       ),
                       children: [
                         if (ability.costString != null && resourceLabel == null)
                           TextSpan(
                             text: ' (${ability.costString})',
-                            style: theme.textTheme.titleMedium?.copyWith(
+                            style: TextStyle(
                               fontWeight: FontWeight.w600,
+                              fontSize: 16,
                               color: resourceColor,
                             ),
                           ),
@@ -61,8 +61,9 @@ class AbilitySummary extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
                         ability.flavor!,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: TextStyle(
                           fontStyle: FontStyle.italic,
+                          fontSize: 12,
                           color: metadataColor,
                         ),
                       ),
@@ -77,8 +78,8 @@ class AbilitySummary extends StatelessWidget {
                   _buildBadge(
                     context,
                     'Level ${ability.level}',
-                    scheme.secondary,
-                    scheme.onSecondary,
+                    Colors.grey.shade700,
+                    Colors.grey.shade200,
                   ),
                 if (resourceLabel != null)
                   Padding(
@@ -111,9 +112,10 @@ class AbilitySummary extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               ability.keywords.join(', '),
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: scheme.onSurface,
+                fontSize: 12,
+                color: Colors.grey.shade300,
               ),
             ),
           ),
@@ -149,7 +151,6 @@ class AbilitySummary extends StatelessWidget {
     Color background,
     Color foreground,
   ) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -158,31 +159,31 @@ class AbilitySummary extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: TextStyle(
           color: foreground,
           fontWeight: FontWeight.w700,
+          fontSize: 11,
         ),
       ),
     );
   }
 
   Widget _buildInfoRow(BuildContext context, IconData icon, String label) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           icon,
           size: 16,
-          color: scheme.onSurfaceVariant,
+          color: Colors.grey.shade500,
         ),
         const SizedBox(width: 6),
         Flexible(
           child: Text(
             label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade400,
             ),
           ),
         ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/navigation_theme.dart';
+
 class AbilityFilterDropdown extends StatelessWidget {
   const AbilityFilterDropdown({
     super.key,
@@ -9,6 +11,7 @@ class AbilityFilterDropdown extends StatelessWidget {
     required this.onChanged,
     required this.allLabelPrefix,
     this.enabled = true,
+    this.accentColor,
   });
 
   final String label;
@@ -17,20 +20,24 @@ class AbilityFilterDropdown extends StatelessWidget {
   final void Function(String?) onChanged;
   final String allLabelPrefix;
   final bool enabled;
+  final Color? accentColor;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final accent = accentColor ?? Colors.grey.shade400;
+    
     return Container(
+      constraints: const BoxConstraints(maxWidth: 160),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
+        color: NavigationTheme.cardBackgroundDark,
         border: Border.all(
           color: value != null
-              ? theme.colorScheme.primary
+              ? accent
               : (enabled
-                    ? theme.colorScheme.outline
-                    : theme.colorScheme.outline.withValues(alpha: 0.5)),
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade800),
           width: value != null ? 2 : 1,
         ),
       ),
@@ -38,20 +45,33 @@ class AbilityFilterDropdown extends StatelessWidget {
         value: value,
         hint: Text(
           label,
-          style: TextStyle(color: enabled ? null : theme.disabledColor),
+          style: TextStyle(
+            color: enabled ? Colors.grey.shade400 : Colors.grey.shade600,
+          ),
+          overflow: TextOverflow.ellipsis,
         ),
         underline: const SizedBox.shrink(),
         isDense: true,
+        isExpanded: true,
+        dropdownColor: NavigationTheme.cardBackgroundDark,
+        style: TextStyle(
+          color: Colors.grey.shade300,
+          fontSize: 14,
+        ),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: value != null ? accent : Colors.grey.shade500,
+        ),
         items: enabled
             ? [
                 DropdownMenuItem<String>(
                   value: null,
-                  child: Text('$allLabelPrefix$label'),
+                  child: Text('$allLabelPrefix$label', overflow: TextOverflow.ellipsis),
                 ),
                 ...options.map(
                   (option) => DropdownMenuItem<String>(
                     value: option,
-                    child: Text(option),
+                    child: Text(option, overflow: TextOverflow.ellipsis),
                   ),
                 ),
               ]

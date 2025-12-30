@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/downtime.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/shared/expandable_card.dart';
 
 class ProjectCategoryDetailPage extends StatelessWidget {
@@ -33,40 +34,67 @@ class ProjectCategoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = _getCategoryColor(category);
+    
     return Scaffold(
+      backgroundColor: NavigationTheme.navBarBackground,
       appBar: AppBar(
         title: Text(getDifficultyTitle(category)),
-        backgroundColor: _getCategoryColor(category).withOpacity(0.1),
+        backgroundColor: NavigationTheme.navBarBackground,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header card with new style
             Container(
-              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withOpacity(0.3),
-                borderRadius: BorderRadius.circular(8),
+                color: NavigationTheme.cardBackgroundDark,
+                borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
               ),
+              clipBehavior: Clip.antiAlias,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 20,
+                  // Accent stripe
+                  Container(
+                    width: NavigationTheme.cardAccentStripeWidth,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      gradient: NavigationTheme.accentStripeGradient(color),
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  // Content
                   Expanded(
-                    child: Text(
-                      '${projects.length} projects in this category',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w500,
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: NavigationTheme.cardIconDecoration(color),
+                            child: Icon(
+                              Icons.info_outline,
+                              color: color,
+                              size: 20,
+                            ),
                           ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              '${projects.length} projects in this category',
+                              style: TextStyle(
+                                color: Colors.grey.shade300,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/theme/strife_theme.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
@@ -15,8 +16,9 @@ class AbilitiesPage extends ConsumerWidget {
     final abilitiesAsync = ref.watch(componentsByTypeProvider('ability'));
 
     return Scaffold(
+      backgroundColor: NavigationTheme.navBarBackground,
       appBar: AppBar(
-        backgroundColor: StrifeTheme.abilitiesAccent,
+        backgroundColor: NavigationTheme.navBarBackground,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text('Abilities Compendium'),
@@ -250,18 +252,22 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
                       Icon(
                         Icons.search_off,
                         size: 64,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.grey.shade500,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'No abilities match your filters',
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade300,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       TextButton.icon(
                         onPressed: _clearFilters,
-                        icon: const Icon(Icons.clear),
-                        label: const Text('Clear Filters'),
+                        icon: Icon(Icons.clear, color: StrifeTheme.abilitiesAccent),
+                        label: Text('Clear Filters', style: TextStyle(color: StrifeTheme.abilitiesAccent)),
                       ),
                     ],
                   ),
@@ -294,12 +300,14 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
     required List<String> distanceOptions,
     required List<String> targetsOptions,
   }) {
-    final theme = Theme.of(context);
     final accent = StrifeTheme.abilitiesAccent;
 
     return Card(
-      elevation: StrifeTheme.cardElevation,
-      shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+      elevation: 4,
+      color: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -307,17 +315,26 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
           children: [
             // Search field
             TextField(
+              style: TextStyle(color: Colors.grey.shade200),
               decoration: InputDecoration(
                 hintText: 'Search abilities by name...',
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(Icons.clear, color: Colors.grey.shade400),
                         onPressed: () => setState(() => _searchQuery = ''),
                       )
                     : null,
+                filled: true,
+                fillColor: Colors.grey.shade900,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -330,8 +347,10 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
             // Filters
             Text(
               'Filters',
-              style: theme.textTheme.titleSmall?.copyWith(
+              style: TextStyle(
+                color: Colors.grey.shade300,
                 fontWeight: FontWeight.w700,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 12),
@@ -403,31 +422,46 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
     required List<String> options,
     required void Function(String?) onChanged,
   }) {
-    final theme = Theme.of(context);
     final accent = StrifeTheme.abilitiesAccent;
 
     return Container(
+      constraints: const BoxConstraints(maxWidth: 160),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
+        color: NavigationTheme.cardBackgroundDark,
         border: Border.all(
-          color: value != null ? accent : theme.colorScheme.outline,
+          color: value != null ? accent : Colors.grey.shade700,
           width: value != null ? 2 : 1,
         ),
       ),
       child: DropdownButton<String>(
         value: value,
-        hint: Text(label),
+        hint: Text(
+          label,
+          style: TextStyle(color: Colors.grey.shade400),
+          overflow: TextOverflow.ellipsis,
+        ),
         underline: const SizedBox.shrink(),
         isDense: true,
+        isExpanded: true,
+        dropdownColor: NavigationTheme.cardBackgroundDark,
+        style: TextStyle(
+          color: Colors.grey.shade300,
+          fontSize: 14,
+        ),
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: value != null ? accent : Colors.grey.shade500,
+        ),
         items: [
           DropdownMenuItem<String>(
             value: null,
-            child: Text('All $label'),
+            child: Text('All $label', overflow: TextOverflow.ellipsis),
           ),
           ...options.map((option) => DropdownMenuItem<String>(
                 value: option,
-                child: Text(option),
+                child: Text(option, overflow: TextOverflow.ellipsis),
               )),
         ],
         onChanged: onChanged,
@@ -436,8 +470,6 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
   }
 
   Widget _buildActiveFiltersChips(BuildContext context) {
-    final theme = Theme.of(context);
-
     final chips = <Widget>[];
 
     if (_searchQuery.isNotEmpty) {
@@ -492,8 +524,11 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
 
     if (chips.isEmpty) return const SizedBox.shrink();
 
+    final accent = StrifeTheme.abilitiesAccent;
+
     return Card(
       elevation: StrifeTheme.cardElevation,
+      color: NavigationTheme.cardBackgroundDark,
       shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -504,15 +539,17 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
               children: [
                 Text(
                   'Active Filters',
-                  style: theme.textTheme.labelLarge?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.grey.shade200,
                   ),
                 ),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: _clearFilters,
-                  icon: const Icon(Icons.clear_all, size: 16),
-                  label: const Text('Clear All'),
+                  icon: Icon(Icons.clear_all, size: 16, color: accent),
+                  label: Text('Clear All', style: TextStyle(color: accent)),
                 ),
               ],
             ),
@@ -536,11 +573,11 @@ class _AbilitiesViewState extends State<_AbilitiesView> {
     final accent = StrifeTheme.abilitiesAccent;
 
     return Chip(
-      label: Text(label),
-      deleteIcon: const Icon(Icons.close, size: 18),
+      label: Text(label, style: TextStyle(color: Colors.grey.shade200)),
+      deleteIcon: Icon(Icons.close, size: 18, color: Colors.grey.shade400),
       onDeleted: onRemove,
-      backgroundColor: accent.withValues(alpha: 0.1),
-      side: BorderSide(color: accent.withValues(alpha: 0.3)),
+      backgroundColor: accent.withValues(alpha: 0.15),
+      side: BorderSide(color: accent.withValues(alpha: 0.4)),
     );
   }
 }
@@ -552,21 +589,71 @@ class _AbilitiesSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = StrifeTheme.abilitiesAccent;
+    
     return Card(
-      elevation: StrifeTheme.cardElevation,
-      shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
+      elevation: 4,
+      color: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          StrifeTheme.sectionHeader(
-            context,
-            title: 'Ability Library',
-            subtitle: 'Browse ${stats.total} abilities by resource and cost.',
-            icon: Icons.bolt,
-            accent: StrifeTheme.abilitiesAccent,
+          // Header with accent stripe style
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  accent.withValues(alpha: 0.2),
+                  accent.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border(
+                bottom: BorderSide(color: accent.withValues(alpha: 0.3), width: 1),
+              ),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: NavigationTheme.cardIconDecoration(accent),
+                  child: Icon(Icons.bolt, color: accent, size: 22),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Ability Library',
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Browse ${stats.total} abilities by resource and cost.',
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
           Padding(
-            padding: StrifeTheme.cardPadding,
+            padding: const EdgeInsets.all(16),
             child: Wrap(
               spacing: 12,
               runSpacing: 12,
@@ -615,15 +702,14 @@ class _AbilitiesSummaryCard extends StatelessWidget {
     required String label,
     required String value,
   }) {
-    final theme = Theme.of(context);
     final accent = StrifeTheme.abilitiesAccent;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: accent.withValues(alpha: 0.08),
-        border: Border.all(color: accent.withValues(alpha: 0.24), width: 1.2),
+        color: accent.withValues(alpha: 0.12),
+        border: Border.all(color: accent.withValues(alpha: 0.3), width: 1.2),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -637,16 +723,18 @@ class _AbilitiesSummaryCard extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
+                  fontSize: 16,
+                  color: Colors.grey.shade100,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 label,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade400,
                 ),
               ),
             ],
@@ -662,12 +750,12 @@ class _AbilitiesEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Card(
           elevation: StrifeTheme.cardElevation,
+          color: NavigationTheme.cardBackgroundDark,
           shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -685,7 +773,7 @@ class _AbilitiesEmptyState extends StatelessWidget {
                 child: Text(
                   'We couldn\'t find any abilities in the database. '
                   'Verify that the compendium has been seeded and then refresh this page.',
-                  style: theme.textTheme.bodyMedium,
+                  style: TextStyle(color: Colors.grey.shade300),
                 ),
               ),
             ],
@@ -703,13 +791,16 @@ class _AbilitiesLoadingState extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: _abilitiesBackground(context),
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Loading abilities...'),
+            CircularProgressIndicator(color: StrifeTheme.abilitiesAccent),
+            const SizedBox(height: 16),
+            Text(
+              'Loading abilities...',
+              style: TextStyle(color: Colors.grey.shade300),
+            ),
           ],
         ),
       ),
@@ -725,7 +816,6 @@ class _AbilitiesErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = error.toString();
-    final theme = Theme.of(context);
 
     return DecoratedBox(
       decoration: _abilitiesBackground(context),
@@ -734,6 +824,7 @@ class _AbilitiesErrorState extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           child: Card(
             elevation: StrifeTheme.cardElevation,
+            color: NavigationTheme.cardBackgroundDark,
             shape: const RoundedRectangleBorder(borderRadius: StrifeTheme.cardRadius),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -750,7 +841,7 @@ class _AbilitiesErrorState extends StatelessWidget {
                   padding: StrifeTheme.cardPadding,
                   child: Text(
                     message,
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300),
                   ),
                 ),
               ],

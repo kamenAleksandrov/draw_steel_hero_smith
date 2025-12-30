@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_icons.dart';
+import '../../core/theme/navigation_theme.dart';
 import '../../core/models/downtime.dart';
 import '../../core/data/downtime_data_source.dart';
 import '../shared/expandable_card.dart';
@@ -216,15 +217,17 @@ class _ProjectCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = _getCategoryColor(category);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Card(
-      elevation: 2,
+      elevation: isDark ? 4 : 2,
+      shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: _getCategoryColor(category),
-          width: 2,
-        ),
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
       ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -238,58 +241,80 @@ class _ProjectCategoryCard extends StatelessWidget {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(12),
+        splashColor: color.withValues(alpha: 0.12),
+        highlightColor: color.withValues(alpha: 0.06),
         child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark 
+                ? NavigationTheme.cardBackgroundDark
+                : Theme.of(context).colorScheme.surfaceContainerLow,
+          ),
           child: Row(
             children: [
+              // Left accent stripe
               Container(
-                width: 40,
-                height: 40,
+                width: NavigationTheme.cardAccentStripeWidth,
+                height: 90,
                 decoration: BoxDecoration(
-                  color: _getCategoryColor(category).withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
+                  gradient: NavigationTheme.accentStripeGradient(color),
                 ),
+              ),
+              const SizedBox(width: 14),
+              // Icon container
+              Container(
+                width: NavigationTheme.cardIconContainerSize,
+                height: NavigationTheme.cardIconContainerSize,
+                decoration: NavigationTheme.cardIconDecoration(color, isDark: isDark),
                 child: Icon(
                   _getCategoryIcon(category),
-                  color: _getCategoryColor(category),
-                  size: 24,
+                  color: color,
+                  size: NavigationTheme.cardIconSize,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
+              // Text content
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      getDifficultyTitle(category),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        getDifficultyTitle(category),
+                        style: NavigationTheme.cardTitleStyle(color),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _getCategoryDescription(category),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      const SizedBox(height: 3),
+                      Text(
+                        _getCategoryDescription(category),
+                        style: NavigationTheme.cardSubtitleStyle(
+                          isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${projects.length} projects available',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _getCategoryColor(category),
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 4),
+                      Text(
+                        '${projects.length} projects available',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: color,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios),
+              // Arrow indicator
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: color.withValues(alpha: 0.6),
+                  size: NavigationTheme.cardIconSize,
+                ),
+              ),
             ],
           ),
         ),
@@ -470,17 +495,17 @@ class _EchelonNavigationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final totalCount = imbuementsByType.values.fold(0, (sum, list) => sum + list.length);
     final typeCount = imbuementsByType.length;
+    final color = _getEchelonColor(echelonLevel);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
-      elevation: 2,
+      elevation: isDark ? 4 : 2,
+      shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: _getEchelonColor(echelonLevel).withValues(alpha: 0.3),
-          width: 2,
-        ),
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
       ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -493,82 +518,104 @@ class _EchelonNavigationCard extends StatelessWidget {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+        splashColor: color.withValues(alpha: 0.12),
+        highlightColor: color.withValues(alpha: 0.06),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark 
+                ? NavigationTheme.cardBackgroundDark
+                : Theme.of(context).colorScheme.surfaceContainerLow,
+          ),
           child: Row(
             children: [
+              // Left accent stripe
               Container(
-                width: 48,
-                height: 48,
+                width: NavigationTheme.cardAccentStripeWidth,
+                height: 90,
                 decoration: BoxDecoration(
-                  color: _getEchelonColor(echelonLevel).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(24),
+                  gradient: NavigationTheme.accentStripeGradient(color),
                 ),
+              ),
+              const SizedBox(width: 14),
+              // Icon container
+              Container(
+                width: NavigationTheme.cardIconContainerSize,
+                height: NavigationTheme.cardIconContainerSize,
+                decoration: NavigationTheme.cardIconDecoration(color, isDark: isDark),
                 child: Icon(
                   _getEchelonIcon(echelonLevel),
-                  color: _getEchelonColor(echelonLevel),
-                  size: 24,
+                  color: color,
+                  size: NavigationTheme.cardIconSize,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
+              // Text content
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dataSource.getLevelName(echelonLevel),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: _getEchelonColor(echelonLevel),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        dataSource.getLevelName(echelonLevel),
+                        style: NavigationTheme.cardTitleStyle(color),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        _getEchelonDescription(echelonLevel),
+                        style: NavigationTheme.cardSubtitleStyle(
+                          isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.inventory_2,
+                            size: 12,
+                            color: color.withValues(alpha: 0.7),
                           ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _getEchelonDescription(echelonLevel),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          const SizedBox(width: 4),
+                          Text(
+                            '$totalCount imbuements',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: color,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.inventory_2,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$totalCount imbuements',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Icons.category,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$typeCount types',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 10),
+                          Icon(
+                            Icons.category,
+                            size: 12,
+                            color: color.withValues(alpha: 0.7),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$typeCount types',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: color,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: _getEchelonColor(echelonLevel),
-                size: 16,
+              // Arrow indicator
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: color.withValues(alpha: 0.6),
+                  size: NavigationTheme.cardIconSize,
+                ),
               ),
             ],
           ),
@@ -736,6 +783,7 @@ class _TreasureTypeCard extends StatelessWidget {
     // Count by echelon for non-leveled, by equipment type for leveled
     final bool isLeveled = type == 'leveled_treasure';
     final Map<String, int> subcategoryCounts = {};
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     if (isLeveled) {
       for (final t in treasures) {
@@ -751,15 +799,13 @@ class _TreasureTypeCard extends StatelessWidget {
     }
 
     return Card(
-      elevation: 2,
+      elevation: isDark ? 4 : 2,
+      shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: color.withValues(alpha: 0.3),
-          width: 2,
-        ),
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
       ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -773,84 +819,106 @@ class _TreasureTypeCard extends StatelessWidget {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+        splashColor: color.withValues(alpha: 0.12),
+        highlightColor: color.withValues(alpha: 0.06),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark 
+                ? NavigationTheme.cardBackgroundDark
+                : Theme.of(context).colorScheme.surfaceContainerLow,
+          ),
           child: Row(
             children: [
+              // Left accent stripe
               Container(
-                width: 48,
-                height: 48,
+                width: NavigationTheme.cardAccentStripeWidth,
+                height: 90,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(24),
+                  gradient: NavigationTheme.accentStripeGradient(color),
                 ),
+              ),
+              const SizedBox(width: 14),
+              // Icon container
+              Container(
+                width: NavigationTheme.cardIconContainerSize,
+                height: NavigationTheme.cardIconContainerSize,
+                decoration: NavigationTheme.cardIconDecoration(color, isDark: isDark),
                 child: Icon(
                   icon,
                   color: color,
-                  size: 24,
+                  size: NavigationTheme.cardIconSize,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 14),
+              // Text content
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dataSource.getTreasureTypeName(type),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: color,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        dataSource.getTreasureTypeName(type),
+                        style: NavigationTheme.cardTitleStyle(color),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        description,
+                        style: NavigationTheme.cardSubtitleStyle(
+                          isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.inventory_2,
+                            size: 12,
+                            color: color.withValues(alpha: 0.7),
                           ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          const SizedBox(width: 4),
+                          Text(
+                            '${treasures.length} items',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: color,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.inventory_2,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${treasures.length} items',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          isLeveled ? Icons.category : Icons.layers,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isLeveled 
-                              ? '${subcategoryCounts.length} equipment types'
-                              : '${subcategoryCounts.length} echelons',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 10),
+                          Icon(
+                            isLeveled ? Icons.category : Icons.layers,
+                            size: 12,
+                            color: color.withValues(alpha: 0.7),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            isLeveled 
+                                ? '${subcategoryCounts.length} equipment types'
+                                : '${subcategoryCounts.length} echelons',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: color,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: color,
-                size: 16,
+              // Arrow indicator
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: color.withValues(alpha: 0.6),
+                  size: NavigationTheme.cardIconSize,
+                ),
               ),
             ],
           ),
@@ -860,43 +928,110 @@ class _TreasureTypeCard extends StatelessWidget {
   }
 }
 
-class DowntimeTabsScaffold extends StatelessWidget {
+class DowntimeTabsScaffold extends StatefulWidget {
   const DowntimeTabsScaffold({super.key, this.initialIndex = 0});
 
   final int initialIndex;
 
   @override
+  State<DowntimeTabsScaffold> createState() => _DowntimeTabsScaffoldState();
+}
+
+class _DowntimeTabsScaffoldState extends State<DowntimeTabsScaffold>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  static const _tabData = [
+    (icon: AppIcons.projects, label: 'Projects', color: NavigationTheme.projectsTabColor),
+    (icon: AppIcons.imbuements, label: 'Imbuements', color: NavigationTheme.imbuementsTabColor),
+    (icon: AppIcons.treasures, label: 'Treasures', color: NavigationTheme.treasuresTabColor),
+    (icon: Icons.event_note, label: 'Events', color: NavigationTheme.eventsTabColor),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: _tabData.length,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      initialIndex: initialIndex,
-      child: Column(
-        children: [
-          Material(
-            color: Theme.of(context).colorScheme.surface,
-            child: TabBar(
-              isScrollable: false,
-              tabAlignment: TabAlignment.fill,
-              tabs: const [
-                Tab(icon: Icon(AppIcons.projects), text: 'Projects'),
-                Tab(icon: Icon(AppIcons.imbuements), text: 'Imbuements'),
-                Tab(icon: Icon(AppIcons.treasures), text: 'Treasures'),
-                Tab(icon: Icon(Icons.event_note), text: 'Events'),
-              ],
-            ),
+    return Column(
+      children: [
+        Container(
+          color: NavigationTheme.navBarBackground,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Row(
+            children: List.generate(_tabData.length, (index) {
+              final tab = _tabData[index];
+              final isSelected = _tabController.index == index;
+              final color = isSelected ? tab.color : NavigationTheme.inactiveColor;
+
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => _tabController.animateTo(index),
+                  behavior: HitTestBehavior.opaque,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: isSelected
+                        ? NavigationTheme.selectedNavItemDecoration(tab.color)
+                        : null,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          tab.icon,
+                          color: color,
+                          size: NavigationTheme.tabIconSize,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          tab.label,
+                          style: NavigationTheme.tabLabelStyle(
+                            color: color,
+                            isSelected: isSelected,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
           ),
-          const Expanded(
-            child: TabBarView(
-              children: [
-                ProjectsTab(),
-                ImbuementsTab(),
-                TreasuresTab(),
-                EventsTab(),
-              ],
-            ),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: const [
+              ProjectsTab(),
+              ImbuementsTab(),
+              TreasuresTab(),
+              EventsTab(),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -1073,67 +1208,114 @@ class _EventTableCard extends StatelessWidget {
 
   const _EventTableCard({required this.table});
 
+  // Assign colors based on table name for visual variety
+  Color _getTableColor() {
+    final name = table.name.toLowerCase();
+    if (name.contains('craft') || name.contains('research')) return NavigationTheme.treasuresTabColor;
+    if (name.contains('career') || name.contains('hone')) return NavigationTheme.careersColor;
+    if (name.contains('master') || name.contains('learn')) return NavigationTheme.featuresColor;
+    if (name.contains('community') || name.contains('service')) return NavigationTheme.ancestriesColor;
+    if (name.contains('fish')) return NavigationTheme.culturesColor;
+    if (name.contains('loved') || name.contains('spend')) return NavigationTheme.complicationsColor;
+    if (name.contains('negotiate')) return NavigationTheme.titlesColor;
+    if (name.contains('quests')) return NavigationTheme.abilitiesColor;
+    if (name.contains('relax')) return NavigationTheme.perksColor;
+    if (name.contains('train')) return NavigationTheme.conditionsColor;
+    // Fallback: use hash of name for consistent but varied colors
+    final hash = name.hashCode.abs();
+    final colors = [
+      NavigationTheme.eventsTabColor,
+      NavigationTheme.projectsTabColor,
+      NavigationTheme.imbuementsTabColor,
+      NavigationTheme.kitsColor,
+      NavigationTheme.skillsColor,
+      NavigationTheme.languagesColor,
+    ];
+    return colors[hash % colors.length];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final color = _getTableColor();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Card(
-      elevation: 2,
+      elevation: isDark ? 4 : 2,
+      shadowColor: Colors.black.withValues(alpha: isDark ? 0.4 : 0.15),
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _navigateToEventTable(context),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
+        splashColor: color.withValues(alpha: 0.12),
+        highlightColor: color.withValues(alpha: 0.06),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark 
+                ? NavigationTheme.cardBackgroundDark
+                : Theme.of(context).colorScheme.surfaceContainerLow,
+          ),
           child: Row(
             children: [
-              // Icon and title section
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.table_chart,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            table.name.replaceAll(' Events', ''),
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Event count
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${table.events.length} events',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ),
-                  ],
+              // Left accent stripe
+              Container(
+                width: NavigationTheme.cardAccentStripeWidth,
+                height: 76,
+                decoration: BoxDecoration(
+                  gradient: NavigationTheme.accentStripeGradient(color),
                 ),
               ),
-              // Action button
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Theme.of(context).colorScheme.primary,
+              
+              const SizedBox(width: 14),
+              
+              // Icon container
+              Container(
+                width: NavigationTheme.cardIconContainerSize,
+                height: NavigationTheme.cardIconContainerSize,
+                decoration: NavigationTheme.cardIconDecoration(color, isDark: isDark),
+                child: Icon(
+                  Icons.table_chart_outlined,
+                  color: color,
+                  size: NavigationTheme.cardIconSize,
+                ),
+              ),
+              
+              const SizedBox(width: 14),
+              
+              // Text content
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        table.name.replaceAll(' Events', ''),
+                        style: NavigationTheme.cardTitleStyle(color),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '${table.events.length} events available',
+                        style: NavigationTheme.cardSubtitleStyle(
+                          Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              // Arrow indicator
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: color.withValues(alpha: 0.6),
+                  size: NavigationTheme.cardIconSize,
+                ),
               ),
             ],
           ),
@@ -1176,71 +1358,253 @@ class _EventTableDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NavigationTheme.navBarBackground,
       appBar: AppBar(
         title: Text(table.name),
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: NavigationTheme.navBarBackground,
+        elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Table header with info
-          Card(
-            elevation: 1,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.table_chart,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          table.name,
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${table.events.length} events available',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ],
-              ),
+          // Table header card with new style
+          Container(
+            decoration: BoxDecoration(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
             ),
-          ),
-          const SizedBox(height: 16),
-          // Events as expandable cards
-          ...table.events.map((event) => Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                  child: ExpandableCard(
-                    title: 'Roll ${event.diceValue}',
-                    borderColor: Theme.of(context).colorScheme.primary,
-                    expandedContent: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        event.description,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              height: 1.4,
-                            ),
-                      ),
+            clipBehavior: Clip.antiAlias,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Accent stripe
+                Container(
+                  width: NavigationTheme.cardAccentStripeWidth,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: NavigationTheme.eventsTabColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(NavigationTheme.cardBorderRadius),
+                      bottomLeft: Radius.circular(NavigationTheme.cardBorderRadius),
                     ),
                   ),
                 ),
-              )),
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: NavigationTheme.eventsTabColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.table_chart,
+                            color: NavigationTheme.eventsTabColor,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                table.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${table.events.length} events available',
+                                style: TextStyle(
+                                  color: Colors.grey.shade400,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Events as expandable cards with RPG tier color progression
+          ...table.events.asMap().entries.map((entry) {
+            final index = entry.key;
+            final event = entry.value;
+            final totalEvents = table.events.length;
+            
+            return _EventCard(
+              diceValue: event.diceValue,
+              description: event.description,
+              accentColor: NavigationTheme.getTierColorByIndex(index, totalEvents),
+            );
+          }),
         ],
+      ),
+    );
+  }
+}
+
+/// Styled event card with expand/collapse
+class _EventCard extends StatefulWidget {
+  final String diceValue;
+  final String description;
+  final Color accentColor;
+
+  const _EventCard({
+    required this.diceValue,
+    required this.description,
+    required this.accentColor,
+  });
+
+  @override
+  State<_EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<_EventCard> 
+    with SingleTickerProviderStateMixin {
+  bool _isExpanded = false;
+  late AnimationController _animationController;
+  late Animation<double> _expandAnimation;
+  late Animation<double> _rotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 250),
+      vsync: this,
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    );
+    _rotationAnimation = Tween<double>(begin: 0, end: 0.5).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+      if (_isExpanded) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: widget.accentColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _toggleExpanded,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header - simplified with just Roll X and colored accent
+              Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    // Left color indicator
+                    Container(
+                      width: 4,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: widget.accentColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Roll label only (no redundant dice value)
+                    Expanded(
+                      child: Text(
+                        'Roll ${widget.diceValue}',
+                        style: TextStyle(
+                          color: widget.accentColor,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    // Expand icon
+                    RotationTransition(
+                      turns: _rotationAnimation,
+                      child: Icon(
+                        Icons.expand_more,
+                        color: Colors.grey.shade500,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Expanded content
+              SizeTransition(
+                sizeFactor: _expandAnimation,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Top border for content
+                    Container(
+                      height: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: widget.accentColor.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                    // Description
+                    Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Text(
+                        widget.description,
+                        style: TextStyle(
+                          color: Colors.grey.shade300,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

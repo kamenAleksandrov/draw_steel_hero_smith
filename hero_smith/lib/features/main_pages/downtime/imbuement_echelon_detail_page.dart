@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/downtime.dart';
 import '../../../core/data/downtime_data_source.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/shared/expandable_card.dart';
 
 class ImbuementEchelonDetailPage extends StatelessWidget {
@@ -32,20 +33,79 @@ class ImbuementEchelonDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final sortedTypes = imbuementsByType.keys.toList()..sort();
     final totalCount = imbuementsByType.values.fold(0, (sum, list) => sum + list.length);
+    final color = _getEchelonColor(echelonLevel);
 
     return DefaultTabController(
       length: sortedTypes.length,
       child: Scaffold(
+        backgroundColor: NavigationTheme.navBarBackground,
         appBar: AppBar(
           title: Text(dataSource.getLevelName(echelonLevel)),
-          backgroundColor: _getEchelonColor(echelonLevel).withOpacity(0.1),
-          bottom: TabBar(
-            tabs: sortedTypes.map((type) {
-              return Tab(
-                icon: Icon(_getTypeIcon(type)),
-                text: _getShortTypeName(type),
-              );
-            }).toList(),
+          backgroundColor: NavigationTheme.navBarBackground,
+          elevation: 0,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(56),
+            child: Container(
+              color: NavigationTheme.navBarBackground,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: sortedTypes.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final type = entry.value;
+                  final typeColor = _getTypeColor(type);
+                  
+                  return Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final tabController = DefaultTabController.of(context);
+                        return AnimatedBuilder(
+                          animation: tabController,
+                          builder: (context, _) {
+                            final isSelected = tabController.index == index;
+                            final displayColor = isSelected ? typeColor : NavigationTheme.inactiveColor;
+                            
+                            return GestureDetector(
+                              onTap: () => tabController.animateTo(index),
+                              behavior: HitTestBehavior.opaque,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                decoration: isSelected
+                                    ? NavigationTheme.selectedNavItemDecoration(typeColor)
+                                    : null,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      _getTypeIcon(type),
+                                      color: displayColor,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _getShortTypeName(type),
+                                      style: TextStyle(
+                                        color: displayColor,
+                                        fontSize: 11,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
         body: Padding(
@@ -53,30 +113,53 @@ class ImbuementEchelonDetailPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header card with new style
               Container(
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primaryContainer
-                      .withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(8),
+                  color: NavigationTheme.cardBackgroundDark,
+                  borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
                 ),
+                clipBehavior: Clip.antiAlias,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.auto_fix_high,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 20,
+                    // Accent stripe
+                    Container(
+                      width: NavigationTheme.cardAccentStripeWidth,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        gradient: NavigationTheme.accentStripeGradient(color),
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    // Content
                     Expanded(
-                      child: Text(
-                        '$totalCount imbuements across ${imbuementsByType.length} categories',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontWeight: FontWeight.w500,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: NavigationTheme.cardIconDecoration(color),
+                              child: Icon(
+                                Icons.auto_fix_high,
+                                color: color,
+                                size: 20,
+                              ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                '$totalCount imbuements across ${imbuementsByType.length} categories',
+                                style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -112,6 +195,19 @@ class ImbuementEchelonDetailPage extends StatelessWidget {
         return Icons.auto_fix_high;
       default:
         return Icons.build;
+    }
+  }
+
+  Color _getTypeColor(String type) {
+    switch (type) {
+      case 'armor_imbuement':
+        return NavigationTheme.armorColor;
+      case 'weapon_imbuement':
+        return NavigationTheme.weaponColor;
+      case 'implement_imbuement':
+        return NavigationTheme.implementColor;
+      default:
+        return Colors.grey;
     }
   }
 

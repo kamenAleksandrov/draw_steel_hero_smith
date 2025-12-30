@@ -2,45 +2,112 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
+import '../../../core/theme/navigation_theme.dart';
+import '../../../widgets/shared/nav_card.dart';
 import '../../../widgets/treasures/treasures.dart';
 import 'echelon_treasure_detail_page.dart';
 import 'leveled_treasure_type_page.dart';
 
-class TreasurePage extends ConsumerWidget {
+class TreasurePage extends ConsumerStatefulWidget {
   const TreasurePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Treasures'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
-              Tab(text: 'Consumables'),
-              Tab(text: 'Trinkets'),
-              Tab(text: 'Leveled'),
-              Tab(text: 'Artifacts'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            // Consumables - Echelon Groups
-            const _EchelonGroupsTab(treasureType: 'consumable', displayName: 'Consumables'),
-            // Trinkets - Echelon Groups
-            const _EchelonGroupsTab(treasureType: 'trinket', displayName: 'Trinkets'),
-            // Leveled - Equipment Type Groups
-            const _LeveledTreasureTypesTab(),
-            // Artifacts
-            _TreasureList(
-              stream: ref.watch(componentsByTypeProvider('artifact')),
-              itemBuilder: (c) => ArtifactTreasureCard(component: c),
+  ConsumerState<TreasurePage> createState() => _TreasurePageState();
+}
+
+class _TreasurePageState extends ConsumerState<TreasurePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  static const _tabData = [
+    (label: 'Consumables', color: NavigationTheme.consumablesColor),
+    (label: 'Trinkets', color: NavigationTheme.trinketsColor),
+    (label: 'Leveled', color: NavigationTheme.leveledColor),
+    (label: 'Artifacts', color: NavigationTheme.artifactsColor),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabData.length, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Treasures'),
+        backgroundColor: NavigationTheme.navBarBackground,
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: NavigationTheme.navBarBackground,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              children: List.generate(_tabData.length, (index) {
+                final tab = _tabData[index];
+                final isSelected = _tabController.index == index;
+                final color = isSelected ? tab.color : NavigationTheme.inactiveColor;
+
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => _tabController.animateTo(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: isSelected
+                          ? NavigationTheme.selectedNavItemDecoration(tab.color)
+                          : null,
+                      child: Text(
+                        tab.label,
+                        style: NavigationTheme.tabLabelStyle(
+                          color: color,
+                          isSelected: isSelected,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Consumables - Echelon Groups
+                const _EchelonGroupsTab(treasureType: 'consumable', displayName: 'Consumables'),
+                // Trinkets - Echelon Groups
+                const _EchelonGroupsTab(treasureType: 'trinket', displayName: 'Trinkets'),
+                // Leveled - Equipment Type Groups
+                const _LeveledTreasureTypesTab(),
+                // Artifacts
+                _TreasureList(
+                  stream: ref.watch(componentsByTypeProvider('artifact')),
+                  itemBuilder: (c) => TreasureCard(component: c),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -57,56 +124,73 @@ class _EchelonGroupsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return ListView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Choose an echelon:',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+      children: [
+        NavCard(
+          icon: Icons.looks_one_outlined,
+          title: '1st Echelon $displayName',
+          subtitle: 'Basic $displayName for starting adventurers',
+          accentColor: NavigationTheme.echelon1Color,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EchelonTreasureDetailPage(
+                echelon: 1,
+                treasureType: treasureType,
+                displayName: displayName,
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          Column(
-            children: [
-              _EchelonCard(
-                echelon: 1,
-                title: '1st Echelon $displayName',
-                description: 'Basic $displayName for starting adventurers',
-                treasureType: treasureType,
-                displayName: displayName,
-              ),
-              const SizedBox(height: 12),
-              _EchelonCard(
+        ),
+        const SizedBox(height: 12),
+        NavCard(
+          icon: Icons.looks_two_outlined,
+          title: '2nd Echelon $displayName',
+          subtitle: 'Intermediate $displayName for experienced heroes',
+          accentColor: NavigationTheme.echelon2Color,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EchelonTreasureDetailPage(
                 echelon: 2,
-                title: '2nd Echelon $displayName',
-                description: 'Intermediate $displayName for experienced heroes',
                 treasureType: treasureType,
                 displayName: displayName,
               ),
-              const SizedBox(height: 12),
-              _EchelonCard(
-                echelon: 3,
-                title: '3rd Echelon $displayName',
-                description: 'Advanced $displayName for seasoned adventurers',
-                treasureType: treasureType,
-                displayName: displayName,
-              ),
-              const SizedBox(height: 12),
-              _EchelonCard(
-                echelon: 4,
-                title: '4th Echelon $displayName',
-                description: 'Master-level $displayName for legendary heroes',
-                treasureType: treasureType,
-                displayName: displayName,
-              ),
-            ],
+            ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        NavCard(
+          icon: Icons.looks_3_outlined,
+          title: '3rd Echelon $displayName',
+          subtitle: 'Advanced $displayName for seasoned adventurers',
+          accentColor: NavigationTheme.echelon3Color,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EchelonTreasureDetailPage(
+                echelon: 3,
+                treasureType: treasureType,
+                displayName: displayName,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        NavCard(
+          icon: Icons.looks_4_outlined,
+          title: '4th Echelon $displayName',
+          subtitle: 'Master-level $displayName for legendary heroes',
+          accentColor: NavigationTheme.echelon4Color,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EchelonTreasureDetailPage(
+                echelon: 4,
+                treasureType: treasureType,
+                displayName: displayName,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -116,282 +200,150 @@ class _LeveledTreasureTypesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Choose equipment type:',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        NavCard(
+          icon: Icons.shield_outlined,
+          title: 'Armor & Shields',
+          subtitle: 'Protective equipment and defensive gear',
+          accentColor: NavigationTheme.armorColor,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const _ArmorShieldPage(),
             ),
           ),
-          SizedBox(height: 16),
-          Column(
-            children: [
-              _LeveledTypeCard(
-                leveledType: 'armor',
-                title: 'Armor & Shields',
-                description: 'Protective equipment and defensive gear',
-                icon: Icons.shield,
-              ),
-              SizedBox(height: 12),
-              _LeveledTypeCard(
+        ),
+        const SizedBox(height: 12),
+        NavCard(
+          icon: Icons.auto_fix_high,
+          title: 'Implements',
+          subtitle: 'Magical focuses and casting tools',
+          accentColor: NavigationTheme.implementColor,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const LeveledTreasureTypePage(
                 leveledType: 'implement',
-                title: 'Implements',
-                description: 'Magical focuses and casting tools',
-                icon: Icons.auto_fix_high,
+                displayName: 'Implements',
               ),
-              SizedBox(height: 12),
-              _LeveledTypeCard(
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        NavCard(
+          icon: Icons.gavel,
+          title: 'Weapons',
+          subtitle: 'Combat weapons and martial equipment',
+          accentColor: NavigationTheme.weaponColor,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const LeveledTreasureTypePage(
                 leveledType: 'weapon',
-                title: 'Weapons',
-                description: 'Combat weapons and martial equipment',
-                icon: Icons.gavel,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EchelonCard extends StatelessWidget {
-  final int echelon;
-  final String title;
-  final String description;
-  final String treasureType;
-  final String displayName;
-
-  const _EchelonCard({
-    required this.echelon,
-    required this.title,
-    required this.description,
-    required this.treasureType,
-    required this.displayName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: _getEchelonColor(echelon),
-          width: 2,
-        ),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => EchelonTreasureDetailPage(
-                echelon: echelon,
-                treasureType: treasureType,
-                displayName: displayName,
+                displayName: 'Weapons',
               ),
             ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                child: Text(
-                  echelon.toString(),
-                  style: TextStyle(
-                    color: _getEchelonColor(echelon),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios),
-            ],
           ),
         ),
-      ),
+      ],
     );
-  }
-
-  Color _getEchelonColor(int echelon) {
-    switch (echelon) {
-      case 1:
-        return Colors.green;
-      case 2:
-        return Colors.blue;
-      case 3:
-        return Colors.orange;
-      case 4:
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
   }
 }
 
-class _LeveledTypeCard extends StatelessWidget {
-  final String leveledType;
-  final String title;
-  final String description;
-  final IconData icon;
-
-  const _LeveledTypeCard({
-    required this.leveledType,
-    required this.title,
-    required this.description,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: () {
-          // Handle both armor and shield in the same page since they're grouped
-          String actualType = leveledType;
-          String displayName = title;
-          
-          if (leveledType == 'armor') {
-            // For armor type, we need to show both armor and shield
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const _ArmorShieldPage(),
-              ),
-            );
-            return;
-          }
-          
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => LeveledTreasureTypePage(
-                leveledType: actualType,
-                displayName: displayName,
-              ),
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: _getTypeColor(),
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getTypeColor() {
-    switch (leveledType) {
-      case 'armor':
-        return Colors.brown;
-      case 'implement':
-        return Colors.indigo;
-      case 'weapon':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-}
-
-class _ArmorShieldPage extends ConsumerWidget {
+class _ArmorShieldPage extends ConsumerStatefulWidget {
   const _ArmorShieldPage();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Armor & Shields'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Armor'),
-              Tab(text: 'Shields'),
-            ],
+  ConsumerState<_ArmorShieldPage> createState() => _ArmorShieldPageState();
+}
+
+class _ArmorShieldPageState extends ConsumerState<_ArmorShieldPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  static const _tabData = [
+    (label: 'Armor', color: NavigationTheme.armorColor),
+    (label: 'Shields', color: NavigationTheme.shieldColor),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabData.length, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Armor & Shields'),
+        backgroundColor: NavigationTheme.navBarBackground,
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: NavigationTheme.navBarBackground,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              children: List.generate(_tabData.length, (index) {
+                final tab = _tabData[index];
+                final isSelected = _tabController.index == index;
+                final color = isSelected ? tab.color : NavigationTheme.inactiveColor;
+
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => _tabController.animateTo(index),
+                    behavior: HitTestBehavior.opaque,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: isSelected
+                          ? NavigationTheme.selectedNavItemDecoration(tab.color)
+                          : null,
+                      child: Text(
+                        tab.label,
+                        style: NavigationTheme.tabLabelStyle(
+                          color: color,
+                          isSelected: isSelected,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _LeveledTreasureTypeList(
-              stream: ref.watch(componentsByTypeProvider('leveled_treasure')),
-              leveledType: 'armor',
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _LeveledTreasureTypeList(
+                  stream: ref.watch(componentsByTypeProvider('leveled_treasure')),
+                  leveledType: 'armor',
+                ),
+                _LeveledTreasureTypeList(
+                  stream: ref.watch(componentsByTypeProvider('leveled_treasure')),
+                  leveledType: 'shield',
+                ),
+              ],
             ),
-            _LeveledTreasureTypeList(
-              stream: ref.watch(componentsByTypeProvider('leveled_treasure')),
-              leveledType: 'shield',
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -420,7 +372,7 @@ class _LeveledTreasureTypeList extends StatelessWidget {
         
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-          itemBuilder: (_, i) => LeveledTreasureCard(component: filteredItems[i]),
+          itemBuilder: (_, i) => TreasureCard(component: filteredItems[i]),
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemCount: filteredItems.length,
         );

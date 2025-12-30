@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/data/downtime_data_source.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/shared/expandable_card.dart';
 
 /// Detail page for a specific type of craftable treasure (consumable, trinket, or leveled)
@@ -37,20 +38,91 @@ class CraftableTreasureTypeDetailPage extends StatelessWidget {
 
     final sortedEchelons = byEchelon.keys.toList()..sort();
 
+    // Echelon colors for tabs
+    Color getEchelonColor(int echelon) {
+      switch (echelon) {
+        case 1: return NavigationTheme.echelon1Color;
+        case 2: return NavigationTheme.echelon2Color;
+        case 3: return NavigationTheme.echelon3Color;
+        case 4: return NavigationTheme.echelon4Color;
+        default: return color;
+      }
+    }
+
     return DefaultTabController(
       length: sortedEchelons.length,
       child: Scaffold(
+        backgroundColor: NavigationTheme.navBarBackground,
         appBar: AppBar(
           title: Text(dataSource.getTreasureTypeName(type)),
-          backgroundColor: color.withValues(alpha: 0.1),
-          bottom: TabBar(
-            isScrollable: true,
-            tabs: sortedEchelons.map((echelon) {
-              final count = byEchelon[echelon]!.length;
-              return Tab(
-                text: '${dataSource.getEchelonName(echelon)} ($count)',
-              );
-            }).toList(),
+          backgroundColor: NavigationTheme.navBarBackground,
+          elevation: 0,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(56),
+            child: Container(
+              color: NavigationTheme.navBarBackground,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: sortedEchelons.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final echelon = entry.value;
+                  final echelonColor = getEchelonColor(echelon);
+                  final count = byEchelon[echelon]!.length;
+                  
+                  return Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final tabController = DefaultTabController.of(context);
+                        return AnimatedBuilder(
+                          animation: tabController,
+                          builder: (context, _) {
+                            final isSelected = tabController.index == index;
+                            final displayColor = isSelected ? echelonColor : NavigationTheme.inactiveColor;
+                            
+                            return GestureDetector(
+                              onTap: () => tabController.animateTo(index),
+                              behavior: HitTestBehavior.opaque,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                margin: const EdgeInsets.symmetric(horizontal: 2),
+                                decoration: isSelected
+                                    ? NavigationTheme.selectedNavItemDecoration(echelonColor)
+                                    : null,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      dataSource.getEchelonName(echelon),
+                                      style: TextStyle(
+                                        color: displayColor,
+                                        fontSize: 11,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '($count)',
+                                      style: TextStyle(
+                                        color: displayColor.withValues(alpha: 0.7),
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
         body: Padding(
@@ -129,6 +201,21 @@ class _LeveledTreasureDetailPage extends StatelessWidget {
     }
   }
 
+  Color _getEquipmentTypeColor(String equipType) {
+    switch (equipType) {
+      case 'armor':
+        return NavigationTheme.armorColor;
+      case 'weapon':
+        return NavigationTheme.weaponColor;
+      case 'implement':
+        return NavigationTheme.implementColor;
+      case 'shield':
+        return NavigationTheme.shieldColor;
+      default:
+        return color;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Group by equipment type
@@ -153,18 +240,82 @@ class _LeveledTreasureDetailPage extends StatelessWidget {
     return DefaultTabController(
       length: sortedTypes.length,
       child: Scaffold(
+        backgroundColor: NavigationTheme.navBarBackground,
         appBar: AppBar(
           title: const Text('Leveled Treasures'),
-          backgroundColor: color.withValues(alpha: 0.1),
-          bottom: TabBar(
-            isScrollable: true,
-            tabs: sortedTypes.map((equipType) {
-              final count = byEquipType[equipType]!.length;
-              return Tab(
-                icon: Icon(_getEquipmentTypeIcon(equipType), size: 20),
-                text: '${_getEquipmentTypeName(equipType)} ($count)',
-              );
-            }).toList(),
+          backgroundColor: NavigationTheme.navBarBackground,
+          elevation: 0,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: Container(
+              color: NavigationTheme.navBarBackground,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: sortedTypes.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final equipType = entry.value;
+                  final typeColor = _getEquipmentTypeColor(equipType);
+                  final count = byEquipType[equipType]!.length;
+                  
+                  return Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final tabController = DefaultTabController.of(context);
+                        return AnimatedBuilder(
+                          animation: tabController,
+                          builder: (context, _) {
+                            final isSelected = tabController.index == index;
+                            final displayColor = isSelected ? typeColor : NavigationTheme.inactiveColor;
+                            
+                            return GestureDetector(
+                              onTap: () => tabController.animateTo(index),
+                              behavior: HitTestBehavior.opaque,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeOut,
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                margin: const EdgeInsets.symmetric(horizontal: 2),
+                                decoration: isSelected
+                                    ? NavigationTheme.selectedNavItemDecoration(typeColor)
+                                    : null,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      _getEquipmentTypeIcon(equipType),
+                                      color: displayColor,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _getEquipmentTypeName(equipType),
+                                      style: TextStyle(
+                                        color: displayColor,
+                                        fontSize: 10,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      '($count)',
+                                      style: TextStyle(
+                                        color: displayColor.withValues(alpha: 0.7),
+                                        fontSize: 9,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ),
         body: Padding(
@@ -217,27 +368,51 @@ class _SummaryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.diamond,
-            color: color,
-            size: 20,
+          // Accent stripe
+          Container(
+            width: NavigationTheme.cardAccentStripeWidth,
+            height: 70,
+            decoration: BoxDecoration(
+              gradient: NavigationTheme.accentStripeGradient(color),
+            ),
           ),
-          const SizedBox(width: 8),
+          // Content
           Expanded(
-            child: Text(
-              '$totalCount craftable items across $echelonCount ${isLeveled ? 'equipment types' : 'echelons'}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: NavigationTheme.cardIconDecoration(color),
+                    child: Icon(
+                      Icons.diamond,
+                      color: color,
+                      size: 20,
+                    ),
                   ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '$totalCount craftable items across $echelonCount ${isLeveled ? 'equipment types' : 'echelons'}',
+                      style: TextStyle(
+                        color: Colors.grey.shade300,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

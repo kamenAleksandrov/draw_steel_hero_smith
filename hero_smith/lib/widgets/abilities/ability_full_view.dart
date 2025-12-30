@@ -50,14 +50,14 @@ class AbilityFullView extends StatelessWidget {
   }
 
   Widget _buildPowerRollSection(BuildContext context, AbilityData ability) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final scheme = theme.colorScheme;
-
     final headerChildren = <Widget>[
       Text(
         ability.powerRollLabel ?? 'Power roll',
-        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 14,
+          color: Colors.grey.shade200,
+        ),
       ),
     ];
 
@@ -65,7 +65,11 @@ class AbilityFullView extends StatelessWidget {
       headerChildren.add(const SizedBox(width: 8));
       headerChildren.add(Text(
         '+',
-        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          color: Colors.grey.shade300,
+        ),
       ));
       headerChildren.add(const SizedBox(width: 6));
       headerChildren.add(Wrap(
@@ -79,7 +83,11 @@ class AbilityFullView extends StatelessWidget {
       headerChildren.add(const SizedBox(width: 8));
       headerChildren.add(Text(
         '+ ${ability.characteristicSummary}',
-        style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          color: Colors.grey.shade300,
+        ),
       ));
     }
 
@@ -94,13 +102,14 @@ class AbilityFullView extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: scheme.surfaceVariant.withOpacity(0.85),
+                      color: Colors.grey.shade800,
                     ),
                     child: Text(
                       tier.label,
-                      style: textTheme.labelSmall?.copyWith(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: scheme.onSurfaceVariant,
+                        fontSize: 11,
+                        color: Colors.grey.shade300,
                       ),
                     ),
                   ),
@@ -112,9 +121,10 @@ class AbilityFullView extends StatelessWidget {
                         AbilityTextHighlighter.highlightGameMechanics(
                           tier.primaryText,
                           context,
-                          baseStyle: textTheme.bodyMedium?.copyWith(
+                          baseStyle: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: scheme.onSurface,
+                            fontSize: 14,
+                            color: Colors.grey.shade200,
                           ),
                         ),
                         if (tier.secondaryText != null)
@@ -124,8 +134,9 @@ class AbilityFullView extends StatelessWidget {
                                 AbilityTextHighlighter.highlightGameMechanics(
                               tier.secondaryText!,
                               context,
-                              baseStyle: textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
+                              baseStyle: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade400,
                               ),
                             ),
                           ),
@@ -156,20 +167,20 @@ class AbilityFullView extends StatelessWidget {
   }
 
   Widget _buildCharacteristicChip(BuildContext context, String label) {
-    final theme = Theme.of(context);
     final color = CharacteristicTokens.color(label);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        color: color.withValues(alpha: 0.18),
-        border: Border.all(color: color.withValues(alpha: 0.7)),
+        color: color.withValues(alpha: 0.2),
+        border: Border.all(color: color.withValues(alpha: 0.6)),
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: TextStyle(
           color: color,
           fontWeight: FontWeight.w700,
+          fontSize: 11,
         ),
       ),
     );
@@ -180,21 +191,25 @@ class AbilityFullView extends StatelessWidget {
     String label,
     String text,
   ) {
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '$label:',
-          style: theme.textTheme.titleSmall?.copyWith(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
+            fontSize: 14,
+            color: Colors.grey.shade200,
           ),
         ),
         const SizedBox(height: 4),
         AbilityTextHighlighter.highlightGameMechanics(
           text,
           context,
-          baseStyle: theme.textTheme.bodyMedium,
+          baseStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.grey.shade300,
+          ),
         ),
       ],
     );

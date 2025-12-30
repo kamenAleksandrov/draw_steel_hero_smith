@@ -15,8 +15,8 @@ class StrifeTheme {
   static const Color resourceAccent = Color(0xFFFFB74D);
   static const Color potencyAccent = Color(0xFF81C784);
   static const Color skillsAccent = Color(0xFFFF8A65);
-  static const Color abilitiesAccent = Color(0xFF7986CB);
-  static const Color featuresAccent = Color(0xFF64B5F6);
+  static const Color abilitiesAccent = Color(0xFFE65100);   // Deep orange (matches NavigationTheme)
+  static const Color featuresAccent = Color(0xFF6A1B9A);    // Deep purple (matches NavigationTheme)
 
   /// Lightweight gradient background for section headers.
   static LinearGradient headerGradient(Color color) => LinearGradient(

@@ -2,61 +2,127 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
-import '../../../widgets/kits/kit_card.dart';
-import '../../../widgets/kits/stormwight_kit_card.dart';
-import '../../../widgets/kits/modifier_card.dart';
-import '../../../widgets/kits/ward_card.dart';
+import '../../../core/theme/navigation_theme.dart';
+import '../../../widgets/kits/equipment_card.dart';
 
-class KitsPage extends ConsumerWidget {
+class KitsPage extends ConsumerStatefulWidget {
   const KitsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Kits'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
-              Tab(text: 'Kits'),
-              Tab(text: 'Stormwight'),
-              Tab(text: 'Augmentations'),
-              Tab(text: 'Enchantments'),
-              Tab(text: 'Prayers'),
-              Tab(text: 'Wards'),
-            ],
+  ConsumerState<KitsPage> createState() => _KitsPageState();
+}
+
+class _KitsPageState extends ConsumerState<KitsPage> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  static const _tabs = [
+    {'label': 'Kits', 'color': Color(0xFF00ACC1)},
+    {'label': 'Stormwight', 'color': Color(0xFF5C6BC0)},
+    {'label': 'Augmentations', 'color': Color(0xFF7E57C2)},
+    {'label': 'Enchantments', 'color': Color(0xFFFFB300)},
+    {'label': 'Prayers', 'color': Color(0xFFFF8A65)},
+    {'label': 'Wards', 'color': Color(0xFFAB47BC)},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context, ) {
+    return Scaffold(
+      backgroundColor: NavigationTheme.navBarBackground,
+      appBar: AppBar(
+        backgroundColor: NavigationTheme.navBarBackground,
+        title: const Text('Kits & Equipment'),
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          // Custom tab bar
+          Container(
+            color: NavigationTheme.navBarBackground,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(_tabs.length, (index) {
+                  final tab = _tabs[index];
+                  final isSelected = _tabController.index == index;
+                  final color = tab['color'] as Color;
+                  
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => _tabController.animateTo(index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isSelected ? color.withOpacity(0.2) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected ? color : Colors.grey.shade700,
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                        ),
+                        child: Text(
+                          tab['label'] as String,
+                          style: TextStyle(
+                            color: isSelected ? color : Colors.grey.shade400,
+                            fontSize: 13,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('kit')),
-              itemBuilder: (c) => KitCard(component: c),
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('kit')),
+                  itemBuilder: (c) => EquipmentCard(component: c),
+                ),
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('stormwight_kit')),
+                  itemBuilder: (c) => EquipmentCard(component: c),
+                ),
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('psionic_augmentation')),
+                  itemBuilder: (c) => EquipmentCard(component: c, badgeLabel: 'Augmentation'),
+                ),
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('enchantment')),
+                  itemBuilder: (c) => EquipmentCard(component: c, badgeLabel: 'Enchantment'),
+                ),
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('prayer')),
+                  itemBuilder: (c) => EquipmentCard(component: c, badgeLabel: 'Prayer'),
+                ),
+                _ComponentsList(
+                  stream: ref.watch(componentsByTypeProvider('ward')),
+                  itemBuilder: (c) => EquipmentCard(component: c),
+                ),
+              ],
             ),
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('stormwight_kit')),
-              itemBuilder: (c) => StormwightKitCard(component: c),
-            ),
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('psionic_augmentation')),
-              itemBuilder: (c) => ModifierCard(component: c, badgeLabel: 'Augmentation'),
-            ),
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('enchantment')),
-              itemBuilder: (c) => ModifierCard(component: c, badgeLabel: 'Enchantment'),
-            ),
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('prayer')),
-              itemBuilder: (c) => ModifierCard(component: c, badgeLabel: 'Prayer'),
-            ),
-            _ComponentsList(
-              stream: ref.watch(componentsByTypeProvider('ward')),
-              itemBuilder: (c) => WardCard(component: c),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -73,20 +139,31 @@ class _ComponentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return stream.when(
-      data: (items) {
-        if (items.isEmpty) {
-          return const Center(child: Text('None available'));
-        }
-        return ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemBuilder: (_, i) => itemBuilder(items[i]),
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemCount: items.length,
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+    return Container(
+      color: NavigationTheme.navBarBackground,
+      child: stream.when(
+        data: (items) {
+          if (items.isEmpty) {
+            return Center(
+              child: Text(
+                'None available',
+                style: TextStyle(color: Colors.grey.shade500),
+              ),
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemBuilder: (_, i) => itemBuilder(items[i]),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemCount: items.length,
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(
+          child: Text('Error: $e', style: TextStyle(color: Colors.grey.shade400)),
+        ),
+      ),
     );
   }
 }
+

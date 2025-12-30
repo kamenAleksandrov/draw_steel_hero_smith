@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../core/models/component.dart';
+import '../../core/theme/navigation_theme.dart';
 import '../../core/theme/semantic/semantic_tokens.dart';
 import 'abilities_shared.dart';
 import 'ability_full_view.dart';
 import 'ability_summary.dart';
 
 class AbilityExpandableItem extends StatefulWidget {
-  const AbilityExpandableItem({super.key, required this.component});
+  const AbilityExpandableItem({
+    super.key, 
+    required this.component,
+    this.embedded = false,
+  });
 
   final Component component;
+  /// When true, removes margins and adjusts styling for embedding inside other cards
+  final bool embedded;
 
   @override
   State<AbilityExpandableItem> createState() => _AbilityExpandableItemState();
@@ -26,42 +33,43 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final ability = AbilityData.fromComponent(widget.component);
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
-    // Use action type color for border, fallback to primary if no action type
+    // Use action type color for border, fallback to grey if no action type
     final borderColor = ability.actionType != null
         ? ActionTokens.color(ability.actionType!)
-        : scheme.primary;
+        : Colors.grey.shade600;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeInOut,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      margin: widget.embedded 
+          ? EdgeInsets.zero 
+          : const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       decoration: BoxDecoration(
-        // Use app background color (dark grey/bluish)
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(18),
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(widget.embedded ? 10 : 14),
         border: Border.all(
-          color: borderColor,
-          width: _expanded ? 2.5 : 2.0,
+          color: _expanded ? borderColor : borderColor.withValues(alpha: 0.5),
+          width: _expanded ? 2.0 : 1.0,
         ),
-        boxShadow: [
+        boxShadow: widget.embedded ? null : [
           BoxShadow(
-            color: borderColor.withValues(alpha: _expanded ? 0.35 : 0.25),
-            blurRadius: _expanded ? 16 : 10,
-            offset: const Offset(0, 6),
+            color: borderColor.withValues(alpha: _expanded ? 0.25 : 0.15),
+            blurRadius: _expanded ? 12 : 6,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(widget.embedded ? 10 : 14),
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(widget.embedded ? 10 : 14),
           onTap: () => setState(() => _expanded = !_expanded),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            padding: widget.embedded 
+                ? const EdgeInsets.symmetric(horizontal: 14, vertical: 12)
+                : const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -91,13 +99,13 @@ class _AbilityExpandableItemState extends State<AbilityExpandableItem>
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 14),
                               Divider(
-                                color: borderColor.withValues(alpha: 0.5),
-                                thickness: 1.1,
-                                height: 1.1,
+                                color: borderColor.withValues(alpha: 0.4),
+                                thickness: 1,
+                                height: 1,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 14),
                               AbilityFullView(
                                 component: widget.component,
                                 abilityData: ability,
