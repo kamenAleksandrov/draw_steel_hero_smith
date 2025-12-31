@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart';
-import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/kit_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_equipment_widget_text.dart';
 import '../../../../widgets/kits/kit_card.dart';
 import '../../../../widgets/kits/modifier_card.dart';
@@ -39,6 +40,8 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
     required this.slots,
   });
 
+  static const _accent = CreatorTheme.classAccent;
+  
   final List<EquipmentSlot> slots;
 
   static const List<String> _allEquipmentTypes = <String>[
@@ -88,34 +91,30 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: HeroTheme.sectionCardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HeroTheme.buildSectionHeader(
-              context,
-              title: ChooseEquipmentWidgetText.sectionTitle,
-              subtitle: ChooseEquipmentWidgetText.sectionSubtitle,
-              icon: Icons.inventory_2,
-              color: HeroTheme.getStepColor('kit'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (var i = 0; i < slots.length; i++) ...[
-                    _EquipmentSlotTile(slot: slots[i]),
-                    if (i != slots.length - 1) const Divider(height: 32),
-                  ],
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseEquipmentWidgetText.sectionTitle,
+            subtitle: ChooseEquipmentWidgetText.sectionSubtitle,
+            icon: Icons.inventory_2,
+            accent: _accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var i = 0; i < slots.length; i++) ...[
+                  _EquipmentSlotTile(slot: slots[i]),
+                  if (i != slots.length - 1) Divider(height: 32, color: Colors.grey.shade700),
                 ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -187,6 +186,8 @@ class _EquipmentSlotTile extends ConsumerStatefulWidget {
 }
 
 class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
+  static const _accent = EquipmentAndModificationsWidget._accent;
+  
   Future<Component?>? _cachedFuture;
   String? _cachedItemId;
 
@@ -197,7 +198,6 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final slot = widget.slot;
     final allowedTypes = EquipmentAndModificationsWidget._normalizeAllowedTypes(
         slot.allowedTypes);
@@ -256,10 +256,13 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
                           : '${ChooseEquipmentWidgetText.buttonChangePrefix}${slot.label}'),
                 ),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: _accent.withValues(alpha: 0.2),
+                  foregroundColor: _accent,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: _accent.withValues(alpha: 0.5)),
                   ),
                 ),
               ),
@@ -268,8 +271,9 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
               const SizedBox(height: 6),
               Text(
                 slot.helperText!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade400,
                 ),
               ),
             ],
@@ -289,6 +293,7 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
+                    color: const Color(0xFF2A2A2A),
                     border: Border.all(
                       color: _getBorderColorForType(selectedItem.type),
                       width: 2,
@@ -299,8 +304,9 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
                       Expanded(
                         child: Text(
                           selectedItem.name,
-                          style: theme.textTheme.bodyMedium?.copyWith(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -318,8 +324,9 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
               const SizedBox(height: 8),
               Text(
                 ChooseEquipmentWidgetText.unableToLoadSelectedItem,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.error,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.redAccent.shade200,
                 ),
               ),
             ],
@@ -335,11 +342,14 @@ class _KitPreviewDialog extends StatelessWidget {
     required this.item,
   });
 
+  static const _accent = EquipmentAndModificationsWidget._accent;
+  
   final Component item;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: 600,
@@ -348,15 +358,41 @@ class _KitPreviewDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AppBar(
-              title: Text(item.name),
-              automaticallyImplyLeading: false,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    _accent.withValues(alpha: 0.3),
+                    _accent.withValues(alpha: 0.1),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
+                border: Border(
+                  bottom: BorderSide(color: _accent.withValues(alpha: 0.3)),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.inventory_2, color: _accent),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
             ),
             Flexible(
               child: SingleChildScrollView(
@@ -438,6 +474,8 @@ class _EquipmentSelectionDialog extends ConsumerStatefulWidget {
 
 class _EquipmentSelectionDialogState
     extends ConsumerState<_EquipmentSelectionDialog> {
+  static const _accent = EquipmentAndModificationsWidget._accent;
+  
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -477,26 +515,54 @@ class _EquipmentSelectionDialogState
 
     if (categories.isEmpty) {
       return Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
         child: SizedBox(
           width: 400,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppBar(
-                title: Text(
-                  '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
-                ),
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => navigator.pop(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      _accent.withValues(alpha: 0.3),
+                      _accent.withValues(alpha: 0.1),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                ],
+                  border: Border(
+                    bottom: BorderSide(color: _accent.withValues(alpha: 0.3)),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.inventory_2, color: _accent),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => navigator.pop(),
+                    ),
+                  ],
+                ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(24.0),
-                child: Text(ChooseEquipmentWidgetText.noItemsAvailable),
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Text(
+                  ChooseEquipmentWidgetText.noItemsAvailable,
+                  style: TextStyle(color: Colors.grey.shade400),
+                ),
               ),
             ],
           ),
@@ -509,45 +575,72 @@ class _EquipmentSelectionDialogState
     return DefaultTabController(
       length: categories.length,
       child: Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.9,
           height: MediaQuery.of(context).size.height * 0.85,
           child: Column(
             children: [
-              AppBar(
-                title: Text(
-                  '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      _accent.withValues(alpha: 0.3),
+                      _accent.withValues(alpha: 0.1),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  border: Border(
+                    bottom: BorderSide(color: _accent.withValues(alpha: 0.3)),
+                  ),
                 ),
-                automaticallyImplyLeading: false,
-                actions: [
-                  if (widget.canRemove)
-                    TextButton.icon(
-                      onPressed: () => navigator
-                          .pop(EquipmentAndModificationsWidget._removeSignal),
-                      icon: const Icon(Icons.clear, color: Colors.white),
-                      label: const Text(
-                        ChooseEquipmentWidgetText.removeLabel,
-                        style: TextStyle(color: Colors.white),
+                child: Row(
+                  children: [
+                    Icon(Icons.inventory_2, color: _accent),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '${ChooseEquipmentWidgetText.selectionDialogTitlePrefix}${widget.slotLabel}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => navigator.pop(),
-                  ),
-                ],
+                    if (widget.canRemove)
+                      TextButton.icon(
+                        onPressed: () => navigator
+                            .pop(EquipmentAndModificationsWidget._removeSignal),
+                        icon: Icon(Icons.clear, color: Colors.redAccent.shade200),
+                        label: Text(
+                          ChooseEquipmentWidgetText.removeLabel,
+                          style: TextStyle(color: Colors.redAccent.shade200),
+                        ),
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => navigator.pop(),
+                    ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                 child: TextField(
                   controller: _searchController,
                   autofocus: false,
+                  style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: ChooseEquipmentWidgetText.searchHint,
-                    prefixIcon: const Icon(Icons.search),
+                    hintStyle: TextStyle(color: Colors.grey.shade500),
+                    prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                     suffixIcon: _searchQuery.isEmpty
                         ? null
                         : IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: Icon(Icons.clear, color: Colors.grey.shade400),
                             onPressed: () {
                               setState(() {
                                 _searchQuery = '';
@@ -555,7 +648,20 @@ class _EquipmentSelectionDialogState
                               });
                             },
                           ),
-                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor: const Color(0xFF2A2A2A),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                      borderSide: const BorderSide(color: _accent),
+                    ),
                     isDense: true,
                   ),
                   onChanged: (value) {
@@ -567,9 +673,12 @@ class _EquipmentSelectionDialogState
               ),
               if (hasMultipleCategories)
                 Material(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: const Color(0xFF2A2A2A),
                   child: TabBar(
                     isScrollable: true,
+                    indicatorColor: _accent,
+                    labelColor: _accent,
+                    unselectedLabelColor: Colors.grey.shade400,
                     tabs: categories
                         .map(
                           (cat) => Tab(
@@ -644,6 +753,7 @@ class _EquipmentSelectionDialogState
                 query.isEmpty
                     ? '${ChooseEquipmentWidgetText.noItemsPrefix}${category.label.toLowerCase()}${ChooseEquipmentWidgetText.noItemsSuffix}'
                     : '${ChooseEquipmentWidgetText.noResultsPrefix}${_searchController.text}${ChooseEquipmentWidgetText.noResultsSuffix}',
+                style: TextStyle(color: Colors.grey.shade400),
               ),
             ),
           );
@@ -656,7 +766,6 @@ class _EquipmentSelectionDialogState
             final item = filtered[index];
             final isSelected = item.id == widget.currentItemId;
             final description = item.data['description'] as String?;
-            final theme = Theme.of(context);
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -667,12 +776,12 @@ class _EquipmentSelectionDialogState
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? theme.colorScheme.primaryContainer.withOpacity(0.3)
-                        : theme.colorScheme.surface,
+                        ? _accent.withValues(alpha: 0.15)
+                        : const Color(0xFF2A2A2A),
                     border: Border.all(
                       color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withOpacity(0.5),
+                          ? _accent
+                          : Colors.grey.shade700,
                       width: isSelected ? 2 : 1,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -687,36 +796,49 @@ class _EquipmentSelectionDialogState
                               padding: const EdgeInsets.only(right: 8),
                               child: Icon(
                                 Icons.check_circle,
-                                color: theme.colorScheme.primary,
+                                color: _accent,
                                 size: 20,
                               ),
                             ),
                           Expanded(
                             child: Text(
                               item.name,
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : null,
+                                fontSize: 16,
+                                color: isSelected ? _accent : Colors.white,
                               ),
                             ),
                           ),
-                          Chip(
-                            avatar: Icon(
-                              EquipmentAndModificationsWidget
-                                      ._equipmentTypeIcons[item.type] ??
-                                  Icons.inventory_2_outlined,
-                              size: 16,
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade800,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            label: Text(
-                              EquipmentAndModificationsWidget
-                                      ._equipmentTypeChipTitles[item.type] ??
-                                  EquipmentAndModificationsWidget._titleize(
-                                      item.type),
-                              style: const TextStyle(fontSize: 12),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  EquipmentAndModificationsWidget
+                                          ._equipmentTypeIcons[item.type] ??
+                                      Icons.inventory_2_outlined,
+                                  size: 14,
+                                  color: Colors.grey.shade400,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  EquipmentAndModificationsWidget
+                                          ._equipmentTypeChipTitles[item.type] ??
+                                      EquipmentAndModificationsWidget._titleize(
+                                          item.type),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                ),
+                              ],
                             ),
-                            visualDensity: VisualDensity.compact,
                           ),
                         ],
                       ),
@@ -724,8 +846,9 @@ class _EquipmentSelectionDialogState
                         const SizedBox(height: 8),
                         Text(
                           description,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade400,
                           ),
                         ),
                       ],
@@ -737,11 +860,11 @@ class _EquipmentSelectionDialogState
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CreatorTheme.loadingIndicator(_accent)),
       error: (error, stack) => Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Text(
+          child: CreatorTheme.errorMessage(
             '${ChooseEquipmentWidgetText.errorLoadingPrefix}${category.label.toLowerCase()}${ChooseEquipmentWidgetText.errorLoadingSuffix}$error',
           ),
         ),

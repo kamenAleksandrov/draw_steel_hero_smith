@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
-import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_ancestry_section_text.dart';
 
 class StoryAncestrySection extends ConsumerWidget {
@@ -26,55 +26,51 @@ class StoryAncestrySection extends ConsumerWidget {
   final void Function(String traitOrSignatureId, String choiceValue) onTraitChoiceChanged;
   final VoidCallback onDirty;
 
+  static const _accent = CreatorTheme.ancestryAccent;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final ancestriesAsync = ref.watch(componentsByTypeProvider('ancestry'));
     final ancestryTraitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: HeroTheme.sectionCardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
-        child: Column(
-          children: [
-            HeroTheme.buildSectionHeader(
-              context,
-              title: StoryAncestrySectionText.sectionTitle,
-              subtitle: StoryAncestrySectionText.sectionSubtitle,
-              icon: Icons.family_restroom,
-              color: HeroTheme.getStepColor('ancestry'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ancestriesAsync.when(
-                    loading: () => const LinearProgressIndicator(),
-                    error: (e, _) => Text(
-                        '${StoryAncestrySectionText.errorPrefix}$e',
-                        style: TextStyle(color: theme.colorScheme.error)),
-                    data: (ancestries) => _buildAncestryDropdown(
-                      context,
-                      theme,
-                      ancestries,
-                      ancestryTraitsAsync,
-                    ),
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StoryAncestrySectionText.sectionTitle,
+            subtitle: StoryAncestrySectionText.sectionSubtitle,
+            icon: Icons.family_restroom,
+            accent: _accent,
+          ),
+          Padding(
+            padding: CreatorTheme.sectionPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ancestriesAsync.when(
+                  loading: () => CreatorTheme.loadingIndicator(_accent),
+                  error: (e, _) => CreatorTheme.errorMessage(
+                    '${StoryAncestrySectionText.errorPrefix}$e',
+                    accent: _accent,
                   ),
-                ],
-              ),
+                  data: (ancestries) => _buildAncestryDropdown(
+                    context,
+                    ancestries,
+                    ancestryTraitsAsync,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAncestryDropdown(
     BuildContext context,
-    ThemeData theme,
     List<model.Component> ancestries,
     AsyncValue<List<model.Component>> traitsAsync,
   ) {
@@ -93,41 +89,42 @@ class StoryAncestrySection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        InputDecorator(
-          decoration: InputDecoration(
-            labelText: StoryAncestrySectionText.chooseAncestryLabel,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        DropdownButtonFormField<String?>(
+          value: selectedAncestryId,
+          dropdownColor: const Color(0xFF2A2A2A),
+          decoration: CreatorTheme.dropdownDecoration(
+            label: StoryAncestrySectionText.chooseAncestryLabel,
+            accent: _accent,
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String?> (
-              value: selectedAncestryId,
-              isExpanded: true,
-              items: [
-                const DropdownMenuItem<String?>(
-                  value: null,
-                  child: Text(StoryAncestrySectionText.chooseAncestryOption),
-                ),
-                ...ancestries.map(
-                  (a) => DropdownMenuItem<String?>(
-                    value: a.id,
-                    child: Text(a.name),
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                onAncestryChanged(value);
-                onDirty();
-              },
+          style: const TextStyle(color: Colors.white),
+          items: [
+            DropdownMenuItem<String?>(
+              value: null,
+              child: Text(
+                StoryAncestrySectionText.chooseAncestryOption,
+                style: TextStyle(color: Colors.grey.shade400),
+              ),
             ),
-          ),
+            ...ancestries.map(
+              (a) => DropdownMenuItem<String?>(
+                value: a.id,
+                child: Text(a.name),
+              ),
+            ),
+          ],
+          onChanged: (value) {
+            onAncestryChanged(value);
+            onDirty();
+          },
         ),
         if (selectedAncestryId != null) ...[
           const SizedBox(height: 16),
           traitsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Text(
-                '${StoryAncestrySectionText.errorLoadingTraitsPrefix}$e'),
+            loading: () => CreatorTheme.loadingIndicator(_accent),
+            error: (e, _) => CreatorTheme.errorMessage(
+              '${StoryAncestrySectionText.errorLoadingTraitsPrefix}$e',
+              accent: _accent,
+            ),
             data: (traitsComps) {
               final traitsForSelected = traitsComps.firstWhere(
                 (t) => t.data['ancestry_id'] == selectedAncestryId,
@@ -175,6 +172,8 @@ class _AncestryDetails extends StatelessWidget {
   final void Function(String traitOrSignatureId, String choiceValue) onTraitChoiceChanged;
   final VoidCallback onDirty;
 
+  static const _accent = CreatorTheme.ancestryAccent;
+
   @override
   Widget build(BuildContext context) {
     final data = ancestry.data;
@@ -201,177 +200,285 @@ class _AncestryDetails extends StatelessWidget {
     });
     final remaining = points - spent;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (shortDesc.isNotEmpty) ...[
-          Text(shortDesc,
-              style: TextStyle(color: Colors.grey.shade300, height: 1.3)),
-          const SizedBox(height: 12),
-        ],
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            if (height != null)
-              _chip(
-                '${StoryAncestrySectionText.heightChipPrefix}${height['min']}–${height['max']}',
-                Colors.blue,
-              ),
-            if (weight != null)
-              _chip(
-                '${StoryAncestrySectionText.weightChipPrefix}${weight['min']}–${weight['max']}',
-                Colors.green,
-              ),
-            if (life != null)
-              _chip(
-                '${StoryAncestrySectionText.lifespanChipPrefix}${life['min']}–${life['max']}',
-                Colors.purple,
-              ),
-            if (size != null)
-              _chip(
-                '${StoryAncestrySectionText.sizeChipPrefix}$size',
-                Colors.orange,
-              ),
-            if (speed != null)
-              _chip(
-                '${StoryAncestrySectionText.speedChipPrefix}$speed',
-                Colors.teal,
-              ),
-            if (stability != null)
-              _chip(
-                '${StoryAncestrySectionText.stabilityChipPrefix}$stability',
-                Colors.redAccent,
-              ),
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: CreatorTheme.subSectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (shortDesc.isNotEmpty) ...[
+            Text(shortDesc,
+                style: TextStyle(color: Colors.grey.shade300, height: 1.4)),
+            const SizedBox(height: 14),
           ],
-        ),
-        const SizedBox(height: 16),
-        if (signature != null) ...[
-          Text(
-              '${StoryAncestrySectionText.signatureLabelPrefix}${signature['name'] ?? ''}',
-              style: const TextStyle(fontWeight: FontWeight.w600)),
-          if ((signature['description'] as String?)?.isNotEmpty == true) ...[
-            const SizedBox(height: 4),
-            Text(signature['description'] as String,
-                style: const TextStyle(height: 1.3)),
-          ],
-          // Show dropdown for signature immunity choice (e.g., Wyrmplate)
-          if (_signatureHasImmunityChoice(signature)) ...[
-            const SizedBox(height: 8),
-            _buildImmunityDropdown(
-              signatureId: 'signature_immunity',
-              currentValue: traitChoices['signature_immunity'],
-              excludedValues: const {}, // Signature has no exclusions
-              onChanged: (value) {
-                if (value != null) {
-                  onTraitChoiceChanged('signature_immunity', value);
-                  onDirty();
-                }
-              },
-            ),
-          ],
-          const SizedBox(height: 12),
-        ],
-        Row(
-          children: [
-            Chip(
-                label: Text(
-                    '${StoryAncestrySectionText.pointsLabelPrefix}$points')),
-            const SizedBox(width: 8),
-            Chip(
-                label: Text(
-                    '${StoryAncestrySectionText.remainingLabelPrefix}$remaining')),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ...traitsList.map((t) {
-          final traitData = t.cast<String, dynamic>();
-          final id = (traitData['id'] ?? traitData['name']).toString();
-          final name = (traitData['name'] ?? id).toString();
-          final desc = (traitData['description'] ?? '').toString();
-          final cost = (traitData['cost'] as int?) ?? 0;
-          final selected = selectedTraitIds.contains(id);
-          final canSelect = selected || remaining - cost >= 0;
-          
-          // Check if this trait has choices
-          final hasImmunityChoice = _traitHasImmunityChoice(traitData);
-          final abilityOptions = _getAbilityOptions(traitData);
-          
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              CheckboxListTile(
-                value: selected,
-                onChanged: canSelect
-                    ? (value) {
-                        if (value == null) return;
-                        onTraitSelectionChanged(id, value);
-                        onDirty();
-                      }
-                    : null,
-                title: Text(name),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
+              if (height != null)
+                _statChip(
+                  '${StoryAncestrySectionText.heightChipPrefix}${height['min']}–${height['max']}',
+                  const Color(0xFF42A5F5),
+                ),
+              if (weight != null)
+                _statChip(
+                  '${StoryAncestrySectionText.weightChipPrefix}${weight['min']}–${weight['max']}',
+                  const Color(0xFF66BB6A),
+                ),
+              if (life != null)
+                _statChip(
+                  '${StoryAncestrySectionText.lifespanChipPrefix}${life['min']}–${life['max']}',
+                  const Color(0xFFAB47BC),
+                ),
+              if (size != null)
+                _statChip(
+                  '${StoryAncestrySectionText.sizeChipPrefix}$size',
+                  const Color(0xFFFFB74D),
+                ),
+              if (speed != null)
+                _statChip(
+                  '${StoryAncestrySectionText.speedChipPrefix}$speed',
+                  const Color(0xFF26C6DA),
+                ),
+              if (stability != null)
+                _statChip(
+                  '${StoryAncestrySectionText.stabilityChipPrefix}$stability',
+                  const Color(0xFFEF5350),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (signature != null) ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: _accent.withValues(alpha: 0.1),
+                border: Border.all(color: _accent.withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.star, color: _accent, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '${StoryAncestrySectionText.signatureLabelPrefix}${signature['name'] ?? ''}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: _accent,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if ((signature['description'] as String?)?.isNotEmpty == true) ...[
+                    const SizedBox(height: 8),
                     Text(
-                      desc,
-                      softWrap: true,
+                      signature['description'] as String,
+                      style: TextStyle(
+                        height: 1.4,
+                        color: Colors.grey.shade300,
+                      ),
                     ),
                   ],
-                ),
-                isThreeLine: true,
-                secondary: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text('$cost'),
-                ),
-                contentPadding: EdgeInsets.zero,
+                  // Show dropdown for signature immunity choice (e.g., Wyrmplate)
+                  if (_signatureHasImmunityChoice(signature)) ...[
+                    const SizedBox(height: 12),
+                    _buildImmunityDropdown(
+                      signatureId: 'signature_immunity',
+                      currentValue: traitChoices['signature_immunity'],
+                      excludedValues: const {}, // Signature has no exclusions
+                      onChanged: (value) {
+                        if (value != null) {
+                          onTraitChoiceChanged('signature_immunity', value);
+                          onDirty();
+                        }
+                      },
+                    ),
+                  ],
+                ],
               ),
-              // Show immunity dropdown for traits like Prismatic Scales
-              if (selected && hasImmunityChoice) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
-                  child: _buildImmunityDropdown(
-                    signatureId: id,
-                    currentValue: traitChoices[id],
-                    // Exclude signature immunity and other trait immunity choices
-                    excludedValues: _getExcludedImmunities(id, traitChoices),
-                    onChanged: (value) {
-                      if (value != null) {
-                        onTraitChoiceChanged(id, value);
-                        onDirty();
-                      }
-                    },
-                  ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          // Points display
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFF2A2A2A),
+            ),
+            child: Row(
+              children: [
+                _pointsBadge(
+                  '${StoryAncestrySectionText.pointsLabelPrefix}$points',
+                  const Color(0xFF5C6BC0),
+                ),
+                const SizedBox(width: 12),
+                _pointsBadge(
+                  '${StoryAncestrySectionText.remainingLabelPrefix}$remaining',
+                  remaining >= 0 ? const Color(0xFF66BB6A) : const Color(0xFFEF5350),
                 ),
               ],
-              // Show ability dropdown for traits like Psionic Gift
-              if (selected && abilityOptions.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 40, right: 16, bottom: 8),
-                  child: _buildAbilityDropdown(
-                    traitId: id,
-                    options: abilityOptions,
-                    currentValue: traitChoices[id],
-                    onChanged: (value) {
-                      if (value != null) {
-                        onTraitChoiceChanged(id, value);
-                        onDirty();
-                      }
-                    },
-                  ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...traitsList.map((t) {
+            final traitData = t.cast<String, dynamic>();
+            final id = (traitData['id'] ?? traitData['name']).toString();
+            final name = (traitData['name'] ?? id).toString();
+            final desc = (traitData['description'] ?? '').toString();
+            final cost = (traitData['cost'] as int?) ?? 0;
+            final selected = selectedTraitIds.contains(id);
+            final canSelect = selected || remaining - cost >= 0;
+            
+            // Check if this trait has choices
+            final hasImmunityChoice = _traitHasImmunityChoice(traitData);
+            final abilityOptions = _getAbilityOptions(traitData);
+            
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: selected 
+                    ? _accent.withValues(alpha: 0.1)
+                    : const Color(0xFF2A2A2A),
+                border: Border.all(
+                  color: selected 
+                      ? _accent.withValues(alpha: 0.4)
+                      : Colors.grey.shade700,
                 ),
-              ],
-            ],
-          );
-        }),
-      ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CheckboxListTile(
+                    value: selected,
+                    onChanged: canSelect
+                        ? (value) {
+                            if (value == null) return;
+                            onTraitSelectionChanged(id, value);
+                            onDirty();
+                          }
+                        : null,
+                    title: Text(
+                      name,
+                      style: TextStyle(
+                        color: selected ? _accent : Colors.grey.shade300,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        desc,
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                    isThreeLine: true,
+                    secondary: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF5C6BC0).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFF5C6BC0).withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Text(
+                        '$cost',
+                        style: const TextStyle(
+                          color: Color(0xFF7986CB),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    checkColor: Colors.white,
+                    activeColor: _accent,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  // Show immunity dropdown for traits like Prismatic Scales
+                  if (selected && hasImmunityChoice) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(48, 0, 16, 12),
+                      child: _buildImmunityDropdown(
+                        signatureId: id,
+                        currentValue: traitChoices[id],
+                        // Exclude signature immunity and other trait immunity choices
+                        excludedValues: _getExcludedImmunities(id, traitChoices),
+                        onChanged: (value) {
+                          if (value != null) {
+                            onTraitChoiceChanged(id, value);
+                            onDirty();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                  // Show ability dropdown for traits like Psionic Gift
+                  if (selected && abilityOptions.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(48, 0, 16, 12),
+                      child: _buildAbilityDropdown(
+                        traitId: id,
+                        options: abilityOptions,
+                        currentValue: traitChoices[id],
+                        onChanged: (value) {
+                          if (value != null) {
+                            onTraitChoiceChanged(id, value);
+                            onDirty();
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
+
+  Widget _statChip(String text, Color color) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      color: color.withValues(alpha: 0.15),
+      border: Border.all(color: color.withValues(alpha: 0.4)),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(
+        color: color,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+
+  Widget _pointsBadge(String text, Color color) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: color.withValues(alpha: 0.2),
+      border: Border.all(color: color.withValues(alpha: 0.4)),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(
+        color: color,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
 
   /// Check if signature has immunity choice (type: "pick_one")
   bool _signatureHasImmunityChoice(Map<String, dynamic> signature) {
@@ -435,17 +542,19 @@ class _AncestryDetails extends StatelessWidget {
 
     return DropdownButtonFormField<String>(
       value: currentValue,
-      decoration: InputDecoration(
-        labelText: StoryAncestrySectionText.immunityDropdownLabel,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        filled: true,
-        fillColor: Colors.deepPurple.withOpacity(0.05),
+      dropdownColor: const Color(0xFF2A2A2A),
+      decoration: CreatorTheme.dropdownDecoration(
+        label: StoryAncestrySectionText.immunityDropdownLabel,
+        accent: const Color(0xFFAB47BC),
       ),
+      style: const TextStyle(color: Colors.white),
       items: [
-        const DropdownMenuItem<String>(
+        DropdownMenuItem<String>(
           value: null,
-          child: Text(StoryAncestrySectionText.immunityDropdownHint),
+          child: Text(
+            StoryAncestrySectionText.immunityDropdownHint,
+            style: TextStyle(color: Colors.grey.shade400),
+          ),
         ),
         ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
@@ -466,17 +575,19 @@ class _AncestryDetails extends StatelessWidget {
   }) {
     return DropdownButtonFormField<String>(
       value: currentValue,
-      decoration: InputDecoration(
-        labelText: StoryAncestrySectionText.abilityDropdownLabel,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        filled: true,
-        fillColor: Colors.teal.withOpacity(0.05),
+      dropdownColor: const Color(0xFF2A2A2A),
+      decoration: CreatorTheme.dropdownDecoration(
+        label: StoryAncestrySectionText.abilityDropdownLabel,
+        accent: const Color(0xFF26C6DA),
       ),
+      style: const TextStyle(color: Colors.white),
       items: [
-        const DropdownMenuItem<String>(
+        DropdownMenuItem<String>(
           value: null,
-          child: Text(StoryAncestrySectionText.abilityDropdownHint),
+          child: Text(
+            StoryAncestrySectionText.abilityDropdownHint,
+            style: TextStyle(color: Colors.grey.shade400),
+          ),
         ),
         ...options.map(
           (ability) => DropdownMenuItem<String>(
@@ -488,10 +599,4 @@ class _AncestryDetails extends StatelessWidget {
       onChanged: onChanged,
     );
   }
-
-  Widget _chip(String text, Color color) => Chip(
-        label: Text(text),
-        backgroundColor: color.withOpacity(0.1),
-        side: BorderSide(color: color.withOpacity(0.6), width: 1),
-      );
 }

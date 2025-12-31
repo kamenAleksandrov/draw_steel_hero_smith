@@ -39,6 +39,12 @@ create a equipment functionality where the user can equip items and get their bo
 update abilities to be dynamic based on the hero stats
 
 add export hero as a file
+
+perks form career give false duplication errors on skills
+
+complication widget needs spaceing fix
+
+complication item grants must use the new widgets
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

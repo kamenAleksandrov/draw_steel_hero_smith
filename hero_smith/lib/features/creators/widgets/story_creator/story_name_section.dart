@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
-import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_name_section_text.dart';
 
 class StoryNameSection extends ConsumerWidget {
@@ -18,50 +18,50 @@ class StoryNameSection extends ConsumerWidget {
   final String? selectedAncestryId;
   final VoidCallback onDirty;
 
+  static const _accent = CreatorTheme.nameAccent;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.all(16),
-      child: Card(
-        elevation: HeroTheme.sectionCardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: StoryNameSectionText.heroNameLabel,
-                      hintText: StoryNameSectionText.heroNameHint,
-                      prefixIcon: const Icon(Icons.person_outline),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onChanged: (_) => onDirty(),
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StoryNameSectionText.heroNameLabel,
+            subtitle: 'Give your hero an identity',
+            icon: Icons.person_outline,
+            accent: _accent,
+          ),
+          Padding(
+            padding: CreatorTheme.sectionPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: CreatorTheme.inputDecoration(
+                    label: StoryNameSectionText.heroNameLabel,
+                    hint: StoryNameSectionText.heroNameHint,
+                    prefixIcon: Icons.badge_outlined,
+                    accent: _accent,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    StoryNameSectionText.ancestrySuggestionPrompt,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  if (selectedAncestryId != null) ...[
-                    const SizedBox(height: 16),
-                    _buildNameSuggestions(context, ref),
-                  ],
+                  onChanged: (_) => onDirty(),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  StoryNameSectionText.ancestrySuggestionPrompt,
+                  style: CreatorTheme.infoTextStyle,
+                ),
+                if (selectedAncestryId != null) ...[
+                  const SizedBox(height: 16),
+                  _buildNameSuggestions(context, ref),
                 ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -104,6 +104,8 @@ class _ExampleNameGroups extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onDirty;
 
+  static const _accent = CreatorTheme.nameAccent;
+
   @override
   Widget build(BuildContext context) {
     final data = ancestry.data;
@@ -114,14 +116,28 @@ class _ExampleNameGroups extends StatelessWidget {
 
     // Special handling for Revenant notes
     if (ancestry.name.toLowerCase() == 'revenant') {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Text(
-          StoryNameSectionText.revenantNote,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontStyle: FontStyle.italic,
-          ),
+      return Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: _accent.withValues(alpha: 0.1),
+          border: Border.all(color: _accent.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline, color: _accent, size: 18),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                StoryNameSectionText.revenantNote,
+                style: TextStyle(
+                  color: Colors.grey.shade300,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -152,44 +168,61 @@ class _ExampleNameGroups extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${StoryNameSectionText.exampleNamesTitlePrefix}${ancestry.name}',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        ...exampleLists.entries.map((entry) {
-          final groupLabel = groupLabels[entry.key] ?? entry.key;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: CreatorTheme.subSectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Text(
-                groupLabel,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
+              Icon(Icons.lightbulb_outline, color: _accent, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  '${StoryNameSectionText.exampleNamesTitlePrefix}${ancestry.name}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: _accent,
+                    fontSize: 14,
+                  ),
                 ),
               ),
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final name in entry.value.take(8))
-                    ActionChip(
-                      label: Text(name),
-                      onPressed: () => _applySuggestion(entry.key, name),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
             ],
-          );
-        }),
-        const SizedBox(height: 16),
-      ],
+          ),
+          const SizedBox(height: 12),
+          ...exampleLists.entries.map((entry) {
+            final groupLabel = groupLabels[entry.key] ?? entry.key;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  groupLabel,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade400,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final name in entry.value.take(8))
+                      CreatorTheme.actionChip(
+                        label: name,
+                        onPressed: () => _applySuggestion(entry.key, name),
+                        accent: _accent,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 

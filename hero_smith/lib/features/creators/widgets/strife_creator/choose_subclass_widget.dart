@@ -5,7 +5,8 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/services/subclass_service.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_subclass_widget_text.dart';
 
 class _SearchOption<T> {
@@ -31,7 +32,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required String title,
   required List<_SearchOption<T>> options,
   T? selected,
+  Color? accent,
 }) {
+  final accentColor = accent ?? CreatorTheme.classAccent;
+  
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -55,6 +59,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -64,22 +72,90 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.2),
+                          accentColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: accentColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accentColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Icon(Icons.search, color: accentColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
-                      autofocus: false,
-                      decoration: const InputDecoration(
+                      autofocus: true,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: ChooseSubclassWidgetText.searchHint,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: accentColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -91,36 +167,99 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Center(child: Text(ChooseSubclassWidgetText.noMatchesFound)),
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  ChooseSubclassWidgetText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
-                              return ListTile(
-                                title: Text(option.label),
-                                subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
-                                    : null,
-                                trailing: isSelected
-                                    ? const Icon(Icons.check)
-                                    : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  _PickerSelection<T>(value: option.value),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? accentColor.withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accentColor.withValues(alpha: 0.4),
+                                        )
+                                      : null,
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? accentColor
+                                          : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle, color: accentColor, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
                       child: const Text(ChooseSubclassWidgetText.cancelLabel),
                     ),
                   ),
@@ -165,6 +304,8 @@ class ChooseSubclassWidget extends StatefulWidget {
 }
 
 class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
+  static const _accent = CreatorTheme.classAccent;
+  
   final SubclassService _planService = const SubclassService();
   final SubclassDataService _dataService = SubclassDataService();
   final ListEquality<String> _listEquality = const ListEquality<String>();
@@ -453,9 +594,9 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CreatorTheme.loadingIndicator(_accent),
         ),
       );
     }
@@ -464,10 +605,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       return _buildContainer(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Text(
-            _error!,
-            style: AppTextStyles.caption,
-          ),
+          child: CreatorTheme.errorMessage(_error!),
         ),
       );
     }
@@ -485,22 +623,6 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
 
     final children = <Widget>[];
 
-    children.add(
-      Text(
-        ChooseSubclassWidgetText.sectionTitle,
-        style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.w600),
-      ),
-    );
-    children.add(const SizedBox(height: 4));
-    children.add(
-      Text(
-        ChooseSubclassWidgetText.sectionSubtitle,
-        style: AppTextStyles.caption,
-      ),
-    );
-
-    children.add(const SizedBox(height: 12));
-
     if (plan.hasSubclassChoice && !plan.combineDomainsAsSubclass) {
       children.addAll(_buildSubclassPickerSection());
       children.add(const SizedBox(height: 16));
@@ -508,7 +630,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       children.add(
         Text(
           ChooseSubclassWidgetText.domainsDetermineSubclass,
-          style: AppTextStyles.caption,
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
         ),
       );
       children.add(const SizedBox(height: 16));
@@ -523,22 +645,46 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       children.addAll(_buildDomainSection());
     }
 
-    return _buildContainer(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
-        ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseSubclassWidgetText.sectionTitle,
+            subtitle: ChooseSubclassWidgetText.sectionSubtitle,
+            icon: Icons.category,
+            accent: _accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildContainer({required Widget child}) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: child,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseSubclassWidgetText.sectionTitle,
+            subtitle: ChooseSubclassWidgetText.sectionSubtitle,
+            icon: Icons.category,
+            accent: _accent,
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -585,22 +731,44 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     return [
       InkWell(
         onTap: openSearch,
-        child: InputDecorator(
-          decoration: const InputDecoration(
-            labelText: ChooseSubclassWidgetText.subclassLabel,
-            border: OutlineInputBorder(),
-            suffixIcon: Icon(Icons.search),
+        borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2A2A2A),
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            border: Border.all(color: Colors.grey.shade700),
           ),
-          child: Text(
-            selectedOption != null
-                ? selectedOption.name
-                : ChooseSubclassWidgetText.subclassPlaceholderDisplay,
-            style: TextStyle(
-              fontSize: 16,
-              color: selectedOption != null
-                  ? null
-                  : Theme.of(context).hintColor,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ChooseSubclassWidgetText.subclassLabel,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      selectedOption != null
+                          ? selectedOption.name
+                          : ChooseSubclassWidgetText.subclassPlaceholderDisplay,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: selectedOption != null
+                            ? Colors.white
+                            : Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.search, color: Colors.grey.shade400),
+            ],
           ),
         ),
       ),
@@ -612,7 +780,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         const SizedBox(height: 12),
         Text(
           featureData.featureDescription!,
-          style: AppTextStyles.caption,
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
         ),
       ],
     ];
@@ -640,19 +808,23 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
       children: [
         Text(
           option.name,
-          style: AppTextStyles.subtitle,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         const SizedBox(height: 4),
         if (option.description != null && option.description!.isNotEmpty)
           Text(
             option.description!,
-            style: AppTextStyles.body,
+            style: TextStyle(color: Colors.grey.shade300, fontSize: 14),
           ),
         if (ability != null && ability.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
             '${ChooseSubclassWidgetText.grantsAbilityPrefix}$ability',
-            style: AppTextStyles.caption,
+            style: TextStyle(color: _accent, fontSize: 13),
           ),
         ],
         if (chips.isNotEmpty) ...[
@@ -681,8 +853,9 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
                 Flexible(
                   child: Text(
                     '${ChooseSubclassWidgetText.reservedSkillWarningPrefix}$skillInfo${ChooseSubclassWidgetText.reservedSkillWarningSuffix}',
-                    style: AppTextStyles.caption.copyWith(
-                      color: Colors.orange.shade800,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.orange.shade300,
                     ),
                   ),
                 ),
@@ -736,22 +909,44 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     return [
       InkWell(
         onTap: openSearch,
-        child: InputDecorator(
-          decoration: const InputDecoration(
-            labelText: ChooseSubclassWidgetText.deityLabel,
-            border: OutlineInputBorder(),
-            suffixIcon: Icon(Icons.search),
+        borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2A2A2A),
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            border: Border.all(color: Colors.grey.shade700),
           ),
-          child: Text(
-            selectedDeity != null
-                ? '${selectedDeity.name}${ChooseSubclassWidgetText.deityDisplayPrefix}${selectedDeity.category}${ChooseSubclassWidgetText.deityDisplaySuffix}'
-                : ChooseSubclassWidgetText.deityPlaceholderDisplay,
-            style: TextStyle(
-              fontSize: 16,
-              color: selectedDeity != null
-                  ? null
-                  : Theme.of(context).hintColor,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ChooseSubclassWidgetText.deityLabel,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      selectedDeity != null
+                          ? '${selectedDeity.name}${ChooseSubclassWidgetText.deityDisplayPrefix}${selectedDeity.category}${ChooseSubclassWidgetText.deityDisplaySuffix}'
+                          : ChooseSubclassWidgetText.deityPlaceholderDisplay,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: selectedDeity != null
+                            ? Colors.white
+                            : Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.search, color: Colors.grey.shade400),
+            ],
           ),
         ),
       ),
@@ -786,7 +981,11 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         required > 0
             ? '${ChooseSubclassWidgetText.domainHeaderRequiredPrefix}$required${required == 1 ? ChooseSubclassWidgetText.domainHeaderRequiredSingularSuffix : ChooseSubclassWidgetText.domainHeaderRequiredPluralSuffix}'
             : ChooseSubclassWidgetText.domainHeaderNoRequired,
-        style: AppTextStyles.subtitle.copyWith(fontSize: 14),
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
       ),
       const SizedBox(height: 8),
       Wrap(
@@ -798,8 +997,19 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
               required > 0 &&
               _selectedDomains.length >= required;
           return FilterChip(
-            label: Text(domain),
+            label: Text(
+              domain,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.grey.shade300,
+              ),
+            ),
             selected: isSelected,
+            selectedColor: _accent.withValues(alpha: 0.3),
+            backgroundColor: const Color(0xFF2A2A2A),
+            checkmarkColor: _accent,
+            side: BorderSide(
+              color: isSelected ? _accent : Colors.grey.shade700,
+            ),
             onSelected:
                 canSelectMore ? null : (value) => _toggleDomain(domain, value),
           );
@@ -809,16 +1019,31 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         const SizedBox(height: 8),
         Text(
           '$remaining${ChooseSubclassWidgetText.remainingPicksPrefix}${remaining == 1 ? ChooseSubclassWidgetText.remainingPicksSingularSuffix : ChooseSubclassWidgetText.remainingPicksPluralSuffix}',
-          style: AppTextStyles.caption,
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
         ),
       ],
     ];
   }
 
   Widget _buildInfoChip(IconData icon, String label) {
-    return Chip(
-      avatar: Icon(icon, size: 16),
-      label: Text(label),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: _accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _accent.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: _accent),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade300),
+          ),
+        ],
+      ),
     );
   }
 }

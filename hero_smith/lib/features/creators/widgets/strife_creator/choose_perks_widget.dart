@@ -9,7 +9,7 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/models/perks_models.dart';
 import '../../../../core/services/perks_service.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_perks_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
@@ -48,6 +48,7 @@ class StartingPerksWidget extends ConsumerStatefulWidget {
 
 class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
     with AutomaticKeepAliveClientMixin {
+  static const _accent = CreatorTheme.classAccent;
   final StartingPerksService _service = const StartingPerksService();
   final MapEquality<String, String?> _mapEquality =
       const MapEquality<String, String?>();
@@ -291,9 +292,9 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
 
   Widget _buildLoadingCard() {
     return _buildContainer(
-      child: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(child: CircularProgressIndicator()),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: CreatorTheme.loadingIndicator(_accent),
       ),
     );
   }
@@ -302,21 +303,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
     return _buildContainer(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: AppTextStyles.caption,
-            ),
-          ],
-        ),
+        child: CreatorTheme.errorMessage('$title: $message'),
       ),
     );
   }
@@ -338,25 +325,20 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
     final assigned =
         _selections.values.expand((slots) => slots).whereType<String>().length;
 
-    return _buildContainer(
-      child: ExpansionTile(
-        key: const PageStorageKey<String>('starting_perks_expansion'),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-        initiallyExpanded: _isExpanded,
-        maintainState: true,
-        onExpansionChanged: (expanded) =>
-            setState(() => _isExpanded = expanded),
-        title: Text(
-          ChoosePerksWidgetText.expansionTitle,
-          style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '${ChoosePerksWidgetText.selectionSubtitlePrefix}$assigned${ChoosePerksWidgetText.selectionSubtitleMiddle}$totalSlots${ChoosePerksWidgetText.selectionSubtitleSuffix}',
-          style: AppTextStyles.caption,
-        ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CreatorTheme.sectionHeader(
+            title: ChoosePerksWidgetText.expansionTitle,
+            subtitle: '${ChoosePerksWidgetText.selectionSubtitlePrefix}$assigned${ChoosePerksWidgetText.selectionSubtitleMiddle}$totalSlots${ChoosePerksWidgetText.selectionSubtitleSuffix}',
+            icon: Icons.star,
+            accent: _accent,
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: plan.allowances
@@ -375,10 +357,21 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
   }
 
   Widget _buildContainer({required Widget child}) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: child,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChoosePerksWidgetText.expansionTitle,
+            subtitle: ChoosePerksWidgetText.sectionSubtitle,
+            icon: Icons.star,
+            accent: _accent,
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -413,15 +406,16 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
         children: [
           Text(
             allowance.label,
-            style: AppTextStyles.subtitle.copyWith(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '${ChoosePerksWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? ChoosePerksWidgetText.allowancePickSingularSuffix : ChoosePerksWidgetText.allowancePickPluralSuffix}${ChoosePerksWidgetText.allowancePickFromPrefix}$allowedGroupsText',
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
           const SizedBox(height: 8),
           PerksSelectionWidget(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/models/class_data.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/class_selector_widget_text.dart';
 
 /// Widget for selecting hero class
@@ -19,117 +19,126 @@ class ClassSelectorWidget extends StatelessWidget {
     required this.onClassChanged,
   });
 
+  static const _accent = CreatorTheme.classAccent;
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              ClassSelectorWidgetText.title,
-              style: AppTextStyles.title,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              ClassSelectorWidgetText.subtitle,
-              style: AppTextStyles.caption,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<ClassData>(
-              value: selectedClass,
-              decoration: const InputDecoration(
-                labelText: ClassSelectorWidgetText.classLabel,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-              ),
-              items: availableClasses
-                  .map((classData) => DropdownMenuItem(
-                        value: classData,
-                        child: Text(
-                          classData.name,
-                          style: AppTextStyles.body,
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  onClassChanged(value);
-                }
-              },
-            ),
-            if (selectedClass != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppColors.secondary,
-                    width: 1,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ClassSelectorWidgetText.title,
+            subtitle: ClassSelectorWidgetText.subtitle,
+            icon: Icons.school,
+            accent: _accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<ClassData>(
+                  value: selectedClass,
+                  dropdownColor: const Color(0xFF2A2A2A),
+                  decoration: CreatorTheme.dropdownDecoration(
+                    label: ClassSelectorWidgetText.classLabel,
+                    accent: _accent,
                   ),
+                  style: const TextStyle(color: Colors.white),
+                  items: availableClasses
+                      .map((classData) => DropdownMenuItem(
+                            value: classData,
+                            child: Text(classData.name),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      onClassChanged(value);
+                    }
+                  },
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.auto_awesome,
-                          color: AppColors.secondary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          selectedClass!
-                              .startingCharacteristics.heroicResourceName,
-                          style: AppTextStyles.subtitle.copyWith(
-                            color: AppColors.secondary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    if (selectedClass!.startingCharacteristics.motto != null)
-                      Text(
-                        selectedClass!.startingCharacteristics.motto!,
-                        style: AppTextStyles.caption.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
+                if (selectedClass != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _accent.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: _accent.withValues(alpha: 0.3),
                       ),
-                    if (selectedClass!.startingCharacteristics.motto != null)
-                      const SizedBox(height: 12),
-                    if (selectedClass!.startingCharacteristics.motto == null)
-                      const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildStatChip(
-                          ClassSelectorWidgetText.staminaLabel,
-                          '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)}${ClassSelectorWidgetText.staminaValueSuffixPrefix}${selectedClass!.startingCharacteristics.baseStamina}${ClassSelectorWidgetText.staminaValueSuffixMiddle}${selectedClass!.startingCharacteristics.staminaPerLevel}${ClassSelectorWidgetText.staminaValueSuffixSuffix}',
+                        Row(
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: _accent.withValues(alpha: 0.2),
+                                border: Border.all(color: _accent.withValues(alpha: 0.4)),
+                              ),
+                              child: const Icon(
+                                Icons.auto_awesome,
+                                color: _accent,
+                                size: 16,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                selectedClass!.startingCharacteristics.heroicResourceName,
+                                style: const TextStyle(
+                                  color: _accent,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        _buildStatChip(
-                          ClassSelectorWidgetText.recoveriesLabel,
-                          '${selectedClass!.startingCharacteristics.baseRecoveries}',
+                        const SizedBox(height: 8),
+                        if (selectedClass!.startingCharacteristics.motto != null)
+                          Text(
+                            selectedClass!.startingCharacteristics.motto!,
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 13,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        if (selectedClass!.startingCharacteristics.motto != null)
+                          const SizedBox(height: 12),
+                        if (selectedClass!.startingCharacteristics.motto == null)
+                          const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 8,
+                          children: [
+                            _buildStatChip(
+                              ClassSelectorWidgetText.staminaLabel,
+                              '${_calculateStamina(selectedClass!.startingCharacteristics.baseStamina, selectedClass!.startingCharacteristics.staminaPerLevel, selectedLevel)}${ClassSelectorWidgetText.staminaValueSuffixPrefix}${selectedClass!.startingCharacteristics.baseStamina}${ClassSelectorWidgetText.staminaValueSuffixMiddle}${selectedClass!.startingCharacteristics.staminaPerLevel}${ClassSelectorWidgetText.staminaValueSuffixSuffix}',
+                            ),
+                            _buildStatChip(
+                              ClassSelectorWidgetText.recoveriesLabel,
+                              '${selectedClass!.startingCharacteristics.baseRecoveries}',
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -140,13 +149,12 @@ class ClassSelectorWidget extends StatelessWidget {
 
   Widget _buildStatChip(String label, String value) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
+        color: _accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.4),
-          width: 1,
+          color: _accent.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -154,13 +162,18 @@ class ClassSelectorWidget extends StatelessWidget {
         children: [
           Text(
             '$label${ClassSelectorWidgetText.statLabelSuffix}',
-            style: AppTextStyles.caption.copyWith(
+            style: TextStyle(
+              color: Colors.grey.shade400,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
             value,
-            style: AppTextStyles.caption,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 ﻿class StartingCharacteristicsWidgetText {
   static const String title = 'Starting Characteristics';
+  static const String sectionSubtitle = 'Assign your characteristic values';
   static const String selectArrayHint =
       'Select an array to unlock assignable values.';
   static const String assignmentMissingArray = 'Assign all array values';

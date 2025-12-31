@@ -4,7 +4,7 @@ import '../../../../core/controllers/starting_characteristics_controller.dart';
 import '../../../../core/models/class_data.dart';
 import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_characteristics_widget_text.dart';
 
 class StartingCharacteristicsWidget extends StatefulWidget {
@@ -38,6 +38,7 @@ class StartingCharacteristicsWidget extends StatefulWidget {
 
 class _StartingCharacteristicsWidgetState
     extends State<StartingCharacteristicsWidget> {
+  static const _accent = CreatorTheme.classAccent;
   late StartingCharacteristicsController _controller;
   Map<String, int> _lastAssignments = const {};
   Map<String, int> _lastTotals = const {};
@@ -184,57 +185,65 @@ class _StartingCharacteristicsWidgetState
           (choice) => (levelSelections[choice.id] ?? '').isNotEmpty,
         );
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              StartingCharacteristicsWidgetText.title,
-              style: AppTextStyles.title,
-            ),
-            const SizedBox(height: 4),
-            _buildAllCharacteristicsRow(summary),
-            if (selectedArray == null &&
-                _controller.classData.startingCharacteristics
-                    .startingCharacteristicsArrays.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.info_outline,
-                      size: 14, color: Colors.orangeAccent),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      StartingCharacteristicsWidgetText.selectArrayHint,
-                      style: AppTextStyles.caption
-                          .copyWith(color: Colors.orangeAccent, fontSize: 11),
-                    ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StartingCharacteristicsWidgetText.title,
+            subtitle: StartingCharacteristicsWidgetText.sectionSubtitle,
+            icon: Icons.bar_chart,
+            accent: _accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAllCharacteristicsRow(summary),
+                if (selectedArray == null &&
+                    _controller.classData.startingCharacteristics
+                        .startingCharacteristicsArrays.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.info_outline,
+                          size: 14, color: Colors.orangeAccent),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          StartingCharacteristicsWidgetText.selectArrayHint,
+                          style: TextStyle(
+                            color: Colors.orangeAccent,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
-              ),
-            ],
-            _buildAssignmentStatus(assignmentsComplete, choicesComplete),
-            if (selectedArray != null) ...[
-              const SizedBox(height: 4),
-              _buildArrayPicker(),
-              const SizedBox(height: 4),
-              _buildAvailableTokensSection(),
-            ] else ...[
-              const SizedBox(height: 4),
-              _buildArrayPicker(),
-            ],
-            const SizedBox(height: 4),
-            _buildPotencySection(potencyValues),
-            if (_controller.levelChoices.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              _buildLevelChoicesSection(),
-            ],
-          ],
-        ),
+                _buildAssignmentStatus(assignmentsComplete, choicesComplete),
+                if (selectedArray != null) ...[
+                  const SizedBox(height: 4),
+                  _buildArrayPicker(),
+                  const SizedBox(height: 4),
+                  _buildAvailableTokensSection(),
+                ] else ...[
+                  const SizedBox(height: 4),
+                  _buildArrayPicker(),
+                ],
+                const SizedBox(height: 4),
+                _buildPotencySection(potencyValues),
+                if (_controller.levelChoices.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  _buildLevelChoicesSection(),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -286,7 +295,7 @@ class _StartingCharacteristicsWidgetState
                 Expanded(
                   child: Text(
                     _displayName(stat),
-                    style: AppTextStyles.subtitle.copyWith(
+                    style: TextStyle(
                       color: color,
                       fontWeight: FontWeight.bold,
                       fontSize: 9,
@@ -300,10 +309,10 @@ class _StartingCharacteristicsWidgetState
             const SizedBox(height: 2),
             Text(
               total.toString(),
-              style: AppTextStyles.title.copyWith(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 2),
@@ -350,7 +359,7 @@ class _StartingCharacteristicsWidgetState
             children: [
               Text(
                 _displayName(stat),
-                style: AppTextStyles.subtitle.copyWith(
+                style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.bold,
                   fontSize: 9,
@@ -365,10 +374,10 @@ class _StartingCharacteristicsWidgetState
                 children: [
                   Text(
                     total.toString(),
-                    style: AppTextStyles.title.copyWith(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: Colors.white,
                     ),
                   ),
                   if (assignedToken != null)
@@ -414,19 +423,34 @@ class _StartingCharacteristicsWidgetState
           border: Border.all(color: Colors.grey.withOpacity(0.4)),
           color: Colors.grey.withOpacity(0.12),
         ),
-        child: const Text(
+        child: Text(
           StartingCharacteristicsWidgetText.allFixedMessage,
-          style: AppTextStyles.caption,
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
         ),
       );
     }
 
     return DropdownButtonFormField<CharacteristicArray?>(
       value: _controller.selectedArray,
-      decoration: const InputDecoration(
+      dropdownColor: const Color(0xFF2A2A2A),
+      style: const TextStyle(color: Colors.white, fontSize: 14),
+      decoration: InputDecoration(
         labelText: StartingCharacteristicsWidgetText.arrayLabel,
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        labelStyle: TextStyle(color: Colors.grey.shade400),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+          borderSide: BorderSide(color: Colors.grey.shade700),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+          borderSide: BorderSide(color: _accent),
+        ),
+        filled: true,
+        fillColor: const Color(0xFF2A2A2A),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
       items: [
         const DropdownMenuItem<CharacteristicArray?>(
@@ -437,10 +461,7 @@ class _StartingCharacteristicsWidgetState
           final preview = array.values.map(_formatSigned).join(' / ');
           return DropdownMenuItem<CharacteristicArray?>(
             value: array,
-            child: Text(
-              preview,
-              style: AppTextStyles.body,
-            ),
+            child: Text(preview),
           );
         }),
       ],
@@ -469,8 +490,8 @@ class _StartingCharacteristicsWidgetState
       ),
       child: Text(
         message,
-        style: AppTextStyles.caption.copyWith(
-          color: AppColors.textPrimary,
+        style: TextStyle(
+          color: Colors.white,
           fontStyle: FontStyle.italic,
           fontSize: 10,
         ),
@@ -491,7 +512,7 @@ class _StartingCharacteristicsWidgetState
 
     final content = Text(
       _formatSigned(token.value),
-      style: AppTextStyles.caption.copyWith(
+      style: TextStyle(
         fontSize: expanded ? 16 : 11,
         fontWeight: FontWeight.w600,
         color: textColor,
@@ -594,7 +615,7 @@ class _StartingCharacteristicsWidgetState
           Expanded(
             child: Text(
               parts.join(StartingCharacteristicsWidgetText.assignmentStatusSeparator),
-              style: AppTextStyles.caption.copyWith(color: Colors.orangeAccent),
+              style: const TextStyle(color: Colors.orangeAccent, fontSize: 13),
             ),
           ),
         ],
@@ -627,9 +648,10 @@ class _StartingCharacteristicsWidgetState
             children: [
               Text(
                 StartingCharacteristicsWidgetText.availableValuesTitle,
-                style: AppTextStyles.subtitle.copyWith(
+                style: TextStyle(
                   color: accent,
                   fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 8),
@@ -638,14 +660,12 @@ class _StartingCharacteristicsWidgetState
                   isActive
                       ? StartingCharacteristicsWidgetText.releaseToClearValue
                       : StartingCharacteristicsWidgetText.allValuesAssigned,
-                  style: AppTextStyles.caption,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 )
               else ...[
                 Text(
                   StartingCharacteristicsWidgetText.holdAndDragToAssign,
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -668,9 +688,10 @@ class _StartingCharacteristicsWidgetState
                 const SizedBox(height: 8),
                 Text(
                   StartingCharacteristicsWidgetText.releaseToClearSlot,
-                  style: AppTextStyles.caption.copyWith(
+                  style: TextStyle(
                     color: accent,
                     fontWeight: FontWeight.w600,
+                    fontSize: 13,
                   ),
                 ),
               ],
@@ -702,9 +723,10 @@ class _StartingCharacteristicsWidgetState
         children: [
           Text(
             '${StartingCharacteristicsWidgetText.potencyTitlePrefix}$baseName${StartingCharacteristicsWidgetText.potencyTitleSuffix}',
-            style: AppTextStyles.subtitle.copyWith(
+            style: TextStyle(
               color: AppColors.accent,
               fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -733,9 +755,10 @@ class _StartingCharacteristicsWidgetState
       ),
       child: Text(
         '$label ${_formatSigned(value)}',
-        style: AppTextStyles.caption.copyWith(
+        style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: Colors.white,
+          fontSize: 13,
         ),
       ),
     );
@@ -747,17 +770,18 @@ class _StartingCharacteristicsWidgetState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primary.withOpacity(0.4)),
-        color: AppColors.primary.withOpacity(0.1),
+        border: Border.all(color: _accent.withOpacity(0.4)),
+        color: _accent.withOpacity(0.1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             StartingCharacteristicsWidgetText.levelBonusesTitle,
-            style: AppTextStyles.subtitle.copyWith(
-              color: AppColors.primary,
+            style: TextStyle(
+              color: _accent,
               fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -773,10 +797,25 @@ class _StartingCharacteristicsWidgetState
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String?>(
         value: current,
+        dropdownColor: const Color(0xFF2A2A2A),
+        style: const TextStyle(color: Colors.white, fontSize: 14),
         decoration: InputDecoration(
           labelText:
               '${StartingCharacteristicsWidgetText.levelBonusLabelPrefix}${choice.level}${StartingCharacteristicsWidgetText.levelBonusLabelSuffix}',
-          border: const OutlineInputBorder(),
+          labelStyle: TextStyle(color: Colors.grey.shade400),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            borderSide: BorderSide(color: Colors.grey.shade700),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            borderSide: BorderSide(color: _accent),
+          ),
+          filled: true,
+          fillColor: const Color(0xFF2A2A2A),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
@@ -790,7 +829,7 @@ class _StartingCharacteristicsWidgetState
             final label = _displayName(stat);
             return DropdownMenuItem<String?>(
               value: stat,
-              child: Text(label, style: AppTextStyles.body),
+              child: Text(label),
             );
           }),
         ],
@@ -808,8 +847,8 @@ class _StartingCharacteristicsWidgetState
       ),
       child: Text(
         label,
-        style: AppTextStyles.caption.copyWith(
-          color: AppColors.textPrimary,
+        style: const TextStyle(
+          color: Colors.white,
           fontSize: 10,
         ),
       ),
@@ -825,7 +864,7 @@ class _StartingCharacteristicsWidgetState
       ),
       child: Text(
         label,
-        style: AppTextStyles.caption.copyWith(
+        style: TextStyle(
           color: color,
           fontSize: 10,
         ),

@@ -6,8 +6,8 @@ import '../../../../core/models/skills_models.dart';
 import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -35,6 +35,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required List<_SearchOption<T>> options,
   T? selected,
 }) {
+  const accent = CreatorTheme.classAccent;
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -58,6 +59,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -67,22 +69,56 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          accent.withValues(alpha: 0.3),
+                          accent.withValues(alpha: 0.1),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.psychology, color: accent, size: 24),
+                        const SizedBox(width: 12),
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.all(16),
                     child: TextField(
                       controller: controller,
                       autofocus: false,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: ChooseSkillsWidgetText.searchHint,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderSide: BorderSide(color: accent),
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -91,13 +127,16 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       },
                     ),
                   ),
-                  const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child:
-                                Center(child: Text(ChooseSkillsWidgetText.noMatchesFound)),
+                        ? Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Center(
+                              child: Text(
+                                ChooseSkillsWidgetText.noMatchesFound,
+                                style: TextStyle(color: Colors.grey.shade400),
+                              ),
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
@@ -107,12 +146,24 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
                               return ListTile(
-                                title: Text(option.label),
+                                title: Text(
+                                  option.label,
+                                  style: TextStyle(
+                                    color: isSelected ? accent : Colors.white,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
                                 subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
+                                    ? Text(
+                                        option.subtitle!,
+                                        style: TextStyle(color: Colors.grey.shade400),
+                                      )
                                     : null,
                                 trailing: isSelected
-                                    ? const Icon(Icons.check)
+                                    ? Icon(Icons.check, color: accent)
+                                    : null,
+                                tileColor: isSelected
+                                    ? accent.withValues(alpha: 0.15)
                                     : null,
                                 onTap: () => Navigator.of(context).pop(
                                   _PickerSelection<T>(value: option.value),
@@ -125,7 +176,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     padding: const EdgeInsets.all(8),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text(ChooseSkillsWidgetText.cancelLabel),
+                      child: Text(
+                        ChooseSkillsWidgetText.cancelLabel,
+                        style: TextStyle(color: Colors.grey.shade400),
+                      ),
                     ),
                   ),
                 ],
@@ -165,6 +219,7 @@ class StartingSkillsWidget extends StatefulWidget {
 
 class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     with AutomaticKeepAliveClientMixin {
+  static const _accent = CreatorTheme.classAccent;
   final StartingSkillsService _service = const StartingSkillsService();
   final SkillDataService _skillDataService = SkillDataService();
   final MapEquality<String, String?> _mapEquality =
@@ -581,9 +636,9 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     if (_isLoading) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CreatorTheme.loadingIndicator(_accent),
         ),
       );
     }
@@ -592,21 +647,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
       return _buildContainer(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                ChooseSkillsWidgetText.loadErrorTitle,
-                style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: AppTextStyles.caption,
-              ),
-            ],
-          ),
+          child: CreatorTheme.errorMessage(_error!),
         ),
       );
     }
@@ -614,11 +655,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     final plan = _plan;
     if (plan == null || plan.allowances.isEmpty) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Text(
             ChooseSkillsWidgetText.noSkillsMessage,
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
         ),
       );
@@ -631,25 +672,20 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     final assigned =
         _selections.values.expand((slots) => slots).whereType<String>().length;
 
-    return _buildContainer(
-      child: ExpansionTile(
-        key: const PageStorageKey<String>('starting_skills_expansion'),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-        initiallyExpanded: _isExpanded,
-        maintainState: true,
-        onExpansionChanged: (expanded) =>
-            setState(() => _isExpanded = expanded),
-        title: Text(
-          ChooseSkillsWidgetText.expansionTitle,
-          style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '${ChooseSkillsWidgetText.selectionSubtitlePrefix}$assigned${ChooseSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseSkillsWidgetText.selectionSubtitleSuffix}',
-          style: AppTextStyles.caption,
-        ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseSkillsWidgetText.expansionTitle,
+            subtitle: '${ChooseSkillsWidgetText.selectionSubtitlePrefix}$assigned${ChooseSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseSkillsWidgetText.selectionSubtitleSuffix}',
+            icon: Icons.psychology,
+            accent: _accent,
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -667,10 +703,21 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   }
 
   Widget _buildContainer({required Widget child}) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: child,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseSkillsWidgetText.expansionTitle,
+            subtitle: ChooseSkillsWidgetText.sectionSubtitle,
+            icon: Icons.psychology,
+            accent: _accent,
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -684,9 +731,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         children: [
           Text(
             ChooseSkillsWidgetText.grantedSkillsTitle,
-            style: AppTextStyles.caption.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: _accent,
+              fontSize: 13,
             ),
           ),
           const SizedBox(height: 6),
@@ -700,13 +748,14 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: AppColors.primary.withValues(alpha: 0.15),
+                      color: _accent.withValues(alpha: 0.15),
                     ),
                     child: Text(
                       skill,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.primary,
+                      style: TextStyle(
+                        color: _accent,
                         fontWeight: FontWeight.w600,
+                        fontSize: 13,
                       ),
                     ),
                   ),
@@ -717,8 +766,9 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
             const SizedBox(height: 6),
             Text(
               '${ChooseSkillsWidgetText.duplicateGrantPrefix}${duplicateGrantNames.join(', ')}${ChooseSkillsWidgetText.duplicateGrantSuffix}',
-              style: AppTextStyles.caption.copyWith(
+              style: const TextStyle(
                 color: Colors.orange,
+                fontSize: 13,
               ),
             ),
           ],
@@ -735,7 +785,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         children: [
           Text(
             ChooseSkillsWidgetText.quickBuildTitle,
-            style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: 6),
           Wrap(
@@ -743,10 +797,17 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
             runSpacing: 6,
             children: quickBuild
                 .map(
-                  (skill) => Chip(
-                    label: Text(skill),
-                    backgroundColor:
-                        AppColors.secondary.withValues(alpha: 0.15),
+                  (skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: _accent.withValues(alpha: 0.15),
+                      border: Border.all(color: _accent.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(
+                      skill,
+                      style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
+                    ),
                   ),
                 )
                 .toList(),
@@ -773,15 +834,16 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
         children: [
           Text(
             allowance.label,
-            style: AppTextStyles.subtitle.copyWith(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '${ChooseSkillsWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? ChooseSkillsWidgetText.allowancePickSingularSuffix : ChooseSkillsWidgetText.allowancePickPluralSuffix}${ChooseSkillsWidgetText.allowancePickFromPrefix}$allowedGroupsText',
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
@@ -853,27 +915,44 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
               child: InkWell(
                 onTap: openSearch,
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText:
-                        '${ChooseSkillsWidgetText.choiceLabelPrefix}${index + 1}',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: const Icon(Icons.search),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
+                borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2A2A2A),
+                    borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                    border: Border.all(color: Colors.grey.shade700),
                   ),
-                  child: Text(
-                    selectedOption != null
-                        ? '${selectedOption.name}${ChooseSkillsWidgetText.selectedOptionGroupPrefix}${selectedOption.group}${ChooseSkillsWidgetText.selectedOptionGroupSuffix}'
-                        : ChooseSkillsWidgetText.unassignedDisplayLabel,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: selectedOption != null
-                          ? null
-                          : Theme.of(context).hintColor,
-                    ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${ChooseSkillsWidgetText.choiceLabelPrefix}${index + 1}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              selectedOption != null
+                                  ? '${selectedOption.name}${ChooseSkillsWidgetText.selectedOptionGroupPrefix}${selectedOption.group}${ChooseSkillsWidgetText.selectedOptionGroupSuffix}'
+                                  : ChooseSkillsWidgetText.unassignedDisplayLabel,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: selectedOption != null
+                                    ? Colors.white
+                                    : Colors.grey.shade500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.search, color: Colors.grey.shade400),
+                    ],
                   ),
                 ),
               ),

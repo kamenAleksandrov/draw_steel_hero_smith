@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/navigation_theme.dart';
+
 /// Represents an option in a searchable picker.
 class SearchableOption<T> {
   const SearchableOption({
@@ -97,20 +99,19 @@ class StaticGrantConflictNotice extends StatelessWidget {
   Widget build(BuildContext context) {
     if (conflictingIds.isEmpty) return const SizedBox.shrink();
 
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    const errorColor = Color(0xFFEF5350);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: scheme.errorContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: scheme.error.withValues(alpha: 0.5)),
+        color: errorColor.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: errorColor.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: scheme.error, size: 24),
+          const Icon(Icons.warning_amber_rounded, color: errorColor, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -118,17 +119,19 @@ class StaticGrantConflictNotice extends StatelessWidget {
               children: [
                 Text(
                   'Duplicate $itemType${conflictingIds.length > 1 ? 's' : ''} detected',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: scheme.error,
+                  style: const TextStyle(
+                    color: errorColor,
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Multiple features grant the same $itemType. '
                   'Discuss with your Director to choose an alternative.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onErrorContainer,
+                  style: TextStyle(
+                    color: Colors.grey.shade400,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -136,9 +139,10 @@ class StaticGrantConflictNotice extends StatelessWidget {
           ),
           if (onDismiss != null)
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(Icons.close, color: Colors.grey.shade500),
               onPressed: onDismiss,
               iconSize: 20,
+              splashRadius: 18,
             ),
         ],
       ),
@@ -213,8 +217,13 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
 
           final theme = Theme.of(context);
           final scheme = theme.colorScheme;
+          const accentColor = Color(0xFF42A5F5); // Blue accent
 
           return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -224,22 +233,90 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: theme.textTheme.titleLarge,
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.2),
+                          accentColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: const Border(
+                        bottom: BorderSide(
+                          color: Color(0xFF3D3D3D),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accentColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: const Icon(Icons.search, color: accentColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: autofocusSearch,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: 'Search...',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(color: accentColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -251,28 +328,70 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                   const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Center(child: Text('No matches found')),
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No matches found',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length + (emptyOptionLabel != null ? 1 : 0),
                             itemBuilder: (context, index) {
                               // Handle empty option at the top
                               if (emptyOptionLabel != null && index == 0) {
                                 final isSelected = selected == null;
-                                return ListTile(
-                                  title: Text(
-                                    emptyOptionLabel,
-                                    style: TextStyle(
-                                      fontStyle: FontStyle.italic,
-                                      color: scheme.onSurfaceVariant,
-                                    ),
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 2),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: isSelected
+                                        ? accentColor.withValues(alpha: 0.15)
+                                        : Colors.transparent,
+                                    border: isSelected
+                                        ? Border.all(
+                                            color: accentColor.withValues(alpha: 0.4),
+                                          )
+                                        : null,
                                   ),
-                                  trailing: isSelected ? const Icon(Icons.check) : null,
-                                  onTap: () => Navigator.of(context).pop(
-                                    SearchablePickerResult<T>(value: null),
+                                  child: ListTile(
+                                    title: Text(
+                                      emptyOptionLabel,
+                                      style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        color: isSelected
+                                            ? accentColor
+                                            : Colors.grey.shade400,
+                                      ),
+                                    ),
+                                    trailing: isSelected
+                                        ? const Icon(Icons.check_circle, color: accentColor, size: 22)
+                                        : null,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    onTap: () => Navigator.of(context).pop(
+                                      SearchablePickerResult<T>(value: null),
+                                    ),
                                   ),
                                 );
                               }
@@ -283,41 +402,95 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                   (option.value == null && selected == null);
                               
                               if (option.isDisabled) {
-                                return ListTile(
-                                  title: Text(
-                                    option.label,
-                                    style: TextStyle(
-                                      color: scheme.onSurface.withValues(alpha: 0.4),
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 2),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: const Color(0xFF2A2A2A),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      option.label,
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      option.disabledReason ?? 'Unavailable',
+                                      style: TextStyle(
+                                        color: Colors.red.shade300.withValues(alpha: 0.7),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    enabled: false,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                   ),
-                                  subtitle: Text(
-                                    option.disabledReason ?? 'Unavailable',
-                                    style: TextStyle(
-                                      color: scheme.error.withValues(alpha: 0.7),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  enabled: false,
                                 );
                               }
 
-                              return ListTile(
-                                title: Text(option.label),
-                                subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
-                                    : null,
-                                trailing: isSelected ? const Icon(Icons.check) : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  SearchablePickerResult<T>(value: option.value),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? accentColor.withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accentColor.withValues(alpha: 0.4),
+                                        )
+                                      : null,
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? accentColor
+                                          : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? const Icon(Icons.check_circle, color: accentColor, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    SearchablePickerResult<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
                       child: const Text('Cancel'),
                     ),
                   ),

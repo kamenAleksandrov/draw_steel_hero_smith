@@ -7,6 +7,7 @@
   static const String noSkillsMessage =
       'This class does not grant additional skill picks.';
   static const String expansionTitle = 'Skills';
+  static const String sectionSubtitle = 'Choose your additional skills';
   static const String selectionSubtitlePrefix = 'Selected ';
   static const String selectionSubtitleMiddle = ' of ';
   static const String selectionSubtitleSuffix = ' options';

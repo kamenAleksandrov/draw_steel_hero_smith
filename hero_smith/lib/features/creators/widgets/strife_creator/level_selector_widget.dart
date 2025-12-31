@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_text_styles.dart';
+
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/level_selector_widget_text.dart';
 
 /// Widget for selecting hero level (1-10)
@@ -13,50 +14,48 @@ class LevelSelectorWidget extends StatelessWidget {
     required this.onLevelChanged,
   });
 
+  static const _accent = CreatorTheme.classAccent;
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: selectedLevel,
-                    decoration: const InputDecoration(
-                      labelText: LevelSelectorWidgetText.heroLevelLabel,
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                    items: List.generate(10, (index) => index + 1)
-                        .map((level) => DropdownMenuItem(
-                              value: level,
-                              child: Text(
-                                '${LevelSelectorWidgetText.levelOptionPrefix}$level',
-                                style: AppTextStyles.body,
-                              ),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        onLevelChanged(value);
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16)
-              ],
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: LevelSelectorWidgetText.heroLevelLabel,
+            subtitle: LevelSelectorWidgetText.levelSubtitle,
+            icon: Icons.trending_up,
+            accent: _accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: DropdownButtonFormField<int>(
+              value: selectedLevel,
+              dropdownColor: const Color(0xFF2A2A2A),
+              decoration: CreatorTheme.dropdownDecoration(
+                label: LevelSelectorWidgetText.heroLevelLabel,
+                accent: _accent,
+              ),
+              style: const TextStyle(color: Colors.white),
+              items: List.generate(10, (index) => index + 1)
+                  .map((level) => DropdownMenuItem(
+                        value: level,
+                        child: Text(
+                          '${LevelSelectorWidgetText.levelOptionPrefix}$level',
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  onLevelChanged(value);
+                }
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -5,8 +5,7 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/skills_models.dart';
 import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -34,6 +33,7 @@ class StartingSkillsWidget extends StatefulWidget {
 }
 
 class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
+  static const _accent = CreatorTheme.classAccent;
   final StartingSkillsService _service = const StartingSkillsService();
   final SkillDataService _skillDataService = SkillDataService();
   final MapEquality<String, String?> _mapEquality =
@@ -329,9 +329,9 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CreatorTheme.loadingIndicator(_accent),
         ),
       );
     }
@@ -340,21 +340,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
       return _buildContainer(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                StartingSkillsWidgetText.loadErrorTitle,
-                style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: AppTextStyles.caption,
-              ),
-            ],
-          ),
+          child: CreatorTheme.errorMessage(_error!),
         ),
       );
     }
@@ -362,11 +348,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     final plan = _plan;
     if (plan == null || plan.allowances.isEmpty) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Text(
             StartingSkillsWidgetText.noSkillsMessage,
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
         ),
       );
@@ -379,23 +365,20 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     final assigned =
         _selections.values.expand((slots) => slots).whereType<String>().length;
 
-    return _buildContainer(
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-        initiallyExpanded: _isExpanded,
-        onExpansionChanged: (expanded) =>
-            setState(() => _isExpanded = expanded),
-        title: Text(
-          StartingSkillsWidgetText.expansionTitle,
-          style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '${StartingSkillsWidgetText.selectionSubtitlePrefix}$assigned${StartingSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${StartingSkillsWidgetText.selectionSubtitleSuffix}',
-          style: AppTextStyles.caption,
-        ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CreatorTheme.sectionHeader(
+            title: StartingSkillsWidgetText.expansionTitle,
+            subtitle: '${StartingSkillsWidgetText.selectionSubtitlePrefix}$assigned${StartingSkillsWidgetText.selectionSubtitleMiddle}$totalSlots${StartingSkillsWidgetText.selectionSubtitleSuffix}',
+            icon: Icons.psychology,
+            accent: _accent,
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -413,10 +396,21 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
   }
 
   Widget _buildContainer({required Widget child}) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: child,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StartingSkillsWidgetText.expansionTitle,
+            subtitle: StartingSkillsWidgetText.sectionSubtitle,
+            icon: Icons.psychology,
+            accent: _accent,
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -428,9 +422,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         children: [
           Text(
             StartingSkillsWidgetText.grantedSkillsTitle,
-            style: AppTextStyles.caption.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+              color: _accent,
+              fontSize: 13,
             ),
           ),
           const SizedBox(height: 6),
@@ -449,7 +444,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                   borderRadius: BorderRadius.circular(8),
                   color: isDuplicate
                       ? Colors.orange.withValues(alpha: 0.15)
-                      : AppColors.primary.withValues(alpha: 0.15),
+                      : _accent.withValues(alpha: 0.15),
                   border: isDuplicate
                       ? Border.all(color: Colors.orange.withValues(alpha: 0.5))
                       : null,
@@ -464,19 +459,20 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                     ],
                     Text(
                       skill,
-                      style: AppTextStyles.caption.copyWith(
+                      style: TextStyle(
                         color: isDuplicate
-                            ? Colors.orange.shade800
-                            : AppColors.primary,
+                            ? Colors.orange.shade300
+                            : _accent,
                         fontWeight: FontWeight.w600,
+                        fontSize: 13,
                       ),
                     ),
                     if (isDuplicate) ...[
                       const SizedBox(width: 4),
                       Text(
                         StartingSkillsWidgetText.duplicateLabel,
-                        style: AppTextStyles.caption.copyWith(
-                          color: Colors.orange.shade700,
+                        style: TextStyle(
+                          color: Colors.orange.shade400,
                           fontSize: 10,
                         ),
                       ),
@@ -499,7 +495,11 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         children: [
           Text(
             StartingSkillsWidgetText.quickBuildTitle,
-            style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: 6),
           Wrap(
@@ -507,10 +507,17 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
             runSpacing: 6,
             children: quickBuild
                 .map(
-                  (skill) => Chip(
-                    label: Text(skill),
-                    backgroundColor:
-                        AppColors.secondary.withValues(alpha: 0.15),
+                  (skill) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: _accent.withValues(alpha: 0.15),
+                      border: Border.all(color: _accent.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(
+                      skill,
+                      style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
+                    ),
                   ),
                 )
                 .toList(),
@@ -537,15 +544,16 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
         children: [
           Text(
             allowance.label,
-            style: AppTextStyles.subtitle.copyWith(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             '${StartingSkillsWidgetText.allowancePickPrefix}${allowance.pickCount}${allowance.pickCount == 1 ? StartingSkillsWidgetText.allowancePickSingularSuffix : StartingSkillsWidgetText.allowancePickPluralSuffix}${StartingSkillsWidgetText.allowancePickFromPrefix}$allowedGroupsText',
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
           const SizedBox(height: 8),
           ...List.generate(slots.length, (index) {
@@ -571,11 +579,26 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
               padding:
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
               child: DropdownButtonFormField<String?>(
-                initialValue: current,
+                value: current,
+                dropdownColor: const Color(0xFF2A2A2A),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 decoration: InputDecoration(
                   labelText:
                       '${StartingSkillsWidgetText.choiceLabelPrefix}${index + 1}',
-                  border: const OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                    borderSide: BorderSide(color: _accent),
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFF2A2A2A),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),

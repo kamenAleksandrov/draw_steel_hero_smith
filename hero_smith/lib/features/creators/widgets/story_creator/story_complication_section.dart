@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/complication_grant_models.dart';
 import '../../../../core/models/component.dart' as model;
+import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_complication_section_text.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/treasures/treasures.dart';
@@ -32,7 +34,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required String title,
   required List<_SearchOption<T>> options,
   T? selected,
+  Color? accent,
 }) {
+  final accentColor = accent ?? CreatorTheme.complicationAccent;
+  
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -56,6 +61,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -65,22 +74,90 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.2),
+                          accentColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: accentColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accentColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Icon(Icons.search, color: accentColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: true,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: StoryComplicationSectionText.searchHint,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: accentColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -92,38 +169,99 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Center(
-                                child: Text(
-                                    StoryComplicationSectionText.noMatchesFound)),
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  StoryComplicationSectionText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
-                              return ListTile(
-                                title: Text(option.label),
-                                subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
-                                    : null,
-                                trailing: isSelected
-                                    ? const Icon(Icons.check)
-                                    : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  _PickerSelection<T>(value: option.value),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? accentColor.withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accentColor.withValues(alpha: 0.4),
+                                        )
+                                      : null,
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? accentColor
+                                          : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle, color: accentColor, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
                       child:
                           const Text(StoryComplicationSectionText.cancelLabel),
                     ),
@@ -166,56 +304,41 @@ class _StoryComplicationSectionState
     extends ConsumerState<StoryComplicationSection> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final complicationsAsync = ref.watch(componentsByTypeProvider('complication'));
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              StoryComplicationSectionText.sectionTitle,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              StoryComplicationSectionText.sectionSubtitle,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Builder(builder: (context) {
+      decoration: CreatorTheme.sectionDecoration(accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StoryComplicationSectionText.sectionTitle,
+            subtitle: StoryComplicationSectionText.sectionSubtitle,
+            icon: Icons.warning_amber_rounded,
+            accent: accent,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            child: Builder(builder: (context) {
               final complications = complicationsAsync.valueOrNull;
               if (complications == null) {
                 if (complicationsAsync.hasError) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(
-                        '${StoryComplicationSectionText.failedToLoadComplicationsPrefix}${complicationsAsync.error}',
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                    ),
+                  return CreatorTheme.errorMessage(
+                    '${StoryComplicationSectionText.failedToLoadComplicationsPrefix}${complicationsAsync.error}',
                   );
                 }
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                return CreatorTheme.loadingIndicator(accent);
               }
               
               if (complications.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text(StoryComplicationSectionText.noComplicationsAvailable),
+                return Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    StoryComplicationSectionText.noComplicationsAvailable,
+                    style: TextStyle(color: Colors.grey.shade500),
+                  ),
                 );
               }
 
@@ -258,24 +381,60 @@ class _StoryComplicationSectionState
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Complication dropdown
                   InkWell(
                     onTap: openSearch,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: StoryComplicationSectionText.selectComplicationLabel,
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.search),
-                      ),
-                      child: Text(
-                        selectedComp != null
-                            ? selectedComp.name
-                            : StoryComplicationSectionText.nonePlaceholder,
-                        style: TextStyle(
-                          fontSize: 16,
+                    borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2A2A2A),
+                        borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                        border: Border.all(
                           color: selectedComp != null
-                              ? theme.textTheme.bodyLarge?.color
-                              : theme.hintColor,
+                              ? accent.withValues(alpha: 0.5)
+                              : Colors.grey.shade700,
                         ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: selectedComp != null ? accent : Colors.grey.shade500,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  StoryComplicationSectionText.selectComplicationLabel,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  selectedComp != null
+                                      ? selectedComp.name
+                                      : StoryComplicationSectionText.nonePlaceholder,
+                                  style: TextStyle(
+                                    color: selectedComp != null
+                                        ? Colors.white
+                                        : Colors.grey.shade600,
+                                    fontSize: 15,
+                                    fontWeight: selectedComp != null
+                                        ? FontWeight.w500
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+                        ],
                       ),
                     ),
                   ),
@@ -294,8 +453,8 @@ class _StoryComplicationSectionState
                 ],
               );
             }),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -327,7 +486,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final data = complication.data;
     final complicationId = complication.id as String;
 
@@ -346,26 +505,48 @@ class _ComplicationDetails extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: NavigationTheme.cardBackgroundDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant,
+          color: accent.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            complication.name,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: accent.withValues(alpha: 0.2),
+                  border: Border.all(color: accent.withValues(alpha: 0.4)),
+                ),
+                child: const Icon(Icons.warning_amber_rounded, color: accent, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  complication.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           if (data['description'] != null) ...[
             Text(
               data['description'].toString(),
-              style: theme.textTheme.bodyMedium,
+              style: TextStyle(
+                color: Colors.grey.shade300,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 16),
           ],
@@ -382,7 +563,7 @@ class _ComplicationDetails extends ConsumerWidget {
   }
 
   Widget _buildEffects(BuildContext context, dynamic effects) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final effectsData = effects as Map<String, dynamic>?;
     if (effectsData == null) return const SizedBox.shrink();
 
@@ -393,19 +574,27 @@ class _ComplicationDetails extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          StoryComplicationSectionText.effectsTitle,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Icon(Icons.flash_on, color: accent, size: 18),
+            const SizedBox(width: 8),
+            const Text(
+              StoryComplicationSectionText.effectsTitle,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         if (benefit != null && benefit.isNotEmpty) ...[
           _buildEffectItem(
             context,
             StoryComplicationSectionText.effectBenefitLabel,
             benefit,
-            theme.colorScheme.primary,
+            const Color(0xFF66BB6A), // Green for benefit
             Icons.add_circle_outline,
           ),
           const SizedBox(height: 8),
@@ -415,7 +604,7 @@ class _ComplicationDetails extends ConsumerWidget {
             context,
             StoryComplicationSectionText.effectDrawbackLabel,
             drawback,
-            theme.colorScheme.error,
+            accent, // Red for drawback
             Icons.remove_circle_outline,
           ),
           const SizedBox(height: 8),
@@ -425,7 +614,7 @@ class _ComplicationDetails extends ConsumerWidget {
             context,
             StoryComplicationSectionText.effectMixedLabel,
             both,
-            theme.colorScheme.tertiary,
+            const Color(0xFFAB47BC), // Purple for mixed
             Icons.swap_horiz,
           ),
         ],
@@ -440,34 +629,37 @@ class _ComplicationDetails extends ConsumerWidget {
     Color color,
     IconData icon,
   ) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 20, color: color),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: theme.textTheme.labelLarge?.copyWith(
+                  style: TextStyle(
                     color: color,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   text,
-                  style: theme.textTheme.bodySmall,
+                  style: TextStyle(
+                    color: Colors.grey.shade300,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -483,7 +675,6 @@ class _ComplicationDetails extends ConsumerWidget {
     List<ComplicationGrant> grants,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
     if (grants.isEmpty) return const SizedBox.shrink();
 
     final items = <Widget>[];
@@ -528,13 +719,21 @@ class _ComplicationDetails extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          StoryComplicationSectionText.grantsTitle,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Icon(Icons.card_giftcard, color: CreatorTheme.complicationAccent, size: 18),
+            const SizedBox(width: 8),
+            const Text(
+              StoryComplicationSectionText.grantsTitle,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         ...items,
       ],
     );
@@ -650,30 +849,32 @@ class _ComplicationDetails extends ConsumerWidget {
     SkillFromGroupGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final groupsStr = grant.groups.join(', ');
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.psychology_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.psychology_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseSkillFromGroupPrefix}${grant.count}'
                   '${grant.count > 1 ? StoryComplicationSectionText.skillPluralSuffix : StoryComplicationSectionText.skillSingularSuffix}'
                   '${StoryComplicationSectionText.chooseSkillFromGroupSuffix}$groupsStr',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -686,11 +887,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (allSkills == null) {
               if (skillsAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter skills by groups - 'any' means all groups
@@ -705,7 +907,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (filteredSkills.isEmpty) {
               return Text(
                 '${StoryComplicationSectionText.noSkillsAvailablePrefix}$groupsStr',
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
               }
 
@@ -728,6 +930,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   return Padding(
                     padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
                     child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
                       onTap: () async {
                         final options = availableSkills.map((s) {
                           final group = s.data['group'] as String? ?? '';
@@ -755,12 +958,12 @@ class _ComplicationDetails extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
+                          color: const Color(0xFF2A2A2A),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: selectedSkill != null
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline.withOpacity(0.5),
+                                ? accent.withValues(alpha: 0.6)
+                                : Colors.grey.shade700,
                           ),
                         ),
                         child: Row(
@@ -769,21 +972,21 @@ class _ComplicationDetails extends ConsumerWidget {
                               selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
                               size: 20,
                               color: selectedSkill != null
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.outline,
+                                  ? accent
+                                  : Colors.grey.shade600,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 selectedSkill?.name ??
                                     '${StoryComplicationSectionText.tapToSelectSkillPrefix}${index + 1}${StoryComplicationSectionText.tapToSelectSkillSuffix}',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: selectedSkill != null ? null : theme.colorScheme.outline,
+                                style: TextStyle(
+                                  color: selectedSkill != null ? Colors.white : Colors.grey.shade500,
                                   fontStyle: selectedSkill != null ? null : FontStyle.italic,
                                 ),
                               ),
                             ),
-                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                            Icon(Icons.chevron_right, color: Colors.grey.shade600),
                           ],
                         ),
                       ),
@@ -803,28 +1006,30 @@ class _ComplicationDetails extends ConsumerWidget {
     SkillFromOptionsGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
     final choiceKey = '${complicationId}_skill_option';
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.psychology_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.psychology_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseSkillFromOptionsPrefix}${grant.options.join(', ')}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -837,11 +1042,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (allSkills == null) {
               if (skillsAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingSkillsPrefix}${skillsAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter skills by options - match by name (case-insensitive)
@@ -854,7 +1060,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (filteredSkills.isEmpty) {
               return Text(
                 '${StoryComplicationSectionText.noMatchingSkillsPrefix}${grant.options.join(', ')}',
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -863,6 +1069,7 @@ class _ComplicationDetails extends ConsumerWidget {
                 : null;
 
             return InkWell(
+              borderRadius: BorderRadius.circular(8),
               onTap: () async {
                 final options = filteredSkills.map((s) {
                   final group = s.data['group'] as String? ?? '';
@@ -889,12 +1096,12 @@ class _ComplicationDetails extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
+                  color: const Color(0xFF2A2A2A),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: selectedSkill != null
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.outline.withOpacity(0.5),
+                        ? accent.withValues(alpha: 0.6)
+                        : Colors.grey.shade700,
                   ),
                 ),
                 child: Row(
@@ -903,21 +1110,21 @@ class _ComplicationDetails extends ConsumerWidget {
                       selectedSkill != null ? Icons.check_circle : Icons.circle_outlined,
                       size: 20,
                         color: selectedSkill != null
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.outline,
+                            ? accent
+                            : Colors.grey.shade600,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           selectedSkill?.name ??
                               StoryComplicationSectionText.tapToSelectSkill,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: selectedSkill != null ? null : theme.colorScheme.outline,
+                          style: TextStyle(
+                            color: selectedSkill != null ? Colors.white : Colors.grey.shade500,
                             fontStyle: selectedSkill != null ? null : FontStyle.italic,
                           ),
                         ),
                       ),
-                      Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                      Icon(Icons.chevron_right, color: Colors.grey.shade600),
                     ],
                   ),
                 ),
@@ -935,7 +1142,7 @@ class _ComplicationDetails extends ConsumerWidget {
     String complicationId,
     int treasureIndex,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final componentsAsync = ref.watch(allComponentsProvider);
     
     // Determine the treasure type to filter by
@@ -944,21 +1151,23 @@ class _ComplicationDetails extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.diamond_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.diamond_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseTreasurePrefix}${treasureType.replaceAll('_', ' ')}${grant.echelon != null ? '${StoryComplicationSectionText.echelonPrefix}${grant.echelon}${StoryComplicationSectionText.echelonSuffix}' : ''}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -971,11 +1180,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (components == null) {
               if (componentsAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter by treasure type
@@ -993,9 +1203,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (treasures.isEmpty) {
               return Text(
                 '${StoryComplicationSectionText.noTreasureAvailablePrefix}${treasureType.replaceAll('_', ' ')}${StoryComplicationSectionText.treasurePluralSuffix}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1010,6 +1218,7 @@ class _ComplicationDetails extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
+                  borderRadius: BorderRadius.circular(8),
                   onTap: () async {
                     final options = treasures.map((t) {
                       final subtitle = t.data['description'] as String?;
@@ -1035,12 +1244,12 @@ class _ComplicationDetails extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
+                      color: const Color(0xFF2A2A2A),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: selectedTreasure != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.outline.withOpacity(0.5),
+                            ? accent.withValues(alpha: 0.6) 
+                            : Colors.grey.shade700,
                       ),
                     ),
                     child: Row(
@@ -1049,18 +1258,18 @@ class _ComplicationDetails extends ConsumerWidget {
                             selectedTreasure != null ? Icons.check_circle : Icons.circle_outlined,
                             size: 20,
                             color: selectedTreasure != null 
-                                ? theme.colorScheme.primary 
-                                : theme.colorScheme.outline,
+                                ? accent 
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               selectedTreasure?.name ??
                                   StoryComplicationSectionText.tapToSelect,
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              style: TextStyle(
                                 color: selectedTreasure != null 
-                                    ? null 
-                                    : theme.colorScheme.outline,
+                                    ? Colors.white 
+                                    : Colors.grey.shade500,
                                 fontStyle: selectedTreasure != null 
                                     ? null 
                                     : FontStyle.italic,
@@ -1069,7 +1278,7 @@ class _ComplicationDetails extends ConsumerWidget {
                           ),
                           Icon(
                             Icons.chevron_right,
-                            color: theme.colorScheme.outline,
+                            color: Colors.grey.shade600,
                           ),
                         ],
                       ),
@@ -1095,7 +1304,7 @@ class _ComplicationDetails extends ConsumerWidget {
     String complicationId,
     int leveledTreasureIndex,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final componentsAsync = ref.watch(allComponentsProvider);
     
     // The category to filter by (e.g., "weapon", "armor")
@@ -1106,21 +1315,23 @@ class _ComplicationDetails extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.diamond_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.diamond_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseLeveledTreasurePrefix}$categoryLabel',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1133,11 +1344,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (components == null) {
               if (componentsAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingTreasuresPrefix}${componentsAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter for leveled treasures matching the category
@@ -1155,9 +1367,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (treasures.isEmpty) {
               return Text(
                 '${StoryComplicationSectionText.noLeveledTreasurePrefix}$categoryLabel${StoryComplicationSectionText.treasurePluralSuffix}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1172,6 +1382,7 @@ class _ComplicationDetails extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
+                  borderRadius: BorderRadius.circular(8),
                   onTap: () async {
                     final options = treasures.map((t) {
                       final subtitle = t.data['description'] as String?;
@@ -1197,12 +1408,12 @@ class _ComplicationDetails extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
+                      color: const Color(0xFF2A2A2A),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: selectedTreasure != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.outline.withOpacity(0.5),
+                            ? accent.withValues(alpha: 0.6) 
+                            : Colors.grey.shade700,
                       ),
                     ),
                     child: Row(
@@ -1211,18 +1422,18 @@ class _ComplicationDetails extends ConsumerWidget {
                           selectedTreasure != null ? Icons.check_circle : Icons.circle_outlined,
                           size: 20,
                           color: selectedTreasure != null 
-                              ? theme.colorScheme.primary 
-                              : theme.colorScheme.outline,
+                              ? accent 
+                              : Colors.grey.shade600,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             selectedTreasure?.name ??
                                 StoryComplicationSectionText.tapToSelect,
-                            style: theme.textTheme.bodyMedium?.copyWith(
+                            style: TextStyle(
                                 color: selectedTreasure != null 
-                                    ? null 
-                                    : theme.colorScheme.outline,
+                                    ? Colors.white 
+                                    : Colors.grey.shade500,
                                 fontStyle: selectedTreasure != null 
                                     ? null 
                                     : FontStyle.italic,
@@ -1231,7 +1442,7 @@ class _ComplicationDetails extends ConsumerWidget {
                           ),
                           Icon(
                             Icons.chevron_right,
-                            color: theme.colorScheme.outline,
+                            color: Colors.grey.shade600,
                           ),
                         ],
                       ),
@@ -1256,27 +1467,29 @@ class _ComplicationDetails extends ConsumerWidget {
     LanguageGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final languagesAsync = ref.watch(componentsByTypeProvider('language'));
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.translate_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.translate_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseLanguagePrefix}${grant.count}${grant.count > 1 ? StoryComplicationSectionText.languagePluralSuffix : StoryComplicationSectionText.languageSingularSuffix}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1289,11 +1502,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (allLanguages == null) {
               if (languagesAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter out dead languages - this is for living languages only
@@ -1306,7 +1520,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (livingLanguages.isEmpty) {
               return Text(
                 StoryComplicationSectionText.noLanguagesAvailable,
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1329,6 +1543,7 @@ class _ComplicationDetails extends ConsumerWidget {
                 return Padding(
                   padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
                     onTap: () async {
                       final options = availableLanguages.map((l) {
                         final langType = l.data['type'] as String? ?? '';
@@ -1361,12 +1576,12 @@ class _ComplicationDetails extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
+                        color: const Color(0xFF2A2A2A),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedLanguage != null
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.outline.withOpacity(0.5),
+                              ? accent.withValues(alpha: 0.6)
+                              : Colors.grey.shade700,
                         ),
                       ),
                       child: Row(
@@ -1375,21 +1590,21 @@ class _ComplicationDetails extends ConsumerWidget {
                               selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
                               size: 20,
                               color: selectedLanguage != null
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.outline,
+                                  ? accent
+                                  : Colors.grey.shade600,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 selectedLanguage?.name ??
                                     '${StoryComplicationSectionText.tapToSelectLanguagePrefix}${index + 1}${StoryComplicationSectionText.tapToSelectLanguageSuffix}',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: selectedLanguage != null ? null : theme.colorScheme.outline,
+                                style: TextStyle(
+                                  color: selectedLanguage != null ? Colors.white : Colors.grey.shade500,
                                   fontStyle: selectedLanguage != null ? null : FontStyle.italic,
                                 ),
                               ),
                             ),
-                            Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                            Icon(Icons.chevron_right, color: Colors.grey.shade600),
                           ],
                         ),
                       ),
@@ -1409,27 +1624,29 @@ class _ComplicationDetails extends ConsumerWidget {
     DeadLanguageGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final languagesAsync = ref.watch(componentsByTypeProvider('language'));
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.translate_outlined, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.translate_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${StoryComplicationSectionText.chooseDeadLanguagePrefix}${grant.count}${grant.count > 1 ? StoryComplicationSectionText.deadLanguagePluralSuffix : StoryComplicationSectionText.deadLanguageSingularSuffix}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1442,11 +1659,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (allLanguages == null) {
               if (languagesAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingLanguagesPrefix}${languagesAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Filter for dead languages only
@@ -1459,7 +1677,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (deadLanguages.isEmpty) {
               return Text(
                 StoryComplicationSectionText.noDeadLanguagesAvailable,
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1482,6 +1700,7 @@ class _ComplicationDetails extends ConsumerWidget {
                 return Padding(
                   padding: EdgeInsets.only(top: index > 0 ? 8 : 0),
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
                     onTap: () async {
                       final options = availableLanguages.map((l) {
                         final ancestry = l.data['ancestry'] as String? ?? '';
@@ -1512,12 +1731,12 @@ class _ComplicationDetails extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
+                        color: const Color(0xFF2A2A2A),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedLanguage != null
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.outline.withOpacity(0.5),
+                              ? accent.withValues(alpha: 0.6)
+                              : Colors.grey.shade700,
                         ),
                       ),
                       child: Row(
@@ -1526,21 +1745,21 @@ class _ComplicationDetails extends ConsumerWidget {
                             selectedLanguage != null ? Icons.check_circle : Icons.circle_outlined,
                             size: 20,
                             color: selectedLanguage != null
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.outline,
+                                ? accent
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               selectedLanguage?.name ??
                                   '${StoryComplicationSectionText.tapToSelectDeadLanguagePrefix}${index + 1}${StoryComplicationSectionText.tapToSelectDeadLanguageSuffix}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: selectedLanguage != null ? null : theme.colorScheme.outline,
+                              style: TextStyle(
+                                color: selectedLanguage != null ? Colors.white : Colors.grey.shade500,
                                 fontStyle: selectedLanguage != null ? null : FontStyle.italic,
                               ),
                             ),
                           ),
-                          Icon(Icons.chevron_right, color: theme.colorScheme.outline),
+                          Icon(Icons.chevron_right, color: Colors.grey.shade600),
                         ],
                       ),
                     ),
@@ -1560,26 +1779,28 @@ class _ComplicationDetails extends ConsumerWidget {
     PickOneGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.checklist_outlined, size: 18, color: theme.colorScheme.tertiary),
+              const Icon(Icons.checklist_outlined, size: 18, color: accent),
               const SizedBox(width: 8),
-              Expanded(
+              const Expanded(
                 child: Text(
                   StoryComplicationSectionText.chooseOneLabel,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1593,6 +1814,7 @@ class _ComplicationDetails extends ConsumerWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: InkWell(
+                borderRadius: BorderRadius.circular(6),
                 onTap: () {
                   _updateChoice('${complicationId}_pick_one', index.toString());
                 },
@@ -1600,13 +1822,13 @@ class _ComplicationDetails extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? theme.colorScheme.primaryContainer.withOpacity(0.5)
-                        : theme.colorScheme.surface,
+                        ? accent.withValues(alpha: 0.2)
+                        : const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: isSelected 
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.outline.withOpacity(0.3),
+                          ? accent
+                          : Colors.grey.shade700,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -1615,10 +1837,17 @@ class _ComplicationDetails extends ConsumerWidget {
                       Icon(
                         isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                         size: 20,
-                        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.outline,
+                        color: isSelected ? accent : Colors.grey.shade600,
                       ),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(description)),
+                      Expanded(
+                        child: Text(
+                          description,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.grey.shade300,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1637,27 +1866,29 @@ class _ComplicationDetails extends ConsumerWidget {
     AncestryTraitsGrant grant,
     String complicationId,
   ) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final ancestryTraitsAsync = ref.watch(componentsByTypeProvider('ancestry_trait'));
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.person_outline, size: 18, color: theme.colorScheme.primary),
+              const Icon(Icons.person_outline, size: 18, color: accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   '${grant.ancestryPoints} ${_formatAncestryName(grant.ancestry)}${grant.ancestryPoints == 1 ? StoryComplicationSectionText.ancestryTraitPointSingularSuffix : StoryComplicationSectionText.ancestryTraitPointPluralSuffix}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1670,11 +1901,12 @@ class _ComplicationDetails extends ConsumerWidget {
             if (allAncestryTraits == null) {
               if (ancestryTraitsAsync.hasError) {
                 return Text(
-                    '${StoryComplicationSectionText.errorLoadingAncestryTraitsPrefix}${ancestryTraitsAsync.error}');
+                    '${StoryComplicationSectionText.errorLoadingAncestryTraitsPrefix}${ancestryTraitsAsync.error}',
+                    style: TextStyle(color: Colors.red.shade300));
               }
               return const SizedBox(
                 height: 48,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: accent)),
               );
             }
             // Find the ancestry traits component that matches the grant's ancestry
@@ -1687,7 +1919,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (traitsComp == null) {
               return Text(
                 '${StoryComplicationSectionText.noTraitsFoundPrefix}${grant.ancestry}',
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1696,7 +1928,7 @@ class _ComplicationDetails extends ConsumerWidget {
             if (traitsList.isEmpty) {
               return Text(
                 '${StoryComplicationSectionText.noTraitsAvailablePrefix}${grant.ancestry}',
-                style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                style: TextStyle(color: Colors.grey.shade500, fontStyle: FontStyle.italic),
               );
             }
 
@@ -1723,16 +1955,39 @@ class _ComplicationDetails extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Chip(
-                        label: Text(
-                            '${StoryComplicationSectionText.pointsLabelPrefix}${grant.ancestryPoints}')),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: accent.withValues(alpha: 0.4)),
+                      ),
+                      child: Text(
+                        '${StoryComplicationSectionText.pointsLabelPrefix}${grant.ancestryPoints}',
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Chip(
-                      label: Text(
-                          '${StoryComplicationSectionText.remainingLabelPrefix}$remaining'),
-                      backgroundColor: remaining < 0
-                          ? theme.colorScheme.errorContainer
-                          : null,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: remaining < 0
+                            ? Colors.red.withValues(alpha: 0.3)
+                            : Colors.green.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: remaining < 0
+                              ? Colors.red.withValues(alpha: 0.5)
+                              : Colors.green.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Text(
+                        '${StoryComplicationSectionText.remainingLabelPrefix}$remaining',
+                        style: TextStyle(
+                          color: remaining < 0 ? Colors.red.shade300 : Colors.green.shade300,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -1759,28 +2014,32 @@ class _ComplicationDetails extends ConsumerWidget {
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
                         enabled: false,
-                        leading: Icon(Icons.check_circle, color: theme.colorScheme.outline),
+                        leading: Icon(Icons.check_circle, color: Colors.grey.shade600),
                         title: Text(
                           name,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: Colors.grey.shade500,
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
                         subtitle: Text(
                           StoryComplicationSectionText.alreadySelectedAncestry,
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: TextStyle(
                             fontStyle: FontStyle.italic,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
                           ),
                         ),
                           trailing: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest,
+                              color: Colors.grey.shade800,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text('$cost'),
+                            child: Text(
+                              '$cost',
+                              style: TextStyle(color: Colors.grey.shade500),
+                            ),
                           ),
                         ),
                       );
@@ -1793,45 +2052,67 @@ class _ComplicationDetails extends ConsumerWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CheckboxListTile(
-                          value: selected,
-                          onChanged: canSelect
-                              ? (value) {
-                                  if (value == null) return;
-                                  final newSelected = Set<String>.from(selectedIds);
-                                  if (value) {
-                                    newSelected.add(id);
-                                  } else {
-                                    newSelected.remove(id);
-                                    // Clear trait-specific choice when deselected
-                                    final newChoices = Map<String, String>.from(choices);
-                                    newChoices.remove(traitChoiceKey);
-                                    onChoicesChanged(newChoices);
-                                  }
-                                  _updateChoice(choiceKey, newSelected.join(','));
+                        Theme(
+                          data: Theme.of(context).copyWith(
+                            checkboxTheme: CheckboxThemeData(
+                              fillColor: WidgetStateProperty.resolveWith((states) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return accent;
                                 }
-                              : null,
-                          title: Text(name),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                desc,
-                                softWrap: true,
-                              ),
-                            ],
-                          ),
-                          isThreeLine: true,
-                          secondary: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(8),
+                                return Colors.grey.shade700;
+                              }),
+                              checkColor: WidgetStateProperty.all(Colors.white),
                             ),
-                            child: Text('$cost'),
                           ),
-                          contentPadding: EdgeInsets.zero,
+                          child: CheckboxListTile(
+                            value: selected,
+                            onChanged: canSelect
+                                ? (value) {
+                                    if (value == null) return;
+                                    final newSelected = Set<String>.from(selectedIds);
+                                    if (value) {
+                                      newSelected.add(id);
+                                    } else {
+                                      newSelected.remove(id);
+                                      // Clear trait-specific choice when deselected
+                                      final newChoices = Map<String, String>.from(choices);
+                                      newChoices.remove(traitChoiceKey);
+                                      onChoicesChanged(newChoices);
+                                    }
+                                    _updateChoice(choiceKey, newSelected.join(','));
+                                  }
+                                : null,
+                            title: Text(
+                              name,
+                              style: TextStyle(
+                                color: canSelect ? Colors.white : Colors.grey.shade500,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  desc,
+                                  softWrap: true,
+                                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                            isThreeLine: true,
+                            secondary: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: accent.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '$cost',
+                                style: TextStyle(color: accent.withValues(alpha: 0.9)),
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                          ),
                         ),
                         // Show immunity dropdown for selected traits with immunity choice
                         if (selected && hasImmunityChoice) ...[
@@ -1877,21 +2158,29 @@ class _ComplicationDetails extends ConsumerWidget {
   }
 
   Widget _buildGrantItem(BuildContext context, String text, IconData icon) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+    const accent = CreatorTheme.complicationAccent;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
+      ),
       child: Row(
         children: [
           Icon(
             icon,
-            size: 16,
-            color: theme.colorScheme.secondary,
+            size: 18,
+            color: accent,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1903,7 +2192,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
   /// Builds an ability grant widget that looks up and displays the full ability details.
   Widget _buildAbilityGrant(BuildContext context, WidgetRef ref, String abilityName) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.complicationAccent;
     final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
 
     final ability = abilityAsync.valueOrNull;
@@ -1919,18 +2208,20 @@ class _ComplicationDetails extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 4),
         child: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 14,
               height: 14,
               child: CircularProgressIndicator(
                 strokeWidth: 1.5,
-                color: theme.colorScheme.secondary,
+                color: accent,
               ),
             ),
             const SizedBox(width: 8),
             Text(
               '${StoryComplicationSectionText.loadingAbilityPrefix}$abilityName${StoryComplicationSectionText.loadingAbilitySuffix}',
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1944,22 +2235,8 @@ class _ComplicationDetails extends ConsumerWidget {
   }
 
   Widget _buildTreasurePreview(BuildContext context, model.Component treasure) {
-    // Use the appropriate treasure card based on type
-    switch (treasure.type) {
-      case 'artifact':
-        return ArtifactTreasureCard(component: treasure);
-      case 'trinket':
-        return TrinketTreasureCard(component: treasure);
-      case 'consumable':
-        return ConsumableTreasureCard(component: treasure);
-      case 'leveled_treasure':
-        return LeveledTreasureCard(component: treasure);
-      default:
-        return BaseTreasureCard(
-          component: treasure,
-          children: const [],
-        );
-    }
+    // Use the unified TreasureCard for all treasure types
+    return TreasureCard(component: treasure);
   }
 
   /// Check if trait has immunity choice (type: "pick_one")
@@ -2002,6 +2279,7 @@ class _ComplicationDetails extends ConsumerWidget {
     required String? currentValue,
     required Set<String> excludedValues,
   }) {
+    const accent = Color(0xFFAB47BC); // Purple for immunity
     // Filter out excluded immunity types (but keep current value if it was previously selected)
     final availableTypes = _immunityTypes.where((type) {
       if (type == currentValue) return true; // Always show current selection
@@ -2012,17 +2290,19 @@ class _ComplicationDetails extends ConsumerWidget {
 
     return DropdownButtonFormField<String>(
       value: currentValue,
-      decoration: InputDecoration(
-        labelText: StoryComplicationSectionText.immunityDropdownLabel,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        filled: true,
-        fillColor: Colors.deepPurple.withOpacity(0.05),
+      dropdownColor: const Color(0xFF2A2A2A),
+      decoration: CreatorTheme.dropdownDecoration(
+        label: StoryComplicationSectionText.immunityDropdownLabel,
+        accent: accent,
       ),
+      style: const TextStyle(color: Colors.white),
       items: [
-        const DropdownMenuItem<String>(
+        DropdownMenuItem<String>(
           value: null,
-          child: Text(StoryComplicationSectionText.immunityDropdownHint),
+          child: Text(
+            StoryComplicationSectionText.immunityDropdownHint,
+            style: TextStyle(color: Colors.grey.shade400),
+          ),
         ),
         ...availableTypes.map(
           (type) => DropdownMenuItem<String>(
@@ -2045,21 +2325,24 @@ class _ComplicationDetails extends ConsumerWidget {
     required List<String> options,
     required String? currentValue,
   }) {
+    const accent = Color(0xFF26C6DA); // Cyan for abilities
     final choiceKey = '${complicationId}_trait_$traitId';
 
     return DropdownButtonFormField<String>(
       value: currentValue,
-      decoration: InputDecoration(
-        labelText: StoryComplicationSectionText.abilityDropdownLabel,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        filled: true,
-        fillColor: Colors.teal.withOpacity(0.05),
+      dropdownColor: const Color(0xFF2A2A2A),
+      decoration: CreatorTheme.dropdownDecoration(
+        label: StoryComplicationSectionText.abilityDropdownLabel,
+        accent: accent,
       ),
+      style: const TextStyle(color: Colors.white),
       items: [
-        const DropdownMenuItem<String>(
+        DropdownMenuItem<String>(
           value: null,
-          child: Text(StoryComplicationSectionText.abilityDropdownHint),
+          child: Text(
+            StoryComplicationSectionText.abilityDropdownHint,
+            style: TextStyle(color: Colors.grey.shade400),
+          ),
         ),
         ...options.map(
           (ability) => DropdownMenuItem<String>(

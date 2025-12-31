@@ -7,7 +7,7 @@ import '../../../../core/models/abilities_models.dart';
 import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
-import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
@@ -43,13 +43,13 @@ class StartingAbilitiesWidget extends StatefulWidget {
 
 class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     with AutomaticKeepAliveClientMixin {
+  static const _accent = CreatorTheme.classAccent;
+  
   final StartingAbilitiesService _service = const StartingAbilitiesService();
   final AbilityDataService _abilityDataService = AbilityDataService();
   final MapEquality<String, String?> _mapEquality =
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
-
-  bool _isExpanded = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -449,9 +449,9 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     if (_isLoading) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: CreatorTheme.loadingIndicator(_accent),
         ),
       );
     }
@@ -460,21 +460,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
       return _buildContainer(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                ChooseAbilitiesWidgetText.loadErrorTitle,
-                style: AppTextStyles.subtitle.copyWith(color: Colors.redAccent),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: AppTextStyles.caption,
-              ),
-            ],
-          ),
+          child: CreatorTheme.errorMessage(_error!),
         ),
       );
     }
@@ -482,11 +468,11 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     final plan = _plan;
     if (plan == null || plan.allowances.isEmpty) {
       return _buildContainer(
-        child: const Padding(
-          padding: EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Text(
             ChooseAbilitiesWidgetText.noAbilitiesMessage,
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
         ),
       );
@@ -499,25 +485,20 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     final selectedCount =
         _selections.values.expand((slots) => slots).whereType<String>().length;
 
-    return _buildContainer(
-      child: ExpansionTile(
-        key: const PageStorageKey<String>('starting_abilities_expansion'),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-        initiallyExpanded: _isExpanded,
-        maintainState: true,
-        onExpansionChanged: (expanded) =>
-            setState(() => _isExpanded = expanded),
-        title: Text(
-          ChooseAbilitiesWidgetText.expansionTitle,
-          style: AppTextStyles.subtitle.copyWith(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          '${ChooseAbilitiesWidgetText.selectionSubtitlePrefix}$selectedCount${ChooseAbilitiesWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseAbilitiesWidgetText.selectionSubtitleSuffix}',
-          style: AppTextStyles.caption,
-        ),
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseAbilitiesWidgetText.expansionTitle,
+            subtitle: '${ChooseAbilitiesWidgetText.selectionSubtitlePrefix}$selectedCount${ChooseAbilitiesWidgetText.selectionSubtitleMiddle}$totalSlots${ChooseAbilitiesWidgetText.selectionSubtitleSuffix}',
+            icon: Icons.auto_awesome,
+            accent: _accent,
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: plan.allowances.map(_buildAllowanceSection).toList(),
@@ -529,10 +510,21 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
   }
 
   Widget _buildContainer({required Widget child}) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: child,
+    return Container(
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(_accent),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CreatorTheme.sectionHeader(
+            title: ChooseAbilitiesWidgetText.expansionTitle,
+            subtitle: ChooseAbilitiesWidgetText.sectionSubtitle,
+            icon: Icons.auto_awesome,
+            accent: _accent,
+          ),
+          child,
+        ],
+      ),
     );
   }
 
@@ -548,21 +540,22 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         children: [
           Text(
             allowance.label,
-            style: AppTextStyles.subtitle.copyWith(
+            style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             helper,
-            style: AppTextStyles.caption,
+            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
           ),
           const SizedBox(height: 8),
           if (options.isEmpty)
             Text(
               ChooseAbilitiesWidgetText.noAllowanceOptionsMessage,
-              style: AppTextStyles.caption,
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
             )
           else
             ...List.generate(slots.length, (index) {
@@ -589,20 +582,39 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DropdownButtonFormField<String?>(
-                      initialValue: current,
+                      value: current,
+                      dropdownColor: const Color(0xFF2A2A2A),
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                       decoration: InputDecoration(
                         labelText:
                             '${ChooseAbilitiesWidgetText.choiceLabelPrefix}${index + 1}',
-                        border: const OutlineInputBorder(),
+                        labelStyle: TextStyle(color: Colors.grey.shade400),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderSide: const BorderSide(color: _accent),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 10,
                         ),
                       ),
                       items: [
-                        const DropdownMenuItem<String?>(
+                        DropdownMenuItem<String?>(
                           value: null,
-                          child: Text(ChooseAbilitiesWidgetText.unassignedLabel),
+                          child: Text(
+                            ChooseAbilitiesWidgetText.unassignedLabel,
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
                         ),
                         ...availableOptions.map(
                           (option) => DropdownMenuItem<String?>(

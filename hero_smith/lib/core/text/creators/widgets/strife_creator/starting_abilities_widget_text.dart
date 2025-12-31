@@ -4,6 +4,7 @@
   static const String noAbilitiesMessage =
       'This class does not provide ability selections at this level.';
   static const String expansionTitle = 'Abilities';
+  static const String sectionSubtitle = 'Choose your starting abilities';
   static const String selectionSubtitlePrefix = 'Selected ';
   static const String selectionSubtitleMiddle = ' of ';
   static const String selectionSubtitleSuffix = ' options';

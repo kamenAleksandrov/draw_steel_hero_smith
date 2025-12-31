@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
-import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_career_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
@@ -62,54 +63,54 @@ class StoryCareerSection extends ConsumerWidget {
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
     final langsAsync = ref.watch(componentsByTypeProvider('language'));
 
+    const accent = CreatorTheme.careerAccent;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        elevation: HeroTheme.sectionCardElevation,
-        shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
-        child: Column(
-          children: [
-            HeroTheme.buildSectionHeader(
-              context,
-              title: StoryCareerSectionText.sectionTitle,
-              subtitle: StoryCareerSectionText.sectionSubtitle,
-              icon: Icons.work,
-              color: HeroTheme.getStepColor('career'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: careersAsync.when(
-                loading: () => const LinearProgressIndicator(),
-                error: (e, _) => Text(
-                    '${StoryCareerSectionText.failedToLoadCareersPrefix}$e'),
-                data: (careers) => _CareerContent(
-                  heroId: heroId,
-                  careers: careers,
-                  careerId: careerId,
-                  chosenSkillIds: chosenSkillIds,
-                  chosenPerkIds: chosenPerkIds,
-                  incidentName: incidentName,
-                  careerLanguageIds: careerLanguageIds,
-                  primaryLanguageId: primaryLanguageId,
-                  selectedLanguageIds: selectedLanguageIds,
-                  selectedSkillIds: selectedSkillIds,
-                  reservedLanguageIds: reservedLanguageIds,
-                  reservedSkillIds: reservedSkillIds,
-                  reservedPerkIds: reservedPerkIds,
-                  skillsAsync: skillsAsync,
-                  langsAsync: langsAsync,
-                  onCareerChanged: onCareerChanged,
-                  onCareerLanguageSlotsChanged: onCareerLanguageSlotsChanged,
-                  onCareerLanguageChanged: onCareerLanguageChanged,
-                  onSkillSelectionChanged: onSkillSelectionChanged,
-                  onPerkSelectionChanged: onPerkSelectionChanged,
-                  onIncidentChanged: onIncidentChanged,
-                  onDirty: onDirty,
-                ),
+      margin: CreatorTheme.sectionMargin,
+      decoration: CreatorTheme.sectionDecoration(accent),
+      child: Column(
+        children: [
+          CreatorTheme.sectionHeader(
+            title: StoryCareerSectionText.sectionTitle,
+            subtitle: StoryCareerSectionText.sectionSubtitle,
+            icon: Icons.work,
+            accent: accent,
+          ),
+          Padding(
+            padding: CreatorTheme.sectionPadding,
+            child: careersAsync.when(
+              loading: () => CreatorTheme.loadingIndicator(accent),
+              error: (e, _) => CreatorTheme.errorMessage(
+                '${StoryCareerSectionText.failedToLoadCareersPrefix}$e',
+                accent: accent,
+              ),
+              data: (careers) => _CareerContent(
+                heroId: heroId,
+                careers: careers,
+                careerId: careerId,
+                chosenSkillIds: chosenSkillIds,
+                chosenPerkIds: chosenPerkIds,
+                incidentName: incidentName,
+                careerLanguageIds: careerLanguageIds,
+                primaryLanguageId: primaryLanguageId,
+                selectedLanguageIds: selectedLanguageIds,
+                selectedSkillIds: selectedSkillIds,
+                reservedLanguageIds: reservedLanguageIds,
+                reservedSkillIds: reservedSkillIds,
+                reservedPerkIds: reservedPerkIds,
+                skillsAsync: skillsAsync,
+                langsAsync: langsAsync,
+                onCareerChanged: onCareerChanged,
+                onCareerLanguageSlotsChanged: onCareerLanguageSlotsChanged,
+                onCareerLanguageChanged: onCareerLanguageChanged,
+                onSkillSelectionChanged: onSkillSelectionChanged,
+                onPerkSelectionChanged: onPerkSelectionChanged,
+                onIncidentChanged: onIncidentChanged,
+                onDirty: onDirty,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -223,7 +224,7 @@ class _CareerContentState extends State<_CareerContent> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    const accent = CreatorTheme.careerAccent;
     final selectedCareer = _careers.firstWhere(
       (c) => c.id == widget.careerId,
       orElse: () => _careers.isNotEmpty
@@ -304,8 +305,8 @@ class _CareerContentState extends State<_CareerContent> {
               style: TextStyle(
                 fontSize: 16,
                 color: widget.careerId != null
-                    ? theme.textTheme.bodyLarge?.color
-                    : theme.hintColor,
+                    ? Colors.white
+                    : Colors.grey.shade500,
               ),
             ),
           ),
@@ -315,7 +316,7 @@ class _CareerContentState extends State<_CareerContent> {
           if ((data['description'] as String?)?.isNotEmpty == true) ...[
             Text(
               data['description'] as String,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.3),
+              style: TextStyle(color: Colors.grey.shade300, height: 1.3),
             ),
             const SizedBox(height: 12),
           ],
@@ -324,25 +325,22 @@ class _CareerContentState extends State<_CareerContent> {
             runSpacing: 8,
             children: [
               if (renown > 0)
-                Chip(
-                  label: Text(
-                    '${StoryCareerSectionText.renownChipPrefix}${renown.toString()}${StoryCareerSectionText.renownChipSuffix}',
-                  ),
-                  avatar: const Icon(Icons.stars, size: 18),
+                _buildStatChip(
+                  '${StoryCareerSectionText.renownChipPrefix}${renown.toString()}${StoryCareerSectionText.renownChipSuffix}',
+                  Icons.stars,
+                  accent,
                 ),
               if (wealth > 0)
-                Chip(
-                  label: Text(
-                    '${StoryCareerSectionText.wealthChipPrefix}${wealth.toString()}${StoryCareerSectionText.wealthChipSuffix}',
-                  ),
-                  avatar: const Icon(Icons.attach_money, size: 18),
+                _buildStatChip(
+                  '${StoryCareerSectionText.wealthChipPrefix}${wealth.toString()}${StoryCareerSectionText.wealthChipSuffix}',
+                  Icons.attach_money,
+                  accent,
                 ),
               if (projectPoints > 0)
-                Chip(
-                  label: Text(
-                    '${StoryCareerSectionText.projectPointsChipPrefix}${projectPoints.toString()}${StoryCareerSectionText.projectPointsChipSuffix}',
-                  ),
-                  avatar: const Icon(Icons.engineering, size: 18),
+                _buildStatChip(
+                  '${StoryCareerSectionText.projectPointsChipPrefix}${projectPoints.toString()}${StoryCareerSectionText.projectPointsChipSuffix}',
+                  Icons.engineering,
+                  accent,
                 ),
             ],
           ),
@@ -555,11 +553,10 @@ class _CareerContentState extends State<_CareerContent> {
                 applySelection(index, result.value);
               }
 
-              final accent = Theme.of(context).colorScheme.primary;
               final border = OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide:
-                    BorderSide(color: accent.withOpacity(0.6), width: 1.4),
+                    BorderSide(color: accent.withValues(alpha: 0.6), width: 1.4),
               );
 
               final slots = currentSlots();
@@ -572,7 +569,7 @@ class _CareerContentState extends State<_CareerContent> {
                     '${StoryCareerSectionText.skillPickInstructionPrefix}$picksNeeded'
                     '${picksNeeded == 1 ? StoryCareerSectionText.skillPickInstructionSingularSuffix : StoryCareerSectionText.skillPickInstructionPluralSuffix}'
                     '${StoryCareerSectionText.skillPickInstructionSuffix}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                   ),
                   const SizedBox(height: 6),
                   for (var index = 0; index < picksNeeded; index++) ...[
@@ -597,8 +594,8 @@ class _CareerContentState extends State<_CareerContent> {
                           style: TextStyle(
                             fontSize: 16,
                             color: slots[index] != null
-                                ? Theme.of(context).textTheme.bodyLarge?.color
-                                : Theme.of(context).hintColor,
+                                ? Colors.white
+                                : Colors.grey.shade500,
                           ),
                         ),
                       ),
@@ -609,7 +606,8 @@ class _CareerContentState extends State<_CareerContent> {
                     Text(
                         '${StoryCareerSectionText.remainingPicksPrefix}$remaining'
                         '${remaining == 1 ? StoryCareerSectionText.remainingPicksSingularSuffix : StoryCareerSectionText.remainingPicksPluralSuffix}'
-                        '${StoryCareerSectionText.remainingPicksSuffix}'),
+                        '${StoryCareerSectionText.remainingPicksSuffix}',
+                        style: TextStyle(color: Colors.grey.shade400)),
                 ],
               );
             },
@@ -702,8 +700,8 @@ class _CareerContentState extends State<_CareerContent> {
                   style: TextStyle(
                     fontSize: 16,
                     color: widget.incidentName != null
-                        ? theme.textTheme.bodyLarge?.color
-                        : theme.hintColor,
+                        ? Colors.white
+                        : Colors.grey.shade500,
                   ),
                 ),
               ),
@@ -719,8 +717,8 @@ class _CareerContentState extends State<_CareerContent> {
                         )['description']
                         ?.toString() ??
                     '',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
+                style: TextStyle(
+                  color: Colors.grey.shade300,
                   height: 1.35,
                   fontWeight: FontWeight.w500,
                 ),
@@ -728,6 +726,32 @@ class _CareerContentState extends State<_CareerContent> {
             ),
         ],
       ],
+    );
+  }
+
+  Widget _buildStatChip(String label, IconData icon, Color accent) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: accent.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: accent),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: accent,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -818,8 +842,8 @@ class _CareerLanguageDropdown extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             color: validValue != null
-                ? Theme.of(context).textTheme.bodyLarge?.color
-                : Theme.of(context).hintColor,
+                ? Colors.white
+                : Colors.grey.shade500,
           ),
         ),
       ),
@@ -861,7 +885,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required String title,
   required List<_SearchOption<T>> options,
   T? selected,
+  Color? accent,
 }) {
+  final accentColor = accent ?? CreatorTheme.careerAccent;
+  
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -885,6 +912,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -894,22 +925,90 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.2),
+                          accentColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: accentColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accentColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Icon(Icons.search, color: accentColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: false,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: StoryCareerSectionText.searchHint,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: accentColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -921,38 +1020,99 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Center(
-                                child: Text(
-                                    StoryCareerSectionText.noMatchesFound)),
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  StoryCareerSectionText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
-                              return ListTile(
-                                title: Text(option.label),
-                                subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
-                                    : null,
-                                trailing: isSelected
-                                    ? const Icon(Icons.check)
-                                    : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  _PickerSelection<T>(value: option.value),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? accentColor.withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accentColor.withValues(alpha: 0.4),
+                                        )
+                                      : null,
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? accentColor
+                                          : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle, color: accentColor, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
                       child: const Text(StoryCareerSectionText.cancelLabel),
                     ),
                   ),
