@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'navigation_theme.dart';
+
 /// Hero-specific design tokens and theme utilities
 class HeroTheme {
   HeroTheme._();
@@ -207,7 +209,6 @@ class HeroTheme {
     String? subtitle,
     Widget? action,
   }) {
-    final theme = Theme.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -217,14 +218,15 @@ class HeroTheme {
             Icon(
               icon,
               size: 80,
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              color: Colors.grey.shade500,
             ),
             const SizedBox(height: 24),
             Text(
               title,
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 22,
+                color: Colors.grey.shade300,
               ),
               textAlign: TextAlign.center,
             ),
@@ -232,8 +234,9 @@ class HeroTheme {
               const SizedBox(height: 8),
               Text(
                 subtitle,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade500,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -256,14 +259,13 @@ class HeroTheme {
     Color? color,
     Widget? trailing,
   }) {
-    final theme = Theme.of(context);
     final accentColor = color ?? primarySection;
     
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-        color: accentColor.withValues(alpha: 0.1),
+        color: accentColor.withValues(alpha: 0.15),
         border: Border(
           bottom: BorderSide(
             color: accentColor.withValues(alpha: 0.3),
@@ -274,7 +276,12 @@ class HeroTheme {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, color: accentColor, size: 24),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: NavigationTheme.cardIconDecoration(accentColor),
+              child: Icon(icon, color: accentColor, size: 20),
+            ),
             const SizedBox(width: 12),
           ],
           Expanded(
@@ -283,8 +290,9 @@ class HeroTheme {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
+                    fontSize: 18,
                     color: accentColor,
                   ),
                 ),
@@ -292,8 +300,9 @@ class HeroTheme {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade400,
                     ),
                   ),
                 ],

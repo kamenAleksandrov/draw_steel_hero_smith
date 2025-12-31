@@ -8,6 +8,7 @@ chaging fury subclass must remove stormwight kits
 in the hero creator stranght tab the automaticaly applied appears doubled each time
 
 automatically applied must be as a divider instead as another box that boxes the box
+ancestries tab signature trait is too bright
 ## medium
 
 most popouts should be wider
@@ -36,6 +37,8 @@ when picking a class and chosing the same class as the current the choises shoul
 create a equipment functionality where the user can equip items and get their bonuses
 
 update abilities to be dynamic based on the hero stats
+
+add export hero as a file
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

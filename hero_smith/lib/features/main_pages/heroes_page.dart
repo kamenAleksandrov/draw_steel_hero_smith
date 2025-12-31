@@ -5,6 +5,7 @@ import '../../core/db/providers.dart';
 import '../../core/services/hero_export_service.dart';
 import '../../core/theme/ability_colors.dart';
 import '../../core/theme/hero_theme.dart';
+import '../../core/theme/navigation_theme.dart';
 import '../creators/hero_creators/hero_creator_page.dart';
 import '../heroes_sheet/hero_sheet_page.dart';
 // import '../creators/hero_creators/strife_creator_page.dart';
@@ -23,11 +24,10 @@ class HeroesPage extends ConsumerWidget {
   
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final summariesAsync = ref.watch(heroSummariesProvider);
     
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: NavigationTheme.navBarBackground,
       body: summariesAsync.when(
         data: (items) => _buildContent(context, ref, items),
         error: (e, st) => _buildErrorState(context, ref, e),
@@ -68,41 +68,72 @@ class HeroesPage extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
+    final accent = NavigationTheme.heroesColor;
     
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        borderRadius: HeroTheme.heroCardRadius,
-        gradient: HeroTheme.headerGradient(context),
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+        color: NavigationTheme.cardBackgroundDark,
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          color: accent.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // const Icon(
-          //   Icons.person,
-          //   size: 48,
-          //   color: HeroTheme.primarySection,
-          // ),
-          const SizedBox(),
-          Text(
-            'Your Heroes',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: HeroTheme.primarySection,
+          // Header with gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  accent.withValues(alpha: 0.2),
+                  accent.withValues(alpha: 0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border(
+                bottom: BorderSide(color: accent.withValues(alpha: 0.3), width: 1),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Create and manage your Draw Steel heroes',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: NavigationTheme.cardIconDecoration(accent),
+                  child: Icon(Icons.shield, color: accent, size: 24),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Heroes',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 22,
+                          color: accent,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Create and manage your Draw Steel heroes',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -110,6 +141,8 @@ class HeroesPage extends ConsumerWidget {
   }
 
   Widget _buildCreateHeroSection(BuildContext context, WidgetRef ref) {
+    final accent = NavigationTheme.heroesColor;
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -128,14 +161,29 @@ class HeroesPage extends ConsumerWidget {
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Create New Hero'),
-                  style: HeroTheme.primaryActionButtonStyle(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: accent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               OutlinedButton.icon(
                 onPressed: () => _showImportDialog(context, ref),
-                icon: const Icon(Icons.download),
-                label: const Text('Import'),
+                icon: Icon(Icons.download, color: accent),
+                label: Text('Import', style: TextStyle(color: accent)),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(color: accent),
+                ),
               ),
             ],
           ),
@@ -146,7 +194,7 @@ class HeroesPage extends ConsumerWidget {
   }
 
   Widget _buildHeroCard(BuildContext context, WidgetRef ref, dynamic hero) {
-    final theme = Theme.of(context);
+    final accent = NavigationTheme.heroesColor;
     final chips = <Widget>[];
     
     // Add chips only if values exist and are not empty
@@ -163,13 +211,16 @@ class HeroesPage extends ConsumerWidget {
       chips.add(_buildChip(context, hero.careerName!, HeroTheme.careerStep));
     }
     if (hero.complicationName != null && hero.complicationName!.isNotEmpty) {
-      chips.add(_buildChip(context, hero.complicationName!, theme.colorScheme.error));
+      chips.add(_buildChip(context, hero.complicationName!, const Color(0xFFE53935)));
     }
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      elevation: HeroTheme.cardElevation,
-      shape: const RoundedRectangleBorder(borderRadius: HeroTheme.cardRadius),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 4,
+      color: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+      ),
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
@@ -181,21 +232,33 @@ class HeroesPage extends ConsumerWidget {
             ),
           );
         },
-        borderRadius: HeroTheme.cardRadius,
-        child: Padding(
+        borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+            border: Border(
+              left: BorderSide(
+                color: accent,
+                width: NavigationTheme.cardAccentStripeWidth,
+              ),
+            ),
+          ),
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildChip(context, 'Lvl ${hero.level}', HeroTheme.primarySection),
-                  const SizedBox(height: 6),
-                  CircleAvatar(
-                    backgroundColor: HeroTheme.getHeroStatusColor('draft').withValues(alpha: 0.2),
+                  _buildChip(context, 'Lvl ${hero.level}', accent),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: NavigationTheme.cardIconDecoration(accent),
                     child: Icon(
                       Icons.person,
-                      color: HeroTheme.getHeroStatusColor('draft'),
+                      color: accent,
+                      size: 22,
                     ),
                   ),
                 ],
@@ -207,8 +270,10 @@ class HeroesPage extends ConsumerWidget {
                   children: [
                     Text(
                       hero.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: Colors.grey.shade100,
                       ),
                     ),
                     if (chips.isNotEmpty) ...[
@@ -223,7 +288,7 @@ class HeroesPage extends ConsumerWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.edit),
+                icon: Icon(Icons.edit, color: Colors.grey.shade400),
                 tooltip: 'Edit Hero',
                 onPressed: () {
                   Navigator.of(context).push(
@@ -234,7 +299,8 @@ class HeroesPage extends ConsumerWidget {
                 },
               ),
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
+                icon: Icon(Icons.more_vert, color: Colors.grey.shade400),
+                color: NavigationTheme.cardBackgroundDark,
                 onSelected: (value) async {
                   if (value == 'export') {
                     await _exportHeroCode(context, ref, hero);
@@ -243,23 +309,23 @@ class HeroesPage extends ConsumerWidget {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'export',
                     child: Row(
                       children: [
-                        Icon(Icons.share),
-                        SizedBox(width: 8),
-                        Text('Export Code'),
+                        Icon(Icons.share, color: Colors.grey.shade300),
+                        const SizedBox(width: 8),
+                        Text('Export Code', style: TextStyle(color: Colors.grey.shade200)),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete_outline, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Delete'),
+                        const Icon(Icons.delete_outline, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text('Delete', style: TextStyle(color: Colors.grey.shade200)),
                       ],
                     ),
                   ),
@@ -273,28 +339,29 @@ class HeroesPage extends ConsumerWidget {
   }
 
   Widget _buildChip(BuildContext context, String label, Color color) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withValues(alpha: 0.4),
           width: 1,
         ),
       ),
       child: Text(
         label,
-        style: theme.textTheme.bodySmall?.copyWith(
+        style: TextStyle(
           color: color,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
+          fontSize: 11,
         ),
       ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
+    final accent = NavigationTheme.heroesColor;
     return HeroTheme.buildEmptyState(
       context,
       icon: Icons.person_add,
@@ -311,13 +378,21 @@ class HeroesPage extends ConsumerWidget {
         },
         icon: const Icon(Icons.add),
         label: const Text('Create First Hero'),
-        style: HeroTheme.primaryActionButtonStyle(context),
+        style: FilledButton.styleFrom(
+          backgroundColor: accent,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+        ),
       ),
     );
   }
 
   Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
-    final theme = Theme.of(context);
+    final accent = NavigationTheme.heroesColor;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -327,21 +402,23 @@ class HeroesPage extends ConsumerWidget {
             Icon(
               Icons.error_outline,
               size: 80,
-              color: theme.colorScheme.error,
+              color: Colors.red.shade400,
             ),
             const SizedBox(height: 24),
             Text(
               'Failed to Load Heroes',
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.error,
+                fontSize: 22,
+                color: Colors.red.shade400,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               error.toString(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade400,
               ),
               textAlign: TextAlign.center,
             ),
@@ -353,7 +430,15 @@ class HeroesPage extends ConsumerWidget {
               },
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
-              style: HeroTheme.primaryActionButtonStyle(context),
+              style: FilledButton.styleFrom(
+                backgroundColor: accent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
             ),
           ],
         ),
@@ -362,19 +447,20 @@ class HeroesPage extends ConsumerWidget {
   }
 
   Widget _buildLoadingState(BuildContext context) {
-    final theme = Theme.of(context);
+    final accent = NavigationTheme.heroesColor;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            color: HeroTheme.primarySection,
+          CircularProgressIndicator(
+            color: accent,
           ),
           const SizedBox(height: 24),
           Text(
             'Loading heroes...',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade400,
             ),
           ),
         ],
