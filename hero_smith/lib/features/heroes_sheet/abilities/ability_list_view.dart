@@ -8,6 +8,7 @@ import '../../../core/models/component.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/text/heroes_sheet/abilities/ability_list_view_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
 /// Enum for action type categories
@@ -37,6 +38,17 @@ extension ActionCategoryLabel on ActionCategory {
         return Icons.directions_run;
       case ActionCategory.triggered:
         return Icons.bolt;
+    }
+  }
+  
+  Color get color {
+    switch (this) {
+      case ActionCategory.actions:
+        return const Color(0xFFE65100); // Orange-red to match Main Action badge
+      case ActionCategory.maneuvers:
+        return NavigationTheme.kitsColor;
+      case ActionCategory.triggered:
+        return const Color(0xFF9C27B0); // Purple to match Triggered Action badge
     }
   }
 }
@@ -109,7 +121,7 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
       future: _loadAbilityComponents(widget.abilityIds),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: NavigationTheme.abilitiesColor));
         }
 
         if (snapshot.hasError) {
@@ -123,12 +135,14 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
                   const SizedBox(height: 16),
                   Text(
                     AbilityListViewText.errorTitle,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     snapshot.error.toString(),
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.grey.shade500),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -140,12 +154,12 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
         final abilities = snapshot.data ?? [];
 
         if (abilities.isEmpty) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(24.0),
               child: Text(
                 AbilityListViewText.emptyDetailsMessage,
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey.shade500),
               ),
             ),
           );
@@ -171,57 +185,95 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
           });
         }
 
-        return Column(
-          children: [
-            // Tab bar for action types
-            TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabAlignment: TabAlignment.center,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 12),
-              tabs: [
-                for (final category in ActionCategory.values)
-                  Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(category.icon, size: 16),
-                        const SizedBox(width: 4),
-                        Text(category.label),
-                        if (grouped[category]!.isNotEmpty) ...[
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              grouped[category]!.length.toString(),
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
+        return AnimatedBuilder(
+          animation: _tabController,
+          builder: (context, _) {
+            return Column(
+              children: [
+                // Custom styled tab bar - compact horizontal
+                Container(
+                  color: NavigationTheme.navBarBackground,
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  child: Row(
+                    children: List.generate(ActionCategory.values.length, (index) {
+                      final category = ActionCategory.values[index];
+                      final isSelected = _tabController.index == index;
+                      final color = isSelected ? category.color : NavigationTheme.inactiveColor;
+                      final count = grouped[category]!.length;
+
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => _tabController.animateTo(index),
+                          behavior: HitTestBehavior.opaque,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                            decoration: isSelected
+                                ? NavigationTheme.selectedNavItemDecoration(category.color)
+                                : null,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  category.icon,
+                                  color: color,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    category.label,
+                                    style: TextStyle(
+                                      color: color,
+                                      fontSize: 11,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (count > 0) ...[
+                                  const SizedBox(width: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                    decoration: BoxDecoration(
+                                      color: category.color.withValues(alpha: isSelected ? 1.0 : 0.7),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      count.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                        ],
-                      ],
-                    ),
+                        ),
+                      );
+                    }),
                   ),
+                ),
+                // Tab views
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      for (final category in ActionCategory.values)
+                        _buildCategoryList(grouped[category]!, category),
+                    ],
+                  ),
+                ),
               ],
-            ),
-            // Tab views
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  for (final category in ActionCategory.values)
-                    _buildCategoryList(grouped[category]!, category),
-                ],
-              ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
@@ -231,39 +283,45 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
     final theme = Theme.of(context);
     
     if (abilities.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(category.icon, size: 48, color: theme.colorScheme.outline),
-              const SizedBox(height: 12),
-              Text(
-                '${AbilityListViewText.emptyCategoryPrefix}${category.label}',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.outline,
+      return Container(
+        color: NavigationTheme.cardBackgroundDark,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(category.icon, size: 48, color: category.color.withValues(alpha: 0.5)),
+                const SizedBox(height: 12),
+                Text(
+                  '${AbilityListViewText.emptyCategoryPrefix}${category.label}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: Colors.grey.shade400,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                AbilityListViewText.emptyCategorySubtitle,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.outline,
+                const SizedBox(height: 4),
+                Text(
+                  AbilityListViewText.emptyCategorySubtitle,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade500,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
     }
     
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: abilities.length,
-      itemBuilder: (context, index) {
-        return _buildAbilityWithRemove(abilities[index]);
-      },
+    return Container(
+      color: NavigationTheme.cardBackgroundDark,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: abilities.length,
+        itemBuilder: (context, index) {
+          return _buildAbilityWithRemove(abilities[index]);
+        },
+      ),
     );
   }
 
@@ -401,5 +459,4 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
     }
 
     return components;
-  }
-}
+  }}

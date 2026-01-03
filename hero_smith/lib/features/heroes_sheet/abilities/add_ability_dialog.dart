@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/text/heroes_sheet/abilities/add_ability_dialog_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
 import '../../../widgets/abilities/ability_filter_dropdown.dart';
 import '../../../widgets/abilities/ability_summary.dart';
@@ -174,14 +175,16 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
     if (targetsOptions.isNotEmpty) targetsOptions.sort();
 
     return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
       child: Container(
         constraints: BoxConstraints(maxWidth: 800, maxHeight: MediaQuery.of(context).size.height * 0.9),
         child: Column(
           children: [
             AppBar(
-              title: const Text(AddAbilityDialogText.dialogTitle),
+              title: const Text(AddAbilityDialogText.dialogTitle, style: TextStyle(color: Colors.white)),
+              backgroundColor: NavigationTheme.navBarBackground,
               automaticallyImplyLeading: false,
-              actions: [IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop())],
+              actions: [IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.of(context).pop())],
             ),
             Expanded(
               child: CustomScrollView(
@@ -200,7 +203,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                     ),
                   ),
                   if (_isLoading) 
-                    const SliverFillRemaining(child: Center(child: CircularProgressIndicator()))
+                    SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: NavigationTheme.abilitiesColor)))
                   else if (_allAbilities == null) 
                     SliverFillRemaining(
                       child: Center(
@@ -209,11 +212,11 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center, 
                             children: [
-                              Icon(Icons.search, size: 64, color: Colors.grey.shade400), 
+                              Icon(Icons.search, size: 64, color: Colors.grey.shade600), 
                               const SizedBox(height: 16), 
                               Text(
                                 AddAbilityDialogText.searchPrompt, 
-                                style: TextStyle(color: Colors.grey), 
+                                style: TextStyle(color: Colors.grey.shade400), 
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -229,11 +232,11 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center, 
                             children: [
-                              Icon(Icons.search_off, size: 64, color: Colors.grey.shade400), 
+                              Icon(Icons.search_off, size: 64, color: Colors.grey.shade600), 
                               const SizedBox(height: 16), 
                               Text(
                                 AddAbilityDialogText.noAbilitiesFound,
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: Colors.grey.shade400),
                               ),
                             ],
                           ),
@@ -261,7 +264,12 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
 
   Widget _buildAbilitySummaryCard(Component ability) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12), 
+      margin: const EdgeInsets.only(bottom: 12),
+      color: const Color(0xFF252525),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
+      ),
       child: InkWell(
         onTap: () => Navigator.of(context).pop(ability.id), 
         borderRadius: BorderRadius.circular(12), 
@@ -283,22 +291,40 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
   }) {
     final isEnabled = _allAbilities != null;
     return Card(
+      color: const Color(0xFF252525),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: NavigationTheme.abilitiesColor.withValues(alpha: 0.3)),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16), 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
             TextField(
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: AddAbilityDialogText.searchHint, 
-                prefixIcon: const Icon(Icons.search), 
+                hintText: AddAbilityDialogText.searchHint,
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                prefixIcon: Icon(Icons.search, color: NavigationTheme.abilitiesColor),
                 suffixIcon: _searchQuery.isNotEmpty 
                     ? IconButton(
-                        icon: const Icon(Icons.clear), 
+                        icon: Icon(Icons.clear, color: Colors.grey.shade400), 
                         onPressed: () { setState(() => _searchQuery = ''); },
                       ) 
                     : null, 
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade600),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade600),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: NavigationTheme.abilitiesColor, width: 2),
+                ),
               ), 
               onChanged: (value) { 
                 setState(() => _searchQuery = value); 
@@ -308,7 +334,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
             const SizedBox(height: 16), 
             Text(
               AddAbilityDialogText.filtersTitle,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade300),
             ), 
             const SizedBox(height: 12), 
             Wrap(
