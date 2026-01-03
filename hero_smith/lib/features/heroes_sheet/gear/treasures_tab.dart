@@ -8,6 +8,7 @@ import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/treasures_tab_text.dart';
 import '../../../widgets/treasures/treasures.dart';
 import 'gear_dialogs.dart';
@@ -253,7 +254,9 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   @override
   Widget build(BuildContext context) {
     if (_isLoadingTreasures) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child:
+              CircularProgressIndicator(color: NavigationTheme.treasureColor));
     }
 
     if (_error != null) {
@@ -293,116 +296,81 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     // Total count includes both treasures and imbuements
     final totalCount = heroTreasures.length + heroImbuements.length;
 
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Text(
-                '${TreasuresTabText.treasuresAndImbuementsHeaderPrefix}$totalCount${TreasuresTabText.treasuresAndImbuementsHeaderSuffix}',
-                style: AppTextStyles.subtitle,
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _showAddTreasureDialog,
-                icon: const Icon(Icons.add),
-                label: const Text(TreasuresTabText.addButtonLabel),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: (heroTreasures.isEmpty && heroImbuements.isEmpty)
-              ? const Center(
-                  child: Text(
-                    TreasuresTabText.emptyStateMessage,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+        Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Row(
+                children: [
+                  Text(
+                    '${TreasuresTabText.treasuresAndImbuementsHeaderPrefix}$totalCount${TreasuresTabText.treasuresAndImbuementsHeaderSuffix}',
+                    style: TextStyle(
+                      color: Colors.grey.shade300,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [
-                    // Imbuements section (if any)
-                    if (heroImbuements.isNotEmpty) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 8),
-                        child: Text(
-                          TreasuresTabText.itemImbuementsHeader,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                        ),
-                      ),
-                      ...heroImbuements.map((imbuement) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Stack(
-                            children: [
-                              ImbuementCard(imbuement: imbuement),
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: IconButton(
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                  onPressed: () =>
-                                      _removeImbuement(imbuement.id),
-                                  style: IconButton.styleFrom(
-                                    backgroundColor:
-                                        Colors.white.withOpacity(0.9),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ],
-                    
-                    // Treasures sections
-                    ...groupedTreasures.entries.map((entry) {
-                      final groupName = entry.key;
-                      final treasures = entry.value;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              ),
+            ),
+            Expanded(
+              child: (heroTreasures.isEmpty && heroImbuements.isEmpty)
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Icon(
+                            Icons.auto_awesome,
+                            size: 64,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            TreasuresTabText.emptyStateMessage,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        // Imbuements section (if any)
+                        if (heroImbuements.isNotEmpty) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 16, bottom: 8),
                             child: Text(
-                              groupName,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
+                              TreasuresTabText.itemImbuementsHeader,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: NavigationTheme.imbuementsTabColor,
+                              ),
                             ),
                           ),
-                          ...treasures.map((treasure) {
+                          ...heroImbuements.map((imbuement) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: Stack(
                                 children: [
-                                  _buildTreasureCard(treasure),
+                                  ImbuementCard(imbuement: imbuement),
                                   Positioned(
                                     top: 8,
                                     right: 8,
                                     child: IconButton(
-                                      icon: const Icon(Icons.delete,
-                                          color: Colors.red),
+                                      icon: const Icon(Icons.delete_outline,
+                                          color: Colors.white70, size: 20),
                                       onPressed: () =>
-                                          _removeTreasure(treasure.id),
+                                          _removeImbuement(imbuement.id),
                                       style: IconButton.styleFrom(
                                         backgroundColor:
-                                            Colors.white.withOpacity(0.9),
+                                            Colors.black.withValues(alpha: 0.6),
+                                        padding: const EdgeInsets.all(6),
+                                        minimumSize: const Size(32, 32),
                                       ),
                                     ),
                                   ),
@@ -411,12 +379,80 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                             );
                           }),
                         ],
-                      );
-                    }),
-                    
-                    const SizedBox(height: 16),
-                  ],
-                ),
+
+                        // Treasures sections
+                        ...groupedTreasures.entries.map((entry) {
+                          final groupName = entry.key;
+                          final treasures = entry.value;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 16, bottom: 8),
+                                child: Text(
+                                  groupName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: NavigationTheme.treasureColor,
+                                  ),
+                                ),
+                              ),
+                              ...treasures.map((treasure) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Stack(
+                                    children: [
+                                      _buildTreasureCard(treasure),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.delete_outline,
+                                              color: Colors.white70, size: 20),
+                                          onPressed: () =>
+                                              _removeTreasure(treasure.id),
+                                          style: IconButton.styleFrom(
+                                            backgroundColor: Colors.black
+                                                .withValues(alpha: 0.6),
+                                            padding: const EdgeInsets.all(6),
+                                            minimumSize: const Size(32, 32),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                          );
+                        }),
+
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+            ),
+          ],
+        ),
+        // Floating Action Button for adding treasures
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.small(
+            heroTag: 'treasures_tab_fab',
+            onPressed: _showAddTreasureDialog,
+            tooltip: TreasuresTabText.addButtonLabel,
+            backgroundColor: Colors.black54,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side:
+                  BorderSide(color: NavigationTheme.treasureColor, width: 1.5),
+            ),
+            child:
+                Icon(Icons.add, color: NavigationTheme.treasureColor, size: 20),
+          ),
         ),
       ],
     );

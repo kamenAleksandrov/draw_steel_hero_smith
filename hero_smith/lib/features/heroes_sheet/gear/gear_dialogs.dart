@@ -8,6 +8,7 @@ import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/text/heroes_sheet/gear/gear_dialogs_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 import 'gear_utils.dart';
 
 /// Dialog for adding treasures and imbuements.
@@ -89,46 +90,108 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return AlertDialog(
-      title: const Text(GearDialogsText.addTreasureOrImbuementTitle),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 600,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * 0.85,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // Tab bar
-            TabBar(
-              controller: _tabController,
-              labelColor: theme.colorScheme.primary,
-              tabs: [
-                Tab(
-                  icon: const Icon(Icons.diamond),
-                  text:
-                      '${GearDialogsText.treasuresTabLabel} (${widget.availableTreasures.length})',
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    NavigationTheme.treasureColor.withValues(alpha: 0.3),
+                    NavigationTheme.treasureColor.withValues(alpha: 0.1),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                Tab(
-                  icon: const Icon(Icons.auto_fix_high),
-                  text:
-                      '${GearDialogsText.imbuementsTabLabel} (${widget.availableImbuements.length})',
+                border: Border(
+                  bottom: BorderSide(
+                      color:
+                          NavigationTheme.treasureColor.withValues(alpha: 0.3)),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Search field
-            TextField(
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.addTreasureSearchLabel,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
               ),
-              onChanged: (value) {
-                _searchQuery = value;
-                _filterTreasures();
-                _filterImbuements();
-              },
+              child: Row(
+                children: [
+                  Icon(Icons.auto_awesome,
+                      color: NavigationTheme.treasureColor),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      GearDialogsText.addTreasureOrImbuementTitle,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
+            // Search field
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: GearDialogsText.addTreasureSearchLabel,
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: const Color(0xFF2A2A2A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        BorderSide(color: NavigationTheme.treasureColor),
+                  ),
+                  isDense: true,
+                ),
+                onChanged: (value) {
+                  _searchQuery = value;
+                  _filterTreasures();
+                  _filterImbuements();
+                },
+              ),
+            ),
+            // Tab bar
+            Material(
+              color: const Color(0xFF2A2A2A),
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: NavigationTheme.treasureColor,
+                labelColor: NavigationTheme.treasureColor,
+                unselectedLabelColor: Colors.grey.shade400,
+                tabs: [
+                  Tab(
+                    icon: const Icon(Icons.diamond, size: 18),
+                    text:
+                        '${GearDialogsText.treasuresTabLabel} (${widget.availableTreasures.length})',
+                  ),
+                  Tab(
+                    icon: const Icon(Icons.auto_fix_high, size: 18),
+                    text:
+                        '${GearDialogsText.imbuementsTabLabel} (${widget.availableImbuements.length})',
+                  ),
+                ],
+              ),
+            ),
             // Tab content
             Expanded(
               child: TabBarView(
@@ -142,207 +205,270 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.addTreasureCancelAction),
-        ),
-      ],
     );
   }
 
   Widget _buildTreasuresTab(ThemeData theme) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          value: _filterType,
-          decoration: const InputDecoration(
-            labelText: GearDialogsText.treasureFilterLabel,
-            border: OutlineInputBorder(),
-            isDense: true,
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          // Filter dropdown
+          DropdownButtonFormField<String>(
+            value: _filterType,
+            dropdownColor: const Color(0xFF2A2A2A),
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: GearDialogsText.treasureFilterLabel,
+              labelStyle: TextStyle(color: Colors.grey.shade400),
+              filled: true,
+              fillColor: const Color(0xFF2A2A2A),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              isDense: true,
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: 'all',
+                child: Text(GearDialogsText.treasureFilterAllTypesLabel),
+              ),
+              DropdownMenuItem(
+                value: 'consumable',
+                child: Text(GearDialogsText.treasureFilterConsumablesLabel),
+              ),
+              DropdownMenuItem(
+                value: 'trinket',
+                child: Text(GearDialogsText.treasureFilterTrinketsLabel),
+              ),
+              DropdownMenuItem(
+                value: 'artifact',
+                child: Text(GearDialogsText.treasureFilterArtifactsLabel),
+              ),
+              DropdownMenuItem(
+                value: 'leveled_treasure',
+                child:
+                    Text(GearDialogsText.treasureFilterLeveledEquipmentLabel),
+              ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                _filterType = value;
+                _filterTreasures();
+              }
+            },
           ),
-          items: const [
-            DropdownMenuItem(
-              value: 'all',
-              child: Text(GearDialogsText.treasureFilterAllTypesLabel),
-            ),
-            DropdownMenuItem(
-              value: 'consumable',
-              child: Text(GearDialogsText.treasureFilterConsumablesLabel),
-            ),
-            DropdownMenuItem(
-              value: 'trinket',
-              child: Text(GearDialogsText.treasureFilterTrinketsLabel),
-            ),
-            DropdownMenuItem(
-              value: 'artifact',
-              child: Text(GearDialogsText.treasureFilterArtifactsLabel),
-            ),
-            DropdownMenuItem(
-              value: 'leveled_treasure',
-              child: Text(GearDialogsText.treasureFilterLeveledEquipmentLabel),
-            ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              _filterType = value;
-              _filterTreasures();
-            }
-          },
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: _filteredTreasures.isEmpty
-              ? Center(
-                  child: Text(
-                    GearDialogsText.treasuresEmptyMessage,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _filteredTreasures.isEmpty
+                ? Center(
+                    child: Text(
+                      GearDialogsText.treasuresEmptyMessage,
+                      style: TextStyle(color: Colors.grey.shade400),
                     ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _filteredTreasures.length,
-                  itemBuilder: (context, index) {
-                    final treasure = _filteredTreasures[index];
-                    final echelon = treasure.data['echelon'] as int?;
-                    final description =
-                        treasure.data['description']?.toString() ?? '';
+                  )
+                : ListView.builder(
+                    itemCount: _filteredTreasures.length,
+                    itemBuilder: (context, index) {
+                      final treasure = _filteredTreasures[index];
+                      final echelon = treasure.data['echelon'] as int?;
+                      final description =
+                          treasure.data['description']?.toString() ?? '';
 
-                    return ListTile(
-                      leading: Icon(
-                        getTreasureIcon(treasure.type),
-                        color: theme.colorScheme.primary,
-                      ),
-                      title: Text(treasure.name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(getTreasureTypeName(treasure.type)),
-                          if (echelon != null)
-                            Text(
-                              '${GearDialogsText.treasureEchelonPrefix}$echelon',
-                            ),
-                          if (description.isNotEmpty)
-                            Text(
-                              description,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                        ],
-                      ),
-                      onTap: () => widget.onTreasureSelected(treasure.id),
-                    );
-                  },
-                ),
-        ),
-      ],
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade700),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            getTreasureIcon(treasure.type),
+                            color: NavigationTheme.treasureColor,
+                          ),
+                          title: Text(
+                            treasure.name,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                getTreasureTypeName(treasure.type),
+                                style: TextStyle(
+                                    color: NavigationTheme.treasureColor),
+                              ),
+                              if (echelon != null)
+                                Text(
+                                  '${GearDialogsText.treasureEchelonPrefix}$echelon',
+                                  style: TextStyle(color: Colors.grey.shade400),
+                                ),
+                              if (description.isNotEmpty)
+                                Text(
+                                  description,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Colors.grey.shade400),
+                                ),
+                            ],
+                          ),
+                          onTap: () => widget.onTreasureSelected(treasure.id),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildImbuementsTab(ThemeData theme) {
-    return Column(
-      children: [
-        DropdownButtonFormField<String>(
-          value: _imbuementFilterType,
-          decoration: const InputDecoration(
-            labelText: GearDialogsText.imbuementFilterLabel,
-            border: OutlineInputBorder(),
-            isDense: true,
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          // Filter dropdown
+          DropdownButtonFormField<String>(
+            value: _imbuementFilterType,
+            dropdownColor: const Color(0xFF2A2A2A),
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              labelText: GearDialogsText.imbuementFilterLabel,
+              labelStyle: TextStyle(color: Colors.grey.shade400),
+              filled: true,
+              fillColor: const Color(0xFF2A2A2A),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              isDense: true,
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: 'all',
+                child: Text(GearDialogsText.imbuementFilterAllTypesLabel),
+              ),
+              DropdownMenuItem(
+                value: 'armor_imbuement',
+                child: Text(GearDialogsText.imbuementFilterArmorLabel),
+              ),
+              DropdownMenuItem(
+                value: 'weapon_imbuement',
+                child: Text(GearDialogsText.imbuementFilterWeaponLabel),
+              ),
+              DropdownMenuItem(
+                value: 'implement_imbuement',
+                child: Text(GearDialogsText.imbuementFilterImplementLabel),
+              ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                _imbuementFilterType = value;
+                _filterImbuements();
+              }
+            },
           ),
-          items: const [
-            DropdownMenuItem(
-              value: 'all',
-              child: Text(GearDialogsText.imbuementFilterAllTypesLabel),
-            ),
-            DropdownMenuItem(
-              value: 'armor_imbuement',
-              child: Text(GearDialogsText.imbuementFilterArmorLabel),
-            ),
-            DropdownMenuItem(
-              value: 'weapon_imbuement',
-              child: Text(GearDialogsText.imbuementFilterWeaponLabel),
-            ),
-            DropdownMenuItem(
-              value: 'implement_imbuement',
-              child: Text(GearDialogsText.imbuementFilterImplementLabel),
-            ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              _imbuementFilterType = value;
-              _filterImbuements();
-            }
-          },
-        ),
-        const SizedBox(height: 12),
-        Expanded(
-          child: _filteredImbuements.isEmpty
-              ? Center(
-                  child: Text(
-                    GearDialogsText.imbuementsEmptyMessage,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+          const SizedBox(height: 12),
+          Expanded(
+            child: _filteredImbuements.isEmpty
+                ? Center(
+                    child: Text(
+                      GearDialogsText.imbuementsEmptyMessage,
+                      style: TextStyle(color: Colors.grey.shade400),
                     ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _filteredImbuements.length,
-                  itemBuilder: (context, index) {
-                    final imbuement = _filteredImbuements[index];
-                    final level = imbuement.raw['level'] as int?;
-                    final imbuementType = imbuement.raw['type']?.toString() ?? '';
-                    final description =
-                        imbuement.raw['description']?.toString() ?? '';
+                  )
+                : ListView.builder(
+                    itemCount: _filteredImbuements.length,
+                    itemBuilder: (context, index) {
+                      final imbuement = _filteredImbuements[index];
+                      final level = imbuement.raw['level'] as int?;
+                      final imbuementType =
+                          imbuement.raw['type']?.toString() ?? '';
+                      final description =
+                          imbuement.raw['description']?.toString() ?? '';
 
-                    return ListTile(
-                      leading: Icon(
-                        _getImbuementTypeIcon(imbuementType),
-                        color: Colors.deepPurple,
-                      ),
-                      title: Text(imbuement.name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade700),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            _getImbuementTypeIcon(imbuementType),
+                            color: NavigationTheme.imbuementsTabColor,
+                          ),
+                          title: Text(
+                            imbuement.name,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(_getImbuementTypeDisplay(imbuementType)),
-                              if (level != null) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: getLevelColor(level).withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    '${GearDialogsText.imbuementLevelPrefix}$level',
+                              Row(
+                                children: [
+                                  Text(
+                                    _getImbuementTypeDisplay(imbuementType),
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: getLevelColor(level),
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                        color:
+                                            NavigationTheme.imbuementsTabColor),
                                   ),
+                                  if (level != null) ...[
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            getLevelColor(level).withAlpha(51),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        '${GearDialogsText.imbuementLevelPrefix}$level',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: getLevelColor(level),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              if (description.isNotEmpty)
+                                Text(
+                                  description,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Colors.grey.shade400),
                                 ),
-                              ],
                             ],
                           ),
-                          if (description.isNotEmpty)
-                            Text(
-                              description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                        ],
-                      ),
-                      isThreeLine: description.isNotEmpty,
-                      onTap: () => widget.onImbuementSelected(imbuement.id),
-                    );
-                  },
-                ),
-        ),
-      ],
+                          isThreeLine: description.isNotEmpty,
+                          onTap: () => widget.onImbuementSelected(imbuement.id),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -392,28 +518,96 @@ class _CreateContainerDialogState extends State<CreateContainerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(GearDialogsText.createContainerTitle),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          labelText: GearDialogsText.createContainerNameLabel,
-          hintText: GearDialogsText.createContainerNameHint,
-          border: OutlineInputBorder(),
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.create_new_folder,
+                    color: NavigationTheme.itemsColor, size: 28),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    GearDialogsText.createContainerTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white70),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Name field
+            TextField(
+              controller: _controller,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: GearDialogsText.createContainerNameLabel,
+                labelStyle: TextStyle(color: Colors.grey.shade400),
+                hintText: GearDialogsText.createContainerNameHint,
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                      const BorderSide(color: NavigationTheme.itemsColor),
+                ),
+              ),
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 20),
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    GearDialogsText.createContainerCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () =>
+                      Navigator.of(context).pop(_controller.text.trim()),
+                  child:
+                      const Text(GearDialogsText.createContainerCreateAction),
+                ),
+              ],
+            ),
+          ],
         ),
-        autofocus: true,
-        textCapitalization: TextCapitalization.words,
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.createContainerCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text(GearDialogsText.createContainerCreateAction),
-        ),
-      ],
     );
   }
 }
@@ -438,92 +632,182 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
     super.dispose();
   }
 
+  InputDecoration _darkInputDecoration(String label, String hint,
+      {int maxLines = 1}) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.grey.shade400),
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade600),
+      filled: true,
+      fillColor: const Color(0xFF2A2A2A),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade700),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: NavigationTheme.itemsColor),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(GearDialogsText.createItemTitle),
-      content: SizedBox(
-        width: 300,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.add_box,
+                    color: NavigationTheme.itemsColor, size: 28),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    GearDialogsText.createItemTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white70),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Name field
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.createItemNameLabel,
-                hintText: GearDialogsText.createItemNameHint,
-                border: OutlineInputBorder(),
+              style: const TextStyle(color: Colors.white),
+              decoration: _darkInputDecoration(
+                GearDialogsText.createItemNameLabel,
+                GearDialogsText.createItemNameHint,
               ),
               autofocus: true,
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 16),
+            // Description field
             TextField(
               controller: _descController,
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.createItemDescriptionLabel,
-                hintText: GearDialogsText.createItemDescriptionHint,
-                border: OutlineInputBorder(),
+              style: const TextStyle(color: Colors.white),
+              decoration: _darkInputDecoration(
+                GearDialogsText.createItemDescriptionLabel,
+                GearDialogsText.createItemDescriptionHint,
               ),
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                const Text(GearDialogsText.createItemQuantityLabel),
-                const SizedBox(width: 16),
-                IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: _quantity > 1
-                      ? () => setState(() => _quantity--)
-                      : null,
-                ),
-                InkWell(
-                  onTap: () => _showQuantityInput(),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: 50,
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
+            // Quantity row
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    GearDialogsText.createItemQuantityLabel,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.remove_circle_outline,
+                      color: _quantity > 1
+                          ? NavigationTheme.itemsColor
+                          : Colors.grey.shade600,
                     ),
-                    child: Text(
-                      '$_quantity',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    onPressed: _quantity > 1
+                        ? () => setState(() => _quantity--)
+                        : null,
+                  ),
+                  InkWell(
+                    onTap: () => _showQuantityInput(),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 50,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3A3A3A),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$_quantity',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: _quantity < 999
+                          ? NavigationTheme.itemsColor
+                          : Colors.grey.shade600,
+                    ),
+                    onPressed: _quantity < 999
+                        ? () => setState(() => _quantity++)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    GearDialogsText.createItemCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: _quantity < 999
-                      ? () => setState(() => _quantity++)
-                      : null,
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    final name = _nameController.text.trim();
+                    if (name.isEmpty) return;
+                    Navigator.of(context).pop({
+                      'name': name,
+                      'description': _descController.text.trim(),
+                      'quantity': _quantity.toString(),
+                    });
+                  },
+                  child: const Text(GearDialogsText.createItemAddAction),
                 ),
               ],
             ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.createItemCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final name = _nameController.text.trim();
-            if (name.isEmpty) return;
-            Navigator.of(context).pop({
-              'name': name,
-              'description': _descController.text.trim(),
-              'quantity': _quantity.toString(),
-            });
-          },
-          child: const Text(GearDialogsText.createItemAddAction),
-        ),
-      ],
     );
   }
 
@@ -559,8 +843,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.item['name'] as String? ?? '');
-    _descController = TextEditingController(text: widget.item['description'] as String? ?? '');
+    _nameController =
+        TextEditingController(text: widget.item['name'] as String? ?? '');
+    _descController = TextEditingController(
+        text: widget.item['description'] as String? ?? '');
     final qty = widget.item['quantity'];
     _quantity = qty is int ? qty : int.tryParse(qty?.toString() ?? '1') ?? 1;
   }
@@ -572,92 +858,181 @@ class _EditItemDialogState extends State<EditItemDialog> {
     super.dispose();
   }
 
+  InputDecoration _darkInputDecoration(String label, String hint) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.grey.shade400),
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade600),
+      filled: true,
+      fillColor: const Color(0xFF2A2A2A),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade700),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: NavigationTheme.itemsColor),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(GearDialogsText.editItemTitle),
-      content: SizedBox(
-        width: 300,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.edit,
+                    color: NavigationTheme.itemsColor, size: 28),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    GearDialogsText.editItemTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white70),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Name field
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.editItemNameLabel,
-                hintText: GearDialogsText.editItemNameHint,
-                border: OutlineInputBorder(),
+              style: const TextStyle(color: Colors.white),
+              decoration: _darkInputDecoration(
+                GearDialogsText.editItemNameLabel,
+                GearDialogsText.editItemNameHint,
               ),
               autofocus: true,
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 16),
+            // Description field
             TextField(
               controller: _descController,
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.editItemDescriptionLabel,
-                hintText: GearDialogsText.editItemDescriptionHint,
-                border: OutlineInputBorder(),
+              style: const TextStyle(color: Colors.white),
+              decoration: _darkInputDecoration(
+                GearDialogsText.editItemDescriptionLabel,
+                GearDialogsText.editItemDescriptionHint,
               ),
               maxLines: 2,
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                const Text(GearDialogsText.editItemQuantityLabel),
-                const SizedBox(width: 16),
-                IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: _quantity > 1
-                      ? () => setState(() => _quantity--)
-                      : null,
-                ),
-                InkWell(
-                  onTap: () => _showQuantityInput(),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: 50,
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
+            // Quantity row
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    GearDialogsText.editItemQuantityLabel,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(
+                      Icons.remove_circle_outline,
+                      color: _quantity > 1
+                          ? NavigationTheme.itemsColor
+                          : Colors.grey.shade600,
                     ),
-                    child: Text(
-                      '$_quantity',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    onPressed: _quantity > 1
+                        ? () => setState(() => _quantity--)
+                        : null,
+                  ),
+                  InkWell(
+                    onTap: () => _showQuantityInput(),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 50,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3A3A3A),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '$_quantity',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      color: _quantity < 999
+                          ? NavigationTheme.itemsColor
+                          : Colors.grey.shade600,
+                    ),
+                    onPressed: _quantity < 999
+                        ? () => setState(() => _quantity++)
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    GearDialogsText.editItemCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: _quantity < 999
-                      ? () => setState(() => _quantity++)
-                      : null,
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    final name = _nameController.text.trim();
+                    if (name.isEmpty) return;
+                    Navigator.of(context).pop({
+                      'name': name,
+                      'description': _descController.text.trim(),
+                      'quantity': _quantity,
+                    });
+                  },
+                  child: const Text(GearDialogsText.editItemSaveAction),
                 ),
               ],
             ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.editItemCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final name = _nameController.text.trim();
-            if (name.isEmpty) return;
-            Navigator.of(context).pop({
-              'name': name,
-              'description': _descController.text.trim(),
-              'quantity': _quantity,
-            });
-          },
-          child: const Text(GearDialogsText.editItemSaveAction),
-        ),
-      ],
     );
   }
 
@@ -699,28 +1074,95 @@ class _EditContainerDialogState extends State<EditContainerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(GearDialogsText.editContainerTitle),
-      content: TextField(
-        controller: _controller,
-        decoration: const InputDecoration(
-          labelText: GearDialogsText.editContainerNameLabel,
-          hintText: GearDialogsText.editContainerNameHint,
-          border: OutlineInputBorder(),
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.edit,
+                    color: NavigationTheme.itemsColor, size: 28),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    GearDialogsText.editContainerTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white70),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // Name field
+            TextField(
+              controller: _controller,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: GearDialogsText.editContainerNameLabel,
+                labelStyle: TextStyle(color: Colors.grey.shade400),
+                hintText: GearDialogsText.editContainerNameHint,
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                      const BorderSide(color: NavigationTheme.itemsColor),
+                ),
+              ),
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: 20),
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    GearDialogsText.editContainerCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () =>
+                      Navigator.of(context).pop(_controller.text.trim()),
+                  child: const Text(GearDialogsText.editContainerSaveAction),
+                ),
+              ],
+            ),
+          ],
         ),
-        autofocus: true,
-        textCapitalization: TextCapitalization.words,
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.editContainerCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text(GearDialogsText.editContainerSaveAction),
-        ),
-      ],
     );
   }
 }
@@ -764,8 +1206,10 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
   Future<void> _loadAvailableKits() async {
     try {
       // 1. Get hero's class from hero_entries table
-      final classId = await widget.db.getSingleHeroEntryId(widget.heroId, 'class');
-      final subclassId = await widget.db.getSingleHeroEntryId(widget.heroId, 'subclass');
+      final classId =
+          await widget.db.getSingleHeroEntryId(widget.heroId, 'class');
+      final subclassId =
+          await widget.db.getSingleHeroEntryId(widget.heroId, 'subclass');
 
       if (classId == null || classId.isEmpty) {
         setState(() {
@@ -791,7 +1235,8 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
       }
 
       _heroClassName = classData.name;
-      final normalizedClassName = normalizedClassId.replaceFirst('class_', '').toLowerCase();
+      final normalizedClassName =
+          normalizedClassId.replaceFirst('class_', '').toLowerCase();
 
       // 3. Check for Fury Stormwight special case
       final normalizedSubclass = subclassId?.toLowerCase().trim() ?? '';
@@ -896,7 +1341,8 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
           types.add('ward');
         } else if (name.contains('enchantment')) {
           types.add('enchantment');
-        } else if (name.contains('augmentation') || name.contains('psionic augmentation')) {
+        } else if (name.contains('augmentation') ||
+            name.contains('psionic augmentation')) {
           types.add('psionic_augmentation');
         }
       }
@@ -957,34 +1403,69 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
     final theme = Theme.of(context);
 
     if (_isLoading) {
-      return AlertDialog(
-        title: const Text(GearDialogsText.addFavoriteLoadingTitle),
-        content: const SizedBox(
-          height: 100,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(GearDialogsText.addFavoriteLoadingCancelAction),
+      return Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: NavigationTheme.kitsColor),
+              const SizedBox(height: 16),
+              const Text(
+                GearDialogsText.addFavoriteLoadingTitle,
+                style: TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  GearDialogsText.addFavoriteLoadingCancelAction,
+                  style: TextStyle(color: Colors.grey.shade400),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     }
 
     if (_error != null) {
-      return AlertDialog(
-        title: const Text(GearDialogsText.addFavoriteErrorTitle),
-        content: Text(
-          _error!,
-          style: TextStyle(color: theme.colorScheme.error),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(GearDialogsText.addFavoriteErrorCloseAction),
+      return Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+              const SizedBox(height: 16),
+              const Text(
+                GearDialogsText.addFavoriteErrorTitle,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _error!,
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  GearDialogsText.addFavoriteErrorCloseAction,
+                  style: TextStyle(color: Colors.grey.shade400),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     }
 
@@ -1012,44 +1493,125 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
       );
     }
 
-    return AlertDialog(
-      title: Text(
-        '${GearDialogsText.addFavoriteMainTitle}${_heroClassName != null ? '${GearDialogsText.addFavoriteMainTitleClassPrefix}$_heroClassName${GearDialogsText.addFavoriteMainTitleClassSuffix}' : ''}',
-      ),
-      content: SizedBox(
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: SizedBox(
         width: double.maxFinite,
-        height: 500,
+        height: 550,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: GearDialogsText.addFavoriteSearchLabel,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                _searchQuery = value;
-                _filterKits();
-              },
-            ),
-            const SizedBox(height: 12),
-            if (_availableTypes.length > 1)
-              DropdownButtonFormField<String>(
-                value: _filterType,
-                decoration: const InputDecoration(
-                  labelText: GearDialogsText.addFavoriteFilterLabel,
-                  border: OutlineInputBorder(),
+            // Gradient header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    NavigationTheme.kitsColor.withAlpha(77),
+                    NavigationTheme.kitsColor.withAlpha(26),
+                  ],
                 ),
-                items: filterItems,
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.add_circle_outline,
+                      color: NavigationTheme.kitsColor, size: 28),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          GearDialogsText.addFavoriteMainTitle,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (_heroClassName != null)
+                          Text(
+                            '${GearDialogsText.addFavoriteMainTitleClassPrefix}$_heroClassName${GearDialogsText.addFavoriteMainTitleClassSuffix}',
+                            style: TextStyle(
+                                color: Colors.grey.shade400, fontSize: 13),
+                          ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+            // Search field
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: GearDialogsText.addFavoriteSearchLabel,
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  filled: true,
+                  fillColor: const Color(0xFF2A2A2A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide:
+                        const BorderSide(color: NavigationTheme.kitsColor),
+                  ),
+                ),
                 onChanged: (value) {
-                  if (value != null) {
-                    _filterType = value;
-                    _filterKits();
-                  }
+                  _searchQuery = value;
+                  _filterKits();
                 },
               ),
-            if (_availableTypes.length > 1) const SizedBox(height: 16),
+            ),
+            // Filter dropdown (if multiple types)
+            if (_availableTypes.length > 1)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: DropdownButtonFormField<String>(
+                  value: _filterType,
+                  dropdownColor: const Color(0xFF2A2A2A),
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: GearDialogsText.addFavoriteFilterLabel,
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    filled: true,
+                    fillColor: const Color(0xFF2A2A2A),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                  ),
+                  items: filterItems,
+                  onChanged: (value) {
+                    if (value != null) {
+                      _filterType = value;
+                      _filterKits();
+                    }
+                  },
+                ),
+              ),
+            // List of kits
             Expanded(
               child: _filteredKits.isEmpty
                   ? Center(
@@ -1058,50 +1620,63 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
                             ? GearDialogsText
                                 .addFavoriteAllItemsAlreadyFavoritedMessage
                             : GearDialogsText.addFavoriteNoItemsMatchMessage,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
+                        style: TextStyle(color: Colors.grey.shade400),
                         textAlign: TextAlign.center,
                       ),
                     )
                   : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       shrinkWrap: true,
                       itemCount: _filteredKits.length,
                       itemBuilder: (context, index) {
                         final kit = _filteredKits[index];
                         final description =
                             kit.data['description']?.toString() ?? '';
-                        final icon = kitTypeIcons[kit.type] ?? kitTypeIcon(kit.type);
+                        final icon =
+                            kitTypeIcons[kit.type] ?? kitTypeIcon(kit.type);
 
-                        return ListTile(
-                          leading: Icon(
-                            icon,
-                            color: theme.colorScheme.primary,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2A2A2A),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade700),
                           ),
-                          title: Text(kit.name),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                kitTypeDisplayName(kit.type),
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              if (description.isNotEmpty)
+                          child: ListTile(
+                            leading:
+                                Icon(icon, color: NavigationTheme.kitsColor),
+                            title: Text(
+                              kit.name,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  description,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                  kitTypeDisplayName(kit.type),
+                                  style: const TextStyle(
+                                    color: NavigationTheme.kitsColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                            ],
+                                if (description.isNotEmpty)
+                                  Text(
+                                    description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        TextStyle(color: Colors.grey.shade400),
+                                  ),
+                              ],
+                            ),
+                            isThreeLine: description.isNotEmpty,
+                            onTap: () {
+                              widget.onKitSelected(kit.id);
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          isThreeLine: description.isNotEmpty,
-                          onTap: () {
-                            widget.onKitSelected(kit.id);
-                            Navigator.of(context).pop();
-                          },
                         );
                       },
                     ),
@@ -1109,12 +1684,6 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.addFavoriteMainCancelAction),
-        ),
-      ],
     );
   }
 }
@@ -1165,28 +1734,78 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(GearDialogsText.quantityDialogTitle),
-      content: TextField(
-        controller: _controller,
-        focusNode: _focusNode,
-        keyboardType: TextInputType.number,
-        decoration: const InputDecoration(
-          labelText: GearDialogsText.quantityDialogLabel,
-          border: OutlineInputBorder(),
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              GearDialogsText.quantityDialogTitle,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                labelText: GearDialogsText.quantityDialogLabel,
+                labelStyle: TextStyle(color: Colors.grey.shade400),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                      const BorderSide(color: NavigationTheme.itemsColor),
+                ),
+              ),
+              onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    GearDialogsText.quantityDialogCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _submit,
+                  child: const Text(GearDialogsText.quantityDialogSetAction),
+                ),
+              ],
+            ),
+          ],
         ),
-        onSubmitted: (_) => _submit(),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(GearDialogsText.quantityDialogCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text(GearDialogsText.quantityDialogSetAction),
-        ),
-      ],
     );
   }
 }

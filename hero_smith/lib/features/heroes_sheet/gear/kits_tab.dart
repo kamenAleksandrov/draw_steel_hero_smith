@@ -10,6 +10,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/services/kit_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/kits_tab_text.dart';
 import '../main_stats/hero_main_stats_providers.dart';
 import 'gear_dialogs.dart';
@@ -77,43 +78,39 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       // Load class data to determine allowed equipment types
       final classDataService = ClassDataService();
       await classDataService.initialize();
-        final classData = resolvedClassId != null
+      final classData = resolvedClassId != null
           ? classDataService.getClassById(resolvedClassId)
           : null;
       final slots = _determineEquipmentSlots(classData, subclassName);
       final allowedTypes = slots.isEmpty
           ? ['kit']
-          : sortKitTypesByPriority(slots
-              .expand((slot) => slot.allowedTypes)
-              .toSet());
+          : sortKitTypesByPriority(
+              slots.expand((slot) => slot.allowedTypes).toSet());
 
       // Load all kit-type components that match allowed types
       final allComponents = await ref.read(allComponentsProvider.future);
-      
+
       // Normalize class name for comparison (strip 'class_' prefix, lowercase)
-        final normalizedClassName = resolvedClassId
-          ?.toLowerCase()
-          .replaceFirst('class_', '');
-      
-      final kits = allComponents
-          .where((c) {
-            // First check if type is allowed
-            if (!allowedTypes.contains(c.type)) return false;
-            
-            // Then check class restrictions (available_to_classes)
-            final availableToClasses = c.data['available_to_classes'];
-            if (availableToClasses == null) {
-              // No class restriction, available to all
-              return true;
-            }
-            if (availableToClasses is List && normalizedClassName != null) {
-              return availableToClasses
-                  .map((e) => e.toString().toLowerCase())
-                  .contains(normalizedClassName);
-            }
-            return true;
-          })
-          .toList()
+      final normalizedClassName =
+          resolvedClassId?.toLowerCase().replaceFirst('class_', '');
+
+      final kits = allComponents.where((c) {
+        // First check if type is allowed
+        if (!allowedTypes.contains(c.type)) return false;
+
+        // Then check class restrictions (available_to_classes)
+        final availableToClasses = c.data['available_to_classes'];
+        if (availableToClasses == null) {
+          // No class restriction, available to all
+          return true;
+        }
+        if (availableToClasses is List && normalizedClassName != null) {
+          return availableToClasses
+              .map((e) => e.toString().toLowerCase())
+              .contains(normalizedClassName);
+        }
+        return true;
+      }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));
 
       // Load favorite and equipped kits
@@ -125,14 +122,12 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         equipmentIds: equipped,
         db: db,
       );
-      
+
       // Use ALL equipped IDs for the "is equipped" check, not just aligned ones
       // This ensures all equipped kits show the equipped badge even if slots < kits
-      final equippedActive = equipped
-          .whereType<String>()
-          .where((id) => id.isNotEmpty)
-          .toList();
-      
+      final equippedActive =
+          equipped.whereType<String>().where((id) => id.isNotEmpty).toList();
+
       // Load any equipped/favorited items that aren't in the filtered kits list
       // This ensures equipped items always show up even if they're from a different type
       final allKitIds = kits.map((k) => k.id).toSet();
@@ -140,7 +135,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         ...equippedActive,
         ...favorites,
       }.where((id) => !allKitIds.contains(id)).toList();
-      
+
       for (final id in missingIds) {
         final component = await db.getComponentById(id);
         if (component != null) {
@@ -154,15 +149,17 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           ));
         }
       }
-      
+
       // Auto-add equipped kit IDs to favorites so they always show up on the page
-      final mergedFavorites = <String>{...favorites, ...equippedActive}.toList();
-      
+      final mergedFavorites =
+          <String>{...favorites, ...equippedActive}.toList();
+
       // Save the merged favorites so equipped kits persist as favorites
-      if (equippedActive.isNotEmpty && !favorites.toSet().containsAll(equippedActive)) {
+      if (equippedActive.isNotEmpty &&
+          !favorites.toSet().containsAll(equippedActive)) {
         await heroRepo.saveFavoriteKitIds(widget.heroId, mergedFavorites);
       }
-      
+
       final cache = {for (final kit in kits) kit.id: kit};
 
       if (mounted) {
@@ -406,12 +403,10 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         .length;
 
     // Find currently equipped kits of the same type
-    final equippedOfSameType = _equippedKitIds
-        .where((id) {
-          final equippedKit = _findKitById(id);
-          return equippedKit != null && equippedKit.type == kit.type;
-        })
-        .toList();
+    final equippedOfSameType = _equippedKitIds.where((id) {
+      final equippedKit = _findKitById(id);
+      return equippedKit != null && equippedKit.type == kit.type;
+    }).toList();
 
     // Check if there's an empty slot for this kit type
     final hasEmptySlot = slotsForType > equippedOfSameType.length;
@@ -481,7 +476,8 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     );
   }
 
-  Future<bool?> _showSwapConfirmation(model.Component newKit, model.Component? existingKit) {
+  Future<bool?> _showSwapConfirmation(
+      model.Component newKit, model.Component? existingKit) {
     final message = existingKit != null
         ? '${KitsTabText.swapKitDialogReplacePrefix}${existingKit.name}${KitsTabText.swapKitDialogReplaceInfix}${newKit.name}${KitsTabText.swapKitDialogReplaceSuffix}'
         : '${KitsTabText.swapKitDialogEquipPrefix}${newKit.name}${KitsTabText.swapKitDialogEquipSuffix}';
@@ -505,7 +501,8 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     );
   }
 
-  Future<String?> _selectKitToReplace(model.Component newKit, List<String> equippedKitIds) {
+  Future<String?> _selectKitToReplace(
+      model.Component newKit, List<String> equippedKitIds) {
     return showDialog<String>(
       context: context,
       builder: (context) {
@@ -524,10 +521,10 @@ class _KitsTabState extends ConsumerState<KitsTab> {
                 final existingKit = _findKitById(kitId);
                 final kitName =
                     existingKit?.name ?? KitsTabText.unknownKitLabel;
-                final kitType = existingKit != null 
-                    ? kitTypeDisplayName(existingKit.type) 
+                final kitType = existingKit != null
+                    ? kitTypeDisplayName(existingKit.type)
                     : '';
-                
+
                 return ListTile(
                   leading: Icon(
                     _getKitIcon(existingKit?.type ?? 'kit'),
@@ -570,14 +567,15 @@ class _KitsTabState extends ConsumerState<KitsTab> {
     }
   }
 
-  Future<void> _applyKitSwapDirect(model.Component kit, String? kitIdToReplace) async {
+  Future<void> _applyKitSwapDirect(
+      model.Component kit, String? kitIdToReplace) async {
     try {
       final heroRepo = ref.read(heroRepositoryProvider);
       final db = ref.read(appDatabaseProvider);
 
       // Work with the raw equipped IDs, not the slot-aligned ones
       final updatedKitIds = List<String>.from(_equippedKitIds);
-      
+
       if (kitIdToReplace != null) {
         // Replace the specific kit
         final indexToReplace = updatedKitIds.indexOf(kitIdToReplace);
@@ -621,14 +619,14 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           _equippedSlotIds = alignedEquipped;
           _equippedKitIds = updatedKitIds;
         });
-        
+
         final replacedName = kitIdToReplace != null
             ? _findKitById(kitIdToReplace)?.name ?? KitsTabText.previousKitLabel
             : null;
         final message = replacedName != null
             ? '${KitsTabText.replacedKitSnackPrefix}$replacedName${KitsTabText.replacedKitSnackInfix}${kit.name}${KitsTabText.replacedKitSnackSuffix}'
             : '${KitsTabText.equippedKitSnackPrefix}${kit.name}${KitsTabText.equippedKitSnackSuffix}';
-            
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
@@ -652,7 +650,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       HeroRepository heroRepo, List<String?> equipmentSlotIds) async {
     final db = ref.read(appDatabaseProvider);
     final level = await heroRepo.getHeroLevel(widget.heroId);
-    
+
     // Use KitGrantsService to apply all kit grants (including stat mods like decrease_total)
     final kitGrantsService = KitGrantsService(db);
     await kitGrantsService.applyKitGrants(
@@ -660,7 +658,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
       equipmentIds: equipmentSlotIds,
       heroLevel: level,
     );
-    
+
     // Also invalidate hero assembly to reload stat mods
     ref.invalidate(heroAssemblyProvider(widget.heroId));
   }
@@ -688,7 +686,8 @@ class _KitsTabState extends ConsumerState<KitsTab> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child: CircularProgressIndicator(color: NavigationTheme.kitsColor));
     }
 
     if (_error != null) {
@@ -719,13 +718,18 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '${KitsTabText.favoriteKitsHeaderPrefix}${favoriteKits.length}${KitsTabText.favoriteKitsHeaderSuffix}',
-                    style: AppTextStyles.subtitle,
+                    style: TextStyle(
+                      color: Colors.grey.shade300,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -739,45 +743,48 @@ class _KitsTabState extends ConsumerState<KitsTab> {
                           Icon(
                             Icons.inventory_2_outlined,
                             size: 64,
-                            color: Theme.of(context).colorScheme.outline,
+                            color: Colors.grey.shade600,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             KitsTabText.noFavoriteKitsTitle,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             KitsTabText.noFavoriteKitsSubtitle,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
+                            style: TextStyle(
+                              color: Colors.grey.shade500,
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
                     )
                   : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: favoriteKits.length,
-                  itemBuilder: (context, index) {
-                    final kit = favoriteKits[index];
-                    final isEquipped = _equippedKitIds.contains(kit.id);
-                    final equippedSlotIndex = _getEquippedSlotIndex(kit.id);
-                    final slotLabel = equippedSlotIndex != null 
-                        ? _equipmentSlots[equippedSlotIndex].label 
-                        : null;
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: favoriteKits.length,
+                      itemBuilder: (context, index) {
+                        final kit = favoriteKits[index];
+                        final isEquipped = _equippedKitIds.contains(kit.id);
+                        final equippedSlotIndex = _getEquippedSlotIndex(kit.id);
+                        final slotLabel = equippedSlotIndex != null
+                            ? _equipmentSlots[equippedSlotIndex].label
+                            : null;
 
-                    return FavoriteKitCardWrapper(
-                      kit: kit,
-                      isEquipped: isEquipped,
-                      equippedSlotLabel: slotLabel,
-                      onSwap: () => _swapToKit(kit),
-                      onRemoveFavorite: () => _toggleFavorite(kit.id),
-                    );
-                  },
-                ),
+                        return FavoriteKitCardWrapper(
+                          kit: kit,
+                          isEquipped: isEquipped,
+                          equippedSlotLabel: slotLabel,
+                          onSwap: () => _swapToKit(kit),
+                          onRemoveFavorite: () => _toggleFavorite(kit.id),
+                        );
+                      },
+                    ),
             ),
           ],
         ),
@@ -785,11 +792,16 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         Positioned(
           right: 16,
           bottom: 16,
-          child: FloatingActionButton(
+          child: FloatingActionButton.small(
             heroTag: 'kits_tab_fab',
             onPressed: _showAddFavoriteDialog,
             tooltip: KitsTabText.addFavoriteFabTooltip,
-            child: const Icon(Icons.add),
+            backgroundColor: Colors.black54,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: NavigationTheme.kitsColor, width: 1.5),
+            ),
+            child: Icon(Icons.add, color: NavigationTheme.kitsColor, size: 20),
           ),
         ),
       ],
@@ -798,7 +810,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
 
   Future<void> _showAddFavoriteDialog() async {
     final db = ref.read(appDatabaseProvider);
-    
+
     await showDialog<void>(
       context: context,
       builder: (context) => AddFavoriteKitDialog(
@@ -815,13 +827,13 @@ class _KitsTabState extends ConsumerState<KitsTab> {
   Future<void> _addKitToFavorites(String kitId) async {
     final heroRepo = ref.read(heroRepositoryProvider);
     final db = ref.read(appDatabaseProvider);
-    
+
     // Add to favorites
     final newFavorites = [..._favoriteKitIds, kitId];
-    
+
     try {
       await heroRepo.saveFavoriteKitIds(widget.heroId, newFavorites);
-      
+
       // Load the kit component to add to cache
       final component = await db.getComponentById(kitId);
       if (component != null && mounted) {
@@ -829,7 +841,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
         final Map<String, dynamic> parsedData = component.dataJson.isNotEmpty
             ? jsonDecode(component.dataJson) as Map<String, dynamic>
             : <String, dynamic>{};
-        
+
         setState(() {
           _favoriteKitIds = newFavorites;
           // Add to allKits if not already present
@@ -845,7 +857,7 @@ class _KitsTabState extends ConsumerState<KitsTab> {
           }
           _kitCache[kitId] = _allKits.firstWhere((k) => k.id == kitId);
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

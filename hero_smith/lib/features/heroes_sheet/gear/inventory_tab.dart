@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/inventory_tab_text.dart';
 import 'gear_dialogs.dart';
 import 'inventory_widgets.dart';
@@ -104,8 +105,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
 
     try {
       final heroRepo = ref.read(heroRepositoryProvider);
-      final updated =
-          _containers.where((c) => c['id'] != containerId).toList();
+      final updated = _containers.where((c) => c['id'] != containerId).toList();
       await heroRepo.saveInventoryContainers(widget.heroId, updated);
       setState(() {
         _containers = updated;
@@ -136,8 +136,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           _containers.indexWhere((c) => c['id'] == containerId);
       if (containerIndex == -1) return;
 
-      final container =
-          Map<String, dynamic>.from(_containers[containerIndex]);
+      final container = Map<String, dynamic>.from(_containers[containerIndex]);
       final items =
           List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
 
@@ -176,8 +175,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           _containers.indexWhere((c) => c['id'] == containerId);
       if (containerIndex == -1) return;
 
-      final container =
-          Map<String, dynamic>.from(_containers[containerIndex]);
+      final container = Map<String, dynamic>.from(_containers[containerIndex]);
       final items =
           List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
 
@@ -220,8 +218,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
 
     try {
       final heroRepo = ref.read(heroRepositoryProvider);
-      final container =
-          Map<String, dynamic>.from(_containers[containerIndex]);
+      final container = Map<String, dynamic>.from(_containers[containerIndex]);
       container['name'] = newName;
 
       final updated = List<Map<String, dynamic>>.from(_containers);
@@ -243,8 +240,8 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
     }
   }
 
-  Future<void> _editItem(
-      String containerId, String itemId, Map<String, dynamic> currentItem) async {
+  Future<void> _editItem(String containerId, String itemId,
+      Map<String, dynamic> currentItem) async {
     final updatedItem = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => EditItemDialog(item: currentItem),
@@ -258,8 +255,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           _containers.indexWhere((c) => c['id'] == containerId);
       if (containerIndex == -1) return;
 
-      final container =
-          Map<String, dynamic>.from(_containers[containerIndex]);
+      final container = Map<String, dynamic>.from(_containers[containerIndex]);
       final items =
           List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
 
@@ -303,8 +299,7 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
           _containers.indexWhere((c) => c['id'] == containerId);
       if (containerIndex == -1) return;
 
-      final container =
-          Map<String, dynamic>.from(_containers[containerIndex]);
+      final container = Map<String, dynamic>.from(_containers[containerIndex]);
       final items =
           List<Map<String, dynamic>>.from(container['items'] as List? ?? []);
 
@@ -338,7 +333,8 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child: CircularProgressIndicator(color: NavigationTheme.itemsColor));
     }
 
     if (_error != null) {
@@ -361,54 +357,86 @@ class _InventoryTabState extends ConsumerState<InventoryTab> {
       );
     }
 
-    return Column(
+    return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Text(
-                InventoryTabText.inventoryTitle,
-                style: AppTextStyles.subtitle,
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _createContainer,
-                icon: const Icon(Icons.create_new_folder),
-                label: const Text(InventoryTabText.newContainerButtonLabel),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: _containers.isEmpty
-              ? const Center(
-                  child: Text(
-                    InventoryTabText.emptyContainersMessage,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+        Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Row(
+                children: [
+                  Text(
+                    InventoryTabText.inventoryTitle,
+                    style: TextStyle(
+                      color: Colors.grey.shade300,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: _containers.length,
-                  itemBuilder: (context, index) {
-                    final container = _containers[index];
-                    final containerId = container['id'] as String;
-                    return ContainerCard(
-                      container: container,
-                      onAddItem: () => _addItemToContainer(containerId),
-                      onDeleteContainer: () => _deleteContainer(containerId),
-                      onDeleteItem: (itemId) =>
-                          _deleteItem(containerId, itemId),
-                      onEditItem: (itemId, itemMap) =>
-                          _editItem(containerId, itemId, itemMap),
-                      onEditContainer: () => _editContainer(containerId),
-                      onUpdateItemQuantity: (itemId, newQty) =>
-                          _updateItemQuantity(containerId, itemId, newQty),
-                    );
-                  },
-                ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _containers.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.inventory_2_outlined,
+                            size: 64,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            InventoryTabText.emptyContainersMessage,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: _containers.length,
+                      itemBuilder: (context, index) {
+                        final container = _containers[index];
+                        final containerId = container['id'] as String;
+                        return ContainerCard(
+                          container: container,
+                          onAddItem: () => _addItemToContainer(containerId),
+                          onDeleteContainer: () =>
+                              _deleteContainer(containerId),
+                          onDeleteItem: (itemId) =>
+                              _deleteItem(containerId, itemId),
+                          onEditItem: (itemId, itemMap) =>
+                              _editItem(containerId, itemId, itemMap),
+                          onEditContainer: () => _editContainer(containerId),
+                          onUpdateItemQuantity: (itemId, newQty) =>
+                              _updateItemQuantity(containerId, itemId, newQty),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+        // Floating Action Button for adding containers
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.small(
+            heroTag: 'inventory_tab_fab',
+            onPressed: _createContainer,
+            tooltip: InventoryTabText.newContainerButtonLabel,
+            backgroundColor: Colors.black54,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: NavigationTheme.itemsColor, width: 1.5),
+            ),
+            child: Icon(Icons.create_new_folder,
+                color: NavigationTheme.itemsColor, size: 20),
+          ),
         ),
       ],
     );

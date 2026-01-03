@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/text/heroes_sheet/gear/inventory_widgets_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 
 /// Card displaying an inventory container with its items.
 class ContainerCard extends StatefulWidget {
@@ -30,12 +31,14 @@ class ContainerCard extends StatefulWidget {
 class _ContainerCardState extends State<ContainerCard> {
   bool _isExpanded = true;
 
-  Future<void> _showQuantityDialog(BuildContext context, String itemId, int currentQuantity) async {
+  Future<void> _showQuantityDialog(
+      BuildContext context, String itemId, int currentQuantity) async {
     final result = await showDialog<int>(
       context: context,
-      builder: (context) => _QuantityInputDialog(currentQuantity: currentQuantity),
+      builder: (context) =>
+          _QuantityInputDialog(currentQuantity: currentQuantity),
     );
-    
+
     if (result != null && result != currentQuantity) {
       widget.onUpdateItemQuantity(itemId, result);
     }
@@ -43,150 +46,245 @@ class _ContainerCardState extends State<ContainerCard> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final items =
         widget.container['items'] as List<dynamic>? ?? <Map<String, dynamic>>[];
     final name = widget.container['name'] as String? ??
         InventoryWidgetsText.defaultContainerName;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Column(
         children: [
-          ListTile(
-            leading: Icon(
-              _isExpanded ? Icons.folder_open : Icons.folder,
-              color: theme.colorScheme.primary,
-            ),
-            title: Text(
-              name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+          // Container header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: NavigationTheme.itemsColor.withAlpha(26),
+              borderRadius: BorderRadius.vertical(
+                top: const Radius.circular(12),
+                bottom: _isExpanded ? Radius.zero : const Radius.circular(12),
               ),
             ),
-            subtitle: Text(
-              '${items.length}${InventoryWidgetsText.containerItemsSuffix}',
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
+                // Fantasy chest/bag icon
+                Icon(
+                  _isExpanded ? Icons.card_travel : Icons.inventory_2,
+                  color: NavigationTheme.itemsColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        '${items.length}${InventoryWidgetsText.containerItemsSuffix}',
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Action buttons
                 IconButton(
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add_circle_outline,
+                      color: NavigationTheme.itemsColor, size: 22),
                   onPressed: widget.onAddItem,
                   tooltip: InventoryWidgetsText.addItemTooltip,
+                  visualDensity: VisualDensity.compact,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.edit, size: 20),
+                  icon: Icon(Icons.edit_outlined,
+                      color: Colors.grey.shade400, size: 20),
                   onPressed: widget.onEditContainer,
                   tooltip: InventoryWidgetsText.editContainerTooltip,
+                  visualDensity: VisualDensity.compact,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(Icons.delete_outline,
+                      color: Colors.red.shade400, size: 20),
                   onPressed: widget.onDeleteContainer,
                   tooltip: InventoryWidgetsText.deleteContainerTooltip,
+                  visualDensity: VisualDensity.compact,
                 ),
                 IconButton(
                   icon: Icon(
-                      _isExpanded ? Icons.expand_less : Icons.expand_more),
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.grey.shade400,
+                  ),
                   onPressed: () => setState(() => _isExpanded = !_isExpanded),
+                  visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
           ),
+          // Items list
           if (_isExpanded && items.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
               child: Column(
                 children: items.map((item) {
                   final itemMap = item as Map<String, dynamic>;
                   final itemId = itemMap['id'] as String;
                   final qty = itemMap['quantity'];
-                  final quantity = qty is int ? qty : int.tryParse(qty?.toString() ?? '1') ?? 1;
-                  
-                  return ListTile(
-                    leading: const Icon(Icons.inventory_2_outlined),
-                    title: Row(
+                  final quantity = qty is int
+                      ? qty
+                      : int.tryParse(qty?.toString() ?? '1') ?? 1;
+                  final description = itemMap['description'] as String?;
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF252525),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade800),
+                    ),
+                    child: Row(
                       children: [
+                        // Fantasy item icon
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: NavigationTheme.itemsColor.withAlpha(26),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.diamond_outlined, // Fantasy gem/item icon
+                            color: NavigationTheme.itemsColor,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        // Item name and description
                         Expanded(
-                          child: Text(
-                            itemMap['name'] as String? ??
-                                InventoryWidgetsText.defaultItemName,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                itemMap['name'] as String? ??
+                                    InventoryWidgetsText.defaultItemName,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (description != null && description.isNotEmpty)
+                                Text(
+                                  description,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 12,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                            ],
                           ),
                         ),
                         // Quantity controls
                         Container(
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHighest,
+                            color: const Color(0xFF3A3A3A),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               InkWell(
-                                borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                                borderRadius: const BorderRadius.horizontal(
+                                    left: Radius.circular(8)),
                                 onTap: quantity > 1
-                                    ? () => widget.onUpdateItemQuantity(itemId, quantity - 1)
+                                    ? () => widget.onUpdateItemQuantity(
+                                        itemId, quantity - 1)
                                     : null,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
+                                  padding: const EdgeInsets.all(6.0),
                                   child: Icon(
                                     Icons.remove,
-                                    size: 16,
-                                    color: quantity > 1 ? null : Colors.grey,
+                                    size: 14,
+                                    color: quantity > 1
+                                        ? NavigationTheme.itemsColor
+                                        : Colors.grey.shade600,
                                   ),
                                 ),
                               ),
                               InkWell(
-                                onTap: () => _showQuantityDialog(context, itemId, quantity),
+                                onTap: () => _showQuantityDialog(
+                                    context, itemId, quantity),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
                                   child: Text(
                                     '$quantity',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                    style: const TextStyle(
+                                      color: Colors.white,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 13,
                                     ),
                                   ),
                                 ),
                               ),
                               InkWell(
-                                borderRadius: const BorderRadius.horizontal(right: Radius.circular(8)),
+                                borderRadius: const BorderRadius.horizontal(
+                                    right: Radius.circular(8)),
                                 onTap: quantity < 999
-                                    ? () => widget.onUpdateItemQuantity(itemId, quantity + 1)
+                                    ? () => widget.onUpdateItemQuantity(
+                                        itemId, quantity + 1)
                                     : null,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
+                                  padding: const EdgeInsets.all(6.0),
                                   child: Icon(
                                     Icons.add,
-                                    size: 16,
-                                    color: quantity < 999 ? null : Colors.grey,
+                                    size: 14,
+                                    color: quantity < 999
+                                        ? NavigationTheme.itemsColor
+                                        : Colors.grey.shade600,
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    subtitle: itemMap['description'] != null &&
-                            (itemMap['description'] as String).isNotEmpty
-                        ? Text(itemMap['description'] as String)
-                        : null,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+                        const SizedBox(width: 8),
+                        // Edit button
                         IconButton(
-                          icon: const Icon(Icons.edit, size: 18),
+                          icon: Icon(Icons.edit_outlined,
+                              size: 18, color: Colors.grey.shade400),
                           onPressed: () => widget.onEditItem(itemId, itemMap),
                           tooltip: InventoryWidgetsText.editItemTooltip,
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(4),
+                          visualDensity: VisualDensity.compact,
                         ),
+                        // Delete button
                         IconButton(
-                          icon: const Icon(Icons.close, size: 18),
+                          icon: Icon(Icons.close,
+                              size: 18, color: Colors.red.shade400),
                           onPressed: () => widget.onDeleteItem(itemId),
                           tooltip: InventoryWidgetsText.deleteItemTooltip,
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(4),
+                          visualDensity: VisualDensity.compact,
                         ),
                       ],
                     ),
-                    dense: true,
                   );
                 }).toList(),
               ),
@@ -196,7 +294,7 @@ class _ContainerCardState extends State<ContainerCard> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 InventoryWidgetsText.emptyItemsMessage,
-                style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                style: TextStyle(color: Colors.grey.shade500),
               ),
             ),
         ],
@@ -252,28 +350,79 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text(InventoryWidgetsText.quantityDialogTitle),
-      content: TextField(
-        controller: _controller,
-        focusNode: _focusNode,
-        keyboardType: TextInputType.number,
-        decoration: const InputDecoration(
-          labelText: InventoryWidgetsText.quantityDialogLabel,
-          border: OutlineInputBorder(),
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              InventoryWidgetsText.quantityDialogTitle,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                labelText: InventoryWidgetsText.quantityDialogLabel,
+                labelStyle: TextStyle(color: Colors.grey.shade400),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                      const BorderSide(color: NavigationTheme.itemsColor),
+                ),
+              ),
+              onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    InventoryWidgetsText.quantityDialogCancelAction,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NavigationTheme.itemsColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _submit,
+                  child:
+                      const Text(InventoryWidgetsText.quantityDialogSetAction),
+                ),
+              ],
+            ),
+          ],
         ),
-        onSubmitted: (_) => _submit(),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(InventoryWidgetsText.quantityDialogCancelAction),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: const Text(InventoryWidgetsText.quantityDialogSetAction),
-        ),
-      ],
     );
   }
 }
