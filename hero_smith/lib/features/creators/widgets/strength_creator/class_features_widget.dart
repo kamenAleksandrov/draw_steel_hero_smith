@@ -9,6 +9,7 @@ import 'package:hero_smith/core/repositories/feature_repository.dart';
 import 'package:hero_smith/core/services/class_feature_data_service.dart';
 import 'package:hero_smith/core/services/heroic_resource_progression_service.dart';
 import 'package:hero_smith/core/services/skill_data_service.dart';
+import 'package:hero_smith/core/theme/creator_theme.dart';
 import 'package:hero_smith/core/theme/feature_tokens.dart';
 import 'package:hero_smith/core/text/creators/widgets/strength_creator/class_feature_card_text.dart';
 import 'package:hero_smith/core/text/creators/widgets/strength_creator/class_features_level_section_text.dart';

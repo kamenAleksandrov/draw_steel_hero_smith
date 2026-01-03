@@ -219,7 +219,7 @@ class StartingSkillsWidget extends StatefulWidget {
 
 class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     with AutomaticKeepAliveClientMixin {
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.skillsAccent;
   final StartingSkillsService _service = const StartingSkillsService();
   final SkillDataService _skillDataService = SkillDataService();
   final MapEquality<String, String?> _mapEquality =

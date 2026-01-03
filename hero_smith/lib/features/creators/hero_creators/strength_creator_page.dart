@@ -9,6 +9,7 @@ import '../../../core/services/class_data_service.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/class_feature_grants_service.dart';
 import '../../../core/text/creators/hero_creators/strength_creator_page_text.dart';
+import '../../../core/theme/creator_theme.dart';
 import '../widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 
@@ -311,20 +312,28 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: CreatorTheme.strengthAccent,
+        ),
+      );
     }
 
     if (_error != null && !_hasLoadedOnce) {
       return _NoticeCard(
         icon: Icons.error_outline,
-        color: Colors.red,
+        accentColor: CreatorTheme.errorColor,
         title: StrengthCreatorPageText.noticeTitleSomethingWentWrong,
         message: _error!,
         action: TextButton.icon(
           onPressed: _load,
-          icon: const Icon(Icons.refresh),
-          label: const Text(StrengthCreatorPageText.noticeActionRetryLabel),
+          icon: const Icon(Icons.refresh, color: CreatorTheme.errorColor),
+          label: const Text(
+            StrengthCreatorPageText.noticeActionRetryLabel,
+            style: TextStyle(color: CreatorTheme.errorColor),
+          ),
         ),
       );
     }
@@ -334,7 +343,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
       notices.add(
         _NoticeCard(
           icon: Icons.info_outline,
-          color: Colors.orange,
+          accentColor: CreatorTheme.warningColor,
           title: StrengthCreatorPageText.noticeTitleClassRequired,
           message:
               StrengthCreatorPageText.noticeMessageClassRequired,
@@ -344,8 +353,8 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
     if (_classData != null && _subclassSelection == null) {
       notices.add(
         _NoticeCard(
-          icon: Icons.error_outline,
-          color: Colors.amber,
+          icon: Icons.warning_amber_rounded,
+          accentColor: CreatorTheme.warningColor,
           title: StrengthCreatorPageText.noticeTitleSubclassMissing,
           message:
               StrengthCreatorPageText.noticeMessageSubclassMissing,
@@ -404,13 +413,17 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
           child: listView,
         ),
         if (_isRefreshing)
-          const Positioned(
+          Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: IgnorePointer(
               ignoring: true,
-              child: LinearProgressIndicator(minHeight: 3),
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                color: CreatorTheme.strengthAccent,
+                backgroundColor: CreatorTheme.strengthAccent.withValues(alpha: 0.2),
+              ),
             ),
           ),
       ],
@@ -424,14 +437,14 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
 class _NoticeCard extends StatelessWidget {
   const _NoticeCard({
     required this.icon,
-    required this.color,
+    required this.accentColor,
     required this.title,
     required this.message,
     this.action,
   });
 
   final IconData icon;
-  final Color color;
+  final Color accentColor;
   final String title;
   final String message;
   final Widget? action;
@@ -439,10 +452,25 @@ class _NoticeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
-        color: color.withOpacity(0.1),
+      child: Container(
+        decoration: BoxDecoration(
+          color: CreatorTheme.cardBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: accentColor.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -450,22 +478,33 @@ class _NoticeCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(icon, color: color),
-                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(icon, color: accentColor, size: 20),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       title,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(color: color, fontWeight: FontWeight.w700),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: accentColor,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   if (action != null) action!,
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
                 message,
-                style: theme.textTheme.bodyMedium,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: CreatorTheme.textSecondary,
+                ),
               ),
             ],
           ),

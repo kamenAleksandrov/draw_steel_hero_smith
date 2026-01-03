@@ -93,7 +93,6 @@ class _HeroicResourceProgressionFeatureState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final featureStyle = widget.featureStyle;
     final isStormwight = _service.isStormwightSubclass(
       widget.widget.subclassSelection?.subclassName,
@@ -103,31 +102,37 @@ class _HeroicResourceProgressionFeatureState
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: scheme.surfaceContainerLow,
+        color: const Color(0xFF252525),
         border: Border.all(
-          color: featureStyle.borderColor.withValues(alpha: widget.isExpanded ? 0.6 : 0.3),
+          color: featureStyle.borderColor.withValues(alpha: widget.isExpanded ? 0.7 : 0.4),
           width: widget.isExpanded ? 2 : 1.5,
         ),
         boxShadow: widget.isExpanded
             ? [
                 BoxShadow(
-                  color: featureStyle.borderColor.withValues(alpha: 0.15),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: featureStyle.borderColor.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
               ]
-            : null,
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          _buildHeader(context, theme, scheme, featureStyle),
+          _buildHeader(context, theme, featureStyle),
           // Expandable content
           if (widget.isExpanded) ...[
             Divider(
               height: 1,
-              color: featureStyle.borderColor.withValues(alpha: 0.2),
+              color: featureStyle.borderColor.withValues(alpha: 0.3),
             ),
             _buildContent(context, theme, isStormwight),
           ],
@@ -139,21 +144,36 @@ class _HeroicResourceProgressionFeatureState
   Widget _buildHeader(
     BuildContext context,
     ThemeData theme,
-    ColorScheme scheme,
     _FeatureStyle featureStyle,
   ) {
     return InkWell(
       onTap: widget.onToggle,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-      child: Padding(
+      child: Container(
+        decoration: widget.isExpanded
+            ? BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    featureStyle.borderColor.withValues(alpha: 0.12),
+                    featureStyle.borderColor.withValues(alpha: 0.04),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              )
+            : null,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: featureStyle.borderColor.withValues(alpha: 0.15),
+                color: featureStyle.borderColor.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: featureStyle.borderColor.withValues(alpha: 0.3),
+                  width: 1,
+                ),
               ),
               child: Icon(
                 featureStyle.icon,
@@ -170,6 +190,7 @@ class _HeroicResourceProgressionFeatureState
                     widget.feature.name,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: CreatorTheme.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -189,7 +210,7 @@ class _HeroicResourceProgressionFeatureState
               child: Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 20,
-                color: scheme.onSurfaceVariant,
+                color: CreatorTheme.textSecondary,
               ),
             ),
           ],
@@ -211,15 +232,19 @@ class _HeroicResourceProgressionFeatureState
               description,
               style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.5,
+                color: CreatorTheme.textSecondary,
               ),
             ),
             const SizedBox(height: 16),
           ],
           if (_isLoading)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator(strokeWidth: 2),
+                padding: const EdgeInsets.all(16),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: CreatorTheme.strengthAccent,
+                ),
               ),
             )
           else if (_progression != null)
@@ -242,10 +267,10 @@ class _HeroicResourceProgressionFeatureState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: CreatorTheme.strengthAccent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.3),
+          color: CreatorTheme.strengthAccent.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -253,13 +278,14 @@ class _HeroicResourceProgressionFeatureState
           Icon(
             Icons.pets_rounded,
             size: 32,
-            color: theme.colorScheme.primary,
+            color: CreatorTheme.strengthAccent,
           ),
           const SizedBox(height: 8),
           Text(
             HeroicResourceProgressionFeatureText.stormwightTitle,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
+              color: CreatorTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -267,7 +293,7 @@ class _HeroicResourceProgressionFeatureState
             HeroicResourceProgressionFeatureText.stormwightSubtitle,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+              color: CreatorTheme.textSecondary,
             ),
           ),
         ],
@@ -279,22 +305,25 @@ class _HeroicResourceProgressionFeatureState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
+        color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.3),
+        ),
       ),
       child: Row(
         children: [
           Icon(
             Icons.info_outline_rounded,
             size: 20,
-            color: theme.colorScheme.onSurfaceVariant,
+            color: CreatorTheme.textSecondary,
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               HeroicResourceProgressionFeatureText.noProgressionMessage,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+                color: CreatorTheme.textSecondary,
               ),
             ),
           ),

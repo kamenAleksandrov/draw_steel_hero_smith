@@ -20,7 +20,6 @@ class _FeatureHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final isDomainLinked = widget.domainLinkedFeatureIds.contains(feature.id);
     final isDeityLinked = widget.deityLinkedFeatureIds.contains(feature.id);
 
@@ -30,7 +29,19 @@ class _FeatureHeader extends StatelessWidget {
         top: const Radius.circular(14),
         bottom: isExpanded ? Radius.zero : const Radius.circular(14),
       ),
-      child: Padding(
+      child: Container(
+        decoration: isExpanded
+            ? BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    featureStyle.borderColor.withValues(alpha: 0.12),
+                    featureStyle.borderColor.withValues(alpha: 0.04),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              )
+            : null,
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,8 +53,12 @@ class _FeatureHeader extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: featureStyle.borderColor.withValues(alpha: 0.15),
+                    color: featureStyle.borderColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: featureStyle.borderColor.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Icon(
                     featureStyle.icon,
@@ -61,7 +76,7 @@ class _FeatureHeader extends StatelessWidget {
                         feature.name,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: scheme.onSurface,
+                          color: CreatorTheme.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -69,7 +84,7 @@ class _FeatureHeader extends StatelessWidget {
                         featureStyle.label,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: featureStyle.borderColor,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -81,7 +96,7 @@ class _FeatureHeader extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    color: scheme.onSurfaceVariant,
+                    color: CreatorTheme.textSecondary,
                   ),
                 ),
               ],
@@ -99,7 +114,7 @@ class _FeatureHeader extends StatelessWidget {
                       label: widget.subclassLabel?.isNotEmpty == true
                           ? widget.subclassLabel!
                           : FeatureHeaderText.subclassLabelFallback,
-                      color: Colors.purple,
+                      color: Colors.purple.shade300,
                     ),
                   if (isDomainLinked)
                     _SmallTag(

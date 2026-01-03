@@ -38,7 +38,7 @@ class StartingCharacteristicsWidget extends StatefulWidget {
 
 class _StartingCharacteristicsWidgetState
     extends State<StartingCharacteristicsWidget> {
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.characteristicsAccent;
   late StartingCharacteristicsController _controller;
   Map<String, int> _lastAssignments = const {};
   Map<String, int> _lastTotals = const {};
@@ -198,46 +198,36 @@ class _StartingCharacteristicsWidgetState
             accent: _accent,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(6, 0, 6, 6),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildAllCharacteristicsRow(summary),
-                if (selectedArray == null &&
-                    _controller.classData.startingCharacteristics
-                        .startingCharacteristicsArrays.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.info_outline,
-                          size: 14, color: Colors.orangeAccent),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          StartingCharacteristicsWidgetText.selectArrayHint,
-                          style: TextStyle(
-                            color: Colors.orangeAccent,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                // Array picker first (if arrays exist)
+                if (_controller.classData.startingCharacteristics
+                    .startingCharacteristicsArrays.isNotEmpty) ...[
+                  _buildArrayPicker(),
+                  const SizedBox(height: 16),
                 ],
+                
+                // Characteristics display
+                _buildCharacteristicsGrid(summary),
+                
+                // Assignment status warning
                 _buildAssignmentStatus(assignmentsComplete, choicesComplete),
+                
+                // Available values to drag (only if array selected)
                 if (selectedArray != null) ...[
-                  const SizedBox(height: 4),
-                  _buildArrayPicker(),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 16),
                   _buildAvailableTokensSection(),
-                ] else ...[
-                  const SizedBox(height: 4),
-                  _buildArrayPicker(),
                 ],
-                const SizedBox(height: 4),
+                
+                // Potency section
+                const SizedBox(height: 16),
                 _buildPotencySection(potencyValues),
+                
+                // Level choices (if any)
                 if (_controller.levelChoices.isNotEmpty) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 16),
                   _buildLevelChoicesSection(),
                 ],
               ],
@@ -248,86 +238,39 @@ class _StartingCharacteristicsWidgetState
     );
   }
 
-  Widget _buildAllCharacteristicsRow(CharacteristicSummary summary) {
-    // Desired order: Might, Agility, Reason, Intuition, Presence
+  Widget _buildCharacteristicsGrid(CharacteristicSummary summary) {
     const desiredOrder = ['might', 'agility', 'reason', 'intuition', 'presence'];
     
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (var i = 0; i < desiredOrder.length; i++)
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: i == desiredOrder.length - 1 ? 0 : 3),
-              child: _buildCompactCharacteristicTile(desiredOrder[i], summary),
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.black.withOpacity(0.2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var i = 0; i < desiredOrder.length; i++)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: i == desiredOrder.length - 1 ? 0 : 4),
+                child: _buildCharacteristicCard(desiredOrder[i], summary),
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildCompactCharacteristicTile(String stat, CharacteristicSummary summary) {
+  Widget _buildCharacteristicCard(String stat, CharacteristicSummary summary) {
     final color = AppColors.getCharacteristicColor(stat);
     final isLocked = _controller.lockedStats.contains(stat);
-    final fixed = summary.fixed[stat] ?? 0;
-    final arrayValue = summary.array[stat] ?? 0;
-    final levelBonus = summary.levelBonuses[stat] ?? 0;
     final total = summary.totals[stat] ?? 0;
     final assignedToken = _controller.assignments[stat];
     final isPending = _controller.selectedArray != null && assignedToken == null && !isLocked;
 
     if (isLocked) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: color.withOpacity(0.45), width: 1),
-          color: color.withOpacity(0.12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.lock, size: 10, color: color),
-                const SizedBox(width: 2),
-                Expanded(
-                  child: Text(
-                    _displayName(stat),
-                    style: TextStyle(
-                      color: color,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 9,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              total.toString(),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Wrap(
-              spacing: 2,
-              runSpacing: 2,
-              children: [
-                _buildValueTag('${_formatSigned(fixed)}', color),
-                if (levelBonus != 0)
-                  _buildValueTag('+${levelBonus}', color),
-              ],
-            ),
-          ],
-        ),
-      );
+      return _buildLockedCharacteristicCard(stat, total, color);
     }
 
     return DragTarget<CharacteristicValueToken>(
@@ -336,27 +279,26 @@ class _StartingCharacteristicsWidgetState
           _controller.assignToken(stat, details.data),
       builder: (context, candidateData, rejectedData) {
         final isActive = candidateData.isNotEmpty;
-        final backgroundColor =
-            isActive ? color.withOpacity(0.18) : color.withOpacity(0.08);
-        final borderColor = isPending
-            ? Colors.orangeAccent
-            : color.withOpacity(isActive ? 0.6 : 0.35);
-
+        
         return AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: borderColor,
-              width: isPending ? 1.5 : 1,
+              color: isPending 
+                  ? Colors.orangeAccent 
+                  : isActive 
+                      ? color 
+                      : color.withOpacity(0.4),
+              width: isPending || isActive ? 2 : 1,
             ),
-            color: backgroundColor,
+            color: isActive ? color.withOpacity(0.2) : color.withOpacity(0.08),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Stat name
               Text(
                 _displayName(stat),
                 style: TextStyle(
@@ -368,46 +310,103 @@ class _StartingCharacteristicsWidgetState
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    total.toString(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  if (assignedToken != null)
-                    _buildAssignedTokenChip(assignedToken, color)
-                  else
-                    _buildDropHint(color, highlight: isActive),
-                ],
+              // Total value
+              Text(
+                total.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-              const SizedBox(height: 2),
-              Wrap(
-                spacing: 2,
-                runSpacing: 2,
-                children: [
-                  if (fixed != 0)
-                    _buildValueTag('${_formatSigned(fixed)}', color),
-                  if (assignedToken != null)
-                    _buildValueTag('${_formatSigned(arrayValue)}', color)
-                  else
-                    _buildValueOutlineTag(
-                      StartingCharacteristicsWidgetText.valueOutlinePlaceholder,
-                      color,
-                    ),
-                  if (levelBonus != 0)
-                    _buildValueTag('+$levelBonus', color),
-                ],
-              ),
+              const SizedBox(height: 4),
+              // Assigned token or drop zone
+              if (assignedToken != null)
+                _buildAssignedTokenChip(assignedToken, color)
+              else
+                _buildDropZone(color, isActive: isActive),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLockedCharacteristicCard(String stat, int total, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.5), width: 1),
+        color: color.withOpacity(0.12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.lock, size: 8, color: color),
+              const SizedBox(width: 2),
+              Flexible(
+                child: Text(
+                  _displayName(stat),
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 9,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            total.toString(),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'Fixed',
+            style: TextStyle(
+              fontSize: 9,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropZone(Color color, {bool isActive = false}) {
+    final hasArray = _controller.selectedArray != null;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: isActive ? color : color.withOpacity(0.5),
+          width: isActive ? 1.5 : 1,
+          style: hasArray ? BorderStyle.solid : BorderStyle.none,
+        ),
+        color: isActive ? color.withOpacity(0.2) : Colors.transparent,
+      ),
+      child: Text(
+        hasArray ? 'Drop' : '?',
+        style: TextStyle(
+          color: hasArray ? Colors.white70 : Colors.grey.shade600,
+          fontSize: 10,
+          fontStyle: FontStyle.italic,
+        ),
+      ),
     );
   }
 
@@ -469,33 +468,6 @@ class _StartingCharacteristicsWidgetState
         _controller.updateArray(array);
         widget.onArrayChanged(array);
       },
-    );
-  }
-
-  Widget _buildDropHint(Color color, {bool highlight = false}) {
-    final borderColor = color.withOpacity(highlight ? 0.8 : 0.5);
-    final backgroundColor =
-        highlight ? color.withOpacity(0.18) : color.withOpacity(0.1);
-    final message =
-        _controller.selectedArray == null
-            ? StartingCharacteristicsWidgetText.dropHintEmpty
-            : StartingCharacteristicsWidgetText.dropHintDrop;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: borderColor),
-        color: backgroundColor,
-      ),
-      child: Text(
-        message,
-        style: TextStyle(
-          color: Colors.white,
-          fontStyle: FontStyle.italic,
-          fontSize: 10,
-        ),
-      ),
     );
   }
 
@@ -834,40 +806,6 @@ class _StartingCharacteristicsWidgetState
           }),
         ],
         onChanged: (value) => _controller.selectLevelChoice(choice.id, value),
-      ),
-    );
-  }
-
-  Widget _buildValueTag(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: color.withOpacity(0.18),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildValueOutlineTag(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withOpacity(0.6), width: 0.8),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 10,
-        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/creators/hero_creators/hero_creator_page_text.dart';
+import 'package:hero_smith/core/theme/navigation_theme.dart';
 import 'package:hero_smith/features/creators/hero_creators/story_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strife_creator_page.dart';
 import 'package:hero_smith/features/creators/hero_creators/strength_creator_page.dart';
@@ -218,6 +219,14 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    
+    // Tab data with icons and colors
+    const tabData = [
+      (icon: Icons.auto_stories, label: HeroCreatorPageText.tabLabelStory, color: NavigationTheme.storyColor),
+      (icon: Icons.local_fire_department, label: HeroCreatorPageText.tabLabelStrife, color: NavigationTheme.strifeColor),
+      (icon: Icons.fitness_center, label: HeroCreatorPageText.tabLabelStrength, color: NavigationTheme.featuresColor),
+    ];
+    
     return PopScope(
       canPop: !(_storyDirty || _strifeDirty),
       onPopInvokedWithResult: (didPop, result) async {
@@ -229,17 +238,19 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
         }
       },
       child: Scaffold(
-        backgroundColor: theme.colorScheme.surface,
+        backgroundColor: NavigationTheme.navBarBackground,
         appBar: AppBar(
           title: Text(
             _heroTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.transparent,
+          backgroundColor: NavigationTheme.navBarBackground,
           elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
           actions: [
             IconButton(
               onPressed: () async {
@@ -302,32 +313,104 @@ class _HeroCreatorPageState extends ConsumerState<HeroCreatorPage>
                 tooltip: HeroCreatorPageText.saveStrifeTooltip,
               ),
           ],
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: HeroCreatorPageText.tabLabelStory),
-              Tab(text: HeroCreatorPageText.tabLabelStrife),
-              Tab(text: HeroCreatorPageText.tabLabelStrength),
-            ],
-          ),
         ),
-        body: TabBarView(
-          controller: _tabController,
+        body: Column(
           children: [
-            StoryCreatorTab(
-              key: _storyTabKey,
-              heroId: widget.heroId,
-              onDirtyChanged: _handleStoryDirty,
-              onTitleChanged: _handleStoryTitleChanged,
+            // Custom styled tab bar
+            Container(
+              color: NavigationTheme.navBarBackground,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: List.generate(tabData.length, (index) {
+                  final tab = tabData[index];
+                  final isSelected = _tabController.index == index;
+                  final color = isSelected ? tab.color : NavigationTheme.inactiveColor;
+                  
+                  // Show dirty indicator
+                  final isDirty = (index == 0 && _storyDirty) || (index == 1 && _strifeDirty);
+
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () => _tabController.animateTo(index),
+                      behavior: HitTestBehavior.opaque,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeOut,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: isSelected
+                            ? NavigationTheme.selectedNavItemDecoration(tab.color)
+                            : null,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Icon(
+                                  tab.icon,
+                                  color: color,
+                                  size: NavigationTheme.tabIconSize,
+                                ),
+                                if (isDirty)
+                                  Positioned(
+                                    right: -4,
+                                    top: -4,
+                                    child: Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: Colors.orange,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: NavigationTheme.navBarBackground,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              tab.label,
+                              style: NavigationTheme.tabLabelStyle(
+                                color: color,
+                                isSelected: isSelected,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
             ),
-            StrifeCreatorTab(
-              key: _strifeTabKey,
-              heroId: widget.heroId,
-              onDirtyChanged: _handleStrifeDirty,
-            ),
-            StrenghtCreatorPage(
-              key: _strengthPageKey,
-              heroId: widget.heroId,
+            // Tab content
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  StoryCreatorTab(
+                    key: _storyTabKey,
+                    heroId: widget.heroId,
+                    onDirtyChanged: _handleStoryDirty,
+                    onTitleChanged: _handleStoryTitleChanged,
+                  ),
+                  StrifeCreatorTab(
+                    key: _strifeTabKey,
+                    heroId: widget.heroId,
+                    onDirtyChanged: _handleStrifeDirty,
+                  ),
+                  StrenghtCreatorPage(
+                    key: _strengthPageKey,
+                    heroId: widget.heroId,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

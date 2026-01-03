@@ -79,7 +79,7 @@ class _OptionsSection extends StatelessWidget {
             OptionsSectionText.grantedFeaturesTitle,
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+              color: CreatorTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 10),
@@ -104,7 +104,7 @@ class _OptionsSection extends StatelessWidget {
             _headingText(selectionLimit),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: scheme.onSurface,
+              color: CreatorTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 10),
@@ -210,10 +210,10 @@ class _SelectionPrompt extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.orange.withValues(alpha: 0.1),
+        color: CreatorTheme.warningColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.orange.withValues(alpha: 0.4),
+          color: CreatorTheme.warningColor.withValues(alpha: 0.5),
           width: 1.5,
         ),
       ),
@@ -222,10 +222,10 @@ class _SelectionPrompt extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.15),
+              color: CreatorTheme.warningColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.touch_app_rounded, color: Colors.orange, size: 22),
+            child: Icon(Icons.touch_app_rounded, color: CreatorTheme.warningColor, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -236,7 +236,7 @@ class _SelectionPrompt extends StatelessWidget {
                   OptionsSectionText.selectionRequiredTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange.shade800,
+                    color: CreatorTheme.warningColor,
                     fontSize: 14,
                   ),
                 ),
@@ -244,7 +244,7 @@ class _SelectionPrompt extends StatelessWidget {
                 Text(
                   _promptText(),
                   style: TextStyle(
-                    color: Colors.orange.shade700,
+                    color: CreatorTheme.warningColor.withValues(alpha: 0.85),
                     fontSize: 13,
                   ),
                 ),
@@ -285,23 +285,25 @@ class _InfoMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.3),
+        color: CreatorTheme.strengthAccent.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: CreatorTheme.strengthAccent.withValues(alpha: 0.25),
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, size: 18, color: scheme.primary),
+          Icon(Icons.info_outline, size: 18, color: CreatorTheme.strengthAccent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.onSurfaceVariant,
+                color: CreatorTheme.textSecondary,
               ),
             ),
           ),
@@ -1011,7 +1013,6 @@ class _OptionTileState extends State<_OptionTile>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final label = ClassFeatureDataService.featureOptionLabel(widget.option);
     final abilities = _resolveAbilities();
     final textSections = _extractOptionTextSections(widget.option);
@@ -1024,17 +1025,17 @@ class _OptionTileState extends State<_OptionTile>
     Color borderColor;
     Color bgColor;
     if (widget.isSelected) {
-      borderColor = scheme.primary;
-      bgColor = scheme.primary.withValues(alpha: 0.08);
+      borderColor = CreatorTheme.strengthAccent;
+      bgColor = CreatorTheme.strengthAccent.withValues(alpha: 0.12);
     } else if (widget.needsSelection) {
-      borderColor = Colors.orange.withValues(alpha: 0.5);
-      bgColor = Colors.orange.withValues(alpha: 0.04);
+      borderColor = CreatorTheme.warningColor.withValues(alpha: 0.6);
+      bgColor = CreatorTheme.warningColor.withValues(alpha: 0.08);
     } else if (widget.isRecommended) {
-      borderColor = scheme.secondary.withValues(alpha: 0.5);
-      bgColor = scheme.secondary.withValues(alpha: 0.05);
+      borderColor = CreatorTheme.successColor.withValues(alpha: 0.5);
+      bgColor = CreatorTheme.successColor.withValues(alpha: 0.08);
     } else {
-      borderColor = scheme.outlineVariant.withValues(alpha: 0.5);
-      bgColor = scheme.surfaceContainerLow;
+      borderColor = Colors.grey.withValues(alpha: 0.4);
+      bgColor = const Color(0xFF2A2A2A);
     }
 
     return AnimatedContainer(
@@ -1078,8 +1079,8 @@ class _OptionTileState extends State<_OptionTile>
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: widget.isSelected
-                                ? scheme.primary
-                                : scheme.onSurface,
+                                ? CreatorTheme.strengthAccent
+                                : CreatorTheme.textPrimary,
                           ),
                         ),
                         if (widget.isRecommended && !widget.isSelected)
@@ -1088,7 +1089,7 @@ class _OptionTileState extends State<_OptionTile>
                             child: Text(
                               OptionsSectionText.matchesSubclassLabel,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.secondary,
+                                color: CreatorTheme.successColor,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -1104,7 +1105,7 @@ class _OptionTileState extends State<_OptionTile>
                         duration: const Duration(milliseconds: 200),
                         child: Icon(
                           Icons.keyboard_arrow_down,
-                          color: scheme.onSurfaceVariant,
+                          color: CreatorTheme.textSecondary,
                         ),
                       ),
                       onPressed: _toggleExpanded,
@@ -1137,8 +1138,8 @@ class _OptionTileState extends State<_OptionTile>
                               if (textSections.isNotEmpty) ...[
                                 _OptionTextContent(
                                   sections: textSections,
-                                  textColor: scheme.onSurfaceVariant,
-                                  titleColor: scheme.primary,
+                                  textColor: CreatorTheme.textSecondary,
+                                  titleColor: CreatorTheme.strengthAccent,
                                 ),
                                 if (abilities.isNotEmpty) const SizedBox(height: 12),
                               ],
@@ -1166,8 +1167,8 @@ class _OptionTileState extends State<_OptionTile>
                   if (!_isExpanded && textSections.isNotEmpty) ...[
                     _OptionTextContent(
                       sections: textSections,
-                      textColor: scheme.onSurfaceVariant,
-                      titleColor: scheme.primary,
+                      textColor: CreatorTheme.textSecondary,
+                      titleColor: CreatorTheme.strengthAccent,
                     ),
                     const SizedBox(height: 12),
                   ],
@@ -1186,19 +1187,18 @@ class _OptionTileState extends State<_OptionTile>
   }
 
   Widget _buildCheckbox(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: 24,
       height: 24,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         color: widget.isSelected
-            ? scheme.primary
+            ? CreatorTheme.strengthAccent
             : Colors.transparent,
         border: Border.all(
           color: widget.isSelected
-              ? scheme.primary
-              : scheme.outline.withValues(alpha: 0.5),
+              ? CreatorTheme.strengthAccent
+              : Colors.grey.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -1209,7 +1209,6 @@ class _OptionTileState extends State<_OptionTile>
   }
 
   Widget _buildRadio(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: 24,
       height: 24,
@@ -1218,8 +1217,8 @@ class _OptionTileState extends State<_OptionTile>
         color: Colors.transparent,
         border: Border.all(
           color: widget.isSelected
-              ? scheme.primary
-              : scheme.outline.withValues(alpha: 0.5),
+              ? CreatorTheme.strengthAccent
+              : Colors.grey.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -1230,7 +1229,7 @@ class _OptionTileState extends State<_OptionTile>
                 height: 12,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: scheme.primary,
+                  color: CreatorTheme.strengthAccent,
                 ),
               ),
             )

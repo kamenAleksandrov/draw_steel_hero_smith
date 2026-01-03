@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/component.dart' as model;
 import '../../../core/text/heroes_sheet/gear/kit_widgets_text.dart';
-import '../../../widgets/kits/kit_card.dart';
-import '../../../widgets/kits/modifier_card.dart';
-import '../../../widgets/kits/stormwight_kit_card.dart';
-import '../../../widgets/kits/ward_card.dart';
+import '../../../widgets/kits/equipment_card.dart';
 
 /// Wrapper widget that displays a favorite kit using the appropriate existing kit card
 /// and adds action buttons for remove from favorites and swap.
@@ -26,7 +23,7 @@ class FavoriteKitCardWrapper extends StatelessWidget {
   final VoidCallback onRemoveFavorite;
   final String? equippedSlotLabel;
 
-  String _getBadgeLabel(String type) {
+  String? _getBadgeLabel(String type) {
     switch (type) {
       case 'psionic_augmentation':
         return KitWidgetsText.badgeAugmentation;
@@ -35,50 +32,16 @@ class FavoriteKitCardWrapper extends StatelessWidget {
       case 'enchantment':
         return KitWidgetsText.badgeEnchantment;
       default:
-        return type;
+        return null;
     }
   }
 
   Widget _buildKitCard() {
-    // Convert to Component (non-aliased) for the kit widgets
-    final component = model.Component(
-      id: kit.id,
-      name: kit.name,
-      type: kit.type,
-      data: kit.data,
+    return EquipmentCard(
+      component: kit,
+      badgeLabel: _getBadgeLabel(kit.type),
+      initiallyExpanded: false,
     );
-
-    switch (kit.type) {
-      case 'kit':
-        return KitCard(
-          component: component,
-          initiallyExpanded: false,
-        );
-      case 'stormwight_kit':
-        return StormwightKitCard(
-          component: component,
-          initiallyExpanded: false,
-        );
-      case 'ward':
-        return WardCard(
-          component: component,
-          initiallyExpanded: false,
-        );
-      case 'psionic_augmentation':
-      case 'prayer':
-      case 'enchantment':
-        return ModifierCard(
-          component: component,
-          badgeLabel: _getBadgeLabel(kit.type),
-          initiallyExpanded: false,
-        );
-      default:
-        // Fallback to standard kit card
-        return KitCard(
-          component: component,
-          initiallyExpanded: false,
-        );
-    }
   }
 
   @override

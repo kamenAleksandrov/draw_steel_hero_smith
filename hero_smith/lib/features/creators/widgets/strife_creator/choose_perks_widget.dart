@@ -48,7 +48,7 @@ class StartingPerksWidget extends ConsumerStatefulWidget {
 
 class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
     with AutomaticKeepAliveClientMixin {
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.perksAccent;
   final StartingPerksService _service = const StartingPerksService();
   final MapEquality<String, String?> _mapEquality =
       const MapEquality<String, String?>();

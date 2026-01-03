@@ -43,7 +43,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
 
 class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     with AutomaticKeepAliveClientMixin {
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.abilitiesAccent;
   
   final StartingAbilitiesService _service = const StartingAbilitiesService();
   final AbilityDataService _abilityDataService = AbilityDataService();

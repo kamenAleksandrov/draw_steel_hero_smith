@@ -495,12 +495,11 @@ class _DescriptionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     return Text(
       description,
       style: theme.textTheme.bodyMedium?.copyWith(
-        color: scheme.onSurfaceVariant,
+        color: CreatorTheme.textSecondary,
         height: 1.5,
       ),
     );
@@ -521,15 +520,14 @@ class _DetailBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.3),
+          color: CreatorTheme.strengthAccent.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -537,13 +535,13 @@ class _DetailBlock extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: scheme.primary),
+              Icon(icon, size: 18, color: CreatorTheme.strengthAccent),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: scheme.primary,
+                  color: CreatorTheme.strengthAccent,
                 ),
               ),
             ],
@@ -552,7 +550,7 @@ class _DetailBlock extends StatelessWidget {
           Text(
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
+              color: CreatorTheme.textSecondary,
               height: 1.5,
             ),
           ),

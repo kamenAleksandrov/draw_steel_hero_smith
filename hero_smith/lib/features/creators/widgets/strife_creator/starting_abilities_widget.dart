@@ -37,7 +37,7 @@ class StartingAbilitiesWidget extends StatefulWidget {
 }
 
 class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.abilitiesAccent;
   final StartingAbilitiesService _service = const StartingAbilitiesService();
   final AbilityDataService _abilityDataService = AbilityDataService();
   final MapEquality<String, String?> _mapEquality =

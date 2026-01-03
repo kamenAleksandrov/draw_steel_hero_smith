@@ -5,6 +5,7 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/subclass_models.dart';
 import '../../../../core/services/class_feature_data_service.dart';
 import '../../../../core/text/creators/widgets/strength_creator/class_features_section_text.dart';
+import '../../../../core/theme/creator_theme.dart';
 import 'class_features_widget.dart';
 
 class ClassFeaturesSection extends StatefulWidget {
@@ -281,25 +282,27 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     if (_isLoading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 2,
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Row(
-              children: [
-                SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2.5),
+      return Padding(
+        padding: CreatorTheme.sectionMargin,
+        child: Container(
+          decoration: CreatorTheme.sectionDecoration(CreatorTheme.strengthAccent),
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: CreatorTheme.strengthAccent,
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Text(ClassFeaturesSectionText.loadingMessage),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                ClassFeaturesSectionText.loadingMessage,
+                style: TextStyle(color: CreatorTheme.textSecondary),
+              ),
+            ],
           ),
         ),
       );
@@ -307,15 +310,32 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
 
     if (_error != null) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Card(
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              _error!,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
+        padding: CreatorTheme.sectionMargin,
+        child: Container(
+          decoration: CreatorTheme.sectionDecoration(CreatorTheme.errorColor),
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: CreatorTheme.errorColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.error_outline,
+                  color: CreatorTheme.errorColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  _error!,
+                  style: TextStyle(color: CreatorTheme.errorColor),
+                ),
+              ),
+            ],
           ),
         ),
       );

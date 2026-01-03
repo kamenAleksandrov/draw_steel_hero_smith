@@ -26,11 +26,63 @@ class CreatorTheme {
   /// Complication section
   static const Color complicationAccent = Color(0xFFEF5350); // Red
   
-  /// Class/Strife section
-  static const Color classAccent = Color(0xFFAB47BC);      // Purple
+  // ============================================================
+  // STRIFE TAB ACCENT COLORS (thematic variety)
+  // ============================================================
+  
+  /// Class/Level/Subclass - Crimson (combat class identity)
+  static const Color classAccent = Color(0xFFE53935);      // Crimson Red
+  
+  /// Characteristics - Amber (core attributes)
+  static const Color characteristicsAccent = Color(0xFFFFB300); // Amber
+  
+  /// Skills - Teal (learned expertise)
+  static const Color skillsAccent = Color(0xFF26A69A);     // Teal
+  
+  /// Perks - Gold (special advantages)
+  static const Color perksAccent = Color(0xFFFFD54F);      // Gold
+  
+  /// Abilities - Purple (magical powers)
+  static const Color abilitiesAccent = Color(0xFFAB47BC);  // Purple
+  
+  /// Equipment - Emerald (gear/items)
+  static const Color equipmentAccent = Color(0xFF43A047);  // Emerald Green
   
   /// Kit section
   static const Color kitAccent = Color(0xFF5C6BC0);        // Indigo
+
+  // ============================================================
+  // STRENGTH TAB ACCENT COLORS
+  // ============================================================
+  
+  /// Strength tab primary accent - Deep Blue (power/features)
+  static const Color strengthAccent = Color(0xFF5C6BC0);   // Deep Indigo
+  
+  // ============================================================
+  // STATUS COLORS
+  // ============================================================
+  
+  /// Error/critical state color
+  static const Color errorColor = Color(0xFFEF5350);       // Red
+  
+  /// Warning/caution state color
+  static const Color warningColor = Color(0xFFFFB74D);     // Orange/Amber
+  
+  /// Success/positive state color
+  static const Color successColor = Color(0xFF66BB6A);     // Green
+  
+  // ============================================================
+  // BACKGROUND & TEXT COLORS
+  // ============================================================
+  
+  /// Card/surface background color
+  static const Color cardBackground = Color(0xFF1E1E1E);
+  
+  /// Primary text color
+  static const Color textPrimary = Color(0xFFF5F5F5);
+  
+  /// Secondary/muted text color
+  static const Color textSecondary = Color(0xFFB0B0B0);
 
   // ============================================================
   // DIMENSIONS

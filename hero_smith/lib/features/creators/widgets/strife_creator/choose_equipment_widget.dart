@@ -7,10 +7,7 @@ import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/kit_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_equipment_widget_text.dart';
-import '../../../../widgets/kits/kit_card.dart';
-import '../../../../widgets/kits/modifier_card.dart';
-import '../../../../widgets/kits/stormwight_kit_card.dart';
-import '../../../../widgets/kits/ward_card.dart';
+import '../../../../widgets/kits/equipment_card.dart';
 
 /// Configuration for a single equipment slot rendered inside the unified section.
 class EquipmentSlot {
@@ -40,7 +37,7 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
     required this.slots,
   });
 
-  static const _accent = CreatorTheme.classAccent;
+  static const _accent = CreatorTheme.equipmentAccent;
   
   final List<EquipmentSlot> slots;
 
@@ -342,61 +339,34 @@ class _KitPreviewDialog extends StatelessWidget {
     required this.item,
   });
 
-  static const _accent = EquipmentAndModificationsWidget._accent;
-  
   final Component item;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: NavigationTheme.cardBackgroundDark,
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: 600,
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
+          maxWidth: 500,
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    _accent.withValues(alpha: 0.3),
-                    _accent.withValues(alpha: 0.1),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                border: Border(
-                  bottom: BorderSide(color: _accent.withValues(alpha: 0.3)),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.inventory_2, color: _accent),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      item.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
+            SingleChildScrollView(
+              child: _buildCardForComponent(item),
             ),
-            Flexible(
-              child: SingleChildScrollView(
-                child: _buildCardForComponent(item),
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Material(
+                color: Colors.black54,
+                shape: const CircleBorder(),
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                  onPressed: () => Navigator.of(context).pop(),
+                  tooltip: 'Close',
+                ),
               ),
             ),
           ],
@@ -406,21 +376,19 @@ class _KitPreviewDialog extends StatelessWidget {
   }
 
   Widget _buildCardForComponent(Component item) {
-    switch (item.type) {
-      case 'kit':
-        return KitCard(component: item, initiallyExpanded: true);
-      case 'stormwight_kit':
-        return StormwightKitCard(component: item, initiallyExpanded: true);
-      case 'ward':
-        return WardCard(component: item, initiallyExpanded: true);
-      case 'psionic_augmentation':
-      case 'enchantment':
-      case 'prayer':
-        return ModifierCard(
-            component: item, badgeLabel: item.type, initiallyExpanded: true);
-      default:
-        return KitCard(component: item, initiallyExpanded: true);
+    // Determine badge label for modifiers
+    String? badgeLabel;
+    if (item.type == 'psionic_augmentation' ||
+        item.type == 'enchantment' ||
+        item.type == 'prayer') {
+      badgeLabel = EquipmentAndModificationsWidget._titleize(item.type);
     }
+    
+    return EquipmentCard(
+      component: item,
+      badgeLabel: badgeLabel,
+      initiallyExpanded: true,
+    );
   }
 }
 
