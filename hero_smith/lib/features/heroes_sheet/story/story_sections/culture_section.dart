@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_culture_section_text.dart';
+import 'package:hero_smith/core/theme/navigation_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
+
+// Story tab color
+const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -58,23 +62,41 @@ class CultureSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     if (!culture.hasAnySelection) {
       return const SizedBox.shrink();
     }
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              SheetStoryCultureSectionText.sectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _storyColor.withAlpha(26),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.public, color: _storyColor, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  SheetStoryCultureSectionText.sectionTitle,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             if (culture.environmentId != null &&
@@ -108,8 +130,10 @@ class CultureSection extends ConsumerWidget {
               const SizedBox(height: 16),
               Text(
                 SheetStoryCultureSectionText.cultureSkillsTitle,
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade300,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 8),
@@ -158,18 +182,19 @@ class _ComponentDisplay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final componentAsync = ref.watch(_componentByIdProvider(componentId));
-    final theme = Theme.of(context);
 
     return componentAsync.when(
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
         height: 20,
         width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2),
+        child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
       ),
       error: (e, _) =>
-          Text('Error: $e', style: const TextStyle(color: Colors.red)),
+          Text('Error: $e', style: TextStyle(color: Colors.red.shade300)),
       data: (component) {
-        if (component == null) return Text('$label not found');
+        if (component == null) {
+          return Text('$label not found', style: TextStyle(color: Colors.grey.shade400));
+        }
 
         final description = component.data['description']?.toString();
 
@@ -186,9 +211,7 @@ class _ComponentDisplay extends ConsumerWidget {
                 padding: const EdgeInsets.only(left: 32),
                 child: Text(
                   description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
-                  ),
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 ),
               ),
             ],

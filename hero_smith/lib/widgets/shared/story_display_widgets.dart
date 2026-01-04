@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const _storyColor = Color(0xFF8E24AA);
+
 /// A row displaying labeled information with an icon.
 class InfoRow extends StatelessWidget {
   const InfoRow({
@@ -15,11 +17,10 @@ class InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: theme.colorScheme.primary),
+        Icon(icon, size: 20, color: _storyColor),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -28,16 +29,19 @@ class InfoRow extends StatelessWidget {
               if (label.isNotEmpty) ...[
                 Text(
                   label,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
                   ),
                 ),
                 const SizedBox(height: 2),
               ],
               Text(
                 value,
-                style: theme.textTheme.bodyLarge?.copyWith(
+                style: const TextStyle(
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -65,13 +69,12 @@ class EffectItemDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha(26),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withAlpha(77)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +87,8 @@ class EffectItemDisplay extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: theme.textTheme.labelLarge?.copyWith(
+                  style: TextStyle(
+                    fontSize: 14,
                     color: color,
                     fontWeight: FontWeight.bold,
                   ),
@@ -92,7 +96,7 @@ class EffectItemDisplay extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   text,
-                  style: theme.textTheme.bodySmall,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 ),
               ],
             ),
@@ -116,7 +120,6 @@ class GrantItemDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
@@ -124,14 +127,16 @@ class GrantItemDisplay extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: theme.colorScheme.secondary,
+            color: _storyColor,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: const TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
+                color: Colors.white,
               ),
             ),
           ),
@@ -152,31 +157,30 @@ class AbilityReferenceDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     if (ability == null) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.1),
+        color: _storyColor.withAlpha(26),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.3),
-        ),
+        border: Border.all(color: _storyColor.withAlpha(77)),
       ),
       child: Row(
         children: [
           Icon(
             Icons.flash_on,
             size: 16,
-            color: theme.colorScheme.primary,
+            color: _storyColor,
           ),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
               'Ability: ${ability.toString()}',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: const TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
+                color: Colors.white,
               ),
             ),
           ),
@@ -197,31 +201,30 @@ class FeatureReferenceDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     if (feature == null) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondary.withOpacity(0.1),
+        color: Colors.amber.withAlpha(26),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: theme.colorScheme.secondary.withOpacity(0.3),
-        ),
+        border: Border.all(color: Colors.amber.withAlpha(77)),
       ),
       child: Row(
         children: [
           Icon(
             Icons.stars,
             size: 16,
-            color: theme.colorScheme.secondary,
+            color: Colors.amber.shade400,
           ),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
               'Feature: ${feature.toString()}',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: const TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
+                color: Colors.white,
               ),
             ),
           ),
@@ -242,29 +245,29 @@ class SelectedTraitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: const Color(0xFF252525),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        border: Border.all(color: Colors.grey.shade700),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             trait['name']?.toString() ?? 'Unknown Trait',
-            style: theme.textTheme.titleSmall?.copyWith(
+            style: const TextStyle(
+              fontSize: 14,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           if (trait['description'] != null) ...[
             const SizedBox(height: 4),
             Text(
               trait['description'].toString(),
-              style: theme.textTheme.bodySmall,
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
             ),
           ],
           if (trait['cost'] != null) ...[
@@ -272,14 +275,15 @@ class SelectedTraitCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: _storyColor.withAlpha(51),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 'Cost: ${trait['cost']} pt${trait['cost'] == 1 ? '' : 's'}',
-                style: theme.textTheme.labelSmall?.copyWith(
+                style: TextStyle(
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.primary,
+                  color: _storyColor,
                 ),
               ),
             ),
@@ -308,11 +312,10 @@ class IncitingIncidentDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final incidents = careerData['inciting_incidents'] as List?;
 
     if (incidents == null) {
-      return Text(incidentName);
+      return Text(incidentName, style: const TextStyle(color: Colors.white));
     }
 
     final incident = incidents.cast<Map<String, dynamic>>().firstWhere(
@@ -321,17 +324,15 @@ class IncitingIncidentDisplay extends StatelessWidget {
         );
 
     if (incident.isEmpty) {
-      return Text(incidentName);
+      return Text(incidentName, style: const TextStyle(color: Colors.white));
     }
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        color: _storyColor.withAlpha(38),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.3),
-        ),
+        border: Border.all(color: _storyColor.withAlpha(77)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,14 +342,16 @@ class IncitingIncidentDisplay extends StatelessWidget {
               Icon(
                 Icons.flash_on,
                 size: 18,
-                color: theme.colorScheme.primary,
+                color: _storyColor,
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   incident['name']?.toString() ?? incidentName,
-                  style: theme.textTheme.titleSmall?.copyWith(
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -358,7 +361,7 @@ class IncitingIncidentDisplay extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               incident['description'].toString(),
-              style: theme.textTheme.bodyMedium,
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
             ),
           ],
         ],

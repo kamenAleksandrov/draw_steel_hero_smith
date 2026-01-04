@@ -1,9 +1,14 @@
 part of 'sheet_story.dart';
 
 extension _StoryTabBuilders on _SheetStoryState {
+  // Story accent color
+  static const _storyColor = Color(0xFF8E24AA);
+  
   Widget _buildStoryTab(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: _storyColor),
+      );
     }
 
     if (_error != null) {
@@ -13,18 +18,22 @@ extension _StoryTabBuilders on _SheetStoryState {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
               const SizedBox(height: 16),
               Text(
                 _error!,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: Colors.red.shade300),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              FilledButton.icon(
+              ElevatedButton.icon(
                 onPressed: _loadStoryData,
                 icon: const Icon(Icons.refresh),
                 label: const Text(SheetStoryCommonText.retry),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _storyColor,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),
@@ -33,8 +42,11 @@ extension _StoryTabBuilders on _SheetStoryState {
     }
 
     if (_storyData == null) {
-      return const Center(
-        child: Text(SheetStoryStoryTabText.noStoryDataAvailable),
+      return Center(
+        child: Text(
+          SheetStoryStoryTabText.noStoryDataAvailable,
+          style: TextStyle(color: Colors.grey.shade400),
+        ),
       );
     }
 
@@ -94,7 +106,6 @@ extension _StoryTabBuilders on _SheetStoryState {
   }
 
   Widget _buildHeroNameSection(BuildContext context) {
-    final theme = Theme.of(context);
     final hero = _storyData.hero;
 
     if (hero == null) {
@@ -108,53 +119,121 @@ extension _StoryTabBuilders on _SheetStoryState {
         ? ref.watch(componentByIdProvider(hero.subclass as String))
         : null;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              SheetStoryStoryTabText.heroSectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            InfoRow(label: SheetStoryStoryTabText.nameLabel, value: hero.name, icon: Icons.person),
-            const SizedBox(height: 4),
-            InfoRow(
-              label: SheetStoryStoryTabText.levelLabel,
-              value: hero.level.toString(),
-              icon: Icons.trending_up,
-            ),
-            if (classAsync != null) ...[
-              const SizedBox(height: 12),
-              classAsync.when(
-                loading: () => const CircularProgressIndicator(),
-                error: (e, _) => Text('Error loading class: $e'),
-                data: (classComp) => InfoRow(
-                  label: SheetStoryStoryTabText.classLabel,
-                  value: classComp?.name ?? SheetStoryStoryTabText.unknown,
-                  icon: Icons.shield,
-                ),
-              ),
-            ],
-            if (subclassAsync != null) ...[
-              const SizedBox(height: 8),
-              subclassAsync.when(
-                loading: () => const CircularProgressIndicator(),
-                error: (e, _) => Text('Error loading subclass: $e'),
-                data: (subclassComp) => InfoRow(
-                  label: SheetStoryStoryTabText.subclassLabel,
-                  value: subclassComp?.name ?? SheetStoryStoryTabText.unknown,
-                  icon: Icons.bolt,
-                ),
-              ),
-            ],
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
       ),
+      child: Column(
+        children: [
+          // Header with gradient
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _storyColor.withAlpha(51),
+                  _storyColor.withAlpha(13),
+                ],
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _storyColor.withAlpha(51),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.person, color: _storyColor, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        hero.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Level ${hero.level}',
+                        style: TextStyle(
+                          color: _storyColor.withAlpha(200),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Class and Subclass info
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                if (classAsync != null)
+                  classAsync.when(
+                    loading: () => const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+                    ),
+                    error: (e, _) => Text('Error: $e', style: const TextStyle(color: Colors.red)),
+                    data: (classComp) => _buildInfoRow(
+                      Icons.shield,
+                      SheetStoryStoryTabText.classLabel,
+                      classComp?.name ?? SheetStoryStoryTabText.unknown,
+                    ),
+                  ),
+                if (subclassAsync != null) ...[
+                  const SizedBox(height: 8),
+                  subclassAsync.when(
+                    loading: () => const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+                    ),
+                    error: (e, _) => Text('Error: $e', style: const TextStyle(color: Colors.red)),
+                    data: (subclassComp) => _buildInfoRow(
+                      Icons.bolt,
+                      SheetStoryStoryTabText.subclassLabel,
+                      subclassComp?.name ?? SheetStoryStoryTabText.unknown,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: _storyColor),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+        ),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 }

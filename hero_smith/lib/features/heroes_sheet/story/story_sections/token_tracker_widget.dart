@@ -80,7 +80,7 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
     if (_isLoading) {
       return const SizedBox(
         height: 60,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF8E24AA))),
       );
     }
 
@@ -88,20 +88,21 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
       return const SizedBox.shrink();
     }
 
-    final theme = Theme.of(context);
+    const storyColor = Color(0xFF8E24AA);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.token_outlined,
-                size: 18, color: theme.colorScheme.primary),
+            const Icon(Icons.token_outlined, size: 18, color: storyColor),
             const SizedBox(width: 8),
             Text(
               SheetStoryTokenTrackerText.sectionTitle,
-              style: theme.textTheme.titleMedium?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.grey.shade300,
               ),
             ),
             const Spacer(),
@@ -110,6 +111,7 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
               icon: const Icon(Icons.refresh, size: 16),
               label: const Text(SheetStoryTokenTrackerText.resetLabel),
               style: TextButton.styleFrom(
+                foregroundColor: storyColor,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 minimumSize: const Size(0, 32),
               ),

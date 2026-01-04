@@ -3,10 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/theme/heroes_sheet/story/sheet_story_ancestry_theme.dart';
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_ancestry_section_text.dart';
+import 'package:hero_smith/core/theme/navigation_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
+
+// Story tab color
+const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID (same as in sheet_story.dart)
 final _componentByIdProvider =
@@ -37,8 +41,6 @@ class AncestrySection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     if (ancestryId == null || ancestryId!.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -46,28 +48,51 @@ class AncestrySection extends ConsumerWidget {
     final ancestryAsync = ref.watch(_componentByIdProvider(ancestryId!));
     final traitsAsync = ref.watch(allComponentsProvider);
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              SheetStoryAncestrySectionText.sectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _storyColor.withAlpha(26),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.family_restroom, color: _storyColor, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  SheetStoryAncestrySectionText.sectionTitle,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             ancestryAsync.when(
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const CircularProgressIndicator(color: _storyColor),
               error: (e, _) => Text(
                 '${SheetStoryAncestrySectionText.errorLoadingAncestryPrefix}$e',
+                style: TextStyle(color: Colors.red.shade300),
               ),
               data: (ancestry) {
                 if (ancestry == null) {
-                  return const Text(
-                      SheetStoryAncestrySectionText.ancestryNotFound);
+                  return Text(
+                    SheetStoryAncestrySectionText.ancestryNotFound,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  );
                 }
 
                 return Column(
@@ -82,7 +107,7 @@ class AncestrySection extends ConsumerWidget {
                       const SizedBox(height: 8),
                       Text(
                         ancestry.data['description'].toString(),
-                        style: theme.textTheme.bodyMedium,
+                        style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                       ),
                     ],
                   ],
@@ -92,8 +117,8 @@ class AncestrySection extends ConsumerWidget {
             if (traitIds.isNotEmpty) ...[
               const SizedBox(height: 16),
               traitsAsync.when(
-                loading: () => const CircularProgressIndicator(),
-                error: (e, _) => Text('Error loading traits: $e'),
+                loading: () => const CircularProgressIndicator(color: _storyColor),
+                error: (e, _) => Text('Error loading traits: $e', style: TextStyle(color: Colors.red.shade300)),
                 data: (allTraits) => _buildTraitsContent(context, allTraits),
               ),
             ],
@@ -107,19 +132,23 @@ class AncestrySection extends ConsumerWidget {
     BuildContext context,
     List<model.Component> allTraits,
   ) {
-    final theme = Theme.of(context);
-
     final ancestryTraitComponent = allTraits.cast<dynamic>().firstWhere(
           (t) => t.data['ancestry_id'] == ancestryId,
           orElse: () => null,
         );
 
     if (ancestryTraitComponent == null && allTraits.isNotEmpty) {
-      return const Text(SheetStoryAncestrySectionText.noTraitDataAvailable);
+      return Text(
+        SheetStoryAncestrySectionText.noTraitDataAvailable,
+        style: TextStyle(color: Colors.grey.shade400),
+      );
     }
 
     if (ancestryTraitComponent == null) {
-      return const Text(SheetStoryAncestrySectionText.noTraitsAvailable);
+      return Text(
+        SheetStoryAncestrySectionText.noTraitsAvailable,
+        style: TextStyle(color: Colors.grey.shade400),
+      );
     }
 
     final signature =
@@ -138,20 +167,20 @@ class AncestrySection extends ConsumerWidget {
         if (signature != null) ...[
           Text(
             SheetStoryAncestrySectionText.signatureAbilityTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color:
-                  SheetStoryAncestryTheme.signatureAccentColor.withOpacity(0.1),
+              color: Colors.amber.shade900.withAlpha(51),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: SheetStoryAncestryTheme.signatureAccentColor
-                    .withOpacity(0.3),
+                color: Colors.amber.shade700.withAlpha(77),
               ),
             ),
             child: Column(
@@ -160,16 +189,16 @@ class AncestrySection extends ConsumerWidget {
                 Text(
                   signature['name']?.toString() ??
                       SheetStoryAncestrySectionText.signatureUnknownName,
-                  style: theme.textTheme.titleSmall?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.amber.shade800,
+                    color: Colors.amber.shade400,
                   ),
                 ),
                 if (signature['description'] != null) ...[
                   const SizedBox(height: 6),
                   Text(
                     signature['description'].toString(),
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
                   ),
                 ],
               ],
@@ -180,8 +209,10 @@ class AncestrySection extends ConsumerWidget {
         if (selectedTraits.isNotEmpty) ...[
           Text(
             SheetStoryAncestrySectionText.optionalTraitsTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),

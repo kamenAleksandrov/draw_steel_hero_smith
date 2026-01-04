@@ -3,14 +3,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
 import '../../core/models/component.dart';
 import '../../core/services/perk_grants_service.dart';
-import '../../core/theme/ds_theme.dart';
+import '../../core/theme/navigation_theme.dart';
 import '../abilities/ability_expandable_item.dart';
 import '../shared/section_widgets.dart';
 import '../shared/expandable_card.dart';
 
+// Perk group colors for dark theme
+const _perkGroupColors = {
+  'crafting': Color(0xFFFFB74D), // Amber
+  'exploration': Color(0xFF4FC3F7), // Light Blue
+  'interpersonal': Color(0xFFBA68C8), // Purple
+  'intrigue': Color(0xFF78909C), // Blue Grey
+  'lore': Color(0xFF81C784), // Green
+  'supernatural': Color(0xFFE57373), // Red
+};
+
+const _perkGroupEmoji = {
+  'crafting': '🛠️',
+  'exploration': '🧭',
+  'interpersonal': '🤝',
+  'intrigue': '🎭',
+  'lore': '📚',
+  'supernatural': '✨',
+};
+
 /// Provider for loading perk grant choices for a specific hero and perk
 final _perkGrantChoicesProvider = FutureProvider.family<
-    Map<String, List<String>>, ({String heroId, String perkId})>((ref, args) async {
+    Map<String, List<String>>,
+    ({String heroId, String perkId})>((ref, args) async {
   final db = ref.read(appDatabaseProvider);
   return PerkGrantsService().getAllGrantChoicesForPerk(
     db: db,
@@ -20,33 +40,40 @@ final _perkGrantChoicesProvider = FutureProvider.family<
 });
 
 /// Provider for loading hero's skills
-final _heroSkillIdsProvider = FutureProvider.family<List<String>, String>((ref, heroId) async {
+final _heroSkillIdsProvider =
+    FutureProvider.family<List<String>, String>((ref, heroId) async {
   final db = ref.read(appDatabaseProvider);
   return PerkGrantsService().getHeroSkillIds(db: db, heroId: heroId);
 });
 
-/// Provider for loading hero's languages  
-final _heroLanguageIdsProvider = FutureProvider.family<List<String>, String>((ref, heroId) async {
+/// Provider for loading hero's languages
+final _heroLanguageIdsProvider =
+    FutureProvider.family<List<String>, String>((ref, heroId) async {
   final db = ref.read(appDatabaseProvider);
   return PerkGrantsService().getHeroLanguageIds(db: db, heroId: heroId);
 });
 
 /// Provider for loading all skills
-final _allSkillsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final _allSkillsProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
   return PerkGrantsService().loadSkills();
 });
 
 /// Provider for loading all languages
-final _allLanguagesProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final _allLanguagesProvider =
+    FutureProvider<List<Map<String, dynamic>>>((ref) async {
   return PerkGrantsService().loadLanguages();
 });
 
 class PerkCard extends ConsumerWidget {
   final Component perk;
+
   /// If provided, enables hero-specific grant selection UI
   final String? heroId;
+
   /// Skill IDs that are already taken (from other sources) and should be excluded from pickers
   final Set<String> reservedSkillIds;
+
   /// Language IDs that are already taken (from other sources) and should be excluded from pickers
   final Set<String> reservedLanguageIds;
 
@@ -65,11 +92,10 @@ class PerkCard extends ConsumerWidget {
     final description = data['description'] as String?;
     final grantsRaw = data['grants'];
 
-    final ds = DsTheme.of(context);
-    final scheme = Theme.of(context).colorScheme;
-    final borderColor = ds.perkGroupBorder[group] ?? scheme.outlineVariant;
-    final neutralText = scheme.onSurface;
-    
+    final borderColor =
+        _perkGroupColors[group.toLowerCase()] ?? const Color(0xFF78909C);
+    final emoji = _perkGroupEmoji[group.toLowerCase()] ?? '✨';
+
     // Parse grants using the service
     final parsedGrant = PerkGrant.fromJson(grantsRaw);
     final hasGrants = parsedGrant != null;
@@ -78,16 +104,16 @@ class PerkCard extends ConsumerWidget {
       title: perk.name,
       borderColor: borderColor,
       badge: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: borderColor.withOpacity(0.1),
-          border: Border.all(color: borderColor.withOpacity(0.3), width: 1),
-          borderRadius: BorderRadius.circular(10),
+          color: borderColor.withAlpha(38),
+          border: Border.all(color: borderColor.withAlpha(77), width: 1),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          '${ds.perkGroupEmoji[group] ?? '✨'} ${group.toUpperCase()}',
+          '$emoji ${group.toUpperCase()}',
           style: TextStyle(
-            fontSize: 9,
+            fontSize: 10,
             fontWeight: FontWeight.bold,
             color: borderColor,
           ),
@@ -98,57 +124,98 @@ class PerkCard extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (description != null && description.isNotEmpty) ...[
-            SectionLabel('Description', emoji: ds.perkSectionEmoji['description'], color: borderColor),
-            const SizedBox(height: 2),
-            _buildIndentedText(description, neutralText),
+            _buildSectionLabel(
+                'Description', Icons.description_outlined, borderColor),
+            const SizedBox(height: 4),
+            _buildIndentedText(description, Colors.grey.shade400),
+            const SizedBox(height: 8),
           ],
           if (hasGrants) ...[
-            SectionLabel('Grants', emoji: ds.perkSectionEmoji['grants'], color: borderColor),
+            _buildSectionLabel(
+                'Grants', Icons.card_giftcard_outlined, borderColor),
             const SizedBox(height: 8),
-            _buildGrantsFromParsed(context, ref, parsedGrant, neutralText, borderColor),
+            _buildGrantsFromParsed(
+                context, ref, parsedGrant, Colors.grey.shade300, borderColor),
           ],
         ],
       ),
     );
   }
 
+  Widget _buildSectionLabel(String text, IconData icon, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildIndentedText(String text, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 4),
+      padding: const EdgeInsets.only(left: 20),
       child: Text(
         text,
-        style: TextStyle(fontSize: 11, color: color),
+        style: TextStyle(fontSize: 12, color: color),
         maxLines: 12,
         overflow: TextOverflow.ellipsis,
       ),
     );
   }
 
-  Widget _buildGrantsFromParsed(BuildContext context, WidgetRef ref, PerkGrant grant, Color textColor, Color accentColor) {
+  Widget _buildGrantsFromParsed(BuildContext context, WidgetRef ref,
+      PerkGrant grant, Color textColor, Color accentColor) {
     return Padding(
       padding: const EdgeInsets.only(left: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: _buildGrantWidgets(context, ref, grant, textColor, accentColor),
+        children:
+            _buildGrantWidgets(context, ref, grant, textColor, accentColor),
       ),
     );
   }
 
-  List<Widget> _buildGrantWidgets(BuildContext context, WidgetRef ref, PerkGrant grant, Color textColor, Color accentColor) {
+  List<Widget> _buildGrantWidgets(BuildContext context, WidgetRef ref,
+      PerkGrant grant, Color textColor, Color accentColor) {
     return switch (grant) {
-      AbilityGrant(:final abilityName) => [_buildAbilityGrantItem(context, ref, abilityName, textColor, accentColor)],
-      CreatureGrant(:final creatureName) => [_buildCreatureGrantItem(creatureName, textColor)],
-      SkillFromOwnedGrant(:final group) => [_buildSkillFromOwnedGrantItem(context, ref, group, textColor, accentColor)],
-      SkillPickGrant(:final group, :final count) => [_buildSkillPickGrantItem(context, ref, group, count, textColor, accentColor)],
-      LanguageGrant(:final count) => [_buildLanguageGrantItem(context, ref, count, textColor, accentColor)],
-      MultiGrant(:final grants) => grants.expand((g) => _buildGrantWidgets(context, ref, g, textColor, accentColor)).toList(),
+      AbilityGrant(:final abilityName) => [
+          _buildAbilityGrantItem(
+              context, ref, abilityName, textColor, accentColor)
+        ],
+      CreatureGrant(:final creatureName) => [
+          _buildCreatureGrantItem(creatureName, textColor)
+        ],
+      SkillFromOwnedGrant(:final group) => [
+          _buildSkillFromOwnedGrantItem(
+              context, ref, group, textColor, accentColor)
+        ],
+      SkillPickGrant(:final group, :final count) => [
+          _buildSkillPickGrantItem(
+              context, ref, group, count, textColor, accentColor)
+        ],
+      LanguageGrant(:final count) => [
+          _buildLanguageGrantItem(context, ref, count, textColor, accentColor)
+        ],
+      MultiGrant(:final grants) => grants
+          .expand((g) =>
+              _buildGrantWidgets(context, ref, g, textColor, accentColor))
+          .toList(),
     };
   }
 
-  Widget _buildAbilityGrantItem(BuildContext context, WidgetRef ref, String abilityName, Color textColor, Color accentColor) {
+  Widget _buildAbilityGrantItem(BuildContext context, WidgetRef ref,
+      String abilityName, Color textColor, Color accentColor) {
     // Look up the full ability by name
     final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
-    
+
     return abilityAsync.when(
       data: (ability) {
         if (ability == null) {
@@ -172,7 +239,8 @@ class PerkCard extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text('Loading $abilityName...', style: TextStyle(fontSize: 11, color: textColor)),
+            Text('Loading $abilityName...',
+                style: TextStyle(fontSize: 11, color: textColor)),
           ],
         ),
       ),
@@ -185,7 +253,8 @@ class PerkCard extends ConsumerWidget {
     return _buildGrantRow('🐾 Creature: $creatureName', textColor);
   }
 
-  Widget _buildSkillFromOwnedGrantItem(BuildContext context, WidgetRef ref, String group, Color textColor, Color accentColor) {
+  Widget _buildSkillFromOwnedGrantItem(BuildContext context, WidgetRef ref,
+      String group, Color textColor, Color accentColor) {
     // If no heroId, just show generic text
     if (heroId == null) {
       return _buildGrantRow('Choose one $group skill you own', textColor);
@@ -194,39 +263,46 @@ class PerkCard extends ConsumerWidget {
     // Load hero's skills and all skills for the group
     final heroSkillsAsync = ref.watch(_heroSkillIdsProvider(heroId!));
     final allSkillsAsync = ref.watch(_allSkillsProvider);
-    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+    final choicesAsync = ref
+        .watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
 
     return heroSkillsAsync.when(
       loading: () => _buildLoadingGrant(accentColor, textColor),
-      error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+      error: (e, _) =>
+          _buildGrantRow('Choose one $group skill you own', textColor),
       data: (heroSkillIds) => allSkillsAsync.when(
         loading: () => _buildLoadingGrant(accentColor, textColor),
-        error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+        error: (e, _) =>
+            _buildGrantRow('Choose one $group skill you own', textColor),
         data: (allSkills) => choicesAsync.when(
           loading: () => _buildLoadingGrant(accentColor, textColor),
-          error: (e, _) => _buildGrantRow('Choose one $group skill you own', textColor),
+          error: (e, _) =>
+              _buildGrantRow('Choose one $group skill you own', textColor),
           data: (choices) {
             // Get skills that: 1) hero owns AND 2) match the group
-            final groupSkills = allSkills.where((s) =>
-              (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
-            ).toList();
-            
-            final ownedGroupSkills = groupSkills.where((s) =>
-              heroSkillIds.contains(s['id'] as String?)
-            ).toList();
+            final groupSkills = allSkills
+                .where((s) =>
+                    (s['group'] as String?)?.toLowerCase() ==
+                    group.toLowerCase())
+                .toList();
+
+            final ownedGroupSkills = groupSkills
+                .where((s) => heroSkillIds.contains(s['id'] as String?))
+                .toList();
 
             if (ownedGroupSkills.isEmpty) {
-              return _buildGrantRow('⚠️ No $group skills owned', textColor.withOpacity(0.7));
+              return _buildGrantRow(
+                  '⚠️ No $group skills owned', textColor.withOpacity(0.7));
             }
 
             // Get current choice
             final currentChoice = choices['skill_owned']?.firstOrNull;
             final selectedSkill = currentChoice != null
-              ? ownedGroupSkills.firstWhere(
-                  (s) => s['id'] == currentChoice,
-                  orElse: () => <String, dynamic>{},
-                )
-              : null;
+                ? ownedGroupSkills.firstWhere(
+                    (s) => s['id'] == currentChoice,
+                    orElse: () => <String, dynamic>{},
+                  )
+                : null;
 
             return _buildSkillSelector(
               context: context,
@@ -245,40 +321,50 @@ class PerkCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildSkillPickGrantItem(BuildContext context, WidgetRef ref, String group, int count, Color textColor, Color accentColor) {
+  Widget _buildSkillPickGrantItem(BuildContext context, WidgetRef ref,
+      String group, int count, Color textColor, Color accentColor) {
     // If no heroId, just show generic text
     if (heroId == null) {
-      return _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor);
+      return _buildGrantRow(
+          'Choose $count new $group skill${count > 1 ? 's' : ''}', textColor);
     }
 
     // Load hero's skills and all skills for the group
     final heroSkillsAsync = ref.watch(_heroSkillIdsProvider(heroId!));
     final allSkillsAsync = ref.watch(_allSkillsProvider);
-    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+    final choicesAsync = ref
+        .watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
 
     return heroSkillsAsync.when(
       loading: () => _buildLoadingGrant(accentColor, textColor),
-      error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+      error: (e, _) => _buildGrantRow(
+          'Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
       data: (heroSkillIds) => allSkillsAsync.when(
         loading: () => _buildLoadingGrant(accentColor, textColor),
-        error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+        error: (e, _) => _buildGrantRow(
+            'Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
         data: (allSkills) => choicesAsync.when(
           loading: () => _buildLoadingGrant(accentColor, textColor),
-          error: (e, _) => _buildGrantRow('Choose $count new $group skill${count > 1 ? 's' : ''}', textColor),
+          error: (e, _) => _buildGrantRow(
+              'Choose $count new $group skill${count > 1 ? 's' : ''}',
+              textColor),
           data: (choices) {
             // Get skills that: 1) hero DOESN'T own AND 2) match the group
-            final groupSkills = allSkills.where((s) =>
-              (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
-            ).toList();
-            
+            final groupSkills = allSkills
+                .where((s) =>
+                    (s['group'] as String?)?.toLowerCase() ==
+                    group.toLowerCase())
+                .toList();
+
             // Find skills reserved by other sources (not owned but reserved)
             final reservedInGroup = groupSkills.where((s) {
               final skillId = s['id'] as String?;
               if (skillId == null) return false;
-              if (heroSkillIds.contains(skillId)) return false; // Already owned, not "reserved"
+              if (heroSkillIds.contains(skillId))
+                return false; // Already owned, not "reserved"
               return reservedSkillIds.contains(skillId);
             }).toList();
-            
+
             // Exclude skills that are already owned OR reserved by other sources
             final availableSkills = groupSkills.where((s) {
               final skillId = s['id'] as String?;
@@ -290,7 +376,7 @@ class PerkCard extends ConsumerWidget {
 
             // Get current choices
             final currentChoices = choices['skill_pick'] ?? [];
-            
+
             // Build warning widget if skills are reserved
             final warningWidgets = <Widget>[];
             if (reservedInGroup.isNotEmpty) {
@@ -300,41 +386,45 @@ class PerkCard extends ConsumerWidget {
                   .toList()
                 ..sort();
               if (reservedNames.isNotEmpty) {
-                final skillsText = reservedNames.length == 1 
-                    ? '${reservedNames.first} is' 
+                final skillsText = reservedNames.length == 1
+                    ? '${reservedNames.first} is'
                     : '${reservedNames.join(", ")} are';
                 warningWidgets.add(_buildReservationWarning(
                   '$skillsText already selected elsewhere',
                 ));
               }
             }
-            
+
             // Build a widget for each slot
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ...warningWidgets,
                 ...List.generate(count, (index) {
-                  final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                  final selectedId = index < currentChoices.length
+                      ? currentChoices[index]
+                      : null;
                   final selectedSkill = selectedId != null
-                    ? groupSkills.firstWhere(
-                        (s) => s['id'] == selectedId,
-                        orElse: () => <String, dynamic>{},
-                      )
-                    : null;
+                      ? groupSkills.firstWhere(
+                          (s) => s['id'] == selectedId,
+                          orElse: () => <String, dynamic>{},
+                        )
+                      : null;
 
                   // For available options, exclude already selected ones (from other slots)
-                  final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
-                  final slotOptions = availableSkills.where((s) =>
-                    !alreadySelected.contains(s['id'] as String?)
-                  ).toList();
+                  final alreadySelected =
+                      currentChoices.where((id) => id != selectedId).toSet();
+                  final slotOptions = availableSkills
+                      .where(
+                          (s) => !alreadySelected.contains(s['id'] as String?))
+                      .toList();
 
                   return _buildSkillSelector(
                     context: context,
                     ref: ref,
-                    label: count == 1 
-                      ? 'New ${_capitalize(group)} Skill'
-                      : 'New ${_capitalize(group)} Skill ${index + 1}',
+                    label: count == 1
+                        ? 'New ${_capitalize(group)} Skill'
+                        : 'New ${_capitalize(group)} Skill ${index + 1}',
                     skills: slotOptions,
                     selectedSkillId: selectedId,
                     selectedSkillName: selectedSkill?['name'] as String?,
@@ -353,35 +443,42 @@ class PerkCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildLanguageGrantItem(BuildContext context, WidgetRef ref, int count, Color textColor, Color accentColor) {
+  Widget _buildLanguageGrantItem(BuildContext context, WidgetRef ref, int count,
+      Color textColor, Color accentColor) {
     // If no heroId, just show generic text
     if (heroId == null) {
-      return _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor);
+      return _buildGrantRow(
+          'Choose $count new language${count > 1 ? 's' : ''}', textColor);
     }
 
     // Load hero's languages and all languages
     final heroLanguagesAsync = ref.watch(_heroLanguageIdsProvider(heroId!));
     final allLanguagesAsync = ref.watch(_allLanguagesProvider);
-    final choicesAsync = ref.watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
+    final choicesAsync = ref
+        .watch(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
 
     return heroLanguagesAsync.when(
       loading: () => _buildLoadingGrant(accentColor, textColor),
-      error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+      error: (e, _) => _buildGrantRow(
+          'Choose $count new language${count > 1 ? 's' : ''}', textColor),
       data: (heroLanguageIds) => allLanguagesAsync.when(
         loading: () => _buildLoadingGrant(accentColor, textColor),
-        error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+        error: (e, _) => _buildGrantRow(
+            'Choose $count new language${count > 1 ? 's' : ''}', textColor),
         data: (allLanguages) => choicesAsync.when(
           loading: () => _buildLoadingGrant(accentColor, textColor),
-          error: (e, _) => _buildGrantRow('Choose $count new language${count > 1 ? 's' : ''}', textColor),
+          error: (e, _) => _buildGrantRow(
+              'Choose $count new language${count > 1 ? 's' : ''}', textColor),
           data: (choices) {
             // Find languages reserved by other sources (not owned but reserved)
             final reservedLangs = allLanguages.where((l) {
               final langId = l['id'] as String?;
               if (langId == null) return false;
-              if (heroLanguageIds.contains(langId)) return false; // Already owned, not "reserved"
+              if (heroLanguageIds.contains(langId))
+                return false; // Already owned, not "reserved"
               return reservedLanguageIds.contains(langId);
             }).toList();
-            
+
             // Get languages that hero DOESN'T own AND are not reserved by other sources
             final availableLanguages = allLanguages.where((l) {
               final langId = l['id'] as String?;
@@ -393,7 +490,7 @@ class PerkCard extends ConsumerWidget {
 
             // Get current choices
             final currentChoices = choices['language'] ?? [];
-            
+
             // Build warning widget if languages are reserved
             final warningWidgets = <Widget>[];
             if (reservedLangs.isNotEmpty) {
@@ -403,39 +500,45 @@ class PerkCard extends ConsumerWidget {
                   .toList()
                 ..sort();
               if (reservedNames.isNotEmpty) {
-                final langsText = reservedNames.length == 1 
-                    ? '${reservedNames.first} is' 
+                final langsText = reservedNames.length == 1
+                    ? '${reservedNames.first} is'
                     : '${reservedNames.join(", ")} are';
                 warningWidgets.add(_buildReservationWarning(
                   '$langsText already selected elsewhere',
                 ));
               }
             }
-            
+
             // Build a widget for each slot
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ...warningWidgets,
                 ...List.generate(count, (index) {
-                  final selectedId = index < currentChoices.length ? currentChoices[index] : null;
+                  final selectedId = index < currentChoices.length
+                      ? currentChoices[index]
+                      : null;
                   final selectedLanguage = selectedId != null
-                    ? allLanguages.firstWhere(
-                        (l) => l['id'] == selectedId,
-                        orElse: () => <String, dynamic>{},
-                      )
-                    : null;
+                      ? allLanguages.firstWhere(
+                          (l) => l['id'] == selectedId,
+                          orElse: () => <String, dynamic>{},
+                        )
+                      : null;
 
                   // For available options, exclude already selected ones (from other slots)
-                  final alreadySelected = currentChoices.where((id) => id != selectedId).toSet();
-                  final slotOptions = availableLanguages.where((l) =>
-                    !alreadySelected.contains(l['id'] as String?)
-                  ).toList();
+                  final alreadySelected =
+                      currentChoices.where((id) => id != selectedId).toSet();
+                  final slotOptions = availableLanguages
+                      .where(
+                          (l) => !alreadySelected.contains(l['id'] as String?))
+                      .toList();
 
                   return _buildLanguageSelector(
                     context: context,
                     ref: ref,
-                    label: count == 1 ? 'New Language' : 'New Language ${index + 1}',
+                    label: count == 1
+                        ? 'New Language'
+                        : 'New Language ${index + 1}',
                     languages: slotOptions,
                     selectedLanguageId: selectedId,
                     selectedLanguageName: selectedLanguage?['name'] as String?,
@@ -461,7 +564,8 @@ class PerkCard extends ConsumerWidget {
           SizedBox(
             width: 12,
             height: 12,
-            child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+            child:
+                CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
           ),
           const SizedBox(width: 8),
           Text('Loading...', style: TextStyle(fontSize: 11, color: textColor)),
@@ -483,36 +587,47 @@ class PerkCard extends ConsumerWidget {
     required Color textColor,
     required Color accentColor,
   }) {
+    final hasSelection = selectedSkillId != null;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 0, left: 2, right: 6),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: accentColor.withAlpha(38),
+              borderRadius: BorderRadius.circular(4),
+            ),
             child: Icon(Icons.school, size: 14, color: accentColor),
           ),
+          const SizedBox(width: 8),
           Expanded(
             child: InkWell(
-              onTap: skills.isEmpty ? null : () => _showSkillPicker(
-                context: context,
-                ref: ref,
-                skills: skills,
-                currentSelectedId: selectedSkillId,
-                grantType: grantType,
-                slotIndex: slotIndex,
-                allCurrentChoices: allCurrentChoices,
-                accentColor: accentColor,
-              ),
-              borderRadius: BorderRadius.circular(6),
+              onTap: skills.isEmpty
+                  ? null
+                  : () => _showSkillPicker(
+                        context: context,
+                        ref: ref,
+                        skills: skills,
+                        currentSelectedId: selectedSkillId,
+                        grantType: grantType,
+                        slotIndex: slotIndex,
+                        allCurrentChoices: allCurrentChoices,
+                        accentColor: accentColor,
+                      ),
+              borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(6),
+                  color: hasSelection
+                      ? accentColor.withAlpha(26)
+                      : const Color(0xFF2A2A2A),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: selectedSkillId != null 
-                      ? accentColor.withOpacity(0.4)
-                      : accentColor.withOpacity(0.2),
+                    color: hasSelection
+                        ? accentColor.withAlpha(102)
+                        : Colors.grey.shade700,
                     width: 1,
                   ),
                 ),
@@ -522,13 +637,17 @@ class PerkCard extends ConsumerWidget {
                       child: Text(
                         selectedSkillName ?? 'Tap to select $label',
                         style: TextStyle(
-                          fontSize: 11,
-                          color: selectedSkillName != null ? textColor : textColor.withOpacity(0.6),
-                          fontStyle: selectedSkillName != null ? FontStyle.normal : FontStyle.italic,
+                          fontSize: 12,
+                          color: hasSelection
+                              ? Colors.white
+                              : Colors.grey.shade500,
+                          fontStyle: hasSelection
+                              ? FontStyle.normal
+                              : FontStyle.italic,
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_drop_down, size: 16, color: accentColor),
+                    Icon(Icons.arrow_drop_down, size: 18, color: accentColor),
                   ],
                 ),
               ),
@@ -551,35 +670,46 @@ class PerkCard extends ConsumerWidget {
     required Color textColor,
     required Color accentColor,
   }) {
+    final hasSelection = selectedLanguageId != null;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 0, left: 2, right: 6),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: accentColor.withAlpha(38),
+              borderRadius: BorderRadius.circular(4),
+            ),
             child: Icon(Icons.translate, size: 14, color: accentColor),
           ),
+          const SizedBox(width: 8),
           Expanded(
             child: InkWell(
-              onTap: languages.isEmpty ? null : () => _showLanguagePicker(
-                context: context,
-                ref: ref,
-                languages: languages,
-                currentSelectedId: selectedLanguageId,
-                slotIndex: slotIndex,
-                allCurrentChoices: allCurrentChoices,
-                accentColor: accentColor,
-              ),
-              borderRadius: BorderRadius.circular(6),
+              onTap: languages.isEmpty
+                  ? null
+                  : () => _showLanguagePicker(
+                        context: context,
+                        ref: ref,
+                        languages: languages,
+                        currentSelectedId: selectedLanguageId,
+                        slotIndex: slotIndex,
+                        allCurrentChoices: allCurrentChoices,
+                        accentColor: accentColor,
+                      ),
+              borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(6),
+                  color: hasSelection
+                      ? accentColor.withAlpha(26)
+                      : const Color(0xFF2A2A2A),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: selectedLanguageId != null 
-                      ? accentColor.withOpacity(0.4)
-                      : accentColor.withOpacity(0.2),
+                    color: hasSelection
+                        ? accentColor.withAlpha(102)
+                        : Colors.grey.shade700,
                     width: 1,
                   ),
                 ),
@@ -589,13 +719,17 @@ class PerkCard extends ConsumerWidget {
                       child: Text(
                         selectedLanguageName ?? 'Tap to select $label',
                         style: TextStyle(
-                          fontSize: 11,
-                          color: selectedLanguageName != null ? textColor : textColor.withOpacity(0.6),
-                          fontStyle: selectedLanguageName != null ? FontStyle.normal : FontStyle.italic,
+                          fontSize: 12,
+                          color: hasSelection
+                              ? Colors.white
+                              : Colors.grey.shade500,
+                          fontStyle: hasSelection
+                              ? FontStyle.normal
+                              : FontStyle.italic,
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_drop_down, size: 16, color: accentColor),
+                    Icon(Icons.arrow_drop_down, size: 18, color: accentColor),
                   ],
                 ),
               ),
@@ -619,6 +753,10 @@ class PerkCard extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (ctx) => DraggableScrollableSheet(
         initialChildSize: 0.5,
         minChildSize: 0.3,
@@ -628,8 +766,22 @@ class PerkCard extends ConsumerWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey.shade800),
+                ),
+              ),
               child: Row(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accentColor.withAlpha(38),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.school, color: accentColor, size: 20),
+                  ),
+                  const SizedBox(width: 12),
                   Text(
                     'Select Skill',
                     style: TextStyle(
@@ -640,13 +792,12 @@ class PerkCard extends ConsumerWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, color: Colors.grey.shade400),
                     onPressed: () => Navigator.pop(ctx),
                   ),
                 ],
               ),
             ),
-            const Divider(height: 1),
             Expanded(
               child: ListView.builder(
                 controller: scrollController,
@@ -657,49 +808,73 @@ class PerkCard extends ConsumerWidget {
                   final name = skill['name'] as String? ?? 'Unknown';
                   final isSelected = id == currentSelectedId;
 
-                  return ListTile(
-                    leading: Icon(
-                      isSelected ? Icons.check_circle : Icons.circle_outlined,
-                      color: isSelected ? accentColor : null,
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? accentColor.withAlpha(38)
+                          : const Color(0xFF252525),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isSelected
+                            ? accentColor.withAlpha(102)
+                            : Colors.grey.shade800,
+                      ),
                     ),
-                    title: Text(name),
-                    selected: isSelected,
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      if (id == null || heroId == null) return;
-                      
-                      final db = ref.read(appDatabaseProvider);
-                      final service = PerkGrantsService();
-                      
-                      // Update the choice list
-                      List<String> newChoices;
-                      if (slotIndex != null && allCurrentChoices != null) {
-                        // Multi-slot selection
-                        newChoices = List<String>.from(allCurrentChoices);
-                        while (newChoices.length <= slotIndex) {
-                          newChoices.add('');
+                    child: ListTile(
+                      leading: Icon(
+                        isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        color: isSelected ? accentColor : Colors.grey.shade600,
+                      ),
+                      title: Text(
+                        name,
+                        style: TextStyle(
+                          color:
+                              isSelected ? Colors.white : Colors.grey.shade300,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        if (id == null || heroId == null) return;
+
+                        final db = ref.read(appDatabaseProvider);
+                        final service = PerkGrantsService();
+
+                        // Update the choice list
+                        List<String> newChoices;
+                        if (slotIndex != null && allCurrentChoices != null) {
+                          // Multi-slot selection
+                          newChoices = List<String>.from(allCurrentChoices);
+                          while (newChoices.length <= slotIndex) {
+                            newChoices.add('');
+                          }
+                          newChoices[slotIndex] = id;
+                          // Remove empty strings
+                          newChoices =
+                              newChoices.where((c) => c.isNotEmpty).toList();
+                        } else {
+                          // Single selection
+                          newChoices = [id];
                         }
-                        newChoices[slotIndex] = id;
-                        // Remove empty strings
-                        newChoices = newChoices.where((c) => c.isNotEmpty).toList();
-                      } else {
-                        // Single selection
-                        newChoices = [id];
-                      }
-                      
-                      // Save choice and apply changes (removes old grants, adds new ones)
-                      await service.saveGrantChoiceAndApply(
-                        db: db,
-                        heroId: heroId!,
-                        perkId: perk.id,
-                        grantType: grantType,
-                        chosenIds: newChoices,
-                      );
-                      
-                      // Invalidate providers to refresh
-                      ref.invalidate(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
-                      ref.invalidate(_heroSkillIdsProvider(heroId!));
-                    },
+
+                        // Save choice and apply changes (removes old grants, adds new ones)
+                        await service.saveGrantChoiceAndApply(
+                          db: db,
+                          heroId: heroId!,
+                          perkId: perk.id,
+                          grantType: grantType,
+                          chosenIds: newChoices,
+                        );
+
+                        // Invalidate providers to refresh
+                        ref.invalidate(_perkGrantChoicesProvider(
+                            (heroId: heroId!, perkId: perk.id)));
+                        ref.invalidate(_heroSkillIdsProvider(heroId!));
+                      },
+                    ),
                   );
                 },
               ),
@@ -722,6 +897,10 @@ class PerkCard extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (ctx) => DraggableScrollableSheet(
         initialChildSize: 0.5,
         minChildSize: 0.3,
@@ -731,8 +910,22 @@ class PerkCard extends ConsumerWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey.shade800),
+                ),
+              ),
               child: Row(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: accentColor.withAlpha(38),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.translate, color: accentColor, size: 20),
+                  ),
+                  const SizedBox(width: 12),
                   Text(
                     'Select Language',
                     style: TextStyle(
@@ -743,13 +936,12 @@ class PerkCard extends ConsumerWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, color: Colors.grey.shade400),
                     onPressed: () => Navigator.pop(ctx),
                   ),
                 ],
               ),
             ),
-            const Divider(height: 1),
             Expanded(
               child: ListView.builder(
                 controller: scrollController,
@@ -760,49 +952,73 @@ class PerkCard extends ConsumerWidget {
                   final name = language['name'] as String? ?? 'Unknown';
                   final isSelected = id == currentSelectedId;
 
-                  return ListTile(
-                    leading: Icon(
-                      isSelected ? Icons.check_circle : Icons.circle_outlined,
-                      color: isSelected ? accentColor : null,
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? accentColor.withAlpha(38)
+                          : const Color(0xFF252525),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isSelected
+                            ? accentColor.withAlpha(102)
+                            : Colors.grey.shade800,
+                      ),
                     ),
-                    title: Text(name),
-                    selected: isSelected,
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      if (id == null || heroId == null) return;
-                      
-                      final db = ref.read(appDatabaseProvider);
-                      final service = PerkGrantsService();
-                      
-                      // Update the choice list
-                      List<String> newChoices;
-                      if (slotIndex != null && allCurrentChoices != null) {
-                        // Multi-slot selection
-                        newChoices = List<String>.from(allCurrentChoices);
-                        while (newChoices.length <= slotIndex) {
-                          newChoices.add('');
+                    child: ListTile(
+                      leading: Icon(
+                        isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        color: isSelected ? accentColor : Colors.grey.shade600,
+                      ),
+                      title: Text(
+                        name,
+                        style: TextStyle(
+                          color:
+                              isSelected ? Colors.white : Colors.grey.shade300,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                        ),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(ctx);
+                        if (id == null || heroId == null) return;
+
+                        final db = ref.read(appDatabaseProvider);
+                        final service = PerkGrantsService();
+
+                        // Update the choice list
+                        List<String> newChoices;
+                        if (slotIndex != null && allCurrentChoices != null) {
+                          // Multi-slot selection
+                          newChoices = List<String>.from(allCurrentChoices);
+                          while (newChoices.length <= slotIndex) {
+                            newChoices.add('');
+                          }
+                          newChoices[slotIndex] = id;
+                          // Remove empty strings
+                          newChoices =
+                              newChoices.where((c) => c.isNotEmpty).toList();
+                        } else {
+                          // Single selection
+                          newChoices = [id];
                         }
-                        newChoices[slotIndex] = id;
-                        // Remove empty strings
-                        newChoices = newChoices.where((c) => c.isNotEmpty).toList();
-                      } else {
-                        // Single selection
-                        newChoices = [id];
-                      }
-                      
-                      // Save choice and apply changes (removes old grants, adds new ones)
-                      await service.saveGrantChoiceAndApply(
-                        db: db,
-                        heroId: heroId!,
-                        perkId: perk.id,
-                        grantType: 'language',
-                        chosenIds: newChoices,
-                      );
-                      
-                      // Invalidate providers to refresh
-                      ref.invalidate(_perkGrantChoicesProvider((heroId: heroId!, perkId: perk.id)));
-                      ref.invalidate(_heroLanguageIdsProvider(heroId!));
-                    },
+
+                        // Save choice and apply changes (removes old grants, adds new ones)
+                        await service.saveGrantChoiceAndApply(
+                          db: db,
+                          heroId: heroId!,
+                          perkId: perk.id,
+                          grantType: 'language',
+                          chosenIds: newChoices,
+                        );
+
+                        // Invalidate providers to refresh
+                        ref.invalidate(_perkGrantChoicesProvider(
+                            (heroId: heroId!, perkId: perk.id)));
+                        ref.invalidate(_heroLanguageIdsProvider(heroId!));
+                      },
+                    ),
                   );
                 },
               ),
@@ -820,17 +1036,17 @@ class PerkCard extends ConsumerWidget {
 
   Widget _buildGrantRow(String text, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 3),
+      padding: const EdgeInsets.only(bottom: 4, left: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 5, left: 2, right: 6),
+            padding: const EdgeInsets.only(top: 6, right: 8),
             child: Container(
-              width: 4,
-              height: 4,
+              width: 5,
+              height: 5,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.9),
+                color: color,
                 shape: BoxShape.circle,
               ),
             ),
@@ -838,7 +1054,7 @@ class PerkCard extends ConsumerWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 11, color: color),
+              style: TextStyle(fontSize: 12, color: color),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
@@ -847,28 +1063,28 @@ class PerkCard extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildReservationWarning(String message) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 8, left: 20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: Colors.orange.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
+          color: Colors.orange.withAlpha(38),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.orange.withAlpha(102)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.info_outline, size: 12, color: Colors.orange.shade700),
-            const SizedBox(width: 4),
+            Icon(Icons.info_outline, size: 14, color: Colors.orange.shade400),
+            const SizedBox(width: 6),
             Flexible(
               child: Text(
                 message,
                 style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.orange.shade800,
+                  fontSize: 11,
+                  color: Colors.orange.shade300,
                 ),
               ),
             ),

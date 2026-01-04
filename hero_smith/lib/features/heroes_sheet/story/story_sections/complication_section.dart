@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_complication_section_text.dart';
+import 'package:hero_smith/core/theme/navigation_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
 import 'token_tracker_widget.dart';
+
+const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -39,8 +42,6 @@ class ComplicationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     if (complicationId == null || complicationId!.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -48,28 +49,54 @@ class ComplicationSection extends ConsumerWidget {
     final complicationAsync =
         ref.watch(_componentByIdProvider(complicationId!));
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              SheetStoryComplicationSectionText.sectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _storyColor.withAlpha(51),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.warning_amber_rounded,
+                    color: _storyColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  SheetStoryComplicationSectionText.sectionTitle,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             complicationAsync.when(
-              loading: () => const CircularProgressIndicator(),
+              loading: () => CircularProgressIndicator(color: _storyColor),
               error: (e, _) => Text(
                 '${SheetStoryComplicationSectionText.errorLoadingComplicationPrefix}$e',
+                style: TextStyle(color: Colors.red.shade300),
               ),
               data: (comp) {
                 if (comp == null) {
-                  return const Text(
+                  return Text(
                     SheetStoryComplicationSectionText.complicationNotFound,
+                    style: TextStyle(color: Colors.grey.shade400),
                   );
                 }
 
@@ -100,33 +127,32 @@ class _ComplicationDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final data = complication.data;
     final complicationId = complication.id;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: const Color(0xFF252525),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Colors.grey.shade700),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             complication.name,
-            style: theme.textTheme.titleLarge?.copyWith(
+            style: const TextStyle(
+              fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 12),
           if (data['description'] != null) ...[
             Text(
               data['description'].toString(),
-              style: theme.textTheme.bodyMedium,
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 14),
             ),
             const SizedBox(height: 16),
           ],
@@ -164,7 +190,6 @@ class _EffectsDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final effectsData = effects as Map<String, dynamic>?;
     if (effectsData == null) return const SizedBox.shrink();
 
@@ -177,8 +202,10 @@ class _EffectsDisplay extends StatelessWidget {
       children: [
         Text(
           SheetStoryComplicationSectionText.effectsTitle,
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.grey.shade300,
           ),
         ),
         const SizedBox(height: 8),
@@ -186,7 +213,7 @@ class _EffectsDisplay extends StatelessWidget {
           EffectItemDisplay(
             label: SheetStoryComplicationSectionText.effectBenefitLabel,
             text: benefit,
-            color: theme.colorScheme.primary,
+            color: const Color(0xFF43A047),
             icon: Icons.add_circle_outline,
           ),
           const SizedBox(height: 8),
@@ -195,7 +222,7 @@ class _EffectsDisplay extends StatelessWidget {
           EffectItemDisplay(
             label: SheetStoryComplicationSectionText.effectDrawbackLabel,
             text: drawback,
-            color: theme.colorScheme.error,
+            color: Colors.red.shade400,
             icon: Icons.remove_circle_outline,
           ),
           const SizedBox(height: 8),
@@ -204,7 +231,7 @@ class _EffectsDisplay extends StatelessWidget {
           EffectItemDisplay(
             label: SheetStoryComplicationSectionText.effectMixedLabel,
             text: both,
-            color: theme.colorScheme.tertiary,
+            color: Colors.amber.shade400,
             icon: Icons.swap_horiz,
           ),
         ],
@@ -226,7 +253,6 @@ class _GrantsDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final grantsData = grants as Map<String, dynamic>?;
     if (grantsData == null || grantsData.isEmpty) {
       return const SizedBox.shrink();
@@ -376,8 +402,10 @@ class _GrantsDisplay extends ConsumerWidget {
       children: [
         Text(
           SheetStoryComplicationSectionText.grantsTitle,
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.grey.shade300,
           ),
         ),
         const SizedBox(height: 8),
@@ -513,7 +541,6 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final ancestry = ancestryTraitsData['ancestry'] as String? ?? '';
     final points = ancestryTraitsData['ancestry_points'] as int? ?? 0;
     final ancestryTraitsAsync =
@@ -567,24 +594,24 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+            color: _storyColor.withAlpha(38),
             borderRadius: BorderRadius.circular(8),
-            border:
-                Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+            border: Border.all(color: _storyColor.withAlpha(77)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.person_outline,
-                      size: 18, color: theme.colorScheme.primary),
+                  Icon(Icons.person_outline, size: 18, color: _storyColor),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       '${_formatAncestryName(ancestry)} Traits',
-                      style: theme.textTheme.titleSmall?.copyWith(
+                      style: const TextStyle(
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -600,7 +627,6 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
   }
 
   Widget _buildTraitItem(BuildContext context, Map<String, dynamic> trait) {
-    final theme = Theme.of(context);
     final name = trait['name']?.toString() ?? '';
     final description = trait['description']?.toString() ?? '';
     final cost = trait['cost'] as int? ?? 0;
@@ -610,9 +636,9 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: const Color(0xFF2A2A2A),
           borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: theme.colorScheme.outlineVariant),
+          border: Border.all(color: Colors.grey.shade700),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -622,8 +648,10 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     name,
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: const TextStyle(
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -631,14 +659,15 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: _storyColor.withAlpha(51),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     '$cost pt${cost == 1 ? '' : 's'}',
-                    style: theme.textTheme.labelSmall?.copyWith(
+                    style: TextStyle(
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.primary,
+                      color: _storyColor,
                     ),
                   ),
                 ),
@@ -648,7 +677,7 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
               const SizedBox(height: 6),
               Text(
                 description,
-                style: theme.textTheme.bodySmall,
+                style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
               ),
             ],
           ],
@@ -671,7 +700,6 @@ class _PickOneDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final choiceKey = '${complicationId}_pick_one';
     final selectedIndexStr = choices[choiceKey];
     final selectedIndex =
@@ -699,21 +727,22 @@ class _PickOneDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.secondaryContainer.withOpacity(0.3),
+        color: _storyColor.withAlpha(38),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+        border: Border.all(color: _storyColor.withAlpha(77)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle,
-              size: 16, color: theme.colorScheme.secondary),
+          Icon(Icons.check_circle, size: 16, color: _storyColor),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               description,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: const TextStyle(
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
+                color: Colors.white,
               ),
             ),
           ),

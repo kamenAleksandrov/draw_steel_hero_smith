@@ -1,5 +1,8 @@
 part of 'sheet_story.dart';
 
+// Skills accent color
+const _skillsColor = Color(0xFF43A047);
+
 // Skills Tab Widget
 class _SkillsTab extends ConsumerStatefulWidget {
   final String heroId;
@@ -131,10 +134,10 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: _skillsColor),
+      );
     }
 
     if (_errorMessage != null) {
@@ -142,10 +145,16 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_errorMessage!, style: TextStyle(color: theme.colorScheme.error)),
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
+            const SizedBox(height: 16),
+            Text(_errorMessage!, style: TextStyle(color: Colors.red.shade300)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _skillsColor,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(SheetStoryCommonText.retry),
             ),
           ],
@@ -163,77 +172,176 @@ class _SkillsTabState extends ConsumerState<_SkillsTab> {
       groupedSkills.putIfAbsent(skill.group, () => []).add(skill);
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                SheetStorySkillsTabText.skillsTitle,
-                style: AppTextStyles.title,
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _showAddSkillDialog,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text(SheetStorySkillsTabText.addSkill),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (selectedSkills.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Text(
-                  SheetStorySkillsTabText.emptyState,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: NavigationTheme.cardBackgroundDark,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade800),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      _skillsColor.withAlpha(38),
+                      _skillsColor.withAlpha(10),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            )
-          else
-            ...groupedSkills.entries.map((entry) {
-              final groupName = entry.key;
-              final skills = entry.value;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (groupName.isNotEmpty) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16, bottom: 8),
-                      child: Text(
-                        groupName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.primary,
-                        ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _skillsColor.withAlpha(51),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.psychology, color: _skillsColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            SheetStorySkillsTabText.skillsTitle,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${selectedSkills.length} skills learned',
+                            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                  ...skills.map((skill) => Card(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          title: Text(skill.name),
-                          subtitle: skill.description.isNotEmpty
-                              ? Text(skill.description)
-                              : null,
-                          trailing: IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => _removeSkill(skill.id),
-                            tooltip: SheetStorySkillsTabText.removeSkillTooltip,
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (selectedSkills.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      children: [
+                        Icon(Icons.school_outlined, size: 48, color: Colors.grey.shade600),
+                        const SizedBox(height: 16),
+                        Text(
+                          SheetStorySkillsTabText.emptyState,
+                          style: TextStyle(color: Colors.grey.shade400),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ...groupedSkills.entries.map((entry) {
+                  final groupName = entry.key;
+                  final skills = entry.value;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (groupName.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12, bottom: 8),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: _skillsColor,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                groupName,
+                                style: const TextStyle(
+                                  color: _skillsColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      )),
-                ],
-              );
-            }),
-        ],
+                      ],
+                      ...skills.map((skill) => _buildSkillCard(skill)),
+                    ],
+                  );
+                }),
+              const SizedBox(height: 80), // Space for FAB
+            ],
+          ),
+        ),
+        // FAB
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.small(
+            onPressed: _showAddSkillDialog,
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            foregroundColor: _skillsColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: _skillsColor, width: 2),
+            ),
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSkillCard(_SkillOption skill) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: _skillsColor.withAlpha(26),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Icon(Icons.check_circle, color: _skillsColor, size: 18),
+        ),
+        title: Text(
+          skill.name,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
+        subtitle: skill.description.isNotEmpty
+            ? Text(
+                skill.description,
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
+            : null,
+        trailing: IconButton(
+          icon: Icon(Icons.close, color: Colors.red.shade400, size: 20),
+          onPressed: () => _removeSkill(skill.id),
+          tooltip: SheetStorySkillsTabText.removeSkillTooltip,
+        ),
       ),
     );
   }
@@ -280,58 +388,179 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // Group filtered skills
+    final groupedSkills = <String, List<_SkillOption>>{};
+    for (final skill in _filteredSkills) {
+      groupedSkills.putIfAbsent(skill.group, () => []).add(skill);
+    }
 
-    return AlertDialog(
-      title: const Text(SheetStorySkillsTabText.addSkillDialogTitle),
-      content: SizedBox(
-        width: double.maxFinite,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 400,
+        constraints: const BoxConstraints(maxHeight: 500),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: SheetStorySkillsTabText.searchSkillsLabel,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    _skillsColor.withAlpha(51),
+                    _skillsColor.withAlpha(13),
+                  ],
+                ),
               ),
-              onChanged: _filterSkills,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _skillsColor.withAlpha(51),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.school, color: _skillsColor, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      SheetStorySkillsTabText.addSkillDialogTitle,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
+            // Search field
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: SheetStorySkillsTabText.searchSkillsLabel,
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: const Color(0xFF2A2A2A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: _skillsColor, width: 2),
+                  ),
+                ),
+                onChanged: _filterSkills,
+              ),
+            ),
+            // Skills list
             Flexible(
               child: _filteredSkills.isEmpty
                   ? Center(
-                      child: Text(
-                        SheetStorySkillsTabText.noSkillsFound,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.search_off, size: 48, color: Colors.grey.shade600),
+                            const SizedBox(height: 16),
+                            Text(
+                              SheetStorySkillsTabText.noSkillsFound,
+                              style: TextStyle(color: Colors.grey.shade400),
+                            ),
+                          ],
                         ),
                       ),
                     )
-                  : ListView.builder(
+                  : ListView(
                       shrinkWrap: true,
-                      itemCount: _filteredSkills.length,
-                      itemBuilder: (context, index) {
-                        final skill = _filteredSkills[index];
-                        return ListTile(
-                          title: Text(skill.name),
-                          subtitle: skill.description.isNotEmpty
-                              ? Text(skill.description)
-                              : null,
-                          onTap: () => widget.onSkillSelected(skill.id),
-                        );
-                      },
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: groupedSkills.entries.expand((entry) {
+                        final groupName = entry.key;
+                        final skills = entry.value;
+                        return [
+                          if (groupName.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 4),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 3,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      color: _skillsColor,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    groupName,
+                                    style: const TextStyle(
+                                      color: _skillsColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          ...skills.map((skill) => Container(
+                                margin: const EdgeInsets.only(bottom: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2A2A2A),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.grey.shade800),
+                                ),
+                                child: ListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                  leading: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: _skillsColor.withAlpha(26),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Icon(Icons.add_circle_outline, color: _skillsColor, size: 18),
+                                  ),
+                                  title: Text(
+                                    skill.name,
+                                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                                  ),
+                                  subtitle: skill.description.isNotEmpty
+                                      ? Text(
+                                          skill.description,
+                                          style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                      : null,
+                                  onTap: () => widget.onSkillSelected(skill.id),
+                                ),
+                              )),
+                        ];
+                      }).toList(),
                     ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(SheetStoryCommonText.cancel),
-        ),
-      ],
     );
   }
 }

@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_career_section_text.dart';
+import 'package:hero_smith/core/theme/navigation_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/perks/perk_card.dart';
 import '../../../../widgets/shared/story_display_widgets.dart';
+
+// Story tab color
+const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -62,7 +66,6 @@ class CareerSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final careerId = career.careerId;
 
     if (careerId == null || careerId.isEmpty) {
@@ -71,27 +74,51 @@ class CareerSection extends ConsumerWidget {
 
     final careerAsync = ref.watch(_componentByIdProvider(careerId));
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              SheetStoryCareerSectionText.sectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _storyColor.withAlpha(26),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.work, color: _storyColor, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  SheetStoryCareerSectionText.sectionTitle,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             careerAsync.when(
-              loading: () => const CircularProgressIndicator(),
+              loading: () => const CircularProgressIndicator(color: _storyColor),
               error: (e, _) => Text(
                 '${SheetStoryCareerSectionText.errorLoadingCareerPrefix}$e',
+                style: TextStyle(color: Colors.red.shade300),
               ),
               data: (careerComp) {
                 if (careerComp == null) {
-                  return const Text(SheetStoryCareerSectionText.careerNotFound);
+                  return Text(
+                    SheetStoryCareerSectionText.careerNotFound,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  );
                 }
 
                 return _CareerContent(
@@ -121,7 +148,6 @@ class _CareerContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final projectPoints = careerComponent.data['project_points'] as int? ?? 0;
 
     return Column(
@@ -138,9 +164,7 @@ class _CareerContent extends ConsumerWidget {
             padding: const EdgeInsets.only(left: 32),
             child: Text(
               careerComponent.data['description'].toString(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
-              ),
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
             ),
           ),
         ],
@@ -156,8 +180,10 @@ class _CareerContent extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             SheetStoryCareerSectionText.incitingIncidentTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -170,8 +196,10 @@ class _CareerContent extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             SheetStoryCareerSectionText.careerSkillsTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -190,8 +218,10 @@ class _CareerContent extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             SheetStoryCareerSectionText.careerPerksTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade300,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 8),
@@ -219,18 +249,19 @@ class _ComponentDisplay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final componentAsync = ref.watch(_componentByIdProvider(componentId));
-    final theme = Theme.of(context);
 
     return componentAsync.when(
-      loading: () => const SizedBox(
+      loading: () => SizedBox(
         height: 20,
         width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2),
+        child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
       ),
       error: (e, _) =>
-          Text('Error: $e', style: const TextStyle(color: Colors.red)),
+          Text('Error: $e', style: TextStyle(color: Colors.red.shade300)),
       data: (component) {
-        if (component == null) return Text('$label not found');
+        if (component == null) {
+          return Text('$label not found', style: TextStyle(color: Colors.grey.shade400));
+        }
 
         final description = component.data['description']?.toString();
 
@@ -247,9 +278,7 @@ class _ComponentDisplay extends ConsumerWidget {
                 padding: const EdgeInsets.only(left: 32),
                 child: Text(
                   description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
-                  ),
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 ),
               ),
             ],
@@ -282,18 +311,18 @@ class _HeroPerkCard extends ConsumerWidget {
     );
 
     return componentAsync.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.only(bottom: 8),
+      loading: () => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
         child: SizedBox(
           height: 40,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor)),
         ),
       ),
       error: (e, _) => Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(
           '${SheetStoryCareerSectionText.errorLoadingPerkPrefix}$e',
-          style: const TextStyle(color: Colors.red),
+          style: TextStyle(color: Colors.red.shade300),
         ),
       ),
       data: (component) {
@@ -301,7 +330,8 @@ class _HeroPerkCard extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-                '${SheetStoryCareerSectionText.perkNotFoundPrefix}$perkId'),
+                '${SheetStoryCareerSectionText.perkNotFoundPrefix}$perkId',
+                style: TextStyle(color: Colors.grey.shade400)),
           );
         }
         return Padding(
@@ -370,19 +400,17 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _isUsed
-            ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
-            : theme.colorScheme.primaryContainer.withOpacity(0.3),
+            ? const Color(0xFF2A2A2A)
+            : _storyColor.withAlpha(51),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: _isUsed
-              ? theme.colorScheme.outline.withOpacity(0.3)
-              : theme.colorScheme.primary.withOpacity(0.3),
+              ? Colors.grey.shade700
+              : _storyColor.withAlpha(77),
         ),
       ),
       child: Row(
@@ -391,8 +419,8 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
             Icons.build_circle,
             size: 24,
             color: _isUsed
-                ? theme.colorScheme.onSurface.withOpacity(0.5)
-                : theme.colorScheme.primary,
+                ? Colors.grey.shade600
+                : _storyColor,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -401,44 +429,50 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
               children: [
                 Text(
                   SheetStoryCareerSectionText.projectPointsTitle,
-                  style: theme.textTheme.titleSmall?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                     color: _isUsed
-                        ? theme.colorScheme.onSurface.withOpacity(0.5)
-                        : null,
+                        ? Colors.grey.shade500
+                        : Colors.white,
                     decoration: _isUsed ? TextDecoration.lineThrough : null,
                   ),
                 ),
                 Text(
                   '${widget.projectPoints}${SheetStoryCareerSectionText.projectPointsDescriptionSuffix}',
-                  style: theme.textTheme.bodySmall?.copyWith(
+                  style: TextStyle(
+                    fontSize: 12,
                     color: _isUsed
-                        ? theme.colorScheme.onSurface.withOpacity(0.4)
-                        : theme.colorScheme.onSurface.withOpacity(0.7),
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade400,
                   ),
                 ),
               ],
             ),
           ),
           if (_isLoading)
-            const SizedBox(
+            SizedBox(
               width: 24,
               height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
+              child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
             )
           else
             Checkbox(
               value: _isUsed,
               onChanged: (_) => _toggleUsed(),
+              activeColor: _storyColor,
+              checkColor: Colors.white,
+              side: BorderSide(color: Colors.grey.shade600),
             ),
           Text(
             _isUsed
                 ? SheetStoryCareerSectionText.usedLabel
                 : SheetStoryCareerSectionText.availableLabel,
-            style: theme.textTheme.bodySmall?.copyWith(
+            style: TextStyle(
+              fontSize: 12,
               color: _isUsed
-                  ? theme.colorScheme.onSurface.withOpacity(0.5)
-                  : theme.colorScheme.primary,
+                  ? Colors.grey.shade500
+                  : _storyColor,
               fontWeight: FontWeight.w500,
             ),
           ),

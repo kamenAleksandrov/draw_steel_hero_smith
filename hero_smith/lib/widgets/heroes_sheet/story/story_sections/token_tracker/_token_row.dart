@@ -17,18 +17,16 @@ class _TokenRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    const storyColor = Color(0xFF8E24AA);
     final canDecrement = current > 0;
     final canIncrement = current < max;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: const Color(0xFF252525),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Colors.grey.shade700),
       ),
       child: Row(
         children: [
@@ -38,14 +36,17 @@ class _TokenRow extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
+                    color: Colors.white,
                   ),
                 ),
                 Text(
                   '$current / $max',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade500,
                   ),
                 ),
               ],
@@ -56,8 +57,8 @@ class _TokenRow extends StatelessWidget {
             icon: const Icon(Icons.remove_circle_outline),
             iconSize: 28,
             color: canDecrement
-                ? theme.colorScheme.error
-                : theme.colorScheme.outline.withOpacity(0.3),
+                ? Colors.red.shade400
+                : Colors.grey.shade700,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
           ),
@@ -66,13 +67,14 @@ class _TokenRow extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               current.toString(),
-              style: theme.textTheme.headlineSmall?.copyWith(
+              style: TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: current == 0
-                    ? theme.colorScheme.error
+                    ? Colors.red.shade400
                     : current == max
-                        ? theme.colorScheme.primary
-                        : null,
+                        ? storyColor
+                        : Colors.white,
               ),
             ),
           ),
@@ -81,8 +83,8 @@ class _TokenRow extends StatelessWidget {
             icon: const Icon(Icons.add_circle_outline),
             iconSize: 28,
             color: canIncrement
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withOpacity(0.3),
+                ? storyColor
+                : Colors.grey.shade700,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
           ),

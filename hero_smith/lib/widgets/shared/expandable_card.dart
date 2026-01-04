@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/ds_theme.dart';
+import '../../core/theme/navigation_theme.dart';
 
 class ExpandableCard extends StatefulWidget {
   final String title;
@@ -67,66 +67,73 @@ class _ExpandableCardState extends State<ExpandableCard>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
-    final ds = DsTheme.of(context);
 
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: widget.borderColor, width: 2),
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(10),
+        border:
+            Border.all(color: widget.borderColor.withAlpha(153), width: 1.5),
       ),
-      child: InkWell(
-        onTap: _toggleExpanded,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Always visible header with title and badge
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.title,
-                      style: ds.cardTitleStyle,
-                      maxLines: _isExpanded ? null : 2,
-                      overflow: _isExpanded ? null : TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (widget.badge != null) ...[
-                    const SizedBox(width: 8),
-                    widget.badge!,
-                  ],
-                  const SizedBox(width: 8),
-                  AnimatedRotation(
-                    turns: _isExpanded ? 0.5 : 0.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.expand_more,
-                      color: widget.borderColor.withOpacity(0.7),
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-              if (widget.preview != null) ...[
-                const SizedBox(height: 8),
-                widget.preview!,
-              ],
-              // Expandable content
-              SizeTransition(
-                sizeFactor: _expandAnimation,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _toggleExpanded,
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Always visible header with title and badge
+                Row(
                   children: [
-                    const SizedBox(height: 6),
-                    widget.expandedContent,
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: _isExpanded ? null : 2,
+                        overflow: _isExpanded ? null : TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (widget.badge != null) ...[
+                      const SizedBox(width: 8),
+                      widget.badge!,
+                    ],
+                    const SizedBox(width: 8),
+                    AnimatedRotation(
+                      turns: _isExpanded ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.expand_more,
+                        color: widget.borderColor.withAlpha(178),
+                        size: 20,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+                if (widget.preview != null) ...[
+                  const SizedBox(height: 8),
+                  widget.preview!,
+                ],
+                // Expandable content
+                SizeTransition(
+                  sizeFactor: _expandAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      widget.expandedContent,
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

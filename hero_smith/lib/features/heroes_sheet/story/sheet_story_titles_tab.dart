@@ -1,5 +1,8 @@
 part of 'sheet_story.dart';
 
+// Titles accent color
+const _titlesColor = Color(0xFFFFB300);
+
 // Titles Tab Widget
 class _TitlesTab extends ConsumerStatefulWidget {
   final String heroId;
@@ -192,10 +195,10 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: _titlesColor),
+      );
     }
 
     if (_errorMessage != null) {
@@ -203,11 +206,16 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error, size: 64, color: Colors.red),
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
             const SizedBox(height: 16),
-            Text(_errorMessage!),
+            Text(_errorMessage!, style: TextStyle(color: Colors.red.shade300)),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _titlesColor,
+                foregroundColor: Colors.black,
+              ),
               child: const Text(SheetStoryCommonText.retry),
             ),
           ],
@@ -222,71 +230,152 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       groupedTitles.putIfAbsent(echelon, () => []).add(entry);
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                SheetStoryTitlesTabText.titlesTitle,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: NavigationTheme.cardBackgroundDark,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade800),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      _titlesColor.withAlpha(38),
+                      _titlesColor.withAlpha(10),
+                    ],
+                  ),
                 ),
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _showAddTitleDialog,
-                icon: const Icon(Icons.add),
-                label: const Text(SheetStoryTitlesTabText.addTitle),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (_selectedTitles.isEmpty)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Text(SheetStoryTitlesTabText.noTitlesSelected),
-              ),
-            )
-          else
-            ...groupedTitles.entries.map((group) {
-              final echelon = group.key;
-              final titles = group.value;
-              
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      'Echelon $echelon',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _titlesColor.withAlpha(51),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.military_tech, color: _titlesColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            SheetStoryTitlesTabText.titlesTitle,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${_selectedTitles.length} titles earned',
+                            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                          ),
+                        ],
                       ),
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (_selectedTitles.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      children: [
+                        Icon(Icons.emoji_events_outlined, size: 48, color: Colors.grey.shade600),
+                        const SizedBox(height: 16),
+                        Text(
+                          SheetStoryTitlesTabText.noTitlesSelected,
+                          style: TextStyle(color: Colors.grey.shade400),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
-                  ...titles.map((entry) => _buildTitleCard(context, entry.key, entry.value)),
-                  const SizedBox(height: 16),
-                ],
-              );
-            }),
-        ],
-      ),
+                )
+              else
+                ...groupedTitles.entries.map((group) {
+                  final echelon = group.key;
+                  final titles = group.value;
+                  
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 8),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: _titlesColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Echelon $echelon',
+                              style: const TextStyle(
+                                color: _titlesColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ...titles.map((entry) => _buildTitleCard(context, entry.key, entry.value)),
+                      const SizedBox(height: 8),
+                    ],
+                  );
+                }),
+              const SizedBox(height: 80), // Space for FAB
+            ],
+          ),
+        ),
+        // FAB
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.small(
+            onPressed: _showAddTitleDialog,
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            foregroundColor: _titlesColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: _titlesColor, width: 2),
+            ),
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildTitleCard(BuildContext context, String titleId, Map<String, dynamic> data) {
-    final theme = Theme.of(context);
     final title = data['title'] as Map<String, dynamic>;
     final selectedBenefitIndex = data['selectedBenefitIndex'] as int;
     final benefits = title['benefits'] as List? ?? [];
     
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -294,23 +383,35 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
           children: [
             Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _titlesColor.withAlpha(26),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.military_tech, color: _titlesColor, size: 20),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title['name'] as String? ?? SheetStoryTitlesTabText.unknown,
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       if (title['prerequisite'] != null) ...[
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
                         Text(
                           'Prerequisite: ${title['prerequisite']}',
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          style: TextStyle(
                             fontStyle: FontStyle.italic,
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: Colors.grey.shade500,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -318,7 +419,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: Icon(Icons.close, color: Colors.red.shade400, size: 20),
                   onPressed: () => _removeTitle(titleId),
                   tooltip: SheetStoryTitlesTabText.removeTitleTooltip,
                 ),
@@ -328,14 +429,16 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
               const SizedBox(height: 12),
               Text(
                 title['description_text'] as String,
-                style: theme.textTheme.bodyMedium,
+                style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
               ),
             ],
             const SizedBox(height: 16),
             Text(
               'Selected Benefit:',
-              style: theme.textTheme.titleSmall?.copyWith(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
+                color: Colors.grey.shade300,
+                fontSize: 13,
               ),
             ),
             const SizedBox(height: 8),
@@ -343,9 +446,9 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                  color: _titlesColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+                  border: Border.all(color: _titlesColor.withAlpha(51)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,6 +458,9 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                       const SizedBox(height: 12),
                       TextButton.icon(
                         onPressed: () => _showChangeBenefitDialog(titleId, benefits),
+                        style: TextButton.styleFrom(
+                          foregroundColor: _titlesColor,
+                        ),
                         icon: const Icon(Icons.swap_horiz, size: 18),
                         label: const Text(SheetStoryTitlesTabText.changeBenefit),
                       ),
@@ -367,18 +473,18 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondaryContainer.withOpacity(0.3),
+                  color: Colors.blue.shade900.withAlpha(51),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline, size: 20, color: theme.colorScheme.secondary),
+                    Icon(Icons.info_outline, size: 20, color: Colors.blue.shade300),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Special: ${title['special']}',
-                        style: theme.textTheme.bodySmall,
+                        style: TextStyle(color: Colors.grey.shade300, fontSize: 12),
                       ),
                     ),
                   ],
@@ -392,7 +498,6 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
   }
 
   Widget _buildBenefitContent(BuildContext context, dynamic benefit) {
-    final theme = Theme.of(context);
     if (benefit is! Map<String, dynamic>) return const SizedBox.shrink();
     
     final description = benefit['description'] as String?;
@@ -405,18 +510,19 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (description != null && description.isNotEmpty)
-          Text(description, style: theme.textTheme.bodyMedium),
+          Text(description, style: TextStyle(color: Colors.grey.shade300, fontSize: 13)),
         if (ability != null && ability.isNotEmpty) ...[
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.flash_on, size: 16, color: theme.colorScheme.secondary),
+              Icon(Icons.flash_on, size: 16, color: Colors.purple.shade300),
               const SizedBox(width: 4),
               Text(
                 'Ability: $ability',
-                style: theme.textTheme.bodySmall?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.secondary,
+                  color: Colors.purple.shade300,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -433,12 +539,13 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
                     children: [
-                      Icon(Icons.card_giftcard, size: 16, color: theme.colorScheme.tertiary),
+                      Icon(Icons.card_giftcard, size: 16, color: Colors.teal.shade300),
                       const SizedBox(width: 4),
                       Text(
                         'Grants: ${_formatGrant(type, value)}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.tertiary,
+                        style: TextStyle(
+                          color: Colors.teal.shade300,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -473,65 +580,122 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
   void _showChangeBenefitDialog(String titleId, List benefits) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(SheetStoryTitlesTabText.changeBenefit),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: benefits.length,
-            itemBuilder: (context, index) {
-              final benefit = benefits[index];
-              final isSelected = _selectedTitles[titleId]!['selectedBenefitIndex'] == index;
-              
-              return Card(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : null,
-                child: InkWell(
-                  onTap: () {
-                    _changeBenefit(titleId, index);
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Benefit ${index + 1}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (isSelected) ...[
-                              const SizedBox(width: 8),
-                              Icon(
-                                Icons.check_circle,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        _buildBenefitContent(context, benefit),
-                      ],
-                    ),
+      builder: (context) => Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          width: 400,
+          constraints: const BoxConstraints(maxHeight: 450),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      _titlesColor.withAlpha(51),
+                      _titlesColor.withAlpha(13),
+                    ],
                   ),
                 ),
-              );
-            },
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _titlesColor.withAlpha(51),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.swap_horiz, color: _titlesColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        SheetStoryTitlesTabText.changeBenefit,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ),
+              // Benefits list
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: benefits.length,
+                  itemBuilder: (context, index) {
+                    final benefit = benefits[index];
+                    final isSelected = _selectedTitles[titleId]!['selectedBenefitIndex'] == index;
+                    
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? _titlesColor.withAlpha(38)
+                            : const Color(0xFF2A2A2A),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected ? _titlesColor : Colors.grey.shade800,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          _changeBenefit(titleId, index);
+                          Navigator.of(context).pop();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Benefit ${index + 1}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isSelected ? _titlesColor : Colors.white,
+                                    ),
+                                  ),
+                                  if (isSelected) ...[
+                                    const SizedBox(width: 8),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      size: 20,
+                                      color: _titlesColor,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              _buildBenefitContent(context, benefit),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(SheetStoryCommonText.cancel),
-          ),
-        ],
       ),
     );
   }
@@ -592,120 +756,274 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Select Benefit for ${title['name']}'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: benefits.length,
-            itemBuilder: (context, index) {
-              final benefit = benefits[index];
-              
-              return Card(
-                child: InkWell(
-                  onTap: () {
-                    widget.onTitleSelected(title['id'] as String, index);
-                    Navigator.of(context).pop();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Benefit ${index + 1}',
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        if (benefit is Map<String, dynamic>) ...[
-                          if (benefit['description'] != null)
-                            Text(
-                              benefit['description'] as String,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                        ],
-                      ],
-                    ),
+      builder: (context) => Dialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          width: 400,
+          constraints: const BoxConstraints(maxHeight: 450),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      _titlesColor.withAlpha(51),
+                      _titlesColor.withAlpha(13),
+                    ],
                   ),
                 ),
-              );
-            },
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _titlesColor.withAlpha(51),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.star, color: _titlesColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Select Benefit for ${title['name']}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white70),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ),
+              // Benefits list
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16),
+                  itemCount: benefits.length,
+                  itemBuilder: (context, index) {
+                    final benefit = benefits[index];
+                    
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2A2A2A),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.shade800),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () {
+                          widget.onTitleSelected(title['id'] as String, index);
+                          Navigator.of(context).pop();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: _titlesColor.withAlpha(26),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Icon(Icons.add_circle_outline, color: _titlesColor, size: 16),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Benefit ${index + 1}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              if (benefit is Map<String, dynamic>) ...[
+                                if (benefit['description'] != null)
+                                  Text(
+                                    benefit['description'] as String,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(SheetStoryCommonText.cancel),
-          ),
-        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return AlertDialog(
-      title: const Text(SheetStoryTitlesTabText.addTitleDialogTitle),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: MediaQuery.of(context).size.height * 0.7,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 450,
+        height: MediaQuery.of(context).size.height * 0.75,
         child: Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: SheetStoryTitlesTabText.searchTitlesLabel,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                _searchQuery = value;
-                _filterTitles();
-              },
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: [
-                FilterChip(
-                  label: const Text(SheetStoryTitlesTabText.allFilter),
-                  selected: _selectedEchelon == null,
-                  onSelected: (selected) {
-                    _selectedEchelon = null;
-                    _filterTitles();
-                  },
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    _titlesColor.withAlpha(51),
+                    _titlesColor.withAlpha(13),
+                  ],
                 ),
-                ...List.generate(4, (index) {
-                  final echelon = index + 1;
-                  return FilterChip(
-                    label: Text('Echelon $echelon'),
-                    selected: _selectedEchelon == echelon,
-                    onSelected: (selected) {
-                      _selectedEchelon = selected ? echelon : null;
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _titlesColor.withAlpha(51),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.military_tech, color: _titlesColor, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      SheetStoryTitlesTabText.addTitleDialogTitle,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+            // Search and filters
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TextField(
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: SheetStoryTitlesTabText.searchTitlesLabel,
+                      labelStyle: TextStyle(color: Colors.grey.shade400),
+                      prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                      filled: true,
+                      fillColor: const Color(0xFF2A2A2A),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: _titlesColor, width: 2),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      _searchQuery = value;
                       _filterTitles();
                     },
-                  );
-                }),
-              ],
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildFilterChip(SheetStoryTitlesTabText.allFilter, null),
+                        const SizedBox(width: 8),
+                        ...List.generate(4, (index) {
+                          final echelon = index + 1;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _buildFilterChip('Echelon $echelon', echelon),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
+            // Titles list
             Expanded(
               child: _filteredTitles.isEmpty
-                  ? const Center(child: Text(SheetStoryTitlesTabText.noTitlesFound))
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.search_off, size: 48, color: Colors.grey.shade600),
+                            const SizedBox(height: 16),
+                            Text(
+                              SheetStoryTitlesTabText.noTitlesFound,
+                              style: TextStyle(color: Colors.grey.shade400),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: _filteredTitles.length,
                       itemBuilder: (context, index) {
                         final title = _filteredTitles[index];
                         
-                        return Card(
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2A2A2A),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey.shade800),
+                          ),
                           child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            leading: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _titlesColor.withAlpha(26),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Icon(Icons.add_circle_outline, color: _titlesColor, size: 18),
+                            ),
                             title: Text(
                               title['name'] as String? ?? SheetStoryTitlesTabText.unknown,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -715,12 +1033,14 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                                     title['description_text'] as String,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                                   ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Echelon ${title['echelon']} • ${(title['benefits'] as List?)?.length ?? 0} benefits',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.primary,
+                                  style: const TextStyle(
+                                    color: _titlesColor,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
@@ -731,15 +1051,40 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                       },
                     ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(SheetStoryCommonText.cancel),
+    );
+  }
+
+  Widget _buildFilterChip(String label, int? echelon) {
+    final isSelected = _selectedEchelon == echelon;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedEchelon = echelon;
+        });
+        _filterTitles();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? _titlesColor.withAlpha(51) : const Color(0xFF2A2A2A),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? _titlesColor : Colors.grey.shade700,
+          ),
         ),
-      ],
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? _titlesColor : Colors.grey.shade400,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
     );
   }
 }

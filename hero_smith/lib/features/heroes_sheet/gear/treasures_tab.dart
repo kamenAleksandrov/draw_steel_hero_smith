@@ -384,6 +384,9 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                         ...groupedTreasures.entries.map((entry) {
                           final groupName = entry.key;
                           final treasures = entry.value;
+                          // Get color from first treasure in group (all same type)
+                          final sectionColor = _getTreasureGroupColor(
+                              treasures.isNotEmpty ? treasures.first.type : '');
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,7 +399,7 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                    color: NavigationTheme.treasureColor,
+                                    color: sectionColor,
                                   ),
                                 ),
                               ),
@@ -492,5 +495,21 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   Widget _buildTreasureCard(model.Component treasure) {
     // Use the unified TreasureCard for all treasure types
     return TreasureCard(component: treasure);
+  }
+
+  /// Get the color for a treasure type group header.
+  Color _getTreasureGroupColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'consumable':
+        return NavigationTheme.consumablesColor;
+      case 'trinket':
+        return NavigationTheme.trinketsColor;
+      case 'leveled_treasure':
+        return NavigationTheme.leveledColor;
+      case 'artifact':
+        return NavigationTheme.artifactsColor;
+      default:
+        return NavigationTheme.treasureColor;
+    }
   }
 }

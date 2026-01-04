@@ -3,9 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/app_database.dart';
 import '../../core/repositories/hero_notes_repository.dart' as notes_repo;
 import '../../core/text/heroes_sheet/sheet_notes_text.dart';
+import '../../core/theme/navigation_theme.dart';
+
+// Notes accent color
+const _notesColor = Color(0xFF42A5F5); // Blue
 
 // Provider for the notes repository
-final heroNotesRepositoryProvider = Provider<notes_repo.HeroNotesRepository>((ref) {
+final heroNotesRepositoryProvider =
+    Provider<notes_repo.HeroNotesRepository>((ref) {
   return notes_repo.HeroNotesRepository(AppDatabase.instance);
 });
 
@@ -36,11 +41,11 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
 
   Future<void> _createNewNote() async {
     final noteId = await ref.read(heroNotesRepositoryProvider).createNote(
-      heroId: widget.heroId,
-      title: SheetNotesText.untitledNote,
-      content: '',
-      folderId: _currentFolderId,
-    );
+          heroId: widget.heroId,
+          title: SheetNotesText.untitledNote,
+          content: '',
+          folderId: _currentFolderId,
+        );
 
     if (!mounted) return;
 
@@ -69,10 +74,10 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
     if (name == null || name.trim().isEmpty) return;
 
     await ref.read(heroNotesRepositoryProvider).createFolder(
-      heroId: widget.heroId,
-      title: name.trim(),
-      parentFolderId: null, // Flat structure - folders only at root
-    );
+          heroId: widget.heroId,
+          title: name.trim(),
+          parentFolderId: null, // Flat structure - folders only at root
+        );
 
     setState(() {});
   }
@@ -100,7 +105,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
     if (!confirmed) return;
 
     await ref.read(heroNotesRepositoryProvider).deleteFolder(folderId);
-    
+
     if (_currentFolderId == folderId) {
       setState(() {
         _currentFolderId = null;
@@ -141,19 +146,76 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NavigationTheme.navBarBackground,
       body: Column(
         children: [
+          // Header
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade800),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _notesColor.withAlpha(38),
+                  _notesColor.withAlpha(10),
+                ],
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _notesColor.withAlpha(51),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child:
+                      const Icon(Icons.note_alt, color: _notesColor, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Notes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _currentFolderId != null
+                            ? 'In folder'
+                            : 'Your adventure journal',
+                        style: TextStyle(
+                            color: Colors.grey.shade400, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           // Search bar
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
               controller: _searchController,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: SheetNotesText.searchHint,
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(Icons.clear, color: Colors.grey.shade400),
                         onPressed: () {
                           _searchController.clear();
                           setState(() {
@@ -162,8 +224,22 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                         },
                       )
                     : null,
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                filled: true,
+                fillColor: NavigationTheme.cardBackgroundDark,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade800),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade800),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: _notesColor, width: 2),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               ),
               onChanged: (value) {
                 setState(() {
@@ -172,43 +248,21 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               },
             ),
           ),
+          const SizedBox(height: 12),
           // Sort options (hide when searching)
           if (!_isSearching && _currentFolderId == null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  Expanded(
-                    child: DropdownButtonFormField<notes_repo.NoteSortOrder>(
-                      value: _sortOrder,
-                      decoration: const InputDecoration(
-                        labelText: SheetNotesText.sortByLabel,
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: notes_repo.NoteSortOrder.newestFirst,
-                          child: Text(SheetNotesText.sortNewestFirst),
-                        ),
-                        DropdownMenuItem(
-                          value: notes_repo.NoteSortOrder.oldestFirst,
-                          child: Text(SheetNotesText.sortOldestFirst),
-                        ),
-                        DropdownMenuItem(
-                          value: notes_repo.NoteSortOrder.alphabetical,
-                          child: Text(SheetNotesText.sortAlphabetical),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _sortOrder = value;
-                          });
-                        }
-                      },
-                    ),
-                  ),
+                  _buildSortChip(SheetNotesText.sortNewestFirst,
+                      notes_repo.NoteSortOrder.newestFirst),
+                  const SizedBox(width: 8),
+                  _buildSortChip(SheetNotesText.sortOldestFirst,
+                      notes_repo.NoteSortOrder.oldestFirst),
+                  const SizedBox(width: 8),
+                  _buildSortChip(SheetNotesText.sortAlphabetical,
+                      notes_repo.NoteSortOrder.alphabetical),
                 ],
               ),
             ),
@@ -223,20 +277,63 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (_currentFolderId == null) // Only show folder button at root
-            FloatingActionButton(
+            FloatingActionButton.small(
               heroTag: 'createFolder',
               onPressed: _createNewFolder,
               tooltip: SheetNotesText.fabCreateFolderTooltip,
+              backgroundColor: NavigationTheme.cardBackgroundDark,
+              foregroundColor: _notesColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: _notesColor, width: 2),
+              ),
               child: const Icon(Icons.create_new_folder),
             ),
           const SizedBox(height: 8),
-          FloatingActionButton(
+          FloatingActionButton.small(
             heroTag: 'createNote',
             onPressed: _createNewNote,
             tooltip: SheetNotesText.fabCreateNoteTooltip,
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            foregroundColor: _notesColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: _notesColor, width: 2),
+            ),
             child: const Icon(Icons.add),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSortChip(String label, notes_repo.NoteSortOrder order) {
+    final isSelected = _sortOrder == order;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _sortOrder = order;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? _notesColor.withAlpha(51)
+              : NavigationTheme.cardBackgroundDark,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? _notesColor : Colors.grey.shade700,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? _notesColor : Colors.grey.shade400,
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }
@@ -247,20 +344,32 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
       future: repo.searchNotes(widget.heroId, _searchController.text),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(color: _notesColor));
         }
 
         final notes = snapshot.data!;
         if (notes.isEmpty) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(SheetNotesText.searchNoMatches),
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.search_off, size: 48, color: Colors.grey.shade600),
+                  const SizedBox(height: 16),
+                  Text(
+                    SheetNotesText.searchNoMatches,
+                    style: TextStyle(color: Colors.grey.shade400),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
         return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: notes.length,
           itemBuilder: (context, index) {
             final note = notes[index];
@@ -278,32 +387,65 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
       // Show notes in folder with back button
       return Column(
         children: [
-          ListTile(
-            leading: const Icon(Icons.arrow_back),
-            title: const Text(SheetNotesText.backToNotes),
-            tileColor: Theme.of(context).colorScheme.surfaceVariant,
-            onTap: _navigateBack,
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.shade800),
+            ),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: _notesColor.withAlpha(38),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child:
+                    const Icon(Icons.arrow_back, color: _notesColor, size: 20),
+              ),
+              title: const Text(
+                SheetNotesText.backToNotes,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+              ),
+              onTap: _navigateBack,
+            ),
           ),
-          const Divider(height: 1),
+          const SizedBox(height: 12),
           Expanded(
             child: FutureBuilder<List<notes_repo.HeroNote>>(
-              future: repo.getNotesInFolder(_currentFolderId!, sortOrder: _sortOrder),
+              future: repo.getNotesInFolder(_currentFolderId!,
+                  sortOrder: _sortOrder),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(color: _notesColor));
                 }
 
                 final notes = snapshot.data!;
                 if (notes.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(SheetNotesText.folderEmpty),
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.folder_open,
+                              size: 48, color: Colors.grey.shade600),
+                          const SizedBox(height: 16),
+                          Text(
+                            SheetNotesText.folderEmpty,
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: notes.length,
                   itemBuilder: (context, index) {
                     final note = notes[index];
@@ -322,18 +464,41 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
       future: repo.getRootItems(widget.heroId, sortOrder: _sortOrder),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+              child: CircularProgressIndicator(color: _notesColor));
         }
 
         final items = snapshot.data!;
         if (items.isEmpty) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Text(
-                SheetNotesText.rootEmpty,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.note_add, size: 64, color: Colors.grey.shade600),
+                  const SizedBox(height: 16),
+                  Text(
+                    SheetNotesText.rootEmpty,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: _createNewNote,
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create Note'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _notesColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -344,99 +509,203 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
         final notes = items.where((item) => !item.isFolder).toList();
 
         return ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
             if (folders.isNotEmpty) ...[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  SheetNotesText.sectionFolders,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ),
+              _buildSectionHeader(SheetNotesText.sectionFolders, Icons.folder),
               ...folders.map((folder) => _buildFolderCard(folder)),
               if (notes.isNotEmpty) const SizedBox(height: 16),
             ],
             if (notes.isNotEmpty) ...[
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  SheetNotesText.sectionNotes,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ),
+              _buildSectionHeader(SheetNotesText.sectionNotes, Icons.note),
               ...notes.map((note) => _buildNoteCard(note)),
             ],
+            const SizedBox(height: 80), // Space for FAB
           ],
         );
       },
     );
   }
 
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 20,
+            decoration: BoxDecoration(
+              color: _notesColor,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Icon(icon, size: 16, color: _notesColor),
+          const SizedBox(width: 6),
+          Text(
+            title,
+            style: const TextStyle(
+              color: _notesColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFolderCard(notes_repo.HeroNote folder) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: ListTile(
-        leading: const Icon(Icons.folder, size: 32),
-        title: Text(
-          folder.title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _openFolder(folder.id),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: _notesColor.withAlpha(38),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.folder, size: 28, color: _notesColor),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        folder.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time,
+                              size: 12, color: Colors.grey.shade500),
+                          const SizedBox(width: 4),
+                          Text(
+                            SheetNotesText.created(
+                                _formatDate(folder.createdAt)),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: _notesColor),
+                IconButton(
+                  icon: Icon(Icons.delete_outline, color: Colors.grey.shade500),
+                  onPressed: () => _deleteFolder(folder.id),
+                  tooltip: SheetNotesText.tooltipDeleteFolder,
+                ),
+              ],
+            ),
+          ),
         ),
-        subtitle: Text(
-          SheetNotesText.created(_formatDate(folder.createdAt)),
-          style: const TextStyle(fontSize: 12),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline),
-          onPressed: () => _deleteFolder(folder.id),
-          tooltip: SheetNotesText.tooltipDeleteFolder,
-        ),
-        onTap: () => _openFolder(folder.id),
       ),
     );
   }
 
   Widget _buildNoteCard(notes_repo.HeroNote note) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: ListTile(
-        leading: const Icon(Icons.note, size: 28),
-        title: Text(
-          note.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (note.content.isNotEmpty)
-              Text(
-                note.content,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 13),
-              ),
-            const SizedBox(height: 4),
-            Text(
-              SheetNotesText.updated(_formatDate(note.updatedAt)),
-              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => _openNote(note),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _notesColor.withAlpha(25),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.note,
+                      size: 24, color: _notesColor.withAlpha(179)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        note.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                      if (note.content.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          note.content,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade400,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.update,
+                              size: 12, color: Colors.grey.shade600),
+                          const SizedBox(width: 4),
+                          Text(
+                            SheetNotesText.updated(_formatDate(note.updatedAt)),
+                            style: TextStyle(
+                                fontSize: 11, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_outline, color: Colors.grey.shade500),
+                  onPressed: () => _deleteNote(note.id),
+                  tooltip: SheetNotesText.tooltipDeleteNote,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete_outline),
-          onPressed: () => _deleteNote(note.id),
-          tooltip: SheetNotesText.tooltipDeleteNote,
-        ),
-        onTap: () => _openNote(note),
       ),
     );
   }
@@ -557,20 +826,25 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        backgroundColor: NavigationTheme.navBarBackground,
+        body:
+            const Center(child: CircularProgressIndicator(color: _notesColor)),
       );
     }
 
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        backgroundColor: NavigationTheme.navBarBackground,
         appBar: AppBar(
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          foregroundColor: Colors.white,
           title: const Text(SheetNotesText.editNoteTitle),
           actions: [
             if (_isDirty)
               IconButton(
-                icon: const Icon(Icons.save),
+                icon: const Icon(Icons.save, color: _notesColor),
                 tooltip: SheetNotesText.saveTooltip,
                 onPressed: _saveNote,
               ),
@@ -583,22 +857,62 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
               // Title field
               TextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: SheetNotesText.fieldTitleLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: NavigationTheme.cardBackgroundDark,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade800),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade800),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: _notesColor, width: 2),
+                  ),
                 ),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                cursorColor: _notesColor,
               ),
               const SizedBox(height: 16),
               // Content field
               Expanded(
                 child: TextField(
                   controller: _contentController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: SheetNotesText.fieldContentLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
                     alignLabelWithHint: true,
+                    filled: true,
+                    fillColor: NavigationTheme.cardBackgroundDark,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade800),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade800),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: _notesColor, width: 2),
+                    ),
                   ),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                    height: 1.5,
+                  ),
+                  cursorColor: _notesColor,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
@@ -624,20 +938,50 @@ Future<String?> _showTextInputDialog({
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(title),
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: hint),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(color: Colors.grey.shade500),
+            filled: true,
+            fillColor: NavigationTheme.navBarBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey.shade700),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey.shade700),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: _notesColor, width: 2),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+          cursorColor: _notesColor,
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(SheetNotesText.actionCancel),
+            child: Text(
+              SheetNotesText.actionCancel,
+              style: TextStyle(color: Colors.grey.shade400),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text(SheetNotesText.actionCreate),
+            child: const Text(
+              SheetNotesText.actionCreate,
+              style: TextStyle(color: _notesColor, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );
@@ -654,17 +998,28 @@ Future<bool> _showConfirmDialog({
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(title),
-        content: Text(message),
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        content: Text(message, style: TextStyle(color: Colors.grey.shade300)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(SheetNotesText.actionCancel),
+            child: Text(
+              SheetNotesText.actionCancel,
+              style: TextStyle(color: Colors.grey.shade400),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text(SheetNotesText.actionDelete),
+            child: const Text(
+              SheetNotesText.actionDelete,
+              style: TextStyle(
+                  color: Colors.redAccent, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );

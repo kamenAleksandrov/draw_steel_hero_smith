@@ -49,8 +49,117 @@ class FavoriteKitCardWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Status row above the card
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6, left: 4, right: 4),
+            child: Row(
+              children: [
+                // Equipped badge or Swap button
+                if (isEquipped)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: NavigationTheme.kitsColor,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: NavigationTheme.kitsColor.withAlpha(100),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.shield,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          equippedSlotLabel != null
+                              ? '${KitWidgetsText.equippedBadgeWithSlotPrefix}$equippedSlotLabel'
+                              : KitWidgetsText.equippedBadgeLabel,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Material(
+                    color: const Color(0xFF2A2A2A),
+                    borderRadius: BorderRadius.circular(6),
+                    child: InkWell(
+                      onTap: onSwap,
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.published_with_changes,
+                              size: 12,
+                              color: Colors.grey.shade300,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              KitWidgetsText.swapButtonLabel,
+                              style: TextStyle(
+                                color: Colors.grey.shade300,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                const Spacer(),
+                // Favorite heart button
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onRemoveFavorite,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Tooltip(
+                      message: KitWidgetsText.removeFavoriteTooltip,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A).withAlpha(200),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.favorite,
+                          color: Colors.redAccent,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           // Main card with left accent border
           Container(
             decoration: BoxDecoration(
@@ -76,113 +185,6 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                   // The actual kit card
                   Expanded(child: _buildKitCard()),
                 ],
-              ),
-            ),
-          ),
-          // Status badge (top left)
-          Positioned(
-            top: 8,
-            left: isEquipped ? 16 : 12,
-            child: isEquipped
-                ? Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: NavigationTheme.kitsColor,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: NavigationTheme.kitsColor.withAlpha(100),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.shield, // Fantasy equipped icon
-                          size: 12,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          equippedSlotLabel != null
-                              ? '${KitWidgetsText.equippedBadgeWithSlotPrefix}$equippedSlotLabel'
-                              : KitWidgetsText.equippedBadgeLabel,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : // Equip button for non-equipped
-                Material(
-                    color: const Color(0xFF2A2A2A),
-                    borderRadius: BorderRadius.circular(6),
-                    child: InkWell(
-                      onTap: onSwap,
-                      borderRadius: BorderRadius.circular(6),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.published_with_changes, // Swap/equip icon
-                              size: 12,
-                              color: Colors.grey.shade300,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              KitWidgetsText.swapButtonLabel,
-                              style: TextStyle(
-                                color: Colors.grey.shade300,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-          ),
-          // Favorite heart (top right)
-          Positioned(
-            top: 8,
-            right: 12,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onRemoveFavorite,
-                borderRadius: BorderRadius.circular(16),
-                child: Tooltip(
-                  message: KitWidgetsText.removeFavoriteTooltip,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A).withAlpha(200),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Colors.redAccent,
-                      size: 18,
-                    ),
-                  ),
-                ),
               ),
             ),
           ),

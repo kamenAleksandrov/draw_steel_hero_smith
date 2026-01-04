@@ -1,5 +1,8 @@
 part of 'sheet_story.dart';
 
+// Languages accent color
+const _languagesColor = Color(0xFF1E88E5);
+
 // Languages Tab Widget
 class _LanguagesTab extends ConsumerStatefulWidget {
   final String heroId;
@@ -130,10 +133,10 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(color: _languagesColor),
+      );
     }
 
     if (_errorMessage != null) {
@@ -141,10 +144,16 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_errorMessage!, style: TextStyle(color: theme.colorScheme.error)),
+            Icon(Icons.error_outline, size: 48, color: Colors.red.shade400),
+            const SizedBox(height: 16),
+            Text(_errorMessage!, style: TextStyle(color: Colors.red.shade300)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadData,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _languagesColor,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(SheetStoryCommonText.retry),
             ),
           ],
@@ -165,85 +174,182 @@ class _LanguagesTabState extends ConsumerState<_LanguagesTab> {
       groupedLanguages.putIfAbsent(groupKey, () => []).add(lang);
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                SheetStoryLanguagesTabText.languagesTitle,
-                style: AppTextStyles.title,
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: _showAddLanguageDialog,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text(SheetStoryLanguagesTabText.addLanguage),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (selectedLanguages.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Text(
-                  SheetStoryLanguagesTabText.emptyState,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              // Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: NavigationTheme.cardBackgroundDark,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade800),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      _languagesColor.withAlpha(38),
+                      _languagesColor.withAlpha(10),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            )
-          else
-            ...groupedLanguages.entries.map((entry) {
-              final groupName = entry.key;
-              final languages = entry.value;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 8),
-                    child: Text(
-                      groupName,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _languagesColor.withAlpha(51),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.translate, color: _languagesColor, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            SheetStoryLanguagesTabText.languagesTitle,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${selectedLanguages.length} languages known',
+                            style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                          ),
+                        ],
                       ),
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (selectedLanguages.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      children: [
+                        Icon(Icons.language_outlined, size: 48, color: Colors.grey.shade600),
+                        const SizedBox(height: 16),
+                        Text(
+                          SheetStoryLanguagesTabText.emptyState,
+                          style: TextStyle(color: Colors.grey.shade400),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
-                  ...languages.map((lang) {
-                    String subtitle = '';
-                    if (lang.region.isNotEmpty) {
-                      subtitle = 'Region: ${lang.region}';
-                    }
-                    if (lang.ancestry.isNotEmpty) {
-                      subtitle = subtitle.isEmpty
-                          ? 'Ancestry: ${lang.ancestry}'
-                          : '$subtitle • Ancestry: ${lang.ancestry}';
-                    }
+                )
+              else
+                ...groupedLanguages.entries.map((entry) {
+                  final groupName = entry.key;
+                  final languages = entry.value;
 
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        title: Text(lang.name),
-                        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
-                        trailing: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => _removeLanguage(lang.id),
-                          tooltip: SheetStoryLanguagesTabText.removeLanguageTooltip,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 8),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: _languagesColor,
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              groupName,
+                              style: const TextStyle(
+                                color: _languagesColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  }),
-                ],
-              );
-            }),
-        ],
+                      ...languages.map((lang) => _buildLanguageCard(lang)),
+                    ],
+                  );
+                }),
+              const SizedBox(height: 80), // Space for FAB
+            ],
+          ),
+        ),
+        // FAB
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton.small(
+            onPressed: _showAddLanguageDialog,
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            foregroundColor: _languagesColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: _languagesColor, width: 2),
+            ),
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLanguageCard(_LanguageOption lang) {
+    String subtitle = '';
+    if (lang.region.isNotEmpty) {
+      subtitle = 'Region: ${lang.region}';
+    }
+    if (lang.ancestry.isNotEmpty) {
+      subtitle = subtitle.isEmpty
+          ? 'Ancestry: ${lang.ancestry}'
+          : '$subtitle • Ancestry: ${lang.ancestry}';
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: _languagesColor.withAlpha(26),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Icon(Icons.record_voice_over, color: _languagesColor, size: 18),
+        ),
+        title: Text(
+          lang.name,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
+        subtitle: subtitle.isNotEmpty
+            ? Text(
+                subtitle,
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+              )
+            : null,
+        trailing: IconButton(
+          icon: Icon(Icons.close, color: Colors.red.shade400, size: 20),
+          onPressed: () => _removeLanguage(lang.id),
+          tooltip: SheetStoryLanguagesTabText.removeLanguageTooltip,
+        ),
       ),
     );
   }
@@ -291,66 +397,190 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // Group filtered languages by type
+    final groupedLanguages = <String, List<_LanguageOption>>{};
+    for (final lang in _filteredLanguages) {
+      final groupKey = lang.languageType.isNotEmpty
+          ? lang.languageType
+          : SheetStoryLanguagesTabText.otherGroup;
+      groupedLanguages.putIfAbsent(groupKey, () => []).add(lang);
+    }
 
-    return AlertDialog(
-      title: const Text(SheetStoryLanguagesTabText.addLanguageDialogTitle),
-      content: SizedBox(
-        width: double.maxFinite,
+    return Dialog(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 400,
+        constraints: const BoxConstraints(maxHeight: 500),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: SheetStoryLanguagesTabText.searchLanguagesLabel,
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    _languagesColor.withAlpha(51),
+                    _languagesColor.withAlpha(13),
+                  ],
+                ),
               ),
-              onChanged: _filterLanguages,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _languagesColor.withAlpha(51),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.translate, color: _languagesColor, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      SheetStoryLanguagesTabText.addLanguageDialogTitle,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
+            // Search field
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: TextField(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: SheetStoryLanguagesTabText.searchLanguagesLabel,
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                  filled: true,
+                  fillColor: const Color(0xFF2A2A2A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: _languagesColor, width: 2),
+                  ),
+                ),
+                onChanged: _filterLanguages,
+              ),
+            ),
+            // Languages list
             Flexible(
               child: _filteredLanguages.isEmpty
                   ? Center(
-                      child: Text(
-                        SheetStoryLanguagesTabText.noLanguagesFound,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.search_off, size: 48, color: Colors.grey.shade600),
+                            const SizedBox(height: 16),
+                            Text(
+                              SheetStoryLanguagesTabText.noLanguagesFound,
+                              style: TextStyle(color: Colors.grey.shade400),
+                            ),
+                          ],
                         ),
                       ),
                     )
-                  : ListView.builder(
+                  : ListView(
                       shrinkWrap: true,
-                      itemCount: _filteredLanguages.length,
-                      itemBuilder: (context, index) {
-                        final lang = _filteredLanguages[index];
-                        String subtitle = '';
-                        if (lang.region.isNotEmpty) {
-                          subtitle = 'Region: ${lang.region}';
-                        }
-                        if (lang.ancestry.isNotEmpty) {
-                          subtitle = subtitle.isEmpty
-                              ? 'Ancestry: ${lang.ancestry}'
-                              : '$subtitle • Ancestry: ${lang.ancestry}';
-                        }
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: groupedLanguages.entries.expand((entry) {
+                        final groupName = entry.key;
+                        final languages = entry.value;
+                        return [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, bottom: 4),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 3,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: _languagesColor,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  groupName,
+                                  style: const TextStyle(
+                                    color: _languagesColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ...languages.map((lang) {
+                            String subtitle = '';
+                            if (lang.region.isNotEmpty) {
+                              subtitle = 'Region: ${lang.region}';
+                            }
+                            if (lang.ancestry.isNotEmpty) {
+                              subtitle = subtitle.isEmpty
+                                  ? 'Ancestry: ${lang.ancestry}'
+                                  : '$subtitle • Ancestry: ${lang.ancestry}';
+                            }
 
-                        return ListTile(
-                          title: Text(lang.name),
-                          subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
-                          onTap: () => widget.onLanguageSelected(lang.id),
-                        );
-                      },
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF2A2A2A),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.grey.shade800),
+                              ),
+                              child: ListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: _languagesColor.withAlpha(26),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Icon(Icons.add_circle_outline, color: _languagesColor, size: 18),
+                                ),
+                                title: Text(
+                                  lang.name,
+                                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                                ),
+                                subtitle: subtitle.isNotEmpty
+                                    ? Text(
+                                        subtitle,
+                                        style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                                      )
+                                    : null,
+                                onTap: () => widget.onLanguageSelected(lang.id),
+                              ),
+                            );
+                          }),
+                        ];
+                      }).toList(),
                     ),
             ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text(SheetStoryCommonText.cancel),
-        ),
-      ],
     );
   }
 }

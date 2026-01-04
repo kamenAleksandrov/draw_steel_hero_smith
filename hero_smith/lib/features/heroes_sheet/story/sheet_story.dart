@@ -18,6 +18,7 @@ import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 import '../../../core/services/title_grants_service.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/story/sheet_story_text.dart';
 import '../../creators/widgets/strength_creator/class_features_section.dart';
 import '../../../widgets/shared/story_display_widgets.dart';
@@ -108,18 +109,50 @@ class _SheetStoryState extends ConsumerState<SheetStory>
 
   @override
   Widget build(BuildContext context) {
+    // Define accent colors for each tab
+    const storyColor = Color(0xFF8E24AA); // Purple for story
+    const skillsColor = Color(0xFF43A047); // Green for skills
+    const languagesColor = Color(0xFF1E88E5); // Blue for languages
+    const perksColor = Color(0xFFFF7043); // Orange for perks
+    const titlesColor = Color(0xFFFFB300); // Gold for titles
+    
     return Column(
       children: [
-        TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: SheetStoryTabsText.features),
-            Tab(text: SheetStoryTabsText.story),
-            Tab(text: SheetStoryTabsText.skills),
-            Tab(text: SheetStoryTabsText.languages),
-            Tab(text: SheetStoryTabsText.perks),
-            Tab(text: SheetStoryTabsText.titles),
-          ],
+        // Dark themed tab bar
+        Container(
+          color: NavigationTheme.navBarBackground,
+          child: AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, child) {
+              return TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: _getTabColor(_tabController.index),
+                      width: 3,
+                    ),
+                  ),
+                ),
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.grey.shade500,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
+                tabs: [
+                  _buildTab(SheetStoryTabsText.features, Icons.auto_awesome, 0, NavigationTheme.kitsColor),
+                  _buildTab(SheetStoryTabsText.story, Icons.menu_book, 1, storyColor),
+                  _buildTab(SheetStoryTabsText.skills, Icons.psychology, 2, skillsColor),
+                  _buildTab(SheetStoryTabsText.languages, Icons.translate, 3, languagesColor),
+                  _buildTab(SheetStoryTabsText.perks, Icons.star, 4, perksColor),
+                  _buildTab(SheetStoryTabsText.titles, Icons.military_tech, 5, titlesColor),
+                ],
+              );
+            },
+          ),
         ),
         Expanded(
           child: TabBarView(
@@ -135,6 +168,36 @@ class _SheetStoryState extends ConsumerState<SheetStory>
           ),
         ),
       ],
+    );
+  }
+
+  Color _getTabColor(int index) {
+    const colors = [
+      NavigationTheme.kitsColor, // Features
+      Color(0xFF8E24AA), // Story - Purple
+      Color(0xFF43A047), // Skills - Green
+      Color(0xFF1E88E5), // Languages - Blue
+      Color(0xFFFF7043), // Perks - Orange
+      Color(0xFFFFB300), // Titles - Gold
+    ];
+    return colors[index.clamp(0, colors.length - 1)];
+  }
+
+  Widget _buildTab(String label, IconData icon, int index, Color color) {
+    final isSelected = _tabController.index == index;
+    return Tab(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: isSelected ? color : Colors.grey.shade500,
+          ),
+          const SizedBox(width: 6),
+          Text(label),
+        ],
+      ),
     );
   }
 }
