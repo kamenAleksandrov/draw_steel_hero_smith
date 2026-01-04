@@ -6,6 +6,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../../core/repositories/hero_repository.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
 
 /// Callback for taking respite action.
@@ -29,8 +30,6 @@ class RespiteDowntimeRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Row(
       children: [
         Expanded(
@@ -39,9 +38,8 @@ class RespiteDowntimeRowWidget extends StatelessWidget {
             icon: const Icon(Icons.bedtime_outlined, size: 18),
             label: const Text(HeroMainStatsViewText.respiteButtonLabel),
             style: OutlinedButton.styleFrom(
-              foregroundColor: theme.colorScheme.primary,
-              side:
-                  BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+              foregroundColor: Colors.blue.shade400,
+              side: BorderSide(color: Colors.blue.shade400.withAlpha(128)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -53,9 +51,8 @@ class RespiteDowntimeRowWidget extends StatelessWidget {
             icon: const Icon(Icons.assignment_outlined, size: 18),
             label: const Text(HeroMainStatsViewText.downtimeButtonLabel),
             style: OutlinedButton.styleFrom(
-              foregroundColor: theme.colorScheme.secondary,
-              side: BorderSide(
-                  color: theme.colorScheme.secondary.withOpacity(0.5)),
+              foregroundColor: NavigationTheme.downtimeColor,
+              side: BorderSide(color: NavigationTheme.downtimeColor.withAlpha(128)),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
@@ -80,24 +77,44 @@ Future<bool?> showRespiteConfirmDialog(
     builder: (dialogContext) {
       final theme = Theme.of(dialogContext);
       return AlertDialog(
-        title: const Row(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
+        title: Row(
           children: [
-            Icon(Icons.bedtime_outlined),
-            SizedBox(width: 8),
-            Text(HeroMainStatsViewText.respiteDialogTitle),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue.withAlpha(40),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.bedtime_outlined, color: Colors.blue.shade400),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              HeroMainStatsViewText.respiteDialogTitle,
+              style: TextStyle(color: Colors.white),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(HeroMainStatsViewText.respiteDialogIntro),
+            Text(
+              HeroMainStatsViewText.respiteDialogIntro,
+              style: TextStyle(color: Colors.grey.shade300),
+            ),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
+                color: Colors.grey.shade800.withAlpha(100),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade700),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,12 +122,12 @@ Future<bool?> showRespiteConfirmDialog(
                   Row(
                     children: [
                       Icon(Icons.emoji_events,
-                          size: 16, color: theme.colorScheme.primary),
+                          size: 16, color: Colors.amber.shade400),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '${HeroMainStatsViewText.respiteDialogConvertPrefix}$victories ${victories == 1 ? HeroMainStatsViewText.respiteDialogConvertSingular : HeroMainStatsViewText.respiteDialogConvertPlural}${HeroMainStatsViewText.respiteDialogConvertSuffix}',
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade300),
                         ),
                       ),
                     ],
@@ -119,13 +136,14 @@ Future<bool?> showRespiteConfirmDialog(
                   Row(
                     children: [
                       Icon(Icons.star,
-                          size: 16, color: theme.colorScheme.primary),
+                          size: 16, color: Colors.amber.shade400),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '${HeroMainStatsViewText.respiteDialogXpPrefix}$currentXp${HeroMainStatsViewText.respiteDialogArrowSeparator}$newXp',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -135,12 +153,12 @@ Future<bool?> showRespiteConfirmDialog(
                   Row(
                     children: [
                       Icon(Icons.favorite,
-                          size: 16, color: theme.colorScheme.tertiary),
+                          size: 16, color: Colors.red.shade400),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           '${HeroMainStatsViewText.respiteDialogRecoveriesPrefix}${HeroMainStatsViewText.respiteDialogRecoveriesArrow}$recoveriesMax${HeroMainStatsViewText.respiteDialogRecoveriesSuffix}',
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade300),
                         ),
                       ),
                     ],
@@ -153,10 +171,15 @@ Future<bool?> showRespiteConfirmDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
             child: const Text(HeroMainStatsViewText.respiteDialogCancelLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.blue.shade600,
+              foregroundColor: Colors.white,
+            ),
             child:
                 const Text(HeroMainStatsViewText.respiteDialogConfirmLabel),
           ),

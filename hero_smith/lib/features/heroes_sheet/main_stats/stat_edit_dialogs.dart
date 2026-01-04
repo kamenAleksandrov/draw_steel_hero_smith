@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 import 'hero_main_stats_models.dart';
 import 'hero_stamina_helpers.dart';
 
@@ -36,14 +37,48 @@ Future<int?> showNumberEditDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('${HeroMainStatsViewText.numberEditTitlePrefix}$label'),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.edit, color: Colors.blue.shade400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${HeroMainStatsViewText.numberEditTitlePrefix}$label',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: TextField(
             controller: controller,
             keyboardType: TextInputType.number,
             autofocus: true,
+            style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               labelText: label,
-              border: const OutlineInputBorder(),
+              labelStyle: TextStyle(color: Colors.grey.shade400),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue.shade400),
+              ),
             ),
             inputFormatters: allowNegative
                 ? numericFormatters(true, 4)
@@ -52,15 +87,20 @@ Future<int?> showNumberEditDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.numberEditCancelLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 final value = int.tryParse(controller.text);
                 if (value != null) {
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.blue.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.numberEditSaveLabel),
             ),
           ],
@@ -88,22 +128,55 @@ Future<int?> showXpEditDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(HeroMainStatsViewText.xpEditTitle),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.star, color: Colors.amber.shade400),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                HeroMainStatsViewText.xpEditTitle,
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '${HeroMainStatsViewText.xpEditCurrentLevelPrefix}$currentLevel',
+                style: TextStyle(color: Colors.grey.shade300),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: controller,
                 keyboardType: TextInputType.number,
                 autofocus: true,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.xpEditExperienceLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber.shade400),
+                  ),
                 ),
                 inputFormatters: numericFormatters(false, 3),
               ),
@@ -112,10 +185,9 @@ Future<int?> showXpEditDialog(
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(dialogContext)
-                        .colorScheme
-                        .surfaceContainerHighest,
+                    color: Colors.grey.shade800.withAlpha(100),
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade700),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,17 +197,15 @@ Future<int?> showXpEditDialog(
                           Icon(
                             Icons.auto_graph,
                             size: 16,
-                            color: Theme.of(dialogContext).colorScheme.primary,
+                            color: Colors.amber.shade400,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             HeroMainStatsViewText.xpEditInsightsTitle,
-                            style: Theme.of(dialogContext)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber.shade400,
+                            ),
                           ),
                         ],
                       ),
@@ -144,8 +214,7 @@ Future<int?> showXpEditDialog(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Text(
                               insight,
-                              style:
-                                  Theme.of(dialogContext).textTheme.bodySmall,
+                              style: TextStyle(color: Colors.grey.shade300, fontSize: 12),
                             ),
                           )),
                     ],
@@ -157,15 +226,20 @@ Future<int?> showXpEditDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.xpEditCancelLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 final value = int.tryParse(controller.text);
                 if (value != null) {
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.amber.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.xpEditSaveLabel),
             ),
           ],
@@ -195,38 +269,61 @@ Future<int?> showModEditDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('${HeroMainStatsViewText.modEditTitlePrefix}$title'),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.tune, color: Colors.purple.shade400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${HeroMainStatsViewText.modEditTitlePrefix}$title',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${HeroMainStatsViewText.modEditBasePrefix}$baseValue'),
+              Text(
+                '${HeroMainStatsViewText.modEditBasePrefix}$baseValue',
+                style: TextStyle(color: Colors.grey.shade300),
+              ),
               if (sourcesDescription.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(dialogContext).colorScheme.primaryContainer,
+                    color: Colors.purple.withAlpha(30),
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.purple.shade400.withAlpha(100)),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.auto_awesome,
                         size: 16,
-                        color: Theme.of(dialogContext)
-                            .colorScheme
-                            .onPrimaryContainer,
+                        color: Colors.purple.shade400,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           sourcesDescription,
                           style: TextStyle(
-                            color: Theme.of(dialogContext)
-                                .colorScheme
-                                .onPrimaryContainer,
+                            color: Colors.purple.shade300,
                             fontSize: 13,
                           ),
                         ),
@@ -241,10 +338,21 @@ Future<int?> showModEditDialog(
                 keyboardType:
                     const TextInputType.numberWithOptions(signed: true),
                 autofocus: true,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.modEditModificationLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.purple.shade400),
+                  ),
                   helperText: HeroMainStatsViewText.modEditHelperText,
+                  helperStyle: TextStyle(color: Colors.grey.shade500),
                 ),
                 inputFormatters: numericFormatters(true, 4),
               ),
@@ -254,7 +362,7 @@ Future<int?> showModEditDialog(
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Text(
                         insight,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
                       ),
                     )),
               ],
@@ -263,15 +371,20 @@ Future<int?> showModEditDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.modEditCancelLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 final value = int.tryParse(controller.text);
                 if (value != null) {
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.purple.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.modEditSaveLabel),
             ),
           ],
@@ -300,38 +413,61 @@ Future<int?> showStatEditDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text('${HeroMainStatsViewText.statEditTitlePrefix}$label'),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.analytics_outlined, color: Colors.blue.shade400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${HeroMainStatsViewText.statEditTitlePrefix}$label',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${HeroMainStatsViewText.statEditBasePrefix}$baseValue'),
+              Text(
+                '${HeroMainStatsViewText.statEditBasePrefix}$baseValue',
+                style: TextStyle(color: Colors.grey.shade300),
+              ),
               if (autoBonusDescription.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(dialogContext).colorScheme.primaryContainer,
+                    color: Colors.blue.withAlpha(30),
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue.shade400.withAlpha(100)),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.auto_awesome,
                         size: 16,
-                        color: Theme.of(dialogContext)
-                            .colorScheme
-                            .onPrimaryContainer,
+                        color: Colors.blue.shade400,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           autoBonusDescription,
                           style: TextStyle(
-                            color: Theme.of(dialogContext)
-                                .colorScheme
-                                .onPrimaryContainer,
+                            color: Colors.blue.shade300,
                             fontSize: 13,
                           ),
                         ),
@@ -346,10 +482,21 @@ Future<int?> showStatEditDialog(
                 keyboardType:
                     const TextInputType.numberWithOptions(signed: true),
                 autofocus: true,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.statEditModificationLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue.shade400),
+                  ),
                   helperText: HeroMainStatsViewText.statEditHelperText,
+                  helperStyle: TextStyle(color: Colors.grey.shade500),
                 ),
                 inputFormatters: numericFormatters(true, 4),
               ),
@@ -358,15 +505,20 @@ Future<int?> showStatEditDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.statEditCancelLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 final value = int.tryParse(controller.text);
                 if (value != null) {
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.blue.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.statEditSaveLabel),
             ),
           ],
@@ -404,38 +556,59 @@ Future<int?> showSizeEditDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text(HeroMainStatsViewText.sizeEditTitle),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.straighten, color: Colors.orange.shade400),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                HeroMainStatsViewText.sizeEditTitle,
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${HeroMainStatsViewText.sizeEditBasePrefix}$baseDisplay'),
+              Text(
+                '${HeroMainStatsViewText.sizeEditBasePrefix}$baseDisplay',
+                style: TextStyle(color: Colors.grey.shade300),
+              ),
               if (sourcesDescription.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(dialogContext).colorScheme.primaryContainer,
+                    color: Colors.orange.withAlpha(30),
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange.shade400.withAlpha(100)),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.auto_awesome,
                         size: 16,
-                        color: Theme.of(dialogContext)
-                            .colorScheme
-                            .onPrimaryContainer,
+                        color: Colors.orange.shade400,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           sourcesDescription,
                           style: TextStyle(
-                            color: Theme.of(dialogContext)
-                                .colorScheme
-                                .onPrimaryContainer,
+                            color: Colors.orange.shade300,
                             fontSize: 13,
                           ),
                         ),
@@ -450,10 +623,21 @@ Future<int?> showSizeEditDialog(
                 keyboardType:
                     const TextInputType.numberWithOptions(signed: true),
                 autofocus: true,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.sizeEditModificationLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange.shade400),
+                  ),
                   helperText: HeroMainStatsViewText.sizeEditHelperText,
+                  helperStyle: TextStyle(color: Colors.grey.shade500),
                 ),
                 inputFormatters: numericFormatters(true, 4),
               ),
@@ -462,15 +646,20 @@ Future<int?> showSizeEditDialog(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.sizeEditCancelLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () {
                 final value = int.tryParse(controller.text);
                 if (value != null) {
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.orange.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.sizeEditSaveLabel),
             ),
           ],
@@ -497,7 +686,6 @@ Future<void> showMaxVitalBreakdownDialog(
   required int total,
   required Future<void> Function() onEditModifier,
 }) async {
-  final theme = Theme.of(context);
   final hasChoice = equipmentBonus != 0 || choiceValue != 0;
   final hasUser = userValue != 0;
   final hasFeature = featureBonus != 0;
@@ -506,49 +694,65 @@ Future<void> showMaxVitalBreakdownDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        title: Text(
-          '$label${HeroMainStatsViewText.maxVitalBreakdownTitleSuffix}',
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(40),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.favorite, color: Colors.red.shade400),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '$label${HeroMainStatsViewText.maxVitalBreakdownTitleSuffix}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildBreakdownRow(
-              theme,
               HeroMainStatsViewText.breakdownClassBaseLabel,
               classBase,
             ),
             if (equipmentBonus > 0)
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownEquipmentLabel,
                 equipmentBonus,
                 isBonus: equipmentBonus > 0,
               ),
             if (hasFeature)
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownFeaturesLabel,
                 featureBonus,
                 isBonus: featureBonus > 0,
               ),
             if (hasChoice)
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownChoiceModsLabel,
                 choiceValue,
                 isBonus: choiceValue >= 0,
               ),
             if (hasUser)
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownManualModsLabel,
                 userValue,
                 isBonus: userValue >= 0,
               ),
-            const Divider(),
+            Divider(color: Colors.grey.shade700),
             _buildBreakdownRow(
-              theme,
               HeroMainStatsViewText.breakdownTotalLabel,
               total,
               isBold: true,
@@ -556,8 +760,9 @@ Future<void> showMaxVitalBreakdownDialog(
             const SizedBox(height: 16),
             Text(
               HeroMainStatsViewText.breakdownEditHint,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 12,
               ),
             ),
           ],
@@ -565,13 +770,18 @@ Future<void> showMaxVitalBreakdownDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
             child: const Text(HeroMainStatsViewText.breakdownCloseLabel),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () async {
               Navigator.of(dialogContext).pop();
               await onEditModifier();
             },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red.shade600,
+              foregroundColor: Colors.white,
+            ),
             child:
                 const Text(HeroMainStatsViewText.breakdownEditModifierLabel),
           ),
@@ -581,12 +791,12 @@ Future<void> showMaxVitalBreakdownDialog(
   );
 }
 
-Widget _buildBreakdownRow(ThemeData theme, String label, int value,
+Widget _buildBreakdownRow(String label, int value,
     {bool isBonus = false, bool isBold = false}) {
   final valueText = isBonus ? '+$value' : value.toString();
   final color = isBonus
-      ? Colors.green
-      : (value < 0 ? Colors.red : theme.colorScheme.onSurface);
+      ? Colors.green.shade400
+      : (value < 0 ? Colors.red.shade400 : Colors.white);
 
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4),
@@ -595,15 +805,16 @@ Widget _buildBreakdownRow(ThemeData theme, String label, int value,
       children: [
         Text(
           label,
-          style: theme.textTheme.bodyMedium?.copyWith(
+          style: TextStyle(
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: isBold ? Colors.white : Colors.grey.shade300,
           ),
         ),
         Text(
           valueText,
-          style: theme.textTheme.bodyMedium?.copyWith(
+          style: TextStyle(
             fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-            color: isBold ? null : color,
+            color: isBold ? Colors.red.shade400 : color,
           ),
         ),
       ],
@@ -624,13 +835,37 @@ Future<int?> promptForAmount(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.favorite_border, color: Colors.red.shade400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (description != null) ...[
-                Text(description),
+                Text(description, style: TextStyle(color: Colors.grey.shade300)),
                 const SizedBox(height: 12),
               ],
               TextField(
@@ -638,9 +873,19 @@ Future<int?> promptForAmount(
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 inputFormatters: numericFormatters(false, 3),
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.promptAmountLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red.shade400),
+                  ),
                 ),
               ),
             ],
@@ -648,6 +893,7 @@ Future<int?> promptForAmount(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.promptCancelLabel),
             ),
             FilledButton(
@@ -659,6 +905,10 @@ Future<int?> promptForAmount(
                   Navigator.of(dialogContext).pop(value);
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.promptApplyLabel),
             ),
           ],
@@ -690,13 +940,37 @@ Future<({int amount, bool applyToTemp})?> promptForHealingAmount(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(title),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.healing, color: Colors.green.shade400),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (description != null) ...[
-                Text(description),
+                Text(description, style: TextStyle(color: Colors.grey.shade300)),
                 const SizedBox(height: 12),
               ],
               TextField(
@@ -704,9 +978,19 @@ Future<({int amount, bool applyToTemp})?> promptForHealingAmount(
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 inputFormatters: numericFormatters(false, 3),
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: HeroMainStatsViewText.promptAmountLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade700),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green.shade400),
+                  ),
                 ),
               ),
             ],
@@ -714,6 +998,7 @@ Future<({int amount, bool applyToTemp})?> promptForHealingAmount(
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
               child: const Text(HeroMainStatsViewText.promptCancelLabel),
             ),
             FilledButton(
@@ -727,6 +1012,10 @@ Future<({int amount, bool applyToTemp})?> promptForHealingAmount(
                   );
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.cyan.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.promptApplyTempLabel),
             ),
             FilledButton(
@@ -740,6 +1029,10 @@ Future<({int amount, bool applyToTemp})?> promptForHealingAmount(
                   );
                 }
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.green.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(HeroMainStatsViewText.promptApplyLabel),
             ),
           ],
@@ -766,8 +1059,6 @@ Future<int?> showDiceRollDialog(
   required String diceType,
   Map<int, int>? diceToValueMapping,
 }) async {
-  final theme = Theme.of(context);
-
   // Find which dice roll corresponds to the rolled value
   int? rolledDice;
   if (diceToValueMapping != null) {
@@ -783,11 +1074,27 @@ Future<int?> showDiceRollDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
         title: Row(
           children: [
-            Icon(Icons.casino, color: theme.colorScheme.primary),
-            const SizedBox(width: 8),
-            Text('$diceType${HeroMainStatsViewText.diceRollTitleSuffix}'),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.purple.withAlpha(40),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.casino, color: Colors.purple.shade400),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              '$diceType${HeroMainStatsViewText.diceRollTitleSuffix}',
+              style: const TextStyle(color: Colors.white),
+            ),
           ],
         ),
         content: Column(
@@ -796,24 +1103,27 @@ Future<int?> showDiceRollDialog(
             if (rolledDice != null && diceToValueMapping != null) ...[
               Text(
                 '${HeroMainStatsViewText.diceRolledDicePrefix}$rolledDice',
-                style: theme.textTheme.headlineMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
+                  fontSize: 28,
+                  color: Colors.purple.shade400,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 '${HeroMainStatsViewText.diceGainPrefix}$rolledValue${HeroMainStatsViewText.diceGainSuffix}',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.secondary,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.amber.shade400,
                 ),
               ),
             ] else
               Text(
                 '${HeroMainStatsViewText.diceRolledValuePrefix}$rolledValue',
-                style: theme.textTheme.headlineMedium?.copyWith(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
+                  fontSize: 28,
+                  color: Colors.purple.shade400,
                 ),
               ),
             const SizedBox(height: 16),
@@ -822,15 +1132,17 @@ Future<int?> showDiceRollDialog(
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
+                  color: Colors.grey.shade800.withAlpha(100),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade700),
                 ),
                 child: Column(
                   children: [
                     Text(
                       HeroMainStatsViewText.diceRollValuesTitle,
-                      style: theme.textTheme.labelMedium?.copyWith(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade300,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -845,12 +1157,12 @@ Future<int?> showDiceRollDialog(
                           ),
                           decoration: BoxDecoration(
                             color: isRolled
-                                ? theme.colorScheme.primaryContainer
+                                ? Colors.purple.withAlpha(60)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(4),
                             border: isRolled
                                 ? Border.all(
-                                    color: theme.colorScheme.primary,
+                                    color: Colors.purple.shade400,
                                     width: 2,
                                   )
                                 : null,
@@ -859,16 +1171,18 @@ Future<int?> showDiceRollDialog(
                             children: [
                               Text(
                                 '${entry.key}',
-                                style: theme.textTheme.titleMedium?.copyWith(
+                                style: TextStyle(
                                   fontWeight: isRolled
                                       ? FontWeight.bold
                                       : FontWeight.normal,
+                                  color: Colors.white,
                                 ),
                               ),
                               Text(
                                 '+${entry.value}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.primary,
+                                style: TextStyle(
+                                  color: Colors.purple.shade400,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -883,7 +1197,7 @@ Future<int?> showDiceRollDialog(
             ],
             Text(
               HeroMainStatsViewText.diceAcceptPrompt,
-              style: theme.textTheme.bodyMedium,
+              style: TextStyle(color: Colors.grey.shade300),
             ),
             const SizedBox(height: 12),
             Wrap(
@@ -896,13 +1210,14 @@ Future<int?> showDiceRollDialog(
                     style: TextStyle(
                       fontWeight:
                           isRolled ? FontWeight.bold : FontWeight.normal,
+                      color: isRolled ? Colors.white : Colors.grey.shade300,
                     ),
                   ),
                   backgroundColor:
-                      isRolled ? theme.colorScheme.primaryContainer : null,
+                      isRolled ? Colors.purple.shade600 : Colors.grey.shade800,
                   side: isRolled
-                      ? BorderSide(color: theme.colorScheme.primary, width: 2)
-                      : null,
+                      ? BorderSide(color: Colors.purple.shade400, width: 2)
+                      : BorderSide(color: Colors.grey.shade700),
                   onPressed: () => Navigator.of(dialogContext).pop(value),
                 );
               }).toList(),
@@ -912,10 +1227,15 @@ Future<int?> showDiceRollDialog(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(null),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
             child: const Text(HeroMainStatsViewText.diceCancelLabel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(rolledValue),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.purple.shade600,
+              foregroundColor: Colors.white,
+            ),
             child: Text(
               '${HeroMainStatsViewText.diceAcceptPrefix}$rolledValue',
             ),

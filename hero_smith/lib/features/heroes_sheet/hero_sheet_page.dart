@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../creators/hero_creators/hero_creator_page.dart';
 import '../../core/text/heroes_sheet/hero_sheet_page_text.dart';
+import '../../core/theme/navigation_theme.dart';
 import 'abilities/sheet_abilities.dart';
 import 'gear/sheet_gear.dart';
 import 'main_stats/sheet_main_stats.dart';
 import 'sheet_notes.dart';
 import 'story/sheet_story.dart';
+
+/// Tab colors for hero sheet sections
+const List<Color> _tabColors = [
+  Color(0xFF4CAF50),    // Main - Green
+  Color(0xFFFF9800),    // Abilities - Orange
+  Color(0xFF7B1FA2),    // Gear - Purple
+  Color(0xFF2196F3),    // Features - Blue
+  Color(0xFF78909C),    // Notes - Blue Grey
+];
 
 /// Top-level hero sheet that hosts all hero information.
 class HeroSheetPage extends StatefulWidget {
@@ -71,32 +81,61 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
         index: _currentIndex,
         children: _sections,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onSectionTapped,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: HeroSheetPageText.navMain,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: NavigationTheme.navBarBackground,
+          boxShadow: NavigationTheme.navBarShadow,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, Icons.person, HeroSheetPageText.navMain),
+                _buildNavItem(1, Icons.flash_on, HeroSheetPageText.navAbilities),
+                _buildNavItem(2, Icons.backpack, HeroSheetPageText.navGear),
+                _buildNavItem(3, Icons.auto_awesome, HeroSheetPageText.navFeatures),
+                _buildNavItem(4, Icons.sticky_note_2, HeroSheetPageText.navNotes),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.flash_on),
-            label: HeroSheetPageText.navAbilities,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.backpack),
-            label: HeroSheetPageText.navGear,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome),
-            label: HeroSheetPageText.navFeatures,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sticky_note_2),
-            label: HeroSheetPageText.navNotes,
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _currentIndex == index;
+    final color = isSelected ? _tabColors[index] : NavigationTheme.inactiveColor;
+
+    return GestureDetector(
+      onTap: () => _onSectionTapped(index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: isSelected
+            ? NavigationTheme.selectedNavItemDecoration(_tabColors[index])
+            : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: NavigationTheme.navBarIconSize,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: NavigationTheme.navLabelStyle(
+                color: color,
+                isSelected: isSelected,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

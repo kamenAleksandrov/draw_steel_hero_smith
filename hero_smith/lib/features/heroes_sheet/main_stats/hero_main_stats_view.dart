@@ -12,6 +12,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/resource_generation_service.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
@@ -430,6 +431,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               required int baseValue,
               required int currentModValue,
               required List<String> insights,
+              Color? accentColor,
+              IconData? icon,
             }) =>
                 _showModEditDialog(
               context,
@@ -438,6 +441,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               baseValue: baseValue,
               currentModValue: currentModValue,
               insights: insights,
+              accentColor: accentColor,
+              icon: icon,
             ),
           ),
           const SizedBox(height: 8),
@@ -455,6 +460,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               required int baseValue,
               required int currentModValue,
               int featureBonus = 0,
+              Color? accentColor,
             }) =>
                 _showStatEditDialog(
               context,
@@ -463,6 +469,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               baseValue: baseValue,
               currentModValue: currentModValue,
               featureBonus: featureBonus,
+              accentColor: accentColor,
             ),
             onEditSize: ({
               required String sizeBase,
@@ -515,26 +522,46 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final theme = Theme.of(dialogContext);
         return AlertDialog(
-          title: const Row(
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
             children: [
-              Icon(Icons.bedtime_outlined),
-              SizedBox(width: 8),
-              Text(HeroMainStatsViewText.respiteDialogTitle),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.indigo.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child:
+                    const Icon(Icons.bedtime_outlined, color: Colors.indigo),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                HeroMainStatsViewText.respiteDialogTitle,
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(HeroMainStatsViewText.respiteDialogIntro),
+              Text(
+                HeroMainStatsViewText.respiteDialogIntro,
+                style: TextStyle(color: Colors.grey.shade300),
+              ),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
+                  color: Colors.grey.shade800.withAlpha(100),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade700),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,12 +569,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Row(
                       children: [
                         Icon(Icons.emoji_events,
-                            size: 16, color: theme.colorScheme.primary),
+                            size: 16, color: Colors.amber.shade400),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '${HeroMainStatsViewText.respiteDialogConvertPrefix}$victories ${victories == 1 ? HeroMainStatsViewText.respiteDialogConvertSingular : HeroMainStatsViewText.respiteDialogConvertPlural}${HeroMainStatsViewText.respiteDialogConvertSuffix}',
-                            style: theme.textTheme.bodyMedium,
+                            style: TextStyle(color: Colors.grey.shade300),
                           ),
                         ),
                       ],
@@ -556,12 +583,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Row(
                       children: [
                         Icon(Icons.star,
-                            size: 16, color: theme.colorScheme.primary),
+                            size: 16, color: Colors.amber.shade400),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '${HeroMainStatsViewText.respiteDialogXpPrefix}$currentXp${HeroMainStatsViewText.respiteDialogArrowSeparator}$newXp',
-                            style: theme.textTheme.bodyMedium?.copyWith(
+                            style: TextStyle(
+                              color: Colors.grey.shade300,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -572,12 +600,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     Row(
                       children: [
                         Icon(Icons.favorite,
-                            size: 16, color: theme.colorScheme.tertiary),
+                            size: 16, color: Colors.green.shade400),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '${HeroMainStatsViewText.respiteDialogRecoveriesPrefix}${HeroMainStatsViewText.respiteDialogRecoveriesArrow}$recoveriesMax${HeroMainStatsViewText.respiteDialogRecoveriesSuffix}',
-                            style: theme.textTheme.bodyMedium,
+                            style: TextStyle(color: Colors.grey.shade300),
                           ),
                         ),
                       ],
@@ -590,10 +618,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade400,
+              ),
               child: const Text(HeroMainStatsViewText.respiteDialogCancelLabel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.indigo.shade600,
+                foregroundColor: Colors.white,
+              ),
               child:
                   const Text(HeroMainStatsViewText.respiteDialogConfirmLabel),
             ),
@@ -657,7 +692,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final equipmentStaminaBonus =
         stats.equipmentBonusFor(HeroModKeys.staminaMax);
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -666,14 +706,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Stamina Section with visual bar
             Row(
               children: [
-                Icon(Icons.favorite_outline,
-                    size: 16, color: staminaState.color),
-                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: staminaState.color.withAlpha(40),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(Icons.favorite_outline,
+                      size: 16, color: staminaState.color),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   HeroMainStatsViewText.staminaSectionTitle,
-                  style: theme.textTheme.labelMedium?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: staminaState.color,
+                    fontSize: 14,
                   ),
                 ),
                 const Spacer(),
@@ -746,7 +794,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       icon: Icons.flash_on,
                       label: HeroMainStatsViewText.vitalsDamageLabel,
                       onPressed: () => _handleDealDamage(stats),
-                      color: theme.colorScheme.error,
+                      color: Colors.red.shade600,
                     ),
                     const SizedBox(height: 4),
                     _buildCompactActionButton(
@@ -914,29 +962,69 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             context: context,
             builder: (dialogContext) {
               return AlertDialog(
-                title: Text(
-                  '${HeroMainStatsViewText.vitalItemEditTitlePrefix}$label',
+                backgroundColor: NavigationTheme.cardBackgroundDark,
+                surfaceTintColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.grey.shade800),
+                ),
+                title: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withAlpha(40),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.edit, color: Colors.blue),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${HeroMainStatsViewText.vitalItemEditTitlePrefix}$label',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
                 content: TextField(
                   controller: controller,
                   keyboardType:
                       TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.vitalItemValueLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.blue.shade400),
+                    ),
                   ),
                   inputFormatters: _formatters(allowNegative, 4),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade400,
+                    ),
                     child:
                         const Text(HeroMainStatsViewText.vitalItemCancelLabel),
                   ),
-                  TextButton(
+                  FilledButton(
                     onPressed: () =>
                         Navigator.of(dialogContext).pop(controller.text),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.blue.shade600,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text(HeroMainStatsViewText.vitalItemSaveLabel),
                   ),
                 ],
@@ -1067,7 +1155,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int userValue,
     required int total,
   }) async {
-    final theme = Theme.of(context);
     final hasChoice = equipmentBonus != 0 || choiceValue != 0;
     final hasUser = userValue != 0;
     final hasFeature = featureBonus != 0;
@@ -1076,49 +1163,63 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            '$label${HeroMainStatsViewText.maxVitalBreakdownTitleSuffix}',
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.analytics_outlined, color: Colors.red),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '$label${HeroMainStatsViewText.maxVitalBreakdownTitleSuffix}',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownClassBaseLabel,
                 classBase,
               ),
               if (equipmentBonus > 0)
                 _buildBreakdownRow(
-                  theme,
                   HeroMainStatsViewText.breakdownEquipmentLabel,
                   equipmentBonus,
                   isBonus: equipmentBonus > 0,
                 ),
               if (hasFeature)
                 _buildBreakdownRow(
-                  theme,
                   HeroMainStatsViewText.breakdownFeaturesLabel,
                   featureBonus,
                   isBonus: featureBonus > 0,
                 ),
               if (hasChoice)
                 _buildBreakdownRow(
-                  theme,
                   HeroMainStatsViewText.breakdownChoiceModsLabel,
                   choiceValue,
                   isBonus: choiceValue >= 0,
                 ),
               if (hasUser)
                 _buildBreakdownRow(
-                  theme,
                   HeroMainStatsViewText.breakdownManualModsLabel,
                   userValue,
                   isBonus: userValue >= 0,
                 ),
-              const Divider(),
+              Divider(color: Colors.grey.shade700),
               _buildBreakdownRow(
-                theme,
                 HeroMainStatsViewText.breakdownTotalLabel,
                 total,
                 isBold: true,
@@ -1126,8 +1227,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               const SizedBox(height: 16),
               Text(
                 HeroMainStatsViewText.breakdownEditHint,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade500,
                 ),
               ),
             ],
@@ -1135,9 +1237,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade400,
+              ),
               child: const Text(HeroMainStatsViewText.breakdownCloseLabel),
             ),
-            TextButton(
+            FilledButton(
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 await _showStatEditDialog(
@@ -1150,6 +1255,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   currentModValue: userValue,
                 );
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.blue.shade600,
+                foregroundColor: Colors.white,
+              ),
               child:
                   const Text(HeroMainStatsViewText.breakdownEditModifierLabel),
             ),
@@ -1159,12 +1268,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     );
   }
 
-  Widget _buildBreakdownRow(ThemeData theme, String label, int value,
+  Widget _buildBreakdownRow(String label, int value,
       {bool isBonus = false, bool isBold = false}) {
     final valueText = isBonus ? '+$value' : value.toString();
     final color = isBonus
-        ? Colors.green
-        : (value < 0 ? Colors.red : theme.colorScheme.onSurface);
+        ? Colors.green.shade400
+        : (value < 0 ? Colors.red.shade400 : Colors.white);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1173,15 +1282,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         children: [
           Text(
             label,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              color: isBold ? Colors.white : Colors.grey.shade300,
             ),
           ),
           Text(
             valueText,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-              color: isBold ? null : color,
+              color: isBold ? Colors.white : color,
             ),
           ),
         ],
@@ -1258,8 +1368,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required String diceType,
     Map<int, int>? diceToValueMapping,
   }) async {
-    final theme = Theme.of(context);
-
     // Find which dice roll corresponds to the rolled value
     int? rolledDice;
     if (diceToValueMapping != null) {
@@ -1275,11 +1383,27 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
           title: Row(
             children: [
-              Icon(Icons.casino, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
-              Text('$diceType${HeroMainStatsViewText.diceRollTitleSuffix}'),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.casino, color: Colors.purple),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '$diceType${HeroMainStatsViewText.diceRollTitleSuffix}',
+                style: const TextStyle(color: Colors.white),
+              ),
             ],
           ),
           content: Column(
@@ -1288,24 +1412,27 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               if (rolledDice != null && diceToValueMapping != null) ...[
                 Text(
                   '${HeroMainStatsViewText.diceRolledDicePrefix}$rolledDice',
-                  style: theme.textTheme.headlineMedium?.copyWith(
+                  style: TextStyle(
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: Colors.purple.shade300,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   '${HeroMainStatsViewText.diceGainPrefix}$rolledValue${HeroMainStatsViewText.diceGainSuffix}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.secondary,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.amber.shade400,
                   ),
                 ),
               ] else
                 Text(
                   '${HeroMainStatsViewText.diceRolledValuePrefix}$rolledValue',
-                  style: theme.textTheme.headlineMedium?.copyWith(
+                  style: TextStyle(
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: Colors.purple.shade300,
                   ),
                 ),
               const SizedBox(height: 16),
@@ -1314,15 +1441,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
+                    color: Colors.grey.shade800.withAlpha(100),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
                     children: [
                       Text(
                         HeroMainStatsViewText.diceRollValuesTitle,
-                        style: theme.textTheme.labelMedium?.copyWith(
+                        style: TextStyle(
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade300,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -1337,12 +1466,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             ),
                             decoration: BoxDecoration(
                               color: isRolled
-                                  ? theme.colorScheme.primaryContainer
+                                  ? Colors.purple.withAlpha(60)
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(4),
                               border: isRolled
                                   ? Border.all(
-                                      color: theme.colorScheme.primary,
+                                      color: Colors.purple,
                                       width: 2,
                                     )
                                   : null,
@@ -1351,16 +1480,19 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               children: [
                                 Text(
                                   '${entry.key}',
-                                  style: theme.textTheme.titleMedium?.copyWith(
+                                  style: TextStyle(
+                                    fontSize: 16,
                                     fontWeight: isRolled
                                         ? FontWeight.bold
                                         : FontWeight.normal,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 Text(
                                   '+${entry.value}',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.primary,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.purple.shade300,
                                   ),
                                 ),
                               ],
@@ -1375,7 +1507,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               ],
               Text(
                 HeroMainStatsViewText.diceAcceptPrompt,
-                style: theme.textTheme.bodyMedium,
+                style: TextStyle(color: Colors.grey.shade300),
               ),
               const SizedBox(height: 12),
               Wrap(
@@ -1388,13 +1520,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       style: TextStyle(
                         fontWeight:
                             isRolled ? FontWeight.bold : FontWeight.normal,
+                        color: isRolled ? Colors.white : Colors.grey.shade300,
                       ),
                     ),
                     backgroundColor:
-                        isRolled ? theme.colorScheme.primaryContainer : null,
+                        isRolled ? Colors.purple.withAlpha(60) : Colors.grey.shade800,
                     side: isRolled
-                        ? BorderSide(color: theme.colorScheme.primary, width: 2)
-                        : null,
+                        ? const BorderSide(color: Colors.purple, width: 2)
+                        : BorderSide(color: Colors.grey.shade700),
                     onPressed: () => Navigator.of(dialogContext).pop(value),
                   );
                 }).toList(),
@@ -1404,10 +1537,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(null),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade400,
+              ),
               child: const Text(HeroMainStatsViewText.diceCancelLabel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(rolledValue),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.purple.shade600,
+                foregroundColor: Colors.white,
+              ),
               child: Text(
                 '${HeroMainStatsViewText.diceAcceptPrefix}$rolledValue',
               ),
@@ -1548,10 +1688,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   // ignore: unused_element
   Widget _buildSummaryCard(BuildContext context) {
-    final theme = Theme.of(context);
     final level = _latestStats?.level ?? 1;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -1575,13 +1719,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 children: [
                   Text(
                     HeroMainStatsViewText.summaryLevelLabel,
-                    style: theme.textTheme.labelSmall,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade400,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     level.toString(),
-                    style: theme.textTheme.titleLarge?.copyWith(
+                    style: const TextStyle(
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -1595,7 +1744,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   // ignore: unused_element
   Widget _buildWealthRenownCard(BuildContext context, HeroMainStats stats) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -1608,6 +1762,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 totalValue: stats.wealthTotal,
                 modKey: HeroModKeys.wealth,
                 insights: _wealthInsights(stats.wealthTotal),
+                accentColor: Colors.purple.shade400,
+                icon: Icons.paid_outlined,
               ),
             ),
             const SizedBox(width: 12),
@@ -1619,6 +1775,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 totalValue: stats.renownTotal,
                 modKey: HeroModKeys.renown,
                 insights: _renownInsights(stats.renownTotal),
+                accentColor: Colors.purple.shade400,
+                icon: Icons.military_tech_outlined,
               ),
             ),
           ],
@@ -1692,7 +1850,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   // ignore: unused_element
   Widget _buildPrimaryStatsCard(BuildContext context, HeroMainStats stats) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -1700,7 +1863,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Text(
               HeroMainStatsViewText.primaryStatsTitle,
-              style: Theme.of(context).textTheme.titleSmall,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -1751,7 +1918,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   // ignore: unused_element
   Widget _buildSecondaryStatsCard(BuildContext context, HeroMainStats stats) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -1759,7 +1931,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Text(
               HeroMainStatsViewText.secondaryStatsTitle,
-              style: Theme.of(context).textTheme.titleSmall,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -1802,14 +1978,25 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     String title,
     List<_StatTileData> data,
   ) {
-    final theme = Theme.of(context);
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: theme.textTheme.titleMedium),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 20,
@@ -1906,7 +2093,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final staminaMaxMod =
         staminaChoiceMod + staminaManualMod + staminaFeatureBonus;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -1914,15 +2106,31 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: state.color.withAlpha(40),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(Icons.favorite, size: 14, color: state.color),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   HeroMainStatsViewText.staminaCardTitle,
-                  style: theme.textTheme.titleSmall,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   state.label,
-                  style:
-                      theme.textTheme.labelSmall?.copyWith(color: state.color),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: state.color,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -2040,15 +2248,37 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final recoveriesMaxMod =
         recoveriesChoiceMod + recoveriesManualMod + recoveriesFeatureBonus;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              HeroMainStatsViewText.recoveriesCardTitle,
-              style: theme.textTheme.titleSmall,
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withAlpha(40),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.local_hospital, size: 14, color: Colors.green),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  HeroMainStatsViewText.recoveriesCardTitle,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
             Row(
@@ -2155,9 +2385,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     HeroMainStats stats,
     AsyncValue<HeroicResourceDetails?> resourceDetails,
   ) {
-    final theme = Theme.of(context);
-
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: resourceDetails.when(
@@ -2168,10 +2401,27 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           error: (error, _) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                stats.heroicResourceName ??
-                    HeroMainStatsViewText.heroicResourceCardFallbackNameError,
-                style: theme.textTheme.titleSmall,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withAlpha(40),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(Icons.auto_awesome, size: 14, color: Colors.purple),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    stats.heroicResourceName ??
+                        HeroMainStatsViewText.heroicResourceCardFallbackNameError,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               _buildCompactVitalDisplay(
@@ -2195,10 +2445,23 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
               children: [
                 Row(
                   children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withAlpha(40),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(Icons.auto_awesome, size: 14, color: Colors.purple),
+                    ),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         resourceName,
-                        style: theme.textTheme.titleSmall,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -2235,13 +2498,35 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     String name,
     HeroicResourceDetails? details,
   ) {
-    final theme = Theme.of(context);
-
     showDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(name),
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade800),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withAlpha(40),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.auto_awesome, color: Colors.purple),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2250,7 +2535,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 if ((details?.description ?? '').isNotEmpty) ...[
                   Text(
                     details!.description!,
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -2258,12 +2543,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Text(
                     details?.inCombatName ??
                         HeroMainStatsViewText.resourceDetailsInCombatFallback,
-                    style: theme.textTheme.titleSmall,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.orange.shade400,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     details!.inCombatDescription!,
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -2271,12 +2559,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Text(
                     details?.outCombatName ??
                         HeroMainStatsViewText.resourceDetailsOutCombatFallback,
-                    style: theme.textTheme.titleSmall,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue.shade400,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     details!.outCombatDescription!,
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -2284,14 +2575,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Text(
                     details?.strainName ??
                         HeroMainStatsViewText.resourceDetailsStrainFallback,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: Colors.red.shade700,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.red.shade400,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     details!.strainDescription!,
-                    style: theme.textTheme.bodyMedium,
+                    style: TextStyle(color: Colors.grey.shade300),
                   ),
                 ],
               ],
@@ -2300,6 +2592,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade400,
+              ),
               child:
                   const Text(HeroMainStatsViewText.resourceDetailsCloseLabel),
             ),
@@ -2310,8 +2605,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }
 
   Widget _buildSurgesCard(BuildContext context, HeroMainStats stats) {
-    final theme = Theme.of(context);
-
     // Calculate surge damage based on highest attribute
     final highestAttribute = [
       stats.mightTotal,
@@ -2323,7 +2616,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     final surgeDamage = highestAttribute;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -2331,15 +2629,29 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           children: [
             Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withAlpha(40),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.flash_on, size: 14, color: Colors.orange),
+                ),
+                const SizedBox(width: 8),
                 Text(
                   HeroMainStatsViewText.surgesCardTitle,
-                  style: theme.textTheme.titleSmall,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   '${HeroMainStatsViewText.surgesCardTotalPrefix}${stats.surgesTotal}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade400,
                   ),
                 ),
               ],
@@ -2357,21 +2669,25 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withOpacity(0.5),
+                      color: Colors.grey.shade800.withAlpha(100),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
                       children: [
                         Text(
                           HeroMainStatsViewText.surgesCardOneSurgeLabel,
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: TextStyle(
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade300,
                           ),
                         ),
                         Text(
                           '$surgeDamage${HeroMainStatsViewText.surgesCardDamageSuffix}',
-                          style: theme.textTheme.labelSmall,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       ],
                     ),
@@ -2382,21 +2698,25 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest
-                          .withOpacity(0.5),
+                      color: Colors.grey.shade800.withAlpha(100),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
                       children: [
                         Text(
                           HeroMainStatsViewText.surgesCardTwoSurgesLabel,
-                          style: theme.textTheme.labelSmall?.copyWith(
+                          style: TextStyle(
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade300,
                           ),
                         ),
                         Text(
                           HeroMainStatsViewText.surgesCardPotencyLabel,
-                          style: theme.textTheme.labelSmall,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       ],
                     ),
@@ -2491,6 +2811,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int totalValue,
     required String modKey,
     required List<String> insights,
+    Color? accentColor,
+    IconData? icon,
   }) {
     final theme = Theme.of(context);
     final modValue = totalValue - baseValue;
@@ -2505,6 +2827,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           baseValue: baseValue,
           currentModValue: modValue,
           insights: insights,
+          accentColor: accentColor,
+          icon: icon,
         );
       },
       borderRadius: BorderRadius.circular(8),
@@ -2556,6 +2880,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   ) async {
     if (!mounted) return;
 
+    // Use amber for victories (like XP), blue for other number fields
+    final isVictories = field == _NumericField.victories;
+    final color = isVictories ? Colors.amber : Colors.blue;
+    final icon = isVictories ? Icons.emoji_events : Icons.edit;
+
     final controller = TextEditingController(
       text: _numberValueFromStats(_latestStats!, field).toString(),
     );
@@ -2565,14 +2894,51 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('${HeroMainStatsViewText.numberEditTitlePrefix}$label'),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '${HeroMainStatsViewText.numberEditTitlePrefix}$label',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               autofocus: true,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: label,
-                border: const OutlineInputBorder(),
+                labelStyle: TextStyle(color: Colors.grey.shade400),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey.shade700),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: color),
+                ),
               ),
               inputFormatters: field == _NumericField.staminaCurrent
                   ? _formatters(true, 4)
@@ -2581,15 +2947,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey.shade400,
+                ),
                 child: const Text(HeroMainStatsViewText.numberEditCancelLabel),
               ),
-              TextButton(
+              FilledButton(
                 onPressed: () {
                   final value = int.tryParse(controller.text);
                   if (value != null) {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text(HeroMainStatsViewText.numberEditSaveLabel),
               ),
             ],
@@ -2623,22 +2996,58 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: const Text(HeroMainStatsViewText.xpEditTitle),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.star, color: Colors.amber),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  HeroMainStatsViewText.xpEditTitle,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '${HeroMainStatsViewText.xpEditCurrentLevelPrefix}$currentLevel',
+                  style: TextStyle(color: Colors.grey.shade300),
                 ),
                 const SizedBox(height: 8),
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.xpEditExperienceLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.amber.shade400),
+                    ),
                   ),
                   inputFormatters: _formatters(false, 3),
                 ),
@@ -2647,9 +3056,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(dialogContext)
-                          .colorScheme
-                          .surfaceContainerHighest,
+                      color: Colors.grey.shade800.withAlpha(100),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -2660,18 +3067,16 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             Icon(
                               Icons.auto_graph,
                               size: 16,
-                              color:
-                                  Theme.of(dialogContext).colorScheme.primary,
+                              color: Colors.amber.shade400,
                             ),
                             const SizedBox(width: 6),
                             Text(
                               HeroMainStatsViewText.xpEditInsightsTitle,
-                              style: Theme.of(dialogContext)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade300,
+                              ),
                             ),
                           ],
                         ),
@@ -2680,8 +3085,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                               padding: const EdgeInsets.only(bottom: 4),
                               child: Text(
                                 insight,
-                                style:
-                                    Theme.of(dialogContext).textTheme.bodySmall,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade400,
+                                ),
                               ),
                             )),
                       ],
@@ -2693,15 +3100,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey.shade400,
+                ),
                 child: const Text(HeroMainStatsViewText.xpEditCancelLabel),
               ),
-              TextButton(
+              FilledButton(
                 onPressed: () {
                   final value = int.tryParse(controller.text);
                   if (value != null) {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.amber.shade600,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text(HeroMainStatsViewText.xpEditSaveLabel),
               ),
             ],
@@ -2729,9 +3143,13 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int baseValue,
     required int currentModValue,
     required List<String> insights,
+    Color? accentColor,
+    IconData? icon,
   }) async {
     if (!mounted) return;
 
+    final color = accentColor ?? Colors.teal;
+    final dialogIcon = icon ?? Icons.tune;
     final controller = TextEditingController(text: currentModValue.toString());
     final sourcesDesc = _getModSourceDescription(
       modKey,
@@ -2744,38 +3162,61 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('${HeroMainStatsViewText.modEditTitlePrefix}$title'),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(dialogIcon, color: color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '${HeroMainStatsViewText.modEditTitlePrefix}$title',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${HeroMainStatsViewText.modEditBasePrefix}$baseValue'),
+                Text(
+                  '${HeroMainStatsViewText.modEditBasePrefix}$baseValue',
+                  style: TextStyle(color: Colors.grey.shade300),
+                ),
                 if (sourcesDesc.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color: Colors.purple.withAlpha(40),
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.purple.withAlpha(60)),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext)
-                              .colorScheme
-                              .onPrimaryContainer,
+                          color: Colors.purple.shade300,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             sourcesDesc,
                             style: TextStyle(
-                              color: Theme.of(dialogContext)
-                                  .colorScheme
-                                  .onPrimaryContainer,
+                              color: Colors.purple.shade200,
                               fontSize: 13,
                             ),
                           ),
@@ -2790,10 +3231,24 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType:
                       const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.modEditModificationLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
                     helperText: HeroMainStatsViewText.modEditHelperText,
+                    helperStyle: TextStyle(color: Colors.grey.shade500),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: color),
+                    ),
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -2803,7 +3258,10 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
                           insight,
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade400,
+                          ),
                         ),
                       )),
                 ],
@@ -2812,15 +3270,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey.shade400,
+                ),
                 child: const Text(HeroMainStatsViewText.modEditCancelLabel),
               ),
-              TextButton(
+              FilledButton(
                 onPressed: () {
                   final value = int.tryParse(controller.text);
                   if (value != null) {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text(HeroMainStatsViewText.modEditSaveLabel),
               ),
             ],
@@ -2975,29 +3440,69 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             context: context,
             builder: (dialogContext) {
               return AlertDialog(
-                title: Text(
-                  '${HeroMainStatsViewText.compactVitalEditTitlePrefix}$label',
+                backgroundColor: NavigationTheme.cardBackgroundDark,
+                surfaceTintColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.grey.shade800),
+                ),
+                title: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withAlpha(40),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.edit, color: Colors.blue),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${HeroMainStatsViewText.compactVitalEditTitlePrefix}$label',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
                 ),
                 content: TextField(
                   controller: controller,
                   keyboardType:
                       TextInputType.numberWithOptions(signed: allowNegative),
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.compactVitalValueLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.blue.shade400),
+                    ),
                   ),
                   inputFormatters: _formatters(allowNegative, 4),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade400,
+                    ),
                     child: const Text(
                         HeroMainStatsViewText.compactVitalCancelLabel),
                   ),
-                  TextButton(
+                  FilledButton(
                     onPressed: () =>
                         Navigator.of(dialogContext).pop(controller.text),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.blue.shade600,
+                      foregroundColor: Colors.white,
+                    ),
                     child:
                         const Text(HeroMainStatsViewText.compactVitalSaveLabel),
                   ),
@@ -3044,9 +3549,11 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int baseValue,
     required int currentModValue,
     int featureBonus = 0,
+    Color? accentColor,
   }) async {
     if (!mounted) return;
 
+    final color = accentColor ?? Colors.blue;
     final controller = TextEditingController(text: currentModValue.toString());
     final sourcesDesc = _getModSourceDescription(
       modKey,
@@ -3084,38 +3591,61 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text('${HeroMainStatsViewText.statEditTitlePrefix}$label'),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.tune, color: color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '${HeroMainStatsViewText.statEditTitlePrefix}$label',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${HeroMainStatsViewText.statEditBasePrefix}$baseValue'),
+                Text(
+                  '${HeroMainStatsViewText.statEditBasePrefix}$baseValue',
+                  style: TextStyle(color: Colors.grey.shade300),
+                ),
                 if (autoBonusDescription.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color: Colors.purple.withAlpha(40),
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.purple.withAlpha(60)),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext)
-                              .colorScheme
-                              .onPrimaryContainer,
+                          color: Colors.purple.shade300,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             autoBonusDescription,
                             style: TextStyle(
-                              color: Theme.of(dialogContext)
-                                  .colorScheme
-                                  .onPrimaryContainer,
+                              color: Colors.purple.shade200,
                               fontSize: 13,
                             ),
                           ),
@@ -3130,10 +3660,24 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType:
                       const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.statEditModificationLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
                     helperText: HeroMainStatsViewText.statEditHelperText,
+                    helperStyle: TextStyle(color: Colors.grey.shade500),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: color),
+                    ),
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -3142,15 +3686,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey.shade400,
+                ),
                 child: const Text(HeroMainStatsViewText.statEditCancelLabel),
               ),
-              TextButton(
+              FilledButton(
                 onPressed: () {
                   final value = int.tryParse(controller.text);
                   if (value != null) {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: color,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text(HeroMainStatsViewText.statEditSaveLabel),
               ),
             ],
@@ -3197,38 +3748,59 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: const Text(HeroMainStatsViewText.sizeEditTitle),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.straighten, color: Colors.orange),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  HeroMainStatsViewText.sizeEditTitle,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${HeroMainStatsViewText.sizeEditBasePrefix}$baseDisplay'),
+                Text(
+                  '${HeroMainStatsViewText.sizeEditBasePrefix}$baseDisplay',
+                  style: TextStyle(color: Colors.grey.shade300),
+                ),
                 if (sourcesDesc.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(dialogContext).colorScheme.primaryContainer,
+                      color: Colors.purple.withAlpha(40),
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.purple.withAlpha(60)),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.auto_awesome,
                           size: 16,
-                          color: Theme.of(dialogContext)
-                              .colorScheme
-                              .onPrimaryContainer,
+                          color: Colors.purple.shade300,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             sourcesDesc,
                             style: TextStyle(
-                              color: Theme.of(dialogContext)
-                                  .colorScheme
-                                  .onPrimaryContainer,
+                              color: Colors.purple.shade200,
                               fontSize: 13,
                             ),
                           ),
@@ -3243,10 +3815,24 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   keyboardType:
                       const TextInputType.numberWithOptions(signed: true),
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.sizeEditModificationLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
                     helperText: HeroMainStatsViewText.sizeEditHelperText,
+                    helperStyle: TextStyle(color: Colors.grey.shade500),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.orange.shade400),
+                    ),
                   ),
                   inputFormatters: _formatters(true, 4),
                 ),
@@ -3255,15 +3841,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.grey.shade400,
+                ),
                 child: const Text(HeroMainStatsViewText.sizeEditCancelLabel),
               ),
-              TextButton(
+              FilledButton(
                 onPressed: () {
                   final value = int.tryParse(controller.text);
                   if (value != null) {
                     Navigator.of(dialogContext).pop(value);
                   }
                 },
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.orange.shade600,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text(HeroMainStatsViewText.sizeEditSaveLabel),
               ),
             ],
@@ -3402,12 +3995,47 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text(title),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.healing,
+                    color: Colors.green.shade400,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (description != null) ...[Text(description),
+                if (description != null) ...[
+                  Text(
+                    description,
+                    style: TextStyle(color: Colors.grey.shade300),
+                  ),
                   const SizedBox(height: 12),
                 ],
                 TextField(
@@ -3415,9 +4043,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   autofocus: true,
                   keyboardType: TextInputType.number,
                   inputFormatters: _formatters(false, 3),
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.promptAmountLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.green.shade400),
+                    ),
                   ),
                 ),
               ],
@@ -3425,9 +4066,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text(HeroMainStatsViewText.promptCancelLabel),
+                child: Text(
+                  HeroMainStatsViewText.promptCancelLabel,
+                  style: TextStyle(color: Colors.grey.shade400),
+                ),
               ),
               FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.teal.shade600,
+                ),
                 onPressed: () {
                   final value = int.tryParse(controller.text.trim());
                   if (value == null || value <= 0) {
@@ -3441,6 +4088,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 child: const Text(HeroMainStatsViewText.promptApplyTempLabel),
               ),
               FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                ),
                 onPressed: () {
                   final value = int.tryParse(controller.text.trim());
                   if (value == null || value <= 0) {
@@ -3483,13 +4133,47 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
         context: context,
         builder: (dialogContext) {
           return AlertDialog(
-            title: Text(title),
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade800),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(40),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.remove_circle_outline,
+                    color: Colors.red.shade400,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (description != null) ...[
-                  Text(description),
+                  Text(
+                    description,
+                    style: TextStyle(color: Colors.grey.shade300),
+                  ),
                   const SizedBox(height: 12),
                 ],
                 TextField(
@@ -3497,9 +4181,22 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   autofocus: true,
                   keyboardType: TextInputType.number,
                   inputFormatters: _formatters(false, 3),
-                  decoration: const InputDecoration(
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
                     labelText: HeroMainStatsViewText.promptAmountLabel,
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(color: Colors.grey.shade400),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey.shade700),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.red.shade400),
+                    ),
                   ),
                 ),
               ],
@@ -3507,9 +4204,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text(HeroMainStatsViewText.promptCancelLabel),
+                child: Text(
+                  HeroMainStatsViewText.promptCancelLabel,
+                  style: TextStyle(color: Colors.grey.shade400),
+                ),
               ),
               FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red.shade600,
+                ),
                 onPressed: () {
                   final value = int.tryParse(controller.text.trim());
                   if (value == null || value <= 0) {

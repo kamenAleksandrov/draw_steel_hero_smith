@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/hero_mod_keys.dart';
 import '../../../core/repositories/hero_repository.dart';
+import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
 import 'hero_main_stats_models.dart';
 import 'hero_stat_insights.dart';
@@ -21,6 +22,8 @@ typedef OnEditMod = void Function({
   required int baseValue,
   required int currentModValue,
   required List<String> insights,
+  Color? accentColor,
+  IconData? icon,
 });
 
 /// Compact horizontal row for Level, XP, Victories, Wealth, Renown
@@ -43,7 +46,12 @@ class ProgressionRowWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final level = stats?.level ?? 1;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         child: Row(
@@ -52,8 +60,9 @@ class ProgressionRowWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
+                color: Colors.green.withAlpha(40),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.withAlpha(100)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -61,14 +70,14 @@ class ProgressionRowWidget extends StatelessWidget {
                   Text(
                     HeroMainStatsViewText.progressionLevelLabel,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
+                      color: Colors.green.shade400,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
                     level.toString(),
                     style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -99,7 +108,7 @@ class ProgressionRowWidget extends StatelessWidget {
             Container(
               width: 1,
               height: 40,
-              color: theme.colorScheme.outlineVariant,
+              color: Colors.grey.shade700,
             ),
             // Wealth and Renown
             Expanded(
@@ -114,6 +123,7 @@ class ProgressionRowWidget extends StatelessWidget {
                     totalValue: stats?.wealthTotal ?? 0,
                     modKey: HeroModKeys.wealth,
                     insights: generateWealthInsights(stats?.wealthTotal ?? 0),
+                    accentColor: Colors.purple.shade400,
                   ),
                   _buildEconomyItem(
                     context,
@@ -123,6 +133,7 @@ class ProgressionRowWidget extends StatelessWidget {
                     totalValue: stats?.renownTotal ?? 0,
                     modKey: HeroModKeys.renown,
                     insights: generateRenownInsights(stats?.renownTotal ?? 0),
+                    accentColor: Colors.purple.shade400,
                   ),
                 ],
               ),
@@ -157,12 +168,13 @@ class ProgressionRowWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: theme.colorScheme.primary),
+            Icon(icon, size: 16, color: Colors.amber.shade400),
             const SizedBox(height: 2),
             Text(
               value.toString(),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
           ],
@@ -179,9 +191,11 @@ class ProgressionRowWidget extends StatelessWidget {
     required int totalValue,
     required String modKey,
     required List<String> insights,
+    Color? accentColor,
   }) {
     final theme = Theme.of(context);
     final modValue = totalValue - baseValue;
+    final color = accentColor ?? Colors.purple.shade400;
 
     return InkWell(
       onTap: () => onEditMod(
@@ -190,6 +204,8 @@ class ProgressionRowWidget extends StatelessWidget {
         baseValue: baseValue,
         currentModValue: modValue,
         insights: insights,
+        accentColor: color,
+        icon: icon,
       ),
       borderRadius: BorderRadius.circular(8),
       child: Padding(
@@ -197,7 +213,7 @@ class ProgressionRowWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: theme.colorScheme.secondary),
+            Icon(icon, size: 16, color: color),
             const SizedBox(height: 2),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -206,6 +222,7 @@ class ProgressionRowWidget extends StatelessWidget {
                   totalValue.toString(),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 if (modValue != 0)
@@ -213,8 +230,8 @@ class ProgressionRowWidget extends StatelessWidget {
                     modValue > 0 ? '+$modValue' : modValue.toString(),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: modValue > 0
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.error,
+                          ? Colors.green.shade400
+                          : Colors.red.shade400,
                     ),
                   ),
               ],
