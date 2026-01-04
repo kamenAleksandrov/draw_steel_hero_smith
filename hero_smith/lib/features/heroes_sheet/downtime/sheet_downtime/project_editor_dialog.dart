@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/models/downtime_tracking.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/project_editor_dialog_text.dart';
+
+/// Accent color for projects
+const Color _projectsColor = NavigationTheme.projectsTabColor;
 
 /// Dialog for creating or editing a downtime project
 class ProjectEditorDialog extends StatefulWidget {
@@ -75,10 +79,34 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        widget.existingProject == null
-            ? ProjectEditorDialogText.titleCreateProject
-            : ProjectEditorDialogText.titleEditProject,
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade800),
+      ),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _projectsColor.withAlpha(40),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              widget.existingProject == null ? Icons.add_task : Icons.edit,
+              color: _projectsColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.existingProject == null
+                ? ProjectEditorDialogText.titleCreateProject
+                : ProjectEditorDialogText.titleEditProject,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
       ),
       content: Form(
         key: _formKey,
@@ -197,12 +225,14 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
                   ProjectEditorDialogText.eventMilestonesLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.5)),
+                    color: NavigationTheme.navBarBackground,
+                    border: Border.all(color: Colors.grey.shade700),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -241,10 +271,17 @@ class _ProjectEditorDialogState extends State<ProjectEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.grey.shade400,
+          ),
           child: const Text(ProjectEditorDialogText.cancelButtonLabel),
         ),
         FilledButton(
           onPressed: _saveProject,
+          style: FilledButton.styleFrom(
+            backgroundColor: _projectsColor,
+            foregroundColor: Colors.white,
+          ),
           child: const Text(ProjectEditorDialogText.saveButtonLabel),
         ),
       ],
@@ -324,7 +361,7 @@ class _EventEditorTile extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: Colors.grey.shade700,
           ),
         ),
       ),
@@ -336,14 +373,14 @@ class _EventEditorTile extends StatelessWidget {
               Icon(
                 event.triggered ? Icons.check_circle : Icons.circle_outlined,
                 size: 18,
-                color: event.triggered ? Colors.amber : theme.colorScheme.outline,
+                color: event.triggered ? Colors.amber : Colors.grey.shade600,
               ),
               const SizedBox(width: 8),
               Text(
                 'Event at ${event.pointThreshold} points',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: event.triggered ? Colors.amber.shade800 : null,
+                  color: event.triggered ? Colors.amber.shade600 : Colors.grey.shade400,
                 ),
               ),
               if (event.triggered) ...[
@@ -351,13 +388,13 @@ class _EventEditorTile extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.2),
+                    color: Colors.amber.withAlpha(50),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     ProjectEditorDialogText.eventTriggeredLabel,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: Colors.amber.shade800,
+                      color: Colors.amber.shade600,
                     ),
                   ),
                 ),
@@ -367,15 +404,27 @@ class _EventEditorTile extends StatelessWidget {
           const SizedBox(height: 8),
           TextFormField(
             initialValue: event.eventDescription ?? '',
+            style: TextStyle(color: Colors.grey.shade300, fontSize: 13),
             decoration: InputDecoration(
               hintText: ProjectEditorDialogText.eventNotesHint,
+              hintStyle: TextStyle(color: Colors.grey.shade600),
               isDense: true,
+              filled: true,
+              fillColor: NavigationTheme.cardBackgroundDark,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: Colors.grey.shade700),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: const BorderSide(color: _projectsColor),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             ),
-            style: theme.textTheme.bodySmall,
             maxLines: 2,
             onChanged: onDescriptionChanged,
           ),

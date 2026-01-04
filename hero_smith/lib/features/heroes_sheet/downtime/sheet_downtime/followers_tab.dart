@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/followers_tab_text.dart';
 import 'follower_editor_dialog.dart';
+
+/// Accent color for followers (use a distinct purple)
+const Color _followersColor = Color(0xFF7E57C2);
 
 /// Provider for hero followers
 final heroFollowersProvider =
@@ -24,8 +28,12 @@ class FollowersTab extends ConsumerWidget {
 
     return followersAsync.when(
       data: (followers) => _buildContent(context, ref, followers),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      loading: () => const Center(
+          child: CircularProgressIndicator(color: _followersColor)),
+      error: (error, stack) => Center(
+        child: Text('Error: $error',
+            style: TextStyle(color: Colors.grey.shade400)),
+      ),
     );
   }
 
@@ -62,20 +70,47 @@ class FollowersTab extends ConsumerWidget {
   Widget _buildAddButton(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: FilledButton.icon(
-        onPressed: () => _addFollower(context, ref),
-        icon: const Icon(Icons.person_add),
-        label: const Text(FollowersTabText.addFollowerButtonLabel),
-        style: HeroTheme.primaryActionButtonStyle(context),
+      child: Material(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () => _addFollower(context, ref),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: _followersColor),
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.person_add, color: _followersColor, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  FollowersTabText.addFollowerButtonLabel,
+                  style: TextStyle(
+                    color: _followersColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildFollowerCard(BuildContext context, WidgetRef ref, Follower follower) {
-    final theme = Theme.of(context);
-    
-    return Card(
+  Widget _buildFollowerCard(
+      BuildContext context, WidgetRef ref, Follower follower) {
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -84,10 +119,14 @@ class FollowersTab extends ConsumerWidget {
             // Header row: Name, Type, and menu
             Row(
               children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: HeroTheme.primarySection.withValues(alpha: 0.2),
-                  child: const Icon(Icons.person, size: 20, color: HeroTheme.primarySection),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _followersColor.withAlpha(38),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.person,
+                      size: 20, color: _followersColor),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -96,14 +135,17 @@ class FollowersTab extends ConsumerWidget {
                     children: [
                       Text(
                         follower.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                       Text(
                         follower.followerType,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -111,14 +153,18 @@ class FollowersTab extends ConsumerWidget {
                 ),
                 PopupMenuButton(
                   iconSize: 20,
+                  iconColor: Colors.grey.shade500,
+                  color: NavigationTheme.cardBackgroundDark,
                   itemBuilder: (context) => [
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'edit',
                       child: Row(
                         children: [
-                          Icon(Icons.edit, size: 18),
-                          SizedBox(width: 8),
-                          Text(FollowersTabText.editMenuLabel),
+                          Icon(Icons.edit,
+                              size: 18, color: Colors.grey.shade400),
+                          const SizedBox(width: 8),
+                          Text(FollowersTabText.editMenuLabel,
+                              style: TextStyle(color: Colors.grey.shade300)),
                         ],
                       ),
                     ),
@@ -126,9 +172,10 @@ class FollowersTab extends ConsumerWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete, color: Colors.red, size: 18),
+                          Icon(Icons.delete, color: Colors.redAccent, size: 18),
                           SizedBox(width: 8),
-                          Text(FollowersTabText.deleteMenuLabel),
+                          Text(FollowersTabText.deleteMenuLabel,
+                              style: TextStyle(color: Colors.redAccent)),
                         ],
                       ),
                     ),
@@ -143,84 +190,93 @@ class FollowersTab extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Characteristics row - all 5 in one compact row
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                color: NavigationTheme.navBarBackground,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildCharacteristicChip(theme, 'M', follower.might),
-                  _buildCharacteristicChip(theme, 'A', follower.agility),
-                  _buildCharacteristicChip(theme, 'R', follower.reason),
-                  _buildCharacteristicChip(theme, 'I', follower.intuition),
-                  _buildCharacteristicChip(theme, 'P', follower.presence),
+                  _buildCharacteristicChip('M', follower.might),
+                  _buildCharacteristicChip('A', follower.agility),
+                  _buildCharacteristicChip('R', follower.reason),
+                  _buildCharacteristicChip('I', follower.intuition),
+                  _buildCharacteristicChip('P', follower.presence),
                 ],
               ),
             ),
-            
+
             // Skills section
             if (follower.skills.isNotEmpty) ...[
               const SizedBox(height: 10),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.build_outlined, size: 16, color: theme.colorScheme.primary),
+                  const Icon(Icons.build_outlined,
+                      size: 16, color: _followersColor),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Wrap(
                       spacing: 6,
                       runSpacing: 4,
-                      children: follower.skills.map((skill) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          skill,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      )).toList(),
+                      children: follower.skills
+                          .map((skill) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: _followersColor.withAlpha(38),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  skill,
+                                  style: const TextStyle(
+                                    color: _followersColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
                 ],
               ),
             ],
-            
+
             // Languages section
             if (follower.languages.isNotEmpty) ...[
               const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.translate, size: 16, color: theme.colorScheme.secondary),
+                  Icon(Icons.translate, size: 16, color: Colors.amber.shade600),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Wrap(
                       spacing: 6,
                       runSpacing: 4,
-                      children: follower.languages.map((lang) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          lang,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSecondaryContainer,
-                          ),
-                        ),
-                      )).toList(),
+                      children: follower.languages
+                          .map((lang) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.withAlpha(38),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  lang,
+                                  style: TextStyle(
+                                    color: Colors.amber.shade600,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
                 ],
@@ -232,23 +288,25 @@ class FollowersTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildCharacteristicChip(ThemeData theme, String label, int value) {
+  Widget _buildCharacteristicChip(String label, int value) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           label,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+          style: TextStyle(
+            color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
+            fontSize: 11,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           value.toString(),
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: HeroTheme.primarySection,
+            color: _followersColor,
+            fontSize: 16,
           ),
         ),
       ],
@@ -256,16 +314,64 @@ class FollowersTab extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
-    return HeroTheme.buildEmptyState(
-      context,
-      icon: Icons.people_outline,
-      title: FollowersTabText.emptyTitle,
-      subtitle: FollowersTabText.emptySubtitle,
-      action: FilledButton.icon(
-        onPressed: () => _addFollower(context, ref),
-        icon: const Icon(Icons.person_add),
-        label: const Text(FollowersTabText.emptyActionLabel),
-        style: HeroTheme.primaryActionButtonStyle(context),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Colors.grey.shade600),
+            const SizedBox(height: 16),
+            Text(
+              FollowersTabText.emptyTitle,
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              FollowersTabText.emptySubtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Material(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                onTap: () => _addFollower(context, ref),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _followersColor),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.person_add, color: _followersColor, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        FollowersTabText.emptyActionLabel,
+                        style: TextStyle(
+                          color: _followersColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -294,7 +400,8 @@ class FollowersTab extends ConsumerWidget {
     }
   }
 
-  void _editFollower(BuildContext context, WidgetRef ref, Follower follower) async {
+  void _editFollower(
+      BuildContext context, WidgetRef ref, Follower follower) async {
     final result = await showDialog<Follower>(
       context: context,
       builder: (context) => FollowerEditorDialog(
@@ -310,7 +417,8 @@ class FollowersTab extends ConsumerWidget {
     }
   }
 
-  void _deleteFollower(BuildContext context, WidgetRef ref, Follower follower) async {
+  void _deleteFollower(
+      BuildContext context, WidgetRef ref, Follower follower) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

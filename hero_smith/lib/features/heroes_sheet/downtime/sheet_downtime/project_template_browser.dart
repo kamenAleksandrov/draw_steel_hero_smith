@@ -4,7 +4,11 @@ import '../../../../core/data/downtime_data_source.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/project_template_browser_text.dart';
+
+/// Accent color for projects
+const Color _projectsColor = NavigationTheme.projectsTabColor;
 
 /// Provider for loading project templates from JSON
 final projectTemplatesProvider = FutureProvider<List<DowntimeEntry>>((ref) async {
@@ -123,27 +127,64 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: SizedBox(
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: NavigationTheme.navBarBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade800),
+        ),
         child: Column(
           children: [
-            // Header
+            // Header with gradient
             Container(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    _projectsColor.withAlpha(60),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
               child: Row(
                 children: [
-                  const Icon(Icons.source, size: 32, color: HeroTheme.primarySection),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _projectsColor.withAlpha(40),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.source, size: 28, color: _projectsColor),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _isSearching
                         ? TextField(
                             controller: _searchController,
                             autofocus: true,
+                            style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               hintText: ProjectTemplateBrowserText.searchHint,
+                              hintStyle: TextStyle(color: Colors.grey.shade500),
+                              filled: true,
+                              fillColor: NavigationTheme.cardBackgroundDark,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.grey.shade700),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: Colors.grey.shade700),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(color: _projectsColor),
                               ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
@@ -151,7 +192,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                               ),
                               suffixIcon: _searchQuery.isNotEmpty
                                   ? IconButton(
-                                      icon: const Icon(Icons.clear),
+                                      icon: Icon(Icons.clear, color: Colors.grey.shade500),
                                       onPressed: () {
                                         _searchController.clear();
                                       },
@@ -163,11 +204,12 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                             ProjectTemplateBrowserText.dialogTitle,
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                           ),
                   ),
                   IconButton(
-                    icon: Icon(_isSearching ? Icons.close : Icons.search),
+                    icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.grey.shade400),
                     onPressed: _toggleSearch,
                     tooltip: _isSearching
                         ? ProjectTemplateBrowserText.closeSearchTooltip
@@ -175,7 +217,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   ),
                   if (!_isSearching)
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, color: Colors.grey.shade400),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                 ],
@@ -187,16 +229,25 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               Expanded(child: _buildSearchResults())
             else ...[
               // Tab bar
-              TabBar(
-                controller: _tabController,
-                labelColor: HeroTheme.primarySection,
-                indicatorColor: HeroTheme.primarySection,
-                tabs: const [
-                  Tab(text: ProjectTemplateBrowserText.tabProjectsLabel),
-                  Tab(text: ProjectTemplateBrowserText.tabImbuementsLabel),
-                  Tab(text: ProjectTemplateBrowserText.tabTreasuresLabel),
-                ],
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade800),
+                  ),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: _projectsColor,
+                  unselectedLabelColor: Colors.grey.shade500,
+                  indicatorColor: _projectsColor,
+                  tabs: const [
+                    Tab(text: ProjectTemplateBrowserText.tabProjectsLabel),
+                    Tab(text: ProjectTemplateBrowserText.tabImbuementsLabel),
+                    Tab(text: ProjectTemplateBrowserText.tabTreasuresLabel),
+                  ],
+                ),
               ),
+              
 
               // Tab content
               Expanded(
@@ -224,7 +275,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     // Check if any are still loading
     if (projectsAsync.isLoading || imbuementsAsync.isLoading || treasuresAsync.isLoading) {
       return const Center(
-        child: CircularProgressIndicator(color: HeroTheme.primarySection),
+        child: CircularProgressIndicator(color: _projectsColor),
       );
     }
     
@@ -267,16 +318,23 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.search_off,
-                size: 64,
-                color: Theme.of(context).colorScheme.outline,
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800.withAlpha(80),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Icon(
+                  Icons.search_off,
+                  size: 48,
+                  color: Colors.grey.shade500,
+                ),
               ),
               const SizedBox(height: 16),
               Text(
                 'No projects found for "$_searchQuery"',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Colors.grey.shade400,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -294,7 +352,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           Text(
             '${filteredProjects.length} results for "$_searchQuery"',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: Colors.grey.shade400,
             ),
           ),
           const SizedBox(height: 16),
@@ -318,11 +376,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     final categoryIcon = _getCategoryIcon(project.category);
     final categoryLabel = _getCategoryLabel(project.category);
     
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: InkWell(
         onTap: () => _takeOnSearchableProject(context, ref, project),
-        borderRadius: HeroTheme.heroCardRadius,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -359,7 +422,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                       project.name,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: HeroTheme.primarySection,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -367,13 +430,13 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: HeroTheme.primarySection.withValues(alpha: 0.1),
+                        color: _projectsColor.withAlpha(40),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         'Goal: ${project.projectGoal}',
                         style: theme.textTheme.labelMedium?.copyWith(
-                          color: HeroTheme.primarySection,
+                          color: _projectsColor,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -385,7 +448,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 const SizedBox(height: 8),
                 Text(
                   project.description,
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade400,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -402,7 +467,10 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   label: const Text(
                     ProjectTemplateBrowserText.takeOnSearchResultButtonLabel,
                   ),
-                  style: HeroTheme.primaryActionButtonStyle(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _projectsColor,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -474,7 +542,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           Text(
             ProjectTemplateBrowserText.selectProjectPrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Colors.grey.shade400,
                 ),
           ),
           const SizedBox(height: 16),
@@ -482,7 +550,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             child: templatesAsync.when(
               data: (templates) => _buildTemplateList(context, templates),
               loading: () => const Center(
-                child: CircularProgressIndicator(color: HeroTheme.primarySection),
+                child: CircularProgressIndicator(color: _projectsColor),
               ),
               error: (error, stack) => _buildErrorState(context, error),
             ),
@@ -503,7 +571,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           Text(
             ProjectTemplateBrowserText.selectImbuementPrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Colors.grey.shade400,
                 ),
           ),
           const SizedBox(height: 16),
@@ -511,7 +579,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             child: imbuementsAsync.when(
               data: (imbuements) => _buildImbuementsGrouped(context, imbuements),
               loading: () => const Center(
-                child: CircularProgressIndicator(color: HeroTheme.primarySection),
+                child: CircularProgressIndicator(color: _projectsColor),
               ),
               error: (error, stack) => _buildErrorState(context, error),
             ),
@@ -532,7 +600,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           Text(
             ProjectTemplateBrowserText.selectTreasurePrompt,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Colors.grey.shade400,
                 ),
           ),
           const SizedBox(height: 16),
@@ -540,7 +608,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
             child: treasuresAsync.when(
               data: (treasures) => _buildTreasuresGrouped(context, treasures),
               loading: () => const Center(
-                child: CircularProgressIndicator(color: HeroTheme.primarySection),
+                child: CircularProgressIndicator(color: _projectsColor),
               ),
               error: (error, stack) => _buildErrorState(context, error),
             ),
@@ -559,11 +627,20 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inbox, size: 64, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800.withAlpha(80),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(Icons.inbox, size: 48, color: Colors.grey.shade500),
+            ),
             const SizedBox(height: 16),
             Text(
               ProjectTemplateBrowserText.noCraftableTreasuresLabel,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.grey.shade400,
+              ),
             ),
           ],
         ),
@@ -650,14 +727,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           return ExpansionTile(
             tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
             childrenPadding: const EdgeInsets.symmetric(horizontal: 8),
+            iconColor: Colors.grey.shade500,
+            collapsedIconColor: Colors.grey.shade600,
             title: Text(
               _getEchelonName(echelon),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Colors.grey.shade400,
                   ),
             ),
-            trailing: Text('${items.length}', style: Theme.of(context).textTheme.bodySmall),
+            trailing: Text('${items.length}', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade500)),
             children: items.map((treasure) => _buildTreasureCard(context, treasure)).toList(),
           );
         }).toList(),
@@ -709,7 +788,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         ),
         subtitle: Text(
           '${treasures.length} items',
-          style: Theme.of(context).textTheme.bodySmall,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.grey.shade500,
+          ),
         ),
         children: sortedTypes.map((equipType) {
           final items = byEquipType[equipType]!;
@@ -717,14 +798,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           return ExpansionTile(
             tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
             childrenPadding: const EdgeInsets.symmetric(horizontal: 8),
+            iconColor: Colors.grey.shade500,
+            collapsedIconColor: Colors.grey.shade600,
             title: Text(
               _getEquipmentTypeName(equipType),
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Colors.grey.shade400,
                   ),
             ),
-            trailing: Text('${items.length}', style: Theme.of(context).textTheme.bodySmall),
+            trailing: Text('${items.length}', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade500)),
             children: items.map((treasure) => _buildTreasureCard(context, treasure)).toList(),
           );
         }).toList(),
@@ -736,11 +819,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     final theme = Theme.of(context);
     final typeColor = _getTreasureTypeColor(treasure.type);
     
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: InkWell(
         onTap: () => _takeOnTreasureProject(context, ref, treasure),
-        borderRadius: HeroTheme.heroCardRadius,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -762,7 +850,7 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: typeColor.withValues(alpha: 0.1),
+                        color: typeColor.withAlpha(40),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -806,7 +894,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               if (treasure.description.isNotEmpty) ...[
                 Text(
                   treasure.description,
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade400,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -829,11 +919,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 Wrap(
                   spacing: 8,
                   children: [
-                    const Icon(Icons.casino_outlined, size: 16, color: Colors.grey),
+                    Icon(Icons.casino_outlined, size: 16, color: Colors.grey.shade500),
                     Text(
                       'Roll: ${treasure.projectRollCharacteristics.join(', ')}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: Colors.grey.shade500,
                       ),
                     ),
                   ],
@@ -851,7 +941,10 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   label: const Text(
                     ProjectTemplateBrowserText.takeOnTreasureButtonLabel,
                   ),
-                  style: HeroTheme.primaryActionButtonStyle(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _projectsColor,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -986,11 +1079,20 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inbox, size: 64, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800.withAlpha(80),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(Icons.inbox, size: 48, color: Colors.grey.shade500),
+            ),
             const SizedBox(height: 16),
             Text(
               ProjectTemplateBrowserText.noImbuementsLabel,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.grey.shade400,
+              ),
             ),
           ],
         ),
@@ -1023,18 +1125,20 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
           child: ExpansionTile(
             tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             childrenPadding: const EdgeInsets.only(bottom: 8),
-            backgroundColor: HeroTheme.primarySection.withValues(alpha: 0.05),
-            collapsedBackgroundColor: HeroTheme.primarySection.withValues(alpha: 0.1),
-            leading: const Icon(
+            backgroundColor: Colors.purple.withAlpha(15),
+            collapsedBackgroundColor: Colors.purple.withAlpha(25),
+            iconColor: Colors.purple.shade300,
+            collapsedIconColor: Colors.purple.shade400,
+            leading: Icon(
               Icons.star,
-              color: HeroTheme.primarySection,
+              color: Colors.purple.shade300,
               size: 20,
             ),
             title: Text(
               _getLevelName(level),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: HeroTheme.primarySection,
+                    color: Colors.purple.shade300,
                   ),
             ),
             children: typeGroups.entries.map((entry) {
@@ -1044,11 +1148,13 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               return ExpansionTile(
                 tilePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
                 childrenPadding: const EdgeInsets.symmetric(horizontal: 8),
+                iconColor: Colors.grey.shade500,
+                collapsedIconColor: Colors.grey.shade600,
                 title: Text(
                   _getImbuementTypeName(type),
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Colors.grey.shade400,
                       ),
                 ),
                 children: items.map((imbuement) => _buildTemplateCard(context, imbuement)).toList(),
@@ -1097,20 +1203,30 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Theme.of(context).colorScheme.error,
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.shade900.withAlpha(80),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Colors.red.shade400,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             ProjectTemplateBrowserText.failedToLoadTemplatesLabel,
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: Colors.grey.shade400,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             error.toString(),
             textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -1126,11 +1242,20 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inbox, size: 64, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800.withAlpha(80),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(Icons.inbox, size: 48, color: Colors.grey.shade500),
+            ),
             const SizedBox(height: 16),
             Text(
               ProjectTemplateBrowserText.noTemplatesFoundLabel,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.grey.shade400,
+              ),
             ),
           ],
         ),
@@ -1167,11 +1292,16 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
     
     final description = template.raw['description'] as String? ?? '';
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: InkWell(
         onTap: () => _takeOnProject(context, ref, template),
-        borderRadius: HeroTheme.heroCardRadius,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -1185,20 +1315,20 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                       template.name,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
-                        color: HeroTheme.primarySection,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: HeroTheme.primarySection.withValues(alpha: 0.1),
+                      color: _projectsColor.withAlpha(40),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       'Goal: $projectGoal',
                       style: theme.textTheme.labelMedium?.copyWith(
-                        color: HeroTheme.primarySection,
+                        color: _projectsColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1212,7 +1342,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               if (description.isNotEmpty) ...[
                 Text(
                   description,
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade400,
+                  ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1250,11 +1382,11 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                 Wrap(
                   spacing: 8,
                   children: [
-                    const Icon(Icons.casino_outlined, size: 16, color: Colors.grey),
+                    Icon(Icons.casino_outlined, size: 16, color: Colors.grey.shade500),
                     Text(
                       'Roll: ${rollChars.map((c) => c['name'] as String? ?? '').join(', ')}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: Colors.grey.shade500,
                       ),
                     ),
                   ],
@@ -1272,7 +1404,10 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
                   label: const Text(
                     ProjectTemplateBrowserText.takeOnTemplateButtonLabel,
                   ),
-                  style: HeroTheme.primaryActionButtonStyle(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _projectsColor,
+                    foregroundColor: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -1294,13 +1429,13 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
       children: [
         Row(
           children: [
-            Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+            Icon(icon, size: 16, color: Colors.grey.shade500),
             const SizedBox(width: 8),
             Text(
               title,
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: Colors.grey.shade400,
               ),
             ),
           ],
@@ -1310,7 +1445,9 @@ class _ProjectTemplateBrowserState extends ConsumerState<ProjectTemplateBrowser>
               padding: const EdgeInsets.only(left: 24, top: 2),
               child: Text(
                 '• $item',
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.grey.shade400,
+                ),
               ),
             )),
       ],

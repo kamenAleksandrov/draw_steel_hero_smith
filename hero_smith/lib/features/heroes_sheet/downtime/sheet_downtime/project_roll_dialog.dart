@@ -5,9 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/repositories/hero_repository.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/project_roll_dialog_text.dart';
 import '../../main_stats/hero_main_stats_providers.dart';
 import 'followers_tab.dart';
+
+/// Accent color for projects
+const Color _projectsColor = NavigationTheme.projectsTabColor;
 
 /// Dialog for rolling project points with characteristics, edges, banes, and followers
 class ProjectRollDialog extends ConsumerStatefulWidget {
@@ -216,8 +220,14 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
     _updateHeroStats();
     
     return Dialog(
+      backgroundColor: Colors.transparent,
       child: Container(
         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+        decoration: BoxDecoration(
+          color: NavigationTheme.navBarBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade800),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -225,12 +235,26 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: HeroTheme.primarySection.withValues(alpha: 0.1),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                gradient: LinearGradient(
+                  colors: [
+                    _projectsColor.withAlpha(60),
+                    Colors.transparent,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.casino, color: HeroTheme.primarySection),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: _projectsColor.withAlpha(40),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.casino, color: _projectsColor, size: 24),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -240,12 +264,13 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                           ProjectRollDialogText.dialogTitle,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         Text(
                           widget.project.name,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: Colors.grey.shade400,
                           ),
                         ),
                       ],
@@ -253,7 +278,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, color: Colors.grey.shade400),
                   ),
                 ],
               ),
@@ -270,14 +295,14 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     _buildHeroRollSection(context),
                     
                     const SizedBox(height: 16),
-                    const Divider(),
+                    Divider(color: Colors.grey.shade800),
                     const SizedBox(height: 16),
                     
                     // Follower Contributions Section
                     _buildFollowerSection(context, followersAsync),
                     
                     const SizedBox(height: 16),
-                    const Divider(),
+                    Divider(color: Colors.grey.shade800),
                     const SizedBox(height: 16),
                     
                     // Grand Total
@@ -288,13 +313,20 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             ),
             
             // Actions
-            Padding(
+            Container(
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border(top: BorderSide(color: Colors.grey.shade800)),
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                        side: BorderSide(color: Colors.grey.shade700),
+                      ),
                       child: const Text(ProjectRollDialogText.cancelButtonLabel),
                     ),
                   ),
@@ -305,7 +337,10 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       icon: const Icon(Icons.add),
                       label: Text('Add $_grandTotal Points'),
                       style: FilledButton.styleFrom(
-                        backgroundColor: HeroTheme.primarySection,
+                        backgroundColor: _projectsColor,
+                        foregroundColor: Colors.white,
+                        disabledBackgroundColor: Colors.grey.shade700,
+                        disabledForegroundColor: Colors.grey.shade500,
                       ),
                     ),
                   ),
@@ -321,7 +356,12 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
   Widget _buildHeroRollSection(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -329,12 +369,20 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
           children: [
             Row(
               children: [
-                Icon(Icons.person, color: HeroTheme.primarySection),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _projectsColor.withAlpha(40),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(Icons.person, color: _projectsColor, size: 20),
+                ),
                 const SizedBox(width: 8),
                 Text(
                   ProjectRollDialogText.heroSectionTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -351,7 +399,8 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     : ProjectRollDialogText.heroRollButtonLabel,
               ),
               style: FilledButton.styleFrom(
-                backgroundColor: HeroTheme.primarySection,
+                backgroundColor: _projectsColor,
+                foregroundColor: Colors.white,
               ),
             ),
             
@@ -372,32 +421,33 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: isBreakthroughRoll 
-                          ? Colors.amber.withValues(alpha: 0.2)
-                          : theme.colorScheme.surfaceContainerHighest,
+                          ? Colors.amber.withAlpha(50)
+                          : Colors.grey.shade800.withAlpha(100),
                       borderRadius: BorderRadius.circular(8),
                       border: isBreakthroughRoll 
                           ? Border.all(color: Colors.amber, width: 2)
-                          : null,
+                          : Border.all(color: Colors.grey.shade700),
                     ),
                     child: Row(
                       children: [
                         if (isBreakthrough) ...[
-                          Icon(Icons.bolt, size: 18, color: Colors.amber.shade700),
+                          Icon(Icons.bolt, size: 18, color: Colors.amber.shade600),
                           const SizedBox(width: 6),
                           Text(
                             'Breakthrough ${index}:',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.amber.shade700,
+                              color: Colors.amber.shade600,
                             ),
                           ),
                         ] else ...[
-                          Icon(Icons.casino, size: 18, color: theme.colorScheme.primary),
+                          const Icon(Icons.casino, size: 18, color: _projectsColor),
                           const SizedBox(width: 6),
                           Text(
                             ProjectRollDialogText.heroInitialRollLabel,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade300,
                             ),
                           ),
                         ],
@@ -406,7 +456,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                           '${roll.d1} + ${roll.d2} = ${roll.total}',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: isBreakthroughRoll ? Colors.amber.shade800 : null,
+                            color: isBreakthroughRoll ? Colors.amber.shade600 : Colors.white,
                           ),
                         ),
                         if (isBreakthroughRoll) ...[
@@ -457,8 +507,9 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer,
+                  color: _projectsColor.withAlpha(40),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: _projectsColor.withAlpha(80)),
                 ),
                 child: Column(
                   children: [
@@ -467,13 +518,15 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       children: [
                         Text(
                           ProjectRollDialogText.heroRollTotalLabel,
-                          style: theme.textTheme.bodyLarge,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: Colors.grey.shade300,
+                          ),
                         ),
                         Text(
                           '$_heroRollTotal',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.onPrimaryContainer,
+                            color: Colors.white,
                           ),
                         ),
                         if (_heroModifierTotal != 0) ...[
@@ -491,7 +544,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                           ' = $_heroFinalTotal',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: HeroTheme.primarySection,
+                            color: _projectsColor,
                           ),
                         ),
                       ],
@@ -608,12 +661,20 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
       children: [
         Row(
           children: [
-            Icon(Icons.group, color: HeroTheme.primarySection),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.purple.withAlpha(40),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Icon(Icons.group, color: Colors.purple.shade300, size: 20),
+            ),
             const SizedBox(width: 8),
             Text(
               ProjectRollDialogText.followerSectionTitle,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
           ],
@@ -626,20 +687,21 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
+                  color: Colors.grey.shade800.withAlpha(80),
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade700),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       Icons.info_outline,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: Colors.grey.shade500,
                     ),
                     const SizedBox(width: 12),
                     Text(
                       ProjectRollDialogText.noFollowersLabel,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: Colors.grey.shade400,
                       ),
                     ),
                   ],
@@ -653,8 +715,8 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
               }).toList(),
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Text('Error loading followers: $e'),
+          loading: () => const Center(child: CircularProgressIndicator(color: _projectsColor)),
+          error: (e, _) => Text('Error loading followers: $e', style: TextStyle(color: Colors.red.shade400)),
         ),
       ],
     );
@@ -664,8 +726,13 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
     final theme = Theme.of(context);
     final rollState = _followerRolls[follower.id] ?? _FollowerRollState();
     
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -675,8 +742,8 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
               children: [
                 CircleAvatar(
                   radius: 14,
-                  backgroundColor: HeroTheme.primarySection.withValues(alpha: 0.2),
-                  child: const Icon(Icons.person, size: 16, color: HeroTheme.primarySection),
+                  backgroundColor: Colors.purple.withAlpha(50),
+                  child: Icon(Icons.person, size: 16, color: Colors.purple.shade300),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -684,6 +751,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     follower.name,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -696,6 +764,8 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                         : ProjectRollDialogText.followerRollButtonLabel,
                   ),
                   style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.purple.shade300,
+                    side: BorderSide(color: Colors.purple.shade400),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -719,12 +789,12 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: isBreakthroughRoll 
-                          ? Colors.amber.withValues(alpha: 0.15)
-                          : theme.colorScheme.surfaceContainerHighest,
+                          ? Colors.amber.withAlpha(40)
+                          : Colors.grey.shade800.withAlpha(80),
                       borderRadius: BorderRadius.circular(4),
                       border: isBreakthroughRoll 
                           ? Border.all(color: Colors.amber, width: 1)
-                          : null,
+                          : Border.all(color: Colors.grey.shade700),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -735,13 +805,14 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                               : ProjectRollDialogText.followerRollPrefixLabel,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: isBreakthrough ? Colors.amber.shade700 : null,
+                            color: isBreakthrough ? Colors.amber.shade600 : Colors.grey.shade400,
                           ),
                         ),
                         Text(
                           '${roll.d1}+${roll.d2}=${roll.total}',
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         if (isBreakthroughRoll) ...[
@@ -761,14 +832,14 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () => _rollFollowerBreakthrough(follower.id),
-                    icon: const Icon(Icons.bolt, size: 14),
+                    icon: Icon(Icons.bolt, size: 14, color: Colors.amber.shade300),
                     label: const Text(
                       ProjectRollDialogText.followerBreakthroughButtonLabel,
                       style: TextStyle(fontSize: 12),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.amber.shade700,
-                      side: BorderSide(color: Colors.amber.shade700),
+                      foregroundColor: Colors.amber.shade300,
+                      side: BorderSide(color: Colors.amber.shade600),
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       visualDensity: VisualDensity.compact,
                     ),
@@ -782,8 +853,9 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                  color: Colors.purple.withAlpha(40),
                   borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.purple.shade400),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -792,6 +864,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       '${rollState.rollTotal}',
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     if (rollState.modifierTotal != 0) ...[
@@ -809,7 +882,7 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
                       ' = ${rollState.finalTotal}',
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: HeroTheme.primarySection,
+                        color: Colors.purple.shade300,
                       ),
                     ),
                   ],
@@ -882,11 +955,16 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
     
     return DropdownButtonFormField<String?>(
       value: rollState.selectedCharacteristic,
+      dropdownColor: NavigationTheme.cardBackgroundDark,
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.purple.shade400)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         isDense: true,
         labelText: 'Characteristic${multiplier > 1 ? ' (x$multiplier)' : ''}',
+        labelStyle: TextStyle(color: Colors.grey.shade400),
       ),
       items: [
         const DropdownMenuItem<String?>(
@@ -1001,10 +1079,10 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: HeroTheme.primarySection.withValues(alpha: 0.1),
+        color: _projectsColor.withAlpha(40),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: HeroTheme.primarySection.withValues(alpha: 0.3),
+          color: _projectsColor.withAlpha(80),
         ),
       ),
       child: Row(
@@ -1014,13 +1092,14 @@ class _ProjectRollDialogState extends ConsumerState<ProjectRollDialog> {
             ProjectRollDialogText.totalPointsLabel,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
+              color: Colors.white,
             ),
           ),
           Text(
             '$_grandTotal',
             style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: HeroTheme.primarySection,
+              color: _projectsColor,
             ),
           ),
         ],
@@ -1140,15 +1219,15 @@ class _ModifierButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isPositive ? Colors.green : Colors.red;
+    final color = isPositive ? Colors.green.shade400 : Colors.red.shade400;
     final modifier = isPositive ? '+2' : '-2';
     
     return Container(
       decoration: BoxDecoration(
-        color: count > 0 ? color.withValues(alpha: 0.1) : null,
+        color: count > 0 ? color.withAlpha(30) : Colors.grey.shade800.withAlpha(50),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: count > 0 ? color : Colors.grey.withValues(alpha: 0.5),
+          color: count > 0 ? color : Colors.grey.shade700,
         ),
       ),
       child: Row(
@@ -1156,7 +1235,7 @@ class _ModifierButton extends StatelessWidget {
         children: [
           IconButton(
             onPressed: count > 0 ? onRemove : null,
-            icon: const Icon(Icons.remove, size: 18),
+            icon: Icon(Icons.remove, size: 18, color: count > 0 ? Colors.white : Colors.grey.shade600),
             visualDensity: VisualDensity.compact,
             padding: const EdgeInsets.all(4),
             constraints: const BoxConstraints(),
@@ -1170,14 +1249,14 @@ class _ModifierButton extends StatelessWidget {
                   '$label ($modifier)',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: count > 0 ? color : null,
+                    color: count > 0 ? color : Colors.grey.shade400,
                   ),
                 ),
                 Text(
                   '$count / $maxCount',
                   style: TextStyle(
                     fontSize: 11,
-                    color: count > 0 ? color : Colors.grey,
+                    color: count > 0 ? color : Colors.grey.shade500,
                   ),
                 ),
               ],
@@ -1185,7 +1264,7 @@ class _ModifierButton extends StatelessWidget {
           ),
           IconButton(
             onPressed: count < maxCount ? onAdd : null,
-            icon: const Icon(Icons.add, size: 18),
+            icon: Icon(Icons.add, size: 18, color: count < maxCount ? Colors.white : Colors.grey.shade600),
             visualDensity: VisualDensity.compact,
             padding: const EdgeInsets.all(4),
             constraints: const BoxConstraints(),
@@ -1216,15 +1295,15 @@ class _SmallModifierButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isPositive ? Colors.green : Colors.red;
+    final color = isPositive ? Colors.green.shade400 : Colors.red.shade400;
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
-        color: count > 0 ? color.withValues(alpha: 0.1) : null,
+        color: count > 0 ? color.withAlpha(30) : Colors.grey.shade800.withAlpha(50),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: count > 0 ? color : Colors.grey.withValues(alpha: 0.5),
+          color: count > 0 ? color : Colors.grey.shade700,
         ),
       ),
       child: Row(
@@ -1235,7 +1314,7 @@ class _SmallModifierButton extends StatelessWidget {
             child: Icon(
               Icons.remove,
               size: 14,
-              color: count > 0 ? color : Colors.grey,
+              color: count > 0 ? color : Colors.grey.shade600,
             ),
           ),
           Padding(
@@ -1245,7 +1324,7 @@ class _SmallModifierButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: count > 0 ? color : null,
+                color: count > 0 ? color : Colors.grey.shade400,
               ),
             ),
           ),
@@ -1254,7 +1333,7 @@ class _SmallModifierButton extends StatelessWidget {
             child: Icon(
               Icons.add,
               size: 14,
-              color: count < maxCount ? color : Colors.grey,
+              color: count < maxCount ? color : Colors.grey.shade600,
             ),
           ),
         ],

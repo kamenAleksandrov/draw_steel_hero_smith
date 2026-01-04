@@ -10,12 +10,6 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 automatically applied must be as a divider instead as another box that boxes the box
 
 ancestries tab signature trait is too bright
-
-treasures sheet must have its sections match the colors of the items in a section
-
-kits swap and equipped must be moved to the side
-
-
 ## medium
 
 most popouts should be wider

@@ -4,6 +4,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/projects_list_tab_text.dart';
 import '../../../../core/data/downtime_data_source.dart';
 import 'project_editor_dialog.dart';
@@ -11,14 +12,18 @@ import 'project_detail_card.dart';
 import 'project_roll_dialog.dart';
 import 'project_template_browser.dart'; // Also provides craftableTreasuresProvider and imbuementTemplatesProvider
 
+/// Accent color for projects
+const Color _projectsColor = NavigationTheme.projectsTabColor;
+
 /// Provider for hero's downtime projects
 final heroProjectsProvider =
-    StreamProvider.family<List<HeroDowntimeProject>, String>((ref, heroId) async* {
+    StreamProvider.family<List<HeroDowntimeProject>, String>(
+        (ref, heroId) async* {
   final repo = ref.read(downtimeRepositoryProvider);
-  
+
   // Initial load
   yield await repo.getHeroProjects(heroId);
-  
+
   // Poll for updates every 2 seconds
   await for (final _ in Stream.periodic(const Duration(seconds: 2))) {
     yield await repo.getHeroProjects(heroId);
@@ -43,7 +48,7 @@ class ProjectsListTab extends ConsumerWidget {
 
   /// Try to find the matching treasure for a project (by templateProjectId or name)
   CraftableTreasure? _findMatchingTreasure(
-    HeroDowntimeProject project, 
+    HeroDowntimeProject project,
     List<CraftableTreasure> treasures,
   ) {
     // First try by templateProjectId
@@ -66,7 +71,7 @@ class ProjectsListTab extends ConsumerWidget {
 
   /// Try to find the matching imbuement for a project (by templateProjectId or name)
   DowntimeEntry? _findMatchingImbuement(
-    HeroDowntimeProject project, 
+    HeroDowntimeProject project,
     List<DowntimeEntry> imbuements,
   ) {
     // First try by templateProjectId
@@ -95,11 +100,11 @@ class ProjectsListTab extends ConsumerWidget {
     // Use the same provider that project_template_browser uses for treasures
     final treasuresAsync = ref.watch(craftableTreasuresProvider);
     final treasures = treasuresAsync.valueOrNull ?? <CraftableTreasure>[];
-    
+
     // Also watch for imbuements
     final imbuementsAsync = ref.watch(imbuementTemplatesProvider);
     final imbuements = imbuementsAsync.valueOrNull ?? <DowntimeEntry>[];
-    
+
     return CustomScrollView(
       slivers: [
         // Add project button
@@ -112,11 +117,28 @@ class ProjectsListTab extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                ProjectsListTabText.activeProjectsHeader,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: _projectsColor,
+                      borderRadius: BorderRadius.circular(2),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(Icons.work_outline, size: 18, color: _projectsColor),
+                  const SizedBox(width: 6),
+                  Text(
+                    ProjectsListTabText.activeProjectsHeader,
+                    style: const TextStyle(
+                      color: _projectsColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -126,9 +148,12 @@ class ProjectsListTab extends ConsumerWidget {
                 final activeProjects =
                     projects.where((p) => !p.isCompleted).toList();
                 final project = activeProjects[index];
-                final hasReachedGoal = project.currentPoints >= project.projectGoal;
-                final matchingTreasure = _findMatchingTreasure(project, treasures);
-                final matchingImbuement = _findMatchingImbuement(project, imbuements);
+                final hasReachedGoal =
+                    project.currentPoints >= project.projectGoal;
+                final matchingTreasure =
+                    _findMatchingTreasure(project, treasures);
+                final matchingImbuement =
+                    _findMatchingImbuement(project, imbuements);
                 final isTreasureProject = matchingTreasure != null;
                 final isImbuementProject = matchingImbuement != null;
                 return ProjectDetailCard(
@@ -143,9 +168,11 @@ class ProjectsListTab extends ConsumerWidget {
                   isImbuementProject: isImbuementProject,
                   imbuementData: matchingImbuement?.raw,
                   onAddToGear: (isTreasureProject && hasReachedGoal)
-                      ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
+                      ? () => _addTreasureToGear(
+                          context, ref, project, matchingTreasure)
                       : (isImbuementProject && hasReachedGoal)
-                          ? () => _addImbuementToGear(context, ref, project, matchingImbuement)
+                          ? () => _addImbuementToGear(
+                              context, ref, project, matchingImbuement)
                           : null,
                 );
               },
@@ -159,12 +186,29 @@ class ProjectsListTab extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-              child: Text(
-                ProjectsListTabText.completedProjectsHeader,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.outline,
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(2),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.check_circle_outline,
+                      size: 18, color: Colors.green),
+                  const SizedBox(width: 6),
+                  Text(
+                    ProjectsListTabText.completedProjectsHeader,
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -174,8 +218,10 @@ class ProjectsListTab extends ConsumerWidget {
                 final completedProjects =
                     projects.where((p) => p.isCompleted).toList();
                 final project = completedProjects[index];
-                final matchingTreasure = _findMatchingTreasure(project, treasures);
-                final matchingImbuement = _findMatchingImbuement(project, imbuements);
+                final matchingTreasure =
+                    _findMatchingTreasure(project, treasures);
+                final matchingImbuement =
+                    _findMatchingImbuement(project, imbuements);
                 final isTreasureProject = matchingTreasure != null;
                 final isImbuementProject = matchingImbuement != null;
                 return ProjectDetailCard(
@@ -188,9 +234,11 @@ class ProjectsListTab extends ConsumerWidget {
                   isImbuementProject: isImbuementProject,
                   imbuementData: matchingImbuement?.raw,
                   onAddToGear: isTreasureProject
-                      ? () => _addTreasureToGear(context, ref, project, matchingTreasure)
+                      ? () => _addTreasureToGear(
+                          context, ref, project, matchingTreasure)
                       : isImbuementProject
-                          ? () => _addImbuementToGear(context, ref, project, matchingImbuement)
+                          ? () => _addImbuementToGear(
+                              context, ref, project, matchingImbuement)
                           : null,
                 );
               },
@@ -219,19 +267,67 @@ class ProjectsListTab extends ConsumerWidget {
       child: Row(
         children: [
           Expanded(
-            child: FilledButton.icon(
-              onPressed: () => _createCustomProject(context, ref),
-              icon: const Icon(Icons.add),
-              label: const Text(ProjectsListTabText.createProjectButtonLabel),
-              style: HeroTheme.primaryActionButtonStyle(context),
+            child: Material(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                onTap: () => _createCustomProject(context, ref),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _projectsColor),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add, color: _projectsColor, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        ProjectsListTabText.createProjectButtonLabel,
+                        style: TextStyle(
+                          color: _projectsColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () => _browseTemplates(context, ref),
-              icon: const Icon(Icons.library_books),
-              label: const Text(ProjectsListTabText.browseProjectsButtonLabel),
+            child: Material(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                onTap: () => _browseTemplates(context, ref),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade700),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.library_books,
+                          color: Colors.grey.shade400, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        ProjectsListTabText.browseProjectsButtonLabel,
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -240,18 +336,42 @@ class ProjectsListTab extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
-    return HeroTheme.buildEmptyState(
-      context,
-      icon: Icons.assignment_outlined,
-      title: ProjectsListTabText.emptyTitle,
-      subtitle: ProjectsListTabText.emptySubtitle,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.assignment_outlined,
+                size: 64, color: Colors.grey.shade600),
+            const SizedBox(height: 16),
+            Text(
+              ProjectsListTabText.emptyTitle,
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              ProjectsListTabText.emptySubtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildLoadingState(BuildContext context) {
     return const Center(
       child: CircularProgressIndicator(
-        color: HeroTheme.primarySection,
+        color: _projectsColor,
       ),
     );
   }
@@ -263,29 +383,54 @@ class ProjectsListTab extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
-              color: Theme.of(context).colorScheme.error,
+              color: Colors.redAccent,
             ),
             const SizedBox(height: 16),
             Text(
               ProjectsListTabText.errorTitle,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               error.toString(),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: TextStyle(color: Colors.grey.shade400),
             ),
             const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: () {
-                ref.invalidate(heroProjectsProvider(heroId));
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text(ProjectsListTabText.retryButtonLabel),
+            Material(
+              color: NavigationTheme.cardBackgroundDark,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                onTap: () => ref.invalidate(heroProjectsProvider(heroId)),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _projectsColor),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.refresh, color: _projectsColor, size: 18),
+                      SizedBox(width: 8),
+                      Text(
+                        ProjectsListTabText.retryButtonLabel,
+                        style: TextStyle(
+                            color: _projectsColor, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -313,7 +458,7 @@ class ProjectsListTab extends ConsumerWidget {
         rollCharacteristics: result.rollCharacteristics,
         isCustom: true,
       );
-      
+
       // Refresh the list
       ref.invalidate(heroProjectsProvider(heroId));
     }
@@ -350,7 +495,7 @@ class ProjectsListTab extends ConsumerWidget {
     if (confirmed == true) {
       final repo = ref.read(downtimeRepositoryProvider);
       await repo.deleteProject(project.id);
-      
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -359,7 +504,7 @@ class ProjectsListTab extends ConsumerWidget {
           ),
         );
       }
-      
+
       // Refresh the list
       ref.invalidate(heroProjectsProvider(heroId));
     }
@@ -381,7 +526,7 @@ class ProjectsListTab extends ConsumerWidget {
     if (result != null) {
       final repo = ref.read(downtimeRepositoryProvider);
       await repo.updateProject(result);
-      
+
       // Refresh the list
       ref.invalidate(heroProjectsProvider(heroId));
     }
@@ -393,7 +538,7 @@ class ProjectsListTab extends ConsumerWidget {
     HeroDowntimeProject project,
   ) async {
     final pointsController = TextEditingController();
-    
+
     final result = await showDialog<int>(
       context: context,
       builder: (context) => AlertDialog(
@@ -410,8 +555,8 @@ class ProjectsListTab extends ConsumerWidget {
             Text(
               'Current: ${project.currentPoints} / ${project.projectGoal}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -448,10 +593,10 @@ class ProjectsListTab extends ConsumerWidget {
       final repo = ref.read(downtimeRepositoryProvider);
       final newTotal = project.currentPoints + result;
       await repo.updateProjectPoints(project.id, newTotal);
-      
+
       // Refresh the list
       ref.invalidate(heroProjectsProvider(heroId));
-      
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -480,10 +625,10 @@ class ProjectsListTab extends ConsumerWidget {
       final repo = ref.read(downtimeRepositoryProvider);
       final newTotal = project.currentPoints + result;
       await repo.updateProjectPoints(project.id, newTotal);
-      
+
       // Refresh the list
       ref.invalidate(heroProjectsProvider(heroId));
-      
+
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -509,11 +654,11 @@ class ProjectsListTab extends ConsumerWidget {
     CraftableTreasure treasure,
   ) async {
     final treasureId = treasure.id;
-    
+
     // Get current hero treasures
     final db = ref.read(appDatabaseProvider);
     final existingTreasures = await db.getHeroComponentIds(heroId, 'treasure');
-    
+
     // Check if already added
     if (existingTreasures.contains(treasureId)) {
       if (context.mounted) {
@@ -562,11 +707,12 @@ class ProjectsListTab extends ConsumerWidget {
     DowntimeEntry imbuement,
   ) async {
     final imbuementId = imbuement.id;
-    
+
     // Get current hero imbuements (stored in 'imbuement' category)
     final db = ref.read(appDatabaseProvider);
-    final existingImbuements = await db.getHeroComponentIds(heroId, 'imbuement');
-    
+    final existingImbuements =
+        await db.getHeroComponentIds(heroId, 'imbuement');
+
     // Check if already added
     if (existingImbuements.contains(imbuementId)) {
       if (context.mounted) {

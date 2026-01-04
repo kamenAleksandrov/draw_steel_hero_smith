@@ -3,7 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
 import '../../../../core/theme/hero_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/sources_tab_text.dart';
+
+/// Accent color for sources
+const Color _sourcesColor = NavigationTheme.projectsTabColor;
 
 /// Provider for hero project sources
 final heroSourcesProvider =
@@ -23,8 +27,8 @@ class SourcesTab extends ConsumerWidget {
 
     return sourcesAsync.when(
       data: (sources) => _buildContent(context, ref, sources),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      loading: () => const Center(child: CircularProgressIndicator(color: _sourcesColor)),
+      error: (error, stack) => Center(child: Text('Error: $error', style: TextStyle(color: Colors.red.shade400))),
     );
   }
 
@@ -65,7 +69,10 @@ class SourcesTab extends ConsumerWidget {
         onPressed: () => _addSource(context, ref),
         icon: const Icon(Icons.add),
         label: const Text(SourcesTabText.addSourceButtonLabel),
-        style: HeroTheme.primaryActionButtonStyle(context),
+        style: FilledButton.styleFrom(
+          backgroundColor: _sourcesColor,
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }
@@ -78,39 +85,51 @@ class SourcesTab extends ConsumerWidget {
     switch (source.type) {
       case 'source':
         icon = Icons.menu_book;
-        iconColor = Colors.blue;
+        iconColor = Colors.blue.shade400;
         break;
       case 'item':
         icon = Icons.inventory_2;
-        iconColor = Colors.amber;
+        iconColor = Colors.amber.shade400;
         break;
       case 'guide':
         icon = Icons.person;
-        iconColor = Colors.green;
+        iconColor = Colors.green.shade400;
         break;
       default:
         icon = Icons.help_outline;
-        iconColor = Colors.grey;
+        iconColor = Colors.grey.shade400;
     }
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: NavigationTheme.cardBackgroundDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade800),
+      ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: iconColor.withValues(alpha: 0.2),
+          backgroundColor: iconColor.withAlpha(40),
           child: Icon(icon, color: iconColor),
         ),
         title: Text(
           source.name,
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(source.type.toUpperCase()),
+            Text(
+              source.type.toUpperCase(),
+              style: TextStyle(color: _sourcesColor, fontWeight: FontWeight.w500, fontSize: 12),
+            ),
             if (source.language != null) ...[
               const SizedBox(height: 2),
-              Text('Language: ${source.language}'),
+              Text('Language: ${source.language}', style: TextStyle(color: Colors.grey.shade400)),
             ],
             if (source.description != null && source.description!.isNotEmpty) ...[
               const SizedBox(height: 2),
@@ -118,30 +137,32 @@ class SourcesTab extends ConsumerWidget {
                 source.description!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey.shade500),
               ),
             ],
           ],
         ),
         trailing: PopupMenuButton(
+          icon: Icon(Icons.more_vert, color: Colors.grey.shade500),
+          color: NavigationTheme.cardBackgroundDark,
           itemBuilder: (context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(Icons.edit),
-                  SizedBox(width: 8),
-                  Text(SourcesTabText.editMenuLabel),
+                  Icon(Icons.edit, color: Colors.grey.shade400),
+                  const SizedBox(width: 8),
+                  Text(SourcesTabText.editMenuLabel, style: TextStyle(color: Colors.grey.shade300)),
                 ],
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text(SourcesTabText.deleteMenuLabel),
+                  Icon(Icons.delete, color: Colors.red.shade400),
+                  const SizedBox(width: 8),
+                  Text(SourcesTabText.deleteMenuLabel, style: TextStyle(color: Colors.red.shade400)),
                 ],
               ),
             ),
@@ -169,7 +190,10 @@ class SourcesTab extends ConsumerWidget {
         onPressed: () => _addSource(context, ref),
         icon: const Icon(Icons.add),
         label: const Text(SourcesTabText.emptyActionLabel),
-        style: HeroTheme.primaryActionButtonStyle(context),
+        style: FilledButton.styleFrom(
+          backgroundColor: _sourcesColor,
+          foregroundColor: Colors.white,
+        ),
       ),
     );
   }
@@ -213,16 +237,29 @@ class SourcesTab extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(SourcesTabText.deleteDialogTitle),
-        content: Text('Remove ${source.name}?'),
+        backgroundColor: NavigationTheme.cardBackgroundDark,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade800),
+        ),
+        title: Text(
+          SourcesTabText.deleteDialogTitle,
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          'Remove ${source.name}?',
+          style: TextStyle(color: Colors.grey.shade300),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
             child: const Text(SourcesTabText.deleteDialogCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade600),
             child: const Text(SourcesTabText.deleteDialogConfirm),
           ),
         ],
@@ -280,10 +317,36 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        widget.existingSource == null
-            ? SourcesTabText.dialogTitleAdd
-            : SourcesTabText.dialogTitleEdit,
+      backgroundColor: NavigationTheme.cardBackgroundDark,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade800),
+      ),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _sourcesColor.withAlpha(40),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              widget.existingSource == null ? Icons.add_circle : Icons.edit,
+              color: _sourcesColor,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              widget.existingSource == null
+                  ? SourcesTabText.dialogTitleAdd
+                  : SourcesTabText.dialogTitleEdit,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
       content: Form(
         key: _formKey,
@@ -294,9 +357,15 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: SourcesTabText.nameLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _sourcesColor)),
+                  filled: true,
+                  fillColor: Colors.grey.shade900,
                 ),
                 validator: (v) => v == null || v.isEmpty
                     ? SourcesTabText.nameRequiredError
@@ -306,9 +375,16 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
               
               DropdownButtonFormField<String>(
                 value: _selectedType,
-                decoration: const InputDecoration(
+                dropdownColor: NavigationTheme.cardBackgroundDark,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: SourcesTabText.typeLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _sourcesColor)),
+                  filled: true,
+                  fillColor: Colors.grey.shade900,
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -334,18 +410,30 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
               
               TextFormField(
                 controller: _languageController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: SourcesTabText.languageLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _sourcesColor)),
+                  filled: true,
+                  fillColor: Colors.grey.shade900,
                 ),
               ),
               const SizedBox(height: 16),
               
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
                   labelText: SourcesTabText.descriptionLabel,
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Colors.grey.shade400),
+                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.grey.shade700)),
+                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _sourcesColor)),
+                  filled: true,
+                  fillColor: Colors.grey.shade900,
                 ),
                 maxLines: 3,
               ),
@@ -356,10 +444,15 @@ class _SourceEditorDialogState extends State<_SourceEditorDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          style: TextButton.styleFrom(foregroundColor: Colors.grey.shade400),
           child: const Text(SourcesTabText.cancelButtonLabel),
         ),
         FilledButton(
           onPressed: _save,
+          style: FilledButton.styleFrom(
+            backgroundColor: _sourcesColor,
+            foregroundColor: Colors.white,
+          ),
           child: const Text(SourcesTabText.saveButtonLabel),
         ),
       ],
