@@ -290,6 +290,30 @@ DynamicModifierList _buildFeatureStatBonusDynamicModifiersFromMap(
       final key = bonusEntry.key.toString();
       final value = bonusEntry.value;
 
+      // Handle stamina_per_level_increase specially
+      if (key == 'stamina_per_level_increase') {
+        if (value is Map) {
+          // New format with feature level: { "value": 3, "feature_level": 2 }
+          final perLevelValue = (value['value'] as num?)?.toInt() ?? 0;
+          final featureLevel = (value['feature_level'] as num?)?.toInt() ?? 1;
+          modifiers.add(DynamicModifier(
+            stat: 'stamina',
+            formulaType: FormulaType.fixedTimesLevelMinusThreshold,
+            formulaParam: '$perLevelValue:$featureLevel',
+            source: source,
+          ));
+        } else if (value is int || value is num) {
+          // Legacy format: just the per-level value (assumes threshold of 1)
+          modifiers.add(DynamicModifier(
+            stat: 'stamina',
+            formulaType: FormulaType.fixedTimesLevelMinusOne,
+            formulaParam: value.toString(),
+            source: source,
+          ));
+        }
+        continue;
+      }
+
       final stat = _bonusKeyToStat(key);
       if (stat == null) continue;
 
@@ -301,14 +325,24 @@ DynamicModifierList _buildFeatureStatBonusDynamicModifiersFromMap(
           source: source,
         ));
       } else if (value is String) {
-        final characteristic = _normalizeCharacteristic(value);
-        if (characteristic != null) {
+        // Check if it's a dynamic value like "level"
+        final normalized = value.toLowerCase().trim();
+        if (normalized == 'level') {
           modifiers.add(DynamicModifier(
             stat: stat,
-            formulaType: FormulaType.characteristic,
-            formulaParam: characteristic,
+            formulaType: FormulaType.level,
             source: source,
           ));
+        } else {
+          final characteristic = _normalizeCharacteristic(value);
+          if (characteristic != null) {
+            modifiers.add(DynamicModifier(
+              stat: stat,
+              formulaType: FormulaType.characteristic,
+              formulaParam: characteristic,
+              source: source,
+            ));
+          }
         }
       }
     }

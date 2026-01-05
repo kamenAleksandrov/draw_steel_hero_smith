@@ -170,9 +170,9 @@
   },
   "active": "3ea995867d73e767",
   "lastOpenFiles": [
-    "Untitled.base",
-    "bugs/Identified bugs and QoL to be fixed.md",
     "Pasted image 20251212224917.png",
+    "bugs/Identified bugs and QoL to be fixed.md",
+    "Untitled.base",
     "widgets/ability_display_widget.md",
     "objects/hero_object.md",
     "features",
@@ -215,7 +215,6 @@
     "widgets/summaries",
     "pages/creator_pages",
     "widgets",
-    "systems",
-    "objects"
+    "systems"
   ]
 }

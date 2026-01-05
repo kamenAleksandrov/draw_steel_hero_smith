@@ -8,4 +8,9 @@
   static const String staminaValueSuffixSuffix = ' per lvl)';
   static const String recoveriesLabel = 'Recoveries';
   static const String statLabelSuffix = ': ';
+  static const String selectClassTitle = 'Select Class';
+  static const String selectClassHint = 'Select a class...';
+  static const String searchHint = 'Search...';
+  static const String noMatchesFound = 'No matches found';
+  static const String cancelButton = 'Cancel';
 }

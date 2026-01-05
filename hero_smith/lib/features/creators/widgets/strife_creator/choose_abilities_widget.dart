@@ -8,10 +8,34 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
+
+// Helper classes for picker
+class _SearchOption {
+  final String value;
+  final String label;
+  final String? subtitle;
+
+  const _SearchOption({
+    required this.value,
+    required this.label,
+    this.subtitle,
+  });
+}
+
+class _PickerSelection {
+  final String? value;
+  final String? label;
+
+  const _PickerSelection({
+    this.value,
+    this.label,
+  });
+}
 
 typedef AbilitySelectionChanged = void Function(
     StartingAbilitySelectionResult result);
@@ -51,8 +75,6 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
 
-  @override
-  bool get wantKeepAlive => true;
   bool _isLoading = true;
   String? _error;
 
@@ -64,6 +86,9 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
 
   List<AbilityOption> _abilityOptions = const [];
   Map<String, AbilityOption> _abilityById = const {};
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -446,7 +471,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
     if (_isLoading) {
       return _buildContainer(
         child: Padding(
@@ -581,50 +606,63 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DropdownButtonFormField<String?>(
-                      value: current,
-                      dropdownColor: const Color(0xFF2A2A2A),
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                      decoration: InputDecoration(
-                        labelText:
-                            '${ChooseAbilitiesWidgetText.choiceLabelPrefix}${index + 1}',
-                        labelStyle: TextStyle(color: Colors.grey.shade400),
-                        filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-                          borderSide: BorderSide(color: Colors.grey.shade700),
+                    InkWell(
+                      onTap: () => _showAbilityPicker(
+                        context: context,
+                        allowance: allowance,
+                        slotIndex: index,
+                        currentValue: current,
+                        availableOptions: availableOptions,
+                      ),
+                      borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText:
+                              '${ChooseAbilitiesWidgetText.choiceLabelPrefix}${index + 1}',
+                          labelStyle: TextStyle(color: Colors.grey.shade400),
+                          filled: true,
+                          fillColor: const Color(0xFF2A2A2A),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                            borderSide: BorderSide(color: Colors.grey.shade700),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                            borderSide: BorderSide(color: Colors.grey.shade700),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                            borderSide: const BorderSide(color: _accent),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-                          borderSide: BorderSide(color: Colors.grey.shade700),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-                          borderSide: const BorderSide(color: _accent),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                selectedOption != null
+                                    ? _abilityOptionLabel(selectedOption)
+                                    : ChooseAbilitiesWidgetText.unassignedLabel,
+                                style: TextStyle(
+                                  color: selectedOption != null
+                                      ? Colors.white
+                                      : Colors.grey.shade400,
+                                  fontSize: 14,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.grey.shade400,
+                            ),
+                          ],
                         ),
                       ),
-                      items: [
-                        DropdownMenuItem<String?>(
-                          value: null,
-                          child: Text(
-                            ChooseAbilitiesWidgetText.unassignedLabel,
-                            style: TextStyle(color: Colors.grey.shade400),
-                          ),
-                        ),
-                        ...availableOptions.map(
-                          (option) => DropdownMenuItem<String?>(
-                            value: option.id,
-                            child: Text(_abilityOptionLabel(option)),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) =>
-                          _handleAbilitySelection(allowance, index, value),
                     ),
                     if (selectedOption != null) ...[
                       const SizedBox(height: 8),
@@ -638,6 +676,337 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         ],
       ),
     );
+  }
+
+  Future<void> _showAbilityPicker({
+    required BuildContext context,
+    required AbilityAllowance allowance,
+    required int slotIndex,
+    required String? currentValue,
+    required List<AbilityOption> availableOptions,
+  }) async {
+    String searchQuery = '';
+
+    final result = await showDialog<_PickerSelection>(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final filteredOptions = availableOptions.where((option) {
+              final query = searchQuery.toLowerCase();
+              return option.name.toLowerCase().contains(query) ||
+                  (option.subclass?.toLowerCase().contains(query) ?? false) ||
+                  (option.resource?.toLowerCase().contains(query) ?? false);
+            }).toList();
+
+            return Dialog(
+              backgroundColor: NavigationTheme.cardBackgroundDark,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.7,
+                  maxWidth: 400,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header with gradient
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            _accent.withValues(alpha: 0.2),
+                            _accent.withValues(alpha: 0.05),
+                          ],
+                        ),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: _accent.withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: _accent.withValues(alpha: 0.2),
+                              border: Border.all(
+                                color: _accent.withValues(alpha: 0.4),
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              color: _accent,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              ChooseAbilitiesWidgetText.selectAbilityTitle,
+                              style: TextStyle(
+                                color: _accent,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.grey.shade400,
+                            ),
+                            onPressed: () => Navigator.pop(dialogContext),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Search field
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        autofocus: false,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: ChooseAbilitiesWidgetText.searchHint,
+                          hintStyle: TextStyle(color: Colors.grey.shade500),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade500,
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFF2A2A2A),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: _accent,
+                              width: 1.5,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setDialogState(() {
+                            searchQuery = value;
+                          });
+                        },
+                      ),
+                    ),
+                    // Options list
+                    Flexible(
+                      child: ListView(
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        children: [
+                          // Unassigned option
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pop(
+                                    dialogContext,
+                                    const _PickerSelection(value: null),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: currentValue == null
+                                        ? _accent.withValues(alpha: 0.15)
+                                        : const Color(0xFF2A2A2A),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: currentValue == null
+                                          ? _accent.withValues(alpha: 0.5)
+                                          : Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          ChooseAbilitiesWidgetText.unassignedLabel,
+                                          style: TextStyle(
+                                            color: currentValue == null
+                                                ? _accent
+                                                : Colors.grey.shade400,
+                                            fontSize: 14,
+                                            fontWeight: currentValue == null
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      if (currentValue == null)
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: _accent,
+                                          size: 20,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Ability options
+                          if (filteredOptions.isEmpty && searchQuery.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Center(
+                                child: Text(
+                                  ChooseAbilitiesWidgetText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            ...filteredOptions.map((option) {
+                              final isSelected = option.id == currentValue;
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.pop(
+                                        dialogContext,
+                                        _PickerSelection(
+                                          value: option.id,
+                                          label: option.name,
+                                        ),
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? _accent.withValues(alpha: 0.15)
+                                            : const Color(0xFF2A2A2A),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? _accent.withValues(alpha: 0.5)
+                                              : Colors.grey.shade700,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _abilityOptionLabel(option),
+                                                  style: TextStyle(
+                                                    color: isSelected
+                                                        ? _accent
+                                                        : Colors.white,
+                                                    fontSize: 14,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                  ),
+                                                ),
+                                                if (option.subclass != null &&
+                                                    option.subclass!.isNotEmpty) ...[
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    option.subclass!,
+                                                    style: TextStyle(
+                                                      color: Colors.grey.shade400,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          ),
+                                          if (isSelected)
+                                            Icon(
+                                              Icons.check_circle,
+                                              color: _accent,
+                                              size: 20,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                        ],
+                      ),
+                    ),
+                    // Cancel button
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.grey.shade800),
+                        ),
+                      ),
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.all(16),
+                        ),
+                        child: Text(
+                          ChooseAbilitiesWidgetText.cancelButton,
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      _handleAbilitySelection(allowance, slotIndex, result.value);
+    }
   }
 
   String _abilityOptionLabel(AbilityOption option) {

@@ -1620,19 +1620,64 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                  // Header with gradient
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          _perksColor.withValues(alpha: 0.2),
+                          _perksColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: _perksColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
                       ),
                     ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: _perksColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: _perksColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Icon(Icons.auto_awesome, color: _perksColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: _perksColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
+                    ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: false,
@@ -1641,12 +1686,12 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                         hintText: 'Search...',
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon:
-                            Icon(Icons.search, color: Colors.grey.shade400),
+                            Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: Colors.grey.shade900,
+                        fillColor: const Color(0xFF2A2A2A),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey.shade700),
+                          borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -1654,7 +1699,7 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: _perksColor),
+                          borderSide: BorderSide(color: _perksColor, width: 2),
                         ),
                       ),
                       onChanged: (value) {
@@ -1669,15 +1714,28 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                     child: filtered.isEmpty
                         ? Padding(
                             padding: const EdgeInsets.all(24),
-                            child: Center(
-                              child: Text(
-                                'No matches found',
-                                style: TextStyle(color: Colors.grey.shade500),
-                              ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'No matches found',
+                                  style: TextStyle(color: Colors.grey.shade500),
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
@@ -1685,17 +1743,16 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                                   (option.value == null && selected == null);
                               return Container(
                                 margin: const EdgeInsets.symmetric(
-                                  horizontal: 12,
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? _perksColor.withAlpha(38)
+                                      ? _perksColor.withValues(alpha: 0.15)
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(10),
                                   border: isSelected
                                       ? Border.all(
-                                          color: _perksColor.withAlpha(77))
+                                          color: _perksColor.withValues(alpha: 0.4))
                                       : null,
                                 ),
                                 child: ListTile(
@@ -1717,8 +1774,11 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                                         )
                                       : null,
                                   trailing: isSelected
-                                      ? Icon(Icons.check, color: _perksColor)
+                                      ? Icon(Icons.check_circle, color: _perksColor, size: 22)
                                       : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                   onTap: () => Navigator.of(context).pop(
                                     PickerSelection<T>(value: option.value),
                                   ),
@@ -1727,14 +1787,20 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.grey.shade400),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
                       ),
+                      child: const Text('Cancel'),
                     ),
                   ),
                 ],

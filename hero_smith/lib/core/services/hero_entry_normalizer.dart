@@ -964,11 +964,17 @@ class HeroEntryNormalizer {
   /// - hero_entries stores individual grants with source metadata
   /// - hero_values stores the computed aggregate for runtime use
   Future<void> _recomputeResistances(String heroId) async {
+    // Get hero level for dynamic calculations
+    final heroLevel = await _getHeroLevel(heroId);
+    
     // Collect all resistance entries from hero_entries
     final allEntries = await _entries.listAllEntriesForHero(heroId);
     
     // Aggregate resistances by damage type
     final resistanceMap = <String, _ResistanceAggregate>{};
+    
+    // Track dynamic resistance grants (for level-based scaling)
+    final dynamicGrants = <String, _DynamicResistanceGrant>{};
     
     for (final entry in allEntries) {
       // Handle resistance entry type
@@ -985,6 +991,53 @@ class HeroEntryNormalizer {
               final weakness = (payload['weakness'] as num?)?.toInt() ?? 0;
               final source = '${entry.sourceType}:${entry.sourceId}';
               resistanceMap[damageType]!.addBonus(immunity, weakness, source);
+            }
+          } catch (_) {}
+        }
+      }
+      
+      // Handle damage_resistance entry type (from class feature grants)
+      if (entry.entryType == 'damage_resistance') {
+        if (entry.payload != null) {
+          try {
+            final payload = jsonDecode(entry.payload!);
+            if (payload is Map) {
+              final stat = (payload['stat'] as String?)?.toLowerCase();
+              final damageType = (payload['type'] as String?)?.toLowerCase();
+              final value = payload['value'];
+              final source = '${entry.sourceType}:${entry.sourceId}';
+              
+              if (damageType != null && damageType.isNotEmpty) {
+                resistanceMap.putIfAbsent(damageType, () => _ResistanceAggregate(damageType));
+                
+                if (value is int) {
+                  // Static value
+                  if (stat == 'immunity') {
+                    resistanceMap[damageType]!.addBonus(value, 0, source);
+                  } else if (stat == 'weakness') {
+                    resistanceMap[damageType]!.addBonus(0, value, source);
+                  }
+                } else if (value is String) {
+                  // Dynamic value (e.g., "level")
+                  final normalized = value.toLowerCase().trim();
+                  if (normalized == 'level') {
+                    // Track for dynamic immunity - DO NOT add to bonus,
+                    // the model's totalImmunityAtLevel will calculate it
+                    dynamicGrants.putIfAbsent(
+                      damageType,
+                      () => _DynamicResistanceGrant(damageType),
+                    );
+                    if (stat == 'immunity') {
+                      dynamicGrants[damageType]!.hasDynamicImmunity = true;
+                    } else if (stat == 'weakness') {
+                      dynamicGrants[damageType]!.hasDynamicWeakness = true;
+                    }
+                    // Note: We intentionally don't add heroLevel to bonusImmunity/bonusWeakness
+                    // because the DamageResistance model's totalImmunityAtLevel/totalWeaknessAtLevel
+                    // will add heroLevel when dynamicImmunity/dynamicWeakness == 'level'
+                  }
+                }
+              }
             }
           } catch (_) {}
         }
@@ -1042,6 +1095,7 @@ class HeroEntryNormalizer {
     for (final damageType in allDamageTypes) {
       final current = currentResistances.forType(damageType);
       final computed = resistanceMap[damageType];
+      final dynamic_ = dynamicGrants[damageType];
       
       finalResistances.add(DamageResistance(
         damageType: damageType,
@@ -1050,6 +1104,8 @@ class HeroEntryNormalizer {
         bonusImmunity: computed?.totalImmunity ?? 0,
         bonusWeakness: computed?.totalWeakness ?? 0,
         sources: computed?.sources ?? const [],
+        dynamicImmunity: dynamic_?.hasDynamicImmunity == true ? 'level' : null,
+        dynamicWeakness: dynamic_?.hasDynamicWeakness == true ? 'level' : null,
       ));
     }
     
@@ -1060,6 +1116,16 @@ class HeroEntryNormalizer {
       key: 'resistances.damage',
       textValue: resistancesModel.toJsonString(),
     );
+  }
+
+  /// Get hero level from assembly or hero_values
+  Future<int> _getHeroLevel(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final levelValue = values.firstWhereOrNull((v) => v.key == 'basics.level');
+    if (levelValue != null) {
+      return levelValue.value ?? int.tryParse(levelValue.textValue ?? '') ?? 1;
+    }
+    return 1;
   }
 
   /// Load current resistances from hero_values.
@@ -1116,4 +1182,13 @@ class _ResistanceAggregate {
       sources.add(source);
     }
   }
+}
+
+/// Helper class to track dynamic resistance grants (level-based scaling).
+class _DynamicResistanceGrant {
+  _DynamicResistanceGrant(this.damageType);
+  
+  final String damageType;
+  bool hasDynamicImmunity = false;
+  bool hasDynamicWeakness = false;
 }

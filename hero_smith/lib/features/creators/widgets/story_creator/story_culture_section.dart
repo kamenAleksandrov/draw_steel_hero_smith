@@ -196,31 +196,47 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
+                              final isNoneOption = option.value == null;
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
                               return Container(
                                 margin: const EdgeInsets.symmetric(vertical: 2),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: isSelected
-                                      ? accentColor.withValues(alpha: 0.15)
-                                      : Colors.transparent,
+                                  color: isNoneOption
+                                      ? Colors.grey.shade800.withValues(alpha: 0.4)
+                                      : isSelected
+                                          ? accentColor.withValues(alpha: 0.15)
+                                          : Colors.transparent,
                                   border: isSelected
                                       ? Border.all(
                                           color: accentColor.withValues(alpha: 0.4),
                                         )
-                                      : null,
+                                      : isNoneOption
+                                          ? Border.all(
+                                              color: Colors.grey.shade700,
+                                            )
+                                          : null,
                                 ),
                                 child: ListTile(
+                                  leading: isNoneOption
+                                      ? Icon(Icons.remove_circle_outline,
+                                          size: 20, color: Colors.grey.shade500)
+                                      : null,
                                   title: Text(
                                     option.label,
                                     style: TextStyle(
-                                      color: isSelected
-                                          ? accentColor
-                                          : Colors.grey.shade200,
+                                      color: isNoneOption
+                                          ? Colors.grey.shade400
+                                          : isSelected
+                                              ? accentColor
+                                              : Colors.grey.shade200,
                                       fontWeight: isSelected
                                           ? FontWeight.w600
                                           : FontWeight.normal,
+                                      fontStyle: isNoneOption
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
                                     ),
                                   ),
                                   subtitle: option.subtitle != null
@@ -575,9 +591,10 @@ class _LanguageDropdown extends StatelessWidget {
 
     Future<void> openSearch() async {
       final options = <_SearchOption<String?>>[
-        const _SearchOption<String?>(
+        _SearchOption<String?>(
           label: StoryCultureSectionText.chooseLanguageOption,
           value: null,
+          subtitle: 'None selected',
         ),
       ];
 
@@ -587,7 +604,7 @@ class _LanguageDropdown extends StatelessWidget {
             _SearchOption<String?>(
               label: lang.name,
               value: lang.id,
-              subtitle: _languageGroupTitle(key),
+              subtitle: _buildLanguageSubtitle(lang, key),
             ),
           );
         }
@@ -687,6 +704,34 @@ class _LanguageDropdown extends StatelessWidget {
         return StoryCultureSectionText.humanLanguagesGroup;
     }
   }
+
+  String _buildLanguageSubtitle(model.Component lang, String groupKey) {
+    final data = lang.data;
+    final parts = <String>[];
+    
+    // Add language type/group
+    parts.add(_languageGroupTitle(groupKey));
+    
+    // Add region if available
+    final region = data['region'] as String?;
+    if (region != null && region.isNotEmpty) {
+      parts.add('Region: $region');
+    }
+    
+    // Add ancestry if available
+    final ancestry = data['ancestry'] as String?;
+    if (ancestry != null && ancestry.isNotEmpty) {
+      parts.add('Ancestry: $ancestry');
+    }
+    
+    // Add common topics if available
+    final topics = (data['common_topics'] as List?)?.cast<String>();
+    if (topics != null && topics.isNotEmpty) {
+      parts.add('Topics: ${topics.take(3).join(', ')}${topics.length > 3 ? '...' : ''}');
+    }
+    
+    return parts.join(' • ');
+  }
 }
 
 class _CultureDropdown extends StatelessWidget {
@@ -727,9 +772,10 @@ class _CultureDropdown extends StatelessWidget {
 
         Future<void> openSearch() async {
           final options = <_SearchOption<String?>>[
-            const _SearchOption<String?>(
-              label: StoryCultureSectionText.chooseOption,
+            _SearchOption<String?>(
+              label: 'None',
               value: null,
+              subtitle: 'No selection',
             ),
             ...items.map(
               (item) => _SearchOption<String?>(

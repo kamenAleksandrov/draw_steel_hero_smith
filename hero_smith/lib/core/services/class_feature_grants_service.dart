@@ -10,6 +10,7 @@ import '../repositories/feature_repository.dart';
 import '../repositories/hero_entry_repository.dart';
 import 'class_feature_data_service.dart';
 import 'hero_config_service.dart';
+import 'hero_entry_normalizer.dart';
 
 /// Service for applying class feature selections to a hero.
 /// 
@@ -112,6 +113,10 @@ class ClassFeatureGrantsService {
       activeSubclassSlugs: activeSubclassSlugs,
       domainSlugs: domainSlugs,
     );
+
+    // Rebuild damage resistances from all hero_entries (including new grants)
+    final normalizer = HeroEntryNormalizer(_db);
+    await normalizer.normalize(heroId);
   }
 
   /// Remove all class feature grants for a hero.
@@ -413,7 +418,7 @@ class ClassFeatureGrantsService {
     await _processTitleGrants(heroId, feature.id, details);
 
     // Process top-level grants array (for stat bonuses, condition immunities, etc.)
-    await _processGrantsArray(heroId, feature.id, details, activeSubclassSlugs);
+    await _processGrantsArray(heroId, feature.id, details, activeSubclassSlugs, feature.level);
   }
 
   Future<void> _applySkillGroupSelections({
@@ -709,6 +714,7 @@ class ClassFeatureGrantsService {
     String featureId,
     Map<String, dynamic> details,
     Set<String> activeSubclassSlugs,
+    int featureLevel,
   ) async {
     final grants = details['grants'];
     if (grants is! List) return;
@@ -716,6 +722,7 @@ class ClassFeatureGrantsService {
     // Collect stat bonuses to merge into a single hero_values entry later
     final statBonuses = <String, dynamic>{};
     final conditionImmunities = <String>[];
+    final damageResistanceGrants = <Map<String, dynamic>>[];
 
     for (final grant in grants) {
       if (grant is! Map<String, dynamic>) continue;
@@ -728,8 +735,9 @@ class ClassFeatureGrantsService {
         final key = entry.key;
         final value = entry.value;
 
-        // Skip subclass keys
+        // Skip subclass keys and metadata keys
         if (_subclassOptionKeys.contains(key)) continue;
+        if (key == 'name' || key == 'description') continue;
 
         switch (key) {
           // Stat bonuses (may be static int or characteristic name like "Agility")
@@ -739,6 +747,21 @@ class ClassFeatureGrantsService {
           case 'stamina_increase':
           case 'recoveries_bonus':
             statBonuses[key] = value;
+            break;
+
+          // Stamina per level increase: adds extra stamina for each level past the feature level
+          case 'stamina_per_level_increase':
+            if (value is int || value is num) {
+              statBonuses['stamina_per_level_increase'] = {
+                'value': (value is int) ? value : (value as num).toInt(),
+                'feature_level': featureLevel,
+              };
+            }
+            break;
+
+          // increase_total: array or single object of stat increases (supports immunity with level scaling)
+          case 'increase_total':
+            _processIncreaseTotalGrant(value, statBonuses, damageResistanceGrants, featureId);
             break;
 
           // Condition immunity
@@ -797,6 +820,19 @@ class ClassFeatureGrantsService {
             }
             break;
 
+          // Nested grants object (contains stamina_per_level_increase, increase_total, etc.)
+          case 'grants':
+            if (value is Map<String, dynamic>) {
+              _processNestedGrants(
+                value,
+                statBonuses,
+                damageResistanceGrants,
+                featureId,
+                featureLevel,
+              );
+            }
+            break;
+
           default:
             // Store other grants generically in payload for future use
             break;
@@ -832,6 +868,26 @@ class ClassFeatureGrantsService {
       );
     }
 
+    // Store damage resistance grants (immunity/weakness with level scaling)
+    if (damageResistanceGrants.isNotEmpty) {
+      var grantIndex = 0;
+      for (final grant in damageResistanceGrants) {
+        final damageType = grant['type']?.toString().toLowerCase() ?? '';
+        if (damageType.isEmpty) continue;
+        
+        await _entries.addEntry(
+          heroId: heroId,
+          entryType: 'damage_resistance',
+          entryId: '${featureId}_resistance_${damageType}_$grantIndex',
+          sourceType: 'class_feature',
+          sourceId: featureId,
+          gainedBy: 'grant',
+          payload: grant,
+        );
+        grantIndex++;
+      }
+    }
+
     // Store condition immunities
     if (conditionImmunities.isNotEmpty) {
       for (final condition in conditionImmunities) {
@@ -844,6 +900,161 @@ class ClassFeatureGrantsService {
           gainedBy: 'grant',
           payload: {'condition': condition},
         );
+      }
+    }
+  }
+
+  /// Process nested grants object containing stamina_per_level_increase, increase_total, etc.
+  void _processNestedGrants(
+    Map<String, dynamic> nestedGrants,
+    Map<String, dynamic> statBonuses,
+    List<Map<String, dynamic>> damageResistanceGrants,
+    String featureId,
+    int featureLevel,
+  ) {
+    for (final entry in nestedGrants.entries) {
+      final key = entry.key;
+      final value = entry.value;
+
+      switch (key) {
+        // Stamina per level increase: adds extra stamina for each level past the feature level
+        case 'stamina_per_level_increase':
+          if (value is int) {
+            // Store both the per-level value and the feature level for proper calculation
+            statBonuses['stamina_per_level_increase'] = {
+              'value': value,
+              'feature_level': featureLevel,
+            };
+          } else if (value is num) {
+            statBonuses['stamina_per_level_increase'] = {
+              'value': value.toInt(),
+              'feature_level': featureLevel,
+            };
+          }
+          break;
+
+        // increase_total: array of stat increases (supports immunity with level scaling)
+        case 'increase_total':
+          if (value is List) {
+            for (final item in value) {
+              if (item is! Map<String, dynamic>) continue;
+              final stat = item['stat']?.toString().toLowerCase();
+              if (stat == null) continue;
+
+              if (stat == 'immunity' || stat == 'weakness') {
+                // Damage resistance grant with potential level scaling
+                final damageType = item['type']?.toString();
+                final itemValue = item['value'];
+                if (damageType != null) {
+                  damageResistanceGrants.add({
+                    'stat': stat,
+                    'type': damageType,
+                    'value': itemValue,
+                    'source': featureId,
+                  });
+                }
+              } else {
+                // Regular stat increase
+                final itemValue = item['value'];
+                if (itemValue is int) {
+                  final existingValue = statBonuses[stat];
+                  if (existingValue is int) {
+                    statBonuses[stat] = existingValue + itemValue;
+                  } else {
+                    statBonuses[stat] = itemValue;
+                  }
+                } else if (itemValue is String) {
+                  // Dynamic value like "level"
+                  statBonuses['${stat}_dynamic'] = itemValue;
+                }
+              }
+            }
+          } else if (value is Map<String, dynamic>) {
+            // Single increase_total object
+            final stat = value['stat']?.toString().toLowerCase();
+            if (stat == null) break;
+
+            if (stat == 'immunity' || stat == 'weakness') {
+              final damageType = value['type']?.toString();
+              final itemValue = value['value'];
+              if (damageType != null) {
+                damageResistanceGrants.add({
+                  'stat': stat,
+                  'type': damageType,
+                  'value': itemValue,
+                  'source': featureId,
+                });
+              }
+            } else {
+              final itemValue = value['value'];
+              if (itemValue is int) {
+                statBonuses[stat] = (statBonuses[stat] as int? ?? 0) + itemValue;
+              } else if (itemValue is String) {
+                statBonuses['${stat}_dynamic'] = itemValue;
+              }
+            }
+          }
+          break;
+
+        default:
+          // Unknown nested grant type, ignore
+          break;
+      }
+    }
+  }
+
+  /// Process increase_total grant (array or single object of stat increases).
+  void _processIncreaseTotalGrant(
+    dynamic value,
+    Map<String, dynamic> statBonuses,
+    List<Map<String, dynamic>> damageResistanceGrants,
+    String featureId,
+  ) {
+    if (value is List) {
+      for (final item in value) {
+        if (item is! Map<String, dynamic>) continue;
+        _processSingleIncreaseTotal(item, statBonuses, damageResistanceGrants, featureId);
+      }
+    } else if (value is Map<String, dynamic>) {
+      _processSingleIncreaseTotal(value, statBonuses, damageResistanceGrants, featureId);
+    }
+  }
+
+  /// Process a single increase_total object.
+  void _processSingleIncreaseTotal(
+    Map<String, dynamic> item,
+    Map<String, dynamic> statBonuses,
+    List<Map<String, dynamic>> damageResistanceGrants,
+    String featureId,
+  ) {
+    final stat = item['stat']?.toString().toLowerCase();
+    if (stat == null) return;
+
+    if (stat == 'immunity' || stat == 'weakness') {
+      // Damage resistance grant with potential level scaling
+      final damageType = item['type']?.toString();
+      final itemValue = item['value'];
+      if (damageType != null) {
+        damageResistanceGrants.add({
+          'stat': stat,
+          'type': damageType,
+          'value': itemValue,
+          'source': featureId,
+        });
+      }
+    } else {
+      // Regular stat increase
+      final itemValue = item['value'];
+      if (itemValue is int) {
+        final existingValue = statBonuses[stat];
+        if (existingValue is int) {
+          statBonuses[stat] = existingValue + itemValue;
+        } else {
+          statBonuses[stat] = itemValue;
+        }
+      } else if (itemValue is String) {
+        // Dynamic value like "level"
+        statBonuses['${stat}_dynamic'] = itemValue;
       }
     }
   }

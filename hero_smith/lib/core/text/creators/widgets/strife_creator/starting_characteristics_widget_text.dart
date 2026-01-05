@@ -26,4 +26,6 @@
   static const String levelBonusLabelSuffix = ' bonus';
   static const String selectCharacteristicPlaceholder = 'Select characteristic';
   static const String valueOutlinePlaceholder = '?';
+  static const String selectArrayTitle = 'Select Array';
+  static const String cancelButton = 'Cancel';
 }

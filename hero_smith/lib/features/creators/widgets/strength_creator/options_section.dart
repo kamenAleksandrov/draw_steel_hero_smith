@@ -614,6 +614,8 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
       title: OptionsSectionText.selectSkillTitle,
       options: options,
       selected: currentSkillId,
+      accentColor: CreatorTheme.skillsAccent,
+      icon: Icons.psychology_alt,
     );
 
     if (result == null) return;
@@ -847,7 +849,12 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required String title,
   required List<_SearchOption<T>> options,
   T? selected,
+  Color? accentColor,
+  IconData? icon,
 }) {
+  final color = accentColor ?? const Color(0xFF42A5F5); // Blue accent default
+  final dialogIcon = icon ?? Icons.search;
+  
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -871,6 +878,10 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
+            backgroundColor: const Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -880,22 +891,90 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          color.withAlpha(50),
+                          color.withAlpha(13),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade800,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: color.withAlpha(50),
+                            border: Border.all(
+                              color: color.withAlpha(100),
+                            ),
+                          ),
+                          child: Icon(dialogIcon, color: color, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: color,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: false,
-                      decoration: const InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
                         hintText: OptionsSectionText.searchHint,
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: color, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                       onChanged: (value) {
                         setState(() {
@@ -907,37 +986,99 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(24),
-                            child: Center(
-                                child: Text(OptionsSectionText.noMatchesFound)),
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  OptionsSectionText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
-                              return ListTile(
-                                title: Text(option.label),
-                                subtitle: option.subtitle != null
-                                    ? Text(option.subtitle!)
-                                    : null,
-                                trailing: isSelected
-                                    ? const Icon(Icons.check)
-                                    : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  _PickerSelection<T>(value: option.value),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? color.withAlpha(38)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: color.withAlpha(100),
+                                        )
+                                      : null,
+                                ),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? color
+                                          : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle, color: color, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
                       child: const Text(OptionsSectionText.cancelLabel),
                     ),
                   ),

@@ -5,7 +5,33 @@ import '../../../../core/models/class_data.dart';
 import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_characteristics_widget_text.dart';
+
+// Helper classes for picker
+class _SearchOption {
+  final String value;
+  final String label;
+  final CharacteristicArray? arrayData;
+
+  const _SearchOption({
+    required this.value,
+    required this.label,
+    this.arrayData,
+  });
+}
+
+class _PickerSelection {
+  final String? value;
+  final String? label;
+  final CharacteristicArray? arrayData;
+
+  const _PickerSelection({
+    this.value,
+    this.label,
+    this.arrayData,
+  });
+}
 
 class StartingCharacteristicsWidget extends StatefulWidget {
   const StartingCharacteristicsWidget({
@@ -429,46 +455,257 @@ class _StartingCharacteristicsWidgetState
       );
     }
 
-    return DropdownButtonFormField<CharacteristicArray?>(
-      value: _controller.selectedArray,
-      dropdownColor: const Color(0xFF2A2A2A),
-      style: const TextStyle(color: Colors.white, fontSize: 14),
-      decoration: InputDecoration(
-        labelText: StartingCharacteristicsWidgetText.arrayLabel,
-        labelStyle: TextStyle(color: Colors.grey.shade400),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+    final currentPreview = _controller.selectedArray != null
+        ? _controller.selectedArray!.values.map(_formatSigned).join(' / ')
+        : null;
+
+    return InkWell(
+      onTap: () => _showArrayPickerDialog(arrays),
+      borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: StartingCharacteristicsWidgetText.arrayLabel,
+          labelStyle: TextStyle(color: Colors.grey.shade400),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            borderSide: BorderSide(color: Colors.grey.shade700),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+            borderSide: BorderSide(color: _accent),
+          ),
+          filled: true,
+          fillColor: const Color(0xFF2A2A2A),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-          borderSide: BorderSide(color: Colors.grey.shade700),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              currentPreview ?? StartingCharacteristicsWidgetText.arrayPlaceholder,
+              style: TextStyle(
+                color: currentPreview != null
+                    ? Colors.white
+                    : Colors.grey.shade500,
+                fontSize: 14,
+              ),
+            ),
+            Icon(
+              Icons.arrow_drop_down,
+              color: Colors.grey.shade400,
+            ),
+          ],
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-          borderSide: BorderSide(color: _accent),
-        ),
-        filled: true,
-        fillColor: const Color(0xFF2A2A2A),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
-      items: [
-        const DropdownMenuItem<CharacteristicArray?>(
-          value: null,
-          child: Text(StartingCharacteristicsWidgetText.arrayPlaceholder),
-        ),
-        ...arrays.map((array) {
-          final preview = array.values.map(_formatSigned).join(' / ');
-          return DropdownMenuItem<CharacteristicArray?>(
-            value: array,
-            child: Text(preview),
-          );
-        }),
-      ],
-      onChanged: (array) {
-        _controller.updateArray(array);
-        widget.onArrayChanged(array);
+    );
+  }
+
+  Future<void> _showArrayPickerDialog(List<CharacteristicArray> arrays) async {
+    final options = [
+      const _SearchOption(
+        value: '',
+        label: StartingCharacteristicsWidgetText.arrayPlaceholder,
+        arrayData: null,
+      ),
+      ...arrays.map((array) {
+        final preview = array.values.map(_formatSigned).join(' / ');
+        return _SearchOption(
+          value: preview,
+          label: preview,
+          arrayData: array,
+        );
+      }),
+    ];
+
+    final currentValue = _controller.selectedArray != null
+        ? _controller.selectedArray!.values.map(_formatSigned).join(' / ')
+        : '';
+
+    final result = await showDialog<_PickerSelection>(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: NavigationTheme.cardBackgroundDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7,
+              maxWidth: 400,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with gradient
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        _accent.withValues(alpha: 0.2),
+                        _accent.withValues(alpha: 0.05),
+                      ],
+                    ),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: _accent.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: _accent.withValues(alpha: 0.2),
+                          border: Border.all(
+                            color: _accent.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.tune,
+                          color: _accent,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          StartingCharacteristicsWidgetText.selectArrayTitle,
+                          style: TextStyle(
+                            color: _accent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.grey.shade400,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
+                ),
+                // Options list
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: options.length,
+                    itemBuilder: (context, index) {
+                      final option = options[index];
+                      final isSelected = option.value == currentValue;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(
+                                context,
+                                _PickerSelection(
+                                  value: option.value,
+                                  label: option.label,
+                                  arrayData: option.arrayData,
+                                ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? _accent.withValues(alpha: 0.15)
+                                    : const Color(0xFF2A2A2A),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? _accent.withValues(alpha: 0.5)
+                                      : Colors.grey.shade700,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      option.label,
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? _accent
+                                            : Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: _accent,
+                                      size: 20,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Cancel button
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.grey.shade800),
+                    ),
+                  ),
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    child: Text(
+                      StartingCharacteristicsWidgetText.cancelButton,
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
+
+    if (result != null) {
+      _controller.updateArray(result.arrayData);
+      widget.onArrayChanged(result.arrayData);
+    }
   }
 
   Widget _buildTokenVisual(

@@ -10,6 +10,14 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 automatically applied must be as a divider instead as another box that boxes the box
 
 ancestries tab signature trait is too bright
+
+select language must add more info to the widget
+
+the color of treasures in the add treasure must better match.
+
+skills dialog picker in strenght uses old style 
+
+treasures need to have stacks
 ## medium
 
 most popouts should be wider
@@ -55,6 +63,8 @@ abilities should show all abilities that the hero gains including ones gained by
 treasures that are already in the gear of a hero should not be removed when i try to add them by the downtime project - i think its fixed
 
 Reload flicker came from the async providers returning to their loading states on every hero update. I removed the nested `AsyncValue.when` blocks and now we reuse the latest progression/context values via `valueOrNull`, so the gauge keeps showing stale data while Riverpod refreshes in the background. If both values are still null (first load) the section stays hidden just like before. This should eliminate the twitching when only the resource value changes.
+
+Switched the Strife Creator page from a sliver-based scroll (`ListView`) to a non-recycling scroll (`SingleChildScrollView` + `Column`) so Abilities/Skills/Perks don’t get collapsed/removed/relaid out when you scroll past them.
 
 strenght tab lack the option to save choises which leads to lost picks
 

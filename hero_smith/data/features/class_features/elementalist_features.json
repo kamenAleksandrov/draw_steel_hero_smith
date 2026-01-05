@@ -145,12 +145,26 @@
       {
         "subclass_name": "Earth",
         "name": "Disciple of Earth",
-        "description": "Your body is strengthened by your mind's connection to the element of permanence. You have a +6 bonus to Stamina, and you gain an additional +3 bonus to Stamina whenever you gain a level past 2nd."
+        "description": "Your body is strengthened by your mind's connection to the element of permanence. You have a +6 bonus to Stamina, and you gain an additional +3 bonus to Stamina whenever you gain a level past 2nd.",
+        "stamina_increase": 6,
+        "stamina_per_level_increase": 3
       },
       {
         "subclass_name": "Fire",
         "name": "Disciple of Fire",
-        "description": "Your connection to fire allows you to protect yourself from it, even as you rip away the protections of others. You have fire immunity equal to 5 plus your level. Additionally, fire damage you deal ignores a target's fire immunity.\n\nAt the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage."
+        "description": "Your connection to fire allows you to protect yourself from it, even as you rip away the protections of others. You have fire immunity equal to 5 plus your level. Additionally, fire damage you deal ignores a target's fire immunity.\n\nAt the start of a combat encounter, you gain a number of surges equal to your Victories. Whenever you spend a surge to deal extra damage, you can make that damage fire damage.",
+        "increase_total": [
+          {
+            "stat": "immunity",
+            "type": "fire",
+            "value": 5
+          },
+          {
+            "stat": "immunity",
+            "type": "fire",
+            "value": "level"
+          }
+        ]
       },
       {
         "subclass_name": "Void",

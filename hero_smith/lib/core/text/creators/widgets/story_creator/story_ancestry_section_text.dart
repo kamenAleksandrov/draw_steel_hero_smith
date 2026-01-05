@@ -5,6 +5,9 @@ class StoryAncestrySectionText {
   static const String errorPrefix = 'Error: ';
   static const String chooseAncestryLabel = 'Choose Ancestry';
   static const String chooseAncestryOption = 'Choose ancestry';
+  static const String selectAncestryTitle = 'Select Ancestry';
+  static const String searchHint = 'Search...';
+  static const String noMatchesFound = 'No matches found';
   static const String unknownAncestryName = 'Unknown';
   static const String errorLoadingTraitsPrefix =
       'Error loading ancestry traits: ';
@@ -21,6 +24,9 @@ class StoryAncestrySectionText {
   static const String immunityDropdownHint = 'Select immunity';
   static const String abilityDropdownLabel = 'Choose Ability';
   static const String abilityDropdownHint = 'Select ability';
+  static const String selectImmunityTitle = 'Select Immunity';
+  static const String selectAbilityTitle = 'Select Ability';
+  static const String cancelButton = 'Cancel';
   static const List<String> immunityTypes = [
     'acid',
     'cold',

@@ -35,4 +35,8 @@
       ' Includes subclass abilities.';
   static const String helperIncludePreviousLevels =
       ' Unchosen abilities from previous levels are also available.';
+  static const String selectAbilityTitle = 'Select Ability';
+  static const String searchHint = 'Search...';
+  static const String noMatchesFound = 'No matches found';
+  static const String cancelButton = 'Cancel';
 }

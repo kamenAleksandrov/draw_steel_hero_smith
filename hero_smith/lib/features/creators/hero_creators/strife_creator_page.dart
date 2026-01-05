@@ -1114,7 +1114,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
 
     return [
-      EquipmentAndModificationsWidget(slots: equipmentSlots),
+      EquipmentAndModificationsWidget(
+        key: const ValueKey('equipment_and_modifications'),
+        slots: equipmentSlots,
+      ),
     ];
   }
 
@@ -1875,16 +1878,20 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
 
     return Scaffold(
-      body: ListView(
-        children: [
+      body: SingleChildScrollView(
+        key: const PageStorageKey('strife_creator_scroll_view'),
+        child: Column(
+          children: [
           // Level Selector
           LevelSelectorWidget(
+            key: const ValueKey('level_selector'),
             selectedLevel: _selectedLevel,
             onLevelChanged: _handleLevelChanged,
           ),
 
           // Class Selector
           ClassSelectorWidget(
+            key: const ValueKey('class_selector'),
             availableClasses: _classDataService.getAllClasses(),
             selectedClass: _selectedClass,
             selectedLevel: _selectedLevel,
@@ -1893,6 +1900,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
           if (_selectedClass != null) ...[
             StartingCharacteristicsWidget(
+              key: const ValueKey('starting_characteristics'),
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedArray: _selectedArray,
@@ -1904,6 +1912,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               onLevelChoiceSelectionsChanged: _handleLevelChoiceSelectionsChanged,
             ),
             ChooseSubclassWidget(
+              key: const ValueKey('choose_subclass'),
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedSubclass: _selectedSubclass,
@@ -1921,6 +1930,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             ),
             ..._buildKitWidgets(),
             StartingAbilitiesWidget(
+              key: const ValueKey('starting_abilities'),
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedSubclassName: _selectedSubclass?.subclassName,
@@ -1930,6 +1940,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               onSelectionChanged: _handleAbilitySelectionsChanged,
             ),
             StartingSkillsWidget(
+              key: const ValueKey('starting_skills'),
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
               selectedSubclass: _selectedSubclass,
@@ -1938,6 +1949,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
               onSelectionChanged: _handleSkillSelectionsChanged,
             ),
             StartingPerksWidget(
+              key: const ValueKey('starting_perks'),
               heroId: widget.heroId,
               classData: _selectedClass!,
               selectedLevel: _selectedLevel,
@@ -1951,7 +1963,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
           // Bottom padding
           const SizedBox(height: 24),
-        ],
+          ],
+        ),
       ),
     );
   }

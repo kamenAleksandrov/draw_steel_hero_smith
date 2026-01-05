@@ -367,26 +367,44 @@ class HeroesPage extends ConsumerWidget {
       icon: Icons.person_add,
       title: 'No Heroes Yet',
       subtitle: 'Create your first hero to begin your Draw Steel adventure',
-      action: FilledButton.icon(
-        onPressed: () async {
-          final repo = ref.read(heroRepositoryProvider);
-          final id = await repo.createHero(name: 'New Hero');
-          if (!context.mounted) return;
-          await Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
-          );
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Create First Hero'),
-        style: FilledButton.styleFrom(
-          backgroundColor: accent,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      action: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FilledButton.icon(
+            onPressed: () async {
+              final repo = ref.read(heroRepositoryProvider);
+              final id = await repo.createHero(name: 'New Hero');
+              if (!context.mounted) return;
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Create First Hero'),
+            style: FilledButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 2,
+            ),
           ),
-          elevation: 2,
-        ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: () => _showImportDialog(context, ref),
+            icon: Icon(Icons.download, color: accent),
+            label: Text('Import Hero', style: TextStyle(color: accent)),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(color: accent),
+            ),
+          ),
+        ],
       ),
     );
   }

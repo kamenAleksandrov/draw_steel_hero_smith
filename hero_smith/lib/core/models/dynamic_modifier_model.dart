@@ -72,6 +72,23 @@ class DynamicModifier {
 
       case FormulaType.levelPlusOne:
         return context.level + 1;
+
+      case FormulaType.levelMinusOne:
+        return (context.level - 1).clamp(0, context.level);
+
+      case FormulaType.fixedTimesLevelMinusOne:
+        // formulaParam contains the per-level value (e.g., "3" for +3 stamina per level)
+        final perLevel = int.tryParse(formulaParam ?? '0') ?? 0;
+        final levelMinus1 = (context.level - 1).clamp(0, context.level);
+        return perLevel * levelMinus1;
+
+      case FormulaType.fixedTimesLevelMinusThreshold:
+        // formulaParam contains "value:threshold" (e.g., "3:2" means 3 * max(0, level - 2))
+        final parts = (formulaParam ?? '0:1').split(':');
+        final perLevel = int.tryParse(parts[0]) ?? 0;
+        final threshold = parts.length > 1 ? (int.tryParse(parts[1]) ?? 1) : 1;
+        final levelsAboveThreshold = (context.level - threshold).clamp(0, context.level);
+        return perLevel * levelsAboveThreshold;
     }
   }
 
@@ -141,11 +158,22 @@ enum FormulaType {
   /// Hero's level + 1
   levelPlusOne,
 
+  /// Hero's level - 1 (for stamina per level bonuses that start at level 2)
+  levelMinusOne,
+
   /// The highest of all five characteristics
   highestCharacteristic,
 
   /// A specific characteristic (name in formulaParam)
   characteristic,
+
+  /// Fixed value multiplied by (level - 1), used for stamina_per_level_increase
+  /// formulaParam contains the per-level value
+  fixedTimesLevelMinusOne,
+
+  /// Fixed value multiplied by max(0, level - threshold)
+  /// formulaParam contains "value:threshold" (e.g., "3:2" means 3 * max(0, level - 2))
+  fixedTimesLevelMinusThreshold,
 }
 
 /// How to apply the modifier to the base stat

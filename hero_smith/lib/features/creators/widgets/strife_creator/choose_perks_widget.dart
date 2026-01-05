@@ -56,15 +56,15 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
 
   bool _isExpanded = false;
 
-  @override
-  bool get wantKeepAlive => true;
-
   StartingPerkPlan? _plan;
   final Map<String, List<String?>> _selections = {};
 
   Map<String, String?> _lastSelectionsSnapshot = const {};
   Set<String> _lastSelectedIdsSnapshot = const {};
   int _selectionCallbackVersion = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -265,7 +265,7 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
     final languagesAsync = ref.watch(componentsByTypeProvider('language'));
     final skillsAsync = ref.watch(componentsByTypeProvider('skill'));
 

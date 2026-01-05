@@ -161,6 +161,8 @@ class StaticGrantConflictNotice extends StatelessWidget {
 /// - [autofocusSearch]: Whether to auto-focus the search field (default: false).
 /// - [showDisabledOptions]: Whether to show disabled options in the list (default: true).
 /// - [emptyOptionLabel]: Label for an empty/clear option (e.g., "None").
+/// - [accentColor]: Optional accent color (defaults to blue).
+/// - [icon]: Optional header icon (defaults to search icon).
 Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
   required BuildContext context,
   required String title,
@@ -170,7 +172,12 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
   bool autofocusSearch = false,
   bool showDisabledOptions = true,
   String? emptyOptionLabel,
+  Color? accentColor,
+  IconData? icon,
 }) {
+  final effectiveAccent = accentColor ?? const Color(0xFF42A5F5);
+  final effectiveIcon = icon ?? Icons.search;
+  
   return showDialog<SearchablePickerResult<T>>(
     context: context,
     builder: (dialogContext) {
@@ -215,10 +222,6 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
             filtered = filtered.where((o) => !o.isDisabled).toList();
           }
 
-          final theme = Theme.of(context);
-          final scheme = theme.colorScheme;
-          const accentColor = Color(0xFF42A5F5); // Blue accent
-
           return Dialog(
             backgroundColor: NavigationTheme.cardBackgroundDark,
             shape: RoundedRectangleBorder(
@@ -242,8 +245,8 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                       ),
                       gradient: LinearGradient(
                         colors: [
-                          accentColor.withValues(alpha: 0.2),
-                          accentColor.withValues(alpha: 0.05),
+                          effectiveAccent.withValues(alpha: 0.2),
+                          effectiveAccent.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -262,19 +265,19 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                           height: 40,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: accentColor.withValues(alpha: 0.2),
+                            color: effectiveAccent.withValues(alpha: 0.2),
                             border: Border.all(
-                              color: accentColor.withValues(alpha: 0.4),
+                              color: effectiveAccent.withValues(alpha: 0.4),
                             ),
                           ),
-                          child: const Icon(Icons.search, color: accentColor, size: 20),
+                          child: Icon(effectiveIcon, color: effectiveAccent, size: 20),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             title,
-                            style: const TextStyle(
-                              color: accentColor,
+                            style: TextStyle(
+                              color: effectiveAccent,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                             ),
@@ -311,7 +314,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: accentColor, width: 2),
+                          borderSide: BorderSide(color: effectiveAccent, width: 2),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -365,11 +368,11 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: isSelected
-                                        ? accentColor.withValues(alpha: 0.15)
+                                        ? effectiveAccent.withValues(alpha: 0.15)
                                         : Colors.transparent,
                                     border: isSelected
                                         ? Border.all(
-                                            color: accentColor.withValues(alpha: 0.4),
+                                            color: effectiveAccent.withValues(alpha: 0.4),
                                           )
                                         : null,
                                   ),
@@ -379,12 +382,12 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                       style: TextStyle(
                                         fontStyle: FontStyle.italic,
                                         color: isSelected
-                                            ? accentColor
+                                            ? effectiveAccent
                                             : Colors.grey.shade400,
                                       ),
                                     ),
                                     trailing: isSelected
-                                        ? const Icon(Icons.check_circle, color: accentColor, size: 22)
+                                        ? Icon(Icons.check_circle, color: effectiveAccent, size: 22)
                                         : null,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -435,11 +438,11 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: isSelected
-                                      ? accentColor.withValues(alpha: 0.15)
+                                      ? effectiveAccent.withValues(alpha: 0.15)
                                       : Colors.transparent,
                                   border: isSelected
                                       ? Border.all(
-                                          color: accentColor.withValues(alpha: 0.4),
+                                          color: effectiveAccent.withValues(alpha: 0.4),
                                         )
                                       : null,
                                 ),
@@ -448,7 +451,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                     option.label,
                                     style: TextStyle(
                                       color: isSelected
-                                          ? accentColor
+                                          ? effectiveAccent
                                           : Colors.grey.shade200,
                                       fontWeight: isSelected
                                           ? FontWeight.w600
@@ -465,7 +468,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                         )
                                       : null,
                                   trailing: isSelected
-                                      ? const Icon(Icons.check_circle, color: accentColor, size: 22)
+                                      ? Icon(Icons.check_circle, color: effectiveAccent, size: 22)
                                       : null,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),

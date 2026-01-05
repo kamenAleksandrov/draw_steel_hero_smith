@@ -4,7 +4,291 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_ancestry_section_text.dart';
+
+class _SearchOption<T> {
+  const _SearchOption({
+    required this.label,
+    required this.value,
+    this.subtitle,
+  });
+
+  final String label;
+  final T? value;
+  final String? subtitle;
+}
+
+class _PickerSelection<T> {
+  const _PickerSelection({required this.value});
+
+  final T? value;
+}
+
+Future<_PickerSelection<T>?> _showSearchablePicker<T>({
+  required BuildContext context,
+  required String title,
+  required List<_SearchOption<T>> options,
+  T? selected,
+  Color? accent,
+  IconData? icon,
+}) {
+  final accentColor = accent ?? CreatorTheme.ancestryAccent;
+  final effectiveIcon = icon ?? Icons.search;
+  
+  return showDialog<_PickerSelection<T>>(
+    context: context,
+    builder: (dialogContext) {
+      final controller = TextEditingController();
+      var query = '';
+
+      return StatefulBuilder(
+        builder: (context, setState) {
+          final normalizedQuery = query.trim().toLowerCase();
+          final List<_SearchOption<T>> filtered = normalizedQuery.isEmpty
+              ? options
+              : options
+                  .where(
+                    (option) =>
+                        option.label.toLowerCase().contains(normalizedQuery) ||
+                        (option.subtitle?.toLowerCase().contains(
+                              normalizedQuery,
+                            ) ??
+                            false),
+                  )
+                  .toList();
+
+          return Dialog(
+            backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.7,
+                maxWidth: 500,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.2),
+                          accentColor.withValues(alpha: 0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: accentColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accentColor.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Icon(effectiveIcon, color: accentColor, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: accentColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Search field
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: TextField(
+                      controller: controller,
+                      autofocus: false,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: StoryAncestrySectionText.searchHint,
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: accentColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          query = value;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: filtered.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  StoryAncestrySectionText.noMatchesFound,
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            itemCount: filtered.length,
+                            itemBuilder: (context, index) {
+                              final option = filtered[index];
+                              final isNoneOption = option.value == null;
+                              final isSelected = option.value == selected ||
+                                  (option.value == null && selected == null);
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isNoneOption
+                                      ? Colors.grey.shade800.withValues(alpha: 0.4)
+                                      : isSelected
+                                          ? accentColor.withValues(alpha: 0.15)
+                                          : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accentColor.withValues(alpha: 0.4),
+                                        )
+                                      : isNoneOption
+                                          ? Border.all(
+                                              color: Colors.grey.shade700,
+                                            )
+                                          : null,
+                                ),
+                                child: ListTile(
+                                  leading: isNoneOption
+                                      ? Icon(Icons.remove_circle_outline,
+                                          size: 20, color: Colors.grey.shade500)
+                                      : null,
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isNoneOption
+                                          ? Colors.grey.shade400
+                                          : isSelected
+                                              ? accentColor
+                                              : Colors.grey.shade200,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.normal,
+                                      fontStyle: isNoneOption
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle,
+                                          color: accentColor, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
 class StoryAncestrySection extends ConsumerWidget {
   const StoryAncestrySection({
@@ -89,33 +373,52 @@ class StoryAncestrySection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        DropdownButtonFormField<String?>(
-          value: selectedAncestryId,
-          dropdownColor: const Color(0xFF2A2A2A),
-          decoration: CreatorTheme.dropdownDecoration(
-            label: StoryAncestrySectionText.chooseAncestryLabel,
-            accent: _accent,
-          ),
-          style: const TextStyle(color: Colors.white),
-          items: [
-            DropdownMenuItem<String?>(
-              value: null,
-              child: Text(
-                StoryAncestrySectionText.chooseAncestryOption,
-                style: TextStyle(color: Colors.grey.shade400),
+        InkWell(
+          onTap: () async {
+            final options = [
+              _SearchOption<String?>(
+                label: StoryAncestrySectionText.chooseAncestryOption,
+                value: null,
               ),
-            ),
-            ...ancestries.map(
-              (a) => DropdownMenuItem<String?>(
-                value: a.id,
-                child: Text(a.name),
+              ...ancestries.map(
+                (a) => _SearchOption<String?>(
+                  label: a.name,
+                  value: a.id,
+                ),
               ),
-            ),
-          ],
-          onChanged: (value) {
-            onAncestryChanged(value);
+            ];
+            final result = await _showSearchablePicker<String?>(
+              context: context,
+              title: StoryAncestrySectionText.selectAncestryTitle,
+              options: options,
+              selected: selectedAncestryId,
+              accent: _accent,
+              icon: Icons.family_restroom,
+            );
+            if (result == null) return;
+            onAncestryChanged(result.value);
             onDirty();
           },
+          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+          child: InputDecorator(
+            decoration: CreatorTheme.dropdownDecoration(
+              label: StoryAncestrySectionText.chooseAncestryLabel,
+              accent: _accent,
+            ).copyWith(
+              suffixIcon: const Icon(Icons.search, color: Colors.white70),
+            ),
+            child: Text(
+              selectedAncestryId != null
+                  ? selectedAncestry.name
+                  : StoryAncestrySectionText.chooseAncestryOption,
+              style: TextStyle(
+                fontSize: 16,
+                color: selectedAncestryId != null
+                    ? Colors.white
+                    : Colors.grey.shade500,
+              ),
+            ),
+          ),
         ),
         if (selectedAncestryId != null) ...[
           const SizedBox(height: 16),
@@ -288,6 +591,7 @@ class _AncestryDetails extends StatelessWidget {
                   if (_signatureHasImmunityChoice(signature)) ...[
                     const SizedBox(height: 12),
                     _buildImmunityDropdown(
+                      context: context,
                       signatureId: 'signature_immunity',
                       currentValue: traitChoices['signature_immunity'],
                       excludedValues: const {}, // Signature has no exclusions
@@ -334,80 +638,123 @@ class _AncestryDetails extends StatelessWidget {
             final cost = (traitData['cost'] as int?) ?? 0;
             final selected = selectedTraitIds.contains(id);
             final canSelect = selected || remaining - cost >= 0;
+            final isUnavailable = !selected && !canSelect;
             
             // Check if this trait has choices
             final hasImmunityChoice = _traitHasImmunityChoice(traitData);
             final abilityOptions = _getAbilityOptions(traitData);
             
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: selected 
-                    ? _accent.withValues(alpha: 0.1)
-                    : const Color(0xFF2A2A2A),
-                border: Border.all(
+            return Opacity(
+              opacity: isUnavailable ? 0.45 : 1.0,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                   color: selected 
-                      ? _accent.withValues(alpha: 0.4)
-                      : Colors.grey.shade700,
+                      ? _accent.withValues(alpha: 0.1)
+                      : isUnavailable
+                          ? const Color(0xFF1A1A1A)
+                          : const Color(0xFF2A2A2A),
+                  border: Border.all(
+                    color: selected 
+                        ? _accent.withValues(alpha: 0.4)
+                        : isUnavailable
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade700,
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CheckboxListTile(
-                    value: selected,
-                    onChanged: canSelect
-                        ? (value) {
-                            if (value == null) return;
-                            onTraitSelectionChanged(id, value);
-                            onDirty();
-                          }
-                        : null,
-                    title: Text(
-                      name,
-                      style: TextStyle(
-                        color: selected ? _accent : Colors.grey.shade300,
-                        fontWeight: FontWeight.w600,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isUnavailable)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade800.withValues(alpha: 0.5),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(9)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.block, size: 14, color: Colors.grey.shade500),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Not enough points',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade500,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text(
-                        desc,
+                    CheckboxListTile(
+                      value: selected,
+                      onChanged: canSelect
+                          ? (value) {
+                              if (value == null) return;
+                              onTraitSelectionChanged(id, value);
+                              onDirty();
+                            }
+                          : null,
+                      title: Text(
+                        name,
                         style: TextStyle(
-                          color: Colors.grey.shade400,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    isThreeLine: true,
-                    secondary: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF5C6BC0).withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: const Color(0xFF5C6BC0).withValues(alpha: 0.4),
-                        ),
-                      ),
-                      child: Text(
-                        '$cost',
-                        style: const TextStyle(
-                          color: Color(0xFF7986CB),
+                          color: selected 
+                              ? _accent 
+                              : isUnavailable 
+                                  ? Colors.grey.shade600 
+                                  : Colors.grey.shade300,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text(
+                          desc,
+                          style: TextStyle(
+                            color: isUnavailable 
+                                ? Colors.grey.shade600 
+                                : Colors.grey.shade400,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      isThreeLine: true,
+                      secondary: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: isUnavailable
+                              ? Colors.red.withValues(alpha: 0.15)
+                              : const Color(0xFF5C6BC0).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isUnavailable
+                                ? Colors.red.withValues(alpha: 0.3)
+                                : const Color(0xFF5C6BC0).withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          '$cost',
+                          style: TextStyle(
+                            color: isUnavailable
+                                ? Colors.red.shade300
+                                : const Color(0xFF7986CB),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      checkColor: Colors.white,
+                      activeColor: _accent,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    checkColor: Colors.white,
-                    activeColor: _accent,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
                   // Show immunity dropdown for traits like Prismatic Scales
                   if (selected && hasImmunityChoice) ...[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(48, 0, 16, 12),
                       child: _buildImmunityDropdown(
+                        context: context,
                         signatureId: id,
                         currentValue: traitChoices[id],
                         // Exclude signature immunity and other trait immunity choices
@@ -426,6 +773,7 @@ class _AncestryDetails extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(48, 0, 16, 12),
                       child: _buildAbilityDropdown(
+                        context: context,
                         traitId: id,
                         options: abilityOptions,
                         currentValue: traitChoices[id],
@@ -439,6 +787,7 @@ class _AncestryDetails extends StatelessWidget {
                     ),
                   ],
                 ],
+              ),
               ),
             );
           }),
@@ -529,6 +878,7 @@ class _AncestryDetails extends StatelessWidget {
       StoryAncestrySectionText.immunityTypes;
 
   Widget _buildImmunityDropdown({
+    required BuildContext context,
     required String signatureId,
     required String? currentValue,
     required Set<String> excludedValues,
@@ -540,63 +890,128 @@ class _AncestryDetails extends StatelessWidget {
       return !excludedValues.contains(type);
     }).toList();
 
-    return DropdownButtonFormField<String>(
-      value: currentValue,
-      dropdownColor: const Color(0xFF2A2A2A),
-      decoration: CreatorTheme.dropdownDecoration(
-        label: StoryAncestrySectionText.immunityDropdownLabel,
-        accent: const Color(0xFFAB47BC),
+    const immunityAccent = Color(0xFFAB47BC);
+
+    return InkWell(
+      onTap: () async {
+        final options = [
+          _SearchOption<String?>(
+            label: StoryAncestrySectionText.immunityDropdownHint,
+            value: null,
+          ),
+          ...availableTypes.map(
+            (type) => _SearchOption<String?>(
+              label: type[0].toUpperCase() + type.substring(1),
+              value: type,
+            ),
+          ),
+        ];
+
+        final result = await _showSearchablePicker<String?>(
+          context: context,
+          title: StoryAncestrySectionText.selectImmunityTitle,
+          options: options,
+          selected: currentValue,
+          accent: immunityAccent,
+          icon: Icons.shield,
+        );
+
+        if (result != null) {
+          onChanged(result.value);
+        }
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: InputDecorator(
+        decoration: CreatorTheme.dropdownDecoration(
+          label: StoryAncestrySectionText.immunityDropdownLabel,
+          accent: immunityAccent,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              currentValue != null
+                  ? currentValue[0].toUpperCase() + currentValue.substring(1)
+                  : StoryAncestrySectionText.immunityDropdownHint,
+              style: TextStyle(
+                color: currentValue != null
+                    ? Colors.white
+                    : Colors.grey.shade500,
+                fontSize: 14,
+              ),
+            ),
+            Icon(
+              Icons.arrow_drop_down,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
       ),
-      style: const TextStyle(color: Colors.white),
-      items: [
-        DropdownMenuItem<String>(
-          value: null,
-          child: Text(
-            StoryAncestrySectionText.immunityDropdownHint,
-            style: TextStyle(color: Colors.grey.shade400),
-          ),
-        ),
-        ...availableTypes.map(
-          (type) => DropdownMenuItem<String>(
-            value: type,
-            child: Text(type[0].toUpperCase() + type.substring(1)),
-          ),
-        ),
-      ],
-      onChanged: onChanged,
     );
   }
 
   Widget _buildAbilityDropdown({
+    required BuildContext context,
     required String traitId,
     required List<String> options,
     required String? currentValue,
     required ValueChanged<String?> onChanged,
   }) {
-    return DropdownButtonFormField<String>(
-      value: currentValue,
-      dropdownColor: const Color(0xFF2A2A2A),
-      decoration: CreatorTheme.dropdownDecoration(
-        label: StoryAncestrySectionText.abilityDropdownLabel,
-        accent: const Color(0xFF26C6DA),
+    const abilityAccent = Color(0xFF26C6DA);
+
+    return InkWell(
+      onTap: () async {
+        final pickerOptions = [
+          _SearchOption<String?>(
+            label: StoryAncestrySectionText.abilityDropdownHint,
+            value: null,
+          ),
+          ...options.map(
+            (ability) => _SearchOption<String?>(
+              label: ability,
+              value: ability,
+            ),
+          ),
+        ];
+
+        final result = await _showSearchablePicker<String?>(
+          context: context,
+          title: StoryAncestrySectionText.selectAbilityTitle,
+          options: pickerOptions,
+          selected: currentValue,
+          accent: abilityAccent,
+          icon: Icons.auto_awesome,
+        );
+
+        if (result != null) {
+          onChanged(result.value);
+        }
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: InputDecorator(
+        decoration: CreatorTheme.dropdownDecoration(
+          label: StoryAncestrySectionText.abilityDropdownLabel,
+          accent: abilityAccent,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              currentValue ?? StoryAncestrySectionText.abilityDropdownHint,
+              style: TextStyle(
+                color: currentValue != null
+                    ? Colors.white
+                    : Colors.grey.shade500,
+                fontSize: 14,
+              ),
+            ),
+            Icon(
+              Icons.arrow_drop_down,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
       ),
-      style: const TextStyle(color: Colors.white),
-      items: [
-        DropdownMenuItem<String>(
-          value: null,
-          child: Text(
-            StoryAncestrySectionText.abilityDropdownHint,
-            style: TextStyle(color: Colors.grey.shade400),
-          ),
-        ),
-        ...options.map(
-          (ability) => DropdownMenuItem<String>(
-            value: ability,
-            child: Text(ability),
-          ),
-        ),
-      ],
-      onChanged: onChanged,
     );
   }
 }

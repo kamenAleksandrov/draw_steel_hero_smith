@@ -35,7 +35,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   required List<_SearchOption<T>> options,
   T? selected,
 }) {
-  const accent = CreatorTheme.classAccent;
+  const accent = CreatorTheme.skillsAccent;
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -60,6 +60,9 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
 
           return Dialog(
             backgroundColor: NavigationTheme.cardBackgroundDark,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -69,38 +72,64 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Header with gradient
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          accent.withValues(alpha: 0.3),
-                          accent.withValues(alpha: 0.1),
+                          accent.withValues(alpha: 0.2),
+                          accent.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
+                        top: Radius.circular(16),
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: accent.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
                       ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.psychology, color: accent, size: 24),
-                        const SizedBox(width: 12),
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: accent.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: accent.withValues(alpha: 0.4),
+                            ),
                           ),
+                          child: Icon(Icons.psychology, color: accent, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: accent,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close, color: Colors.grey.shade400),
+                          splashRadius: 20,
                         ),
                       ],
                     ),
                   ),
+                  // Search field
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: TextField(
                       controller: controller,
                       autofocus: false,
@@ -108,16 +137,24 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       decoration: InputDecoration(
                         hintText: ChooseSkillsWidgetText.searchHint,
                         hintStyle: TextStyle(color: Colors.grey.shade500),
-                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
                         fillColor: const Color(0xFF2A2A2A),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey.shade700),
+                        ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
-                          borderSide: BorderSide(color: accent),
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: accent, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
                       ),
                       onChanged: (value) {
@@ -127,59 +164,96 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       },
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Flexible(
                     child: filtered.isEmpty
                         ? Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Center(
-                              child: Text(
-                                ChooseSkillsWidgetText.noMatchesFound,
-                                style: TextStyle(color: Colors.grey.shade400),
-                              ),
+                            padding: const EdgeInsets.all(32),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: Colors.grey.shade600,
+                                  size: 48,
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  ChooseSkillsWidgetText.noMatchesFound,
+                                  style: TextStyle(color: Colors.grey.shade500),
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(
                             shrinkWrap: true,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
-                              return ListTile(
-                                title: Text(
-                                  option.label,
-                                  style: TextStyle(
-                                    color: isSelected ? accent : Colors.white,
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
+                              return Container(
+                                margin: const EdgeInsets.symmetric(vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isSelected
+                                      ? accent.withValues(alpha: 0.15)
+                                      : Colors.transparent,
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: accent.withValues(alpha: 0.4),
+                                        )
+                                      : null,
                                 ),
-                                subtitle: option.subtitle != null
-                                    ? Text(
-                                        option.subtitle!,
-                                        style: TextStyle(color: Colors.grey.shade400),
-                                      )
-                                    : null,
-                                trailing: isSelected
-                                    ? Icon(Icons.check, color: accent)
-                                    : null,
-                                tileColor: isSelected
-                                    ? accent.withValues(alpha: 0.15)
-                                    : null,
-                                onTap: () => Navigator.of(context).pop(
-                                  _PickerSelection<T>(value: option.value),
+                                child: ListTile(
+                                  title: Text(
+                                    option.label,
+                                    style: TextStyle(
+                                      color: isSelected ? accent : Colors.grey.shade200,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: option.subtitle != null
+                                      ? Text(
+                                          option.subtitle!,
+                                          style: TextStyle(
+                                            color: Colors.grey.shade500,
+                                            fontSize: 12,
+                                          ),
+                                        )
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(Icons.check_circle, color: accent, size: 22)
+                                      : null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  onTap: () => Navigator.of(context).pop(
+                                    _PickerSelection<T>(value: option.value),
+                                  ),
                                 ),
                               );
                             },
                           ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
+                  // Cancel button
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: Colors.grey.shade800),
+                      ),
+                    ),
                     child: TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text(
-                        ChooseSkillsWidgetText.cancelLabel,
-                        style: TextStyle(color: Colors.grey.shade400),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey.shade400,
                       ),
+                      child: const Text(ChooseSkillsWidgetText.cancelLabel),
                     ),
                   ),
                 ],
@@ -228,9 +302,6 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   final ListEquality<String> _listEquality = const ListEquality<String>();
 
   bool _isExpanded = false;
-
-  @override
-  bool get wantKeepAlive => true;
   bool _isLoading = true;
   String? _error;
 
@@ -246,6 +317,9 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   Set<String> _lastGrantedIdsSnapshot = const {};
   List<String> _lastGrantedNamesSnapshot = const [];
   int _selectionCallbackVersion = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -633,7 +707,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
     if (_isLoading) {
       return _buildContainer(
         child: Padding(

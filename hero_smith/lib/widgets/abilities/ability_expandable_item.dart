@@ -22,16 +22,11 @@ class AbilityExpandableItem extends StatefulWidget {
   State<AbilityExpandableItem> createState() => _AbilityExpandableItemState();
 }
 
-class _AbilityExpandableItemState extends State<AbilityExpandableItem>
-    with AutomaticKeepAliveClientMixin {
+class _AbilityExpandableItemState extends State<AbilityExpandableItem> {
   bool _expanded = false;
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final ability = AbilityData.fromComponent(widget.component);
 
     // Use action type color for border, fallback to grey if no action type

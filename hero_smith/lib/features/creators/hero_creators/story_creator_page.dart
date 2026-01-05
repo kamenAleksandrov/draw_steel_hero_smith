@@ -248,7 +248,7 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
 
     final payload = StoryCreatorSavePayload(
       heroId: widget.heroId,
-      name: _nameCtrl.text.trim(),
+      name: _nameCtrl.text.trim().isEmpty ? 'New Hero' : _nameCtrl.text.trim(),
       ancestryId: _selectedAncestryId,
       ancestryTraitIds: LinkedHashSet<String>.of(_selectedTraitIds),
       ancestryTraitChoices: Map<String, String>.from(_ancestryTraitChoices),

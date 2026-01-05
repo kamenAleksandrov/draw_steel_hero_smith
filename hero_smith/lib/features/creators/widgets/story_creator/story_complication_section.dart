@@ -199,31 +199,47 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                             itemCount: filtered.length,
                             itemBuilder: (context, index) {
                               final option = filtered[index];
+                              final isNoneOption = option.value == null;
                               final isSelected = option.value == selected ||
                                   (option.value == null && selected == null);
                               return Container(
                                 margin: const EdgeInsets.symmetric(vertical: 2),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: isSelected
-                                      ? accentColor.withValues(alpha: 0.15)
-                                      : Colors.transparent,
+                                  color: isNoneOption
+                                      ? Colors.grey.shade800.withValues(alpha: 0.4)
+                                      : isSelected
+                                          ? accentColor.withValues(alpha: 0.15)
+                                          : Colors.transparent,
                                   border: isSelected
                                       ? Border.all(
                                           color: accentColor.withValues(alpha: 0.4),
                                         )
-                                      : null,
+                                      : isNoneOption
+                                          ? Border.all(
+                                              color: Colors.grey.shade700,
+                                            )
+                                          : null,
                                 ),
                                 child: ListTile(
+                                  leading: isNoneOption
+                                      ? Icon(Icons.remove_circle_outline,
+                                          size: 20, color: Colors.grey.shade500)
+                                      : null,
                                   title: Text(
                                     option.label,
                                     style: TextStyle(
-                                      color: isSelected
-                                          ? accentColor
-                                          : Colors.grey.shade200,
+                                      color: isNoneOption
+                                          ? Colors.grey.shade400
+                                          : isSelected
+                                              ? accentColor
+                                              : Colors.grey.shade200,
                                       fontWeight: isSelected
                                           ? FontWeight.w600
                                           : FontWeight.normal,
+                                      fontStyle: isNoneOption
+                                          ? FontStyle.italic
+                                          : FontStyle.normal,
                                     ),
                                   ),
                                   subtitle: option.subtitle != null
