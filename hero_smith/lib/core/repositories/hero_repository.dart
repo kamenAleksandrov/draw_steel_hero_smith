@@ -346,6 +346,26 @@ class HeroRepository {
     );
   }
 
+  /// Save coin purse data to the database
+  Future<void> saveCoinPurse(
+    String heroId,
+    Map<String, dynamic> coinPurseJson,
+  ) async {
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: _k.coinPurse,
+      jsonMap: coinPurseJson,
+    );
+  }
+
+  /// Get coin purse data from the database
+  Future<Map<String, dynamic>?> getCoinPurse(String heroId) async {
+    final values = await _db.getHeroValues(heroId);
+    final value = values.firstWhereOrNull((v) => v.key == _k.coinPurse);
+    if (value?.jsonValue == null) return null;
+    return jsonDecode(value!.jsonValue!) as Map<String, dynamic>;
+  }
+
   Future<void> updateVitals(
     String heroId, {
     int? staminaCurrent,
@@ -2217,6 +2237,7 @@ class _HeroKeys {
   final String exp = 'score.exp';
   final String wealth = 'score.wealth';
   final String renown = 'score.renown';
+  final String coinPurse = 'score.coin_purse';
 
   final String might = 'stats.might';
   final String agility = 'stats.agility';

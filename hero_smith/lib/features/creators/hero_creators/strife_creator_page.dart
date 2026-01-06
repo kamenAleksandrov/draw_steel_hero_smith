@@ -1511,6 +1511,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
 
       // Use KitGrantsService to apply all kit grants - this also returns calculated bonuses
+      // Note: applyKitGrants already saves equipment entries to hero_entries
       final kitGrantsService = KitGrantsService(db);
       final equipmentBonuses = await kitGrantsService.applyKitGrants(
         heroId: widget.heroId,
@@ -1518,9 +1519,20 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         heroLevel: _selectedLevel,
       );
 
-      // Also save equipment IDs separately for other screens
-      updates
-          .add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
+      // Save equipment slot configuration for UI restoration
+      updates.add(db.setHeroConfig(
+        heroId: widget.heroId,
+        configKey: 'equipment.slots',
+        value: {'ids': slotOrderedEquipmentIds},
+      ));
+
+      // Update legacy kit field for backwards compatibility
+      final primaryKit = slotOrderedEquipmentIds.firstWhereOrNull(
+        (id) => id != null && id.isNotEmpty,
+      );
+      if (primaryKit != null) {
+        updates.add(repo.updateKit(widget.heroId, primaryKit));
+      }
 
       // Auto-favorite the selected equipment so it shows up in the gear page favorites
       final equipmentIdsToFavorite =
@@ -1710,7 +1722,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       print(
           '[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
 
-      // Always save abilities (even if empty, to clear old ones)
+      // Save ONLY user-selected abilities from strife creator UI (not from other sources)
+      // Abilities from kits, class features, ancestry, etc. are already saved by their respective services
+      // We only need to save abilities that the user explicitly chose in the strife UI slots
       updates.add(
         ref.read(appDatabaseProvider).setHeroComponentIds(
               heroId: widget.heroId,
@@ -1755,17 +1769,16 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // These are preserved across class changes
       final storySkillIds = _dbSavedSkillIds;
 
-      // Combine: story skills + new strife skills + class grants
-      // Note: subclass skill is tracked separately via hero_entries with sourceType='subclass'
-      final mergedSkillIds =
-          storySkillIds.union(strifeSkillIds).union(grantSkillIds);
-
-      // Save all skills (setHeroComponentIds replaces the 'skill' category for manual_choice source)
+      // Save ONLY user-selected skills from strife creator UI slots
+      // (not including story skills from career/culture or class feature grants)
+      // Story skills and grants are already saved by their respective services
+      final strifeOnlySkills = strifeSkillIds.difference(storySkillIds).difference(grantSkillIds);
+      
       updates.add(
         db.setHeroComponentIds(
           heroId: widget.heroId,
           category: 'skill',
-          componentIds: mergedSkillIds.toList(),
+          componentIds: strifeOnlySkills.toList(),
         ),
       );
 
@@ -1786,15 +1799,16 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // Get story-sourced perks (from ancestry, career, complication, culture)
       final storyPerkIds = _dbSavedPerkIds;
 
-      // Combine: story perks + new strife perks
-      final mergedPerkIds = storyPerkIds.union(strifePerkIds);
-
-      // Save all perks (setHeroComponentIds replaces the 'perk' category for manual_choice source)
+      // Save ONLY user-selected perks from strife creator UI
+      // (not including story perks from career/complication)
+      // Story perks are already saved by their respective services
+      final strifeOnlyPerks = strifePerkIds.difference(storyPerkIds);
+      
       updates.add(
         db.setHeroComponentIds(
           heroId: widget.heroId,
           category: 'perk',
-          componentIds: mergedPerkIds.toList(),
+          componentIds: strifeOnlyPerks.toList(),
         ),
       );
 

@@ -845,10 +845,20 @@ class HeroEntryNormalizer {
           .where((e) => e.isNotEmpty)
           .toList();
       if (ids.isEmpty) return;
-      await _entries.addEntriesFromSource(
+
+      // Remove legacy rows written with mismatched source metadata to avoid duplicates
+      await _entries.removeEntriesFromSource(
         heroId: heroId,
         sourceType: 'class',
         sourceId: 'strife_creator',
+        entryType: entryType,
+      );
+
+      // Rebuild strife selections using the same source metadata as the creator save path
+      await _entries.addEntriesFromSource(
+        heroId: heroId,
+        sourceType: 'manual_choice',
+        sourceId: entryType,
         entryType: entryType,
         entryIds: ids,
         gainedBy: 'choice',

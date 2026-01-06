@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import 'coin_purse_model.dart';
+import 'coin_purse_widget.dart';
 import 'hero_main_stats_models.dart';
 import 'hero_stamina_helpers.dart';
 
@@ -1245,3 +1247,172 @@ Future<int?> showDiceRollDialog(
     },
   );
 }
+
+/// Shows a dialog to edit wealth with coin purse.
+/// Returns a tuple of (modValue, coinPurse) or null if cancelled.
+Future<(int, CoinPurse)?> showWealthEditDialog(
+  BuildContext context, {
+  required int baseValue,
+  required int currentModValue,
+  required CoinPurse coinPurse,
+  required List<String> insights,
+  String sourcesDescription = '',
+}) async {
+  final controller = TextEditingController(text: currentModValue.toString());
+  CoinPurse localPurse = coinPurse;
+
+  try {
+    final result = await showDialog<(int, CoinPurse)?>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: NavigationTheme.cardBackgroundDark,
+              surfaceTintColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: Colors.grey.shade800),
+              ),
+              title: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withAlpha(40),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.paid, color: Colors.purple.shade400),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Modify Wealth',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: 520,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${HeroMainStatsViewText.modEditBasePrefix}$baseValue',
+                        style: TextStyle(color: Colors.grey.shade300),
+                      ),
+                      if (sourcesDescription.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withAlpha(30),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: Colors.purple.shade400.withAlpha(100)),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.auto_awesome,
+                                size: 16,
+                                color: Colors.purple.shade400,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  sourcesDescription,
+                                  style: TextStyle(
+                                    color: Colors.purple.shade300,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: controller,
+                        keyboardType:
+                            const TextInputType.numberWithOptions(signed: true),
+                        autofocus: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: HeroMainStatsViewText.modEditModificationLabel,
+                          labelStyle: TextStyle(color: Colors.grey.shade400),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade700),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade700),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.purple.shade400),
+                          ),
+                          helperText: HeroMainStatsViewText.modEditHelperText,
+                          helperStyle: TextStyle(color: Colors.grey.shade500),
+                        ),
+                        inputFormatters: numericFormatters(true, 4),
+                      ),
+                      if (insights.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ...insights.map((insight) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                insight,
+                                style: TextStyle(
+                                    color: Colors.grey.shade400, fontSize: 12),
+                              ),
+                            )),
+                      ],
+                      const SizedBox(height: 16),
+                      CoinPurseWidget(
+                        coinPurse: localPurse,
+                        onChanged: (newPurse) {
+                          setState(() {
+                            localPurse = newPurse;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade400),
+                  child: const Text(HeroMainStatsViewText.modEditCancelLabel),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final value = int.tryParse(controller.text);
+                    if (value != null) {
+                      Navigator.of(dialogContext).pop((value, localPurse));
+                    }
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.purple.shade600,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text(HeroMainStatsViewText.modEditSaveLabel),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    return result;
+  } finally {
+    await Future.delayed(const Duration(milliseconds: 50));
+    controller.dispose();
+  }
+}
+

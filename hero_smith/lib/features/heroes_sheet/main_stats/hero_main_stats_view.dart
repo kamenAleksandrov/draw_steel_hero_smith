@@ -19,6 +19,8 @@ import '../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 import '../downtime/hero_downtime_tracking_page.dart';
 import 'hero_main_stats_providers.dart';
+import 'coin_purse_model.dart';
+import 'coin_purse_widget.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
 import 'hero_main_stats_models.dart';
@@ -32,6 +34,7 @@ import 'combined_stats_card_widget.dart';
 import 'heroic_resource_section_widget.dart';
 import 'surges_section_widget.dart';
 import 'hero_tokens_section_widget.dart';
+import 'stat_edit_dialogs.dart';
 
 class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
@@ -3227,6 +3230,17 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
   }) async {
     if (!mounted) return;
 
+    // Special handling for wealth to show coin purse
+    if (modKey == HeroModKeys.wealth) {
+      await _showWealthEditDialog(
+        context,
+        baseValue: baseValue,
+        currentModValue: currentModValue,
+        insights: insights,
+      );
+      return;
+    }
+
     final color = accentColor ?? Colors.teal;
     final dialogIcon = icon ?? Icons.tune;
     final controller = TextEditingController(text: currentModValue.toString());
@@ -4381,6 +4395,44 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       }
     }
     return parts.join('; ');
+  }
+
+  /// Shows the wealth edit dialog with coin purse
+  Future<void> _showWealthEditDialog(
+    BuildContext context, {
+    required int baseValue,
+    required int currentModValue,
+    required List<String> insights,
+  }) async {
+    if (!mounted) return;
+
+    final repo = ref.read(heroRepositoryProvider);
+    final coinPurseJson = await repo.getCoinPurse(widget.heroId);
+    final coinPurse = CoinPurse.fromJson(coinPurseJson);
+
+    final sourcesDesc = _getModSourceDescription(
+      HeroModKeys.wealth,
+      _ancestryMods,
+      includeEquipment: false,
+    );
+
+    final result = await showWealthEditDialog(
+      context,
+      baseValue: baseValue,
+      currentModValue: currentModValue,
+      coinPurse: coinPurse,
+      insights: insights,
+      sourcesDescription: sourcesDesc,
+    );
+
+    if (result != null && mounted) {
+      final (modValue, newPurse) = result;
+      await repo.saveCoinPurse(widget.heroId, newPurse.toJson());
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        await _persistModification(HeroModKeys.wealth, modValue.toString());
+      });
+    }
   }
 
   /// Builds a widget showing the modification value.
