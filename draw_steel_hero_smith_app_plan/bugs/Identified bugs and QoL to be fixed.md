@@ -9,11 +9,7 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 
 automatically applied must be as a divider instead as another box that boxes the box
 
-the color of treasures in the add treasure must better match.
-
 skills dialog picker in strenght uses old style 
-
-treasures need to have stacks
 ## medium
 
 most popouts should be wider
@@ -26,8 +22,6 @@ titles must grant their abilities
 
 must add treasure abilities
 
-there should be a way to show what condition immunities does a hero have
-
 modification popuots should not have an already set value of 0
 ## hard
 
@@ -35,7 +29,7 @@ the storing of equasion and calculation must be applied accross the board. not j
 
 there are false save and duplication flags on the strife page
 
-the gear page should look through every item in the heros inventory  and check the grants and their conditions to summ them all and add to the hero stats
+the gear page should look through every item in the heros inventory and check the grants and their conditions to summ them all and add to the hero stats
 
 when picking a class and chosing the same class as the current the choises should not reset.
 
@@ -46,10 +40,6 @@ update abilities to be dynamic based on the hero stats
 add export hero as a file
 
 perks form career give false duplication errors on skills
-
-complication widget needs spaceing fix
-
-complication item grants must use the new widgets
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel

@@ -21,6 +21,7 @@ enum NumericField {
   recoveriesCurrent,
   heroicResourceCurrent,
   surgesCurrent,
+  heroTokensCurrent,
 }
 
 /// Extension to get human-readable labels for numeric fields.
@@ -43,6 +44,8 @@ extension NumericFieldLabel on NumericField {
         return HeroMainStatsModelsText.numericFieldHeroicResourceLabel;
       case NumericField.surgesCurrent:
         return HeroMainStatsModelsText.numericFieldSurgesLabel;
+      case NumericField.heroTokensCurrent:
+        return HeroMainStatsModelsText.numericFieldHeroTokensLabel;
     }
   }
 }

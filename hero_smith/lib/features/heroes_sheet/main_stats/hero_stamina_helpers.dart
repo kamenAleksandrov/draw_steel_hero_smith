@@ -60,6 +60,8 @@ int getNumberValueFromStats(HeroMainStats stats, NumericField field) {
       return stats.heroicResourceCurrent;
     case NumericField.surgesCurrent:
       return stats.surgesCurrent;
+    case NumericField.heroTokensCurrent:
+      return stats.heroTokensCurrent;
   }
 }
 

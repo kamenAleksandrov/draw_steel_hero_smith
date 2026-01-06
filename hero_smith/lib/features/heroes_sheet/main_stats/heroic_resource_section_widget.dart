@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/resource_generation_service.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
+import '../../../core/theme/ability_colors.dart';
 import 'hero_main_stats_models.dart';
 
 /// Callback for editing a number field.
@@ -80,6 +81,10 @@ class HeroicResourceSectionWidget extends StatelessWidget {
             details?.calculateMinValue(reasonScore: stats.reasonTotal) ??
                 minValue;
         final canBeNegative = details?.canBeNegative ?? false;
+        
+        // Get the resource-specific color
+        final resourceColor = AbilityColors.getHeroicResourceColor(resourceName);
+        final resourceLightColor = AbilityColors.getHeroicResourceLightColor(resourceName);
 
         return Padding(
           padding: const EdgeInsets.only(left: 12),
@@ -89,13 +94,14 @@ class HeroicResourceSectionWidget extends StatelessWidget {
               Row(
                 children: [
                   Icon(Icons.bolt_outlined,
-                      size: 14, color: theme.colorScheme.primary),
+                      size: 14, color: resourceColor),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       resourceName,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        color: resourceColor,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -109,7 +115,7 @@ class HeroicResourceSectionWidget extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(2),
                         child: Icon(Icons.info_outline,
-                            size: 14, color: theme.colorScheme.primary),
+                            size: 14, color: resourceColor),
                       ),
                     ),
                 ],
@@ -129,7 +135,7 @@ class HeroicResourceSectionWidget extends StatelessWidget {
                         value.toString(),
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: value < 0 ? Colors.red : null,
+                          color: value < 0 ? Colors.red : resourceColor,
                         ),
                       ),
                       if (canBeNegative) ...[
@@ -146,9 +152,9 @@ class HeroicResourceSectionWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              _buildResourceGenerationButtons(context, stats),
+              _buildResourceGenerationButtons(context, stats, resourceColor),
               _buildHeroicResourceSpendButtons(
-                  context, stats, effectiveMinValue),
+                  context, stats, effectiveMinValue, resourceColor),
               const SizedBox(height: 6),
             ],
           ),
@@ -159,7 +165,7 @@ class HeroicResourceSectionWidget extends StatelessWidget {
 
   /// Builds the resource generation buttons based on class
   Widget _buildResourceGenerationButtons(
-      BuildContext context, HeroMainStats stats) {
+      BuildContext context, HeroMainStats stats, Color resourceColor) {
     return FutureBuilder<List<GenerationPreset>>(
       future:
           _getResourceGenerationOptions(stats.classId, heroLevel: stats.level),
@@ -197,14 +203,14 @@ class HeroicResourceSectionWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.5),
+                    color: resourceColor.withOpacity(0.5),
                   ),
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: resourceColor.withOpacity(0.1),
                 ),
                 child: Text(
                   label,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.primary,
+                    color: resourceColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -224,7 +230,7 @@ class HeroicResourceSectionWidget extends StatelessWidget {
   }
 
   Widget _buildHeroicResourceSpendButtons(
-      BuildContext context, HeroMainStats stats, int effectiveMinValue) {
+      BuildContext context, HeroMainStats stats, int effectiveMinValue, Color resourceColor) {
     const amounts = [1, 3, 5, 7, 9, 11];
     return Wrap(
       spacing: 4,
@@ -238,7 +244,7 @@ class HeroicResourceSectionWidget extends StatelessWidget {
           label: '-$amount',
           amount: amount,
           enabled: enabled,
-          color: Theme.of(context).colorScheme.primary,
+          color: resourceColor,
         );
       }).toList(),
     );
@@ -277,6 +283,8 @@ class HeroicResourceSectionWidget extends StatelessWidget {
   Widget _buildResourceDisplay(
       BuildContext context, HeroMainStats stats, String name, int value) {
     final theme = Theme.of(context);
+    final resourceColor = AbilityColors.getHeroicResourceColor(name);
+    
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: Column(
@@ -285,12 +293,13 @@ class HeroicResourceSectionWidget extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.bolt_outlined,
-                  size: 14, color: theme.colorScheme.primary),
+                  size: 14, color: resourceColor),
               const SizedBox(width: 4),
               Text(
                 name,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  color: resourceColor,
                 ),
               ),
             ],
@@ -306,14 +315,15 @@ class HeroicResourceSectionWidget extends StatelessWidget {
                 value.toString(),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: resourceColor,
                 ),
               ),
             ),
           ),
           const SizedBox(height: 4),
-          _buildHeroicResourceSpendButtons(context, stats, minValue),
+          _buildHeroicResourceSpendButtons(context, stats, minValue, resourceColor),
           const SizedBox(height: 6),
-          _buildResourceGenerationButtons(context, stats),
+          _buildResourceGenerationButtons(context, stats, resourceColor),
         ],
       ),
     );

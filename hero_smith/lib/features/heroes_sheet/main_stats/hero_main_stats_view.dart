@@ -12,6 +12,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/resource_generation_service.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
+import '../../../core/theme/ability_colors.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../widgets/psi boosts/psi_boosts.dart';
@@ -30,6 +31,7 @@ import 'respite_downtime_row_widget.dart';
 import 'combined_stats_card_widget.dart';
 import 'heroic_resource_section_widget.dart';
 import 'surges_section_widget.dart';
+import 'hero_tokens_section_widget.dart';
 
 class HeroMainStatsView extends ConsumerStatefulWidget {
   const HeroMainStatsView({
@@ -192,6 +194,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     setNumber(_NumericField.recoveriesCurrent, stats.recoveriesCurrent);
     setNumber(_NumericField.heroicResourceCurrent, stats.heroicResourceCurrent);
     setNumber(_NumericField.surgesCurrent, stats.surgesCurrent);
+    setNumber(_NumericField.heroTokensCurrent, stats.heroTokensCurrent);
 
     for (final key in _modKeys) {
       setMod(key, stats.userModValue(key));
@@ -257,6 +260,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
       case _NumericField.surgesCurrent:
         value = value.clamp(0, 999);
         break;
+      case _NumericField.heroTokensCurrent:
+        value = value.clamp(0, 99);
+        break;
     }
 
     if (stats != null && _numberValueFromStats(stats, field) == value) {
@@ -288,6 +294,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           break;
         case _NumericField.surgesCurrent:
           await repo.updateVitals(widget.heroId, surgesCurrent: value);
+          break;
+        case _NumericField.heroTokensCurrent:
+          await repo.updateVitals(widget.heroId, heroTokensCurrent: value);
           break;
       }
     } catch (err) {
@@ -812,14 +821,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
             // Recoveries row
             Row(
               children: [
-                Icon(Icons.local_hospital_outlined,
-                    size: 16, color: theme.colorScheme.tertiary),
+                const Icon(Icons.local_hospital_outlined,
+                    size: 16, color: AbilityColors.recovery),
                 const SizedBox(width: 6),
                 Text(
                   HeroMainStatsViewText.recoveriesSectionTitle,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.tertiary,
+                    color: AbilityColors.recovery,
                   ),
                 ),
               ],
@@ -873,6 +882,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   style: FilledButton.styleFrom(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    backgroundColor: const Color.fromARGB(255, 37, 42, 40),
+                    foregroundColor: AbilityColors.recoveryDark,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -887,6 +898,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   ),
                 ),
               ],
+            ),
+            const Divider(height: 20),
+            // Hero Tokens section
+            HeroTokensSectionWidget(
+              stats: stats,
+              onEditNumberField: (label, field) =>
+                  _showNumberEditDialog(context, label, field),
+              onGainHeroToken: _gainHeroToken,
+              onSpendForSurges: _spendHeroTokenForSurges,
+              onSpendForStamina: _spendHeroTokensForStamina,
+              onSpendHeroTokens: _spendHeroTokens,
+              onShowInfo: (ctx) => showHeroTokensInfoDialog(ctx),
             ),
             const Divider(height: 20),
             // Heroic Resource and Surges row
@@ -917,6 +940,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         _showNumberEditDialog(context, label, field),
                     onSpendSurges: _spendSurges,
                     onAddSurges: _addSurges,
+                    onShowInfo: (ctx) => showSurgesInfoDialog(ctx),
                   ),
                 ),
               ],
@@ -1678,6 +1702,61 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final current = stats.surgesCurrent;
     final newValue = current + amount;
     await _persistNumberField(_NumericField.surgesCurrent, newValue.toString());
+  }
+
+  Future<void> _gainHeroToken(int amount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+
+    final current = stats.heroTokensCurrent;
+    final newValue = (current + amount).clamp(0, 99);
+    await _persistNumberField(_NumericField.heroTokensCurrent, newValue.toString());
+  }
+
+  Future<void> _spendHeroTokenForSurges(int tokenCost, int surgesGained) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+
+    final currentTokens = stats.heroTokensCurrent;
+    if (currentTokens < tokenCost) return;
+
+    // Deduct tokens
+    final newTokens = currentTokens - tokenCost;
+    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
+
+    // Add surges
+    final currentSurges = stats.surgesCurrent;
+    final newSurges = currentSurges + surgesGained;
+    await _persistNumberField(_NumericField.surgesCurrent, newSurges.toString());
+  }
+
+  Future<void> _spendHeroTokensForStamina(int tokenCost, int staminaAmount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+
+    final currentTokens = stats.heroTokensCurrent;
+    if (currentTokens < tokenCost) return;
+
+    // Deduct tokens
+    final newTokens = currentTokens - tokenCost;
+    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
+
+    // Add stamina up to max
+    final currentStamina = stats.staminaCurrent;
+    final maxStamina = stats.staminaMaxEffective;
+    final newStamina = (currentStamina + staminaAmount).clamp(0, maxStamina);
+    await _persistNumberField(_NumericField.staminaCurrent, newStamina.toString());
+  }
+
+  Future<void> _spendHeroTokens(int amount) async {
+    final stats = _latestStats;
+    if (stats == null) return;
+
+    final currentTokens = stats.heroTokensCurrent;
+    if (currentTokens < amount) return;
+
+    final newTokens = currentTokens - amount;
+    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
   }
 
   Future<void> _handleEndOfCombat(HeroMainStats stats) async {

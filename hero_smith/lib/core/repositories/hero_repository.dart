@@ -104,6 +104,8 @@ class HeroMainStats {
 
   final int surgesCurrent;
 
+  final int heroTokensCurrent;
+
   final String? classId;
   final String? heroicResourceName;
   final int heroicResourceCurrent;
@@ -138,6 +140,7 @@ class HeroMainStats {
     required this.recoveriesMaxBase,
     this.recoveryValueBonus = 0,
     required this.surgesCurrent,
+    this.heroTokensCurrent = 0,
     required this.classId,
     required this.heroicResourceName,
     required this.heroicResourceCurrent,
@@ -354,6 +357,7 @@ class HeroRepository {
     int? recoveriesMax,
     int? surgesCurrent,
     int? heroicResourceCurrent,
+    int? heroTokensCurrent,
   }) async {
     Future<void> setInt(String key, int? value) async {
       if (value == null) return;
@@ -370,6 +374,7 @@ class HeroRepository {
       setInt(_k.recoveriesMax, recoveriesMax),
       setInt(_k.surgesCurrent, surgesCurrent),
       setInt(_k.heroicResourceCurrent, heroicResourceCurrent),
+      setInt(_k.heroTokensCurrent, heroTokensCurrent),
     ]);
   }
 
@@ -2236,6 +2241,8 @@ class _HeroKeys {
   final String heroicResourceCurrent = 'heroic.current';
 
   final String surgesCurrent = 'surges.current';
+
+  final String heroTokensCurrent = 'heroTokens.current';
 
   final String immunities = 'resistances.immunities';
   final String weaknesses = 'resistances.weaknesses';

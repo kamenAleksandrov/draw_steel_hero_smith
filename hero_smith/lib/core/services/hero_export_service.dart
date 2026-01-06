@@ -515,6 +515,9 @@ class HeroExportService {
         case 'surges.current':
           if (v.value != 0) parts.add('s${v.value}');
           break;
+        case 'heroTokens.current':
+          if (v.value != 0) parts.add('k${v.value}');
+          break;
       }
     }
 
@@ -888,6 +891,9 @@ class HeroExportService {
         case 's':
           key = 'surges.current';
           break;
+        case 'k':
+          key = 'heroTokens.current';
+          break;
       }
 
       if (key != null) {
@@ -933,6 +939,12 @@ class HeroExportService {
           break;
         case 'e':
           key = 'heroic.current';
+          break;
+        case 's':
+          key = 'surges.current';
+          break;
+        case 'k':
+          key = 'heroTokens.current';
           break;
       }
 

@@ -9,6 +9,7 @@ class HeroMainStatsModelsText {
   static const String numericFieldRecoveriesLabel = 'Recoveries';
   static const String numericFieldHeroicResourceLabel = 'Heroic resource';
   static const String numericFieldSurgesLabel = 'Surges';
+  static const String numericFieldHeroTokensLabel = 'Hero Tokens';
 
   static const String staminaStateHealthy = 'Healthy';
   static const String staminaStateWinded = 'Winded';

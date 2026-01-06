@@ -132,6 +132,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
     recoveriesMaxBase: readInt('recoveries.max'),
     recoveryValueBonus: readInt('complication.recovery_bonus'),
     surgesCurrent: readInt('surges.current'),
+    heroTokensCurrent: readInt('heroTokens.current'),
     classId: classId,
     heroicResourceName: heroicResourceName,
     heroicResourceCurrent: readInt('heroic.current'),

@@ -82,17 +82,48 @@ class AbilityColors {
   static const Color persistentKeyword = Color(0xFFAB47BC);
 
   // === HEROIC RESOURCE COLORS ===
-  // Class-specific resources with distinct identities
+  // Class-specific resources with modern, vibrant identities
+  // Each resource has a main color and a light variant for backgrounds
   
-  static const Color wrath = Color(0xFFB71C1C);        // Fury - Dark Red
-  static const Color piety = Color(0xFFFFB300);        // Censor - Gold
-  static const Color essence = Color(0xFF6A1B9A);      // Elementalist - Deep Purple
-  static const Color ferocity = Color(0xFFFF6F00);     // Barbarian - Orange
-  static const Color discipline = Color(0xFF1565C0);   // Tactician - Blue
-  static const Color insight = Color(0xFF00695C);      // Psion - Teal
-  static const Color focus = Color(0xFF7B1FA2);        // Conduit - Purple
-  static const Color clarity = Color(0xFF455A64);      // Monk - Blue Grey
-  static const Color drama = Color(0xFFE91E63);        // Troubadour - Pink
+  /// Wrath - Fury's burning rage (Modern Crimson)
+  static const Color wrath = Color(0xFFDC2626);
+  static const Color wrathLight = Color(0xFFFEE2E2);
+  
+  /// Piety - Censor's divine conviction (Rich Gold)
+  static const Color piety = Color(0xFFF59E0B);
+  static const Color pietyLight = Color(0xFFFEF3C7);
+  
+  /// Essence - Elementalist's primal power (Vivid Purple)
+  static const Color essence = Color(0xFF8B5CF6);
+  static const Color essenceLight = Color(0xFFEDE9FE);
+  
+  /// Ferocity - Barbarian's wild fury (Vibrant Orange)
+  static const Color ferocity = Color(0xFFF97316);
+  static const Color ferocityLight = Color(0xFFFFEDD5);
+  
+  /// Discipline - Tactician's strategic control (Modern Blue)
+  static const Color discipline = Color(0xFF3B82F6);
+  static const Color disciplineLight = Color(0xFFDBEAFE);
+  
+  /// Insight - Null's mental clarity (Ocean Teal)
+  static const Color insight = Color(0xFF14B8A6);
+  static const Color insightLight = Color(0xFFCCFBF1);
+  
+  /// Focus - Conduit's channeled energy (Electric Violet)
+  static const Color focus = Color(0xFFA855F7);
+  static const Color focusLight = Color(0xFFF3E8FF);
+  
+  /// Clarity - Talent's psionic focus (Slate Blue)
+  static const Color clarity = Color(0xFF64748B);
+  static const Color clarityLight = Color(0xFFF1F5F9);
+  
+  /// Drama - Troubadour's theatrical flair (Hot Pink)
+  static const Color drama = Color(0xFFEC4899);
+  static const Color dramaLight = Color(0xFFFCE7F3);
+  
+  /// Shadow - Shadow's darkness (Deep Indigo)
+  static const Color shadow = Color(0xFF4F46E5);
+  static const Color shadowLight = Color(0xFFE0E7FF);
 
   // === DAMAGE TYPE COLORS ===
   // Enhanced elemental colors with better contrast
@@ -106,6 +137,19 @@ class AbilityColors {
   static const Color holy = Color(0xFFFFB300);         // Divine Gold
   static const Color corruption = Color(0xFF6A1B9A);   // Dark Purple
   static const Color psychic = Color(0xFFE91E63);      // Mind Pink
+
+  // === COMBAT RESOURCE COLORS ===
+  // Vital combat resources with energetic, thematic colors
+  
+  /// Surges - Explosive battle power (Electric Amber)
+  static const Color surge = Color(0xFFF59E0B);
+  static const Color surgeLight = Color(0xFFFEF3C7);
+  static const Color surgeDark = Color(0xFFD97706);
+  
+  /// Recoveries - Life-saving healing (Vibrant Emerald)
+  static const Color recovery = Color(0xFF10B981);
+  static const Color recoveryLight = Color(0xFFD1FAE5);
+  static const Color recoveryDark = Color(0xFF059669);
 
   // === UTILITY METHODS ===
   
@@ -242,11 +286,35 @@ class AbilityColors {
       case 'focus': return focus;
       case 'clarity': return clarity;
       case 'drama': return drama;
+      case 'shadow': return shadow;
       case 'heroic_resource':
       case 'heroic resource':
-        return const Color(0xFF5E35B1); // Default heroic purple
+        return const Color(0xFF7C3AED); // Default heroic purple
       default:
-        return const Color(0xFF546E7A); // Neutral fallback
+        return const Color(0xFF64748B); // Modern neutral slate
+    }
+  }
+  
+  /// Get heroic resource light color for backgrounds
+  static Color getHeroicResourceLightColor(String resource) {
+    final normalized = resource.toLowerCase().trim();
+    
+    switch (normalized) {
+      case 'wrath': return wrathLight;
+      case 'piety': return pietyLight;
+      case 'essence': return essenceLight;
+      case 'ferocity': return ferocityLight;
+      case 'discipline': return disciplineLight;
+      case 'insight': return insightLight;
+      case 'focus': return focusLight;
+      case 'clarity': return clarityLight;
+      case 'drama': return dramaLight;
+      case 'shadow': return shadowLight;
+      case 'heroic_resource':
+      case 'heroic resource':
+        return const Color(0xFFEDE9FE); // Default heroic purple light
+      default:
+        return const Color(0xFFF1F5F9); // Modern neutral slate light
     }
   }
   
