@@ -21,11 +21,11 @@ import '../heroes_sheet/hero_sheet_page.dart';
 
 class HeroesPage extends ConsumerWidget {
   const HeroesPage({super.key});
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summariesAsync = ref.watch(heroSummariesProvider);
-    
+
     return Scaffold(
       backgroundColor: NavigationTheme.navBarBackground,
       body: summariesAsync.when(
@@ -47,7 +47,7 @@ class HeroesPage extends ConsumerWidget {
         SliverToBoxAdapter(
           child: _buildHeader(context),
         ),
-        
+
         // Create hero button
         SliverToBoxAdapter(
           child: _buildCreateHeroSection(context, ref),
@@ -69,7 +69,7 @@ class HeroesPage extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context) {
     final accent = NavigationTheme.heroesColor;
-    
+
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -96,7 +96,8 @@ class HeroesPage extends ConsumerWidget {
                 end: Alignment.bottomRight,
               ),
               border: Border(
-                bottom: BorderSide(color: accent.withValues(alpha: 0.3), width: 1),
+                bottom:
+                    BorderSide(color: accent.withValues(alpha: 0.3), width: 1),
               ),
             ),
             padding: const EdgeInsets.all(20),
@@ -142,7 +143,7 @@ class HeroesPage extends ConsumerWidget {
 
   Widget _buildCreateHeroSection(BuildContext context, WidgetRef ref) {
     final accent = NavigationTheme.heroesColor;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
@@ -156,7 +157,8 @@ class HeroesPage extends ConsumerWidget {
                     final id = await repo.createHero(name: 'New Hero');
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),
+                      MaterialPageRoute(
+                          builder: (_) => HeroCreatorPage(heroId: id)),
                     );
                   },
                   icon: const Icon(Icons.add),
@@ -164,7 +166,8 @@ class HeroesPage extends ConsumerWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: accent,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -178,7 +181,8 @@ class HeroesPage extends ConsumerWidget {
                 icon: Icon(Icons.download, color: accent),
                 label: Text('Import', style: TextStyle(color: accent)),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -196,7 +200,7 @@ class HeroesPage extends ConsumerWidget {
   Widget _buildHeroCard(BuildContext context, WidgetRef ref, dynamic hero) {
     final accent = NavigationTheme.heroesColor;
     final chips = <Widget>[];
-    
+
     // Add chips only if values exist and are not empty
     if (hero.className != null && hero.className!.isNotEmpty) {
       final resourceColor = hero.heroicResourceName != null
@@ -205,13 +209,15 @@ class HeroesPage extends ConsumerWidget {
       chips.add(_buildChip(context, hero.className!, resourceColor));
     }
     if (hero.ancestryName != null && hero.ancestryName!.isNotEmpty) {
-      chips.add(_buildChip(context, hero.ancestryName!, HeroTheme.ancestryStep));
+      chips
+          .add(_buildChip(context, hero.ancestryName!, HeroTheme.ancestryStep));
     }
     if (hero.careerName != null && hero.careerName!.isNotEmpty) {
       chips.add(_buildChip(context, hero.careerName!, HeroTheme.careerStep));
     }
     if (hero.complicationName != null && hero.complicationName!.isNotEmpty) {
-      chips.add(_buildChip(context, hero.complicationName!, const Color(0xFFE53935)));
+      chips.add(
+          _buildChip(context, hero.complicationName!, const Color(0xFFE53935)));
     }
 
     return Card(
@@ -235,7 +241,8 @@ class HeroesPage extends ConsumerWidget {
         borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+            borderRadius:
+                BorderRadius.circular(NavigationTheme.cardBorderRadius),
             border: Border(
               left: BorderSide(
                 color: accent,
@@ -315,7 +322,8 @@ class HeroesPage extends ConsumerWidget {
                       children: [
                         Icon(Icons.share, color: Colors.grey.shade300),
                         const SizedBox(width: 8),
-                        Text('Export Code', style: TextStyle(color: Colors.grey.shade200)),
+                        Text('Export Code',
+                            style: TextStyle(color: Colors.grey.shade200)),
                       ],
                     ),
                   ),
@@ -325,7 +333,8 @@ class HeroesPage extends ConsumerWidget {
                       children: [
                         const Icon(Icons.delete_outline, color: Colors.red),
                         const SizedBox(width: 8),
-                        Text('Delete', style: TextStyle(color: Colors.grey.shade200)),
+                        Text('Delete',
+                            style: TextStyle(color: Colors.grey.shade200)),
                       ],
                     ),
                   ),
@@ -451,7 +460,8 @@ class HeroesPage extends ConsumerWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: accent,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -486,12 +496,14 @@ class HeroesPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _deleteHero(BuildContext context, WidgetRef ref, dynamic hero) async {
+  Future<void> _deleteHero(
+      BuildContext context, WidgetRef ref, dynamic hero) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Hero'),
-        content: Text('Are you sure you want to delete "${hero.name}"? This cannot be undone.'),
+        content: Text(
+            'Are you sure you want to delete "${hero.name}"? This cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -508,7 +520,7 @@ class HeroesPage extends ConsumerWidget {
         ],
       ),
     );
-    
+
     if (confirmed == true) {
       final repo = ref.read(heroRepositoryProvider);
       await repo.deleteHero(hero.id);
@@ -519,20 +531,34 @@ class HeroesPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _exportHeroCode(BuildContext context, WidgetRef ref, dynamic hero) async {
+  Future<void> _exportHeroCode(
+      BuildContext context, WidgetRef ref, dynamic hero) async {
     try {
       final db = ref.read(appDatabaseProvider);
       final exportService = HeroExportService(db);
-      final code = await exportService.exportHeroToCode(hero.id);
-      
+
       if (!context.mounted) return;
-      
+
+      // Show options dialog first
+      final options = await showDialog<HeroExportOptions>(
+        context: context,
+        builder: (ctx) => _ExportOptionsDialog(heroName: hero.name),
+      );
+
+      if (options == null || !context.mounted) return;
+
+      // Generate code with selected options
+      final code =
+          await exportService.exportHeroToCode(hero.id, options: options);
+
+      if (!context.mounted) return;
+
       await showDialog(
         context: context,
         builder: (ctx) {
           final theme = Theme.of(ctx);
           final codeLength = code.length;
-          
+
           return AlertDialog(
             title: Row(
               children: [
@@ -552,7 +578,7 @@ class HeroesPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Code preview container with scroll
                 Container(
                   constraints: const BoxConstraints(maxHeight: 150),
@@ -576,14 +602,15 @@ class HeroesPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Code info
                 Text(
                   '${codeLength} characters',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onSurfaceVariant
+                        .withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -628,12 +655,12 @@ class HeroesPage extends ConsumerWidget {
 
   Future<void> _showImportDialog(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
-    
+
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) {
         final theme = Theme.of(ctx);
-        
+
         return StatefulBuilder(
           builder: (ctx, setState) => AlertDialog(
             title: Row(
@@ -662,18 +689,20 @@ class HeroesPage extends ConsumerWidget {
                     fontSize: 11,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'HERO:H4sIAAAA...',
+                    hintText: 'H:... or HS:... or HERO:...',
                     hintStyle: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 11,
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                      color: theme.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.5),
                     ),
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.paste),
                       tooltip: 'Paste from clipboard',
                       onPressed: () async {
-                        final data = await Clipboard.getData(Clipboard.kTextPlain);
+                        final data =
+                            await Clipboard.getData(Clipboard.kTextPlain);
                         if (data?.text != null) {
                           controller.text = data!.text!;
                           setState(() {});
@@ -688,7 +717,8 @@ class HeroesPage extends ConsumerWidget {
                   Text(
                     '${controller.text.length} characters',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      color: theme.colorScheme.onSurfaceVariant
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -711,13 +741,13 @@ class HeroesPage extends ConsumerWidget {
         );
       },
     );
-    
+
     if (result == null || result.isEmpty) return;
-    
+
     try {
       final db = ref.read(appDatabaseProvider);
       final exportService = HeroExportService(db);
-      
+
       // Validate first
       final preview = exportService.validateCode(result);
       if (preview == null) {
@@ -737,7 +767,7 @@ class HeroesPage extends ConsumerWidget {
         );
         return;
       }
-      
+
       if (!preview.isCompatible) {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -759,10 +789,10 @@ class HeroesPage extends ConsumerWidget {
         );
         return;
       }
-      
+
       // Import the hero
       final newHeroId = await exportService.importHeroFromCode(result);
-      
+
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -777,7 +807,7 @@ class HeroesPage extends ConsumerWidget {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      
+
       // Navigate to the imported hero
       await Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: newHeroId)),
@@ -801,3 +831,191 @@ class HeroesPage extends ConsumerWidget {
   }
 }
 
+/// Dialog for selecting hero export options
+class _ExportOptionsDialog extends StatefulWidget {
+  const _ExportOptionsDialog({required this.heroName});
+
+  final String heroName;
+
+  @override
+  State<_ExportOptionsDialog> createState() => _ExportOptionsDialogState();
+}
+
+class _ExportOptionsDialogState extends State<_ExportOptionsDialog> {
+  bool _includeRuntimeState = false;
+  bool _includeUserData = false;
+  bool _includeCustomItems = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      title: Row(
+        children: [
+          Icon(Icons.upload_rounded, color: theme.colorScheme.primary),
+          const SizedBox(width: 12),
+          Expanded(child: Text('Export ${widget.heroName}')),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Choose what to include in the export code:',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Core build info (always included)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hero Build',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'Class, ancestry, abilities, skills, equipment',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Always',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Optional: Runtime state
+          _buildOptionTile(
+            title: 'Runtime State',
+            subtitle: 'Current HP, conditions, heroic resources',
+            value: _includeRuntimeState,
+            onChanged: (v) => setState(() => _includeRuntimeState = v ?? false),
+          ),
+
+          // Optional: User data
+          _buildOptionTile(
+            title: 'User Data',
+            subtitle: 'Notes, projects, sources, inventory, followers',
+            value: _includeUserData,
+            onChanged: (v) => setState(() => _includeUserData = v ?? false),
+          ),
+
+          // Optional: Custom items
+          _buildOptionTile(
+            title: 'Custom Items',
+            subtitle: 'User-created abilities, equipment, etc.',
+            value: _includeCustomItems,
+            onChanged: (v) => setState(() => _includeCustomItems = v ?? false),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Info about code size
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Fewer options = shorter code. Share just the build for quick imports!',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop(HeroExportOptions(
+              includeRuntimeState: _includeRuntimeState,
+              includeUserData: _includeUserData,
+              includeCustomItems: _includeCustomItems,
+            ));
+          },
+          icon: const Icon(Icons.upload),
+          label: const Text('Generate Code'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOptionTile({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool?> onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return CheckboxListTile(
+      value: value,
+      onChanged: onChanged,
+      title: Text(
+        title,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      controlAffinity: ListTileControlAffinity.leading,
+    );
+  }
+}
