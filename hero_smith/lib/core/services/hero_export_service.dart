@@ -16,7 +16,9 @@ import '../db/app_database.dart';
 const int kHeroExportVersion = 4;
 
 /// Version for the ultra-compact format
-const int kUltraCompactVersion = 1;
+/// v1: userData uses gzip+base64 (double compression with outer gzip)
+/// v2: userData uses base64url only (outer gzip handles compression)
+const int kUltraCompactVersion = 2;
 
 /// Options for hero export - controls what optional data is included.
 class HeroExportOptions {
@@ -588,11 +590,10 @@ class HeroExportService {
 
     if (userData.isEmpty) return '';
 
-    // Compress user data
+    // v2+: Just base64url encode - let outer gzip handle compression
+    // (Avoids double compression: inner gzip+base64 then outer gzip can't compress base64)
     final json = jsonEncode(userData);
-    final bytes = utf8.encode(json);
-    final compressed = gzip.encode(bytes);
-    return base64Encode(compressed);
+    return base64Url.encode(utf8.encode(json));
   }
 
   /// Export using the legacy full JSON format (for compatibility).
@@ -946,15 +947,31 @@ class HeroExportService {
   }
 
   /// Import user data from ultra-compact format
+  /// Supports both v1 (gzip+base64) and v2+ (base64url only)
   Future<void> _importUltraCompactUserData(
       String heroId, String userDataStr) async {
     if (userDataStr.isEmpty) return;
 
     Map<String, dynamic> userData;
     try {
-      final compressed = base64Decode(userDataStr);
-      final bytes = gzip.decode(compressed);
-      final json = utf8.decode(bytes);
+      // Try base64url decode first (v2+ format)
+      List<int> bytes;
+      try {
+        bytes = base64Url.decode(userDataStr);
+      } catch (_) {
+        // Fall back to regular base64 (v1 format)
+        bytes = base64Decode(userDataStr);
+      }
+
+      // Check if gzip compressed (v1 format has magic bytes 0x1f 0x8b)
+      String json;
+      if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
+        // v1: gzip compressed
+        json = utf8.decode(gzip.decode(bytes));
+      } else {
+        // v2+: raw JSON
+        json = utf8.decode(bytes);
+      }
       userData = jsonDecode(json) as Map<String, dynamic>;
     } catch (_) {
       return; // Invalid user data, skip
