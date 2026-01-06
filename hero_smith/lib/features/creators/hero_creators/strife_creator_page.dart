@@ -509,6 +509,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       classData: classData,
       selectedLevel: selectedLevel,
       subclassSelection: _selectedSubclass,
+      // Exclude level-based and subclass skill allowances - those are handled in Strength tab
+      excludeLevelAllowances: true,
+      excludeSubclassSkillAllowances: true,
     );
     if (plan.allowances.isEmpty) {
       return const <String, String?>{};
@@ -640,6 +643,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       classData: _selectedClass!,
       selectedLevel: _selectedLevel,
       subclassSelection: _selectedSubclass,
+      // Exclude level-based and subclass skill allowances - those are handled in Strength tab
+      excludeLevelAllowances: true,
+      excludeSubclassSkillAllowances: true,
     );
     _skillGrantIds = plan.grantedSkillNames
         .map(_resolveSkillId)

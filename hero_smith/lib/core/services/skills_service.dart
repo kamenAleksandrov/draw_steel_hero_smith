@@ -21,18 +21,30 @@ class StartingSkillsService {
     SubclassSelectionResult? subclassSelection,
     List<SkillAllowance> additionalAllowances = const <SkillAllowance>[],
     List<String> additionalGrantedSkillNames = const <String>[],
+    /// When true, excludes level-based skill allowances (from class level progression).
+    /// These are handled in the Strength tab via class feature grants instead.
+    bool excludeLevelAllowances = false,
+    /// When true, excludes subclass skill_group allowances (from class features).
+    /// These are handled in the Strength tab via the subclass feature's skill_group option.
+    bool excludeSubclassSkillAllowances = false,
   }) {
     final startingSkills = classData.startingCharacteristics.startingSkills;
     final startingAllowances =
         _buildStartingAllowances(startingSkills: startingSkills);
 
-    final levelAllowances = _buildLevelAllowances(
-      classData: classData,
-      selectedLevel: selectedLevel,
-    );
+    final levelAllowances = excludeLevelAllowances
+        ? <SkillAllowance>[]
+        : _buildLevelAllowances(
+            classData: classData,
+            selectedLevel: selectedLevel,
+          );
 
-    final subclassAllowances =
-        _buildSubclassAllowances(subclassSelection: subclassSelection);
+    final subclassAllowances = excludeSubclassSkillAllowances
+        ? const _StartingAllowanceBundle(
+            allowances: <SkillAllowance>[],
+            grantedSkills: <String>[],
+          )
+        : _buildSubclassAllowances(subclassSelection: subclassSelection);
 
     final combined = <SkillAllowance>[
       ...startingAllowances.allowances,

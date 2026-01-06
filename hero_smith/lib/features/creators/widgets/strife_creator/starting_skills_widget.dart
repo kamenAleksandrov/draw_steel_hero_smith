@@ -123,6 +123,10 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     final plan = _service.buildPlan(
       classData: widget.classData,
       selectedLevel: widget.selectedLevel,
+      // Exclude level-based and subclass skill allowances - those are handled in Strength tab
+      // via class feature grants (skill_group options in subclass features)
+      excludeLevelAllowances: true,
+      excludeSubclassSkillAllowances: true,
     );
 
     final newSelections = <String, List<String?>>{};

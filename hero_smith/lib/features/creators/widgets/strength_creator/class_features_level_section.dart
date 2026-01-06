@@ -100,7 +100,11 @@ class _LevelSectionState extends State<_LevelSection>
                           bottom: index < widget.features.length - 1 ? 12 : 0,
                         ),
                         child: _FeatureCard(
-                          key: ValueKey(widget.features[index].id),
+                          // Include selection count in key to force rebuild when choice is made
+                          key: ValueKey(
+                            '${widget.features[index].id}_'
+                            '${widget.widget.selectedOptions[widget.features[index].id]?.length ?? 0}',
+                          ),
                           feature: widget.features[index],
                           widget: widget.widget,
                         ),
