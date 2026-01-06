@@ -427,6 +427,145 @@ class ClassFeatureDataService {
     final abilityId = option['ability_id']?.toString().trim();
     return domain ?? subclass ?? name ?? ability ?? abilityId ?? 'default';
   }
+  
+  /// Counts features that have pending choices (user needs to make selections).
+  /// This includes:
+  /// - Features with multiple options where user hasn't made required selections
+  /// - Features with skill_group options that haven't been selected
+  static int countPendingChoices({
+    required Map<String, Map<String, dynamic>> featureDetailsById,
+    required Map<String, Set<String>> selectedOptions,
+    required Map<String, Map<String, String>> skillGroupSelections,
+    Iterable<String>? featureIds,
+    Set<String> activeSubclassSlugs = const {},
+    Set<String> selectedDomainSlugs = const {},
+    Set<String> selectedDeitySlugs = const {},
+  }) {
+    int count = 0;
+    final idsToCheck = (featureIds ?? featureDetailsById.keys)
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty);
+
+    for (final featureId in idsToCheck) {
+      final details = featureDetailsById[featureId];
+      if (details == null) continue;
+      if (_featureHasPendingChoices(
+        featureId: featureId,
+        details: details,
+        selectedOptions: selectedOptions,
+        skillGroupSelections: skillGroupSelections,
+        activeSubclassSlugs: activeSubclassSlugs,
+        selectedDomainSlugs: selectedDomainSlugs,
+        selectedDeitySlugs: selectedDeitySlugs,
+      )) {
+        count++;
+      }
+    }
+    return count;
+  }
+  
+  /// Keys that indicate an option is tied to a specific subclass selection.
+  static const List<String> _subclassOptionKeys = [
+    'subclass', 'subclass_name', 'tradition', 'order', 'doctrine',
+    'mask', 'path', 'circle', 'college', 'element', 'role',
+    'discipline', 'oath', 'school', 'guild', 'name',
+  ];
+  
+  /// Checks if an option is active for the current subclass/domain selection.
+  static bool _isOptionActiveForCurrentSelection(
+    Map<String, dynamic> option, {
+    Set<String> activeSubclassSlugs = const {},
+    Set<String> selectedDomainSlugs = const {},
+    Set<String> selectedDeitySlugs = const {},
+  }) {
+    // Check subclass-related keys
+    for (final key in _subclassOptionKeys) {
+      final value = option[key]?.toString().trim().toLowerCase();
+      if (value != null && value.isNotEmpty) {
+        final slug = value.replaceAll(RegExp(r'\s+'), '-');
+        if (activeSubclassSlugs.isNotEmpty && !activeSubclassSlugs.contains(slug)) {
+          return false;
+        }
+      }
+    }
+    
+    // Check domain key
+    final domain = option['domain']?.toString().trim().toLowerCase();
+    if (domain != null && domain.isNotEmpty) {
+      final slug = domain.replaceAll(RegExp(r'\s+'), '-');
+      if (selectedDomainSlugs.isNotEmpty && !selectedDomainSlugs.contains(slug)) {
+        return false;
+      }
+    }
+    
+    // Check deity key
+    final deity = option['deity']?.toString().trim().toLowerCase();
+    if (deity != null && deity.isNotEmpty) {
+      final slug = deity.replaceAll(RegExp(r'\s+'), '-');
+      if (selectedDeitySlugs.isNotEmpty && !selectedDeitySlugs.contains(slug)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /// Checks if a specific feature has pending choices.
+  static bool _featureHasPendingChoices({
+    required String featureId,
+    required Map<String, dynamic> details,
+    required Map<String, Set<String>> selectedOptions,
+    required Map<String, Map<String, String>> skillGroupSelections,
+    Set<String> activeSubclassSlugs = const {},
+    Set<String> selectedDomainSlugs = const {},
+    Set<String> selectedDeitySlugs = const {},
+  }) {
+    // Check if it uses grants (auto-applied, but may have nested choices)
+    final grants = details['grants'];
+    final isGrantsFeature = grants is List && grants.isNotEmpty;
+    
+    // Extract options using the service
+    final options = extractOptionMaps(details);
+    if (options.isEmpty) return false;
+    
+    // Check for pending skill_group selections in any ACTIVE option
+    for (final option in options) {
+      final skillGroup = option['skill_group']?.toString().trim();
+      if (skillGroup == null || skillGroup.isEmpty) continue;
+      
+      // Skip options that don't match the current subclass/domain selection
+      if (!_isOptionActiveForCurrentSelection(
+        option,
+        activeSubclassSlugs: activeSubclassSlugs,
+        selectedDomainSlugs: selectedDomainSlugs,
+        selectedDeitySlugs: selectedDeitySlugs,
+      )) {
+        continue;
+      }
+      
+      // Check if user has made a skill_group selection for this option
+      final grantKey = optionGrantKey(option);
+      final featureSelections = skillGroupSelections[featureId];
+      final selectedSkillId = featureSelections?[grantKey];
+      
+      if (selectedSkillId == null || selectedSkillId.isEmpty) {
+        return true;
+      }
+    }
+    
+    // For grants features, no further choice is needed
+    if (isGrantsFeature) return false;
+    
+    // If there's only one option, it's auto-applied
+    if (options.length <= 1) return false;
+    
+    // Check if user already made a selection
+    final currentSelections = selectedOptions[featureId] ?? const <String>{};
+    final minimumRequired = ClassFeatureDataService.minimumSelections(details);
+    final effectiveMinimum = minimumRequired <= 0 ? 1 : minimumRequired;
+    
+    return currentSelections.length < effectiveMinimum;
+  }
 
   static Set<String> identifyDomainLinkedFeatures(
     Map<String, Map<String, dynamic>> featureDetailsById,

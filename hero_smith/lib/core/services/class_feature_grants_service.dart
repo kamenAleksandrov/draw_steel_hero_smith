@@ -216,8 +216,6 @@ class ClassFeatureGrantsService {
     required String grantKey,
     required String? skillId,
   }) async {
-    print('[ClassFeatureGrantsService] setSkillGroupSelection: heroId=$heroId, featureId=$featureId, grantKey=$grantKey, skillId=$skillId');
-    
     // Load current selections
     final current = await loadSkillGroupSelections(heroId);
     // Deep copy to avoid modifying the original
@@ -261,7 +259,6 @@ class ClassFeatureGrantsService {
     // Add new skill entry to hero_entries
     if (skillId != null && skillId.isNotEmpty) {
       final sourceId = '${featureId}_skill_group_$grantKey';
-      print('[ClassFeatureGrantsService] Adding skill entry: entryId=$skillId, sourceType=class_feature, sourceId=$sourceId');
       await _entries.addEntry(
         heroId: heroId,
         entryType: 'skill',
@@ -270,7 +267,6 @@ class ClassFeatureGrantsService {
         sourceId: sourceId,
         gainedBy: 'choice',
       );
-      print('[ClassFeatureGrantsService] Skill entry added successfully');
     }
   }
 

@@ -20,6 +20,7 @@ class ClassFeaturesSection extends StatefulWidget {
     this.skillGroupSelections = const {},
     this.onSkillGroupSelectionChanged,
     this.reservedSkillIds = const {},
+    this.onPendingChoicesChanged,
   });
 
   final ClassData classData;
@@ -39,6 +40,9 @@ class ClassFeaturesSection extends StatefulWidget {
   
   /// Set of skill IDs that are already selected elsewhere (for duplicate prevention)
   final Set<String> reservedSkillIds;
+  
+  /// Callback when the number of pending choices changes
+  final ValueChanged<int>? onPendingChoicesChanged;
 
   @override
   State<ClassFeaturesSection> createState() => _ClassFeaturesSectionState();
@@ -53,6 +57,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
   ClassFeatureDataResult? _data;
   Map<String, Set<String>> _selections = const {};
   int _loadRequestId = 0;
+  int _lastPendingChoicesCount = -1;
 
   @override
   bool get wantKeepAlive => true;
@@ -74,6 +79,8 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
         oldWidget.selectedSubclass != widget.selectedSubclass;
     final initialSelectionsChanged =
         !_mapsEqual(oldWidget.initialSelections, widget.initialSelections);
+    final skillGroupSelectionsChanged = 
+        oldWidget.skillGroupSelections != widget.skillGroupSelections;
 
     if (classChanged) {
       _selections = _normalizeSelections(widget.initialSelections);
@@ -90,6 +97,40 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
       setState(() {
         _selections = _normalizeSelections(widget.initialSelections);
       });
+      _notifyPendingChoicesIfChanged();
+    }
+    
+    if (skillGroupSelectionsChanged) {
+      _notifyPendingChoicesIfChanged();
+    }
+  }
+  
+  void _notifyPendingChoicesIfChanged() {
+    if (widget.onPendingChoicesChanged == null) return;
+    final data = _data;
+    if (data == null) return;
+    
+    // Compute active slugs for filtering
+    final activeSubclassSlugs =
+        ClassFeatureDataService.activeSubclassSlugs(widget.selectedSubclass);
+    final domainSlugs =
+        ClassFeatureDataService.selectedDomainSlugs(widget.selectedSubclass);
+    final deitySlugs =
+        ClassFeatureDataService.selectedDeitySlugs(widget.selectedSubclass);
+    
+    final count = ClassFeatureDataService.countPendingChoices(
+      featureDetailsById: data.featureDetailsById,
+      featureIds: data.features.map((f) => f.id),
+      selectedOptions: _selections,
+      skillGroupSelections: widget.skillGroupSelections,
+      activeSubclassSlugs: activeSubclassSlugs,
+      selectedDomainSlugs: domainSlugs,
+      selectedDeitySlugs: deitySlugs,
+    );
+    
+    if (count != _lastPendingChoicesCount) {
+      _lastPendingChoicesCount = count;
+      widget.onPendingChoicesChanged!(count);
     }
   }
 
@@ -166,6 +207,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
         _selections = workingSelections;
       });
       _notifySelectionsChanged();
+      _notifyPendingChoicesIfChanged();
     } catch (e) {
       if (!mounted || requestId != _loadRequestId) return;
       setState(() {
@@ -245,6 +287,7 @@ class _ClassFeaturesSectionState extends State<ClassFeaturesSection>
       _selections = updated;
     });
     _notifySelectionsChanged();
+    _notifyPendingChoicesIfChanged();
   }
 
   void _notifySelectionsChanged() {

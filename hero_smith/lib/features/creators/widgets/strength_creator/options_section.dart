@@ -15,7 +15,7 @@ class _OptionsSection extends StatelessWidget {
   final _FeatureOptionsContext optionsContext;
   final Set<String> originalSelections;
   final ClassFeaturesWidget widget;
-  
+
   /// If true, this feature uses 'grants' instead of 'options'.
   /// All matching grants should be auto-displayed (no user choice needed).
   final bool isGrantsFeature;
@@ -28,23 +28,32 @@ class _OptionsSection extends StatelessWidget {
     final minimumRequired = optionsContext.minimumRequired;
     final allowMultiple = selectionLimit != 1;
     final effectiveSelections = optionsContext.selectedKeys;
-    final canEdit = widget.onSelectionChanged != null && optionsContext.allowEditing && !isGrantsFeature;
+    final canEdit = widget.onSelectionChanged != null &&
+        optionsContext.allowEditing &&
+        !isGrantsFeature;
     final isAutoApplied = _isAutoAppliedSelection();
 
-    final grantType = widget.grantTypeByFeatureName[feature.name.toLowerCase().trim()] ?? '';
+    final grantType =
+        widget.grantTypeByFeatureName[feature.name.toLowerCase().trim()] ?? '';
     final isPickFeature = grantType == 'pick';
     final hasOptions = optionsContext.options.isNotEmpty;
-    
+
     // Determine if this feature requires a selection:
     // 1. Not a grants feature (auto-applied)
     // 2. Not auto-applied (single option with no editing)
     // 3. Has options available
     // 4. Either explicitly a 'pick' feature OR has multiple options that require choice
     // 5. Not enough selections have been made yet
-    final hasMultipleOptionsToChoose = hasOptions && optionsContext.options.length > 1;
-    final requiresChoice = isPickFeature || (hasMultipleOptionsToChoose && optionsContext.allowEditing);
-    final needsSelection = !isGrantsFeature && !isAutoApplied && hasOptions && requiresChoice &&
-        effectiveSelections.length < (minimumRequired <= 0 ? 1 : minimumRequired);
+    final hasMultipleOptionsToChoose =
+        hasOptions && optionsContext.options.length > 1;
+    final requiresChoice = isPickFeature ||
+        (hasMultipleOptionsToChoose && optionsContext.allowEditing);
+    final needsSelection = !isGrantsFeature &&
+        !isAutoApplied &&
+        hasOptions &&
+        requiresChoice &&
+        effectiveSelections.length <
+            (minimumRequired <= 0 ? 1 : minimumRequired);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,13 +93,13 @@ class _OptionsSection extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           ...optionsContext.options.map((option) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _AutoAppliedContent(
-              option: option,
-              widget: widget,
-              featureId: feature.id,
-            ),
-          )),
+                padding: const EdgeInsets.only(bottom: 8),
+                child: _AutoAppliedContent(
+                  option: option,
+                  widget: widget,
+                  featureId: feature.id,
+                ),
+              )),
         ]
         // For options: use existing behavior
         else if (isAutoApplied && optionsContext.options.isNotEmpty)
@@ -111,16 +120,18 @@ class _OptionsSection extends StatelessWidget {
           ...optionsContext.options.map((option) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: _OptionTile(
-                  key: ValueKey(ClassFeatureDataService.featureOptionKey(option)),
+                  key: ValueKey(
+                      ClassFeatureDataService.featureOptionKey(option)),
                   option: option,
                   feature: feature,
-                  isSelected: effectiveSelections
-                      .contains(ClassFeatureDataService.featureOptionKey(option)),
+                  isSelected: effectiveSelections.contains(
+                      ClassFeatureDataService.featureOptionKey(option)),
                   isRecommended: _optionMatchesActiveSubclass(option),
                   allowMultiple: allowMultiple,
                   canEdit: canEdit,
                   needsSelection: needsSelection,
-                  onChanged: (selected) => _handleOptionChanged(option, selected),
+                  onChanged: (selected) =>
+                      _handleOptionChanged(option, selected),
                   widget: widget,
                 ),
               )),
@@ -225,7 +236,8 @@ class _SelectionPrompt extends StatelessWidget {
               color: CreatorTheme.warningColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.touch_app_rounded, color: CreatorTheme.warningColor, size: 22),
+            child: Icon(Icons.touch_app_rounded,
+                color: CreatorTheme.warningColor, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -297,7 +309,8 @@ class _InfoMessage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, size: 18, color: CreatorTheme.strengthAccent),
+          Icon(Icons.info_outline,
+              size: 18, color: CreatorTheme.strengthAccent),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -327,7 +340,13 @@ class _AutoAppliedContent extends StatelessWidget {
   /// Extracts the display name from the option
   String? _getOptionName() {
     // Try common name fields
-    final nameFields = ['name', 'title', 'label', 'option_name', 'ability_name'];
+    final nameFields = [
+      'name',
+      'title',
+      'label',
+      'option_name',
+      'ability_name'
+    ];
     for (final field in nameFields) {
       final value = option[field]?.toString().trim();
       if (value != null && value.isNotEmpty) {
@@ -430,7 +449,7 @@ class _AutoAppliedContent extends StatelessWidget {
   /// and arrays of ability names (e.g., ["Moonlight Sonata", "Radical Fantasia"])
   List<Map<String, dynamic>> _resolveAbilities() {
     final abilities = <Map<String, dynamic>>[];
-    
+
     // Check for ability_id first (single ID)
     String? id = option['ability_id']?.toString().trim();
     if (id != null && id.isNotEmpty) {
@@ -450,7 +469,7 @@ class _AutoAppliedContent extends StatelessWidget {
     // Check for ability field - can be a string or a list
     final abilityField = option['ability'];
     if (abilityField == null) return abilities;
-    
+
     // Handle array of ability names
     if (abilityField is List) {
       for (final item in abilityField) {
@@ -464,7 +483,7 @@ class _AutoAppliedContent extends StatelessWidget {
       }
       return abilities;
     }
-    
+
     // Handle single ability name string
     final abilityName = abilityField.toString().trim();
     if (abilityName.isNotEmpty) {
@@ -473,10 +492,10 @@ class _AutoAppliedContent extends StatelessWidget {
         abilities.add(resolved);
       }
     }
-    
+
     return abilities;
   }
-  
+
   Map<String, dynamic>? _resolveAbilityByName(String abilityName) {
     final slug = ClassFeatureDataService.slugify(abilityName);
     final resolvedId = widget.abilityIdByName[slug] ?? slug;
@@ -485,7 +504,9 @@ class _AutoAppliedContent extends StatelessWidget {
 
   Component _abilityMapToComponent(Map<String, dynamic> abilityData) {
     return Component(
-      id: abilityData['id']?.toString() ?? abilityData['resolved_id']?.toString() ?? '',
+      id: abilityData['id']?.toString() ??
+          abilityData['resolved_id']?.toString() ??
+          '',
       type: abilityData['type']?.toString() ?? 'ability',
       name: abilityData['name']?.toString() ?? '',
       data: abilityData,
@@ -548,10 +569,15 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
   String get _grantKey => ClassFeatureDataService.optionGrantKey(widget.option);
 
   String? _getCurrentSkillId() {
-    final featureSelections =
-        widget.featuresWidget.skillGroupSelections[widget.featureId];
-    if (featureSelections == null) return null;
-    return featureSelections[_grantKey];
+    final allSelections = widget.featuresWidget.skillGroupSelections;
+    final featureId = widget.featureId;
+    final grantKey = _grantKey;
+    
+    final featureSelections = allSelections[featureId];
+    if (featureSelections == null) {
+      return null;
+    }
+    return featureSelections[grantKey];
   }
 
   List<SkillOption> _getFilteredSkills() {
@@ -588,7 +614,8 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
         return false;
       }
       return true;
-    }).toList()..sort((a, b) => a.name.compareTo(b.name));
+    }).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
   }
 
   Future<void> _showSkillPicker() async {
@@ -637,11 +664,15 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
     }
 
     final currentSkillId = _getCurrentSkillId();
-    final hasCallback = widget.featuresWidget.onSkillGroupSelectionChanged != null;
-    final needsSelection = currentSkillId == null || currentSkillId.isEmpty;
+    final hasCallback =
+        widget.featuresWidget.onSkillGroupSelectionChanged != null;
+    final hasSkillId = currentSkillId != null && currentSkillId.isNotEmpty;
+    // Only show "needs selection" warning if we have no skill ID saved
+    // (If skill ID is saved but skills haven't loaded yet, it's not a missing selection)
+    final needsSelection = !hasSkillId;
 
     String? currentSkillName;
-    if (currentSkillId != null && _allSkills != null) {
+    if (hasSkillId && _allSkills != null) {
       final skill = _allSkills!.firstWhere(
         (s) => s.id == currentSkillId,
         orElse: () => SkillOption(id: '', name: '', group: '', description: ''),
@@ -649,6 +680,25 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
       if (skill.id.isNotEmpty) {
         currentSkillName = skill.name;
       }
+    }
+
+    // Determine display text:
+    // - If we have skill ID but skills are still loading, show loading indicator
+    // - If we have skill ID and skills loaded but name not found, show the ID as fallback
+    // - If we have skill name, show it
+    // - If no skill selected, show placeholder
+    final bool isLoadingWithSelection = hasSkillId && _isLoadingSkills;
+    final String displayText;
+    if (currentSkillName != null) {
+      displayText = currentSkillName;
+    } else if (hasSkillId && _allSkills != null) {
+      // Skill ID exists but name lookup failed - show ID as fallback
+      displayText = currentSkillId!;
+    } else if (hasSkillId) {
+      // Still loading skills, will be resolved once loaded
+      displayText = OptionsSectionText.selectSkillPlaceholder;
+    } else {
+      displayText = OptionsSectionText.selectSkillPlaceholder;
     }
 
     return Container(
@@ -680,15 +730,17 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
                   '${OptionsSectionText.skillFromGroupPrefix}$skillGroup',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color:
-                        needsSelection ? Colors.orange.shade700 : scheme.primary,
+                    color: needsSelection
+                        ? Colors.orange.shade700
+                        : scheme.primary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          if (_isLoadingSkills)
+          if (_isLoadingSkills && !hasSkillId)
+            // Only show full loading indicator when no skill is selected yet
             const LinearProgressIndicator()
           else if (hasCallback)
             InkWell(
@@ -700,7 +752,13 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  suffixIcon: const Icon(Icons.search),
+                  suffixIcon: isLoadingWithSelection
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.search),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 10,
@@ -709,10 +767,10 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
                   filled: true,
                 ),
                 child: Text(
-                  currentSkillName ?? OptionsSectionText.selectSkillPlaceholder,
+                  displayText,
                   style: TextStyle(
                     fontSize: 16,
-                    color: currentSkillName != null
+                    color: (currentSkillName != null || hasSkillId)
                         ? theme.textTheme.bodyLarge?.color
                         : theme.hintColor,
                   ),
@@ -854,7 +912,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
 }) {
   final color = accentColor ?? const Color(0xFF42A5F5); // Blue accent default
   final dialogIcon = icon ?? Icons.search;
-  
+
   return showDialog<_PickerSelection<T>>(
     context: context,
     builder: (dialogContext) {
@@ -871,8 +929,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                     (option) =>
                         option.label.toLowerCase().contains(normalizedQuery) ||
                         (option.subtitle?.toLowerCase().contains(
-                              normalizedQuery,
-                            ) ??
+                                  normalizedQuery,
+                                ) ??
                             false),
                   )
                   .toList();
@@ -956,7 +1014,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                       decoration: InputDecoration(
                         hintText: OptionsSectionText.searchHint,
                         hintStyle: TextStyle(color: Colors.grey.shade500),
-                        prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                        prefixIcon:
+                            Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
                         fillColor: const Color(0xFF2A2A2A),
                         border: OutlineInputBorder(
@@ -1053,7 +1112,8 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                                         )
                                       : null,
                                   trailing: isSelected
-                                      ? Icon(Icons.check_circle, color: color, size: 22)
+                                      ? Icon(Icons.check_circle,
+                                          color: color, size: 22)
                                       : null,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -1128,7 +1188,8 @@ class _OptionTileState extends State<_OptionTile>
   @override
   bool get wantKeepAlive => true;
 
-  String get _storageKey => 'option_tile_expanded_${widget.feature.id}_${ClassFeatureDataService.featureOptionKey(widget.option)}';
+  String get _storageKey =>
+      'option_tile_expanded_${widget.feature.id}_${ClassFeatureDataService.featureOptionKey(widget.option)}';
 
   @override
   void didChangeDependencies() {
@@ -1146,7 +1207,8 @@ class _OptionTileState extends State<_OptionTile>
   void _toggleExpanded() {
     setState(() {
       _isExpanded = !_isExpanded;
-      PageStorage.of(context).writeState(context, _isExpanded, identifier: _storageKey);
+      PageStorage.of(context)
+          .writeState(context, _isExpanded, identifier: _storageKey);
     });
   }
 
@@ -1195,7 +1257,9 @@ class _OptionTileState extends State<_OptionTile>
         children: [
           // Main tile
           InkWell(
-            onTap: widget.canEdit ? () => widget.onChanged(!widget.isSelected) : null,
+            onTap: widget.canEdit
+                ? () => widget.onChanged(!widget.isSelected)
+                : null,
             borderRadius: BorderRadius.vertical(
               top: const Radius.circular(12),
               bottom: hasExtraContent ? Radius.zero : const Radius.circular(12),
@@ -1270,7 +1334,9 @@ class _OptionTileState extends State<_OptionTile>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Divider(height: 1, color: borderColor.withValues(alpha: 0.3)),
+                        Divider(
+                            height: 1,
+                            color: borderColor.withValues(alpha: 0.3)),
                         Padding(
                           padding: const EdgeInsets.all(14),
                           child: Column(
@@ -1282,12 +1348,14 @@ class _OptionTileState extends State<_OptionTile>
                                   textColor: CreatorTheme.textSecondary,
                                   titleColor: CreatorTheme.strengthAccent,
                                 ),
-                                if (abilities.isNotEmpty) const SizedBox(height: 12),
+                                if (abilities.isNotEmpty)
+                                  const SizedBox(height: 12),
                               ],
                               for (int i = 0; i < abilities.length; i++) ...[
                                 if (i > 0) const SizedBox(height: 8),
                                 AbilityExpandableItem(
-                                  component: _abilityMapToComponent(abilities[i]),
+                                  component:
+                                      _abilityMapToComponent(abilities[i]),
                                 ),
                               ],
                             ],
@@ -1382,7 +1450,7 @@ class _OptionTileState extends State<_OptionTile>
   /// and arrays of ability names (e.g., ["Moonlight Sonata", "Radical Fantasia"])
   List<Map<String, dynamic>> _resolveAbilities() {
     final abilities = <Map<String, dynamic>>[];
-    
+
     // Check for ability_id first (single ID)
     String? id = widget.option['ability_id']?.toString().trim();
     if (id != null && id.isNotEmpty) {
@@ -1402,7 +1470,7 @@ class _OptionTileState extends State<_OptionTile>
     // Check for ability field - can be a string or a list
     final abilityField = widget.option['ability'];
     if (abilityField == null) return abilities;
-    
+
     // Handle array of ability names
     if (abilityField is List) {
       for (final item in abilityField) {
@@ -1416,7 +1484,7 @@ class _OptionTileState extends State<_OptionTile>
       }
       return abilities;
     }
-    
+
     // Handle single ability name string
     final abilityName = abilityField.toString().trim();
     if (abilityName.isNotEmpty) {
@@ -1425,10 +1493,10 @@ class _OptionTileState extends State<_OptionTile>
         abilities.add(resolved);
       }
     }
-    
+
     return abilities;
   }
-  
+
   Map<String, dynamic>? _resolveAbilityByName(String abilityName) {
     final slug = ClassFeatureDataService.slugify(abilityName);
     final resolvedId = widget.widget.abilityIdByName[slug] ?? slug;
@@ -1437,7 +1505,9 @@ class _OptionTileState extends State<_OptionTile>
 
   Component _abilityMapToComponent(Map<String, dynamic> abilityData) {
     return Component(
-      id: abilityData['id']?.toString() ?? abilityData['resolved_id']?.toString() ?? '',
+      id: abilityData['id']?.toString() ??
+          abilityData['resolved_id']?.toString() ??
+          '',
       type: abilityData['type']?.toString() ?? 'ability',
       name: abilityData['name']?.toString() ?? '',
       data: abilityData,

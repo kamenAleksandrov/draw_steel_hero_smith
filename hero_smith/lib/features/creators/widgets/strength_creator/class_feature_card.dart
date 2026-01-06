@@ -140,19 +140,28 @@ class _FeatureCardState extends State<_FeatureCard>
   
   /// Determines if this feature has options that require a user choice.
   /// Returns true if:
-  /// - Feature has 'options' or 'options_X' with multiple entries
+  /// - Feature has 'options' or 'options_X' with multiple entries and user hasn't selected enough
+  /// - OR Feature has options with skill_group that haven't been selected yet
   /// - Feature doesn't use 'grants' (which are auto-applied)
-  /// - No selection has been made yet
   bool _hasOptionsRequiringChoice(Map<String, dynamic>? details) {
     if (details == null) return false;
     
-    // Check if it uses grants (auto-applied, no choice needed)
+    // Check if it uses grants (auto-applied, no choice needed for the main selection)
     final grants = details['grants'];
-    if (grants is List && grants.isNotEmpty) return false;
+    final isGrantsFeature = grants is List && grants.isNotEmpty;
     
     // Extract options using the service
     final options = ClassFeatureDataService.extractOptionMaps(details);
     if (options.isEmpty) return false;
+    
+    // Check for pending skill_group selections in any option
+    // (even auto-applied options can have skill_group pickers)
+    if (_hasPendingSkillGroupSelections(options)) {
+      return true;
+    }
+    
+    // For grants features, no further choice is needed
+    if (isGrantsFeature) return false;
     
     // If there's only one option, it's auto-applied (no choice needed)
     if (options.length <= 1) return false;
@@ -163,6 +172,65 @@ class _FeatureCardState extends State<_FeatureCard>
     final effectiveMinimum = minimumRequired <= 0 ? 1 : minimumRequired;
     
     return currentSelections.length < effectiveMinimum;
+  }
+  
+  /// Checks if any ACTIVE option has a skill_group that hasn't been selected yet.
+  /// Only considers options that match the current subclass/domain selection.
+  bool _hasPendingSkillGroupSelections(List<Map<String, dynamic>> options) {
+    for (final option in options) {
+      final skillGroup = option['skill_group']?.toString().trim();
+      if (skillGroup == null || skillGroup.isEmpty) continue;
+      
+      // Only check options that are active for the current selection
+      if (!_isOptionActiveForCurrentSelection(option)) continue;
+      
+      // Check if user has made a skill_group selection for this option
+      final grantKey = ClassFeatureDataService.optionGrantKey(option);
+      final featureSelections = w.skillGroupSelections[feature.id];
+      final selectedSkillId = featureSelections?[grantKey];
+      
+      if (selectedSkillId == null || selectedSkillId.isEmpty) {
+        return true; // Found a pending skill_group selection
+      }
+    }
+    return false;
+  }
+  
+  /// Checks if an option is active based on current subclass/domain selection.
+  bool _isOptionActiveForCurrentSelection(Map<String, dynamic> option) {
+    // If the option specifies any subclass-related key (including 'name' for doctrines),
+    // it must match the active subclass slugs.
+    for (final key in ClassFeaturesWidget._widgetSubclassOptionKeys) {
+      final value = option[key]?.toString().trim();
+      if (value == null || value.isEmpty) continue;
+
+      final slug = ClassFeatureDataService.slugify(value);
+      if (w.activeSubclassSlugs.isNotEmpty && !w.activeSubclassSlugs.contains(slug)) {
+        return false;
+      }
+    }
+
+    // Domain restriction
+    final domain = option['domain']?.toString().trim();
+    if (domain != null && domain.isNotEmpty) {
+      final slug = ClassFeatureDataService.slugify(domain);
+      if (w.selectedDomainSlugs.isNotEmpty && !w.selectedDomainSlugs.contains(slug)) {
+        return false;
+      }
+    }
+
+    // Deity restriction
+    for (final key in ClassFeaturesWidget._widgetDeityOptionKeys) {
+      final value = option[key]?.toString().trim();
+      if (value == null || value.isEmpty) continue;
+
+      final slug = ClassFeatureDataService.slugify(value);
+      if (w.selectedDeitySlugs.isNotEmpty && !w.selectedDeitySlugs.contains(slug)) {
+        return false;
+      }
+    }
+
+    return true;
   }
   
   /// Build a special card for progression features (Growing Ferocity / Discipline Mastery)
@@ -206,10 +274,26 @@ class _FeatureStyle {
           label: ClassFeatureCardText.grantedLabel,
         );
       case 'pick':
+        // Only show "Choice Required" styling while a required choice is still pending.
+        // Once the user has satisfied the selection(s), fall back to the normal feature styling.
+        if (hasOptionsRequiringChoice) {
+          return _FeatureStyle(
+            borderColor: Colors.orange.shade600,
+            icon: Icons.touch_app_outlined,
+            label: ClassFeatureCardText.choiceRequiredLabel,
+          );
+        }
+        if (isSubclass) {
+          return _FeatureStyle(
+            borderColor: Colors.purple.shade500,
+            icon: Icons.star_outline_rounded,
+            label: ClassFeatureCardText.subclassFeatureLabel,
+          );
+        }
         return _FeatureStyle(
-          borderColor: Colors.orange.shade600,
-          icon: Icons.touch_app_outlined,
-          label: ClassFeatureCardText.choiceRequiredLabel,
+          borderColor: Colors.blueGrey.shade400,
+          icon: Icons.category_outlined,
+          label: ClassFeatureCardText.classFeatureLabel,
         );
       case 'ability':
         return _FeatureStyle(

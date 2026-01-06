@@ -101,7 +101,7 @@ class ClassFeaturesWidget extends StatelessWidget {
   static const List<String> _widgetSubclassOptionKeys = [
     'subclass', 'subclass_name', 'tradition', 'order', 'doctrine',
     'mask', 'path', 'circle', 'college', 'element', 'role',
-    'discipline', 'oath', 'school', 'guild', 'domain', 'name',
+    'discipline', 'oath', 'school', 'guild', 'name',
   ];
 
   static const List<String> _widgetDeityOptionKeys = [
@@ -117,6 +117,110 @@ class ClassFeaturesWidget extends StatelessWidget {
   /// Check if a feature should be rendered as a progression widget
   bool _isProgressionFeature(Feature feature) {
     return _progressionFeatureIds.contains(feature.id);
+  }
+  
+  /// Returns the count of features that still have pending choices.
+  /// This includes features with:
+  /// - Multiple options where user hasn't made required selections
+  /// - skill_group options that haven't been selected
+  int getPendingChoicesCount() {
+    int count = 0;
+    for (final feature in features) {
+      if (_featureHasPendingChoices(feature)) {
+        count++;
+      }
+    }
+    return count;
+  }
+  
+  /// Checks if a specific feature has pending choices.
+  bool _featureHasPendingChoices(Feature feature) {
+    final details = featureDetailsById[feature.id];
+    if (details == null) return false;
+    
+    // Check if it uses grants (auto-applied, but may have nested choices)
+    final grants = details['grants'];
+    final isGrantsFeature = grants is List && grants.isNotEmpty;
+    
+    // Extract options using the service
+    final options = ClassFeatureDataService.extractOptionMaps(details);
+    if (options.isEmpty) return false;
+    
+    // Check for pending skill_group selections in any option
+    if (_hasPendingSkillGroupSelectionsForFeature(feature.id, options)) {
+      return true;
+    }
+    
+    // For grants features, no further choice is needed
+    if (isGrantsFeature) return false;
+    
+    // If there's only one option, it's auto-applied
+    if (options.length <= 1) return false;
+    
+    // Check if user already made a selection
+    final currentSelections = selectedOptions[feature.id] ?? const <String>{};
+    final minimumRequired = ClassFeatureDataService.minimumSelections(details);
+    final effectiveMinimum = minimumRequired <= 0 ? 1 : minimumRequired;
+    
+    return currentSelections.length < effectiveMinimum;
+  }
+  
+  /// Checks if an option is active for the current subclass/domain selection.
+  bool _isOptionActiveForCurrentSelection(Map<String, dynamic> option) {
+    // Check subclass-related keys
+    for (final key in _widgetSubclassOptionKeys) {
+      final value = option[key]?.toString().trim().toLowerCase();
+      if (value != null && value.isNotEmpty) {
+        final slug = value.replaceAll(RegExp(r'\s+'), '-');
+        if (activeSubclassSlugs.isNotEmpty && !activeSubclassSlugs.contains(slug)) {
+          return false;
+        }
+      }
+    }
+    
+    // Check domain key
+    final domain = option['domain']?.toString().trim().toLowerCase();
+    if (domain != null && domain.isNotEmpty) {
+      final slug = domain.replaceAll(RegExp(r'\s+'), '-');
+      if (selectedDomainSlugs.isNotEmpty && !selectedDomainSlugs.contains(slug)) {
+        return false;
+      }
+    }
+    
+    // Check deity key
+    final deity = option['deity']?.toString().trim().toLowerCase();
+    if (deity != null && deity.isNotEmpty) {
+      final slug = deity.replaceAll(RegExp(r'\s+'), '-');
+      if (selectedDeitySlugs.isNotEmpty && !selectedDeitySlugs.contains(slug)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /// Checks if any option for a feature has a skill_group that hasn't been selected.
+  bool _hasPendingSkillGroupSelectionsForFeature(
+    String featureId,
+    List<Map<String, dynamic>> options,
+  ) {
+    for (final option in options) {
+      final skillGroup = option['skill_group']?.toString().trim();
+      if (skillGroup == null || skillGroup.isEmpty) continue;
+      
+      // Skip options that don't match the current subclass/domain selection
+      if (!_isOptionActiveForCurrentSelection(option)) continue;
+      
+      // Check if user has made a skill_group selection for this option
+      final grantKey = ClassFeatureDataService.optionGrantKey(option);
+      final featureSelections = skillGroupSelections[featureId];
+      final selectedSkillId = featureSelections?[grantKey];
+      
+      if (selectedSkillId == null || selectedSkillId.isEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override

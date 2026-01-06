@@ -116,8 +116,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   Set<String> _reservedLanguageIds = {};
   SubclassSelectionResult? _selectedSubclass;
   List<String?> _selectedKitIds = [];
+
   /// The skill ID saved in config as granted by the current subclass (to avoid self-flagging)
   String? _savedSubclassSkillId;
+
   /// The class ID that was loaded from the database (to detect class changes on save)
   String? _savedClassId;
 
@@ -169,7 +171,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _isLoading = false;
       });
       _syncSnapshot();
-      
+
       // Mark initial load complete after first frame to prevent false dirty detection
       // Widgets may fire onChange callbacks during their first build
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -186,7 +188,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage = '${StrifeCreatorPageText.failedToLoadClassDataPrefix}$e';
+        _errorMessage =
+            '${StrifeCreatorPageText.failedToLoadClassDataPrefix}$e';
       });
     }
   }
@@ -235,11 +238,12 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             (c) => c.classId == hero.className,
             orElse: () => _classDataService.getAllClasses().first);
         _selectedClass = classData;
-        _savedClassId = classData.classId; // Track the saved class for change detection
+        _savedClassId =
+            classData.classId; // Track the saved class for change detection
 
         // Load characteristic array if available
-        final arrayConfig =
-            await db.getHeroConfigValue(widget.heroId, 'strife.characteristic_array');
+        final arrayConfig = await db.getHeroConfigValue(
+            widget.heroId, 'strife.characteristic_array');
         final arrayDescription = arrayConfig?['name']?.toString();
 
         final savedArrayValues =
@@ -326,8 +330,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (_selectedClass != null) {
         final abilityIds =
             await db.getHeroComponentIds(widget.heroId, 'ability');
-        print('[StrifeCreatorPage] _loadHeroData: All abilityIds from DB: $abilityIds');
-        
+        print(
+            '[StrifeCreatorPage] _loadHeroData: All abilityIds from DB: $abilityIds');
+
         final languageIds =
             await db.getHeroComponentIds(widget.heroId, 'language');
         final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
@@ -335,9 +340,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _baseSkillIds = _normalizeSkillIds(skillIds);
 
         // First try to load saved strife ability selections directly
-        final savedStrifeAbilitySelections = await _loadStrifeSelections('strife.ability_selections');
-        print('[StrifeCreatorPage] _loadHeroData: savedStrifeAbilitySelections: $savedStrifeAbilitySelections');
-        
+        final savedStrifeAbilitySelections =
+            await _loadStrifeSelections('strife.ability_selections');
+        print(
+            '[StrifeCreatorPage] _loadHeroData: savedStrifeAbilitySelections: $savedStrifeAbilitySelections');
+
         if (savedStrifeAbilitySelections.isNotEmpty) {
           _selectedAbilities = savedStrifeAbilitySelections;
         } else {
@@ -348,8 +355,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             abilityIds: abilityIds,
           );
         }
-        print('[StrifeCreatorPage] _loadHeroData: _selectedAbilities after load: $_selectedAbilities');
-        
+        print(
+            '[StrifeCreatorPage] _loadHeroData: _selectedAbilities after load: $_selectedAbilities');
+
         // ignore: unused_local_variable
         final assignedAbilityIds =
             _selectedAbilities.values.whereType<String>().toSet();
@@ -357,7 +365,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _reservedLanguageIds = languageIds.toSet();
 
         // First try to load saved strife skill selections directly
-        final savedStrifeSkillSelections = await _loadStrifeSelections('strife.skill_selections');
+        final savedStrifeSkillSelections =
+            await _loadStrifeSelections('strife.skill_selections');
         if (savedStrifeSkillSelections.isNotEmpty) {
           _selectedSkills = savedStrifeSkillSelections;
         } else {
@@ -371,7 +380,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _reservedSkillIds = _baseSkillIds;
 
         // First try to load saved strife perk selections directly
-        final savedStrifePerkSelections = await _loadStrifeSelections('strife.perk_selections');
+        final savedStrifePerkSelections =
+            await _loadStrifeSelections('strife.perk_selections');
         if (savedStrifePerkSelections.isNotEmpty) {
           _selectedPerks = savedStrifePerkSelections;
         } else {
@@ -408,7 +418,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     String? savedDescription,
     required List<int> savedValues,
   }) {
-    final arrays = classData.startingCharacteristics.startingCharacteristicsArrays;
+    final arrays =
+        classData.startingCharacteristics.startingCharacteristicsArrays;
 
     if (savedDescription != null && savedDescription.isNotEmpty) {
       final byDescription = arrays.firstWhereOrNull(
@@ -594,7 +605,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
   /// Gets language IDs saved in the database from other sources.
   Set<String> get _dbSavedLanguageIds => ref.watch(
-        heroEntryIdsByTypeProvider((heroId: widget.heroId, entryType: 'language')),
+        heroEntryIdsByTypeProvider(
+            (heroId: widget.heroId, entryType: 'language')),
       );
 
   void _refreshReservedSkills() {
@@ -647,10 +659,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       excludeLevelAllowances: true,
       excludeSubclassSkillAllowances: true,
     );
-    _skillGrantIds = plan.grantedSkillNames
-        .map(_resolveSkillId)
-        .whereType<String>()
-        .toSet();
+    _skillGrantIds =
+        plan.grantedSkillNames.map(_resolveSkillId).whereType<String>().toSet();
     _refreshReservedSkills();
   }
 
@@ -1021,7 +1031,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
   void _handleSkillSelectionsChanged(StartingSkillSelectionResult result) {
     final sameSlots = _deepEq.equals(_selectedSkills, result.selectionsBySlot);
-    final sameGrants = _deepEq.equals(_skillGrantIds, result.grantedSkillIds.toSet());
+    final sameGrants =
+        _deepEq.equals(_skillGrantIds, result.grantedSkillIds.toSet());
     if (sameSlots && sameGrants) return;
     setState(() {
       _selectedSkills = result.selectionsBySlot;
@@ -1050,9 +1061,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
   void _handleSubclassSelectionChanged(SubclassSelectionResult result) {
     final sameDeity = _selectedSubclass?.deityId == result.deityId;
-    final sameSubclass = _selectedSubclass?.subclassName == result.subclassName &&
-        _selectedSubclass?.subclassKey == result.subclassKey;
-    final sameDomains = _deepEq.equals(_selectedSubclass?.domainNames ?? const <String>[], result.domainNames);
+    final sameSubclass =
+        _selectedSubclass?.subclassName == result.subclassName &&
+            _selectedSubclass?.subclassKey == result.subclassKey;
+    final sameDomains = _deepEq.equals(
+        _selectedSubclass?.domainNames ?? const <String>[], result.domainNames);
     if (sameDeity && sameSubclass && sameDomains) return;
     setState(() {
       _selectedSubclass = result;
@@ -1064,7 +1077,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   }
 
   void _handleKitChangedAtSlot(int slotIndex, String? kitId) {
-    if (_selectedKitIds.length > slotIndex && _selectedKitIds[slotIndex] == kitId) {
+    if (_selectedKitIds.length > slotIndex &&
+        _selectedKitIds[slotIndex] == kitId) {
       return;
     }
     setState(() {
@@ -1445,9 +1459,11 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
     try {
       // Check if the class has changed - if so, clear all previous strife data first
-      final classChanged = _savedClassId != null && _savedClassId != classData.classId;
+      final classChanged =
+          _savedClassId != null && _savedClassId != classData.classId;
       if (classChanged) {
-        debugPrint('Class changed from $_savedClassId to ${classData.classId} - clearing old strife data');
+        debugPrint(
+            'Class changed from $_savedClassId to ${classData.classId} - clearing old strife data');
         await repo.clearStrifeData(widget.heroId);
       }
 
@@ -1493,7 +1509,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // 3.5. Apply kit grants (bonuses, abilities, stat mods like decrease_total) from selected equipment
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
-      
+
       // Use KitGrantsService to apply all kit grants - this also returns calculated bonuses
       final kitGrantsService = KitGrantsService(db);
       final equipmentBonuses = await kitGrantsService.applyKitGrants(
@@ -1501,18 +1517,19 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         equipmentIds: slotOrderedEquipmentIds,
         heroLevel: _selectedLevel,
       );
-      
+
       // Also save equipment IDs separately for other screens
-      updates.add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
-      
+      updates
+          .add(repo.saveEquipmentIds(widget.heroId, slotOrderedEquipmentIds));
+
       // Auto-favorite the selected equipment so it shows up in the gear page favorites
-      final equipmentIdsToFavorite = slotOrderedEquipmentIds
-          .whereType<String>()
-          .toList();
+      final equipmentIdsToFavorite =
+          slotOrderedEquipmentIds.whereType<String>().toList();
       if (equipmentIdsToFavorite.isNotEmpty) {
         // Get existing favorites and merge with new equipment
         final existingFavorites = await repo.getFavoriteKitIds(widget.heroId);
-        final mergedFavorites = <String>{...existingFavorites, ...equipmentIdsToFavorite}.toList();
+        final mergedFavorites =
+            <String>{...existingFavorites, ...equipmentIdsToFavorite}.toList();
         updates.add(repo.saveFavoriteKitIds(widget.heroId, mergedFavorites));
       }
 
@@ -1608,7 +1625,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // 5.5. Load feature stat bonuses (from class features like "stamina_increase: 21")
       // Note: speed/disengage bonuses may be characteristic-based ("Agility") so they're
       // computed at runtime via dynamicModifiers, not added here.
-      final featureStatBonuses = await repo.getFeatureStatBonuses(widget.heroId);
+      final featureStatBonuses =
+          await repo.getFeatureStatBonuses(widget.heroId);
       final featureStaminaBonus = featureStatBonuses['stamina'] ?? 0;
 
       // 6. Calculate and save Stamina (class base + level scaling + equipment bonus + feature bonus)
@@ -1624,7 +1642,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // 7. Calculate winded and dying values (based on effective max stamina)
       final windedValue = effectiveMaxStamina ~/ 2; // Half of max stamina
-      final dyingValue = -(effectiveMaxStamina ~/ 2); // Negative half of max stamina
+      final dyingValue =
+          -(effectiveMaxStamina ~/ 2); // Negative half of max stamina
       updates.add(repo.updateVitals(
         widget.heroId,
         windedValue: windedValue,
@@ -1686,8 +1705,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           .where((id) => id.isNotEmpty)
           .toList();
 
-      print('[StrifeCreatorPage] _handleSave: Saving abilities: $selectedAbilityIds');
-      print('[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
+      print(
+          '[StrifeCreatorPage] _handleSave: Saving abilities: $selectedAbilityIds');
+      print(
+          '[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
 
       // Always save abilities (even if empty, to clear old ones)
       updates.add(
@@ -1717,7 +1738,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           value: {'id': subclassSkillId},
         ));
       } else {
-        updates.add(db.deleteHeroConfig(widget.heroId, 'strife.subclass_skill_id'));
+        updates.add(
+            db.deleteHeroConfig(widget.heroId, 'strife.subclass_skill_id'));
       }
 
       // 12. Save selected skills to database
@@ -1735,9 +1757,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Combine: story skills + new strife skills + class grants
       // Note: subclass skill is tracked separately via hero_entries with sourceType='subclass'
-      final mergedSkillIds = storySkillIds
-          .union(strifeSkillIds)
-          .union(grantSkillIds);
+      final mergedSkillIds =
+          storySkillIds.union(strifeSkillIds).union(grantSkillIds);
 
       // Save all skills (setHeroComponentIds replaces the 'skill' category for manual_choice source)
       updates.add(
@@ -1792,7 +1813,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       // 14. Apply class feature grants so bonuses apply even without visiting the Strength page
       // Load any existing feature selections and apply the grants
       try {
-        final savedFeatureSelections = await repo.getFeatureSelections(widget.heroId);
+        final savedFeatureSelections =
+            await repo.getFeatureSelections(widget.heroId);
         final grantService = ClassFeatureGrantsService(db);
         await grantService.applyClassFeatureSelections(
           heroId: widget.heroId,
@@ -1815,7 +1837,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // Update local state with the new saved IDs
       _savedSubclassSkillId = subclassSkillId;
-      _savedClassId = classData.classId; // Update saved class ID after successful save
+      _savedClassId =
+          classData.classId; // Update saved class ID after successful save
 
       setState(() {
         _isDirty = false;
@@ -1888,87 +1911,92 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         key: const PageStorageKey('strife_creator_scroll_view'),
         child: Column(
           children: [
-          // Level Selector
-          LevelSelectorWidget(
-            key: const ValueKey('level_selector'),
-            selectedLevel: _selectedLevel,
-            onLevelChanged: _handleLevelChanged,
-          ),
+            // Level Selector
+            LevelSelectorWidget(
+              key: const ValueKey('level_selector'),
+              selectedLevel: _selectedLevel,
+              onLevelChanged: _handleLevelChanged,
+            ),
 
-          // Class Selector
-          ClassSelectorWidget(
-            key: const ValueKey('class_selector'),
-            availableClasses: _classDataService.getAllClasses(),
-            selectedClass: _selectedClass,
-            selectedLevel: _selectedLevel,
-            onClassChanged: _handleClassChanged,
-          ),
+            // Class Selector
+            ClassSelectorWidget(
+              key: const ValueKey('class_selector'),
+              availableClasses: _classDataService.getAllClasses(),
+              selectedClass: _selectedClass,
+              selectedLevel: _selectedLevel,
+              onClassChanged: _handleClassChanged,
+            ),
 
-          if (_selectedClass != null) ...[
-            StartingCharacteristicsWidget(
-              key: const ValueKey('starting_characteristics'),
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedArray: _selectedArray,
-              assignedCharacteristics: _assignedCharacteristics,
-              initialLevelChoiceSelections: _levelChoiceSelections,
-              onArrayChanged: _handleArrayChanged,
-              onAssignmentsChanged: _handleAssignmentsChanged,
-              onFinalTotalsChanged: _handleFinalTotalsChanged,
-              onLevelChoiceSelectionsChanged: _handleLevelChoiceSelectionsChanged,
-            ),
-            ChooseSubclassWidget(
-              key: const ValueKey('choose_subclass'),
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedSubclass: _selectedSubclass,
-              onSelectionChanged: _handleSubclassSelectionChanged,
-              // Pass reserved skills excluding the current subclass's own skill
-              // so it doesn't flag itself as a duplicate
-              reservedSkillIds: {
-                ..._baseSkillIds,
-                ..._normalizeSkillIds(_selectedSkills.values.whereType<String>()),
-                ..._dbSavedSkillIds,
-              },
-              skillNameToIdLookup: _skillIdLookup,
-              // Pass the saved subclass skill ID to avoid self-flagging
-              savedSubclassSkillId: _savedSubclassSkillId,
-            ),
-            ..._buildKitWidgets(),
-            StartingAbilitiesWidget(
-              key: const ValueKey('starting_abilities'),
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedSubclassName: _selectedSubclass?.subclassName,
-              selectedDomainNames: _selectedSubclass?.domainNames ?? const [],
-              selectedAbilities: _selectedAbilities,
-              reservedAbilityIds: _reservedAbilityIds,
-              onSelectionChanged: _handleAbilitySelectionsChanged,
-            ),
-            StartingSkillsWidget(
-              key: const ValueKey('starting_skills'),
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedSubclass: _selectedSubclass,
-              selectedSkills: _selectedSkills,
-              reservedSkillIds: _reservedSkillIds,
-              onSelectionChanged: _handleSkillSelectionsChanged,
-            ),
-            StartingPerksWidget(
-              key: const ValueKey('starting_perks'),
-              heroId: widget.heroId,
-              classData: _selectedClass!,
-              selectedLevel: _selectedLevel,
-              selectedPerks: _selectedPerks,
-              reservedPerkIds: _reservedPerkIds,
-              reservedLanguageIds: {..._reservedLanguageIds, ..._dbSavedLanguageIds},
-              reservedSkillIds: _reservedSkillIds,
-              onSelectionChanged: _handlePerkSelectionsChanged,
-            ),
-          ],
+            if (_selectedClass != null) ...[
+              ChooseSubclassWidget(
+                key: const ValueKey('choose_subclass'),
+                classData: _selectedClass!,
+                selectedLevel: _selectedLevel,
+                selectedSubclass: _selectedSubclass,
+                onSelectionChanged: _handleSubclassSelectionChanged,
+                // Pass reserved skills excluding the current subclass's own skill
+                // so it doesn't flag itself as a duplicate
+                reservedSkillIds: {
+                  ..._baseSkillIds,
+                  ..._normalizeSkillIds(
+                      _selectedSkills.values.whereType<String>()),
+                  ..._dbSavedSkillIds,
+                },
+                skillNameToIdLookup: _skillIdLookup,
+                // Pass the saved subclass skill ID to avoid self-flagging
+                savedSubclassSkillId: _savedSubclassSkillId,
+              ),
+              StartingCharacteristicsWidget(
+                key: const ValueKey('starting_characteristics'),
+                classData: _selectedClass!,
+                selectedLevel: _selectedLevel,
+                selectedArray: _selectedArray,
+                assignedCharacteristics: _assignedCharacteristics,
+                initialLevelChoiceSelections: _levelChoiceSelections,
+                onArrayChanged: _handleArrayChanged,
+                onAssignmentsChanged: _handleAssignmentsChanged,
+                onFinalTotalsChanged: _handleFinalTotalsChanged,
+                onLevelChoiceSelectionsChanged:
+                    _handleLevelChoiceSelectionsChanged,
+              ),
+              ..._buildKitWidgets(),
+              StartingAbilitiesWidget(
+                key: const ValueKey('starting_abilities'),
+                classData: _selectedClass!,
+                selectedLevel: _selectedLevel,
+                selectedSubclassName: _selectedSubclass?.subclassName,
+                selectedDomainNames: _selectedSubclass?.domainNames ?? const [],
+                selectedAbilities: _selectedAbilities,
+                reservedAbilityIds: _reservedAbilityIds,
+                onSelectionChanged: _handleAbilitySelectionsChanged,
+              ),
+              StartingSkillsWidget(
+                key: const ValueKey('starting_skills'),
+                classData: _selectedClass!,
+                selectedLevel: _selectedLevel,
+                selectedSubclass: _selectedSubclass,
+                selectedSkills: _selectedSkills,
+                reservedSkillIds: _reservedSkillIds,
+                onSelectionChanged: _handleSkillSelectionsChanged,
+              ),
+              StartingPerksWidget(
+                key: const ValueKey('starting_perks'),
+                heroId: widget.heroId,
+                classData: _selectedClass!,
+                selectedLevel: _selectedLevel,
+                selectedPerks: _selectedPerks,
+                reservedPerkIds: _reservedPerkIds,
+                reservedLanguageIds: {
+                  ..._reservedLanguageIds,
+                  ..._dbSavedLanguageIds
+                },
+                reservedSkillIds: _reservedSkillIds,
+                onSelectionChanged: _handlePerkSelectionsChanged,
+              ),
+            ],
 
-          // Bottom padding
-          const SizedBox(height: 24),
+            // Bottom padding
+            const SizedBox(height: 24),
           ],
         ),
       ),

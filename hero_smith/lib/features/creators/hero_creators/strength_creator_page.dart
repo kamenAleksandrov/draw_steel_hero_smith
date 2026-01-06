@@ -41,6 +41,7 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
   List<String?> _equipmentIds = const [];
   Map<String, Map<String, String>> _skillGroupSelections = const {};
   Set<String> _reservedSkillIds = const {};
+  int _pendingChoicesCount = 0;
 
   @override
   void initState() {
@@ -116,8 +117,11 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
         final storedSubclassKey =
             (await grantService.loadSubclassKey(widget.heroId))?.trim();
         final currentSubclassKey = subclassSelection?.subclassKey?.trim();
-        final subclassChanged = (storedSubclassKey ?? '') !=
-            (currentSubclassKey ?? '');
+        // Only treat as a change if we HAD a stored subclass and it's different.
+        // If storedSubclassKey is null/empty, this is the first save - not a change.
+        final hadPreviousSubclass = storedSubclassKey != null && storedSubclassKey.isNotEmpty;
+        final subclassChanged = hadPreviousSubclass &&
+            storedSubclassKey != (currentSubclassKey ?? '');
 
         if (subclassChanged) {
           // Remove old class feature grants and clear persisted selections.
@@ -248,7 +252,6 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
     String grantKey,
     String? skillId,
   ) async {
-    print('[StrengthCreatorPage] _handleSkillGroupSelectionChanged: featureId=$featureId, grantKey=$grantKey, skillId=$skillId');
     // Update local state immediately for responsiveness
     setState(() {
       final updated = Map<String, Map<String, String>>.from(_skillGroupSelections);
@@ -363,6 +366,9 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
     }
 
     final content = <Widget>[
+      // Pending choices notification banner
+      if (_pendingChoicesCount > 0)
+        _PendingChoicesBanner(count: _pendingChoicesCount),
       if (notices.isNotEmpty) ...[
         ...notices,
         const SizedBox(height: 12),
@@ -387,6 +393,18 @@ class _StrenghtCreatorPageState extends ConsumerState<StrenghtCreatorPage>
           skillGroupSelections: _skillGroupSelections,
           onSkillGroupSelectionChanged: _handleSkillGroupSelectionChanged,
           reservedSkillIds: _reservedSkillIds,
+          onPendingChoicesChanged: (count) {
+            if (_pendingChoicesCount != count) {
+              // Defer setState to avoid calling it during build phase
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted && _pendingChoicesCount != count) {
+                  setState(() {
+                    _pendingChoicesCount = count;
+                  });
+                }
+              });
+            }
+          },
         )
       else
         const Padding(
@@ -505,6 +523,85 @@ class _NoticeCard extends StatelessWidget {
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: CreatorTheme.textSecondary,
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PendingChoicesBanner extends StatelessWidget {
+  const _PendingChoicesBanner({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.orange.shade700.withValues(alpha: 0.15),
+              Colors.orange.shade600.withValues(alpha: 0.1),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.orange.shade600.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade600.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.touch_app_outlined,
+                  color: Colors.orange.shade400,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      count == 1
+                          ? StrengthCreatorPageText.pendingChoicesSingular
+                          : StrengthCreatorPageText.pendingChoicesPlural(count),
+                      style: TextStyle(
+                        color: Colors.orange.shade300,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      StrengthCreatorPageText.pendingChoicesHint,
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.orange.shade400,
               ),
             ],
           ),

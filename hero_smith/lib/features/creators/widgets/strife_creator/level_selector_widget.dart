@@ -229,7 +229,7 @@ class LevelSelectorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: CreatorTheme.sectionMargin,
-      decoration: CreatorTheme.sectionDecoration(_accent),
+      decoration: CreatorTheme.sectionDecoration(const Color.fromARGB(255, 53, 164, 229)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -237,7 +237,7 @@ class LevelSelectorWidget extends StatelessWidget {
             title: LevelSelectorWidgetText.heroLevelLabel,
             subtitle: LevelSelectorWidgetText.levelSubtitle,
             icon: Icons.trending_up,
-            accent: _accent,
+            accent: const Color.fromARGB(255, 53, 126, 229),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -255,7 +255,7 @@ class LevelSelectorWidget extends StatelessWidget {
                   options: options,
                   title: LevelSelectorWidgetText.selectLevelTitle,
                   currentValue: selectedLevel.toString(),
-                  accentColor: _accent,
+                  accentColor: const Color.fromARGB(255, 53, 120, 229),
                   icon: Icons.trending_up,
                 );
 

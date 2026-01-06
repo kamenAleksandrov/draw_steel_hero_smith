@@ -93,7 +93,6 @@ remove duplication finding?
 
 ### necessary changes
 
-
 features must have ui updated to handle options, grants and other such cases better.
 ## hero creation testing
 
@@ -104,7 +103,6 @@ features must have ui updated to handle options, grants and other such cases bet
 ### elementalist
 
 would be cool to have the mantle of essence like the fury or null growing resource.
-
 ### fury
 
 ### null

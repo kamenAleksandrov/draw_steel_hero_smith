@@ -19,4 +19,7 @@ class StrengthCreatorPageText {
   static const String greenFormSectionTitle = 'Green Elementalist Forms';
   static const String chooseClassFirstMessage =
       'Choose a class first to load features.';
+  static const String pendingChoicesSingular = '1 choice pending';
+  static String pendingChoicesPlural(int count) => '$count choices pending';
+  static const String pendingChoicesHint = 'Scroll down to find features requiring selections';
 }
