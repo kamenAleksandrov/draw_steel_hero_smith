@@ -281,7 +281,7 @@ class AncestryCard extends StatelessWidget {
           margin: EdgeInsets.only(bottom: signatures.last == signature ? 0 : 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.amber.shade50,
+            color: const Color.fromARGB(0, 255, 248, 225),
             border: Border.all(color: Colors.amber.shade300, width: 1),
             borderRadius: BorderRadius.circular(8),
           ),

@@ -16,4 +16,6 @@ class TreasuresTabText {
   static const String emptyStateMessage =
       'No treasures or imbuements yet.\nTap "Add" to begin or complete a downtime project.';
   static const String itemImbuementsHeader = 'Item Imbuements';
+  static const String quantityUpdatedSnack = 'Quantity updated';
+  static const String updateQuantityFailedPrefix = 'Failed to update quantity: ';
 }

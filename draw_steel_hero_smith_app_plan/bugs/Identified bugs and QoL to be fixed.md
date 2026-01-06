@@ -9,10 +9,6 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 
 automatically applied must be as a divider instead as another box that boxes the box
 
-ancestries tab signature trait is too bright
-
-select language must add more info to the widget
-
 the color of treasures in the add treasure must better match.
 
 skills dialog picker in strenght uses old style 

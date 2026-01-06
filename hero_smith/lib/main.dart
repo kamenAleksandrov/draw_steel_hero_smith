@@ -22,29 +22,15 @@ class HeroSmithApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hero Smith',
-      theme: (() {
-        final base = ThemeData(
-          colorSchemeSeed: Colors.indigo,
-          useMaterial3: true,
-        );
-        return base.copyWith(
-          extensions: <ThemeExtension<dynamic>>[
-            DsTheme.defaults(base.colorScheme),
-          ],
-        );
-      })(),
-      darkTheme: (() {
-        final base = ThemeData(
-          colorSchemeSeed: Colors.indigo,
-          brightness: Brightness.dark,
-          useMaterial3: true,
-        );
-        return base.copyWith(
-          extensions: <ThemeExtension<dynamic>>[
-            DsTheme.defaults(base.colorScheme),
-          ],
-        );
-      })(),
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xFF4A4A4A),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorSchemeSeed: const Color(0xFF4A4A4A),
+        brightness: Brightness.dark,
+        useMaterial3: true,
+      ),
       themeMode: ThemeMode.dark,
       home: const SplashWrapper(),
     );
@@ -98,8 +84,14 @@ class _SplashWrapperState extends ConsumerState<SplashWrapper> {
 
     // Seed DB while the splash screen is showing so the Heroes page doesn't
     // appear frozen during heavy first-run initialization.
+    // Add timeout to prevent infinite hang if seeding gets stuck.
     try {
-      await ref.read(seedOnStartupProvider.future);
+      await ref.read(seedOnStartupProvider.future).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          debugPrint('Startup seed timed out after 30 seconds');
+        },
+      );
     } catch (e) {
       // Best-effort: allow app to continue; downstream pages can surface errors.
       debugPrint('Startup seed failed: $e');

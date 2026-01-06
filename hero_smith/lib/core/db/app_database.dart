@@ -44,8 +44,10 @@ class HeroEntries extends Table {
   TextColumn get entryId => text()(); // component id
   TextColumn get sourceType =>
       text().withDefault(const Constant('legacy'))(); // e.g. class, ancestry
-  TextColumn get sourceId => text().withDefault(const Constant(''))(); // component id of source
-  TextColumn get gainedBy => text().withDefault(const Constant('grant'))(); // grant | choice
+  TextColumn get sourceId =>
+      text().withDefault(const Constant(''))(); // component id of source
+  TextColumn get gainedBy =>
+      text().withDefault(const Constant('grant'))(); // grant | choice
   TextColumn get payload => text().nullable()(); // JSON metadata
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
@@ -92,11 +94,13 @@ class HeroDowntimeProjects extends Table {
   TextColumn get description => text().withDefault(const Constant(''))();
   IntColumn get projectGoal => integer()();
   IntColumn get currentPoints => integer().withDefault(const Constant(0))();
-  TextColumn get prerequisitesJson => text().withDefault(const Constant('[]'))();
+  TextColumn get prerequisitesJson =>
+      text().withDefault(const Constant('[]'))();
   TextColumn get projectSource => text().nullable()();
   TextColumn get sourceLanguage => text().nullable()();
   TextColumn get guidesJson => text().withDefault(const Constant('[]'))();
-  TextColumn get rollCharacteristicsJson => text().withDefault(const Constant('[]'))();
+  TextColumn get rollCharacteristicsJson =>
+      text().withDefault(const Constant('[]'))();
   TextColumn get eventsJson => text().withDefault(const Constant('[]'))();
   TextColumn get notes => text().withDefault(const Constant(''))();
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
@@ -211,71 +215,73 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(heroNotes);
           }
           if (from < 5) {
-          // Migration from schema version 4 to 5
-          // Add notes column to hero_downtime_projects
-          await customStatement(
-            "ALTER TABLE hero_downtime_projects ADD COLUMN notes TEXT NOT NULL DEFAULT ''",
-          );
-        }
-        if (from < 6) {
-          // Migration from schema version 5 to 6
-          await m.createTable(heroEntries);
-          await m.createTable(heroConfig);
-          await customStatement(
-              'CREATE INDEX IF NOT EXISTS idx_hero_entries_hero_id ON hero_entries(hero_id)');
-          await customStatement(
-              'CREATE INDEX IF NOT EXISTS idx_hero_entries_type ON hero_entries(hero_id, entry_type)');
-          await customStatement(
-              'CREATE INDEX IF NOT EXISTS idx_hero_config_hero_id ON hero_config(hero_id)');
-          await _migrateHeroValuesToEntriesAndConfig();
-        }
-        if (from < 7) {
-          // Normalization pass to ensure correct metadata and cleanup legacy fields
-          final heroesList = await select(heroes).get();
-          final normalizer = HeroEntryNormalizer(this);
-          for (final h in heroesList) {
-            await normalizer.normalize(h.id);
+            // Migration from schema version 4 to 5
+            // Add notes column to hero_downtime_projects
+            await customStatement(
+              "ALTER TABLE hero_downtime_projects ADD COLUMN notes TEXT NOT NULL DEFAULT ''",
+            );
           }
-        }
-        if (from < 8) {
-          // Ensure hero_config uniqueness and cleanup duplicates
-          // MUST dedupe BEFORE creating unique index to avoid constraint failures
-          final heroesList = await select(heroes).get();
-          final normalizer = HeroEntryNormalizer(this);
-          for (final h in heroesList) {
-            await normalizer.normalize(h.id);
+          if (from < 6) {
+            // Migration from schema version 5 to 6
+            await m.createTable(heroEntries);
+            await m.createTable(heroConfig);
+            await customStatement(
+                'CREATE INDEX IF NOT EXISTS idx_hero_entries_hero_id ON hero_entries(hero_id)');
+            await customStatement(
+                'CREATE INDEX IF NOT EXISTS idx_hero_entries_type ON hero_entries(hero_id, entry_type)');
+            await customStatement(
+                'CREATE INDEX IF NOT EXISTS idx_hero_config_hero_id ON hero_config(hero_id)');
+            await _migrateHeroValuesToEntriesAndConfig();
           }
-          // Now safe to create unique index
-          await customStatement(
-              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
-        }
-        if (from < 9) {
-          // v9: Fix for users who migrated to v8 but still have duplicate config rows
-          // The unique index creation with IF NOT EXISTS doesn't enforce on existing data
-          // so we must: 1) drop index, 2) dedupe, 3) recreate index
-          await customStatement('DROP INDEX IF EXISTS idx_hero_config_unique');
-          final heroesList = await select(heroes).get();
-          final normalizer = HeroEntryNormalizer(this);
-          for (final h in heroesList) {
-            await normalizer.normalize(h.id);
+          if (from < 7) {
+            // Normalization pass to ensure correct metadata and cleanup legacy fields
+            final heroesList = await select(heroes).get();
+            final normalizer = HeroEntryNormalizer(this);
+            for (final h in heroesList) {
+              await normalizer.normalize(h.id);
+            }
           }
-          await customStatement(
-              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
-        }
-        if (from < 10) {
-          // v10: Force cleanup of duplicates created by buggy setHeroConfig
-          // Now that setHeroConfig properly deletes before insert, this is a one-time cleanup
-          await customStatement('DROP INDEX IF EXISTS idx_hero_config_unique');
-          final heroesList = await select(heroes).get();
-          final normalizer = HeroEntryNormalizer(this);
-          for (final h in heroesList) {
-            await normalizer.normalize(h.id);
+          if (from < 8) {
+            // Ensure hero_config uniqueness and cleanup duplicates
+            // MUST dedupe BEFORE creating unique index to avoid constraint failures
+            final heroesList = await select(heroes).get();
+            final normalizer = HeroEntryNormalizer(this);
+            for (final h in heroesList) {
+              await normalizer.normalize(h.id);
+            }
+            // Now safe to create unique index
+            await customStatement(
+                'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
           }
-          await customStatement(
-              'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
-        }
-      },
-    );
+          if (from < 9) {
+            // v9: Fix for users who migrated to v8 but still have duplicate config rows
+            // The unique index creation with IF NOT EXISTS doesn't enforce on existing data
+            // so we must: 1) drop index, 2) dedupe, 3) recreate index
+            await customStatement(
+                'DROP INDEX IF EXISTS idx_hero_config_unique');
+            final heroesList = await select(heroes).get();
+            final normalizer = HeroEntryNormalizer(this);
+            for (final h in heroesList) {
+              await normalizer.normalize(h.id);
+            }
+            await customStatement(
+                'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
+          }
+          if (from < 10) {
+            // v10: Force cleanup of duplicates created by buggy setHeroConfig
+            // Now that setHeroConfig properly deletes before insert, this is a one-time cleanup
+            await customStatement(
+                'DROP INDEX IF EXISTS idx_hero_config_unique');
+            final heroesList = await select(heroes).get();
+            final normalizer = HeroEntryNormalizer(this);
+            for (final h in heroesList) {
+              await normalizer.normalize(h.id);
+            }
+            await customStatement(
+                'CREATE UNIQUE INDEX IF NOT EXISTS idx_hero_config_unique ON hero_config(hero_id, config_key)');
+          }
+        },
+      );
 
   /// Migrate hero components data to hero values (schema v1 -> v2)
   Future<void> _migrateHeroComponentsToValues() async {
@@ -307,16 +313,16 @@ class AppDatabase extends _$AppDatabase {
         for (final heroId in grouped.keys) {
           for (final category in grouped[heroId]!.keys) {
             final componentIds = grouped[heroId]![category]!;
-            
+
             // For single-item categories, store as textValue
             // For multi-item categories, store as JSON array
-            if (componentIds.length == 1 && 
-                (category == 'culture_environment' || 
-                 category == 'culture_organisation' || 
-                 category == 'culture_upbringing' ||
-                 category == 'ancestry' ||
-                 category == 'career' ||
-                 category == 'complication')) {
+            if (componentIds.length == 1 &&
+                (category == 'culture_environment' ||
+                    category == 'culture_organisation' ||
+                    category == 'culture_upbringing' ||
+                    category == 'ancestry' ||
+                    category == 'career' ||
+                    category == 'complication')) {
               await upsertHeroValue(
                 heroId: heroId,
                 key: 'component.$category',
@@ -742,7 +748,8 @@ class AppDatabase extends _$AppDatabase {
             Iterable list;
             if (decoded is Map && decoded['list'] is List) {
               list = decoded['list'] as List;
-            } else if (decoded is Map && decoded.values.every((e) => e != null)) {
+            } else if (decoded is Map &&
+                decoded.values.every((e) => e != null)) {
               list = decoded.values;
             } else if (decoded is List) {
               list = decoded;
@@ -795,8 +802,7 @@ class AppDatabase extends _$AppDatabase {
 
     // Remove migrated rows from hero_values.
     if (idsToDelete.isNotEmpty) {
-      await (delete(heroValues)
-            ..where((t) => t.id.isIn(idsToDelete.toList())))
+      await (delete(heroValues)..where((t) => t.id.isIn(idsToDelete.toList())))
           .go();
     }
   }
@@ -830,12 +836,13 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<Component>> getAllComponents() => select(components).get();
-  
+
   /// Get a single component by ID
   Future<Component?> getComponentById(String id) async {
-    return (select(components)..where((c) => c.id.equals(id))).getSingleOrNull();
+    return (select(components)..where((c) => c.id.equals(id)))
+        .getSingleOrNull();
   }
-  
+
   /// Insert a component into the database from raw values
   Future<void> insertComponentRaw({
     required String id,
@@ -860,7 +867,7 @@ class AppDatabase extends _$AppDatabase {
       mode: InsertMode.insertOrReplace,
     );
   }
-  
+
   Stream<List<Component>> watchAllComponents() => select(components).watch();
   Stream<List<Component>> watchComponentsByType(String type) =>
       (select(components)..where((c) => c.type.equals(type))).watch();
@@ -1000,7 +1007,7 @@ class AppDatabase extends _$AppDatabase {
   // --- Hero entries helpers -------------------------------------------------
 
   /// Insert (or replace existing) hero content entry.
-  /// 
+  ///
   /// Entries are unique per (heroId, entryType, entryId, sourceType, sourceId).
   /// This allows the same skill/ability/etc to be granted from multiple sources
   /// (e.g., culture and complication can both grant the same skill).
@@ -1090,7 +1097,8 @@ class AppDatabase extends _$AppDatabase {
 
   Future<String?> getSingleHeroEntryId(String heroId, String entryType) async {
     final rows = await (select(heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .get();
     return rows.isEmpty ? null : rows.first.entryId;
   }
@@ -1115,7 +1123,8 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<String>> getHeroEntryIds(String heroId, String entryType) async {
     final rows = await (select(heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .get();
     // Return unique entry IDs (same entry might be granted from multiple sources)
     return rows.map((e) => e.entryId).toSet().toList();
@@ -1123,15 +1132,90 @@ class AppDatabase extends _$AppDatabase {
 
   Stream<List<String>> watchHeroEntryIds(String heroId, String entryType) {
     return (select(heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .watch()
         // Return unique entry IDs (same entry might be granted from multiple sources)
         .map((rows) => rows.map((e) => e.entryId).toSet().toList());
   }
 
+  /// Watch hero entries with their payloads for a specific category.
+  /// Returns a stream of maps: {entryId: payload} where payload contains quantity etc.
+  Stream<Map<String, Map<String, dynamic>>> watchHeroEntriesWithPayload(
+      String heroId, String entryType) {
+    return (select(heroEntries)
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .watch()
+        .map((rows) {
+      final result = <String, Map<String, dynamic>>{};
+      for (final row in rows) {
+        Map<String, dynamic> payload = {};
+        if (row.payload != null) {
+          try {
+            payload = jsonDecode(row.payload!) as Map<String, dynamic>;
+          } catch (_) {}
+        }
+        // If same entry exists multiple times, merge quantities
+        if (result.containsKey(row.entryId)) {
+          final existing = result[row.entryId]!;
+          final existingQty = existing['quantity'] as int? ?? 1;
+          final newQty = payload['quantity'] as int? ?? 1;
+          existing['quantity'] = existingQty + newQty;
+        } else {
+          // Default quantity to 1 if not specified
+          payload['quantity'] ??= 1;
+          result[row.entryId] = payload;
+        }
+      }
+      return result;
+    });
+  }
+
+  /// Update the payload for a specific hero entry.
+  Future<void> updateHeroEntryPayload({
+    required String heroId,
+    required String entryType,
+    required String entryId,
+    required Map<String, dynamic> payload,
+  }) async {
+    final now = DateTime.now();
+    await (update(heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals(entryType) &
+              t.entryId.equals(entryId)))
+        .write(HeroEntriesCompanion(
+      payload: Value(jsonEncode(payload)),
+      updatedAt: Value(now),
+    ));
+  }
+
+  /// Add a hero entry with a specific payload (for treasures with quantity).
+  Future<void> addHeroEntryWithPayload({
+    required String heroId,
+    required String entryType,
+    required String entryId,
+    required Map<String, dynamic> payload,
+    String sourceType = 'manual_choice',
+    String sourceId = '',
+    String gainedBy = 'choice',
+  }) async {
+    await upsertHeroEntry(
+      heroId: heroId,
+      entryType: entryType,
+      entryId: entryId,
+      sourceType: sourceType,
+      sourceId: sourceId,
+      gainedBy: gainedBy,
+      payload: payload,
+    );
+  }
+
   Future<void> clearHeroEntryType(String heroId, String entryType) async {
     await (delete(heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .go();
   }
 
@@ -1157,9 +1241,10 @@ class AppDatabase extends _$AppDatabase {
     // Delete existing rows for this hero+key, then insert new one
     // This ensures no duplicates regardless of index state
     await (delete(heroConfig)
-          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
         .go();
-    
+
     await into(heroConfig).insert(
       HeroConfigCompanion.insert(
         heroId: heroId,
@@ -1176,7 +1261,8 @@ class AppDatabase extends _$AppDatabase {
       String heroId, String configKey) async {
     // Use .get() instead of .getSingleOrNull() to handle potential duplicates gracefully
     final rows = await (select(heroConfig)
-          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
           ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
           ..limit(1))
         .get();
@@ -1190,7 +1276,8 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteHeroConfig(String heroId, String configKey) async {
     await (delete(heroConfig)
-          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.configKey.equals(configKey)))
         .go();
   }
 
@@ -1198,7 +1285,8 @@ class AppDatabase extends _$AppDatabase {
       String heroId, String configKey) {
     // Use .watch() instead of .watchSingleOrNull() to handle potential duplicates gracefully
     return (select(heroConfig)
-          ..where((t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.configKey.equals(configKey))
           ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)])
           ..limit(1))
         .watch()
@@ -1213,7 +1301,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// Get component IDs for a specific category (replaces getHeroComponents)
-  Future<List<String>> getHeroComponentIds(String heroId, String category) async {
+  Future<List<String>> getHeroComponentIds(
+      String heroId, String category) async {
     final entryIds = await getHeroEntryIds(heroId, category);
     if (entryIds.isNotEmpty) return entryIds;
 
@@ -1241,7 +1330,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<String>> watchHeroComponentIds(String heroId, String category) {
     final legacyKey = 'component.$category';
     return (select(heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals(category)))
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(category)))
         .watch()
         .asyncMap((rows) async {
       if (rows.isNotEmpty) {
@@ -1258,9 +1348,7 @@ class AppDatabase extends _$AppDatabase {
         try {
           final decoded = jsonDecode(legacyRow.jsonValue!);
           if (decoded is Map && decoded['ids'] is List) {
-            return (decoded['ids'] as List)
-                .map((e) => e.toString())
-                .toList();
+            return (decoded['ids'] as List).map((e) => e.toString()).toList();
           }
         } catch (_) {}
       }
@@ -1304,9 +1392,12 @@ class AppDatabase extends _$AppDatabase {
     await transaction(() async {
       // Delete all per-hero data (order matters: children first, then parent)
       await (delete(heroNotes)..where((t) => t.heroId.equals(heroId))).go();
-      await (delete(heroDowntimeProjects)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroDowntimeProjects)
+            ..where((t) => t.heroId.equals(heroId)))
+          .go();
       await (delete(heroFollowers)..where((t) => t.heroId.equals(heroId))).go();
-      await (delete(heroProjectSources)..where((t) => t.heroId.equals(heroId))).go();
+      await (delete(heroProjectSources)..where((t) => t.heroId.equals(heroId)))
+          .go();
       await (delete(heroEntries)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroConfig)..where((t) => t.heroId.equals(heroId))).go();
       await (delete(heroValues)..where((t) => t.heroId.equals(heroId))).go();

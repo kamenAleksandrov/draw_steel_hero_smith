@@ -30,9 +30,12 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   List<DowntimeEntry> _allImbuements = [];
   bool _isLoadingTreasures = true;
   String? _error;
-  StreamSubscription<List<String>>? _treasureIdsSubscription;
+  StreamSubscription<Map<String, Map<String, dynamic>>>?
+      _treasureEntriesSubscription;
   StreamSubscription<List<String>>? _imbuementIdsSubscription;
-  List<String> _heroTreasureIds = [];
+
+  /// Map of treasureId -> {quantity: int, ...other payload data}
+  Map<String, Map<String, dynamic>> _heroTreasureEntries = {};
   List<String> _heroImbuementIds = [];
 
   @override
@@ -40,25 +43,25 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     super.initState();
     _loadAllTreasures();
     _loadAllImbuements();
-    _watchHeroTreasureIds();
+    _watchHeroTreasureEntries();
     _watchHeroImbuementIds();
   }
 
   @override
   void dispose() {
-    _treasureIdsSubscription?.cancel();
+    _treasureEntriesSubscription?.cancel();
     _imbuementIdsSubscription?.cancel();
     super.dispose();
   }
 
-  void _watchHeroTreasureIds() {
+  void _watchHeroTreasureEntries() {
     final db = ref.read(appDatabaseProvider);
-    _treasureIdsSubscription =
-        db.watchHeroComponentIds(widget.heroId, 'treasure').listen(
-      (ids) {
+    _treasureEntriesSubscription =
+        db.watchHeroEntriesWithPayload(widget.heroId, 'treasure').listen(
+      (entries) {
         if (mounted) {
           setState(() {
-            _heroTreasureIds = ids;
+            _heroTreasureEntries = entries;
           });
         }
       },
@@ -131,17 +134,29 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     }
   }
 
-  Future<void> _addTreasure(String treasureId) async {
-    if (_heroTreasureIds.contains(treasureId)) return;
+  /// Get the quantity of a treasure from entries.
+  int _getTreasureQuantity(String treasureId) {
+    final entry = _heroTreasureEntries[treasureId];
+    return entry?['quantity'] as int? ?? 1;
+  }
 
+  Future<void> _addTreasure(String treasureId) async {
     final db = ref.read(appDatabaseProvider);
-    final updated = [..._heroTreasureIds, treasureId];
+
+    // Check if treasure already exists - if so, increment quantity
+    if (_heroTreasureEntries.containsKey(treasureId)) {
+      final currentQty = _getTreasureQuantity(treasureId);
+      await _updateTreasureQuantity(treasureId, currentQty + 1);
+      return;
+    }
 
     try {
-      await db.setHeroComponentIds(
+      // Add new treasure with quantity 1
+      await db.addHeroEntryWithPayload(
         heroId: widget.heroId,
-        category: 'treasure',
-        componentIds: updated,
+        entryType: 'treasure',
+        entryId: treasureId,
+        payload: {'quantity': 1},
       );
 
       if (mounted) {
@@ -164,16 +179,82 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     }
   }
 
-  Future<void> _removeTreasure(String treasureId) async {
+  Future<void> _updateTreasureQuantity(
+      String treasureId, int newQuantity) async {
     final db = ref.read(appDatabaseProvider);
-    final updated = _heroTreasureIds.where((id) => id != treasureId).toList();
 
     try {
-      await db.setHeroComponentIds(
-        heroId: widget.heroId,
-        category: 'treasure',
-        componentIds: updated,
+      if (newQuantity <= 0) {
+        // Remove the treasure entirely
+        await _removeTreasure(treasureId);
+        return;
+      }
+
+      // Update the payload with new quantity
+      final existingPayload = Map<String, dynamic>.from(
+        _heroTreasureEntries[treasureId] ?? {},
       );
+      existingPayload['quantity'] = newQuantity;
+
+      await db.updateHeroEntryPayload(
+        heroId: widget.heroId,
+        entryType: 'treasure',
+        entryId: treasureId,
+        payload: existingPayload,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(TreasuresTabText.quantityUpdatedSnack),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${TreasuresTabText.updateQuantityFailedPrefix}$e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _incrementTreasure(String treasureId) async {
+    final currentQty = _getTreasureQuantity(treasureId);
+    await _updateTreasureQuantity(treasureId, currentQty + 1);
+  }
+
+  Future<void> _decrementTreasure(String treasureId) async {
+    final currentQty = _getTreasureQuantity(treasureId);
+    if (currentQty <= 1) {
+      await _removeTreasure(treasureId);
+    } else {
+      await _updateTreasureQuantity(treasureId, currentQty - 1);
+    }
+  }
+
+  Future<void> _removeTreasure(String treasureId) async {
+    final db = ref.read(appDatabaseProvider);
+
+    try {
+      // Delete the entry entirely
+      await db.clearHeroEntryType(widget.heroId, 'treasure');
+      // Re-add remaining treasures
+      final remaining =
+          Map<String, Map<String, dynamic>>.from(_heroTreasureEntries);
+      remaining.remove(treasureId);
+      for (final entry in remaining.entries) {
+        await db.addHeroEntryWithPayload(
+          heroId: widget.heroId,
+          entryType: 'treasure',
+          entryId: entry.key,
+          payload: entry.value,
+        );
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -196,8 +277,8 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   }
 
   void _showAddTreasureDialog() {
-    final availableTreasures =
-        _allTreasures.where((t) => !_heroTreasureIds.contains(t.id)).toList();
+    // Show all treasures - user can add more of the same (increases quantity)
+    final availableTreasures = _allTreasures;
     final availableImbuements =
         _allImbuements.where((i) => !_heroImbuementIds.contains(i.id)).toList();
 
@@ -279,8 +360,10 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       );
     }
 
+    // Get treasures that the hero has (using entries map)
+    final heroTreasureIds = _heroTreasureEntries.keys.toSet();
     final heroTreasures =
-        _allTreasures.where((t) => _heroTreasureIds.contains(t.id)).toList();
+        _allTreasures.where((t) => heroTreasureIds.contains(t.id)).toList();
 
     // Get hero's imbuements
     final heroImbuements =
@@ -293,8 +376,12 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       groupedTreasures.putIfAbsent(groupKey, () => []).add(treasure);
     }
 
-    // Total count includes both treasures and imbuements
-    final totalCount = heroTreasures.length + heroImbuements.length;
+    // Total count includes sum of all quantities plus imbuements
+    final totalTreasureCount = _heroTreasureEntries.values.fold<int>(
+      0,
+      (sum, entry) => sum + (entry['quantity'] as int? ?? 1),
+    );
+    final totalCount = totalTreasureCount + heroImbuements.length;
 
     return Stack(
       children: [
@@ -404,29 +491,11 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                                 ),
                               ),
                               ...treasures.map((treasure) {
+                                final quantity =
+                                    _getTreasureQuantity(treasure.id);
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
-                                  child: Stack(
-                                    children: [
-                                      _buildTreasureCard(treasure),
-                                      Positioned(
-                                        top: 8,
-                                        right: 8,
-                                        child: IconButton(
-                                          icon: const Icon(Icons.delete_outline,
-                                              color: Colors.white70, size: 20),
-                                          onPressed: () =>
-                                              _removeTreasure(treasure.id),
-                                          style: IconButton.styleFrom(
-                                            backgroundColor: Colors.black
-                                                .withValues(alpha: 0.6),
-                                            padding: const EdgeInsets.all(6),
-                                            minimumSize: const Size(32, 32),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  child: _buildTreasureCard(treasure, quantity),
                                 );
                               }),
                             ],
@@ -492,9 +561,16 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     }
   }
 
-  Widget _buildTreasureCard(model.Component treasure) {
-    // Use the unified TreasureCard for all treasure types
-    return TreasureCard(component: treasure);
+  Widget _buildTreasureCard(model.Component treasure, int quantity) {
+    // Use the unified TreasureCard with quantity controls
+    return TreasureCard(
+      component: treasure,
+      quantity: quantity,
+      showQuantityControls: true,
+      onIncrement: () => _incrementTreasure(treasure.id),
+      onDecrement: () => _decrementTreasure(treasure.id),
+      onRemove: () => _removeTreasure(treasure.id),
+    );
   }
 
   /// Get the color for a treasure type group header.

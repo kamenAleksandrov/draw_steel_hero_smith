@@ -47,6 +47,22 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
     _tabController = TabController(length: 2, vsync: this);
   }
 
+  /// Get the color for a treasure type.
+  Color _getTreasureTypeColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'consumable':
+        return NavigationTheme.consumablesColor;
+      case 'trinket':
+        return NavigationTheme.trinketsColor;
+      case 'leveled_treasure':
+        return NavigationTheme.leveledColor;
+      case 'artifact':
+        return NavigationTheme.artifactsColor;
+      default:
+        return NavigationTheme.treasureColor;
+    }
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -233,27 +249,60 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
               ),
               isDense: true,
             ),
-            items: const [
-              DropdownMenuItem(
+            items: [
+              const DropdownMenuItem(
                 value: 'all',
                 child: Text(GearDialogsText.treasureFilterAllTypesLabel),
               ),
               DropdownMenuItem(
                 value: 'consumable',
-                child: Text(GearDialogsText.treasureFilterConsumablesLabel),
+                child: Row(
+                  children: [
+                    Icon(Icons.science_outlined,
+                        color: NavigationTheme.consumablesColor, size: 18),
+                    const SizedBox(width: 8),
+                    Text(GearDialogsText.treasureFilterConsumablesLabel,
+                        style:
+                            TextStyle(color: NavigationTheme.consumablesColor)),
+                  ],
+                ),
               ),
               DropdownMenuItem(
                 value: 'trinket',
-                child: Text(GearDialogsText.treasureFilterTrinketsLabel),
+                child: Row(
+                  children: [
+                    Icon(Icons.diamond_outlined,
+                        color: NavigationTheme.trinketsColor, size: 18),
+                    const SizedBox(width: 8),
+                    Text(GearDialogsText.treasureFilterTrinketsLabel,
+                        style: TextStyle(color: NavigationTheme.trinketsColor)),
+                  ],
+                ),
               ),
               DropdownMenuItem(
                 value: 'artifact',
-                child: Text(GearDialogsText.treasureFilterArtifactsLabel),
+                child: Row(
+                  children: [
+                    Icon(Icons.auto_awesome,
+                        color: NavigationTheme.artifactsColor, size: 18),
+                    const SizedBox(width: 8),
+                    Text(GearDialogsText.treasureFilterArtifactsLabel,
+                        style:
+                            TextStyle(color: NavigationTheme.artifactsColor)),
+                  ],
+                ),
               ),
               DropdownMenuItem(
                 value: 'leveled_treasure',
-                child:
-                    Text(GearDialogsText.treasureFilterLeveledEquipmentLabel),
+                child: Row(
+                  children: [
+                    Icon(Icons.trending_up,
+                        color: NavigationTheme.leveledColor, size: 18),
+                    const SizedBox(width: 8),
+                    Text(GearDialogsText.treasureFilterLeveledEquipmentLabel,
+                        style: TextStyle(color: NavigationTheme.leveledColor)),
+                  ],
+                ),
               ),
             ],
             onChanged: (value) {
@@ -279,18 +328,30 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                       final echelon = treasure.data['echelon'] as int?;
                       final description =
                           treasure.data['description']?.toString() ?? '';
+                      final treasureColor =
+                          _getTreasureTypeColor(treasure.type);
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFF2A2A2A),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade700),
+                          border: Border.all(
+                            color: treasureColor.withValues(alpha: 0.4),
+                          ),
                         ),
                         child: ListTile(
-                          leading: Icon(
-                            getTreasureIcon(treasure.type),
-                            color: NavigationTheme.treasureColor,
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: treasureColor.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              getTreasureIcon(treasure.type),
+                              color: treasureColor,
+                              size: 22,
+                            ),
                           ),
                           title: Text(
                             treasure.name,
@@ -303,8 +364,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                             children: [
                               Text(
                                 getTreasureTypeName(treasure.type),
-                                style: TextStyle(
-                                    color: NavigationTheme.treasureColor),
+                                style: TextStyle(color: treasureColor),
                               ),
                               if (echelon != null)
                                 Text(
