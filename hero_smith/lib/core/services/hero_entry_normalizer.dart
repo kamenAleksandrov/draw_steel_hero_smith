@@ -84,7 +84,7 @@ class HeroEntryNormalizer {
     'kit.signature_ability',
     
     // === STRIFE legacy content (equipment bonuses only) ===
-    'strife.equipment_bonuses',
+    // 'strife.equipment_bonuses', // Now used as source of truth by heroEquipmentBonusesProvider
     
     // === CAREER legacy content (content only, not config) ===
     'career.abilities',
@@ -116,9 +116,10 @@ class HeroEntryNormalizer {
   ];
 
   /// Entry types that should not exist in hero_entries (computed, not stored).
+  /// Note: equipment_bonuses is now legitimately stored by KitGrantsService.
   static const List<String> _bannedEntryTypes = [
-    'combined_equipment_bonuses',
-    'equipment_bonuses',
+    // 'combined_equipment_bonuses', // Now stored by KitGrantsService
+    // 'equipment_bonuses',          // Now stored by KitGrantsService
   ];
 
   /// Main normalization entry point.
@@ -714,25 +715,9 @@ class HeroEntryNormalizer {
 
   Future<void> _removeBannedValues(String heroId) async {
     final rows = await _db.getHeroValues(heroId);
-    // Migrate legacy equipment bonuses into hero_entries before deletion.
-    final equipmentRow = rows
-        .firstWhereOrNull((v) => v.key == 'strife.equipment_bonuses');
-    if (equipmentRow != null) {
-      final bonuses = _parseLegacyEquipmentBonuses(equipmentRow);
-      if (bonuses != null) {
-        await _heroRepo.saveEquipmentBonuses(
-          heroId,
-          staminaBonus: bonuses.staminaBonus,
-          speedBonus: bonuses.speedBonus,
-          stabilityBonus: bonuses.stabilityBonus,
-          disengageBonus: bonuses.disengageBonus,
-          meleeDamageBonus: bonuses.meleeDamageBonus,
-          rangedDamageBonus: bonuses.rangedDamageBonus,
-          meleeDistanceBonus: bonuses.meleeDistanceBonus,
-          rangedDistanceBonus: bonuses.rangedDistanceBonus,
-        );
-      }
-    }
+    // Note: strife.equipment_bonuses is now the source of truth, 
+    // not a legacy format to migrate. Skip migration.
+    
     final toDelete = rows
         .where((v) =>
             _bannedValueKeysPrefixes

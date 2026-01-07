@@ -76,6 +76,7 @@ class HeroMainStatsViewText {
   static const String maxVitalBreakdownTitleSuffix = ' Breakdown';
   static const String breakdownClassBaseLabel = 'Class (Base + Level)';
   static const String breakdownEquipmentLabel = 'Equipment';
+  static const String breakdownTreasureLabel = 'Treasure';
   static const String breakdownFeaturesLabel = 'Features & Abilities';
   static const String breakdownChoiceModsLabel = 'Other choice mods';
   static const String breakdownManualModsLabel = 'Manual mods';

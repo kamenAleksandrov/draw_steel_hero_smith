@@ -1476,25 +1476,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     
     debugPrint('[StrifeCreator] applyKitGrants returned bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}, disengage=${bonuses.disengageBonus}');
 
-    // Save bonuses to hero_values for heroEquipmentBonusesProvider to read
-    // Note: Do NOT use repo.saveEquipmentBonuses as it clears hero_entries
-    final bonusMap = {
-      'stamina': bonuses.staminaBonus,
-      'speed': bonuses.speedBonus,
-      'stability': bonuses.stabilityBonus,
-      'disengage': bonuses.disengageBonus,
-      'melee_damage': bonuses.meleeDamageBonus,
-      'ranged_damage': bonuses.rangedDamageBonus,
-      'melee_distance': bonuses.meleeDistanceBonus,
-      'ranged_distance': bonuses.rangedDistanceBonus,
-    };
-    debugPrint('[StrifeCreator] Saving to strife.equipment_bonuses: $bonusMap');
-    
-    await db.upsertHeroValue(
-      heroId: widget.heroId,
-      key: 'strife.equipment_bonuses',
-      jsonMap: bonusMap,
-    );
+    // KitGrantsService now saves to both hero_entries AND hero_values.strife.equipment_bonuses
+    // No need to save separately here
 
     // Also invalidate hero assembly to reload stat mods
     ref.invalidate(heroAssemblyProvider(widget.heroId));

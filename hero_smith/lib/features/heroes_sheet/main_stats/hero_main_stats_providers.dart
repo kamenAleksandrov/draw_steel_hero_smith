@@ -14,6 +14,7 @@ import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/ancestry_bonus_service.dart';
 import '../../../core/services/heroic_resource_progression_service.dart';
 import '../../../core/services/psi_boost_service.dart';
+import '../../../core/services/treasure_bonus_service.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_models_text.dart';
 
 /// Provider that combines hero_values (base stats) with HeroAssembly (mods/bonuses)
@@ -26,13 +27,13 @@ final heroMainStatsProvider =
   final valuesAsync = ref.watch(heroValuesProvider(heroId));
   final assemblyAsync = ref.watch(heroAssemblyProvider(heroId));
   final equipmentBonusesAsync = ref.watch(heroEquipmentBonusesProvider(heroId));
-  final treasureStaminaAsync = ref.watch(heroTreasureHighestBonusStaminaProvider(heroId));
+  final treasureBonusesAsync = ref.watch(heroEquippedTreasureBonusesProvider(heroId));
 
   // Propagate loading/error states if any dependency is not ready
   if (valuesAsync.isLoading ||
       assemblyAsync.isLoading ||
       equipmentBonusesAsync.isLoading ||
-      treasureStaminaAsync.isLoading) {
+      treasureBonusesAsync.isLoading) {
     return const AsyncLoading();
   }
 
@@ -51,15 +52,15 @@ final heroMainStatsProvider =
       equipmentBonusesAsync.stackTrace ?? StackTrace.current,
     );
   }
-  // Treasure stamina errors are non-fatal, default to 0
-  final treasureStamina = treasureStaminaAsync.valueOrNull ?? 0;
+  // Treasure bonuses errors are non-fatal, default to empty
+  final treasureBonuses = treasureBonusesAsync.valueOrNull ?? EquippedTreasureBonuses.empty();
 
   final values = valuesAsync.requireValue;
   final assembly = assemblyAsync.value; // may be null
   final equipmentBonuses = equipmentBonusesAsync.requireValue;
 
   final stats =
-      _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses, treasureStamina);
+      _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses, treasureBonuses);
   return AsyncData(stats);
 });
 
@@ -68,7 +69,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
   List<db.HeroValue> values,
   HeroAssembly? assembly,
   Map<String, int> equipmentBonuses,
-  int treasureHighestBonusStamina,
+  EquippedTreasureBonuses treasureBonuses,
 ) {
   int readInt(String key, {int defaultValue = 0}) {
     final v = values.firstWhereOrNull((e) => e.key == key);
@@ -145,7 +146,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
     userModifications: userModifications,
     choiceModifications: choiceModifications,
     equipmentBonuses: equipmentBonuses,
-    treasureHighestBonusStamina: treasureHighestBonusStamina,
+    treasureBonuses: treasureBonuses,
     dynamicModifiers: dynamicModifiers,
   );
 }
@@ -472,11 +473,45 @@ final heroAncestryStatModsProvider =
   return service.watchAncestryStatMods(heroId);
 });
 
-/// Provider to watch damage resistances - auto-updates when values change.
-final heroDamageResistancesProvider =
+/// Provider to watch base damage resistances from ancestry.
+final _baseAncestryResistancesProvider =
     StreamProvider.family<HeroDamageResistances, String>((ref, heroId) {
   final service = ref.watch(ancestryBonusServiceProvider);
   return service.watchDamageResistances(heroId);
+});
+
+/// Provider to watch damage resistances - auto-updates when values change.
+/// Combines ancestry-based resistances with treasure immunities.
+final heroDamageResistancesProvider =
+    Provider.family<AsyncValue<HeroDamageResistances>, String>((ref, heroId) {
+  final ancestryResistancesAsync = ref.watch(_baseAncestryResistancesProvider(heroId));
+  final treasureBonusesAsync = ref.watch(heroEquippedTreasureBonusesProvider(heroId));
+
+  return ancestryResistancesAsync.when(
+    data: (ancestryResistances) {
+      return treasureBonusesAsync.when(
+        data: (treasureBonuses) {
+          // Convert treasure immunities to DamageResistanceBonus map
+          final treasureImmunityBonuses = <String, DamageResistanceBonus>{};
+          for (final entry in treasureBonuses.immunities.entries) {
+            final damageType = entry.key.toLowerCase();
+            treasureImmunityBonuses[damageType] = DamageResistanceBonus(
+              damageType: entry.key,
+              immunity: entry.value,
+              sources: ['Treasure'],
+            );
+          }
+          // Merge treasure immunities into ancestry resistances
+          final combined = ancestryResistances.mergeBonuses(treasureImmunityBonuses);
+          return AsyncValue.data(combined);
+        },
+        loading: () => AsyncValue.data(ancestryResistances),
+        error: (e, st) => AsyncValue.data(ancestryResistances),
+      );
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (e, st) => AsyncValue.error(e, st),
+  );
 });
 
 /// Provider to load equipment bonuses that have been applied to the hero.

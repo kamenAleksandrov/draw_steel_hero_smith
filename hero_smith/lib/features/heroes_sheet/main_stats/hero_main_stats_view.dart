@@ -703,6 +703,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final recoveriesFeatureBonus = stats.recoveriesFeatureBonus;
     final equipmentStaminaBonus =
         stats.equipmentBonusFor(HeroModKeys.staminaMax);
+    final treasureStaminaBonus = stats.treasureStaminaBonus;
 
     return Container(
       decoration: BoxDecoration(
@@ -790,6 +791,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                             baseValue: stats.staminaMaxBase,
                             equipmentBonus: equipmentStaminaBonus,
                             featureBonus: staminaFeatureBonus,
+                            treasureBonus: treasureStaminaBonus,
                           ),
                         ],
                       ),
@@ -1098,10 +1100,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int userValue,
     int equipmentBonus = 0,
     int featureBonus = 0,
+    int treasureBonus = 0,
   }) {
     final theme = Theme.of(context);
     final otherChoice = choiceValue - equipmentBonus;
     final hasBreakdown = equipmentBonus != 0 ||
+        treasureBonus != 0 ||
         otherChoice != 0 ||
         userValue != 0 ||
         featureBonus != 0;
@@ -1119,6 +1123,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
           choiceValue: otherChoice,
           userValue: userValue,
           total: value,
+          treasureBonus: treasureBonus,
         );
       },
       borderRadius: BorderRadius.circular(6),
@@ -1155,6 +1160,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   Text(
                     ' ($baseValue'
                     '${equipmentBonus != 0 ? _formatSigned(equipmentBonus) : ''}'
+                    '${treasureBonus != 0 ? _formatSigned(treasureBonus) : ''}'
                     '${featureBonus != 0 ? _formatSigned(featureBonus) : ''}'
                     '${otherChoice != 0 ? _formatSigned(otherChoice) : ''}'
                     '${userValue != 0 ? _formatSigned(userValue) : ''})',
@@ -1181,10 +1187,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     required int choiceValue,
     required int userValue,
     required int total,
+    int treasureBonus = 0,
   }) async {
     final hasChoice = equipmentBonus != 0 || choiceValue != 0;
     final hasUser = userValue != 0;
     final hasFeature = featureBonus != 0;
+    final hasTreasure = treasureBonus != 0;
 
     await showDialog(
       context: context,
@@ -1226,6 +1234,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   HeroMainStatsViewText.breakdownEquipmentLabel,
                   equipmentBonus,
                   isBonus: equipmentBonus > 0,
+                ),
+              if (hasTreasure)
+                _buildBreakdownRow(
+                  HeroMainStatsViewText.breakdownTreasureLabel,
+                  treasureBonus,
+                  isBonus: treasureBonus > 0,
                 ),
               if (hasFeature)
                 _buildBreakdownRow(
@@ -2168,6 +2182,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     final state = calculateStaminaState(stats);
     final equipmentStaminaBonus =
         stats.equipmentBonusFor(HeroModKeys.staminaMax);
+    final treasureStaminaBonus = stats.treasureStaminaBonus;
     final staminaFeatureBonus = stats.staminaFeatureBonus;
     final effectiveMax = stats.staminaMaxEffective;
     final staminaChoiceMod = stats.choiceModValue(HeroModKeys.staminaMax);
@@ -2246,6 +2261,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         modKey: HeroModKeys.staminaMax,
                         classBase: stats.staminaMaxBase,
                         equipmentBonus: equipmentStaminaBonus,
+                        treasureBonus: treasureStaminaBonus,
                         featureBonus: staminaFeatureBonus,
                         choiceValue: staminaChoiceMod,
                         userValue: staminaManualMod,

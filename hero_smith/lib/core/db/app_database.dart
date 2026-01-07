@@ -380,7 +380,7 @@ class AppDatabase extends _$AppDatabase {
       'complication.treasures',
       'complication.languages',
       'complication.damage_resistances',
-      'strife.equipment_bonuses',
+      // 'strife.equipment_bonuses', // Now used as source of truth by heroEquipmentBonusesProvider
     ];
 
     Future<void> addEntry({

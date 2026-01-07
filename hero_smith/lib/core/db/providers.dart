@@ -152,6 +152,14 @@ final heroTreasureHighestBonusStaminaProvider =
   return svc.watchCombinedTreasureStamina(heroId);
 });
 
+/// Provider to watch all equipped treasure bonuses (stamina, stability, speed, immunities).
+/// Returns full EquippedTreasureBonuses for integrating into HeroMainStats.
+final heroEquippedTreasureBonusesProvider =
+    StreamProvider.family<EquippedTreasureBonuses, String>((ref, heroId) {
+  final svc = ref.read(treasureBonusServiceProvider);
+  return svc.watchEquippedTreasureBonuses(heroId);
+});
+
 // Provider to fetch an ability by name (used for perk grants lookup)
 final abilityByNameProvider = FutureProvider.family<model.Component?, String>((ref, rawName) async {
   final name = rawName.trim();

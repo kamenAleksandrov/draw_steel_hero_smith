@@ -25,6 +25,11 @@ class HeroEntryRepository {
     if (entryType == 'skill') {
       print('[HeroEntryRepository] addEntry(skill): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
     }
+    // Debug: Track kit-related entries
+    if (entryType == 'kit_stat_bonus' || entryType == 'equipment_bonuses' || entryType == 'equipment') {
+      print('[HeroEntryRepository] addEntry($entryType): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId, gainedBy=$gainedBy');
+      print('[HeroEntryRepository] payload: $payload');
+    }
     return _db.upsertHeroEntry(
       heroId: heroId,
       entryType: entryType,
@@ -72,6 +77,11 @@ class HeroEntryRepository {
     String? sourceId,
     String? entryType,
   }) {
+    // Debug: Track entry removals that might affect kit data
+    if (sourceType == 'kit' || entryType == 'kit_stat_bonus' || entryType == 'equipment_bonuses' || entryType == 'equipment') {
+      print('[HeroEntryRepository] removeEntriesFromSource: heroId=$heroId, sourceType=$sourceType, sourceId=$sourceId, entryType=$entryType');
+      print(StackTrace.current);
+    }
     final query = _db.delete(_db.heroEntries)
       ..where((t) => t.heroId.equals(heroId) & t.sourceType.equals(sourceType));
     if (sourceId != null) {

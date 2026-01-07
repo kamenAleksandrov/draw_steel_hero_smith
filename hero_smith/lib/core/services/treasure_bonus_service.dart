@@ -191,6 +191,53 @@ class TreasureBonusService {
     });
   }
   
+  /// Watch all equipped treasure bonuses (stamina, stability, speed, immunities).
+  /// Reacts to changes in treasure entries or hero level/characteristics.
+  Stream<EquippedTreasureBonuses> watchEquippedTreasureBonuses(String heroId) async* {
+    // Emit initial value immediately
+    final initialLevel = await _getHeroLevel(heroId);
+    final initialHighestChar = await _getHeroHighestCharacteristic(heroId);
+    final imbuementStamina = await calculateHighestArmorImbuementStamina(heroId);
+    var bonuses = await calculateEquippedTreasureBonuses(
+      heroId,
+      initialLevel,
+      highestCharacteristic: initialHighestChar,
+    );
+    
+    // Combine imbuement stamina with treasure stamina for total
+    final combinedStamina = _combineTreasureStamina(imbuementStamina, bonuses);
+    yield bonuses.copyWith(stamina: combinedStamina);
+    
+    // Watch treasure entries, imbuements, AND hero values (for level/characteristic changes)
+    final treasureStream = _db.watchHeroEntriesWithPayload(heroId, 'treasure');
+    final imbuementStream = _db.watchHeroComponentIds(heroId, 'imbuement');
+    final valuesStream = _db.watchHeroValues(heroId);
+    
+    // Combine streams - recalculate when any changes
+    yield* _combineThreeStreams(treasureStream, imbuementStream, valuesStream).asyncMap((_) async {
+      final heroLevel = await _getHeroLevel(heroId);
+      final highestChar = await _getHeroHighestCharacteristic(heroId);
+      final imbStamina = await calculateHighestArmorImbuementStamina(heroId);
+      final bonuses = await calculateEquippedTreasureBonuses(
+        heroId,
+        heroLevel,
+        highestCharacteristic: highestChar,
+      );
+      
+      // Combine imbuement stamina with treasure stamina for total
+      final combinedStamina = _combineTreasureStamina(imbStamina, bonuses);
+      return bonuses.copyWith(stamina: combinedStamina);
+    });
+  }
+  
+  /// Combine imbuement stamina with treasure stamina using stacking rules.
+  int _combineTreasureStamina(int imbuementStamina, EquippedTreasureBonuses treasureBonuses) {
+    final highestNonStacking = imbuementStamina > treasureBonuses.highestNonStackingStamina
+        ? imbuementStamina
+        : treasureBonuses.highestNonStackingStamina;
+    return highestNonStacking + treasureBonuses.stackingStamina;
+  }
+  
   /// Get the current level of a hero from hero values.
   Future<int> _getHeroLevel(String heroId) async {
     final values = await _db.getHeroValues(heroId);
@@ -209,11 +256,11 @@ class TreasureBonusService {
     }
     
     final characteristics = [
-      getValue('basics.might'),
-      getValue('basics.agility'),
-      getValue('basics.reason'),
-      getValue('basics.intuition'),
-      getValue('basics.presence'),
+      getValue('stats.might'),
+      getValue('stats.agility'),
+      getValue('stats.reason'),
+      getValue('stats.intuition'),
+      getValue('stats.presence'),
     ];
     
     return characteristics.reduce((a, b) => a > b ? a : b);
@@ -431,6 +478,20 @@ class TreasureBonusService {
               }
             }
           }
+          
+          // Speed bonus
+          final speedBonus = statBonuses['speed'] as Map<String, dynamic>?;
+          if (speedBonus != null) {
+            final value = _getLeveledValue(speedBonus, heroLevel);
+            speed += value;
+          }
+          
+          // Stability bonus
+          final stabilityBonus = statBonuses['stability'] as Map<String, dynamic>?;
+          if (stabilityBonus != null) {
+            final value = _getLeveledValue(stabilityBonus, heroLevel);
+            stability += value;
+          }
         }
       } else if (type == 'trinket') {
         // Parse grants array for trinkets
@@ -590,7 +651,7 @@ class EquippedTreasureBonuses {
     required this.immunities,
   });
   
-  factory EquippedTreasureBonuses.empty() => const EquippedTreasureBonuses(
+  static const EquippedTreasureBonuses _empty = EquippedTreasureBonuses(
     stamina: 0,
     highestNonStackingStamina: 0,
     stackingStamina: 0,
@@ -599,12 +660,32 @@ class EquippedTreasureBonuses {
     immunities: {},
   );
   
+  static EquippedTreasureBonuses empty() => _empty;
+  
   final int stamina;
   final int highestNonStackingStamina;
   final int stackingStamina;
   final int stability;
   final int speed;
   final Map<String, int> immunities;
+  
+  EquippedTreasureBonuses copyWith({
+    int? stamina,
+    int? highestNonStackingStamina,
+    int? stackingStamina,
+    int? stability,
+    int? speed,
+    Map<String, int>? immunities,
+  }) {
+    return EquippedTreasureBonuses(
+      stamina: stamina ?? this.stamina,
+      highestNonStackingStamina: highestNonStackingStamina ?? this.highestNonStackingStamina,
+      stackingStamina: stackingStamina ?? this.stackingStamina,
+      stability: stability ?? this.stability,
+      speed: speed ?? this.speed,
+      immunities: immunities ?? this.immunities,
+    );
+  }
   
   @override
   String toString() {

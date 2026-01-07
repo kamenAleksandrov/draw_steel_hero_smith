@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 import '../db/app_database.dart' as db;
 import '../models/component.dart' as model;
@@ -43,8 +44,11 @@ class KitGrantsService {
     required int heroLevel,
     Map<String, String>? kitSelections,
   }) async {
+    debugPrint('[KitGrantsService] applyKitGrants called: heroId=$heroId, equipmentIds=$equipmentIds, heroLevel=$heroLevel');
+    
     // Clear existing kit grants
     await _clearAllKitGrants(heroId);
+    debugPrint('[KitGrantsService] Cleared existing kit grants');
 
     // Store kit selections in config
     if (kitSelections != null && kitSelections.isNotEmpty) {
@@ -67,15 +71,20 @@ class KitGrantsService {
 
     // Load kit components and process grants
     final dbComponents = await _db.getAllComponents();
+    debugPrint('[KitGrantsService] Loaded ${dbComponents.length} total components from DB');
     final kitComponents = <model.Component>[];
     
     for (final kitId in nonNullIds) {
       final dbComp = dbComponents.firstWhereOrNull((c) => c.id == kitId);
       if (dbComp != null) {
+        debugPrint('[KitGrantsService] Found component for kitId=$kitId: name=${dbComp.name}');
         // Convert db.Component to model.Component
         kitComponents.add(_convertDbComponent(dbComp));
+      } else {
+        debugPrint('[KitGrantsService] WARNING: No component found for kitId=$kitId');
       }
     }
+    debugPrint('[KitGrantsService] Total kit components found: ${kitComponents.length}');
 
     // Add kit entries
     for (final kit in kitComponents) {
@@ -103,14 +112,20 @@ class KitGrantsService {
 
     // Calculate and store equipment bonuses
     if (kitComponents.isNotEmpty) {
+      debugPrint('[KitGrantsService] Calculating bonuses for ${kitComponents.length} kit(s)');
       final bonuses = _bonusService.calculateBonuses(
         equipment: kitComponents,
         heroLevel: heroLevel,
       );
+      debugPrint('[KitGrantsService] Calculated bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}');
       await _storeEquipmentBonuses(heroId, bonuses);
+      debugPrint('[KitGrantsService] Stored equipment bonuses to hero_entries');
       return bonuses;
     }
     
+    // No kit components - store empty bonuses to clear any previous values
+    debugPrint('[KitGrantsService] WARNING: No kit components found - storing empty bonuses');
+    await _storeEquipmentBonuses(heroId, EquipmentBonuses.empty);
     return EquipmentBonuses.empty;
   }
 
@@ -339,6 +354,7 @@ class KitGrantsService {
     model.Component kit,
     int heroLevel,
   ) async {
+    debugPrint('[KitGrantsService] _storeKitStatBonuses called for kit=${kit.id}, heroLevel=$heroLevel');
     final data = kit.data;
     
     final tier = KitBonusService.tierForLevel(heroLevel);
@@ -366,8 +382,13 @@ class KitGrantsService {
 
     // Only store if there are non-zero bonuses
     final hasBonus = bonuses.values.any((v) => v != 0);
-    if (!hasBonus) return;
+    debugPrint('[KitGrantsService] Kit ${kit.id} bonuses: $bonuses, hasBonus=$hasBonus');
+    if (!hasBonus) {
+      debugPrint('[KitGrantsService] Skipping kit_stat_bonus entry - no non-zero bonuses');
+      return;
+    }
 
+    debugPrint('[KitGrantsService] Storing kit_stat_bonus entry for ${kit.id}');
     await _entries.addEntry(
       heroId: heroId,
       entryType: 'kit_stat_bonus',
@@ -383,6 +404,7 @@ class KitGrantsService {
     String heroId,
     EquipmentBonuses bonuses,
   ) async {
+    // Save to hero_entries for legacy/backup
     await _entries.addEntry(
       heroId: heroId,
       entryType: 'equipment_bonuses',
@@ -402,6 +424,23 @@ class KitGrantsService {
         'equipment_ids': bonuses.equipmentIds,
       },
     );
+    
+    // Also save to hero_values as the source of truth for heroEquipmentBonusesProvider
+    await _db.upsertHeroValue(
+      heroId: heroId,
+      key: 'strife.equipment_bonuses',
+      jsonMap: {
+        'stamina': bonuses.staminaBonus,
+        'speed': bonuses.speedBonus,
+        'stability': bonuses.stabilityBonus,
+        'disengage': bonuses.disengageBonus,
+        'melee_damage': bonuses.meleeDamageBonus,
+        'ranged_damage': bonuses.rangedDamageBonus,
+        'melee_distance': bonuses.meleeDistanceBonus,
+        'ranged_distance': bonuses.rangedDistanceBonus,
+      },
+    );
+    debugPrint('[KitGrantsService] Saved equipment bonuses to both hero_entries AND hero_values.strife.equipment_bonuses');
   }
 
   Future<void> _clearEquipmentBonuses(String heroId) async {

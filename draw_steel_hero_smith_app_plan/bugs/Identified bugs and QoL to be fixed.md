@@ -9,7 +9,9 @@ in the hero creator stranght tab the automaticaly applied appears doubled each t
 
 automatically applied must be as a divider instead as another box that boxes the box
 
-skills dialog picker in strenght uses old style 
+treasures must be reorderable and appear by time of addition
+
+guismaster adds too much stamina
 ## medium
 
 most popouts should be wider

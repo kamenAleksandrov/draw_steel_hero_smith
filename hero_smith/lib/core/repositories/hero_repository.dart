@@ -9,6 +9,7 @@ import '../models/dynamic_modifier_model.dart';
 import '../models/hero_model.dart';
 import '../models/hero_mod_keys.dart';
 import '../models/stat_modification_model.dart';
+import '../services/treasure_bonus_service.dart';
 import 'hero_entry_repository.dart';
 
 /// All valid sizes in order: 1T, 1S, 1M, 1L, 2, 3, 4, 5
@@ -115,9 +116,8 @@ class HeroMainStats {
   final Map<String, int> choiceModifications;
   final Map<String, int> equipmentBonuses;
   
-  /// Highest stamina bonus from treasures (armor imbuements, etc.)
-  /// Uses "take highest" logic - only the highest bonus applies.
-  final int treasureHighestBonusStamina;
+  /// All bonuses from equipped treasures (stamina, stability, speed, immunities).
+  final EquippedTreasureBonuses treasureBonuses;
   
   /// Dynamic modifiers that recalculate based on current stats
   final DynamicModifierList dynamicModifiers;
@@ -152,7 +152,14 @@ class HeroMainStats {
     this.userModifications = const {},
     this.choiceModifications = const {},
     this.equipmentBonuses = const {},
-    this.treasureHighestBonusStamina = 0,
+    this.treasureBonuses = const EquippedTreasureBonuses(
+      stamina: 0,
+      highestNonStackingStamina: 0,
+      stackingStamina: 0,
+      stability: 0,
+      speed: 0,
+      immunities: {},
+    ),
     this.dynamicModifiers = const DynamicModifierList([]),
   });
 
@@ -218,18 +225,26 @@ class HeroMainStats {
   int get stabilityFeatureBonus => dynamicBonusFor('stability');
   int get staminaFeatureBonus => dynamicBonusFor('stamina');
   int get recoveriesFeatureBonus => dynamicBonusFor('recoveries');
+  
+  /// Treasure bonuses for speed, stability
+  int get treasureSpeedBonus => treasureBonuses.speed;
+  int get treasureStabilityBonus => treasureBonuses.stability;
+  int get treasureStaminaBonus => treasureBonuses.stamina;
+  
+  /// Treasure immunities (damage type -> immunity value)
+  Map<String, int> get treasureImmunities => treasureBonuses.immunities;
 
-  int get speedTotal => speedBase + modValue(HeroModKeys.speed) + speedFeatureBonus;
+  int get speedTotal => speedBase + modValue(HeroModKeys.speed) + speedFeatureBonus + treasureSpeedBonus;
   int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage) + disengageFeatureBonus;
-  int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability) + stabilityFeatureBonus;
+  int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability) + stabilityFeatureBonus + treasureStabilityBonus;
 
   /// Total stamina max including all bonuses:
   /// - Base stamina
   /// - Modifications (from choices, ancestry, etc.)
   /// - Feature bonuses (from class features, etc.)
-  /// - Treasure highest bonus (armor imbuements use "take highest" logic)
+  /// - Treasure bonuses (armor imbuements + equipped treasures with stacking rules)
   int get staminaMaxEffective =>
-      staminaMaxBase + modValue(HeroModKeys.staminaMax) + staminaFeatureBonus + treasureHighestBonusStamina;
+      staminaMaxBase + modValue(HeroModKeys.staminaMax) + staminaFeatureBonus + treasureStaminaBonus;
   int get recoveriesMaxEffective =>
       recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax) + recoveriesFeatureBonus;
   int get surgesTotal => surgesCurrent + modValue(HeroModKeys.surges);
@@ -642,13 +657,16 @@ class HeroRepository {
     // Source of truth: hero_values
     final values = await _db.getHeroValues(heroId);
     final parsed = _parseEquipmentBonuses(values);
+    print('[HeroRepository] getEquipmentBonuses($heroId): parsed from hero_values = $parsed');
     if (parsed.isNotEmpty) return parsed;
 
     // Fallback to legacy hero_entries for backward compatibility
     final entries = await _entries.listEntriesByType(heroId, 'equipment_bonuses');
+    print('[HeroRepository] getEquipmentBonuses($heroId): falling back to hero_entries, found ${entries.length} entries');
     final bonusEntry = entries.firstWhereOrNull(
       (e) => e.entryId == 'combined_equipment_bonuses' && e.sourceType == 'kit',
     );
+    print('[HeroRepository] getEquipmentBonuses($heroId): bonusEntry = ${bonusEntry?.payload}');
     if (bonusEntry?.payload != null) {
       try {
         final payload = jsonDecode(bonusEntry!.payload!);

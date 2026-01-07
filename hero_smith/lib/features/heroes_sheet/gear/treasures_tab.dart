@@ -176,17 +176,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
       
       // Recalculate and save equipped treasure bonuses
       await _recalculateEquippedBonuses();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(willBeEquipped 
-              ? TreasuresTabText.treasureEquippedSnack 
-              : TreasuresTabText.treasureUnequippedSnack),
-            duration: const Duration(seconds: 1),
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -277,15 +266,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
         entryId: treasureId,
         payload: {'quantity': 1},
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(TreasuresTabText.treasureAddedSnack),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -321,15 +301,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
         entryId: treasureId,
         payload: existingPayload,
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(TreasuresTabText.quantityUpdatedSnack),
-            duration: Duration(seconds: 1),
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -372,15 +343,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
           entryType: 'treasure',
           entryId: entry.key,
           payload: entry.value,
-        );
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(TreasuresTabText.treasureRemovedSnack),
-            duration: Duration(seconds: 2),
-          ),
         );
       }
     } catch (e) {
@@ -430,15 +392,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
         category: 'imbuement',
         componentIds: updated,
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(TreasuresTabText.imbuementAddedSnack),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -707,15 +660,6 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
         category: 'imbuement',
         componentIds: updated,
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(TreasuresTabText.imbuementRemovedSnack),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
