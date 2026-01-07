@@ -18,4 +18,20 @@ class TreasuresTabText {
   static const String itemImbuementsHeader = 'Item Imbuements';
   static const String quantityUpdatedSnack = 'Quantity updated';
   static const String updateQuantityFailedPrefix = 'Failed to update quantity: ';
+  static const String imbuementsInfoDialogTitle = 'Imbued Items';
+  static const String imbuementsInfoTooltip = 'About imbued items';
+  static const String closeButtonLabel = 'Close';
+  
+  // Equip/Unequip messages
+  static const String treasureEquippedSnack = 'Treasure equipped';
+  static const String treasureUnequippedSnack = 'Treasure unequipped';
+  static const String toggleEquipFailedPrefix = 'Failed to toggle equip: ';
+  
+  // Jealousy warning for leveled treasures
+  static const String jealousyWarningTitle = 'Treasure Jealousy!';
+  static const String jealousyWarningMessage = 
+      'You now have more than 3 leveled treasures equipped. '
+      'Be warned: leveled treasures are known to get jealous of each other! '
+      'Having too many equipped at once may cause... complications.';
+  static const String jealousyWarningDismiss = 'I\'ll risk it!';
 }

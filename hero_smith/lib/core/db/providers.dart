@@ -11,6 +11,7 @@ import '../models/component.dart' as model;
 import '../services/perk_grants_service.dart';
 import '../services/hero_config_service.dart';
 import '../services/hero_assembly_service.dart';
+import '../services/treasure_bonus_service.dart';
 import '../models/hero_assembled_model.dart';
 
 // Core singletons
@@ -34,6 +35,11 @@ final heroConfigServiceProvider = Provider<HeroConfigService>((ref) {
 final heroAssemblyServiceProvider = Provider<HeroAssemblyService>((ref) {
   final db = ref.read(appDatabaseProvider);
   return HeroAssemblyService(db);
+});
+
+final treasureBonusServiceProvider = Provider<TreasureBonusService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return TreasureBonusService(db);
 });
 
 final heroRepositoryProvider = Provider<HeroRepository>((ref) {
@@ -135,6 +141,15 @@ final heroAssemblyProvider =
   ref.watch(heroRowProvider(heroId));
   final svc = ref.read(heroAssemblyServiceProvider);
   return svc.assemble(heroId);
+});
+
+/// Provider to watch the highest stamina bonus from armor imbuements.
+/// Uses "take highest" logic - only the highest bonus applies.
+/// Now includes equipped treasure stamina bonuses with proper stacking.
+final heroTreasureHighestBonusStaminaProvider =
+    StreamProvider.family<int, String>((ref, heroId) {
+  final svc = ref.read(treasureBonusServiceProvider);
+  return svc.watchCombinedTreasureStamina(heroId);
 });
 
 // Provider to fetch an ability by name (used for perk grants lookup)

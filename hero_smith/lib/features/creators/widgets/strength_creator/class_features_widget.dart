@@ -167,36 +167,12 @@ class ClassFeaturesWidget extends StatelessWidget {
   
   /// Checks if an option is active for the current subclass/domain selection.
   bool _isOptionActiveForCurrentSelection(Map<String, dynamic> option) {
-    // Check subclass-related keys
-    for (final key in _widgetSubclassOptionKeys) {
-      final value = option[key]?.toString().trim().toLowerCase();
-      if (value != null && value.isNotEmpty) {
-        final slug = value.replaceAll(RegExp(r'\s+'), '-');
-        if (activeSubclassSlugs.isNotEmpty && !activeSubclassSlugs.contains(slug)) {
-          return false;
-        }
-      }
-    }
-    
-    // Check domain key
-    final domain = option['domain']?.toString().trim().toLowerCase();
-    if (domain != null && domain.isNotEmpty) {
-      final slug = domain.replaceAll(RegExp(r'\s+'), '-');
-      if (selectedDomainSlugs.isNotEmpty && !selectedDomainSlugs.contains(slug)) {
-        return false;
-      }
-    }
-    
-    // Check deity key
-    final deity = option['deity']?.toString().trim().toLowerCase();
-    if (deity != null && deity.isNotEmpty) {
-      final slug = deity.replaceAll(RegExp(r'\s+'), '-');
-      if (selectedDeitySlugs.isNotEmpty && !selectedDeitySlugs.contains(slug)) {
-        return false;
-      }
-    }
-    
-    return true;
+    return ClassFeatureDataService.isOptionActiveForSelection(
+      option,
+      activeSubclassSlugs: activeSubclassSlugs,
+      selectedDomainSlugs: selectedDomainSlugs,
+      selectedDeitySlugs: selectedDeitySlugs,
+    );
   }
   
   /// Checks if any option for a feature has a skill_group that hasn't been selected.

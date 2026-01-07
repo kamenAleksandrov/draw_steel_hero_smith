@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/db/app_database.dart' as app_db;
 import '../../../core/db/providers.dart';
 import '../../../core/models/abilities_models.dart';
 import '../../../core/models/class_data.dart';
@@ -12,11 +13,14 @@ import '../../../core/models/component.dart';
 import '../../../core/models/perks_models.dart';
 import '../../../core/models/skills_models.dart';
 import '../../../core/models/subclass_models.dart';
+import '../../../core/repositories/hero_entry_repository.dart';
+import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/class_feature_grants_service.dart';
 import '../../../core/services/abilities_service.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/services/class_data_service.dart';
+import '../../../core/services/kit_bonus_service.dart';
 import '../../../core/services/kit_grants_service.dart';
 import '../../../core/services/perk_data_service.dart';
 import '../../../core/services/perks_service.dart';
@@ -1443,6 +1447,61 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     return result ?? false;
   }
 
+  Future<EquipmentBonuses> _applyEquipmentSelectionAndBonuses(
+    List<String?> equipmentSlotIds,
+    HeroRepository repo,
+    app_db.AppDatabase db,
+  ) async {
+    debugPrint('[StrifeCreator] _applyEquipmentSelectionAndBonuses called with: $equipmentSlotIds');
+    
+    // EXACT copy of Kits tab flow - do not add extra logic here
+    await repo.saveEquipmentIds(widget.heroId, equipmentSlotIds);
+    await db.upsertHeroValue(
+      heroId: widget.heroId,
+      key: 'basics.equipment',
+      jsonMap: {'ids': equipmentSlotIds},
+    );
+
+    final level = _selectedLevel;
+    debugPrint('[StrifeCreator] Calling applyKitGrants with heroLevel: $level');
+
+    // Use KitGrantsService to apply all kit grants (including stat mods like decrease_total)
+    // This is the ONLY thing that saves to hero_entries - do not duplicate or interfere
+    final kitGrantsService = KitGrantsService(db);
+    final bonuses = await kitGrantsService.applyKitGrants(
+      heroId: widget.heroId,
+      equipmentIds: equipmentSlotIds,
+      heroLevel: level,
+    );
+    
+    debugPrint('[StrifeCreator] applyKitGrants returned bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}, disengage=${bonuses.disengageBonus}');
+
+    // Save bonuses to hero_values for heroEquipmentBonusesProvider to read
+    // Note: Do NOT use repo.saveEquipmentBonuses as it clears hero_entries
+    final bonusMap = {
+      'stamina': bonuses.staminaBonus,
+      'speed': bonuses.speedBonus,
+      'stability': bonuses.stabilityBonus,
+      'disengage': bonuses.disengageBonus,
+      'melee_damage': bonuses.meleeDamageBonus,
+      'ranged_damage': bonuses.rangedDamageBonus,
+      'melee_distance': bonuses.meleeDistanceBonus,
+      'ranged_distance': bonuses.rangedDistanceBonus,
+    };
+    debugPrint('[StrifeCreator] Saving to strife.equipment_bonuses: $bonusMap');
+    
+    await db.upsertHeroValue(
+      heroId: widget.heroId,
+      key: 'strife.equipment_bonuses',
+      jsonMap: bonusMap,
+    );
+
+    // Also invalidate hero assembly to reload stat mods
+    ref.invalidate(heroAssemblyProvider(widget.heroId));
+    
+    return bonuses;
+  }
+
   Future<void> handleSave() async {
     await _handleSave();
   }
@@ -1470,69 +1529,55 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       final updates = <Future>[];
 
       // 1. Save level
-      updates.add(repo.updateMainStats(widget.heroId, level: _selectedLevel));
+      await repo.updateMainStats(widget.heroId, level: _selectedLevel);
 
       // 2. Save class name
-      updates.add(repo.updateClassName(widget.heroId, classData.classId));
+      await repo.updateClassName(widget.heroId, classData.classId);
 
       // 3. Save subclass
       if (_selectedSubclass != null) {
-        updates.add(repo.updateSubclass(
+        // Execute immediately to reduce batch size
+        await repo.updateSubclass(
           widget.heroId,
           _selectedSubclass!.subclassName,
-        ));
+        );
 
         // Save subclass key for proper restoration
         if (_selectedSubclass!.subclassKey != null) {
-          updates.add(repo.saveSubclassKey(
+          await repo.saveSubclassKey(
             widget.heroId,
             _selectedSubclass!.subclassKey,
-          ));
+          );
         }
 
         // Save deity if selected
         if (_selectedSubclass!.deityId != null) {
-          updates.add(repo.updateDeity(
+          await repo.updateDeity(
             widget.heroId,
             _selectedSubclass!.deityId,
-          ));
+          );
         }
 
         // Save domain if selected (join multiple domains with comma)
         if (_selectedSubclass!.domainNames.isNotEmpty) {
-          updates.add(repo.updateDomain(
+          await repo.updateDomain(
             widget.heroId,
             _selectedSubclass!.domainNames.join(', '),
-          ));
+          );
         }
       }
 
       // 3.5. Apply kit grants (bonuses, abilities, stat mods like decrease_total) from selected equipment
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
+      debugPrint('[StrifeCreatorPage] _handleSave: Saving kits: $slotOrderedEquipmentIds');
 
-      // Use KitGrantsService to apply all kit grants - this also returns calculated bonuses
-      // Note: applyKitGrants already saves equipment entries to hero_entries
-      final kitGrantsService = KitGrantsService(db);
-      final equipmentBonuses = await kitGrantsService.applyKitGrants(
-        heroId: widget.heroId,
-        equipmentIds: slotOrderedEquipmentIds,
-        heroLevel: _selectedLevel,
+      // Persist equipment selection and recalc bonuses using the same flow as KitsTab
+      final equipmentBonuses = await _applyEquipmentSelectionAndBonuses(
+        slotOrderedEquipmentIds,
+        repo,
+        db,
       );
-
-      // Save equipment slot configuration for UI restoration
-      updates.add(db.setHeroConfig(
-        heroId: widget.heroId,
-        configKey: 'equipment.slots',
-        value: {'ids': slotOrderedEquipmentIds},
-      ));
-
-      // Update legacy kit field for backwards compatibility
-      final primaryKit = slotOrderedEquipmentIds.firstWhereOrNull(
-        (id) => id != null && id.isNotEmpty,
-      );
-      if (primaryKit != null) {
-        updates.add(repo.updateKit(widget.heroId, primaryKit));
-      }
+      debugPrint('[StrifeCreatorPage] _handleSave: Calculated bonuses: $equipmentBonuses');
 
       // Auto-favorite the selected equipment so it shows up in the gear page favorites
       final equipmentIdsToFavorite =
@@ -1542,7 +1587,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         final existingFavorites = await repo.getFavoriteKitIds(widget.heroId);
         final mergedFavorites =
             <String>{...existingFavorites, ...equipmentIdsToFavorite}.toList();
-        updates.add(repo.saveFavoriteKitIds(widget.heroId, mergedFavorites));
+        await repo.saveFavoriteKitIds(widget.heroId, mergedFavorites);
       }
 
       // 4. Save selected characteristic array name
@@ -1844,7 +1889,8 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       if (!mounted) return;
 
-      // Invalidate providers so UI reflects the saved data
+      // Invalidate providers so UI reflects the saved data (same as Kits tab)
+      ref.invalidate(heroRepositoryProvider);
       ref.invalidate(heroEquipmentBonusesProvider(widget.heroId));
       ref.invalidate(heroValuesProvider(widget.heroId));
       ref.invalidate(heroAssemblyProvider(widget.heroId));

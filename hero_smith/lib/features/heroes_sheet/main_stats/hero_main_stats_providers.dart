@@ -20,17 +20,19 @@ import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_models_text.d
 /// to produce the complete HeroMainStats.
 ///
 /// This is a pure combination of existing providers; Riverpod will recompute
-/// whenever any dependency changes (values, assembly, equipment bonuses).
+/// whenever any dependency changes (values, assembly, equipment bonuses, treasure bonuses).
 final heroMainStatsProvider =
     Provider.family<AsyncValue<HeroMainStats>, String>((ref, heroId) {
   final valuesAsync = ref.watch(heroValuesProvider(heroId));
   final assemblyAsync = ref.watch(heroAssemblyProvider(heroId));
   final equipmentBonusesAsync = ref.watch(heroEquipmentBonusesProvider(heroId));
+  final treasureStaminaAsync = ref.watch(heroTreasureHighestBonusStaminaProvider(heroId));
 
   // Propagate loading/error states if any dependency is not ready
   if (valuesAsync.isLoading ||
       assemblyAsync.isLoading ||
-      equipmentBonusesAsync.isLoading) {
+      equipmentBonusesAsync.isLoading ||
+      treasureStaminaAsync.isLoading) {
     return const AsyncLoading();
   }
 
@@ -49,13 +51,15 @@ final heroMainStatsProvider =
       equipmentBonusesAsync.stackTrace ?? StackTrace.current,
     );
   }
+  // Treasure stamina errors are non-fatal, default to 0
+  final treasureStamina = treasureStaminaAsync.valueOrNull ?? 0;
 
   final values = valuesAsync.requireValue;
   final assembly = assemblyAsync.value; // may be null
   final equipmentBonuses = equipmentBonusesAsync.requireValue;
 
   final stats =
-      _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses);
+      _mapValuesAndAssemblyToMainStats(values, assembly, equipmentBonuses, treasureStamina);
   return AsyncData(stats);
 });
 
@@ -64,6 +68,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
   List<db.HeroValue> values,
   HeroAssembly? assembly,
   Map<String, int> equipmentBonuses,
+  int treasureHighestBonusStamina,
 ) {
   int readInt(String key, {int defaultValue = 0}) {
     final v = values.firstWhereOrNull((e) => e.key == key);
@@ -140,6 +145,7 @@ HeroMainStats _mapValuesAndAssemblyToMainStats(
     userModifications: userModifications,
     choiceModifications: choiceModifications,
     equipmentBonuses: equipmentBonuses,
+    treasureHighestBonusStamina: treasureHighestBonusStamina,
     dynamicModifiers: dynamicModifiers,
   );
 }

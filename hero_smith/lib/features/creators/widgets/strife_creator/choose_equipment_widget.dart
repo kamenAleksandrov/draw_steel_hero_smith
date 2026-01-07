@@ -105,7 +105,10 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (var i = 0; i < slots.length; i++) ...[
-                  _EquipmentSlotTile(slot: slots[i]),
+                  _EquipmentSlotTile(
+                    key: ValueKey('slot_$i'),
+                    slot: slots[i],
+                  ),
                   if (i != slots.length - 1) Divider(height: 32, color: Colors.grey.shade700),
                 ],
               ],
@@ -173,6 +176,7 @@ class EquipmentAndModificationsWidget extends ConsumerWidget {
 
 class _EquipmentSlotTile extends ConsumerStatefulWidget {
   const _EquipmentSlotTile({
+    super.key,
     required this.slot,
   });
 

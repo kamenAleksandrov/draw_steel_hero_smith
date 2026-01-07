@@ -11,6 +11,7 @@ import '../../core/theme/treasure_theme.dart';
 /// - Wider nested sections that blend with the card
 /// - Smooth expand/collapse animation
 /// - Optional quantity display with +/- controls for stacking
+/// - Optional equip/unequip toggle for equipable treasures
 class TreasureCard extends StatefulWidget {
   final model.Component component;
   final VoidCallback? onTap;
@@ -30,6 +31,15 @@ class TreasureCard extends StatefulWidget {
   /// Whether to show quantity controls.
   final bool showQuantityControls;
 
+  /// Whether this treasure is currently equipped.
+  final bool isEquipped;
+
+  /// Callback when user wants to toggle equipped state.
+  final VoidCallback? onToggleEquip;
+
+  /// Whether to show the equip toggle (only for equipable treasure types).
+  final bool showEquipToggle;
+
   const TreasureCard({
     super.key,
     required this.component,
@@ -39,6 +49,9 @@ class TreasureCard extends StatefulWidget {
     this.onDecrement,
     this.onRemove,
     this.showQuantityControls = false,
+    this.isEquipped = false,
+    this.onToggleEquip,
+    this.showEquipToggle = false,
   });
 
   @override
@@ -88,6 +101,59 @@ class _TreasureCardState extends State<TreasureCard>
     });
   }
 
+  /// Check if this treasure type can be equipped.
+  bool _isEquipableTreasure() {
+    final type = widget.component.type.toLowerCase();
+    // Consumables can't be equipped - they're one-time use
+    // Trinkets, artifacts, and leveled treasures can be equipped
+    return type == 'trinket' || type == 'artifact' || type == 'leveled_treasure';
+  }
+
+  /// Build the equip toggle button.
+  Widget _buildEquipToggle(BuildContext context) {
+    final isEquipped = widget.isEquipped;
+    final equipColor = isEquipped ? Colors.green.shade400 : Colors.grey.shade400;
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: widget.onToggleEquip,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: equipColor.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: equipColor.withOpacity(0.4),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isEquipped ? Icons.check_circle : Icons.radio_button_unchecked,
+                color: equipColor,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                isEquipped ? 'EQUIPPED' : 'EQUIP',
+                style: TextStyle(
+                  color: equipColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Color _getAccentColor() {
     switch (widget.component.type.toLowerCase()) {
       case 'consumable':
@@ -122,11 +188,15 @@ class _TreasureCardState extends State<TreasureCard>
   Widget build(BuildContext context) {
     super.build(context);
     final accentColor = _getAccentColor();
+    final isEquipable = _isEquipableTreasure();
 
     return Container(
       decoration: BoxDecoration(
         color: NavigationTheme.cardBackgroundDark,
         borderRadius: BorderRadius.circular(NavigationTheme.cardBorderRadius),
+        border: widget.isEquipped
+            ? Border.all(color: Colors.green.shade400, width: 2)
+            : null,
       ),
       clipBehavior: Clip.antiAlias,
       child: Material(
@@ -136,12 +206,12 @@ class _TreasureCardState extends State<TreasureCard>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Accent stripe
+              // Accent stripe (green glow when equipped)
               Container(
                 width: NavigationTheme.cardAccentStripeWidth,
                 constraints: const BoxConstraints(minHeight: 80),
                 decoration: BoxDecoration(
-                  color: accentColor,
+                  color: widget.isEquipped ? Colors.green.shade400 : accentColor,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(NavigationTheme.cardBorderRadius),
                     bottomLeft:
@@ -158,6 +228,11 @@ class _TreasureCardState extends State<TreasureCard>
                     children: [
                       _buildHeader(context, accentColor),
                       const SizedBox(height: 10),
+                      // Equip toggle row (for equipable treasures)
+                      if (widget.showEquipToggle && isEquipable) ...[
+                        _buildEquipToggle(context),
+                        const SizedBox(height: 10),
+                      ],
                       _buildDescription(context),
                       SizeTransition(
                         sizeFactor: _expandAnimation,

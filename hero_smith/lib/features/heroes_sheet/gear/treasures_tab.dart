@@ -7,7 +7,7 @@ import '../../../core/data/downtime_data_source.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
-import '../../../core/theme/app_text_styles.dart';
+import '../../../core/repositories/hero_repository.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/treasures_tab_text.dart';
 import '../../../widgets/treasures/treasures.dart';
@@ -138,6 +138,125 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   int _getTreasureQuantity(String treasureId) {
     final entry = _heroTreasureEntries[treasureId];
     return entry?['quantity'] as int? ?? 1;
+  }
+
+  /// Check if a treasure is equipped.
+  bool _isTreasureEquipped(String treasureId) {
+    final entry = _heroTreasureEntries[treasureId];
+    return entry?['equipped'] as bool? ?? false;
+  }
+
+  /// Toggle equip state for a treasure.
+  Future<void> _toggleEquip(String treasureId, String treasureType) async {
+    final db = ref.read(appDatabaseProvider);
+    final isCurrentlyEquipped = _isTreasureEquipped(treasureId);
+    final willBeEquipped = !isCurrentlyEquipped;
+
+    // Check for leveled treasure jealousy warning
+    if (willBeEquipped && treasureType.toLowerCase() == 'leveled_treasure') {
+      final equippedLeveledCount = _countEquippedLeveledTreasures();
+      // Show warning if equipping a 4th leveled treasure (already have 3)
+      if (equippedLeveledCount >= 3) {
+        _showJealousyWarning();
+      }
+    }
+
+    try {
+      final existingPayload = Map<String, dynamic>.from(
+        _heroTreasureEntries[treasureId] ?? {},
+      );
+      existingPayload['equipped'] = willBeEquipped;
+
+      await db.updateHeroEntryPayload(
+        heroId: widget.heroId,
+        entryType: 'treasure',
+        entryId: treasureId,
+        payload: existingPayload,
+      );
+      
+      // Recalculate and save equipped treasure bonuses
+      await _recalculateEquippedBonuses();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(willBeEquipped 
+              ? TreasuresTabText.treasureEquippedSnack 
+              : TreasuresTabText.treasureUnequippedSnack),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${TreasuresTabText.toggleEquipFailedPrefix}$e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  /// Recalculate equipped treasure bonuses and save to hero values.
+  Future<void> _recalculateEquippedBonuses() async {
+    try {
+      final heroRepo = ref.read(heroRepositoryProvider);
+      final treasureBonusService = ref.read(treasureBonusServiceProvider);
+      final heroLevel = await heroRepo.getHeroLevel(widget.heroId);
+      
+      await treasureBonusService.recalculateAndSaveEquippedBonuses(
+        widget.heroId,
+        heroLevel,
+      );
+    } catch (e) {
+      // Silently ignore bonus calculation errors
+    }
+  }
+
+  /// Count how many leveled treasures are currently equipped.
+  int _countEquippedLeveledTreasures() {
+    int count = 0;
+    for (final entry in _heroTreasureEntries.entries) {
+      final treasureId = entry.key;
+      final payload = entry.value;
+      final isEquipped = payload['equipped'] as bool? ?? false;
+      if (isEquipped) {
+        // Find the treasure to check its type
+        final treasure = _allTreasures.firstWhere(
+          (t) => t.id == treasureId,
+          orElse: () => _allTreasures.first,
+        );
+        if (treasure.type.toLowerCase() == 'leveled_treasure') {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  /// Show warning about leveled treasure jealousy.
+  void _showJealousyWarning() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange.shade400),
+            const SizedBox(width: 8),
+            const Text(TreasuresTabText.jealousyWarningTitle),
+          ],
+        ),
+        content: const Text(TreasuresTabText.jealousyWarningMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(TreasuresTabText.jealousyWarningDismiss),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _addTreasure(String treasureId) async {
@@ -332,6 +451,37 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
     }
   }
 
+  Future<void> _showImbuementsInfoDialog() async {
+    final treasureBonusService = ref.read(treasureBonusServiceProvider);
+    final description = await treasureBonusService.loadImbuementsDescription();
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          TreasuresTabText.imbuementsInfoDialogTitle,
+          style: TextStyle(color: NavigationTheme.imbuementsTabColor),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            description.isNotEmpty
+                ? description
+                : 'No description available.',
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(TreasuresTabText.closeButtonLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoadingTreasures) {
@@ -430,13 +580,30 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
                         if (heroImbuements.isNotEmpty) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 16, bottom: 8),
-                            child: Text(
-                              TreasuresTabText.itemImbuementsHeader,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: NavigationTheme.imbuementsTabColor,
-                              ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  TreasuresTabText.itemImbuementsHeader,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: NavigationTheme.imbuementsTabColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.info_outline,
+                                    size: 18,
+                                    color: NavigationTheme.imbuementsTabColor,
+                                  ),
+                                  tooltip: TreasuresTabText.imbuementsInfoTooltip,
+                                  onPressed: _showImbuementsInfoDialog,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                              ],
                             ),
                           ),
                           ...heroImbuements.map((imbuement) {
@@ -562,11 +729,17 @@ class _TreasuresTabState extends ConsumerState<TreasuresTab> {
   }
 
   Widget _buildTreasureCard(model.Component treasure, int quantity) {
+    final isEquipped = _isTreasureEquipped(treasure.id);
+    final isEquipable = treasure.type.toLowerCase() != 'consumable';
+    
     // Use the unified TreasureCard with quantity controls
     return TreasureCard(
       component: treasure,
       quantity: quantity,
       showQuantityControls: true,
+      showEquipToggle: isEquipable,
+      isEquipped: isEquipped,
+      onToggleEquip: () => _toggleEquip(treasure.id, treasure.type),
       onIncrement: () => _incrementTreasure(treasure.id),
       onDecrement: () => _decrementTreasure(treasure.id),
       onRemove: () => _removeTreasure(treasure.id),

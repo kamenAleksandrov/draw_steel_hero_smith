@@ -139,10 +139,11 @@ class ClassFeatureDataService {
     if (selection == null || selection.domainNames.isEmpty) {
       return const <String>{};
     }
-    return selection.domainNames
-        .map(slugify)
-        .where((slug) => slug.isNotEmpty)
-        .toSet();
+    final slugs = <String>{};
+    for (final domain in selection.domainNames) {
+      slugs.addAll(slugVariants(domain));
+    }
+    return slugs;
   }
 
   static Set<String> selectedDeitySlugs(SubclassSelectionResult? selection) {
@@ -466,48 +467,123 @@ class ClassFeatureDataService {
   
   /// Keys that indicate an option is tied to a specific subclass selection.
   static const List<String> _subclassOptionKeys = [
-    'subclass', 'subclass_name', 'tradition', 'order', 'doctrine',
-    'mask', 'path', 'circle', 'college', 'element', 'role',
-    'discipline', 'oath', 'school', 'guild', 'name',
+    'subclass',
+    'subclass_name',
+    'tradition',
+    'order',
+    'doctrine',
+    'mask',
+    'path',
+    'circle',
+    'college',
+    'element',
+    'role',
+    'discipline',
+    'oath',
+    'school',
+    'guild',
+    'name',
   ];
-  
-  /// Checks if an option is active for the current subclass/domain selection.
-  static bool _isOptionActiveForCurrentSelection(
+
+  /// Keys used to decide if an option is active for a subclass selection.
+  /// This intentionally excludes 'name' so domain/deity grants with a name
+  /// are not treated as subclass-gated.
+  static const List<String> _activationSubclassKeys = [
+    'subclass',
+    'subclass_name',
+    'tradition',
+    'order',
+    'doctrine',
+    'mask',
+    'path',
+    'circle',
+    'college',
+    'element',
+    'role',
+    'discipline',
+    'oath',
+    'school',
+    'guild',
+  ];
+
+  /// Checks if an option is active for the current subclass/domain/deity selection.
+  /// Uses slug variants everywhere so underscore/hyphen/punctuation differences do not hide matches.
+  static bool isOptionActiveForSelection(
     Map<String, dynamic> option, {
     Set<String> activeSubclassSlugs = const {},
     Set<String> selectedDomainSlugs = const {},
     Set<String> selectedDeitySlugs = const {},
   }) {
-    // Check subclass-related keys
-    for (final key in _subclassOptionKeys) {
-      final value = option[key]?.toString().trim().toLowerCase();
-      if (value != null && value.isNotEmpty) {
-        final slug = value.replaceAll(RegExp(r'\s+'), '-');
-        if (activeSubclassSlugs.isNotEmpty && !activeSubclassSlugs.contains(slug)) {
-          return false;
+    final subclassSlugs =
+        _extractOptionSlugSet(option, keys: _activationSubclassKeys);
+    if (subclassSlugs.isNotEmpty &&
+        activeSubclassSlugs.isNotEmpty &&
+        subclassSlugs.intersection(activeSubclassSlugs).isEmpty) {
+      return false;
+    }
+
+    final domainSlugs = _extractDomainSlugs(option);
+    if (domainSlugs.isNotEmpty &&
+        selectedDomainSlugs.isNotEmpty &&
+        domainSlugs.intersection(selectedDomainSlugs).isEmpty) {
+      return false;
+    }
+
+    final deitySlugs = _extractDeitySlugs(option);
+    if (deitySlugs.isNotEmpty &&
+        selectedDeitySlugs.isNotEmpty &&
+        deitySlugs.intersection(selectedDeitySlugs).isEmpty) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Collect slug variants for the provided option keys (handles strings and lists).
+  static Set<String> _extractOptionSlugSet(
+    Map<String, dynamic> option, {
+    required Iterable<String> keys,
+  }) {
+    final slugs = <String>{};
+    for (final key in keys) {
+      final value = option[key];
+      if (value == null) continue;
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) {
+          slugs.addAll(slugVariants(trimmed));
+        }
+      } else if (value is List) {
+        for (final entry in value.whereType<String>()) {
+          final trimmed = entry.trim();
+          if (trimmed.isNotEmpty) {
+            slugs.addAll(slugVariants(trimmed));
+          }
         }
       }
     }
-    
-    // Check domain key
-    final domain = option['domain']?.toString().trim().toLowerCase();
-    if (domain != null && domain.isNotEmpty) {
-      final slug = domain.replaceAll(RegExp(r'\s+'), '-');
-      if (selectedDomainSlugs.isNotEmpty && !selectedDomainSlugs.contains(slug)) {
-        return false;
+    return slugs;
+  }
+
+  /// Collect slug variants for the domain field (string or list).
+  static Set<String> _extractDomainSlugs(Map<String, dynamic> option) {
+    final value = option['domain'];
+    if (value == null) return const <String>{};
+    final slugs = <String>{};
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isNotEmpty) {
+        slugs.addAll(slugVariants(trimmed));
+      }
+    } else if (value is List) {
+      for (final entry in value.whereType<String>()) {
+        final trimmed = entry.trim();
+        if (trimmed.isNotEmpty) {
+          slugs.addAll(slugVariants(trimmed));
+        }
       }
     }
-    
-    // Check deity key
-    final deity = option['deity']?.toString().trim().toLowerCase();
-    if (deity != null && deity.isNotEmpty) {
-      final slug = deity.replaceAll(RegExp(r'\s+'), '-');
-      if (selectedDeitySlugs.isNotEmpty && !selectedDeitySlugs.contains(slug)) {
-        return false;
-      }
-    }
-    
-    return true;
+    return slugs;
   }
   
   /// Checks if a specific feature has pending choices.
@@ -534,7 +610,7 @@ class ClassFeatureDataService {
       if (skillGroup == null || skillGroup.isEmpty) continue;
       
       // Skip options that don't match the current subclass/domain selection
-      if (!_isOptionActiveForCurrentSelection(
+      if (!isOptionActiveForSelection(
         option,
         activeSubclassSlugs: activeSubclassSlugs,
         selectedDomainSlugs: selectedDomainSlugs,

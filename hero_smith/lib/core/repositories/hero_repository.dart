@@ -115,6 +115,10 @@ class HeroMainStats {
   final Map<String, int> choiceModifications;
   final Map<String, int> equipmentBonuses;
   
+  /// Highest stamina bonus from treasures (armor imbuements, etc.)
+  /// Uses "take highest" logic - only the highest bonus applies.
+  final int treasureHighestBonusStamina;
+  
   /// Dynamic modifiers that recalculate based on current stats
   final DynamicModifierList dynamicModifiers;
 
@@ -148,6 +152,7 @@ class HeroMainStats {
     this.userModifications = const {},
     this.choiceModifications = const {},
     this.equipmentBonuses = const {},
+    this.treasureHighestBonusStamina = 0,
     this.dynamicModifiers = const DynamicModifierList([]),
   });
 
@@ -218,8 +223,13 @@ class HeroMainStats {
   int get disengageTotal => disengageBase + modValue(HeroModKeys.disengage) + disengageFeatureBonus;
   int get stabilityTotal => stabilityBase + modValue(HeroModKeys.stability) + stabilityFeatureBonus;
 
+  /// Total stamina max including all bonuses:
+  /// - Base stamina
+  /// - Modifications (from choices, ancestry, etc.)
+  /// - Feature bonuses (from class features, etc.)
+  /// - Treasure highest bonus (armor imbuements use "take highest" logic)
   int get staminaMaxEffective =>
-      staminaMaxBase + modValue(HeroModKeys.staminaMax) + staminaFeatureBonus;
+      staminaMaxBase + modValue(HeroModKeys.staminaMax) + staminaFeatureBonus + treasureHighestBonusStamina;
   int get recoveriesMaxEffective =>
       recoveriesMaxBase + modValue(HeroModKeys.recoveriesMax) + recoveriesFeatureBonus;
   int get surgesTotal => surgesCurrent + modValue(HeroModKeys.surges);

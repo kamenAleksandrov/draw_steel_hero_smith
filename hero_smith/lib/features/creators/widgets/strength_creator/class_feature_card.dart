@@ -198,39 +198,12 @@ class _FeatureCardState extends State<_FeatureCard>
   
   /// Checks if an option is active based on current subclass/domain selection.
   bool _isOptionActiveForCurrentSelection(Map<String, dynamic> option) {
-    // If the option specifies any subclass-related key (including 'name' for doctrines),
-    // it must match the active subclass slugs.
-    for (final key in ClassFeaturesWidget._widgetSubclassOptionKeys) {
-      final value = option[key]?.toString().trim();
-      if (value == null || value.isEmpty) continue;
-
-      final slug = ClassFeatureDataService.slugify(value);
-      if (w.activeSubclassSlugs.isNotEmpty && !w.activeSubclassSlugs.contains(slug)) {
-        return false;
-      }
-    }
-
-    // Domain restriction
-    final domain = option['domain']?.toString().trim();
-    if (domain != null && domain.isNotEmpty) {
-      final slug = ClassFeatureDataService.slugify(domain);
-      if (w.selectedDomainSlugs.isNotEmpty && !w.selectedDomainSlugs.contains(slug)) {
-        return false;
-      }
-    }
-
-    // Deity restriction
-    for (final key in ClassFeaturesWidget._widgetDeityOptionKeys) {
-      final value = option[key]?.toString().trim();
-      if (value == null || value.isEmpty) continue;
-
-      final slug = ClassFeatureDataService.slugify(value);
-      if (w.selectedDeitySlugs.isNotEmpty && !w.selectedDeitySlugs.contains(slug)) {
-        return false;
-      }
-    }
-
-    return true;
+    return ClassFeatureDataService.isOptionActiveForSelection(
+      option,
+      activeSubclassSlugs: w.activeSubclassSlugs,
+      selectedDomainSlugs: w.selectedDomainSlugs,
+      selectedDeitySlugs: w.selectedDeitySlugs,
+    );
   }
   
   /// Build a special card for progression features (Growing Ferocity / Discipline Mastery)

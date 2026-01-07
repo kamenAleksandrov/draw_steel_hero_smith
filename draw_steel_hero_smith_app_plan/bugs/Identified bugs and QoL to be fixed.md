@@ -114,3 +114,23 @@ would be cool to have the mantle of essence like the fury or null growing resour
 
 ### troubadour
 
+trinkets, leveled treasures and artefacts now have new objects that tell the app what do they add to the hero stats when a hero equips them.
+
+here are all the new objects with explanations:
+
+ { "increase_total": { "stat": "stamina", "value": 3 } },
+      {
+        "increase_total": {
+          "stat": "stability",
+          "value": 1
+        }
+      }
+"grants": [
+        {
+          "increase_total": {
+            "stat": "stamina",
+            "value": 21
+          }
+        }
+      ]
+theese function the same way are ancestries, complication and other such types of additions. if grants are found nested in levels of leveled treasures they add their bonuses to the hero at the level that the bonus is found, if the bonus is of higher level and the same bonus exists of previous levels, the highest is added to the hero IF the stackable 

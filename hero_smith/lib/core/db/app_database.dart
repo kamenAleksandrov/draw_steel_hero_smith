@@ -1172,6 +1172,38 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  /// Get hero entries with their payloads for a specific category (non-stream).
+  /// Returns a map: {entryId: payload} where payload contains quantity, equipped, etc.
+  Future<Map<String, Map<String, dynamic>>> getHeroEntriesWithPayload(
+      String heroId, String entryType) async {
+    final rows = await (select(heroEntries)
+          ..where(
+              (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
+        .get();
+    
+    final result = <String, Map<String, dynamic>>{};
+    for (final row in rows) {
+      Map<String, dynamic> payload = {};
+      if (row.payload != null) {
+        try {
+          payload = jsonDecode(row.payload!) as Map<String, dynamic>;
+        } catch (_) {}
+      }
+      // If same entry exists multiple times, merge quantities
+      if (result.containsKey(row.entryId)) {
+        final existing = result[row.entryId]!;
+        final existingQty = existing['quantity'] as int? ?? 1;
+        final newQty = payload['quantity'] as int? ?? 1;
+        existing['quantity'] = existingQty + newQty;
+      } else {
+        // Default quantity to 1 if not specified
+        payload['quantity'] ??= 1;
+        result[row.entryId] = payload;
+      }
+    }
+    return result;
+  }
+
   /// Update the payload for a specific hero entry.
   Future<void> updateHeroEntryPayload({
     required String heroId,

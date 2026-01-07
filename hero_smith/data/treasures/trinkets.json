@@ -21,7 +21,16 @@
     "level_5": null,
     "level_9": null,
     "enchanted": false,
-    "enchants": []
+    "enchants": [],
+    "grants": [
+      {
+        "increase_total": {
+          "stat": "immunity",
+          "type": "cold",
+          "value": "level"
+        }
+      }
+    ]
   },
   {
     "id": "color_cloak_red",
@@ -45,7 +54,16 @@
     "level_5": null,
     "level_9": null,
     "enchanted": false,
-    "enchants": []
+    "enchants": [],
+    "grants": [
+      {
+        "increase_total": {
+          "stat": "immunity",
+          "type": "fire",
+          "value": "level"
+        }
+      }
+    ]
   },
   {
     "id": "color_cloak_yellow",
@@ -69,7 +87,16 @@
     "level_5": null,
     "level_9": null,
     "enchanted": false,
-    "enchants": []
+    "enchants": [],
+    "grants": [
+      {
+        "increase_total": {
+          "stat": "immunity",
+          "type": "lightning",
+          "value": "level"
+        }
+      }
+    ]
   },
   {
     "id": "deadweight",
@@ -309,7 +336,16 @@
     "level_5": null,
     "level_9": null,
     "enchanted": false,
-    "enchants": []
+    "enchants": [],
+    "grants": [
+      { "increase_total": { "stat": "stamina", "value": 3 } },
+      {
+        "increase_total": {
+          "stat": "stability",
+          "value": 1
+        }
+      }
+    ]
   },
   {
     "id": "evilest_eye",
