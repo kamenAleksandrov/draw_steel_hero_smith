@@ -180,6 +180,19 @@ class HeroDamageResistances {
 
   final List<DamageResistance> resistances;
 
+  /// Get a copy with only base values (strips all bonus values).
+  /// Used for saving to storage - bonus values are calculated at runtime.
+  HeroDamageResistances get baseOnly {
+    return HeroDamageResistances(
+      resistances: resistances.map((r) => DamageResistance(
+        damageType: r.damageType,
+        baseImmunity: r.baseImmunity,
+        baseWeakness: r.baseWeakness,
+        // All bonus/dynamic values are stripped
+      )).toList(),
+    );
+  }
+
   /// Get resistance for a specific damage type, or null if not tracked.
   DamageResistance? forType(String damageType) {
     final normalized = damageType.toLowerCase();

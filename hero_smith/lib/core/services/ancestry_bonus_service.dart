@@ -218,6 +218,7 @@ class AncestryBonusService {
   }
 
   /// Watch damage resistances - automatically updates when values change.
+  /// Returns base values only (bonuses are calculated separately).
   Stream<HeroDamageResistances> watchDamageResistances(String heroId) {
     return _db.watchHeroValues(heroId).map((values) {
       final value = values.firstWhereOrNull((v) => v.key == _kDamageResistances);
@@ -233,15 +234,117 @@ class AncestryBonusService {
     });
   }
 
-  /// Save damage resistances for a hero.
+  /// Watch resistance bonuses from hero_entries (ancestry + complication sources).
+  /// Returns a map of damage type -> DamageResistanceBonus.
+  Stream<Map<String, DamageResistanceBonus>> watchResistanceBonusEntries(String heroId) {
+    return _entries.watchEntriesByType(heroId, 'resistance').map((entries) {
+      final combinedBonuses = <String, DamageResistanceBonus>{};
+      
+      for (final e in entries) {
+        int immunity = 0, weakness = 0;
+        final sources = <String>[];
+        String? dynamicImmunity;
+        String? dynamicWeakness;
+        int immunityPerEchelon = 0;
+        int weaknessPerEchelon = 0;
+        
+        if (e.payload != null) {
+          try {
+            final decoded = jsonDecode(e.payload!);
+            if (decoded is Map) {
+              // Check for new dynamic format with immunityMods/weaknessMods
+              final immunityMods = decoded['immunityMods'];
+              final weaknessMods = decoded['weaknessMods'];
+              
+              if (immunityMods is List) {
+                for (final modData in immunityMods) {
+                  if (modData is Map) {
+                    final value = (modData['value'] as num?)?.toInt() ?? 0;
+                    final source = modData['source'] as String? ?? '';
+                    final dynValue = modData['dynamicValue'] as String?;
+                    final perEchelon = modData['perEchelon'] as bool? ?? false;
+                    final valPerEchelon = (modData['valuePerEchelon'] as num?)?.toInt() ?? 0;
+                    
+                    if (dynValue == 'level') {
+                      dynamicImmunity = 'level';
+                    } else if (perEchelon) {
+                      immunityPerEchelon += valPerEchelon;
+                    } else {
+                      immunity += value;
+                    }
+                    if (source.isNotEmpty && !sources.contains(source)) sources.add(source);
+                  }
+                }
+              } else {
+                immunity = (decoded['immunity'] as num?)?.toInt() ?? 0;
+              }
+              
+              if (weaknessMods is List) {
+                for (final modData in weaknessMods) {
+                  if (modData is Map) {
+                    final value = (modData['value'] as num?)?.toInt() ?? 0;
+                    final source = modData['source'] as String? ?? '';
+                    final dynValue = modData['dynamicValue'] as String?;
+                    final perEchelon = modData['perEchelon'] as bool? ?? false;
+                    final valPerEchelon = (modData['valuePerEchelon'] as num?)?.toInt() ?? 0;
+                    
+                    if (dynValue == 'level') {
+                      dynamicWeakness = 'level';
+                    } else if (perEchelon) {
+                      weaknessPerEchelon += valPerEchelon;
+                    } else {
+                      weakness += value;
+                    }
+                    if (source.isNotEmpty && !sources.contains(source)) sources.add(source);
+                  }
+                }
+              } else {
+                weakness = (decoded['weakness'] as num?)?.toInt() ?? 0;
+              }
+              
+              if (sources.isEmpty && decoded['sources'] is List) {
+                sources.addAll(
+                    (decoded['sources'] as List).map((s) => s.toString()));
+              }
+            }
+          } catch (_) {}
+        }
+        
+        final key = e.entryId.toLowerCase();
+        combinedBonuses[key] ??= DamageResistanceBonus(damageType: e.entryId);
+        final source = sources.isNotEmpty ? sources.first : e.sourceType;
+        combinedBonuses[key]!.addImmunity(immunity, source);
+        combinedBonuses[key]!.addWeakness(weakness, source);
+        if (dynamicImmunity != null) {
+          combinedBonuses[key]!.dynamicImmunity = dynamicImmunity;
+        }
+        if (dynamicWeakness != null) {
+          combinedBonuses[key]!.dynamicWeakness = dynamicWeakness;
+        }
+        if (immunityPerEchelon > 0) {
+          combinedBonuses[key]!.immunityPerEchelon += immunityPerEchelon;
+        }
+        if (weaknessPerEchelon > 0) {
+          combinedBonuses[key]!.weaknessPerEchelon += weaknessPerEchelon;
+        }
+      }
+      
+      return combinedBonuses;
+    });
+  }
+
+  /// Save damage resistances for a hero (base values only).
+  /// Bonus values are stripped before saving - they are calculated at runtime
+  /// from hero_entries and equipped treasures.
   Future<void> saveDamageResistances(
     String heroId,
     HeroDamageResistances resistances,
   ) async {
+    // Only save base values - bonus values are calculated at runtime
     await _db.upsertHeroValue(
       heroId: heroId,
       key: _kDamageResistances,
-      textValue: resistances.toJsonString(),
+      textValue: resistances.baseOnly.toJsonString(),
     );
   }
 
@@ -361,43 +464,20 @@ class AncestryBonusService {
         .go();
   }
   
-  /// Rebuild damage resistances by combining all sources from hero_entries.
-  /// This reads ancestry and complication resistance entries and combines them.
+  /// Rebuild damage resistances - now a no-op since bonuses are calculated at runtime.
+  /// 
+  /// Previously this method would:
+  /// 1. Load current resistances
+  /// 2. Read all resistance entries from hero_entries
+  /// 3. Apply bonuses and save
+  /// 
+  /// Now bonuses are calculated at runtime in [heroCombinedDamageResistancesProvider]
+  /// by reading from [watchResistanceBonusEntries], so we don't need to bake them
+  /// into the saved data. This method is kept for backward compatibility but does nothing.
   Future<void> _rebuildDamageResistancesFromEntries(String heroId) async {
-    // Load existing resistances to preserve base values
-    final current = await loadDamageResistances(heroId);
-    
-    // Collect all resistance entries from hero_entries (ancestry + complication)
-    final entries = await _entries.listEntriesByType(heroId, 'resistance');
-    final combinedBonuses = <String, DamageResistanceBonus>{};
-    
-    for (final e in entries) {
-      int immunity = 0, weakness = 0;
-      final sources = <String>[];
-      if (e.payload != null) {
-        try {
-          final decoded = jsonDecode(e.payload!);
-          if (decoded is Map) {
-            immunity = (decoded['immunity'] as num?)?.toInt() ?? 0;
-            weakness = (decoded['weakness'] as num?)?.toInt() ?? 0;
-            if (decoded['sources'] is List) {
-              sources.addAll(
-                  (decoded['sources'] as List).map((s) => s.toString()));
-            }
-          }
-        } catch (_) {}
-      }
-      
-      final key = e.entryId.toLowerCase();
-      combinedBonuses[key] ??= DamageResistanceBonus(damageType: e.entryId);
-      final source = sources.isNotEmpty ? sources.first : e.sourceType;
-      combinedBonuses[key]!.addImmunity(immunity, source);
-      combinedBonuses[key]!.addWeakness(weakness, source);
-    }
-    
-    // Apply all bonuses (this replaces bonus values with the combined totals)
-    final updated = current.applyBonuses(combinedBonuses);
-    await saveDamageResistances(heroId, updated);
+    // No-op: bonuses are now calculated at runtime in the provider
+    // The hero_entries are already stored, and watchResistanceBonusEntries 
+    // will read them when needed for display.
   }
 
   Future<void> _applyStatBonuses(

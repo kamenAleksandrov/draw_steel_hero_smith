@@ -28,12 +28,19 @@ class DamageResistanceTrackerWidget extends ConsumerStatefulWidget {
 class _DamageResistanceTrackerWidgetState
     extends ConsumerState<DamageResistanceTrackerWidget> {
   HeroDamageResistances _resistances = HeroDamageResistances.empty;
+  HeroDamageResistances _baseResistances = HeroDamageResistances.empty;
   int _heroLevel = 1;
 
   @override
   Widget build(BuildContext context) {
-    // Watch the stream provider for automatic updates
-    final resistancesAsync = ref.watch(heroDamageResistancesProvider(widget.heroId));
+    // Watch the combined provider for display (includes treasure immunities)
+    final combinedResistancesAsync = ref.watch(heroCombinedDamageResistancesProvider(widget.heroId));
+    
+    // Watch the base provider for saving (excludes treasure immunities)
+    final baseResistancesAsync = ref.watch(heroDamageResistancesProvider(widget.heroId));
+    baseResistancesAsync.whenData((base) {
+      _baseResistances = base;
+    });
     
     // Get hero level for dynamic resistance calculations
     final mainStats = ref.watch(heroMainStatsProvider(widget.heroId));
@@ -41,7 +48,7 @@ class _DamageResistanceTrackerWidgetState
       _heroLevel = stats.level;
     });
     
-    return resistancesAsync.when(
+    return combinedResistancesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Center(
         child: Column(
@@ -51,14 +58,14 @@ class _DamageResistanceTrackerWidgetState
               '${DamageResistanceTrackerText.errorLoadingResistancesPrefix}$error',
             ),
             ElevatedButton(
-              onPressed: () => ref.invalidate(heroDamageResistancesProvider(widget.heroId)),
+              onPressed: () => ref.invalidate(heroCombinedDamageResistancesProvider(widget.heroId)),
               child: const Text(DamageResistanceTrackerText.errorRetryLabel),
             ),
           ],
         ),
       ),
       data: (resistances) {
-        // Update local state for editing
+        // Update local state for display
         _resistances = resistances;
         return _buildContent(context);
       },
@@ -68,7 +75,8 @@ class _DamageResistanceTrackerWidgetState
   Future<void> _save() async {
     try {
       final service = ref.read(ancestryBonusServiceProvider);
-      await service.saveDamageResistances(widget.heroId, _resistances);
+      // Save the base resistances, not the combined ones with treasure
+      await service.saveDamageResistances(widget.heroId, _baseResistances);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -252,7 +260,7 @@ class _DamageResistanceTrackerWidgetState
 
   void _addDamageType(String type) {
     setState(() {
-      _resistances = _resistances.upsertResistance(
+      _baseResistances = _baseResistances.upsertResistance(
         DamageResistance(damageType: type),
       );
     });
@@ -261,7 +269,7 @@ class _DamageResistanceTrackerWidgetState
 
   void _removeDamageType(String type) {
     setState(() {
-      _resistances = _resistances.removeResistance(type);
+      _baseResistances = _baseResistances.removeResistance(type);
     });
     _save();
   }
@@ -468,9 +476,12 @@ class _DamageResistanceTrackerWidgetState
       if (result == true && mounted) {
         final newBaseImm = int.tryParse(immunityController.text) ?? 0;
         final newBaseWeak = int.tryParse(weaknessController.text) ?? 0;
+        
+        // Get the base resistance (without treasure bonuses) and update it
+        final baseResistance = _baseResistances.forType(resistance.damageType);
         setState(() {
-          _resistances = _resistances.upsertResistance(
-            resistance.copyWith(
+          _baseResistances = _baseResistances.upsertResistance(
+            (baseResistance ?? resistance).copyWith(
               baseImmunity: newBaseImm,
               baseWeakness: newBaseWeak,
             ),

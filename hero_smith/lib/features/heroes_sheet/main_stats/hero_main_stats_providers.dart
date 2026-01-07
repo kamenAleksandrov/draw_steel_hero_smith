@@ -473,40 +473,85 @@ final heroAncestryStatModsProvider =
   return service.watchAncestryStatMods(heroId);
 });
 
-/// Provider to watch base damage resistances from ancestry.
-final _baseAncestryResistancesProvider =
+/// Provider to watch BASE damage resistances (user-editable values only).
+/// This returns data from hero_values with only baseImmunity/baseWeakness - 
+/// no bonus values. Use this for saving.
+final heroDamageResistancesProvider =
     StreamProvider.family<HeroDamageResistances, String>((ref, heroId) {
   final service = ref.watch(ancestryBonusServiceProvider);
   return service.watchDamageResistances(heroId);
 });
 
-/// Provider to watch damage resistances - auto-updates when values change.
-/// Combines ancestry-based resistances with treasure immunities.
-final heroDamageResistancesProvider =
+/// Provider to watch resistance bonuses from hero_entries (ancestry + complication).
+/// Returns a map of damage type -> DamageResistanceBonus.
+final heroResistanceBonusEntriesProvider =
+    StreamProvider.family<Map<String, DamageResistanceBonus>, String>((ref, heroId) {
+  final service = ref.watch(ancestryBonusServiceProvider);
+  return service.watchResistanceBonusEntries(heroId);
+});
+
+/// Provider to watch COMBINED damage resistances from ALL sources:
+/// - Base values (user-editable) from hero_values
+/// - Ancestry/complication bonuses from hero_entries
+/// - Treasure bonuses from equipped treasures
+/// 
+/// Use this for DISPLAY purposes only - do not save this data.
+final heroCombinedDamageResistancesProvider =
     Provider.family<AsyncValue<HeroDamageResistances>, String>((ref, heroId) {
-  final ancestryResistancesAsync = ref.watch(_baseAncestryResistancesProvider(heroId));
+  final baseResistancesAsync = ref.watch(heroDamageResistancesProvider(heroId));
+  final entryBonusesAsync = ref.watch(heroResistanceBonusEntriesProvider(heroId));
   final treasureBonusesAsync = ref.watch(heroEquippedTreasureBonusesProvider(heroId));
 
-  return ancestryResistancesAsync.when(
-    data: (ancestryResistances) {
-      return treasureBonusesAsync.when(
-        data: (treasureBonuses) {
-          // Convert treasure immunities to DamageResistanceBonus map
-          final treasureImmunityBonuses = <String, DamageResistanceBonus>{};
-          for (final entry in treasureBonuses.immunities.entries) {
-            final damageType = entry.key.toLowerCase();
-            treasureImmunityBonuses[damageType] = DamageResistanceBonus(
-              damageType: entry.key,
-              immunity: entry.value,
-              sources: ['Treasure'],
-            );
-          }
-          // Merge treasure immunities into ancestry resistances
-          final combined = ancestryResistances.mergeBonuses(treasureImmunityBonuses);
-          return AsyncValue.data(combined);
+  return baseResistancesAsync.when(
+    data: (baseResistances) {
+      return entryBonusesAsync.when(
+        data: (entryBonuses) {
+          return treasureBonusesAsync.when(
+            data: (treasureBonuses) {
+              // Start with base resistances
+              var combined = baseResistances;
+              
+              // Apply ancestry/complication bonuses from entries
+              if (entryBonuses.isNotEmpty) {
+                combined = combined.applyBonuses(entryBonuses, clearMissing: false);
+              }
+              
+              // Merge treasure immunities on top
+              if (treasureBonuses.immunities.isNotEmpty) {
+                final treasureImmunityBonuses = <String, DamageResistanceBonus>{};
+                for (final entry in treasureBonuses.immunities.entries) {
+                  final damageType = entry.key.toLowerCase();
+                  treasureImmunityBonuses[damageType] = DamageResistanceBonus(
+                    damageType: entry.key,
+                    immunity: entry.value,
+                    sources: ['Treasure'],
+                  );
+                }
+                combined = combined.mergeBonuses(treasureImmunityBonuses);
+              }
+              
+              return AsyncValue.data(combined);
+            },
+            loading: () {
+              // Still apply entry bonuses even if treasure is loading
+              var combined = baseResistances;
+              if (entryBonuses.isNotEmpty) {
+                combined = combined.applyBonuses(entryBonuses, clearMissing: false);
+              }
+              return AsyncValue.data(combined);
+            },
+            error: (e, st) {
+              // Still apply entry bonuses even if treasure errors
+              var combined = baseResistances;
+              if (entryBonuses.isNotEmpty) {
+                combined = combined.applyBonuses(entryBonuses, clearMissing: false);
+              }
+              return AsyncValue.data(combined);
+            },
+          );
         },
-        loading: () => AsyncValue.data(ancestryResistances),
-        error: (e, st) => AsyncValue.data(ancestryResistances),
+        loading: () => AsyncValue.data(baseResistances),
+        error: (e, st) => AsyncValue.data(baseResistances),
       );
     },
     loading: () => const AsyncValue.loading(),

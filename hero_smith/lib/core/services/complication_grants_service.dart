@@ -651,20 +651,6 @@ class ComplicationGrantsService {
     );
   }
 
-  // All known damage types - "damage" type applies to all these
-  static const _allDamageTypes = [
-    'acid',
-    'cold',
-    'corruption',
-    'fire',
-    'holy',
-    'lightning',
-    'poison',
-    'psychic',
-    'sonic',
-    'untyped',
-  ];
-
   Future<void> _applyDamageResistanceGrants(
     String heroId,
     AppliedComplicationGrants grants,
@@ -685,30 +671,30 @@ class ComplicationGrantsService {
       bool perEchelon = false,
       int valuePerEchelon = 0,
     }) {
-      // "damage" type applies to all damage types
-      final typesToApply = damageType.toLowerCase() == 'damage' 
-          ? _allDamageTypes 
-          : [damageType.toLowerCase()];
+      // Normalize "all damage" to "damage" for consistency
+      var normalizedType = damageType.toLowerCase();
+      if (normalizedType == 'all damage') {
+        normalizedType = 'damage';
+      }
       
-      for (final type in typesToApply) {
-        resistanceEntries[type] ??= _DynamicResistanceEntry(damageType: type);
-        if (stat == 'immunity') {
-          resistanceEntries[type]!.addImmunity(
-            value: value,
-            source: sourceName,
-            dynamicValue: dynamicValue,
-            perEchelon: perEchelon,
-            valuePerEchelon: valuePerEchelon,
-          );
-        } else {
-          resistanceEntries[type]!.addWeakness(
-            value: value,
-            source: sourceName,
-            dynamicValue: dynamicValue,
-            perEchelon: perEchelon,
-            valuePerEchelon: valuePerEchelon,
-          );
-        }
+      // Use single "damage" type for all damage (widget displays as "All Damage")
+      resistanceEntries[normalizedType] ??= _DynamicResistanceEntry(damageType: normalizedType);
+      if (stat == 'immunity') {
+        resistanceEntries[normalizedType]!.addImmunity(
+          value: value,
+          source: sourceName,
+          dynamicValue: dynamicValue,
+          perEchelon: perEchelon,
+          valuePerEchelon: valuePerEchelon,
+        );
+      } else {
+        resistanceEntries[normalizedType]!.addWeakness(
+          value: value,
+          source: sourceName,
+          dynamicValue: dynamicValue,
+          perEchelon: perEchelon,
+          valuePerEchelon: valuePerEchelon,
+        );
       }
     }
 
@@ -797,106 +783,20 @@ class ComplicationGrantsService {
     );
   }
 
-  /// Rebuild damage resistances from hero_entries, combining all sources.
+  /// Rebuild damage resistances - now a no-op since bonuses are calculated at runtime.
   /// 
-  /// This method reads ALL resistance entries from hero_entries (both ancestry
-  /// and complication sourced) and combines them into the final resistances.damage.
+  /// Previously this method would:
+  /// 1. Load current resistances
+  /// 2. Read all resistance entries from hero_entries
+  /// 3. Apply bonuses and save
+  /// 
+  /// Now bonuses are calculated at runtime in [heroCombinedDamageResistancesProvider]
+  /// by reading from [watchResistanceBonusEntries], so we don't need to bake them
+  /// into the saved data. This method is kept for backward compatibility but does nothing.
   Future<void> _rebuildDamageResistances(String heroId, int heroLevel) async {
-    // Load existing resistances to preserve base values
-    final current = await loadDamageResistances(heroId);
-    
-    // Collect ALL resistance entries from hero_entries (ancestry + complication)
-    final entries = await _entries.listEntriesByType(heroId, 'resistance');
-    final combinedBonuses = <String, DamageResistanceBonus>{};
-    
-    for (final e in entries) {
-      int immunity = 0, weakness = 0;
-      final sources = <String>[];
-      String? dynamicImmunity;
-      String? dynamicWeakness;
-      int immunityPerEchelon = 0;
-      int weaknessPerEchelon = 0;
-      
-      if (e.payload != null) {
-        try {
-          final decoded = jsonDecode(e.payload!);
-          if (decoded is Map) {
-            // Check for new dynamic format with immunityMods/weaknessMods
-            final immunityMods = decoded['immunityMods'];
-            final weaknessMods = decoded['weaknessMods'];
-            
-            if (immunityMods is List) {
-              // New dynamic format - collect static and dynamic mods
-              for (final modData in immunityMods) {
-                if (modData is Map) {
-                  final mod = _DynamicResistanceMod.fromJson(Map<String, dynamic>.from(modData));
-                  if (mod.dynamicValue == 'level') {
-                    dynamicImmunity = 'level';
-                  } else if (mod.perEchelon) {
-                    immunityPerEchelon += mod.valuePerEchelon;
-                  } else {
-                    immunity += mod.value;
-                  }
-                  if (!sources.contains(mod.source)) sources.add(mod.source);
-                }
-              }
-            } else {
-              // Legacy format: immunity is a direct value
-              immunity = (decoded['immunity'] as num?)?.toInt() ?? 0;
-            }
-            
-            if (weaknessMods is List) {
-              // New dynamic format - collect static and dynamic mods
-              for (final modData in weaknessMods) {
-                if (modData is Map) {
-                  final mod = _DynamicResistanceMod.fromJson(Map<String, dynamic>.from(modData));
-                  if (mod.dynamicValue == 'level') {
-                    dynamicWeakness = 'level';
-                  } else if (mod.perEchelon) {
-                    weaknessPerEchelon += mod.valuePerEchelon;
-                  } else {
-                    weakness += mod.value;
-                  }
-                  if (!sources.contains(mod.source)) sources.add(mod.source);
-                }
-              }
-            } else {
-              // Legacy format: weakness is a direct value
-              weakness = (decoded['weakness'] as num?)?.toInt() ?? 0;
-            }
-            
-            // Fallback sources from legacy format
-            if (sources.isEmpty && decoded['sources'] is List) {
-              sources.addAll(
-                  (decoded['sources'] as List).map((s) => s.toString()));
-            }
-          }
-        } catch (_) {}
-      }
-      
-      final key = e.entryId.toLowerCase();
-      combinedBonuses[key] ??= DamageResistanceBonus(damageType: e.entryId);
-      final source = sources.isNotEmpty ? sources.first : e.sourceType;
-      combinedBonuses[key]!.addImmunity(immunity, source);
-      combinedBonuses[key]!.addWeakness(weakness, source);
-      // Store dynamic metadata
-      if (dynamicImmunity != null) {
-        combinedBonuses[key]!.dynamicImmunity = dynamicImmunity;
-      }
-      if (dynamicWeakness != null) {
-        combinedBonuses[key]!.dynamicWeakness = dynamicWeakness;
-      }
-      if (immunityPerEchelon > 0) {
-        combinedBonuses[key]!.immunityPerEchelon += immunityPerEchelon;
-      }
-      if (weaknessPerEchelon > 0) {
-        combinedBonuses[key]!.weaknessPerEchelon += weaknessPerEchelon;
-      }
-    }
-    
-    // Apply all combined bonuses (this replaces bonus values with the totals from all sources)
-    final updated = current.applyBonuses(combinedBonuses);
-    await saveDamageResistances(heroId, updated);
+    // No-op: bonuses are now calculated at runtime in the provider
+    // The hero_entries are already stored, and watchResistanceBonusEntries 
+    // will read them when needed for display.
   }
 
   Future<void> _clearLanguageGrants(String heroId) async {
