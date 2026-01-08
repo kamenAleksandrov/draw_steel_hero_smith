@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
-
 import '../db/app_database.dart';
 import '../repositories/hero_entry_repository.dart';
+import 'ability_resolver_service.dart';
 
 /// Represents a parsed perk grant
 sealed class PerkGrant {
@@ -105,78 +104,31 @@ class MultiGrant extends PerkGrant {
   const MultiGrant(this.grants);
 }
 
-/// Service to handle perk grant choices
+/// Service to handle perk grant choices.
+/// 
+/// Uses constructor injection for database dependency.
 class PerkGrantsService {
-  PerkGrantsService._();
+  PerkGrantsService(this._db)
+      : _entries = HeroEntryRepository(_db),
+        _abilityResolver = AbilityResolverService(_db);
   
-  static final PerkGrantsService _instance = PerkGrantsService._();
-  factory PerkGrantsService() => _instance;
+  final AppDatabase _db;
+  final HeroEntryRepository _entries;
+  final AbilityResolverService _abilityResolver;
   
-  List<Map<String, dynamic>>? _cachedSkills;
-  List<Map<String, dynamic>>? _cachedLanguages;
-  List<Map<String, dynamic>>? _cachedPerkAbilities;
-  
-  /// Load all skills from JSON
-  Future<List<Map<String, dynamic>>> loadSkills() async {
-    if (_cachedSkills != null) return _cachedSkills!;
-    
-    final raw = await rootBundle.loadString('data/story/skills.json');
-    final decoded = json.decode(raw) as List;
-    _cachedSkills = decoded.cast<Map<String, dynamic>>();
-    return _cachedSkills!;
+  /// Get all skills from the database.
+  Future<List<Component>> loadSkills() async {
+    return _abilityResolver.getAllSkills();
   }
   
-  /// Load all languages from JSON
-  Future<List<Map<String, dynamic>>> loadLanguages() async {
-    if (_cachedLanguages != null) return _cachedLanguages!;
-    
-    final raw = await rootBundle.loadString('data/story/languages.json');
-    final decoded = json.decode(raw) as List;
-    _cachedLanguages = decoded.cast<Map<String, dynamic>>();
-    return _cachedLanguages!;
+  /// Get all languages from the database.
+  Future<List<Component>> loadLanguages() async {
+    return _abilityResolver.getAllLanguages();
   }
   
-  /// Load perk abilities from JSON
-  Future<List<Map<String, dynamic>>> loadPerkAbilities() async {
-    if (_cachedPerkAbilities != null) return _cachedPerkAbilities!;
-    
-    final raw = await rootBundle.loadString('data/abilities/perk_abilities.json');
-    final decoded = json.decode(raw) as List;
-    _cachedPerkAbilities = decoded.cast<Map<String, dynamic>>();
-    return _cachedPerkAbilities!;
-  }
-  
-  /// Get skills by group
-  Future<List<Map<String, dynamic>>> getSkillsByGroup(String group) async {
-    final skills = await loadSkills();
-    return skills.where((s) => 
-      (s['group'] as String?)?.toLowerCase() == group.toLowerCase()
-    ).toList();
-  }
-  
-  /// Normalize ability names for comparisons (handles punctuation differences)
-  String _normalizeAbilityName(String value) {
-    final lower = value.trim().toLowerCase();
-    return lower
-        .replaceAll('\u2019', "'") // apostrophe right
-        .replaceAll('\u2018', "'") // apostrophe left
-        .replaceAll('\u201C', '"')
-        .replaceAll('\u201D', '"');
-  }
-
-  /// Get a perk ability by name
-  Future<Map<String, dynamic>?> getPerkAbilityByName(String name) async {
-    final abilities = await loadPerkAbilities();
-    final normalizedTarget = _normalizeAbilityName(name);
-
-    for (final ability in abilities) {
-      final abilityName = ability['name'];
-      if (abilityName is! String) continue;
-      if (_normalizeAbilityName(abilityName) == normalizedTarget) {
-        return ability;
-      }
-    }
-    return null;
+  /// Get skills by group from the database.
+  Future<List<Component>> getSkillsByGroup(String group) async {
+    return _abilityResolver.getSkillsByGroup(group);
   }
   
   // --- Hero-specific grant choice storage ---
@@ -187,14 +139,13 @@ class PerkGrantsService {
   
   /// Save a perk grant choice for a hero
   Future<void> saveGrantChoice({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
     required String grantType,
     required List<String> chosenIds,
   }) async {
     final key = _grantChoiceKey(perkId, grantType);
-    await db.upsertHeroValue(
+    await _db.upsertHeroValue(
       heroId: heroId,
       key: key,
       jsonMap: {'list': chosenIds},
@@ -203,13 +154,12 @@ class PerkGrantsService {
   
   /// Get a perk grant choice for a hero
   Future<List<String>> getGrantChoice({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
     required String grantType,
   }) async {
     final key = _grantChoiceKey(perkId, grantType);
-    final values = await db.getHeroValues(heroId);
+    final values = await _db.getHeroValues(heroId);
     
     for (final value in values) {
       if (value.key == key) {
@@ -227,12 +177,11 @@ class PerkGrantsService {
   
   /// Get all grant choices for a hero (for a specific perk)
   Future<Map<String, List<String>>> getAllGrantChoicesForPerk({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
   }) async {
     final prefix = 'perk_grant.$perkId.';
-    final values = await db.getHeroValues(heroId);
+    final values = await _db.getHeroValues(heroId);
     final result = <String, List<String>>{};
     
     for (final value in values) {
@@ -252,33 +201,30 @@ class PerkGrantsService {
   
   /// Get hero's current skills
   Future<List<String>> getHeroSkillIds({
-    required AppDatabase db,
     required String heroId,
   }) async {
-    return await db.getHeroComponentIds(heroId, 'skill');
+    return await _db.getHeroComponentIds(heroId, 'skill');
   }
   
   /// Get hero's current languages
   Future<List<String>> getHeroLanguageIds({
-    required AppDatabase db,
     required String heroId,
   }) async {
-    return await db.getHeroComponentIds(heroId, 'language');
+    return await _db.getHeroComponentIds(heroId, 'language');
   }
   
   /// Ensure all perk grants are applied for a hero.
   /// This is useful when viewing the abilities sheet to make sure any
   /// perk-granted abilities are properly registered in the hero's abilities.
   Future<void> ensureAllPerkGrantsApplied({
-    required AppDatabase db,
     required String heroId,
   }) async {
     // Get all perk IDs for this hero
-    final perkIds = await db.getHeroComponentIds(heroId, 'perk');
+    final perkIds = await _db.getHeroComponentIds(heroId, 'perk');
     if (perkIds.isEmpty) return;
     
     // Get all perk components
-    final allComponents = await db.getAllComponents();
+    final allComponents = await _db.getAllComponents();
     final perkComponents = allComponents
         .where((c) => c.type == 'perk' && perkIds.contains(c.id))
         .toList();
@@ -293,7 +239,6 @@ class PerkGrantsService {
         final grantsJson = data['grants'];
         if (grantsJson != null) {
           await applyPerkGrants(
-            db: db,
             heroId: heroId,
             perkId: perkComp.id,
             grantsJson: grantsJson,
@@ -312,7 +257,6 @@ class PerkGrantsService {
   /// Apply all grants from a perk when it is selected.
   /// This adds any ability grants to the hero's ability components.
   Future<void> applyPerkGrants({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
     required dynamic grantsJson,
@@ -326,92 +270,77 @@ class PerkGrantsService {
     if (abilityNames.isEmpty) return;
     
     // Find ability IDs from the database or perk_abilities.json
-    final abilityIds = await _resolveAbilityIds(db, abilityNames);
+    final abilityIds = await _abilityResolver.resolveAbilityIds(
+      abilityNames,
+      sourceType: 'perk',
+      ensureInDb: true,
+    );
     if (abilityIds.isEmpty) return;
     
     // Track which abilities came from this perk (legacy, kept for backwards compat)
-    await _savePerkAbilityGrants(db, heroId, perkId, abilityIds);
+    await _savePerkAbilityGrants(heroId, perkId, abilityIds);
     
     // Add to hero's ability entries with proper source tracking
-    await _addToHeroAbilities(db, heroId, perkId, abilityIds);
+    await _addToHeroAbilities(heroId, perkId, abilityIds);
   }
   
   /// Remove all grants from a perk when it is deselected.
   Future<void> removePerkGrants({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
   }) async {
     // Get the abilities that were granted by this perk
-    final grantedAbilityIds = await _loadPerkAbilityGrants(db, heroId, perkId);
+    final grantedAbilityIds = await _loadPerkAbilityGrants(heroId, perkId);
     
     // Remove the ability grant tracking
-    await _clearPerkAbilityGrants(db, heroId, perkId);
-    
-    // Get languages/skills granted by this perk
-    final grantedLanguageIds = await getGrantChoice(
-      db: db, heroId: heroId, perkId: perkId, grantType: 'language',
-    );
-    final grantedSkillPickIds = await getGrantChoice(
-      db: db, heroId: heroId, perkId: perkId, grantType: 'skill_pick',
-    );
+    await _clearPerkAbilityGrants(heroId, perkId);
     
     // Clear all grant choices for this perk
-    await _clearAllGrantChoicesForPerk(db, heroId, perkId);
+    await _clearAllGrantChoicesForPerk(heroId, perkId);
     
     // Remove abilities from hero (only if not granted by other perks)
     if (grantedAbilityIds.isNotEmpty) {
-      await _removeFromHeroAbilities(db, heroId, grantedAbilityIds, perkId);
+      await _removeFromHeroAbilities(heroId, grantedAbilityIds, perkId);
     }
     
-    // Remove languages from hero
-    if (grantedLanguageIds.isNotEmpty) {
-      await _removeFromHeroLanguages(db, heroId, grantedLanguageIds, perkId);
-    }
+    // Remove all languages from hero that were granted by this perk
+    await _removeFromHeroLanguages(heroId, perkId);
     
-    // Remove skill picks from hero (not skill_owned, those are already owned)
-    if (grantedSkillPickIds.isNotEmpty) {
-      await _removeFromHeroSkills(db, heroId, grantedSkillPickIds, perkId);
-    }
+    // Remove all skill picks from hero (not skill_owned, those are already owned)
+    await _removeFromHeroSkills(heroId, perkId);
+    
+    // Remove the perk entry itself (regardless of source type - handles career perks too)
+    await _entries.removeEntryById(heroId, 'perk', perkId);
   }
   
   /// Save a perk grant choice and also update hero components.
   Future<void> saveGrantChoiceAndApply({
-    required AppDatabase db,
     required String heroId,
     required String perkId,
     required String grantType,
     required List<String> chosenIds,
   }) async {
-    // Get previous choices to determine what to remove
-    final previousChoices = await getGrantChoice(
-      db: db, heroId: heroId, perkId: perkId, grantType: grantType,
-    );
-    
     // Save the new choices
     await saveGrantChoice(
-      db: db, heroId: heroId, perkId: perkId, grantType: grantType, chosenIds: chosenIds,
+      heroId: heroId, perkId: perkId, grantType: grantType, chosenIds: chosenIds,
     );
     
-    // Determine what was added and removed
-    final added = chosenIds.where((id) => !previousChoices.contains(id)).toList();
-    final removed = previousChoices.where((id) => !chosenIds.contains(id)).toList();
-    
     // Apply changes to hero entries
+    // For languages and skills, we remove all and re-add all to ensure consistency
+    // This handles multi-slot selections correctly (e.g., Linguist grants 2 languages)
     if (grantType == 'language') {
-      if (removed.isNotEmpty) {
-        await _removeFromHeroLanguages(db, heroId, removed, perkId);
-      }
-      if (added.isNotEmpty) {
-        await _addToHeroLanguages(db, heroId, perkId, added);
+      // Remove all language entries from this perk
+      await _removeFromHeroLanguages(heroId, perkId);
+      // Add all current choices
+      if (chosenIds.isNotEmpty) {
+        await _addToHeroLanguages(heroId, perkId, chosenIds);
       }
     } else if (grantType == 'skill_pick') {
-      // New skills being learned
-      if (removed.isNotEmpty) {
-        await _removeFromHeroSkills(db, heroId, removed, perkId);
-      }
-      if (added.isNotEmpty) {
-        await _addToHeroSkills(db, heroId, perkId, added);
+      // Remove all skill entries from this perk
+      await _removeFromHeroSkills(heroId, perkId);
+      // Add all current choices
+      if (chosenIds.isNotEmpty) {
+        await _addToHeroSkills(heroId, perkId, chosenIds);
       }
     }
     // skill_owned doesn't add new skills, just tracks selection
@@ -432,61 +361,12 @@ class PerkGrantsService {
     }
   }
   
-  Future<List<String>> _resolveAbilityIds(AppDatabase db, List<String> names) async {
-    final ids = <String>[];
-    final allComponents = await db.getAllComponents();
-    
-    for (final name in names) {
-      final normalizedName = _normalizeAbilityName(name);
-      
-      // First try to find in database
-      final dbMatch = allComponents.where((c) {
-        if (c.type != 'ability') return false;
-        return _normalizeAbilityName(c.name) == normalizedName;
-      }).firstOrNull;
-      
-      if (dbMatch != null) {
-        ids.add(dbMatch.id);
-        continue;
-      }
-      
-      // Try to find in perk_abilities.json
-      final perkAbility = await getPerkAbilityByName(name);
-      if (perkAbility != null) {
-        final id = perkAbility['id'] as String?;
-        if (id != null && id.isNotEmpty) {
-          ids.add(id);
-          // Ensure this ability exists in the database
-          await _ensurePerkAbilityInDb(db, perkAbility);
-        }
-      }
-    }
-    return ids;
-  }
-  
-  Future<void> _ensurePerkAbilityInDb(AppDatabase db, Map<String, dynamic> abilityData) async {
-    final id = abilityData['id'] as String?;
-    if (id == null || id.isEmpty) return;
-    
-    // Check if already exists
-    final existing = await db.getComponentById(id);
-    if (existing != null) return;
-    
-    // Insert the component directly
-    await db.insertComponentRaw(
-      id: id,
-      type: 'ability',
-      name: abilityData['name'] as String? ?? id,
-      data: Map<String, dynamic>.from(abilityData),
-    );
-  }
-  
   static const _kPerkAbilitiesPrefix = 'perk_abilities.';
   
   Future<void> _savePerkAbilityGrants(
-    AppDatabase db, String heroId, String perkId, List<String> abilityIds,
+    String heroId, String perkId, List<String> abilityIds,
   ) async {
-    await db.upsertHeroValue(
+    await _db.upsertHeroValue(
       heroId: heroId,
       key: '$_kPerkAbilitiesPrefix$perkId',
       jsonMap: {'list': abilityIds},
@@ -494,9 +374,9 @@ class PerkGrantsService {
   }
   
   Future<List<String>> _loadPerkAbilityGrants(
-    AppDatabase db, String heroId, String perkId,
+    String heroId, String perkId,
   ) async {
-    final values = await db.getHeroValues(heroId);
+    final values = await _db.getHeroValues(heroId);
     for (final value in values) {
       if (value.key == '$_kPerkAbilitiesPrefix$perkId') {
         final jsonStr = value.jsonValue;
@@ -512,29 +392,28 @@ class PerkGrantsService {
   }
   
   Future<void> _clearPerkAbilityGrants(
-    AppDatabase db, String heroId, String perkId,
+    String heroId, String perkId,
   ) async {
-    await db.deleteHeroValue(heroId: heroId, key: '$_kPerkAbilitiesPrefix$perkId');
+    await _db.deleteHeroValue(heroId: heroId, key: '$_kPerkAbilitiesPrefix$perkId');
   }
   
   Future<void> _clearAllGrantChoicesForPerk(
-    AppDatabase db, String heroId, String perkId,
+    String heroId, String perkId,
   ) async {
     final prefix = 'perk_grant.$perkId.';
-    final values = await db.getHeroValues(heroId);
+    final values = await _db.getHeroValues(heroId);
     for (final value in values) {
       if (value.key.startsWith(prefix)) {
-        await db.deleteHeroValue(heroId: heroId, key: value.key);
+        await _db.deleteHeroValue(heroId: heroId, key: value.key);
       }
     }
   }
   
   // --- Private helpers for hero components ---
   
-  Future<void> _addToHeroAbilities(AppDatabase db, String heroId, String perkId, List<String> abilityIds) async {
+  Future<void> _addToHeroAbilities(String heroId, String perkId, List<String> abilityIds) async {
     if (abilityIds.isEmpty) return;
-    final entries = HeroEntryRepository(db);
-    await entries.addEntriesFromSource(
+    await _entries.addEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,
@@ -545,12 +424,11 @@ class PerkGrantsService {
   }
   
   Future<void> _removeFromHeroAbilities(
-    AppDatabase db, String heroId, List<String> abilityIds, String perkId,
+    String heroId, List<String> abilityIds, String perkId,
   ) async {
     // Simply remove all abilities from this specific perk
     // Other perks' abilities are stored separately with their own sourceId
-    final entries = HeroEntryRepository(db);
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,
@@ -558,10 +436,9 @@ class PerkGrantsService {
     );
   }
   
-  Future<void> _addToHeroLanguages(AppDatabase db, String heroId, String perkId, List<String> languageIds) async {
+  Future<void> _addToHeroLanguages(String heroId, String perkId, List<String> languageIds) async {
     if (languageIds.isEmpty) return;
-    final entries = HeroEntryRepository(db);
-    await entries.addEntriesFromSource(
+    await _entries.addEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,
@@ -571,11 +448,12 @@ class PerkGrantsService {
     );
   }
   
+  /// Removes ALL language entries granted by this perk.
+  /// Note: This removes all languages from the perk, not specific ones.
   Future<void> _removeFromHeroLanguages(
-    AppDatabase db, String heroId, List<String> languageIds, String perkId,
+    String heroId, String perkId,
   ) async {
-    final entries = HeroEntryRepository(db);
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,
@@ -583,10 +461,9 @@ class PerkGrantsService {
     );
   }
   
-  Future<void> _addToHeroSkills(AppDatabase db, String heroId, String perkId, List<String> skillIds) async {
+  Future<void> _addToHeroSkills(String heroId, String perkId, List<String> skillIds) async {
     if (skillIds.isEmpty) return;
-    final entries = HeroEntryRepository(db);
-    await entries.addEntriesFromSource(
+    await _entries.addEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,
@@ -596,11 +473,12 @@ class PerkGrantsService {
     );
   }
   
+  /// Removes ALL skill entries granted by this perk.
+  /// Note: This removes all skills from the perk, not specific ones.
   Future<void> _removeFromHeroSkills(
-    AppDatabase db, String heroId, List<String> skillIds, String perkId,
+    String heroId, String perkId,
   ) async {
-    final entries = HeroEntryRepository(db);
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'perk',
       sourceId: perkId,

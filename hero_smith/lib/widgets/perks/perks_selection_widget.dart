@@ -18,9 +18,8 @@ const _perksColor = Color(0xFFFF7043);
 final perkGrantChoicesProvider = FutureProvider.family<
     Map<String, List<String>>,
     ({String heroId, String perkId})>((ref, args) async {
-  final db = ref.read(appDatabaseProvider);
-  return PerkGrantsService().getAllGrantChoicesForPerk(
-    db: db,
+  final service = ref.read(perkGrantsServiceProvider);
+  return service.getAllGrantChoicesForPerk(
     heroId: args.heroId,
     perkId: args.perkId,
   );
@@ -847,11 +846,11 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     }
 
     final db = ref.read(appDatabaseProvider);
+    final service = ref.read(perkGrantsServiceProvider);
     for (final perkId in widget.selectedPerkIds) {
       final component = await _loadPerkComponent(perkId, null, db);
       if (component == null) continue;
-      await PerkGrantsService().applyPerkGrants(
-        db: db,
+      await service.applyPerkGrants(
         heroId: widget.heroId,
         perkId: perkId,
         grantsJson: component.data['grants'],
@@ -870,6 +869,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     // Only persist to database and apply grants if persistToDatabase is enabled
     if (widget.persistToDatabase && widget.heroId.isNotEmpty) {
       final db = ref.read(appDatabaseProvider);
+      final service = ref.read(perkGrantsServiceProvider);
 
       // Persist the current perk list
       await db.setHeroComponentIds(
@@ -882,8 +882,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
       for (final perkId in added) {
         final component = await _loadPerkComponent(perkId, perkMap, db);
         if (component == null) continue;
-        await PerkGrantsService().applyPerkGrants(
-          db: db,
+        await service.applyPerkGrants(
           heroId: widget.heroId,
           perkId: perkId,
           grantsJson: component.data['grants'],
@@ -892,8 +891,7 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
 
       // Remove grants from removed perks
       for (final perkId in removed) {
-        await PerkGrantsService().removePerkGrants(
-          db: db,
+        await service.removePerkGrants(
           heroId: widget.heroId,
           perkId: perkId,
         );
@@ -1488,9 +1486,8 @@ class _PerkGrantsDisplay extends ConsumerWidget {
     String grantType,
     List<String> chosenIds,
   ) async {
-    final db = ref.read(appDatabaseProvider);
-    await PerkGrantsService().saveGrantChoiceAndApply(
-      db: db,
+    final service = ref.read(perkGrantsServiceProvider);
+    await service.saveGrantChoiceAndApply(
       heroId: heroId,
       perkId: perkId,
       grantType: grantType,

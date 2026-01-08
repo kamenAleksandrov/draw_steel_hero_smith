@@ -652,21 +652,13 @@ class HeroRepository {
     );
   }
 
-  /// Load equipment bonuses from hero_entries (new system) or legacy hero_values.
+  /// Load equipment bonuses from hero_entries (preferred) or legacy hero_values.
   Future<Map<String, int>> getEquipmentBonuses(String heroId) async {
-    // Source of truth: hero_values
-    final values = await _db.getHeroValues(heroId);
-    final parsed = _parseEquipmentBonuses(values);
-    print('[HeroRepository] getEquipmentBonuses($heroId): parsed from hero_values = $parsed');
-    if (parsed.isNotEmpty) return parsed;
-
-    // Fallback to legacy hero_entries for backward compatibility
+    // Source of truth: hero_entries (new pattern)
     final entries = await _entries.listEntriesByType(heroId, 'equipment_bonuses');
-    print('[HeroRepository] getEquipmentBonuses($heroId): falling back to hero_entries, found ${entries.length} entries');
     final bonusEntry = entries.firstWhereOrNull(
       (e) => e.entryId == 'combined_equipment_bonuses' && e.sourceType == 'kit',
     );
-    print('[HeroRepository] getEquipmentBonuses($heroId): bonusEntry = ${bonusEntry?.payload}');
     if (bonusEntry?.payload != null) {
       try {
         final payload = jsonDecode(bonusEntry!.payload!);
@@ -684,6 +676,11 @@ class HeroRepository {
         }
       } catch (_) {}
     }
+
+    // Legacy fallback: hero_values (will be removed after migration)
+    final values = await _db.getHeroValues(heroId);
+    final parsed = _parseEquipmentBonuses(values);
+    if (parsed.isNotEmpty) return parsed;
     
     return const {};
   }
@@ -1217,7 +1214,7 @@ class HeroRepository {
       for (final entry in mods.modifications.entries) {
         final modKey = _ancestryStatToModKey(entry.key);
         if (modKey == null) continue;
-        final total = entry.value.fold<int>(0, (sum, mod) => sum + mod.value);
+        final total = entry.value.fold<int>(0, (sum, mod) => sum + mod.baseValue);
         if (total != 0) {
           totals[modKey] = (totals[modKey] ?? 0) + total;
         }

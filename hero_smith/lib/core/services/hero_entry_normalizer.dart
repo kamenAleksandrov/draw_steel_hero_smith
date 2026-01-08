@@ -4,9 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
 import '../db/app_database.dart' as db;
-import '../models/damage_resistance_model.dart';
 import '../repositories/hero_entry_repository.dart';
 import '../repositories/hero_repository.dart';
+import 'damage_resistance_service.dart';
 import 'hero_config_service.dart';
 import 'kit_bonus_service.dart';
 
@@ -21,12 +21,14 @@ class HeroEntryNormalizer {
   HeroEntryNormalizer(this._db)
       : _entries = HeroEntryRepository(_db),
         _config = HeroConfigService(_db),
-        _heroRepo = HeroRepository(_db);
+        _heroRepo = HeroRepository(_db),
+        _resistanceService = DamageResistanceService(_db);
 
   final db.AppDatabase _db;
   final HeroEntryRepository _entries;
   final HeroConfigService _config;
   final HeroRepository _heroRepo;
+  final DamageResistanceService _resistanceService;
 
   /// Keys in hero_values that should be removed entirely.
   /// These prefixes represent legacy data that has been migrated to
@@ -83,8 +85,8 @@ class HeroEntryNormalizer {
     'kit.stat_bonuses',
     'kit.signature_ability',
     
-    // === STRIFE legacy content (equipment bonuses only) ===
-    // 'strife.equipment_bonuses', // Now used as source of truth by heroEquipmentBonusesProvider
+    // === STRIFE legacy content ===
+    'strife.equipment_bonuses', // Migrated to hero_entries as equipment_bonuses entry
     
     // === CAREER legacy content (content only, not config) ===
     'career.abilities',
@@ -133,6 +135,7 @@ class HeroEntryNormalizer {
       await _migrateLegacyAncestryData(heroId);
       await _migrateLegacyClassFeatureGrants(heroId);
       await _migrateLegacyKitGrants(heroId);
+      await _migrateLegacyEquipmentBonuses(heroId);
       await _migrateLegacyPerkGrants(heroId);
       await _migrateClassFeatureSelections(heroId);
       await _migrateSubclassKeyToEntries(heroId);
@@ -584,6 +587,63 @@ class HeroEntryNormalizer {
     }
   }
 
+  /// Migrate legacy equipment bonuses from hero_values to hero_entries.
+  /// This is a one-time migration for heroes created before the storage consolidation.
+  Future<void> _migrateLegacyEquipmentBonuses(String heroId) async {
+    final rows = await _db.getHeroValues(heroId);
+    final legacyRow = rows.firstWhereOrNull(
+      (v) => v.key == 'strife.equipment_bonuses',
+    );
+    if (legacyRow == null) return;
+
+    // Check if we already have equipment_bonuses in hero_entries
+    final existingEntries = await _entries.listEntriesByType(heroId, 'equipment_bonuses');
+    if (existingEntries.isNotEmpty) {
+      // Already migrated - just delete the legacy value
+      await _db.deleteHeroValue(heroId: heroId, key: 'strife.equipment_bonuses');
+      return;
+    }
+
+    // Migrate the data from hero_values to hero_entries
+    final raw = legacyRow.jsonValue ?? legacyRow.textValue;
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map) {
+          await _entries.addEntry(
+            heroId: heroId,
+            entryType: 'equipment_bonuses',
+            entryId: 'combined_equipment_bonuses',
+            sourceType: 'kit',
+            sourceId: 'combined',
+            gainedBy: 'calculated',
+            payload: {
+              'stamina': _toIntOrZero(decoded['stamina']),
+              'speed': _toIntOrZero(decoded['speed']),
+              'stability': _toIntOrZero(decoded['stability']),
+              'disengage': _toIntOrZero(decoded['disengage']),
+              'melee_damage': _toIntOrZero(decoded['melee_damage']),
+              'ranged_damage': _toIntOrZero(decoded['ranged_damage']),
+              'melee_distance': _toIntOrZero(decoded['melee_distance']),
+              'ranged_distance': _toIntOrZero(decoded['ranged_distance']),
+            },
+          );
+        }
+      } catch (_) {}
+    }
+
+    // Delete the legacy value after migration
+    await _db.deleteHeroValue(heroId: heroId, key: 'strife.equipment_bonuses');
+  }
+
+  int _toIntOrZero(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is double) return value.round();
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
   /// Migrate class feature selections from hero_values to hero_config.
   Future<void> _migrateClassFeatureSelections(String heroId) async {
     final rows = await _db.getHeroValues(heroId);
@@ -715,8 +775,6 @@ class HeroEntryNormalizer {
 
   Future<void> _removeBannedValues(String heroId) async {
     final rows = await _db.getHeroValues(heroId);
-    // Note: strife.equipment_bonuses is now the source of truth, 
-    // not a legacy format to migrate. Skip migration.
     
     final toDelete = rows
         .where((v) =>
@@ -955,187 +1013,13 @@ class HeroEntryNormalizer {
   /// Collects all resistance entries (immunity/weakness) from hero_entries
   /// and writes the aggregate to hero_values as resistances.damage.
   /// 
+  /// Delegates to DamageResistanceService for centralized logic.
+  /// 
   /// This is the SOURCE OF TRUTH for damage resistances:
   /// - hero_entries stores individual grants with source metadata
   /// - hero_values stores the computed aggregate for runtime use
   Future<void> _recomputeResistances(String heroId) async {
-    // Get hero level for dynamic calculations
-    final heroLevel = await _getHeroLevel(heroId);
-    
-    // Collect all resistance entries from hero_entries
-    final allEntries = await _entries.listAllEntriesForHero(heroId);
-    
-    // Aggregate resistances by damage type
-    final resistanceMap = <String, _ResistanceAggregate>{};
-    
-    // Track dynamic resistance grants (for level-based scaling)
-    final dynamicGrants = <String, _DynamicResistanceGrant>{};
-    
-    for (final entry in allEntries) {
-      // Handle resistance entry type
-      if (entry.entryType == 'resistance') {
-        final damageType = entry.entryId.toLowerCase();
-        resistanceMap.putIfAbsent(damageType, () => _ResistanceAggregate(damageType));
-        
-        // Parse payload for immunity/weakness values
-        if (entry.payload != null) {
-          try {
-            final payload = jsonDecode(entry.payload!);
-            if (payload is Map) {
-              final immunity = (payload['immunity'] as num?)?.toInt() ?? 0;
-              final weakness = (payload['weakness'] as num?)?.toInt() ?? 0;
-              final source = '${entry.sourceType}:${entry.sourceId}';
-              resistanceMap[damageType]!.addBonus(immunity, weakness, source);
-            }
-          } catch (_) {}
-        }
-      }
-      
-      // Handle damage_resistance entry type (from class feature grants)
-      if (entry.entryType == 'damage_resistance') {
-        if (entry.payload != null) {
-          try {
-            final payload = jsonDecode(entry.payload!);
-            if (payload is Map) {
-              final stat = (payload['stat'] as String?)?.toLowerCase();
-              final damageType = (payload['type'] as String?)?.toLowerCase();
-              final value = payload['value'];
-              final source = '${entry.sourceType}:${entry.sourceId}';
-              
-              if (damageType != null && damageType.isNotEmpty) {
-                resistanceMap.putIfAbsent(damageType, () => _ResistanceAggregate(damageType));
-                
-                if (value is int) {
-                  // Static value
-                  if (stat == 'immunity') {
-                    resistanceMap[damageType]!.addBonus(value, 0, source);
-                  } else if (stat == 'weakness') {
-                    resistanceMap[damageType]!.addBonus(0, value, source);
-                  }
-                } else if (value is String) {
-                  // Dynamic value (e.g., "level")
-                  final normalized = value.toLowerCase().trim();
-                  if (normalized == 'level') {
-                    // Track for dynamic immunity - DO NOT add to bonus,
-                    // the model's totalImmunityAtLevel will calculate it
-                    dynamicGrants.putIfAbsent(
-                      damageType,
-                      () => _DynamicResistanceGrant(damageType),
-                    );
-                    if (stat == 'immunity') {
-                      dynamicGrants[damageType]!.hasDynamicImmunity = true;
-                    } else if (stat == 'weakness') {
-                      dynamicGrants[damageType]!.hasDynamicWeakness = true;
-                    }
-                    // Note: We intentionally don't add heroLevel to bonusImmunity/bonusWeakness
-                    // because the DamageResistance model's totalImmunityAtLevel/totalWeaknessAtLevel
-                    // will add heroLevel when dynamicImmunity/dynamicWeakness == 'level'
-                  }
-                }
-              }
-            }
-          } catch (_) {}
-        }
-      }
-      
-      // Handle legacy immunity entry type
-      if (entry.entryType == 'immunity') {
-        if (entry.payload != null) {
-          try {
-            final payload = jsonDecode(entry.payload!);
-            final immunities = payload['immunities'];
-            if (immunities is List) {
-              for (final type in immunities) {
-                final damageType = type.toString().toLowerCase();
-                resistanceMap.putIfAbsent(damageType, () => _ResistanceAggregate(damageType));
-                final source = '${entry.sourceType}:${entry.sourceId}';
-                resistanceMap[damageType]!.addBonus(1, 0, source);
-              }
-            }
-          } catch (_) {}
-        }
-      }
-      
-      // Handle legacy weakness entry type
-      if (entry.entryType == 'weakness') {
-        if (entry.payload != null) {
-          try {
-            final payload = jsonDecode(entry.payload!);
-            final weaknesses = payload['weaknesses'];
-            if (weaknesses is List) {
-              for (final type in weaknesses) {
-                final damageType = type.toString().toLowerCase();
-                resistanceMap.putIfAbsent(damageType, () => _ResistanceAggregate(damageType));
-                final source = '${entry.sourceType}:${entry.sourceId}';
-                resistanceMap[damageType]!.addBonus(0, 1, source);
-              }
-            }
-          } catch (_) {}
-        }
-      }
-    }
-    
-    // Load current resistances to preserve base values (user-editable)
-    final currentResistances = await _loadCurrentResistances(heroId);
-    
-    // Build the final resistance list
-    final finalResistances = <DamageResistance>[];
-    
-    // Process all damage types (from both current and computed)
-    final allDamageTypes = <String>{
-      ...resistanceMap.keys,
-      ...currentResistances.resistances.map((r) => r.damageType.toLowerCase()),
-    };
-    
-    for (final damageType in allDamageTypes) {
-      final current = currentResistances.forType(damageType);
-      final computed = resistanceMap[damageType];
-      final dynamic_ = dynamicGrants[damageType];
-      
-      finalResistances.add(DamageResistance(
-        damageType: damageType,
-        baseImmunity: current?.baseImmunity ?? 0,
-        baseWeakness: current?.baseWeakness ?? 0,
-        bonusImmunity: computed?.totalImmunity ?? 0,
-        bonusWeakness: computed?.totalWeakness ?? 0,
-        sources: computed?.sources ?? const [],
-        dynamicImmunity: dynamic_?.hasDynamicImmunity == true ? 'level' : null,
-        dynamicWeakness: dynamic_?.hasDynamicWeakness == true ? 'level' : null,
-      ));
-    }
-    
-    // Write aggregate to hero_values
-    final resistancesModel = HeroDamageResistances(resistances: finalResistances);
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: 'resistances.damage',
-      textValue: resistancesModel.toJsonString(),
-    );
-  }
-
-  /// Get hero level from assembly or hero_values
-  Future<int> _getHeroLevel(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final levelValue = values.firstWhereOrNull((v) => v.key == 'basics.level');
-    if (levelValue != null) {
-      return levelValue.value ?? int.tryParse(levelValue.textValue ?? '') ?? 1;
-    }
-    return 1;
-  }
-
-  /// Load current resistances from hero_values.
-  Future<HeroDamageResistances> _loadCurrentResistances(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final value = values.firstWhereOrNull((v) => v.key == 'resistances.damage');
-    if (value?.jsonValue == null && value?.textValue == null) {
-      return HeroDamageResistances.empty;
-    }
-    try {
-      final jsonStr = value!.jsonValue ?? value.textValue!;
-      return HeroDamageResistances.fromJsonString(jsonStr);
-    } catch (_) {
-      return HeroDamageResistances.empty;
-    }
+    await _resistanceService.recomputeAggregateResistances(heroId);
   }
 
   EquipmentBonuses? _parseLegacyEquipmentBonuses(db.HeroValue row) {
@@ -1159,31 +1043,4 @@ class HeroEntryNormalizer {
       return null;
     }
   }
-}
-
-/// Helper class to aggregate resistance values from multiple sources.
-class _ResistanceAggregate {
-  _ResistanceAggregate(this.damageType);
-  
-  final String damageType;
-  int totalImmunity = 0;
-  int totalWeakness = 0;
-  final List<String> sources = [];
-  
-  void addBonus(int immunity, int weakness, String source) {
-    totalImmunity += immunity;
-    totalWeakness += weakness;
-    if (source.isNotEmpty && !sources.contains(source)) {
-      sources.add(source);
-    }
-  }
-}
-
-/// Helper class to track dynamic resistance grants (level-based scaling).
-class _DynamicResistanceGrant {
-  _DynamicResistanceGrant(this.damageType);
-  
-  final String damageType;
-  bool hasDynamicImmunity = false;
-  bool hasDynamicWeakness = false;
 }

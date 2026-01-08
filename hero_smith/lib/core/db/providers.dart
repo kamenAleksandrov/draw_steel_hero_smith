@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:collection/collection.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app_database.dart' as db;
@@ -9,6 +12,9 @@ import '../repositories/hero_entry_repository.dart';
 import '../repositories/downtime_repository.dart';
 import '../models/component.dart' as model;
 import '../services/perk_grants_service.dart';
+import '../services/title_grants_service.dart';
+import '../services/ability_resolver_service.dart';
+import '../services/damage_resistance_service.dart';
 import '../services/hero_config_service.dart';
 import '../services/hero_assembly_service.dart';
 import '../services/treasure_bonus_service.dart';
@@ -40,6 +46,26 @@ final heroAssemblyServiceProvider = Provider<HeroAssemblyService>((ref) {
 final treasureBonusServiceProvider = Provider<TreasureBonusService>((ref) {
   final db = ref.read(appDatabaseProvider);
   return TreasureBonusService(db);
+});
+
+final perkGrantsServiceProvider = Provider<PerkGrantsService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return PerkGrantsService(db);
+});
+
+final titleGrantsServiceProvider = Provider<TitleGrantsService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return TitleGrantsService(db);
+});
+
+final abilityResolverServiceProvider = Provider<AbilityResolverService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return AbilityResolverService(db);
+});
+
+final damageResistanceServiceProvider = Provider<DamageResistanceService>((ref) {
+  final db = ref.read(appDatabaseProvider);
+  return DamageResistanceService(db);
 });
 
 final heroRepositoryProvider = Provider<HeroRepository>((ref) {
@@ -160,20 +186,20 @@ final heroEquippedTreasureBonusesProvider =
   return svc.watchEquippedTreasureBonuses(heroId);
 });
 
-// Provider to fetch an ability by name (used for perk grants lookup)
+/// Provider to fetch an ability by name (used for perk grants lookup)
 final abilityByNameProvider = FutureProvider.family<model.Component?, String>((ref, rawName) async {
   final name = rawName.trim();
   if (name.isEmpty) return null;
 
   final abilities = await ref.read(componentsByTypeProvider('ability').future);
 
-  // Try exact match first
+  // Try exact name match first
   final exactMatch = _findAbility(abilities, (c) => c.name == name);
   if (exactMatch != null && exactMatch.id.isNotEmpty) {
     return exactMatch;
   }
 
-  // Try normalized (case/punctuation-insensitive) match
+  // Try normalized (case/punctuation-insensitive) name match
   final normalizedTarget = _normalizeAbilityName(name);
   final normalizedMatch = _findAbility(
     abilities,
@@ -182,14 +208,104 @@ final abilityByNameProvider = FutureProvider.family<model.Component?, String>((r
   if (normalizedMatch != null && normalizedMatch.id.isNotEmpty) {
     return normalizedMatch;
   }
-
-  // Fallback to perk_abilities.json entries
-  final perkAbilityMap = await PerkGrantsService().getPerkAbilityByName(name);
-  if (perkAbilityMap == null) {
-    return null;
+  
+  // Try ID match (slugified name) - perk/title abilities use ID like "arcane_trick"
+  final slugId = _slugifyForId(name);
+  final idMatch = _findAbility(abilities, (c) => c.id == slugId);
+  if (idMatch != null) {
+    return idMatch;
   }
-  return _perkAbilityToComponent(perkAbilityMap, name);
+
+  // Fallback: load from supplemental ability JSON files
+  final jsonFallback = await _loadAbilityFromJsonFiles(name);
+  if (jsonFallback != null) {
+    return jsonFallback;
+  }
+
+  return null;
 });
+
+/// Supplemental ability JSON files to search when ability not in DB
+const _supplementalAbilityJsonFiles = [
+  'data/abilities/perk_abilities.json',
+  'data/abilities/titles_abilities.json',
+  'data/abilities/complication_abilities.json',
+  'data/abilities/ancestry_abilities.json',
+  'data/abilities/kit_abilities.json',
+];
+
+/// Cache for loaded supplemental abilities
+Map<String, model.Component>? _supplementalAbilitiesCache;
+
+/// Load an ability by name from JSON files (fallback when not in DB)
+Future<model.Component?> _loadAbilityFromJsonFiles(String name) async {
+  // Build cache if not already built
+  _supplementalAbilitiesCache ??= await _buildSupplementalAbilitiesCache();
+  
+  final cache = _supplementalAbilitiesCache!;
+  
+  // Try exact name match
+  if (cache.containsKey(name)) {
+    return cache[name];
+  }
+  
+  // Try normalized name match
+  final normalized = _normalizeAbilityName(name);
+  for (final entry in cache.entries) {
+    if (_normalizeAbilityName(entry.key) == normalized) {
+      return entry.value;
+    }
+  }
+  
+  return null;
+}
+
+Future<Map<String, model.Component>> _buildSupplementalAbilitiesCache() async {
+  final cache = <String, model.Component>{};
+  
+  for (final filePath in _supplementalAbilityJsonFiles) {
+    try {
+      final raw = await rootBundle.loadString(filePath);
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) continue;
+      
+      for (final item in decoded) {
+        if (item is! Map) continue;
+        final map = Map<String, dynamic>.from(item);
+        final id = map['id']?.toString() ?? '';
+        final name = map['name']?.toString() ?? '';
+        if (id.isEmpty || name.isEmpty) continue;
+        
+        // Remove id, name, type from data - they go in Component fields
+        final data = Map<String, dynamic>.from(map);
+        data.remove('id');
+        data.remove('name');
+        data.remove('type');
+        
+        cache[name] = model.Component(
+          id: id,
+          type: 'ability',
+          name: name,
+          data: data,
+          source: 'json_fallback',
+        );
+      }
+    } catch (_) {
+      // Ignore errors for individual files
+    }
+  }
+  
+  return cache;
+}
+
+String _slugifyForId(String value) {
+  return value
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r"[''']"), '')  // Remove apostrophes
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+      .replaceAll(RegExp(r'^_+|_+$'), '');
+}
 
 model.Component? _findAbility(
   List<model.Component> abilities,
@@ -211,34 +327,4 @@ String _normalizeAbilityName(String value) {
       .replaceAll('\u2018', "'")
       .replaceAll('\u201C', '"')
       .replaceAll('\u201D', '"');
-}
-
-model.Component _perkAbilityToComponent(Map<String, dynamic> raw, String fallbackName) {
-  final data = Map<String, dynamic>.from(raw);
-  final rawId = data.remove('id')?.toString();
-  final type = data.remove('type')?.toString() ?? 'ability';
-  final name = data.remove('name')?.toString() ?? fallbackName;
-  final safeId = (rawId == null || rawId.isEmpty) ? _slugify(name) : rawId;
-  final componentId = safeId.startsWith('perk_ability_') ? safeId : 'perk_ability_$safeId';
-
-  return model.Component(
-    id: componentId,
-    type: type,
-    name: name,
-    data: data,
-    source: 'perk_ability',
-  );
-}
-
-String _slugify(String value) {
-  final normalized = value
-      .trim()
-      .toLowerCase()
-      .replaceAll('\u2019', '')
-      .replaceAll('\u2018', '')
-      .replaceAll('\u201C', '')
-      .replaceAll('\u201D', '');
-  final slug = normalized.replaceAll(RegExp('[^a-z0-9]+'), '_').replaceAll(RegExp('_+'), '_');
-  final trimmed = slug.replaceAll(RegExp(r'^_+|_+$'), '');
-  return trimmed.isEmpty ? 'ability' : trimmed;
 }

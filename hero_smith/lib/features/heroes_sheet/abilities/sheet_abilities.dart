@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
-import '../../../core/services/perk_grants_service.dart';
+
 import '../../../core/theme/navigation_theme.dart';
 import '../../../core/theme/semantic/hero_entry_tokens.dart';
 import '../../../core/text/heroes_sheet/abilities/sheet_abilities_text.dart';
@@ -44,9 +44,8 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
     _perkGrantsEnsured = true;
 
     try {
-      final db = ref.read(appDatabaseProvider);
-      await PerkGrantsService().ensureAllPerkGrantsApplied(
-        db: db,
+      final service = ref.read(perkGrantsServiceProvider);
+      await service.ensureAllPerkGrantsApplied(
         heroId: widget.heroId,
       );
     } catch (e) {

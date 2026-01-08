@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../models/feature.dart';
 
@@ -55,11 +54,8 @@ class FeatureRepository {
               normalized['type'] = 'feature';
             }
             features.add(Feature.fromJson(normalized));
-          } catch (e) {
-            final suspectedId = item['id'];
-            final suspectedName = item['name'];
-            debugPrint(
-                '[FeatureRepository] Skipping invalid feature in "$className" (id: ${suspectedId ?? 'unknown'}, name: ${suspectedName ?? 'unknown'}): $e');
+          } catch (_) {
+            // Skip invalid feature entries silently
           }
         }
       }

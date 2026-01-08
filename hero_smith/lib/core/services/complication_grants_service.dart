@@ -11,6 +11,8 @@ import '../models/complication_grant_models.dart';
 import '../models/damage_resistance_model.dart';
 import '../models/dynamic_modifier_model.dart';
 import '../models/stat_modification_model.dart';
+import 'ability_resolver_service.dart';
+import 'damage_resistance_service.dart';
 import 'dynamic_modifiers_service.dart';
 import '../repositories/hero_entry_repository.dart';
 
@@ -19,11 +21,15 @@ import '../repositories/hero_entry_repository.dart';
 class ComplicationGrantsService {
   ComplicationGrantsService(this._db)
       : _dynamicModifiers = DynamicModifiersService(_db),
-        _entries = HeroEntryRepository(_db);
+        _entries = HeroEntryRepository(_db),
+        _abilityResolver = AbilityResolverService(_db),
+        _resistanceService = DamageResistanceService(_db);
 
   final db.AppDatabase _db;
   final DynamicModifiersService _dynamicModifiers;
   final HeroEntryRepository _entries;
+  final AbilityResolverService _abilityResolver;
+  final DamageResistanceService _resistanceService;
 
   /// Parse all grants from a complication's data.
   Future<AppliedComplicationGrants> parseComplicationGrants({
@@ -120,14 +126,6 @@ class ComplicationGrantsService {
   /// regardless of whether the grants config exists. This ensures orphaned
   /// entries are always cleaned up.
   Future<void> removeGrants(String heroId) async {
-    print('[ComplicationGrantsService] removeGrants called for heroId: $heroId');
-    
-    // Debug: List ability entries BEFORE clearing
-    final entriesBefore = await (_db.select(_db.heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals('ability')))
-        .get();
-    print('[ComplicationGrantsService] BEFORE _clearAbilityGrants: ${entriesBefore.map((e) => '${e.entryId} (source: ${e.sourceType})').toList()}');
-    
     final currentGrants = await loadGrants(heroId);
 
     // Restore original base stats that were modified by complication
@@ -144,12 +142,6 @@ class ComplicationGrantsService {
 
     // Clear ability grants - always clear even if config is null
     await _clearAbilityGrants(heroId);
-    
-    // Debug: List ability entries AFTER clearing
-    final entriesAfter = await (_db.select(_db.heroEntries)
-          ..where((t) => t.heroId.equals(heroId) & t.entryType.equals('ability')))
-        .get();
-    print('[ComplicationGrantsService] AFTER _clearAbilityGrants: ${entriesAfter.map((e) => '${e.entryId} (source: ${e.sourceType})').toList()}');
 
     // Clear skill grants - always clear even if config is null
     await _clearSkillGrants(heroId);
@@ -304,30 +296,18 @@ class ComplicationGrantsService {
   }
 
   /// Load damage resistances for a hero.
+  /// Delegates to DamageResistanceService for centralized management.
   Future<HeroDamageResistances> loadDamageResistances(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final value = values.firstWhereOrNull((v) => v.key == _kDamageResistances);
-    if (value?.jsonValue == null && value?.textValue == null) {
-      return HeroDamageResistances.empty;
-    }
-    try {
-      final jsonStr = value!.jsonValue ?? value.textValue!;
-      return HeroDamageResistances.fromJsonString(jsonStr);
-    } catch (_) {
-      return HeroDamageResistances.empty;
-    }
+    return _resistanceService.loadDamageResistances(heroId);
   }
 
   /// Save damage resistances for a hero.
+  /// Delegates to DamageResistanceService for centralized management.
   Future<void> saveDamageResistances(
     String heroId,
     HeroDamageResistances resistances,
   ) async {
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: _kDamageResistances,
-      textValue: resistances.toJsonString(),
-    );
+    await _resistanceService.saveDamageResistances(heroId, resistances);
   }
 
   // Private implementation methods
@@ -375,27 +355,30 @@ class ComplicationGrantsService {
           // Skip immunity/weakness - handled by _applyDamageResistanceGrants
           final stat = grant.stat.toLowerCase();
           if (stat == 'immunity' || stat == 'weakness') continue;
-          // Store with dynamic value metadata if present
-          addMod(grant.stat, StatModification(
-            value: grant.value,
-            source: grant.sourceComplicationName,
-            dynamicValue: grant.dynamicValue,
-          ));
+          // Create appropriate StatModification subtype based on grant properties
+          final StatModification mod;
+          if (grant.dynamicValue == 'level') {
+            mod = LevelScaledStatModification(source: grant.sourceComplicationName);
+          } else {
+            mod = StaticStatModification(
+              value: grant.value,
+              source: grant.sourceComplicationName,
+            );
+          }
+          addMod(grant.stat, mod);
 
         case IncreaseTotalPerEchelonGrant():
           // Skip immunity/weakness - handled by _applyDamageResistanceGrants
           final stat = grant.stat.toLowerCase();
           if (stat == 'immunity' || stat == 'weakness') continue;
           // Store with per-echelon metadata for dynamic calculation
-          addMod(grant.stat, StatModification(
-            value: 0, // Will be calculated dynamically
-            source: grant.sourceComplicationName,
-            perEchelon: true,
+          addMod(grant.stat, EchelonScaledStatModification(
             valuePerEchelon: grant.valuePerEchelon,
+            source: grant.sourceComplicationName,
           ));
 
         case DecreaseTotalGrant():
-          addMod(grant.stat, StatModification(
+          addMod(grant.stat, StaticStatModification(
             value: -grant.value,
             source: grant.sourceComplicationName,
           ));
@@ -440,26 +423,20 @@ class ComplicationGrantsService {
     String heroId,
     AppliedComplicationGrants grants,
   ) async {
-    final abilities = <String, String>{}; // name -> source
+    final abilityNames = <String>[];
 
     for (final grant in grants.grants) {
       if (grant is AbilityGrant) {
-        abilities[grant.abilityName] = grant.sourceComplicationName;
+        abilityNames.add(grant.abilityName);
       }
     }
 
-    if (abilities.isEmpty) return;
+    if (abilityNames.isEmpty) return;
 
-    final comps = await _db.getAllComponents();
-    final nameToId = {
-      for (final c in comps.where((c) => c.type == 'ability'))
-        c.name.toLowerCase(): c.id
-    };
-    final abilityIds = <String>[];
-    abilities.forEach((name, _) {
-      final id = nameToId[name.toLowerCase()] ?? name;
-      abilityIds.add(id);
-    });
+    final abilityIds = await _abilityResolver.resolveAbilityIds(
+      abilityNames,
+      sourceType: 'complication',
+    );
 
     await _entries.addEntriesFromSource(
       heroId: heroId,
@@ -624,14 +601,12 @@ class ComplicationGrantsService {
   }
 
   Future<void> _clearAbilityGrants(String heroId) async {
-    print('[ComplicationGrantsService] _clearAbilityGrants: Deleting where heroId=$heroId, entryType=ability, sourceType=complication');
-    final deleted = await (_db.delete(_db.heroEntries)
+    await (_db.delete(_db.heroEntries)
           ..where((t) =>
               t.heroId.equals(heroId) &
               t.entryType.equals('ability') &
               t.sourceType.equals('complication')))
         .go();
-    print('[ComplicationGrantsService] _clearAbilityGrants: Deleted $deleted rows');
   }
 
   Future<void> _clearSkillGrants(String heroId) async {
@@ -659,8 +634,15 @@ class ComplicationGrantsService {
     // Clear old complication resistance entries first
     await _clearDamageResistanceGrants(heroId);
 
-    // Collect all resistance bonuses with dynamic metadata
-    final resistanceEntries = <String, _DynamicResistanceEntry>{};
+    // Collect resistance data for batch processing
+    final resistanceData = <String, ({
+      int immunity,
+      int weakness,
+      String? dynamicImmunity,
+      String? dynamicWeakness,
+      int immunityPerEchelon,
+      int weaknessPerEchelon,
+    })>{};
 
     void addResistance({
       required String stat, 
@@ -677,23 +659,33 @@ class ComplicationGrantsService {
         normalizedType = 'damage';
       }
       
-      // Use single "damage" type for all damage (widget displays as "All Damage")
-      resistanceEntries[normalizedType] ??= _DynamicResistanceEntry(damageType: normalizedType);
+      // Get or create entry
+      final existing = resistanceData[normalizedType] ?? (
+        immunity: 0,
+        weakness: 0,
+        dynamicImmunity: null,
+        dynamicWeakness: null,
+        immunityPerEchelon: 0,
+        weaknessPerEchelon: 0,
+      );
+      
       if (stat == 'immunity') {
-        resistanceEntries[normalizedType]!.addImmunity(
-          value: value,
-          source: sourceName,
-          dynamicValue: dynamicValue,
-          perEchelon: perEchelon,
-          valuePerEchelon: valuePerEchelon,
+        resistanceData[normalizedType] = (
+          immunity: existing.immunity + value,
+          weakness: existing.weakness,
+          dynamicImmunity: dynamicValue ?? existing.dynamicImmunity,
+          dynamicWeakness: existing.dynamicWeakness,
+          immunityPerEchelon: existing.immunityPerEchelon + (perEchelon ? valuePerEchelon : 0),
+          weaknessPerEchelon: existing.weaknessPerEchelon,
         );
       } else {
-        resistanceEntries[normalizedType]!.addWeakness(
-          value: value,
-          source: sourceName,
-          dynamicValue: dynamicValue,
-          perEchelon: perEchelon,
-          valuePerEchelon: valuePerEchelon,
+        resistanceData[normalizedType] = (
+          immunity: existing.immunity,
+          weakness: existing.weakness + value,
+          dynamicImmunity: existing.dynamicImmunity,
+          dynamicWeakness: dynamicValue ?? existing.dynamicWeakness,
+          immunityPerEchelon: existing.immunityPerEchelon,
+          weaknessPerEchelon: existing.weaknessPerEchelon + (perEchelon ? valuePerEchelon : 0),
         );
       }
     }
@@ -703,7 +695,6 @@ class ComplicationGrantsService {
         final stat = grant.stat.toLowerCase();
         if (stat == 'immunity' || stat == 'weakness') {
           final damageType = grant.damageType ?? 'untyped';
-          // Store with dynamic metadata instead of pre-calculated value
           addResistance(
             stat: stat, 
             damageType: damageType, 
@@ -716,7 +707,6 @@ class ComplicationGrantsService {
         final stat = grant.stat.toLowerCase();
         if (stat == 'immunity' || stat == 'weakness') {
           final damageType = grant.damageType ?? 'untyped';
-          // Store with per-echelon metadata
           addResistance(
             stat: stat, 
             damageType: damageType, 
@@ -729,32 +719,35 @@ class ComplicationGrantsService {
       }
     }
 
-    // Store each resistance entry in hero_entries with dynamic metadata
-    for (final entry in resistanceEntries.entries) {
+    // Store each resistance entry using DamageResistanceService
+    for (final entry in resistanceData.entries) {
       final type = entry.key;
-      final resEntry = entry.value;
-      await _entries.addEntry(
+      final data = entry.value;
+      await _resistanceService.addResistanceEntry(
         heroId: heroId,
-        entryType: 'resistance',
-        entryId: type,
+        damageType: type,
         sourceType: 'complication',
         sourceId: grants.complicationId,
-        gainedBy: 'grant',
-        payload: resEntry.toJson(),
+        immunity: data.immunity,
+        weakness: data.weakness,
+        dynamicImmunity: data.dynamicImmunity,
+        dynamicWeakness: data.dynamicWeakness,
+        immunityPerEchelon: data.immunityPerEchelon,
+        weaknessPerEchelon: data.weaknessPerEchelon,
       );
     }
 
-    await _rebuildDamageResistances(heroId, heroLevel);
+    // Recompute aggregate resistances
+    await _resistanceService.recomputeAggregateResistances(heroId);
   }
 
-  Future<void> _clearDamageResistanceGrants(String heroId, [int? heroLevel]) async {
-    await (_db.delete(_db.heroEntries)
-          ..where((t) =>
-              t.heroId.equals(heroId) &
-              t.entryType.equals('resistance') &
-              t.sourceType.equals('complication')))
-        .go();
-    await _rebuildDamageResistances(heroId, heroLevel ?? 1);
+  Future<void> _clearDamageResistanceGrants(String heroId) async {
+    await _resistanceService.removeResistanceEntriesBySourceType(
+      heroId: heroId,
+      sourceType: 'complication',
+    );
+    // Recompute aggregate resistances after clearing
+    await _resistanceService.recomputeAggregateResistances(heroId);
   }
 
   Future<void> _applyLanguageGrants(
@@ -786,19 +779,6 @@ class ComplicationGrantsService {
   /// Rebuild damage resistances - now a no-op since bonuses are calculated at runtime.
   /// 
   /// Previously this method would:
-  /// 1. Load current resistances
-  /// 2. Read all resistance entries from hero_entries
-  /// 3. Apply bonuses and save
-  /// 
-  /// Now bonuses are calculated at runtime in [heroCombinedDamageResistancesProvider]
-  /// by reading from [watchResistanceBonusEntries], so we don't need to bake them
-  /// into the saved data. This method is kept for backward compatibility but does nothing.
-  Future<void> _rebuildDamageResistances(String heroId, int heroLevel) async {
-    // No-op: bonuses are now calculated at runtime in the provider
-    // The hero_entries are already stored, and watchResistanceBonusEntries 
-    // will read them when needed for display.
-  }
-
   Future<void> _clearLanguageGrants(String heroId) async {
     await (_db.delete(_db.heroEntries)
           ..where((t) =>
@@ -954,27 +934,16 @@ class ComplicationGrantsService {
     AppliedComplicationGrants grants,
     int heroLevel,
   ) async {
-    print('[ComplicationGrantsService] _applyAncestryTraitGrants called');
-    
     // Find AncestryTraitsGrant in the grants
     final ancestryTraitGrant = grants.grants.whereType<AncestryTraitsGrant>().firstOrNull;
-    if (ancestryTraitGrant == null) {
-      print('[ComplicationGrantsService] No AncestryTraitsGrant found');
-      return;
-    }
-    
-    print('[ComplicationGrantsService] Found AncestryTraitsGrant: ancestry=${ancestryTraitGrant.ancestry}, points=${ancestryTraitGrant.ancestryPoints}');
+    if (ancestryTraitGrant == null) return;
 
     // Load the complication choices to get selected trait IDs
     final choices = await loadComplicationChoices(heroId);
     final choiceKey = '${grants.complicationId}_ancestry_traits';
     final selectedIdsStr = choices[choiceKey] ?? '';
-    if (selectedIdsStr.isEmpty) {
-      print('[ComplicationGrantsService] No traits selected for $choiceKey');
-      return;
-    }
+    if (selectedIdsStr.isEmpty) return;
     final selectedTraitIds = selectedIdsStr.split(',').toSet();
-    print('[ComplicationGrantsService] Selected trait IDs: $selectedTraitIds');
 
     // Load the trait data from components
     final allComponents = await _db.getAllComponents();
@@ -989,10 +958,7 @@ class ComplicationGrantsService {
       }
     });
 
-    if (traitsComp == null) {
-      print('[ComplicationGrantsService] No ancestry_trait component found for $targetAncestryId');
-      return;
-    }
+    if (traitsComp == null) return;
 
     final traitsData = jsonDecode(traitsComp.dataJson) as Map<String, dynamic>;
     final traitsList = (traitsData['traits'] as List?) ?? [];
@@ -1006,7 +972,6 @@ class ComplicationGrantsService {
         traitChoices[traitId] = entry.value;
       }
     }
-    print('[ComplicationGrantsService] Trait choices: $traitChoices');
 
     // Parse bonuses from selected traits
     final bonuses = <AncestryBonus>[];
@@ -1019,11 +984,8 @@ class ComplicationGrantsService {
 
       final traitName = traitMap['name']?.toString() ?? traitId;
       final traitBonuses = AncestryBonus.parseFromTraitData(traitMap, traitId, traitName, traitChoices);
-      print('[ComplicationGrantsService] Trait $traitId yielded ${traitBonuses.length} bonuses');
       bonuses.addAll(traitBonuses);
     }
-
-    print('[ComplicationGrantsService] Total bonuses to apply: ${bonuses.length}');
 
     // Apply the bonuses with source type 'complication' instead of 'ancestry'
     // 1. Apply granted abilities
@@ -1077,7 +1039,6 @@ class ComplicationGrantsService {
       abilityIds.add(id);
     });
 
-    print('[ComplicationGrantsService] Adding ancestry trait ability entries: $abilityIds');
     await _entries.addEntriesFromSource(
       heroId: heroId,
       sourceType: 'complication',
@@ -1103,7 +1064,6 @@ class ComplicationGrantsService {
 
     if (immunities.isEmpty) return;
 
-    print('[ComplicationGrantsService] Adding ancestry trait condition immunities: $immunities');
     await _entries.addEntriesFromSource(
       heroId: heroId,
       sourceType: 'complication',
@@ -1165,8 +1125,6 @@ class ComplicationGrantsService {
 
     if (statMods.isEmpty) return;
 
-    print('[ComplicationGrantsService] Adding ancestry trait stat mods: $statMods');
-    
     // Store each stat mod in hero_entries
     for (final entry in statMods.entries) {
       await _entries.addEntry(
@@ -1187,7 +1145,7 @@ class ComplicationGrantsService {
     List<AncestryBonus> bonuses,
     int heroLevel,
   ) async {
-    final resistanceBonuses = <String, Map<String, dynamic>>{};
+    final resistanceBonuses = <String, ({int immunity, int weakness, List<String> sources})>{};
 
     for (final bonus in bonuses) {
       if (bonus is IncreaseTotalBonus) {
@@ -1199,48 +1157,45 @@ class ComplicationGrantsService {
         
         for (final type in types) {
           final key = type.toLowerCase();
-          resistanceBonuses[key] ??= {
-            'immunity': 0,
-            'weakness': 0,
-            'sources': <String>[],
-          };
+          final existing = resistanceBonuses[key] ?? (immunity: 0, weakness: 0, sources: <String>[]);
+          
           if (stat == 'immunity') {
-            resistanceBonuses[key]!['immunity'] = 
-                (resistanceBonuses[key]!['immunity'] as int) + value;
+            resistanceBonuses[key] = (
+              immunity: existing.immunity + value,
+              weakness: existing.weakness,
+              sources: [...existing.sources, bonus.sourceTraitName],
+            );
           } else {
-            resistanceBonuses[key]!['weakness'] = 
-                (resistanceBonuses[key]!['weakness'] as int) + value;
+            resistanceBonuses[key] = (
+              immunity: existing.immunity,
+              weakness: existing.weakness + value,
+              sources: [...existing.sources, bonus.sourceTraitName],
+            );
           }
-          (resistanceBonuses[key]!['sources'] as List<String>)
-              .add(bonus.sourceTraitName);
         }
       }
     }
 
     if (resistanceBonuses.isEmpty) return;
 
-    print('[ComplicationGrantsService] Adding ancestry trait damage resistances: $resistanceBonuses');
-    
-    // Store each resistance in hero_entries
+    // Store each resistance using DamageResistanceService
     for (final entry in resistanceBonuses.entries) {
-      await _entries.addEntry(
+      final data = entry.value;
+      await _resistanceService.addResistanceEntry(
         heroId: heroId,
-        entryType: 'resistance',
-        entryId: entry.key,
+        damageType: entry.key,
         sourceType: 'complication',
         sourceId: complicationId,
-        gainedBy: 'ancestry_trait_grant',
-        payload: entry.value,
+        immunity: data.immunity,
+        weakness: data.weakness,
       );
     }
 
-    // Rebuild combined resistances
-    await _rebuildDamageResistances(heroId, heroLevel);
+    // Recompute aggregate resistances
+    await _resistanceService.recomputeAggregateResistances(heroId);
   }
 
   Future<void> _clearAncestryTraitGrants(String heroId) async {
-    print('[ComplicationGrantsService] _clearAncestryTraitGrants called');
-    
     // Clear ancestry_trait entries from complication source
     await (_db.delete(_db.heroEntries)
           ..where((t) =>
@@ -1478,111 +1433,7 @@ class ComplicationGrantsService {
   // ignore: unused_field
   static const _kComplicationLanguages = 'complication.languages';
   static const _kComplicationFeatures = 'complication.features';
-  static const _kDamageResistances = 'resistances.damage';
   static const _kComplicationOriginalBaseStats = 'complication.original_base_stats';
-}
-
-/// Helper class for dynamic resistance tracking with per-echelon and level-based scaling.
-class _DynamicResistanceEntry {
-  _DynamicResistanceEntry({required this.damageType});
-
-  final String damageType;
-  final List<_DynamicResistanceMod> immunityMods = [];
-  final List<_DynamicResistanceMod> weaknessMods = [];
-
-  void addImmunity({
-    required int value,
-    required String source,
-    String? dynamicValue,
-    bool perEchelon = false,
-    int valuePerEchelon = 0,
-  }) {
-    immunityMods.add(_DynamicResistanceMod(
-      value: value,
-      source: source,
-      dynamicValue: dynamicValue,
-      perEchelon: perEchelon,
-      valuePerEchelon: valuePerEchelon,
-    ));
-  }
-
-  void addWeakness({
-    required int value,
-    required String source,
-    String? dynamicValue,
-    bool perEchelon = false,
-    int valuePerEchelon = 0,
-  }) {
-    weaknessMods.add(_DynamicResistanceMod(
-      value: value,
-      source: source,
-      dynamicValue: dynamicValue,
-      perEchelon: perEchelon,
-      valuePerEchelon: valuePerEchelon,
-    ));
-  }
-
-  List<String> get sources {
-    final s = <String>[];
-    for (final m in immunityMods) {
-      if (!s.contains(m.source)) s.add(m.source);
-    }
-    for (final m in weaknessMods) {
-      if (!s.contains(m.source)) s.add(m.source);
-    }
-    return s;
-  }
-
-  Map<String, dynamic> toJson() => {
-    'immunityMods': immunityMods.map((m) => m.toJson()).toList(),
-    'weaknessMods': weaknessMods.map((m) => m.toJson()).toList(),
-    'sources': sources,
-  };
-}
-
-class _DynamicResistanceMod {
-  const _DynamicResistanceMod({
-    required this.value,
-    required this.source,
-    this.dynamicValue,
-    this.perEchelon = false,
-    this.valuePerEchelon = 0,
-  });
-
-  final int value;
-  final String source;
-  final String? dynamicValue;
-  final bool perEchelon;
-  final int valuePerEchelon;
-
-  int getActualValue(int heroLevel) {
-    if (dynamicValue == 'level') {
-      return heroLevel;
-    }
-    if (perEchelon) {
-      final echelon = ((heroLevel - 1) ~/ 3) + 1;
-      return valuePerEchelon * echelon;
-    }
-    return value;
-  }
-
-  Map<String, dynamic> toJson() => {
-    'value': value,
-    'source': source,
-    if (dynamicValue != null) 'dynamicValue': dynamicValue,
-    if (perEchelon) 'perEchelon': perEchelon,
-    if (perEchelon) 'valuePerEchelon': valuePerEchelon,
-  };
-
-  factory _DynamicResistanceMod.fromJson(Map<String, dynamic> json) {
-    return _DynamicResistanceMod(
-      value: (json['value'] as num?)?.toInt() ?? 0,
-      source: json['source'] as String? ?? '',
-      dynamicValue: json['dynamicValue'] as String?,
-      perEchelon: json['perEchelon'] as bool? ?? false,
-      valuePerEchelon: (json['valuePerEchelon'] as num?)?.toInt() ?? 0,
-    );
-  }
 }
 
 class _SkillLookup {

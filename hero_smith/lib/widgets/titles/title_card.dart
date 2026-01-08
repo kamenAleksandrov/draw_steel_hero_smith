@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/db/providers.dart';
 import '../../core/models/component.dart';
 import '../../core/theme/ds_theme.dart';
+import '../abilities/ability_expandable_item.dart';
 import '../shared/section_widgets.dart';
 import '../shared/expandable_card.dart';
 
-class TitleCard extends StatelessWidget {
+class TitleCard extends ConsumerWidget {
   final Component titleComp;
   const TitleCard({super.key, required this.titleComp});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final data = titleComp.data;
     final int echelon = (data['echelon'] as num?)?.toInt() ?? 0;
     final String? prerequisite = data['prerequisite'] as String?;
@@ -58,7 +61,7 @@ class TitleCard extends StatelessWidget {
           if (benefits != null && benefits.isNotEmpty) ...[
             SectionLabel('Benefits', emoji: '🎁', color: borderColor),
             const SizedBox(height: 2),
-            _buildBenefits(benefits, neutralText),
+            _buildBenefits(benefits, neutralText, ref, borderColor),
           ],
           if (special != null && special.isNotEmpty) ...[
             SectionLabel('Special', emoji: '✨', color: ds.specialSectionColor),
@@ -94,9 +97,8 @@ class TitleCard extends StatelessWidget {
   }
 
   // Minimal chips-style: render each benefit as an icon + text row
-  Widget _buildBenefits(List<dynamic> benefits, Color textColor) {
-    final items = benefits.where((b) => b != null).map((b) => _formatBenefit(b)).where((s) => s.isNotEmpty).toList();
-    if (items.isEmpty) {
+  Widget _buildBenefits(List<dynamic> benefits, Color textColor, WidgetRef ref, Color accentColor) {
+    if (benefits.isEmpty) {
       return _buildInfoRow(Icons.card_giftcard_outlined, 'No listed benefits', textColor);
     }
     return Padding(
@@ -104,9 +106,96 @@ class TitleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final line in items)
-            _buildBulletRow(line, textColor),
+          for (final b in benefits.where((b) => b != null))
+            _buildBenefitWidget(b, textColor, ref, accentColor),
         ],
+      ),
+    );
+  }
+  
+  Widget _buildBenefitWidget(dynamic b, Color textColor, WidgetRef ref, Color accentColor) {
+    if (b is String) {
+      return _buildBulletRow(b, textColor);
+    }
+    if (b is Map) {
+      final ability = b['ability'];
+      final name = b['name'] as String? ?? '';
+      final description = b['description'] as String? ?? b['desc'] as String? ?? b['text'] as String? ?? '';
+      
+      // If there's an ability, show expanded ability card
+      if (ability is String && ability.trim().isNotEmpty) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (name.isNotEmpty) ...[
+              Text(
+                name,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: accentColor,
+                ),
+              ),
+              const SizedBox(height: 2),
+            ],
+            if (description.isNotEmpty) ...[
+              _buildBulletRow(description, textColor),
+              const SizedBox(height: 4),
+            ],
+            _buildAbilityLookup(ability, ref, textColor, accentColor),
+            const SizedBox(height: 8),
+          ],
+        );
+      }
+      
+      // No ability - just show text
+      final formatted = _formatBenefit(b);
+      if (formatted.isNotEmpty) {
+        return _buildBulletRow(formatted, textColor);
+      }
+    }
+    return const SizedBox.shrink();
+  }
+  
+  Widget _buildAbilityLookup(String abilityName, WidgetRef ref, Color textColor, Color accentColor) {
+    final abilityAsync = ref.watch(abilityByNameProvider(abilityName));
+    
+    return abilityAsync.when(
+      data: (ability) {
+        if (ability == null) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Text(
+              '⚔️ Ability: $abilityName',
+              style: TextStyle(fontSize: 11, color: textColor, fontStyle: FontStyle.italic),
+            ),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: AbilityExpandableItem(component: ability, embedded: true),
+        );
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.only(left: 8, bottom: 4),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 1.5, color: accentColor),
+            ),
+            const SizedBox(width: 8),
+            Text('Loading $abilityName...', style: TextStyle(fontSize: 10, color: textColor)),
+          ],
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Text(
+          '⚔️ Ability: $abilityName',
+          style: TextStyle(fontSize: 11, color: textColor, fontStyle: FontStyle.italic),
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import '../models/feature.dart' as feature_model;
 import '../models/subclass_models.dart';
 import '../repositories/feature_repository.dart';
 import '../repositories/hero_entry_repository.dart';
+import 'ability_resolver_service.dart';
 import 'class_feature_data_service.dart';
 import 'hero_config_service.dart';
 import 'hero_entry_normalizer.dart';
@@ -20,11 +21,13 @@ import 'hero_entry_normalizer.dart';
 class ClassFeatureGrantsService {
   ClassFeatureGrantsService(this._db)
       : _entries = HeroEntryRepository(_db),
-        _config = HeroConfigService(_db);
+        _config = HeroConfigService(_db),
+        _abilityResolver = AbilityResolverService(_db);
 
   final db.AppDatabase _db;
   final HeroEntryRepository _entries;
   final HeroConfigService _config;
+  final AbilityResolverService _abilityResolver;
 
   /// Config key for storing feature selections.
   static const _kFeatureSelections = 'class_feature.selections';
@@ -543,7 +546,10 @@ class ClassFeatureGrantsService {
     _collectAbilityNames(abilityNames, option['abilities']);
     if (abilityNames.isNotEmpty) {
       for (final abilityName in abilityNames) {
-        final abilityId = await _resolveAbilityId(abilityName);
+        final abilityId = await _abilityResolver.resolveAbilityId(
+          abilityName,
+          sourceType: 'class_feature',
+        );
         await _entries.addEntry(
           heroId: heroId,
           entryType: 'ability',
@@ -683,7 +689,10 @@ class ClassFeatureGrantsService {
     if (abilityNames.isEmpty) return;
 
     for (final abilityName in abilityNames) {
-      final abilityId = await _resolveAbilityId(abilityName);
+      final abilityId = await _abilityResolver.resolveAbilityId(
+        abilityName,
+        sourceType: 'class_feature',
+      );
       await _entries.addEntry(
         heroId: heroId,
         entryType: 'ability',
@@ -772,7 +781,10 @@ class ClassFeatureGrantsService {
             final abilityNames = <String>{};
             _collectAbilityNames(abilityNames, value);
             for (final abilityName in abilityNames) {
-              final abilityId = await _resolveAbilityId(abilityName);
+              final abilityId = await _abilityResolver.resolveAbilityId(
+                abilityName,
+                sourceType: 'class_feature',
+              );
               await _entries.addEntry(
                 heroId: heroId,
                 entryType: 'ability',
@@ -1079,14 +1091,6 @@ class ClassFeatureGrantsService {
       (c) => c.type == 'skill' && c.name.toLowerCase() == skillName.toLowerCase(),
     );
     return match?.id ?? 'skill_${ClassFeatureDataService.slugify(skillName)}';
-  }
-
-  Future<String> _resolveAbilityId(String abilityName) async {
-    final components = await _db.getAllComponents();
-    final match = components.firstWhereOrNull(
-      (c) => c.type == 'ability' && c.name.toLowerCase() == abilityName.toLowerCase(),
-    );
-    return match?.id ?? ClassFeatureDataService.slugify(abilityName);
   }
 
   Future<String> _resolveTitleId(String titleName) async {

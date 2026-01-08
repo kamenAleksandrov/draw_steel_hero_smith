@@ -1,52 +1,42 @@
 import 'dart:convert';
 
-import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
-
 import '../db/app_database.dart';
 import '../repositories/hero_entry_repository.dart';
+import 'ability_resolver_service.dart';
 
 /// Service to handle title grant processing.
 /// 
 /// Titles can grant abilities through their selected benefit.
 /// This service writes ability entries to hero_entries with sourceType='title'.
 class TitleGrantsService {
-  TitleGrantsService._();
+  TitleGrantsService(this._db)
+      : _entries = HeroEntryRepository(_db),
+        _abilityResolver = AbilityResolverService(_db);
   
-  static final TitleGrantsService _instance = TitleGrantsService._();
-  factory TitleGrantsService() => _instance;
+  final AppDatabase _db;
+  final HeroEntryRepository _entries;
+  final AbilityResolverService _abilityResolver;
   
-  List<Map<String, dynamic>>? _cachedTitles;
-  List<Map<String, dynamic>>? _cachedTitleAbilities;
-  
-  /// Load all titles from JSON
-  Future<List<Map<String, dynamic>>> loadTitles() async {
-    if (_cachedTitles != null) return _cachedTitles!;
-    
-    final raw = await rootBundle.loadString('data/story/titles.json');
-    final decoded = json.decode(raw) as List;
-    _cachedTitles = decoded.cast<Map<String, dynamic>>();
-    return _cachedTitles!;
+  /// Get all titles from the database.
+  Future<List<Component>> loadTitles() async {
+    return _abilityResolver.getAllTitles();
   }
   
-  /// Load title abilities from JSON
-  Future<List<Map<String, dynamic>>> loadTitleAbilities() async {
-    if (_cachedTitleAbilities != null) return _cachedTitleAbilities!;
-    
-    try {
-      final raw = await rootBundle.loadString('data/abilities/titles_abilities.json');
-      final decoded = json.decode(raw) as List;
-      _cachedTitleAbilities = decoded.cast<Map<String, dynamic>>();
-    } catch (_) {
-      _cachedTitleAbilities = [];
-    }
-    return _cachedTitleAbilities!;
-  }
-  
-  /// Get a title by ID
+  /// Get a title by ID from the database.
+  /// Returns the title data as a Map for compatibility with existing code.
   Future<Map<String, dynamic>?> getTitleById(String titleId) async {
-    final titles = await loadTitles();
-    return titles.firstWhereOrNull((t) => t['id'] == titleId);
+    final component = await _abilityResolver.getTitleById(titleId);
+    if (component == null) return null;
+    
+    // Reconstruct the title data from Component
+    final data = component.dataJson.isNotEmpty 
+        ? jsonDecode(component.dataJson) as Map<String, dynamic>
+        : <String, dynamic>{};
+    return {
+      'id': component.id,
+      'name': component.name,
+      ...data,
+    };
   }
   
   /// Get the ability ID for a title benefit, if it grants one
@@ -64,7 +54,11 @@ class TitleGrantsService {
     if (abilityRef == null || abilityRef.toString().isEmpty) return null;
     
     final abilitySlug = abilityRef.toString();
-    return await _resolveAbilityId(abilitySlug);
+    return await _abilityResolver.resolveAbilityId(
+      abilitySlug,
+      sourceType: 'title',
+      ensureInDb: true,
+    );
   }
   
   /// Apply title grants for a hero.
@@ -72,14 +66,11 @@ class TitleGrantsService {
   /// Takes a list of selected titles in format "titleId:benefitIndex"
   /// and writes any granted abilities to hero_entries.
   Future<void> applyTitleGrants({
-    required AppDatabase db,
     required String heroId,
     required List<String> selectedTitleIds,
   }) async {
-    final entries = HeroEntryRepository(db);
-    
     // First clear all existing title-granted abilities
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'title',
     );
@@ -98,11 +89,10 @@ class TitleGrantsService {
       final abilityId = await getAbilityIdForBenefit(title, benefitIndex);
       if (abilityId == null || abilityId.isEmpty) continue;
       
-      // Ensure ability exists in database
-      await _ensureAbilityInDb(db, abilityId);
+      // Note: getAbilityIdForBenefit already calls _abilityResolver with ensureInDb: true
       
       // Write ability entry with title as source
-      await entries.addEntry(
+      await _entries.addEntry(
         heroId: heroId,
         entryType: 'ability',
         entryId: abilityId,
@@ -119,11 +109,9 @@ class TitleGrantsService {
   
   /// Remove all title grants for a hero.
   Future<void> removeTitleGrants({
-    required AppDatabase db,
     required String heroId,
   }) async {
-    final entries = HeroEntryRepository(db);
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'title',
     );
@@ -131,12 +119,10 @@ class TitleGrantsService {
   
   /// Remove grants for a specific title.
   Future<void> removeTitleGrantsForTitle({
-    required AppDatabase db,
     required String heroId,
     required String titleId,
   }) async {
-    final entries = HeroEntryRepository(db);
-    await entries.removeEntriesFromSource(
+    await _entries.removeEntriesFromSource(
       heroId: heroId,
       sourceType: 'title',
       sourceId: titleId,
@@ -145,69 +131,12 @@ class TitleGrantsService {
   
   /// Get all abilities granted by titles for a hero.
   Future<List<String>> getGrantedAbilities({
-    required AppDatabase db,
     required String heroId,
   }) async {
-    final entries = HeroEntryRepository(db);
-    final all = await entries.listEntriesByType(heroId, 'ability');
+    final all = await _entries.listEntriesByType(heroId, 'ability');
     return all
         .where((e) => e.sourceType == 'title')
         .map((e) => e.entryId)
         .toList();
-  }
-  
-  // Private helpers
-  
-  Future<String> _resolveAbilityId(String abilityRef) async {
-    // First check title abilities
-    final titleAbilities = await loadTitleAbilities();
-    
-    // Try by ID first
-    final byId = titleAbilities.firstWhereOrNull(
-      (a) => a['id']?.toString() == abilityRef,
-    );
-    if (byId != null) return byId['id'].toString();
-    
-    // Try by slug match
-    final normalizedRef = _normalizeSlug(abilityRef);
-    for (final ability in titleAbilities) {
-      final id = ability['id']?.toString() ?? '';
-      if (_normalizeSlug(id) == normalizedRef) return id;
-      
-      final name = ability['name']?.toString() ?? '';
-      if (_normalizeSlug(name) == normalizedRef) return id;
-    }
-    
-    // Fallback to the reference itself (might be an ID)
-    return abilityRef;
-  }
-  
-  String _normalizeSlug(String value) {
-    return value
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]'), '_')
-        .replaceAll(RegExp(r'_+'), '_')
-        .replaceAll(RegExp(r'^_|_$'), '');
-  }
-  
-  Future<void> _ensureAbilityInDb(AppDatabase db, String abilityId) async {
-    // Check if already exists
-    final existing = await db.getComponentById(abilityId);
-    if (existing != null) return;
-    
-    // Try to find in title abilities
-    final titleAbilities = await loadTitleAbilities();
-    final ability = titleAbilities.firstWhereOrNull(
-      (a) => a['id']?.toString() == abilityId,
-    );
-    
-    if (ability != null) {
-      await db.insertComponentRaw(
-        id: abilityId,
-        type: 'ability',
-        name: ability['name']?.toString() ?? abilityId,
-        data: Map<String, dynamic>.from(ability),
-      );
-    }
   }
 }

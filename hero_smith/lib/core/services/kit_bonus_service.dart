@@ -260,9 +260,13 @@ class KitBonusService {
     final stability = _parseIntOrNull(data['stability_bonus']) ?? 0;
     final disengage = _parseIntOrNull(data['disengage_bonus']) ?? 0;
 
-    // Determine if stamina scales with level
-    // Typically equipment that has stamina 3 or 6 scales (3→6→9→12 or 6→12→18→24)
-    final staminaScales = baseStamina > 0 && (baseStamina == 3 || baseStamina == 6);
+    // All kit stamina bonuses scale with level/echelon.
+    // At levels 1-3 (echelon 1): 1x base stamina
+    // At levels 4-6 (echelon 2): 2x base stamina
+    // At levels 7-9 (echelon 3): 3x base stamina
+    // At level 10 (echelon 4): 4x base stamina
+    // This applies to all non-zero stamina bonuses from kits.
+    final staminaScales = baseStamina > 0;
 
     // Parse tiered melee damage
     final meleeDamage = data['melee_damage_bonus'];

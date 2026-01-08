@@ -1,96 +1,196 @@
 import 'dart:convert';
 
 /// Represents a single stat modification with its source.
-/// 
-/// Supports both static values and dynamic values that scale with level:
-/// - `value`: The base static value
-/// - `dynamicValue`: If set to "level", the value equals the hero level
-/// - `perEchelon`: If true, the value is multiplied by the echelon (levels 1-3 = 1, 4-6 = 2, 7-9 = 3, 10 = 4)
-/// - `valuePerEchelon`: When `perEchelon` is true, this is the value added per echelon
-class StatModification {
-  final int value;
+///
+/// This is a sealed class hierarchy supporting three scaling types:
+/// - [StaticStatModification]: Fixed value that doesn't scale
+/// - [LevelScaledStatModification]: Value equals the hero's level
+/// - [EchelonScaledStatModification]: Value scales with echelon (levels 1-3 = 1x, 4-6 = 2x, 7-9 = 3x, 10 = 4x)
+sealed class StatModification {
+  /// The source of this modification (e.g., "Ancestry", "Complication: Bereaved")
   final String source;
-  final String? dynamicValue;
-  final bool perEchelon;
-  final int valuePerEchelon;
 
-  const StatModification({
-    required this.value,
-    required this.source,
-    this.dynamicValue,
-    this.perEchelon = false,
-    this.valuePerEchelon = 0,
-  });
+  const StatModification({required this.source});
 
   /// Calculate the actual value based on the hero's level.
-  int getActualValue(int heroLevel) {
-    // Dynamic value based on level
-    if (dynamicValue == 'level') {
-      return heroLevel;
-    }
-    // Per-echelon scaling (levels 1, 4, 7, 10 add the value)
-    if (perEchelon && valuePerEchelon > 0) {
-      final echelon = ((heroLevel - 1) ~/ 3) + 1;
-      return valuePerEchelon * echelon;
-    }
-    return value;
-  }
+  int getActualValue(int heroLevel);
 
-  /// Whether this modification has dynamic scaling
-  bool get isDynamic => dynamicValue != null || perEchelon;
+  /// Whether this modification has dynamic scaling (changes with level)
+  bool get isDynamic;
 
+  /// The base value used for this modification (for display/serialization)
+  int get baseValue;
+
+  /// Serialize to JSON for storage
+  Map<String, dynamic> toJson();
+
+  /// Deserialize from JSON
   factory StatModification.fromJson(
     Map<String, dynamic> json, {
     String? defaultSource,
   }) {
-    return StatModification(
-      value: (json['value'] as num?)?.toInt() ?? 0,
-      source: json['source'] as String? ?? defaultSource ?? 'Unknown',
-      dynamicValue: json['dynamicValue'] as String?,
-      perEchelon: json['perEchelon'] as bool? ?? false,
-      valuePerEchelon: (json['valuePerEchelon'] as num?)?.toInt() ?? 0,
-    );
+    final source = json['source'] as String? ?? defaultSource ?? 'Unknown';
+    final dynamicValue = json['dynamicValue'] as String?;
+    final perEchelon = json['perEchelon'] as bool? ?? false;
+    final valuePerEchelon = (json['valuePerEchelon'] as num?)?.toInt() ?? 0;
+    final value = (json['value'] as num?)?.toInt() ?? 0;
+
+    // Determine which subclass to create based on the JSON fields
+    if (dynamicValue == 'level') {
+      return LevelScaledStatModification(source: source);
+    } else if (perEchelon && valuePerEchelon > 0) {
+      return EchelonScaledStatModification(
+        valuePerEchelon: valuePerEchelon,
+        source: source,
+      );
+    } else {
+      return StaticStatModification(value: value, source: source);
+    }
   }
 
+  /// Create a static modification (most common case)
+  factory StatModification.static({
+    required int value,
+    required String source,
+  }) = StaticStatModification;
+
+  /// Create a level-scaled modification (value = hero level)
+  factory StatModification.levelScaled({
+    required String source,
+  }) = LevelScaledStatModification;
+
+  /// Create an echelon-scaled modification (value = valuePerEchelon × echelon)
+  factory StatModification.echelonScaled({
+    required int valuePerEchelon,
+    required String source,
+  }) = EchelonScaledStatModification;
+}
+
+/// A stat modification with a fixed value that doesn't scale with level.
+class StaticStatModification extends StatModification {
+  /// The fixed value of this modification
+  final int value;
+
+  const StaticStatModification({
+    required this.value,
+    required super.source,
+  });
+
+  @override
+  int getActualValue(int heroLevel) => value;
+
+  @override
+  bool get isDynamic => false;
+
+  @override
+  int get baseValue => value;
+
+  @override
   Map<String, dynamic> toJson() => {
-    'value': value,
-    'source': source,
-    if (dynamicValue != null) 'dynamicValue': dynamicValue,
-    if (perEchelon) 'perEchelon': perEchelon,
-    if (valuePerEchelon > 0) 'valuePerEchelon': valuePerEchelon,
-  };
-
-  StatModification copyWith({
-    int? value,
-    String? source,
-    String? dynamicValue,
-    bool? perEchelon,
-    int? valuePerEchelon,
-  }) {
-    return StatModification(
-      value: value ?? this.value,
-      source: source ?? this.source,
-      dynamicValue: dynamicValue ?? this.dynamicValue,
-      perEchelon: perEchelon ?? this.perEchelon,
-      valuePerEchelon: valuePerEchelon ?? this.valuePerEchelon,
-    );
-  }
+        'value': value,
+        'source': source,
+      };
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is StatModification &&
+      other is StaticStatModification &&
           value == other.value &&
-          source == other.source &&
-          dynamicValue == other.dynamicValue &&
-          perEchelon == other.perEchelon &&
-          valuePerEchelon == other.valuePerEchelon;
+          source == other.source;
 
   @override
-  int get hashCode => Object.hash(value, source, dynamicValue, perEchelon, valuePerEchelon);
+  int get hashCode => Object.hash(value, source);
 
   @override
-  String toString() => 'StatModification(value: $value, source: $source, dynamicValue: $dynamicValue, perEchelon: $perEchelon, valuePerEchelon: $valuePerEchelon)';
+  String toString() => 'StaticStatModification(value: $value, source: $source)';
+}
+
+/// A stat modification where the value equals the hero's level.
+/// 
+/// Example: "Mundane" complication grants corruption/holy/psychic immunity
+/// equal to the hero's level.
+class LevelScaledStatModification extends StatModification {
+  const LevelScaledStatModification({required super.source});
+
+  @override
+  int getActualValue(int heroLevel) => heroLevel;
+
+  @override
+  bool get isDynamic => true;
+
+  @override
+  int get baseValue => 0;
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'value': 0,
+        'source': source,
+        'dynamicValue': 'level',
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LevelScaledStatModification && source == other.source;
+
+  @override
+  int get hashCode => source.hashCode;
+
+  @override
+  String toString() => 'LevelScaledStatModification(source: $source)';
+}
+
+/// A stat modification that scales with echelon.
+/// 
+/// Echelon calculation: (heroLevel - 1) ~/ 3 + 1
+/// - Levels 1-3: echelon 1 (1x valuePerEchelon)
+/// - Levels 4-6: echelon 2 (2x valuePerEchelon)
+/// - Levels 7-9: echelon 3 (3x valuePerEchelon)
+/// - Level 10:   echelon 4 (4x valuePerEchelon)
+/// 
+/// Example: "Elemental Inside" complication grants +3 stamina per echelon.
+class EchelonScaledStatModification extends StatModification {
+  /// The value added per echelon
+  final int valuePerEchelon;
+
+  const EchelonScaledStatModification({
+    required this.valuePerEchelon,
+    required super.source,
+  });
+
+  @override
+  int getActualValue(int heroLevel) {
+    final echelon = ((heroLevel - 1) ~/ 3) + 1;
+    return valuePerEchelon * echelon;
+  }
+
+  @override
+  bool get isDynamic => true;
+
+  @override
+  int get baseValue => valuePerEchelon;
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'value': 0,
+        'source': source,
+        'perEchelon': true,
+        'valuePerEchelon': valuePerEchelon,
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EchelonScaledStatModification &&
+          valuePerEchelon == other.valuePerEchelon &&
+          source == other.source;
+
+  @override
+  int get hashCode => Object.hash(valuePerEchelon, source);
+
+  @override
+  String toString() =>
+      'EchelonScaledStatModification(valuePerEchelon: $valuePerEchelon, source: $source)';
 }
 
 /// Collection of all stat modifications for a hero.
@@ -122,7 +222,7 @@ class HeroStatModifications {
           mods[key] = [StatModification.fromJson(value as Map<String, dynamic>)];
         } else if (value is num) {
           // Legacy format: just a number (no source info)
-          mods[key] = [StatModification(value: value.toInt(), source: 'Ancestry')];
+          mods[key] = [StaticStatModification(value: value.toInt(), source: 'Ancestry')];
         }
       }
       return HeroStatModifications(modifications: mods);
@@ -140,10 +240,11 @@ class HeroStatModifications {
   }
 
   /// Get total modification value for a stat.
+  /// Uses [baseValue] for static mods; for dynamic mods, use [getTotalForStatAtLevel].
   int getTotalForStat(String stat) {
     final mods = modifications[stat.toLowerCase()];
     if (mods == null || mods.isEmpty) return 0;
-    return mods.fold(0, (sum, m) => sum + m.value);
+    return mods.fold(0, (sum, m) => sum + m.baseValue);
   }
 
   /// Get total modification value for a stat, calculating dynamic values based on hero level.
@@ -165,6 +266,7 @@ class HeroStatModifications {
   }
 
   /// Get a formatted string of all sources for a stat.
+  /// Uses pattern matching to provide context-aware descriptions for dynamic mods.
   String getSourcesDescription(String stat, [int heroLevel = 1]) {
     final mods = getModsForStat(stat);
     if (mods.isEmpty) return '';
@@ -172,7 +274,15 @@ class HeroStatModifications {
     return mods.map((m) {
       final actualValue = m.getActualValue(heroLevel);
       final sign = actualValue >= 0 ? '+' : '';
-      return '$sign$actualValue from ${m.source}';
+      
+      // Use pattern matching to provide type-specific descriptions
+      final suffix = switch (m) {
+        StaticStatModification() => '',
+        LevelScaledStatModification() => ' (scales with level)',
+        EchelonScaledStatModification() => ' (scales with echelon)',
+      };
+      
+      return '$sign$actualValue from ${m.source}$suffix';
     }).join(', ');
   }
 
@@ -188,9 +298,9 @@ class HeroStatModifications {
     // Find existing mod from this source and update it
     final existingIndex = currentMods.indexWhere((m) => m.source == source);
     if (existingIndex >= 0) {
-      currentMods[existingIndex] = StatModification(value: value, source: source);
+      currentMods[existingIndex] = StaticStatModification(value: value, source: source);
     } else {
-      currentMods.add(StatModification(value: value, source: source));
+      currentMods.add(StaticStatModification(value: value, source: source));
     }
     
     return HeroStatModifications(

@@ -22,6 +22,7 @@ class AssetSeeder {
     try {
       final assets = await discoverDataJsonAssets();
       if (AppDatabase.databasePreexisted) {
+        // Seed classes if missing
         await _seedTypeIfMissing(
           db: db,
           assets: assets,
@@ -29,6 +30,8 @@ class AssetSeeder {
           pathPredicate: (path) =>
               path.startsWith('data/classes_levels_and_stats/'),
         );
+        // Seed perk/title/complication abilities if missing (by specific IDs)
+        await _seedSupplementalAbilitiesIfMissing(db, assets);
         return;
       }
 
@@ -38,6 +41,66 @@ class AssetSeeder {
       // print('DEBUG: Error in seedFromManifestIfEmpty: $e');
       rethrow;
     }
+  }
+  
+  /// Supplemental ability files that may be missing in pre-existing databases
+  static const _supplementalAbilityFiles = [
+    'data/abilities/perk_abilities.json',
+    'data/abilities/titles_abilities.json',
+    'data/abilities/complication_abilities.json',
+    'data/abilities/ancestry_abilities.json',
+    'data/abilities/kit_abilities.json',
+  ];
+  
+  /// Seed supplemental abilities (perk/title/etc) if not already present
+  static Future<void> _seedSupplementalAbilitiesIfMissing(
+    AppDatabase db, 
+    List<String> assets,
+  ) async {
+    for (final filePath in _supplementalAbilityFiles) {
+      if (!assets.contains(filePath)) continue;
+      
+      try {
+        final raw = await rootBundle.loadString(filePath);
+        final decoded = jsonDecode(raw);
+        if (decoded is! List) continue;
+        
+        final items = decoded.cast<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+        if (items.isEmpty) continue;
+        
+        // Check if any of these abilities are missing
+        final idsToCheck = items
+            .map((m) => _peekComponentId(m))
+            .whereType<String>()
+            .toList();
+        
+        if (idsToCheck.isEmpty) continue;
+        
+        final existing = await (db.select(db.components)
+              ..where((c) => c.id.isIn(idsToCheck)))
+            .get();
+        
+        final existingIds = existing.map((c) => c.id).toSet();
+        final missingIds = idsToCheck.where((id) => !existingIds.contains(id)).toSet();
+        
+        if (missingIds.isEmpty) continue;
+        
+        // Seed only missing abilities from this file
+        await _seedAssetsInChunks(db: db, assetPaths: [filePath]);
+      } catch (_) {
+        // Ignore errors for individual files
+      }
+    }
+  }
+  
+  /// Peek at component ID without removing it from the map
+  static String? _peekComponentId(Map<String, dynamic> source) {
+    const candidateKeys = ['id', 'componentId', 'classId', 'abilityId', 'featureId'];
+    for (final key in candidateKeys) {
+      final value = source[key];
+      if (value is String && value.isNotEmpty) return value;
+    }
+    return null;
   }
 
   static Future<void> _seedAssetsInChunks({

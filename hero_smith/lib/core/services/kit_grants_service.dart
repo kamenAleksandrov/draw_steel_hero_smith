@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import '../db/app_database.dart' as db;
 import '../models/component.dart' as model;
 import '../repositories/hero_entry_repository.dart';
+import 'ability_resolver_service.dart';
 import 'hero_config_service.dart';
 import 'kit_bonus_service.dart';
 
@@ -18,12 +19,14 @@ class KitGrantsService {
   KitGrantsService(this._db)
       : _entries = HeroEntryRepository(_db),
         _config = HeroConfigService(_db),
-        _bonusService = const KitBonusService();
+        _bonusService = const KitBonusService(),
+        _abilityResolver = AbilityResolverService(_db);
 
   final db.AppDatabase _db;
   final HeroEntryRepository _entries;
   final HeroConfigService _config;
   final KitBonusService _bonusService;
+  final AbilityResolverService _abilityResolver;
 
   /// Config key for kit selections/options.
   static const _kKitSelections = 'kit.selections';
@@ -44,11 +47,8 @@ class KitGrantsService {
     required int heroLevel,
     Map<String, String>? kitSelections,
   }) async {
-    debugPrint('[KitGrantsService] applyKitGrants called: heroId=$heroId, equipmentIds=$equipmentIds, heroLevel=$heroLevel');
-    
     // Clear existing kit grants
     await _clearAllKitGrants(heroId);
-    debugPrint('[KitGrantsService] Cleared existing kit grants');
 
     // Store kit selections in config
     if (kitSelections != null && kitSelections.isNotEmpty) {
@@ -71,20 +71,15 @@ class KitGrantsService {
 
     // Load kit components and process grants
     final dbComponents = await _db.getAllComponents();
-    debugPrint('[KitGrantsService] Loaded ${dbComponents.length} total components from DB');
     final kitComponents = <model.Component>[];
     
     for (final kitId in nonNullIds) {
       final dbComp = dbComponents.firstWhereOrNull((c) => c.id == kitId);
       if (dbComp != null) {
-        debugPrint('[KitGrantsService] Found component for kitId=$kitId: name=${dbComp.name}');
         // Convert db.Component to model.Component
         kitComponents.add(_convertDbComponent(dbComp));
-      } else {
-        debugPrint('[KitGrantsService] WARNING: No component found for kitId=$kitId');
       }
     }
-    debugPrint('[KitGrantsService] Total kit components found: ${kitComponents.length}');
 
     // Add kit entries
     for (final kit in kitComponents) {
@@ -112,19 +107,15 @@ class KitGrantsService {
 
     // Calculate and store equipment bonuses
     if (kitComponents.isNotEmpty) {
-      debugPrint('[KitGrantsService] Calculating bonuses for ${kitComponents.length} kit(s)');
       final bonuses = _bonusService.calculateBonuses(
         equipment: kitComponents,
         heroLevel: heroLevel,
       );
-      debugPrint('[KitGrantsService] Calculated bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}');
       await _storeEquipmentBonuses(heroId, bonuses);
-      debugPrint('[KitGrantsService] Stored equipment bonuses to hero_entries');
       return bonuses;
     }
     
     // No kit components - store empty bonuses to clear any previous values
-    debugPrint('[KitGrantsService] WARNING: No kit components found - storing empty bonuses');
     await _storeEquipmentBonuses(heroId, EquipmentBonuses.empty);
     return EquipmentBonuses.empty;
   }
@@ -232,7 +223,10 @@ class KitGrantsService {
     // Grant signature ability
     final signatureAbility = data['signature_ability']?.toString();
     if (signatureAbility != null && signatureAbility.isNotEmpty) {
-      final abilityId = await _resolveAbilityId(signatureAbility);
+      final abilityId = await _abilityResolver.resolveAbilityId(
+        signatureAbility,
+        sourceType: 'kit',
+      );
       await _entries.addEntry(
         heroId: heroId,
         entryType: 'ability',
@@ -250,7 +244,10 @@ class KitGrantsService {
       for (final ab in abilities) {
         final abilityName = ab?.toString();
         if (abilityName != null && abilityName.isNotEmpty) {
-          final abilityId = await _resolveAbilityId(abilityName);
+          final abilityId = await _abilityResolver.resolveAbilityId(
+            abilityName,
+            sourceType: 'kit',
+          );
           await _entries.addEntry(
             heroId: heroId,
             entryType: 'ability',
@@ -323,7 +320,10 @@ class KitGrantsService {
     // Grant ability from option
     final ability = option['ability']?.toString();
     if (ability != null && ability.isNotEmpty) {
-      final abilityId = await _resolveAbilityId(ability);
+      final abilityId = await _abilityResolver.resolveAbilityId(
+        ability,
+        sourceType: 'kit',
+      );
       await _entries.addEntry(
         heroId: heroId,
         entryType: 'ability',
@@ -354,7 +354,6 @@ class KitGrantsService {
     model.Component kit,
     int heroLevel,
   ) async {
-    debugPrint('[KitGrantsService] _storeKitStatBonuses called for kit=${kit.id}, heroLevel=$heroLevel');
     final data = kit.data;
     
     final tier = KitBonusService.tierForLevel(heroLevel);
@@ -382,13 +381,7 @@ class KitGrantsService {
 
     // Only store if there are non-zero bonuses
     final hasBonus = bonuses.values.any((v) => v != 0);
-    debugPrint('[KitGrantsService] Kit ${kit.id} bonuses: $bonuses, hasBonus=$hasBonus');
-    if (!hasBonus) {
-      debugPrint('[KitGrantsService] Skipping kit_stat_bonus entry - no non-zero bonuses');
-      return;
-    }
-
-    debugPrint('[KitGrantsService] Storing kit_stat_bonus entry for ${kit.id}');
+    if (!hasBonus) return;
     await _entries.addEntry(
       heroId: heroId,
       entryType: 'kit_stat_bonus',
@@ -404,7 +397,7 @@ class KitGrantsService {
     String heroId,
     EquipmentBonuses bonuses,
   ) async {
-    // Save to hero_entries for legacy/backup
+    // Save to hero_entries as the single source of truth
     await _entries.addEntry(
       heroId: heroId,
       entryType: 'equipment_bonuses',
@@ -425,22 +418,6 @@ class KitGrantsService {
       },
     );
     
-    // Also save to hero_values as the source of truth for heroEquipmentBonusesProvider
-    await _db.upsertHeroValue(
-      heroId: heroId,
-      key: 'strife.equipment_bonuses',
-      jsonMap: {
-        'stamina': bonuses.staminaBonus,
-        'speed': bonuses.speedBonus,
-        'stability': bonuses.stabilityBonus,
-        'disengage': bonuses.disengageBonus,
-        'melee_damage': bonuses.meleeDamageBonus,
-        'ranged_damage': bonuses.rangedDamageBonus,
-        'melee_distance': bonuses.meleeDistanceBonus,
-        'ranged_distance': bonuses.rangedDistanceBonus,
-      },
-    );
-    debugPrint('[KitGrantsService] Saved equipment bonuses to both hero_entries AND hero_values.strife.equipment_bonuses');
   }
 
   Future<void> _clearEquipmentBonuses(String heroId) async {
@@ -496,14 +473,6 @@ class KitGrantsService {
     }
   }
 
-  Future<String> _resolveAbilityId(String abilityName) async {
-    final components = await _db.getAllComponents();
-    final match = components.firstWhereOrNull(
-      (c) => c.type == 'ability' && c.name.toLowerCase() == abilityName.toLowerCase(),
-    );
-    return match?.id ?? _slugify(abilityName);
-  }
-
   int? _parseIntOrNull(dynamic value) {
     if (value == null) return null;
     if (value is int) return value;
@@ -536,9 +505,6 @@ class KitGrantsService {
     return _parseIntOrNull(echelonData[key]) ?? 0;
   }
 
-  String _slugify(String value) {
-    final normalized = value.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
-    final collapsed = normalized.replaceAll(RegExp(r'_+'), '_');
-    return collapsed.replaceAll(RegExp(r'^_|_$'), '');
-  }
+  String _slugify(String value) =>
+      AbilityResolverService.slugify(value);
 }

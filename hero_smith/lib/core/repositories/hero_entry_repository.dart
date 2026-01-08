@@ -17,19 +17,6 @@ class HeroEntryRepository {
     String gainedBy = 'grant',
     Map<String, dynamic>? payload,
   }) {
-    // Debug: Track entry additions
-    if (entryType == 'ability') {
-      print('[HeroEntryRepository] addEntry(ability): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
-      print(StackTrace.current);
-    }
-    if (entryType == 'skill') {
-      print('[HeroEntryRepository] addEntry(skill): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId');
-    }
-    // Debug: Track kit-related entries
-    if (entryType == 'kit_stat_bonus' || entryType == 'equipment_bonuses' || entryType == 'equipment') {
-      print('[HeroEntryRepository] addEntry($entryType): heroId=$heroId, entryId=$entryId, sourceType=$sourceType, sourceId=$sourceId, gainedBy=$gainedBy');
-      print('[HeroEntryRepository] payload: $payload');
-    }
     return _db.upsertHeroEntry(
       heroId: heroId,
       entryType: entryType,
@@ -77,11 +64,6 @@ class HeroEntryRepository {
     String? sourceId,
     String? entryType,
   }) {
-    // Debug: Track entry removals that might affect kit data
-    if (sourceType == 'kit' || entryType == 'kit_stat_bonus' || entryType == 'equipment_bonuses' || entryType == 'equipment') {
-      print('[HeroEntryRepository] removeEntriesFromSource: heroId=$heroId, sourceType=$sourceType, sourceId=$sourceId, entryType=$entryType');
-      print(StackTrace.current);
-    }
     final query = _db.delete(_db.heroEntries)
       ..where((t) => t.heroId.equals(heroId) & t.sourceType.equals(sourceType));
     if (sourceId != null) {
@@ -91,6 +73,17 @@ class HeroEntryRepository {
       query.where((t) => t.entryType.equals(entryType));
     }
     return query.go();
+  }
+
+  /// Remove a specific entry by heroId, entryType, and entryId.
+  /// This removes the entry regardless of source type (useful for career-granted perks, etc.)
+  Future<int> removeEntryById(String heroId, String entryType, String entryId) {
+    return (_db.delete(_db.heroEntries)
+          ..where((t) =>
+              t.heroId.equals(heroId) &
+              t.entryType.equals(entryType) &
+              t.entryId.equals(entryId)))
+        .go();
   }
 
   Future<List<HeroEntry>> listEntriesByType(

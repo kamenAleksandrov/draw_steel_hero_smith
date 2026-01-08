@@ -168,8 +168,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "3ea995867d73e767",
+  "active": "b156b34ca9b7604c",
   "lastOpenFiles": [
+    "refactoring/services_refactoring_plan.md",
+    "refactoring",
     "Pasted image 20251212224917.png",
     "bugs/Identified bugs and QoL to be fixed.md",
     "Untitled.base",
@@ -214,7 +216,6 @@
     "creators/story/cultures_creator.canvas",
     "widgets/summaries",
     "pages/creator_pages",
-    "widgets",
-    "systems"
+    "widgets"
   ]
 }

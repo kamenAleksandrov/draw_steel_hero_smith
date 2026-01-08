@@ -102,8 +102,8 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       );
       
       // Apply title grants (abilities, etc.)
-      await TitleGrantsService().applyTitleGrants(
-        db: db,
+      final service = ref.read(titleGrantsServiceProvider);
+      await service.applyTitleGrants(
         heroId: widget.heroId,
         selectedTitleIds: updatedIds,
       );
@@ -134,8 +134,8 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       );
       
       // Reapply title grants with updated list
-      await TitleGrantsService().applyTitleGrants(
-        db: db,
+      final service = ref.read(titleGrantsServiceProvider);
+      await service.applyTitleGrants(
         heroId: widget.heroId,
         selectedTitleIds: updatedIds,
       );
@@ -166,8 +166,8 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       );
       
       // Reapply title grants with new benefit selection
-      await TitleGrantsService().applyTitleGrants(
-        db: db,
+      final service = ref.read(titleGrantsServiceProvider);
+      await service.applyTitleGrants(
         heroId: widget.heroId,
         selectedTitleIds: updatedIds,
       );

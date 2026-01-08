@@ -14,31 +14,26 @@ class _PerksTab extends ConsumerStatefulWidget {
 }
 
 class _PerksTabState extends ConsumerState<_PerksTab> {
-  Set<String> _selectedPerkIds = {};
   List<model.Component> _languages = [];
   List<model.Component> _skills = [];
   Set<String> _reservedLanguageIds = {};
   Set<String> _reservedSkillIds = {};
-  bool _isLoading = true;
+  bool _isLoadingAuxData = true;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _loadAuxData();
   }
 
-  Future<void> _loadData() async {
+  /// Load auxiliary data (languages, skills) that doesn't need reactive updates
+  Future<void> _loadAuxData() async {
     try {
       setState(() {
-        _isLoading = true;
+        _isLoadingAuxData = true;
         _errorMessage = null;
       });
-
-      final db = ref.read(appDatabaseProvider);
-
-      // Load selected perks for this hero
-      final perkIds = await db.getHeroComponentIds(widget.heroId, 'perk');
 
       // Load languages and skills for grant selections
       final languagesAsync =
@@ -46,45 +41,50 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
       final skillsAsync =
           await ref.read(componentsByTypeProvider('skill').future);
 
-      // Load reserved languages and skills (already assigned to hero)
-      final languageIds =
-          await db.getHeroComponentIds(widget.heroId, 'language');
-      final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
-
       if (mounted) {
         setState(() {
-          _selectedPerkIds = perkIds.toSet();
           _languages = languagesAsync;
           _skills = skillsAsync;
-          _reservedLanguageIds = languageIds.toSet();
-          _reservedSkillIds = skillIds.toSet();
-          _isLoading = false;
+          _isLoadingAuxData = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoading = false;
-          _errorMessage = 'Failed to load perks: $e';
+          _isLoadingAuxData = false;
+          _errorMessage = 'Failed to load data: $e';
         });
       }
     }
   }
 
   Future<void> _handleSelectionChanged(Set<String> newSelection) async {
-    // Update local state - the PerksSelectionWidget handles database persistence
-    // when persistToDatabase is true
-    setState(() {
-      _selectedPerkIds = newSelection;
-    });
+    // The PerksSelectionWidget handles database persistence when persistToDatabase is true
+    // Just trigger a refresh of reserved languages/skills
+    _refreshReservedEntries();
+  }
 
-    // Reload related data so the tab reflects changes immediately
-    await _loadData();
+  Future<void> _refreshReservedEntries() async {
+    final db = ref.read(appDatabaseProvider);
+    final languageIds =
+        await db.getHeroComponentIds(widget.heroId, 'language');
+    final skillIds = await db.getHeroComponentIds(widget.heroId, 'skill');
+    if (mounted) {
+      setState(() {
+        _reservedLanguageIds = languageIds.toSet();
+        _reservedSkillIds = skillIds.toSet();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
+    // Watch perk entries reactively
+    final selectedPerkIds = ref.watch(heroEntryIdsByTypeProvider(
+      (heroId: widget.heroId, entryType: 'perk'),
+    ));
+
+    if (_isLoadingAuxData) {
       return const Center(
         child: CircularProgressIndicator(color: _perksColor),
       );
@@ -100,7 +100,7 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
             Text(_errorMessage!, style: TextStyle(color: Colors.red.shade300)),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _loadData,
+              onPressed: _loadAuxData,
               style: ElevatedButton.styleFrom(
                 backgroundColor: _perksColor,
                 foregroundColor: Colors.white,
@@ -112,6 +112,10 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
       );
     }
 
+    return _buildContent(context, selectedPerkIds);
+  }
+
+  Widget _buildContent(BuildContext context, Set<String> selectedPerkIds) {
     return Stack(
       children: [
         SingleChildScrollView(
@@ -160,7 +164,7 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
                             ),
                           ),
                           Text(
-                            '${_selectedPerkIds.length} perks selected',
+                            '${selectedPerkIds.length} perks selected',
                             style: TextStyle(
                                 color: Colors.grey.shade400, fontSize: 13),
                           ),
@@ -174,9 +178,9 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
               // Perks selection widget
               PerksSelectionWidget(
                 heroId: widget.heroId,
-                selectedPerkIds: _selectedPerkIds,
+                selectedPerkIds: selectedPerkIds,
                 onSelectionChanged: _handleSelectionChanged,
-                onDirty: _loadData,
+                onDirty: _refreshReservedEntries,
                 languages: _languages,
                 skills: _skills,
                 reservedLanguageIds: _reservedLanguageIds,
@@ -194,7 +198,7 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
           right: 16,
           bottom: 16,
           child: FloatingActionButton.small(
-            onPressed: _showAddPerkDialog,
+            onPressed: () => _showAddPerkDialog(selectedPerkIds),
             backgroundColor: NavigationTheme.cardBackgroundDark,
             foregroundColor: _perksColor,
             shape: RoundedRectangleBorder(
@@ -208,15 +212,15 @@ class _PerksTabState extends ConsumerState<_PerksTab> {
     );
   }
 
-  void _showAddPerkDialog() {
+  void _showAddPerkDialog(Set<String> selectedPerkIds) {
     showDialog(
       context: context,
       builder: (context) => _AddPerkDialog(
         heroId: widget.heroId,
-        selectedPerkIds: _selectedPerkIds,
+        selectedPerkIds: selectedPerkIds,
         onPerkSelected: (perkId) async {
           Navigator.of(context).pop();
-          final newSelection = Set<String>.from(_selectedPerkIds)..add(perkId);
+          final newSelection = Set<String>.from(selectedPerkIds)..add(perkId);
           await _handleSelectionChanged(newSelection);
 
           // Persist the new perk

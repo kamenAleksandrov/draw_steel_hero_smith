@@ -837,6 +837,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<Component>> getAllComponents() => select(components).get();
 
+  /// Get all components by type (e.g., 'skill', 'language', 'title', 'ability')
+  Future<List<Component>> getComponentsByType(String type) =>
+      (select(components)..where((c) => c.type.equals(type))).get();
+
   /// Get a single component by ID
   Future<Component?> getComponentById(String id) async {
     return (select(components)..where((c) => c.id.equals(id)))

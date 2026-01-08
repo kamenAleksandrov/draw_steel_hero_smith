@@ -18,6 +18,7 @@ class EquipmentSlot {
     required this.onChanged,
     this.helperText,
     this.classId,
+    this.excludeItemIds = const [],
   });
 
   final String label;
@@ -28,6 +29,9 @@ class EquipmentSlot {
 
   /// The class ID to filter equipment that has class restrictions (e.g., psionic_augmentation)
   final String? classId;
+
+  /// Item IDs to exclude from selection (e.g., already selected in other slots)
+  final List<String> excludeItemIds;
 }
 
 /// Compact section that renders all equipment and modification requirements together.
@@ -237,6 +241,7 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
                       currentItemId: slot.selectedItemId,
                       canRemove: slot.selectedItemId != null,
                       classId: slot.classId,
+                      excludeItemIds: slot.excludeItemIds,
                     ),
                   );
                   if (result == null) {
@@ -429,6 +434,7 @@ class _EquipmentSelectionDialog extends ConsumerStatefulWidget {
     required this.currentItemId,
     required this.canRemove,
     this.classId,
+    this.excludeItemIds = const [],
   });
 
   final String slotLabel;
@@ -438,6 +444,9 @@ class _EquipmentSelectionDialog extends ConsumerStatefulWidget {
 
   /// The class ID to filter equipment with class restrictions (e.g., psionic_augmentation)
   final String? classId;
+
+  /// Item IDs to exclude from selection (e.g., already selected in other slots)
+  final List<String> excludeItemIds;
 
   @override
   ConsumerState<_EquipmentSelectionDialog> createState() =>
@@ -707,10 +716,19 @@ class _EquipmentSelectionDialogState
           }).toList();
         }
 
+        // Filter out items already selected in other slots
+        // (but keep the current slot's selection visible)
+        var excludeFiltered = classFiltered;
+        if (widget.excludeItemIds.isNotEmpty) {
+          excludeFiltered = classFiltered.where((item) {
+            return !widget.excludeItemIds.contains(item.id);
+          }).toList();
+        }
+
         // Then filter by search query
         final filtered = query.isEmpty
-            ? classFiltered
-            : classFiltered.where((item) {
+            ? excludeFiltered
+            : excludeFiltered.where((item) {
                 final name = item.name.toLowerCase();
                 final description =
                     (item.data['description'] as String?)?.toLowerCase() ?? '';

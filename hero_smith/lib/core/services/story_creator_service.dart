@@ -48,14 +48,6 @@ class StoryCreatorService {
   }
 
   Future<void> saveStory(StoryCreatorSavePayload payload) async {
-    print('[StoryCreatorService] ========== saveStory START ==========');
-    print('[StoryCreatorService] payload.complicationId: ${payload.complicationId}');
-    
-    // Debug: List all ability entries BEFORE any changes
-    final entriesBefore = await _db.select(_db.heroEntries).get();
-    final abilitiesBefore = entriesBefore.where((e) => e.heroId == payload.heroId && e.entryType == 'ability').toList();
-    print('[StoryCreatorService] BEFORE: Abilities in DB: ${abilitiesBefore.map((e) => '${e.entryId} (source: ${e.sourceType}/${e.sourceId})').toList()}');
-    
     final hero = await _heroRepository.load(payload.heroId);
     if (hero == null) {
       throw Exception('Hero with id ${payload.heroId} not found.');
@@ -69,16 +61,9 @@ class StoryCreatorService {
     final traitsChanged = !_listEquals(oldTraitIds, payload.ancestryTraitIds.toList());
     final choicesChanged = !_mapEquals(oldTraitChoices, payload.ancestryTraitChoices);
 
-    print('[StoryCreatorService] oldAncestryId: $oldAncestryId');
-    print('[StoryCreatorService] oldTraitIds: $oldTraitIds');
-    print('[StoryCreatorService] ancestryChanged: $ancestryChanged, traitsChanged: $traitsChanged, choicesChanged: $choicesChanged');
-
     // Remove old bonuses if ancestry, traits, or choices changed
     if (ancestryChanged || traitsChanged || choicesChanged) {
-      print('[StoryCreatorService] Changes detected, removing old bonuses and will apply new ones');
       await _ancestryBonusService.removeBonuses(payload.heroId);
-    } else {
-      print('[StoryCreatorService] No ancestry/trait changes detected, skipping bonus application');
     }
 
     // Check if complication or its choices have changed
@@ -87,20 +72,9 @@ class StoryCreatorService {
     final complicationChanged = oldComplicationId != payload.complicationId;
     final complicationChoicesChanged = !_mapEquals(oldComplicationChoices, payload.complicationChoices);
 
-    print('[StoryCreatorService] oldComplicationId: $oldComplicationId, newComplicationId: ${payload.complicationId}');
-    print('[StoryCreatorService] complicationChanged: $complicationChanged, complicationChoicesChanged: $complicationChoicesChanged');
-
     // Remove old complication grants if complication or choices changed
     if (complicationChanged || complicationChoicesChanged) {
-      print('[StoryCreatorService] Calling removeGrants...');
       await _complicationGrantsService.removeGrants(payload.heroId);
-      
-      // Debug: List ability entries AFTER removeGrants
-      final entriesAfterRemove = await _db.select(_db.heroEntries).get();
-      final abilitiesAfterRemove = entriesAfterRemove.where((e) => e.heroId == payload.heroId && e.entryType == 'ability').toList();
-      print('[StoryCreatorService] AFTER removeGrants: Abilities in DB: ${abilitiesAfterRemove.map((e) => '${e.entryId} (source: ${e.sourceType}/${e.sourceId})').toList()}');
-    } else {
-      print('[StoryCreatorService] No complication changes, skipping removeGrants');
     }
 
     hero.name = payload.name;
@@ -256,7 +230,7 @@ class StoryCreatorService {
   }) async {
     // Get all perks from database
     final allComponents = await _db.getAllComponents();
-    final perkGrantsService = PerkGrantsService();
+    final perkGrantsService = PerkGrantsService(_db);
     
     for (final perkId in perkIds) {
       final perkComp = allComponents.where(
@@ -270,7 +244,6 @@ class StoryCreatorService {
         final grantsRaw = data['grants'];
         if (grantsRaw != null) {
           await perkGrantsService.applyPerkGrants(
-            db: _db,
             heroId: heroId,
             perkId: perkId,
             grantsJson: grantsRaw,
@@ -288,11 +261,10 @@ class StoryCreatorService {
     required String heroId,
     required List<String> perkIds,
   }) async {
-    final perkGrantsService = PerkGrantsService();
+    final perkGrantsService = PerkGrantsService(_db);
     
     for (final perkId in perkIds) {
       await perkGrantsService.removePerkGrants(
-        db: _db,
         heroId: heroId,
         perkId: perkId,
       );

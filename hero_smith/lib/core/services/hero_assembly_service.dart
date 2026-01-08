@@ -285,8 +285,8 @@ class HeroAssemblyService {
               Map<String, dynamic>.from(modItem),
               defaultSource: defaultSource,
             );
-            // Skip mods with no value and no dynamic properties
-            if (mod.value == 0 && !mod.isDynamic) continue;
+            // Skip mods with no base value and no dynamic properties
+            if (mod.baseValue == 0 && !mod.isDynamic) continue;
             mods.putIfAbsent(stat, () => []);
             mods[stat]!.add(mod);
           }
@@ -306,7 +306,7 @@ class HeroAssemblyService {
           if (value == 0) continue;
           
           mods.putIfAbsent(stat, () => []);
-          mods[stat]!.add(StatModification(value: value, source: defaultSource));
+          mods[stat]!.add(StaticStatModification(value: value, source: defaultSource));
         }
       } catch (_) {
         // Skip malformed entries

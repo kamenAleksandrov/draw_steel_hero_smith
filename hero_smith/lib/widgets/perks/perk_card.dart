@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
+import '../../core/db/app_database.dart' as db;
 import '../../core/models/component.dart';
 import '../../core/services/perk_grants_service.dart';
 import '../../core/theme/navigation_theme.dart';
@@ -27,13 +30,37 @@ const _perkGroupEmoji = {
   'supernatural': '✨',
 };
 
+/// Convert a db.Component to a Map for UI compatibility
+Map<String, dynamic> _componentToMap(db.Component c) {
+  final data = c.dataJson.isNotEmpty 
+      ? (Map<String, dynamic>.from(
+          (c.dataJson.startsWith('{') ? c.dataJson : '{}') as String == c.dataJson 
+              ? _tryParseJson(c.dataJson) ?? {} 
+              : {}))
+      : <String, dynamic>{};
+  return {
+    'id': c.id,
+    'name': c.name,
+    'type': c.type,
+    ...data,
+  };
+}
+
+Map<String, dynamic>? _tryParseJson(String json) {
+  try {
+    return Map<String, dynamic>.from(
+        const JsonDecoder().convert(json) as Map);
+  } catch (_) {
+    return null;
+  }
+}
+
 /// Provider for loading perk grant choices for a specific hero and perk
 final _perkGrantChoicesProvider = FutureProvider.family<
     Map<String, List<String>>,
     ({String heroId, String perkId})>((ref, args) async {
-  final db = ref.read(appDatabaseProvider);
-  return PerkGrantsService().getAllGrantChoicesForPerk(
-    db: db,
+  final service = ref.read(perkGrantsServiceProvider);
+  return service.getAllGrantChoicesForPerk(
     heroId: args.heroId,
     perkId: args.perkId,
   );
@@ -42,27 +69,31 @@ final _perkGrantChoicesProvider = FutureProvider.family<
 /// Provider for loading hero's skills
 final _heroSkillIdsProvider =
     FutureProvider.family<List<String>, String>((ref, heroId) async {
-  final db = ref.read(appDatabaseProvider);
-  return PerkGrantsService().getHeroSkillIds(db: db, heroId: heroId);
+  final service = ref.read(perkGrantsServiceProvider);
+  return service.getHeroSkillIds(heroId: heroId);
 });
 
 /// Provider for loading hero's languages
 final _heroLanguageIdsProvider =
     FutureProvider.family<List<String>, String>((ref, heroId) async {
-  final db = ref.read(appDatabaseProvider);
-  return PerkGrantsService().getHeroLanguageIds(db: db, heroId: heroId);
+  final service = ref.read(perkGrantsServiceProvider);
+  return service.getHeroLanguageIds(heroId: heroId);
 });
 
-/// Provider for loading all skills
+/// Provider for loading all skills (as Maps for UI compatibility)
 final _allSkillsProvider =
     FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  return PerkGrantsService().loadSkills();
+  final service = ref.read(perkGrantsServiceProvider);
+  final components = await service.loadSkills();
+  return components.map(_componentToMap).toList();
 });
 
-/// Provider for loading all languages
+/// Provider for loading all languages (as Maps for UI compatibility)
 final _allLanguagesProvider =
     FutureProvider<List<Map<String, dynamic>>>((ref) async {
-  return PerkGrantsService().loadLanguages();
+  final service = ref.read(perkGrantsServiceProvider);
+  final components = await service.loadLanguages();
+  return components.map(_componentToMap).toList();
 });
 
 class PerkCard extends ConsumerWidget {
@@ -840,8 +871,7 @@ class PerkCard extends ConsumerWidget {
                         Navigator.pop(ctx);
                         if (id == null || heroId == null) return;
 
-                        final db = ref.read(appDatabaseProvider);
-                        final service = PerkGrantsService();
+                        final service = ref.read(perkGrantsServiceProvider);
 
                         // Update the choice list
                         List<String> newChoices;
@@ -862,7 +892,6 @@ class PerkCard extends ConsumerWidget {
 
                         // Save choice and apply changes (removes old grants, adds new ones)
                         await service.saveGrantChoiceAndApply(
-                          db: db,
                           heroId: heroId!,
                           perkId: perk.id,
                           grantType: grantType,
@@ -984,8 +1013,7 @@ class PerkCard extends ConsumerWidget {
                         Navigator.pop(ctx);
                         if (id == null || heroId == null) return;
 
-                        final db = ref.read(appDatabaseProvider);
-                        final service = PerkGrantsService();
+                        final service = ref.read(perkGrantsServiceProvider);
 
                         // Update the choice list
                         List<String> newChoices;
@@ -1006,7 +1034,6 @@ class PerkCard extends ConsumerWidget {
 
                         // Save choice and apply changes (removes old grants, adds new ones)
                         await service.saveGrantChoiceAndApply(
-                          db: db,
                           heroId: heroId!,
                           perkId: perk.id,
                           grantType: 'language',

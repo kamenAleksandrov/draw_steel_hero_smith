@@ -1121,6 +1121,14 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             ? 'Allowed types: ${slot.allowedTypes.map(_formatKitTypeName).join(', ')}'
             : null;
 
+        // Collect IDs of kits selected in OTHER slots to prevent duplicates
+        final excludeIds = <String>[];
+        for (var j = 0; j < _selectedKitIds.length; j++) {
+          if (j != currentIndex && _selectedKitIds[j] != null) {
+            excludeIds.add(_selectedKitIds[j]!);
+          }
+        }
+
         equipmentSlots.add(
           EquipmentSlot(
             label: label,
@@ -1131,6 +1139,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             onChanged: (kitId) => _handleKitChangedAtSlot(currentIndex, kitId),
             helperText: helperText,
             classId: _selectedClass?.classId,
+            excludeItemIds: excludeIds,
           ),
         );
         kitIndex++;
