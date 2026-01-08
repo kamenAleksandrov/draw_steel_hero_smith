@@ -54,7 +54,6 @@ class _StartingPerksWidgetState extends ConsumerState<StartingPerksWidget>
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
 
-  bool _isExpanded = false;
 
   StartingPerkPlan? _plan;
   final Map<String, List<String?>> _selections = {};

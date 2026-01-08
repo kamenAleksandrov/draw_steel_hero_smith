@@ -97,7 +97,6 @@ class _CommonAbilitiesViewState extends State<CommonAbilitiesView>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return FutureBuilder<List<Component>>(
       future: _loadCommonAbilities(),

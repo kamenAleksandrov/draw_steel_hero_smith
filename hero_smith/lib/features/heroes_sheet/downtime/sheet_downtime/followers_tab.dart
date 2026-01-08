@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime_tracking.dart';
-import '../../../../core/theme/hero_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/followers_tab_text.dart';
 import 'follower_editor_dialog.dart';

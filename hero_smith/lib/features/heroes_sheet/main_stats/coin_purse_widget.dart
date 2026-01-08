@@ -447,12 +447,6 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
     return str;
   }
 
-  double _getIncrementStep(double currentValue) {
-    // Use smart increments: 0.01 for values < 0.1, 0.1 for values < 1, 1 for values >= 1
-    if (currentValue < 0.1) return 0.01;
-    if (currentValue < 1) return 0.1;
-    return 1.0;
-  }
 
   Widget _buildQuantityButton({
     required IconData icon,

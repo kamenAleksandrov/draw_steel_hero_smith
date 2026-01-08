@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:hero_smith/core/theme/heroes_sheet/story/sheet_story_ancestry_theme.dart';
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_ancestry_section_text.dart';
 import 'package:hero_smith/core/theme/navigation_theme.dart';
 

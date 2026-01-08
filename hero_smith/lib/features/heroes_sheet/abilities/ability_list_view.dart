@@ -115,7 +115,6 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     
     return FutureBuilder<List<Component>>(
       future: _loadAbilityComponents(widget.abilityIds),

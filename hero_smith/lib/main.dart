@@ -7,9 +7,7 @@ import 'features/main_pages/story/story_page.dart';
 import 'features/main_pages/gear/gear_page.dart';
 import 'features/main_pages/downtime/downtime_projects_page.dart';
 import 'features/splash/splash_screen.dart';
-import 'core/theme/ds_theme.dart';
 import 'core/db/providers.dart';
-import 'core/db/app_database.dart';
 
 void main() {
   runApp(const ProviderScope(child: HeroSmithApp()));

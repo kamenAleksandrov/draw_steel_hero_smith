@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/repositories/hero_repository.dart';
-import '../../../core/theme/ability_colors.dart';
 import 'hero_main_stats_models.dart';
 
 /// Hero token color - Royal Purple for heroic deeds

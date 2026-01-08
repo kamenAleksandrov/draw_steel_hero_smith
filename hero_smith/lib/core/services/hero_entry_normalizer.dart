@@ -5,10 +5,8 @@ import 'package:drift/drift.dart';
 
 import '../db/app_database.dart' as db;
 import '../repositories/hero_entry_repository.dart';
-import '../repositories/hero_repository.dart';
 import 'damage_resistance_service.dart';
 import 'hero_config_service.dart';
-import 'kit_bonus_service.dart';
 
 /// Normalizes hero_entries to ensure correct metadata and completeness.
 /// 
@@ -21,13 +19,11 @@ class HeroEntryNormalizer {
   HeroEntryNormalizer(this._db)
       : _entries = HeroEntryRepository(_db),
         _config = HeroConfigService(_db),
-        _heroRepo = HeroRepository(_db),
         _resistanceService = DamageResistanceService(_db);
 
   final db.AppDatabase _db;
   final HeroEntryRepository _entries;
   final HeroConfigService _config;
-  final HeroRepository _heroRepo;
   final DamageResistanceService _resistanceService;
 
   /// Keys in hero_values that should be removed entirely.
@@ -1020,27 +1016,5 @@ class HeroEntryNormalizer {
   /// - hero_values stores the computed aggregate for runtime use
   Future<void> _recomputeResistances(String heroId) async {
     await _resistanceService.recomputeAggregateResistances(heroId);
-  }
-
-  EquipmentBonuses? _parseLegacyEquipmentBonuses(db.HeroValue row) {
-    final raw = row.jsonValue ?? row.textValue;
-    if (raw == null || raw.isEmpty) return null;
-    try {
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      return EquipmentBonuses(
-        staminaBonus: (decoded['stamina'] as num?)?.toInt() ?? 0,
-        speedBonus: (decoded['speed'] as num?)?.toInt() ?? 0,
-        stabilityBonus: (decoded['stability'] as num?)?.toInt() ?? 0,
-        disengageBonus: (decoded['disengage'] as num?)?.toInt() ?? 0,
-        meleeDamageBonus: (decoded['melee_damage'] as num?)?.toInt() ?? 0,
-        rangedDamageBonus: (decoded['ranged_damage'] as num?)?.toInt() ?? 0,
-        meleeDistanceBonus:
-            (decoded['melee_distance'] as num?)?.toInt() ?? 0,
-        rangedDistanceBonus:
-            (decoded['ranged_distance'] as num?)?.toInt() ?? 0,
-      );
-    } catch (_) {
-      return null;
-    }
   }
 }

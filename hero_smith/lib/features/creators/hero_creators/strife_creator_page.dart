@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,6 @@ import '../../../core/models/component.dart';
 import '../../../core/models/perks_models.dart';
 import '../../../core/models/skills_models.dart';
 import '../../../core/models/subclass_models.dart';
-import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/services/class_feature_data_service.dart';
 import '../../../core/services/class_feature_grants_service.dart';
@@ -931,18 +929,7 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     }
   }
 
-  /// Parse JSON string to map, returns null on error
-  Future<Map<String, dynamic>?> _parseJson(String jsonStr) async {
-    try {
-      final decoded = jsonDecode(jsonStr);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
-      }
-      return null;
-    } catch (_) {
-      return null;
-    }
-  }
+
 
   void _markDirty() {
     // Don't mark dirty during initial data loading or before first frame completes

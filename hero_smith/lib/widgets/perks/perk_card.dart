@@ -8,7 +8,6 @@ import '../../core/models/component.dart';
 import '../../core/services/perk_grants_service.dart';
 import '../../core/theme/navigation_theme.dart';
 import '../abilities/ability_expandable_item.dart';
-import '../shared/section_widgets.dart';
 import '../shared/expandable_card.dart';
 
 // Perk group colors for dark theme

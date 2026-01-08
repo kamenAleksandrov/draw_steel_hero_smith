@@ -7,7 +7,6 @@ import '../../../core/data/downtime_data_source.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/models/downtime.dart';
-import '../../../core/repositories/hero_repository.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/treasures_tab_text.dart';
 import '../../../widgets/treasures/treasures.dart';

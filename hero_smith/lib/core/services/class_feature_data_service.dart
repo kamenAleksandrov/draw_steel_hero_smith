@@ -465,26 +465,6 @@ class ClassFeatureDataService {
     return count;
   }
   
-  /// Keys that indicate an option is tied to a specific subclass selection.
-  static const List<String> _subclassOptionKeys = [
-    'subclass',
-    'subclass_name',
-    'tradition',
-    'order',
-    'doctrine',
-    'mask',
-    'path',
-    'circle',
-    'college',
-    'element',
-    'role',
-    'discipline',
-    'oath',
-    'school',
-    'guild',
-    'name',
-  ];
-
   /// Keys used to decide if an option is active for a subclass selection.
   /// This intentionally excludes 'name' so domain/deity grants with a name
   /// are not treated as subclass-gated.

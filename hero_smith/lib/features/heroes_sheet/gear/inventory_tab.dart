@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../core/text/heroes_sheet/gear/inventory_tab_text.dart';
 import 'gear_dialogs.dart';

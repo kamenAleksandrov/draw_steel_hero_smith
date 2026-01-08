@@ -23,7 +23,6 @@ class _OptionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final selectionLimit = optionsContext.selectionLimit;
     final minimumRequired = optionsContext.minimumRequired;
     final allowMultiple = selectionLimit != 1;
@@ -693,7 +692,7 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
       displayText = currentSkillName;
     } else if (hasSkillId && _allSkills != null) {
       // Skill ID exists but name lookup failed - show ID as fallback
-      displayText = currentSkillId!;
+      displayText = currentSkillId;
     } else if (hasSkillId) {
       // Still loading skills, will be resolved once loaded
       displayText = OptionsSectionText.selectSkillPlaceholder;

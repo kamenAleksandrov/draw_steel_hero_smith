@@ -20,7 +20,6 @@ import '../../../widgets/creature stat block/hero_green_form_widget.dart';
 import '../downtime/hero_downtime_tracking_page.dart';
 import 'hero_main_stats_providers.dart';
 import 'coin_purse_model.dart';
-import 'coin_purse_widget.dart';
 import 'conditions_tracker_widget.dart';
 import 'damage_resistance_tracker_widget.dart';
 import 'hero_main_stats_models.dart';

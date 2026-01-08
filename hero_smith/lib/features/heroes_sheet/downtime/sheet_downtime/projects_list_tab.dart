@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/downtime.dart';
 import '../../../../core/models/downtime_tracking.dart';
-import '../../../../core/theme/hero_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
 import '../../../../core/text/heroes_sheet/downtime/projects_list_tab_text.dart';
 import '../../../../core/data/downtime_data_source.dart';

@@ -15,17 +15,7 @@ import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/abilities/abilities_shared.dart';
 
 // Helper classes for picker
-class _SearchOption {
-  final String value;
-  final String label;
-  final String? subtitle;
 
-  const _SearchOption({
-    required this.value,
-    required this.label,
-    this.subtitle,
-  });
-}
 
 class _PickerSelection {
   final String? value;

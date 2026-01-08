@@ -84,7 +84,6 @@ class HeroicResourceSectionWidget extends StatelessWidget {
         
         // Get the resource-specific color
         final resourceColor = AbilityColors.getHeroicResourceColor(resourceName);
-        final resourceLightColor = AbilityColors.getHeroicResourceLightColor(resourceName);
 
         return Padding(
           padding: const EdgeInsets.only(left: 12),

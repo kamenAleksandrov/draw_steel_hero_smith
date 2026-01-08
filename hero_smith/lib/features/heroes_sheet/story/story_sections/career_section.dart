@@ -28,15 +28,7 @@ final _componentByIdProvider =
   );
 });
 
-// Provider to get career project points used status
-final _careerProjectPointsUsedProvider =
-    FutureProvider.family<bool, String>((ref, heroId) async {
-  final db = ref.read(appDatabaseProvider);
-  final values = await db.getHeroValues(heroId);
-  final value =
-      values.where((v) => v.key == 'career.project_points_used').firstOrNull;
-  return value?.value == 1;
-});
+
 
 /// Data class for career selection.
 class CareerSelectionData {

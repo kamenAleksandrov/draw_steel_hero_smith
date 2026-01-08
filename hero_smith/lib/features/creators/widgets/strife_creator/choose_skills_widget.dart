@@ -301,7 +301,6 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
   final SetEquality<String> _setEquality = const SetEquality<String>();
   final ListEquality<String> _listEquality = const ListEquality<String>();
 
-  bool _isExpanded = false;
   bool _isLoading = true;
   String? _error;
 

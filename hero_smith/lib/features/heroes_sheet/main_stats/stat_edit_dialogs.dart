@@ -12,8 +12,6 @@ import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dar
 import '../../../core/theme/navigation_theme.dart';
 import 'coin_purse_model.dart';
 import 'coin_purse_widget.dart';
-import 'hero_main_stats_models.dart';
-import 'hero_stamina_helpers.dart';
 
 /// Common input formatters for numeric fields.
 List<TextInputFormatter> numericFormatters(bool allowNegative, int maxLength) {

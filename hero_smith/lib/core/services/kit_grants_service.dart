@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 
 import '../db/app_database.dart' as db;
 import '../models/component.dart' as model;

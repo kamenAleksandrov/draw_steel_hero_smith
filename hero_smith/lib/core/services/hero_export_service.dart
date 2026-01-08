@@ -104,38 +104,8 @@ class HeroExportService {
     'condition_immunity'
   };
 
-  // Legacy short codes for HS: format backward compatibility
-  static const _legacyShortCodes = {
-    'class': 'c',
-    'subclass': 'sc',
-    'ancestry': 'a',
-    'ancestry_trait': 'at',
-    'career': 'ca',
-    'kit': 'k',
-    'deity': 'd',
-    'domain': 'dm',
-    'ability': 'ab',
-    'skill': 'sk',
-    'perk': 'pk',
-    'language': 'lg',
-    'title': 'ti',
-    'equipment': 'eq',
-    'treasure': 'tr',
-    'stat_mod': 'sm',
-    'resistance': 'rs',
-    'condition_immunity': 'ci',
-    'kit_feature': 'kf',
-    'kit_stat_bonus': 'ks',
-    'equipment_bonuses': 'eb',
-    'feature': 'ft',
-    'complication': 'cm',
-    'culture': 'cu',
-  };
 
-  static final _legacyCodeToType = {
-    for (final e in _legacyShortCodes.entries) e.value: e.key
-  };
-
+ 
   // ============================================================
   // COMPACT FORMAT (HS:) CONSTANTS - for backward compatibility
   // ============================================================
@@ -218,14 +188,6 @@ class HeroExportService {
     'active_effects',
   };
 
-  // Score keys that should always be imported from HS: format
-  static const _scoreKeys = {
-    'might_score',
-    'agility_score',
-    'reason_score',
-    'intuition_score',
-    'presence_score',
-  };
 
   // Prefixes to strip from IDs for ultra-compact export (type -> prefix)
   static const _typePrefix = {
@@ -906,57 +868,6 @@ class HeroExportService {
     }
   }
 
-  /// Parse compact values (legacy HS: format): "v5,x100,h45"
-  Future<void> _importCompactValues(String heroId, String valuesStr) async {
-    final values = valuesStr.split(',');
-
-    for (final v in values) {
-      if (v.isEmpty) continue;
-
-      final prefix = v[0];
-      final value = int.tryParse(v.substring(1));
-      if (value == null) continue;
-
-      String? key;
-      switch (prefix) {
-        case 'v':
-          key = 'score.victories';
-          break;
-        case 'x':
-          key = 'score.exp';
-          break;
-        case 'w':
-          key = 'score.wealth';
-          break;
-        case 'r':
-          key = 'score.renown';
-          break;
-        case 'h':
-          key = 'stamina.current';
-          break;
-        case 'c':
-          key = 'recoveries.current';
-          break;
-        case 'e':
-          key = 'heroic.current';
-          break;
-        case 's':
-          key = 'surges.current';
-          break;
-        case 'k':
-          key = 'heroTokens.current';
-          break;
-      }
-
-      if (key != null) {
-        await _db.upsertHeroValue(
-          heroId: heroId,
-          key: key,
-          value: value,
-        );
-      }
-    }
-  }
 
   /// Import user data from ultra-compact format
   /// Supports both v1 (gzip+base64) and v2+ (base64url only)

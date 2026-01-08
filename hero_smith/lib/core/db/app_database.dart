@@ -1184,7 +1184,7 @@ class AppDatabase extends _$AppDatabase {
           ..where(
               (t) => t.heroId.equals(heroId) & t.entryType.equals(entryType)))
         .get();
-    
+
     final result = <String, Map<String, dynamic>>{};
     for (final row in rows) {
       Map<String, dynamic> payload = {};

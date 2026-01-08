@@ -44,7 +44,6 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
       const MapEquality<String, String?>();
   final SetEquality<String> _setEquality = const SetEquality<String>();
 
-  bool _isExpanded = false;
   bool _isLoading = true;
   String? _error;
 

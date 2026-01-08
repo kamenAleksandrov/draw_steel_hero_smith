@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/text/heroes_sheet/main_stats/stamina_bar_text.dart';
 import 'hero_main_stats_models.dart';
-import 'hero_stamina_helpers.dart';
 
 /// Dual-track stamina bar with clear zone visualization:
 /// - Top track: Current stamina with smooth blending gradient zones

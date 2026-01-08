@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/db/providers.dart';
 import '../../core/models/component.dart' as model;
-import '../../core/services/perk_grants_service.dart';
 import '../../core/theme/navigation_theme.dart';
 import '../abilities/ability_expandable_item.dart';
 
@@ -410,38 +409,6 @@ class _PerksSelectionWidgetState extends ConsumerState<PerksSelectionWidget> {
     );
   }
 
-  Widget _buildAddPerkButton(
-    BuildContext context,
-    List<String> currentSelections,
-    Map<String, model.Component> perkMap,
-    Map<String, List<model.Component>> grouped,
-    List<String> sortedGroupKeys,
-    Color borderColor,
-  ) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () => _openAddPerkPicker(
-          context,
-          currentSelections,
-          perkMap,
-          grouped,
-          sortedGroupKeys,
-          borderColor,
-        ),
-        icon: const Icon(Icons.add, size: 20),
-        label: const Text('Add Perk'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: borderColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildSelectionMode(
     BuildContext context,

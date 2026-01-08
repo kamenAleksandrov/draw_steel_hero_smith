@@ -3,7 +3,6 @@ import '../../core/theme/app_icons.dart';
 import '../../core/theme/navigation_theme.dart';
 import '../../core/models/downtime.dart';
 import '../../core/data/downtime_data_source.dart';
-import '../shared/expandable_card.dart';
 import '../../features/main_pages/downtime/project_category_detail_page.dart';
 import '../../features/main_pages/downtime/imbuement_echelon_detail_page.dart';
 import '../../features/main_pages/downtime/craftable_treasure_type_detail_page.dart';

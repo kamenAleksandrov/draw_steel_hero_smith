@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:drift/drift.dart';
 
 import '../db/app_database.dart' as db;
 import '../models/dynamic_modifier_model.dart';
