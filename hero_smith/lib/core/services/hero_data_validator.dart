@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../db/app_database.dart';
 
 /// Validation result containing issues found during hero data validation.
@@ -323,18 +325,20 @@ class HeroDataValidator {
 
   /// Print a summary of validation results.
   static void printSummary(List<HeroValidationResult> results) {
+    if (!kDebugMode) return;
+    
     final validCount = results.where((r) => r.isValid).length;
     final invalidCount = results.length - validCount;
     
-    print('=== Hero Data Validation Summary ===');
-    print('Total heroes: ${results.length}');
-    print('Valid: $validCount');
-    print('Invalid: $invalidCount');
+    debugPrint('=== Hero Data Validation Summary ===');
+    debugPrint('Total heroes: ${results.length}');
+    debugPrint('Valid: $validCount');
+    debugPrint('Invalid: $invalidCount');
     
     if (invalidCount > 0) {
-      print('\n=== Invalid Heroes ===');
+      debugPrint('\n=== Invalid Heroes ===');
       for (final result in results.where((r) => !r.isValid)) {
-        print(result);
+        debugPrint(result.toString());
       }
     }
   }

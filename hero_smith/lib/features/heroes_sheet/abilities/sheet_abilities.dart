@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,7 +50,9 @@ class _SheetAbilitiesState extends ConsumerState<SheetAbilities> {
         heroId: widget.heroId,
       );
     } catch (e) {
-      debugPrint('Failed to ensure perk grants: $e');
+      if (kDebugMode) {
+        debugPrint('Failed to ensure perk grants: $e');
+      }
     }
   }
 

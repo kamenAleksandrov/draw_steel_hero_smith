@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -427,7 +428,9 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
           missingIds.add(id);
         }
       } catch (e) {
-        debugPrint('Failed to resolve ability $id: $e');
+        if (kDebugMode) {
+          debugPrint('Failed to resolve ability $id: $e');
+        }
         missingIds.add(id);
       }
     }
@@ -452,7 +455,9 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
             ));
           }
         } catch (e) {
-          debugPrint('Failed to load ability $id from database: $e');
+          if (kDebugMode) {
+            debugPrint('Failed to load ability $id from database: $e');
+          }
         }
       }
     }

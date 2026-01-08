@@ -1,5 +1,6 @@
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -332,8 +333,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       if (_selectedClass != null) {
         final abilityIds =
             await db.getHeroComponentIds(widget.heroId, 'ability');
-        print(
-            '[StrifeCreatorPage] _loadHeroData: All abilityIds from DB: $abilityIds');
+        if (kDebugMode) {
+          debugPrint('[StrifeCreatorPage] _loadHeroData: All abilityIds from DB: $abilityIds');
+        }
 
         final languageIds =
             await db.getHeroComponentIds(widget.heroId, 'language');
@@ -344,8 +346,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         // First try to load saved strife ability selections directly
         final savedStrifeAbilitySelections =
             await _loadStrifeSelections('strife.ability_selections');
-        print(
-            '[StrifeCreatorPage] _loadHeroData: savedStrifeAbilitySelections: $savedStrifeAbilitySelections');
+        if (kDebugMode) {
+          debugPrint('[StrifeCreatorPage] _loadHeroData: savedStrifeAbilitySelections: $savedStrifeAbilitySelections');
+        }
 
         if (savedStrifeAbilitySelections.isNotEmpty) {
           _selectedAbilities = savedStrifeAbilitySelections;
@@ -357,8 +360,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
             abilityIds: abilityIds,
           );
         }
-        print(
-            '[StrifeCreatorPage] _loadHeroData: _selectedAbilities after load: $_selectedAbilities');
+        if (kDebugMode) {
+          debugPrint('[StrifeCreatorPage] _loadHeroData: _selectedAbilities after load: $_selectedAbilities');
+        }
 
         // ignore: unused_local_variable
         final assignedAbilityIds =
@@ -1448,7 +1452,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     HeroRepository repo,
     app_db.AppDatabase db,
   ) async {
-    debugPrint('[StrifeCreator] _applyEquipmentSelectionAndBonuses called with: $equipmentSlotIds');
+    if (kDebugMode) {
+      debugPrint('[StrifeCreator] _applyEquipmentSelectionAndBonuses called with: $equipmentSlotIds');
+    }
     
     // EXACT copy of Kits tab flow - do not add extra logic here
     await repo.saveEquipmentIds(widget.heroId, equipmentSlotIds);
@@ -1459,7 +1465,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     );
 
     final level = _selectedLevel;
-    debugPrint('[StrifeCreator] Calling applyKitGrants with heroLevel: $level');
+    if (kDebugMode) {
+      debugPrint('[StrifeCreator] Calling applyKitGrants with heroLevel: $level');
+    }
 
     // Use KitGrantsService to apply all kit grants (including stat mods like decrease_total)
     // This is the ONLY thing that saves to hero_entries - do not duplicate or interfere
@@ -1470,7 +1478,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       heroLevel: level,
     );
     
-    debugPrint('[StrifeCreator] applyKitGrants returned bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}, disengage=${bonuses.disengageBonus}');
+    if (kDebugMode) {
+      debugPrint('[StrifeCreator] applyKitGrants returned bonuses: stamina=${bonuses.staminaBonus}, speed=${bonuses.speedBonus}, stability=${bonuses.stabilityBonus}, disengage=${bonuses.disengageBonus}');
+    }
 
     // KitGrantsService now saves to both hero_entries AND hero_values.strife.equipment_bonuses
     // No need to save separately here
@@ -1500,8 +1510,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
       final classChanged =
           _savedClassId != null && _savedClassId != classData.classId;
       if (classChanged) {
-        debugPrint(
-            'Class changed from $_savedClassId to ${classData.classId} - clearing old strife data');
+        if (kDebugMode) {
+          debugPrint('Class changed from $_savedClassId to ${classData.classId} - clearing old strife data');
+        }
         await repo.clearStrifeData(widget.heroId);
       }
 
@@ -1548,7 +1559,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
       // 3.5. Apply kit grants (bonuses, abilities, stat mods like decrease_total) from selected equipment
       final slotOrderedEquipmentIds = List<String?>.from(_selectedKitIds);
-      debugPrint('[StrifeCreatorPage] _handleSave: Saving kits: $slotOrderedEquipmentIds');
+      if (kDebugMode) {
+        debugPrint('[StrifeCreatorPage] _handleSave: Saving kits: $slotOrderedEquipmentIds');
+      }
 
       // Persist equipment selection and recalc bonuses using the same flow as KitsTab
       final equipmentBonuses = await _applyEquipmentSelectionAndBonuses(
@@ -1556,7 +1569,9 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         repo,
         db,
       );
-      debugPrint('[StrifeCreatorPage] _handleSave: Calculated bonuses: $equipmentBonuses');
+      if (kDebugMode) {
+        debugPrint('[StrifeCreatorPage] _handleSave: Calculated bonuses: $equipmentBonuses');
+      }
 
       // Auto-favorite the selected equipment so it shows up in the gear page favorites
       final equipmentIdsToFavorite =
@@ -1741,10 +1756,10 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
           .where((id) => id.isNotEmpty)
           .toList();
 
-      print(
-          '[StrifeCreatorPage] _handleSave: Saving abilities: $selectedAbilityIds');
-      print(
-          '[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
+      if (kDebugMode) {
+        debugPrint('[StrifeCreatorPage] _handleSave: Saving abilities: $selectedAbilityIds');
+        debugPrint('[StrifeCreatorPage] _handleSave: _selectedAbilities map: $_selectedAbilities');
+      }
 
       // Save ONLY user-selected abilities from strife creator UI (not from other sources)
       // Abilities from kits, class features, ancestry, etc. are already saved by their respective services

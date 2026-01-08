@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode, kReleaseMode;
 import 'package:path_provider/path_provider.dart';
 
 import '../services/hero_entry_normalizer.dart';
@@ -344,7 +344,7 @@ class AppDatabase extends _$AppDatabase {
       }
     } catch (e) {
       // If migration fails, log it but don't crash
-      print('Migration warning: $e');
+      debugPrint('Migration warning: $e');
     }
   }
 

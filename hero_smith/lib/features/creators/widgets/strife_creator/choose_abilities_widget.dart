@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/models/class_data.dart';
@@ -180,11 +181,13 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
         subclass: subclass,
       );
     } catch (e, stackTrace) {
-      debugPrint('Error mapping component to option:');
-      debugPrint('Component ID: ${component.id}');
-      debugPrint('Component Name: ${component.name}');
-      debugPrint('Error: $e');
-      debugPrint('Stack trace: $stackTrace');
+      if (kDebugMode) {
+        debugPrint('Error mapping component to option:');
+        debugPrint('Component ID: ${component.id}');
+        debugPrint('Component Name: ${component.name}');
+        debugPrint('Error: $e');
+        debugPrint('Stack trace: $stackTrace');
+      }
       rethrow;
     }
   }
