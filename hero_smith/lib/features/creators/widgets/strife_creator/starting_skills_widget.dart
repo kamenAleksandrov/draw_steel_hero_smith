@@ -6,6 +6,7 @@ import '../../../../core/models/skills_models.dart';
 import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -583,7 +584,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                   EdgeInsets.only(bottom: index == slots.length - 1 ? 0 : 12),
               child: DropdownButtonFormField<String?>(
                 value: current,
-                dropdownColor: const Color(0xFF2A2A2A),
+                dropdownColor: FormTheme.surface,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
                 decoration: InputDecoration(
                   labelText:
@@ -601,7 +602,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
                     borderSide: BorderSide(color: _accent),
                   ),
                   filled: true,
-                  fillColor: const Color(0xFF2A2A2A),
+                  fillColor: FormTheme.surface,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
@@ -629,3 +630,4 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget> {
     );
   }
 }
+

@@ -10,6 +10,7 @@ import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
@@ -614,7 +615,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                               '${ChooseAbilitiesWidgetText.choiceLabelPrefix}${index + 1}',
                           labelStyle: TextStyle(color: Colors.grey.shade400),
                           filled: true,
-                          fillColor: const Color(0xFF2A2A2A),
+                          fillColor: FormTheme.surface,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
                             borderSide: BorderSide(color: Colors.grey.shade700),
@@ -782,7 +783,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                             color: Colors.grey.shade500,
                           ),
                           filled: true,
-                          fillColor: const Color(0xFF2A2A2A),
+                          fillColor: FormTheme.surface,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -836,7 +837,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                                   decoration: BoxDecoration(
                                     color: currentValue == null
                                         ? _accent.withValues(alpha: 0.15)
-                                        : const Color(0xFF2A2A2A),
+                                        : FormTheme.surface,
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                       color: currentValue == null
@@ -909,7 +910,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? _accent.withValues(alpha: 0.15)
-                                            : const Color(0xFF2A2A2A),
+                                            : FormTheme.surface,
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
                                           color: isSelected
@@ -1155,3 +1156,4 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget>
     return null;
   }
 }
+

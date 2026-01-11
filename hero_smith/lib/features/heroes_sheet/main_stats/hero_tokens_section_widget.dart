@@ -11,13 +11,14 @@ import 'package:flutter/services.dart';
 
 import '../../../core/repositories/hero_repository.dart';
 import 'hero_main_stats_models.dart';
+import '../../../core/theme/main_stats_theme.dart';
 
 /// Hero token color - Royal Purple for heroic deeds
 class HeroTokenColors {
   HeroTokenColors._();
   
   static const Color primary = Color.fromARGB(255, 89, 64, 255);
-  static const Color light = Color(0xFFEDE9FE);
+  static const Color light = MainStatsTheme.heroTokenLight;
   static const Color dark = Color.fromARGB(255, 50, 33, 182);
 }
 
@@ -333,3 +334,4 @@ Future<void> showHeroTokensInfoDialog(BuildContext context) async {
     },
   );
 }
+

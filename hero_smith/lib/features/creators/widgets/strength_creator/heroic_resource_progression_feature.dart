@@ -102,7 +102,7 @@ class _HeroicResourceProgressionFeatureState
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: const Color(0xFF252525),
+        color: FormTheme.surfaceDark,
         border: Border.all(
           color: featureStyle.borderColor.withValues(alpha: widget.isExpanded ? 0.7 : 0.4),
           width: widget.isExpanded ? 2 : 1.5,
@@ -305,7 +305,7 @@ class _HeroicResourceProgressionFeatureState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
+        color: FormTheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.grey.withValues(alpha: 0.3),
@@ -332,3 +332,4 @@ class _HeroicResourceProgressionFeatureState
     );
   }
 }
+

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/services/green_forms_service.dart';
+import '../../core/theme/creature_theme.dart';
 import 'creature_stat_block.dart';
 import 'green_animal_form.dart';
 
@@ -120,7 +121,8 @@ class _GreenFormsSelectorState extends State<GreenFormsSelector>
   }
 
   /// Use a softer, less saturated green that's easier on the eyes
-  Color get _accentColor => widget.accentColor ?? const Color(0xFF4A7C59);
+  Color get _accentColor =>
+      widget.accentColor ?? CreatureTheme.greenFormAccent;
 
   @override
   void dispose() {

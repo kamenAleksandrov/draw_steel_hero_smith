@@ -68,7 +68,7 @@ class _FeatureCardState extends State<_FeatureCard>
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: const Color(0xFF252525),
+        color: FormTheme.surfaceDark,
         border: Border.all(
           color: featureStyle.borderColor.withValues(alpha: _isExpanded ? 0.7 : 0.4),
           width: _isExpanded ? 2 : 1.5,
@@ -298,3 +298,4 @@ class _FeatureStyle {
     }
   }
 }
+

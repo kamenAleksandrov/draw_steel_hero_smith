@@ -9,6 +9,7 @@ import '../../../core/models/component.dart';
 import '../../../core/repositories/hero_entry_repository.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/text/heroes_sheet/abilities/ability_list_view_text.dart';
+import '../../../core/theme/ability_colors.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
@@ -45,11 +46,11 @@ extension ActionCategoryLabel on ActionCategory {
   Color get color {
     switch (this) {
       case ActionCategory.actions:
-        return const Color(0xFFE65100); // Orange-red to match Main Action badge
+        return AbilityColors.getActionTypeColor('main action');
       case ActionCategory.maneuvers:
-        return NavigationTheme.kitsColor;
+        return AbilityColors.getActionTypeColor('maneuver');
       case ActionCategory.triggered:
-        return const Color(0xFF9C27B0); // Purple to match Triggered Action badge
+        return AbilityColors.getActionTypeColor('triggered action');
     }
   }
 }
@@ -60,10 +61,12 @@ class AbilityListView extends ConsumerStatefulWidget {
     super.key, 
     required this.abilityIds, 
     required this.heroId,
+    this.loadAbilities,
   });
 
   final List<String> abilityIds;
   final String heroId;
+  final Future<List<Component>> Function(List<String> abilityIds)? loadAbilities;
 
   @override
   ConsumerState<AbilityListView> createState() => _AbilityListViewState();
@@ -117,8 +120,10 @@ class _AbilityListViewState extends ConsumerState<AbilityListView>
   @override
   Widget build(BuildContext context) {
     
+    final load = widget.loadAbilities ?? _loadAbilityComponents;
+
     return FutureBuilder<List<Component>>(
-      future: _loadAbilityComponents(widget.abilityIds),
+      future: load(widget.abilityIds),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator(color: NavigationTheme.abilitiesColor));

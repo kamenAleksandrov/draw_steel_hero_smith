@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/navigation_theme.dart';
+import 'core/theme/app_colors.dart';
 import 'features/main_pages/heroes_page.dart';
 import 'features/main_pages/strife/strife_page.dart';
 import 'features/main_pages/story/story_page.dart';
@@ -21,11 +22,11 @@ class HeroSmithApp extends StatelessWidget {
     return MaterialApp(
       title: 'Hero Smith',
       theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF4A4A4A),
+        colorSchemeSeed: AppColors.primary,
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        colorSchemeSeed: const Color(0xFF4A4A4A),
+        colorSchemeSeed: AppColors.primary,
         brightness: Brightness.dark,
         useMaterial3: true,
       ),

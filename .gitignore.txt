@@ -1,2 +1,3 @@
 compendium/
 *.keystore
+android/key.properties

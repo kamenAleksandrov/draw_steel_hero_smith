@@ -4,7 +4,9 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../core/text/heroes_sheet/main_stats/coin_purse_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/main_stats_theme.dart';
 import 'coin_purse_model.dart';
 
 /// A widget that displays and allows editing of coins in the purse.
@@ -24,16 +26,6 @@ class CoinPurseWidget extends StatefulWidget {
 
 class _CoinPurseWidgetState extends State<CoinPurseWidget> {
   late CoinPurse _purse;
-
-  // Available colors for coin cards
-  static const List<int> _coinColors = [
-    0xFFFFD54F, // Amber (Gold)
-    0xFFB0BEC5, // Blue Grey (Silver)
-    0xFFFF8A65, // Deep Orange (Copper)
-    0xFFE57373, // Red (Ruby)
-    0xFF4DD0E1, // Cyan (Diamond)
-    0xFFFFFFFF, // White (Platinum)
-  ];
 
   @override
   void initState() {
@@ -60,7 +52,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
     final nameController = TextEditingController();
     final quantityController = TextEditingController();
     final multiplierController = TextEditingController(text: '1.0');
-    int selectedColor = _coinColors[0];
+    int selectedColor = MainStatsTheme.coinColors[0];
 
     final result = await showDialog<Coin>(
       context: context,
@@ -86,7 +78,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                   ),
                   const SizedBox(width: 12),
                   const Text(
-                    'Add Coin',
+                    CoinPurseText.addCoinTitle,
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -99,9 +91,9 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     autofocus: true,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: 'Coin Name',
+                      labelText: CoinPurseText.coinNameLabel,
                       labelStyle: TextStyle(color: Colors.grey.shade400),
-                      hintText: 'e.g., Gold, Silver, Copper',
+                      hintText: CoinPurseText.coinNameHint,
                       hintStyle: TextStyle(color: Colors.grey.shade600),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey.shade700),
@@ -123,9 +115,9 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Quantity',
+                            labelText: CoinPurseText.quantityLabel,
                             labelStyle: TextStyle(color: Colors.grey.shade400),
-                            hintText: 'e.g., 100',
+                            hintText: CoinPurseText.quantityHint,
                             hintStyle: TextStyle(color: Colors.grey.shade600),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey.shade700),
@@ -150,9 +142,9 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Value',
+                            labelText: CoinPurseText.valueLabel,
                             labelStyle: TextStyle(color: Colors.grey.shade400),
-                            hintText: 'e.g., 1.0',
+                            hintText: CoinPurseText.valueHint,
                             hintStyle: TextStyle(color: Colors.grey.shade600),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey.shade700),
@@ -173,12 +165,12 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text('Color', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                  Text(CoinPurseText.colorLabel, style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _coinColors.map((colorValue) {
+                    children: MainStatsTheme.coinColors.map((colorValue) {
                       final isSelected = selectedColor == colorValue;
                       return GestureDetector(
                         onTap: () => setDialogState(() => selectedColor = colorValue),
@@ -193,7 +185,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                               width: 2,
                             ),
                             boxShadow: isSelected
-                                ? [BoxShadow(color: Color(colorValue).withAlpha(150), blurRadius: 8)]
+                            ? [BoxShadow(color: Color(colorValue).withAlpha(150), blurRadius: 8)]
                                 : null,
                           ),
                           child: isSelected
@@ -211,13 +203,13 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.grey.shade400,
                   ),
-                  child: const Text('Cancel'),
+                  child: const Text(CoinPurseText.cancel),
                 ),
                 FilledButton(
                   onPressed: () {
                     final name = nameController.text.trim();
                     final quantity = int.tryParse(quantityController.text);
-                    final multiplier = double.tryParse(multiplierController.text);
+                                  final multiplier = double.tryParse(multiplierController.text);
                     if (name.isNotEmpty && quantity != null && quantity > 0 && multiplier != null && multiplier > 0) {
                       Navigator.of(dialogContext).pop(
                         Coin(name: name, quantity: quantity, multiplier: multiplier, colorValue: selectedColor),
@@ -228,7 +220,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     backgroundColor: Color(selectedColor),
                     foregroundColor: Colors.black87,
                   ),
-                  child: const Text('Add'),
+                  child: const Text(CoinPurseText.add),
                 ),
               ],
             );
@@ -272,7 +264,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                   ),
                   const SizedBox(width: 12),
                   const Text(
-                    'Edit Coin',
+                    CoinPurseText.editCoinTitle,
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -285,7 +277,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     autofocus: true,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: 'Coin Name',
+                      labelText: CoinPurseText.coinNameLabel,
                       labelStyle: TextStyle(color: Colors.grey.shade400),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey.shade700),
@@ -307,7 +299,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Quantity',
+                            labelText: CoinPurseText.quantityLabel,
                             labelStyle: TextStyle(color: Colors.grey.shade400),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey.shade700),
@@ -332,7 +324,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Value',
+                            labelText: CoinPurseText.valueLabel,
                             labelStyle: TextStyle(color: Colors.grey.shade400),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.grey.shade700),
@@ -353,12 +345,12 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text('Color', style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                  Text(CoinPurseText.colorLabel, style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _coinColors.map((colorValue) {
+                    children: MainStatsTheme.coinColors.map((colorValue) {
                       final isSelected = selectedColor == colorValue;
                       return GestureDetector(
                         onTap: () => setDialogState(() => selectedColor = colorValue),
@@ -391,7 +383,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.grey.shade400,
                   ),
-                  child: const Text('Cancel'),
+                  child: const Text(CoinPurseText.cancel),
                 ),
                 FilledButton(
                   onPressed: () {
@@ -408,7 +400,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                     backgroundColor: Color(selectedColor),
                     foregroundColor: Colors.black87,
                   ),
-                  child: const Text('Save'),
+                  child: const Text(CoinPurseText.save),
                 ),
               ],
             );
@@ -512,7 +504,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
               IconButton(
                 onPressed: _showAddCoinDialog,
                 icon: Icon(Icons.add_circle, color: Colors.amber.shade400),
-                tooltip: 'Add coin',
+                tooltip: CoinPurseText.add,
                 visualDensity: VisualDensity.compact,
               ),
             ],
@@ -523,7 +515,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  'No coins yet. Tap + to add.',
+                  CoinPurseText.emptyState,
                   style: TextStyle(
                     color: Colors.grey.shade500,
                     fontStyle: FontStyle.italic,
@@ -667,7 +659,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                                       children: [
                                         Icon(Icons.edit, size: 16, color: Colors.grey.shade400),
                                         const SizedBox(width: 8),
-                                        const Text('Edit', style: TextStyle(color: Colors.white, fontSize: 13)),
+                                        const Text(CoinPurseText.edit, style: TextStyle(color: Colors.white, fontSize: 13)),
                                       ],
                                     ),
                                   ),
@@ -678,7 +670,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
                                       children: [
                                         Icon(Icons.delete, size: 16, color: Colors.red.shade400),
                                         const SizedBox(width: 8),
-                                        Text('Delete', style: TextStyle(color: Colors.red.shade400, fontSize: 13)),
+                                        Text(CoinPurseText.delete, style: TextStyle(color: Colors.red.shade400, fontSize: 13)),
                                       ],
                                     ),
                                   ),
@@ -701,7 +693,7 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total Value:',
+                  CoinPurseText.totalValueLabel,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -724,3 +716,5 @@ class _CoinPurseWidgetState extends State<CoinPurseWidget> {
     );
   }
 }
+
+

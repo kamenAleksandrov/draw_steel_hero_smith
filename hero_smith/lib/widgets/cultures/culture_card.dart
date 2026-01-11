@@ -23,9 +23,10 @@ class CultureCard extends StatelessWidget {
 
     // Determine culture type and get appropriate theming
     final cultureType = culture.type;
-    final borderColor = theme.cultureTypeBorder[cultureType] ?? Colors.grey.shade300;
+    final borderColor =
+        theme.cultureTypeBorder[cultureType] ?? Colors.grey.shade300;
     final typeEmoji = theme.cultureTypeEmoji[cultureType] ?? '🏛️';
-    
+
     // Create type-specific badge text
     final badgeText = switch (cultureType) {
       'culture_environment' => '$typeEmoji Environment',
@@ -111,26 +112,27 @@ class CultureCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillGroupsContent(BuildContext context, List<dynamic> skillGroups) {
+  Widget _buildSkillGroupsContent(
+      BuildContext context, List<dynamic> skillGroups) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: skillGroups.map((group) {
         final groupName = group.toString();
         final capitalizedName = _capitalize(groupName);
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            border: Border.all(color: Colors.blue.shade300, width: 1),
+            color: Colors.blue.shade900.withAlpha(60),
+            border: Border.all(color: Colors.blue.shade700, width: 1),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             capitalizedName,
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: Colors.blue.shade700,
+              color: Colors.blue.shade300,
               fontSize: 12,
             ),
           ),
@@ -139,25 +141,26 @@ class CultureCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecificSkillsContent(BuildContext context, List<dynamic> specificSkills) {
+  Widget _buildSpecificSkillsContent(
+      BuildContext context, List<dynamic> specificSkills) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: specificSkills.map((skill) {
         final skillName = skill.toString();
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.green.shade50,
-            border: Border.all(color: Colors.green.shade300, width: 1),
+            color: Colors.teal.shade900.withAlpha(60),
+            border: Border.all(color: Colors.teal.shade600, width: 1),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             skillName,
             style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: Colors.green.shade700,
+              color: Colors.teal.shade300,
               fontSize: 12,
             ),
           ),
@@ -171,14 +174,14 @@ class CultureCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.amber.shade50,
-        border: Border.all(color: Colors.amber.shade300, width: 1),
+        color: Colors.amber.shade900.withAlpha(40),
+        border: Border.all(color: Colors.amber.shade700, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         skillDescription,
         style: TextStyle(
-          color: Colors.amber.shade800,
+          color: Colors.amber.shade300,
           height: 1.4,
           fontStyle: FontStyle.italic,
         ),

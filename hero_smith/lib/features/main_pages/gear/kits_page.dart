@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/db/providers.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/kit_page_theme.dart';
 import '../../../widgets/kits/equipment_card.dart';
 
 class KitsPage extends ConsumerStatefulWidget {
@@ -15,19 +16,10 @@ class KitsPage extends ConsumerStatefulWidget {
 class _KitsPageState extends ConsumerState<KitsPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static const _tabs = [
-    {'label': 'Kits', 'color': Color(0xFF00ACC1)},
-    {'label': 'Stormwight', 'color': Color(0xFF5C6BC0)},
-    {'label': 'Augmentations', 'color': Color(0xFF7E57C2)},
-    {'label': 'Enchantments', 'color': Color(0xFFFFB300)},
-    {'label': 'Prayers', 'color': Color(0xFFFF8A65)},
-    {'label': 'Wards', 'color': Color(0xFFAB47BC)},
-  ];
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController = TabController(length: KitPageTheme.tabData.length, vsync: this);
     _tabController.addListener(() => setState(() {}));
   }
 
@@ -55,10 +47,10 @@ class _KitsPageState extends ConsumerState<KitsPage> with SingleTickerProviderSt
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: List.generate(_tabs.length, (index) {
-                  final tab = _tabs[index];
+                children: List.generate(KitPageTheme.tabData.length, (index) {
+                  final tab = KitPageTheme.tabData[index];
                   final isSelected = _tabController.index == index;
-                  final color = tab['color'] as Color;
+                  final color = tab.color;
                   
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -76,7 +68,7 @@ class _KitsPageState extends ConsumerState<KitsPage> with SingleTickerProviderSt
                           ),
                         ),
                         child: Text(
-                          tab['label'] as String,
+                          tab.label,
                           style: TextStyle(
                             color: isSelected ? color : Colors.grey.shade400,
                             fontSize: 13,

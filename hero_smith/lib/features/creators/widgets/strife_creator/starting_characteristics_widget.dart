@@ -6,6 +6,7 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_characteristics_widget_text.dart';
 
 // Helper classes for picker
@@ -478,7 +479,7 @@ class _StartingCharacteristicsWidgetState
             borderSide: BorderSide(color: _accent),
           ),
           filled: true,
-          fillColor: const Color(0xFF2A2A2A),
+          fillColor: FormTheme.surface,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
         child: Row(
@@ -634,7 +635,7 @@ class _StartingCharacteristicsWidgetState
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? _accent.withValues(alpha: 0.15)
-                                    : const Color(0xFF2A2A2A),
+                                    : FormTheme.surface,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   color: isSelected
@@ -1006,7 +1007,7 @@ class _StartingCharacteristicsWidgetState
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String?>(
         value: current,
-        dropdownColor: const Color(0xFF2A2A2A),
+        dropdownColor: FormTheme.surface,
         style: const TextStyle(color: Colors.white, fontSize: 14),
         decoration: InputDecoration(
           labelText:
@@ -1024,7 +1025,7 @@ class _StartingCharacteristicsWidgetState
             borderSide: BorderSide(color: _accent),
           ),
           filled: true,
-          fillColor: const Color(0xFF2A2A2A),
+          fillColor: FormTheme.surface,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
@@ -1047,3 +1048,4 @@ class _StartingCharacteristicsWidgetState
     );
   }
 }
+

@@ -5,6 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_culture_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -138,7 +139,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -627,7 +628,7 @@ class _LanguageDropdown extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: const Color(0xFF252525),
+        color: FormTheme.surfaceDark,
         border: Border.all(color: _accent.withValues(alpha: 0.3)),
       ),
       child: Column(
@@ -666,7 +667,7 @@ class _LanguageDropdown extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFF2A2A2A),
+                color: FormTheme.surface,
                 border: Border.all(color: Colors.grey.shade700),
               ),
               child: Row(
@@ -825,7 +826,7 @@ class _CultureDropdown extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: const Color(0xFF2A2A2A),
+                    color: FormTheme.surface,
                     border: Border.all(
                       color: validSelected != null 
                           ? accent.withValues(alpha: 0.5) 
@@ -1025,7 +1026,7 @@ class _CultureSkillChooser extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFF2A2A2A),
+              color: FormTheme.surface,
               border: Border.all(
                 color: validSelected != null 
                     ? accent.withValues(alpha: 0.5) 
@@ -1071,3 +1072,4 @@ class _CultureSkillChooser extends StatelessWidget {
     );
   }
 }
+

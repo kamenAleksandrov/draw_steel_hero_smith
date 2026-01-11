@@ -8,6 +8,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_career_section_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/perks/perks_selection_widget.dart';
@@ -1021,7 +1022,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -1170,3 +1171,4 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
     },
   );
 }
+

@@ -7,6 +7,7 @@ import '../../../../core/models/complication_grant_models.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_complication_section_text.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
 import '../../../../widgets/treasures/treasures.dart';
@@ -141,7 +142,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -404,7 +405,7 @@ class _StoryComplicationSectionState
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: FormTheme.surface,
                         borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
                         border: Border.all(
                           color: selectedComp != null
@@ -974,7 +975,7 @@ class _ComplicationDetails extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: FormTheme.surface,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: selectedSkill != null
@@ -1112,7 +1113,7 @@ class _ComplicationDetails extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
+                  color: FormTheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: selectedSkill != null
@@ -1260,7 +1261,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
+                      color: FormTheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: selectedTreasure != null 
@@ -1424,7 +1425,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2A2A2A),
+                      color: FormTheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: selectedTreasure != null 
@@ -1592,7 +1593,7 @@ class _ComplicationDetails extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: FormTheme.surface,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedLanguage != null
@@ -1747,7 +1748,7 @@ class _ComplicationDetails extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: FormTheme.surface,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedLanguage != null
@@ -1839,7 +1840,7 @@ class _ComplicationDetails extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: isSelected 
                         ? accent.withValues(alpha: 0.2)
-                        : const Color(0xFF2A2A2A),
+                        : FormTheme.surface,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: isSelected 
@@ -2306,7 +2307,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
     return DropdownButtonFormField<String>(
       value: currentValue,
-      dropdownColor: const Color(0xFF2A2A2A),
+      dropdownColor: FormTheme.surface,
       decoration: CreatorTheme.dropdownDecoration(
         label: StoryComplicationSectionText.immunityDropdownLabel,
         accent: accent,
@@ -2346,7 +2347,7 @@ class _ComplicationDetails extends ConsumerWidget {
 
     return DropdownButtonFormField<String>(
       value: currentValue,
-      dropdownColor: const Color(0xFF2A2A2A),
+      dropdownColor: FormTheme.surface,
       decoration: CreatorTheme.dropdownDecoration(
         label: StoryComplicationSectionText.abilityDropdownLabel,
         accent: accent,
@@ -2375,3 +2376,4 @@ class _ComplicationDetails extends ConsumerWidget {
     );
   }
 }
+

@@ -4,9 +4,7 @@ import '../../core/db/app_database.dart';
 import '../../core/repositories/hero_notes_repository.dart' as notes_repo;
 import '../../core/text/heroes_sheet/sheet_notes_text.dart';
 import '../../core/theme/navigation_theme.dart';
-
-// Notes accent color
-const _notesColor = Color(0xFF42A5F5); // Blue
+import '../../core/theme/hero_sheet_theme.dart';
 
 // Provider for the notes repository
 final heroNotesRepositoryProvider =
@@ -161,8 +159,8 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  _notesColor.withAlpha(38),
-                  _notesColor.withAlpha(10),
+                  HeroSheetTheme.notesAccent.withAlpha(38),
+                  HeroSheetTheme.notesAccent.withAlpha(10),
                 ],
               ),
             ),
@@ -171,11 +169,11 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _notesColor.withAlpha(51),
+                    color: HeroSheetTheme.notesAccent.withAlpha(51),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child:
-                      const Icon(Icons.note_alt, color: _notesColor, size: 24),
+                      const Icon(Icons.note_alt, color: HeroSheetTheme.notesAccent, size: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -236,7 +234,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: _notesColor, width: 2),
+                  borderSide: const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -282,10 +280,10 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               onPressed: _createNewFolder,
               tooltip: SheetNotesText.fabCreateFolderTooltip,
               backgroundColor: NavigationTheme.cardBackgroundDark,
-              foregroundColor: _notesColor,
+              foregroundColor: HeroSheetTheme.notesAccent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: _notesColor, width: 2),
+                side: const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
               ),
               child: const Icon(Icons.create_new_folder),
             ),
@@ -295,10 +293,10 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
             onPressed: _createNewNote,
             tooltip: SheetNotesText.fabCreateNoteTooltip,
             backgroundColor: NavigationTheme.cardBackgroundDark,
-            foregroundColor: _notesColor,
+            foregroundColor: HeroSheetTheme.notesAccent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: _notesColor, width: 2),
+              side: const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
             ),
             child: const Icon(Icons.add),
           ),
@@ -319,17 +317,17 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? _notesColor.withAlpha(51)
+              ? HeroSheetTheme.notesAccent.withAlpha(51)
               : NavigationTheme.cardBackgroundDark,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? _notesColor : Colors.grey.shade700,
+            color: isSelected ? HeroSheetTheme.notesAccent : Colors.grey.shade700,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? _notesColor : Colors.grey.shade400,
+            color: isSelected ? HeroSheetTheme.notesAccent : Colors.grey.shade400,
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
@@ -345,7 +343,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
-              child: CircularProgressIndicator(color: _notesColor));
+              child: CircularProgressIndicator(color: HeroSheetTheme.notesAccent));
         }
 
         final notes = snapshot.data!;
@@ -398,11 +396,11 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               leading: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: _notesColor.withAlpha(38),
+                  color: HeroSheetTheme.notesAccent.withAlpha(38),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child:
-                    const Icon(Icons.arrow_back, color: _notesColor, size: 20),
+                    const Icon(Icons.arrow_back, color: HeroSheetTheme.notesAccent, size: 20),
               ),
               title: const Text(
                 SheetNotesText.backToNotes,
@@ -420,7 +418,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(
-                      child: CircularProgressIndicator(color: _notesColor));
+                      child: CircularProgressIndicator(color: HeroSheetTheme.notesAccent));
                 }
 
                 final notes = snapshot.data!;
@@ -465,7 +463,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
-              child: CircularProgressIndicator(color: _notesColor));
+              child: CircularProgressIndicator(color: HeroSheetTheme.notesAccent));
         }
 
         final items = snapshot.data!;
@@ -492,7 +490,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                     icon: const Icon(Icons.add),
                     label: const Text('Create Note'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _notesColor,
+                      backgroundColor: HeroSheetTheme.notesAccent,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24, vertical: 12),
@@ -536,17 +534,17 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
             width: 4,
             height: 20,
             decoration: BoxDecoration(
-              color: _notesColor,
+              color: HeroSheetTheme.notesAccent,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           const SizedBox(width: 8),
-          Icon(icon, size: 16, color: _notesColor),
+          Icon(icon, size: 16, color: HeroSheetTheme.notesAccent),
           const SizedBox(width: 6),
           Text(
             title,
             style: const TextStyle(
-              color: _notesColor,
+              color: HeroSheetTheme.notesAccent,
               fontWeight: FontWeight.bold,
               fontSize: 14,
             ),
@@ -576,10 +574,10 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: _notesColor.withAlpha(38),
+                    color: HeroSheetTheme.notesAccent.withAlpha(38),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.folder, size: 28, color: _notesColor),
+                  child: const Icon(Icons.folder, size: 28, color: HeroSheetTheme.notesAccent),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -611,7 +609,7 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: _notesColor),
+                const Icon(Icons.chevron_right, color: HeroSheetTheme.notesAccent),
                 IconButton(
                   icon: Icon(Icons.delete_outline, color: Colors.grey.shade500),
                   onPressed: () => _deleteFolder(folder.id),
@@ -646,11 +644,11 @@ class _SheetNotesState extends ConsumerState<SheetNotes> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _notesColor.withAlpha(25),
+                    color: HeroSheetTheme.notesAccent.withAlpha(25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(Icons.note,
-                      size: 24, color: _notesColor.withAlpha(179)),
+                      size: 24, color: HeroSheetTheme.notesAccent.withAlpha(179)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -829,7 +827,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
       return Scaffold(
         backgroundColor: NavigationTheme.navBarBackground,
         body:
-            const Center(child: CircularProgressIndicator(color: _notesColor)),
+            const Center(child: CircularProgressIndicator(color: HeroSheetTheme.notesAccent)),
       );
     }
 
@@ -844,7 +842,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
           actions: [
             if (_isDirty)
               IconButton(
-                icon: const Icon(Icons.save, color: _notesColor),
+                icon: const Icon(Icons.save, color: HeroSheetTheme.notesAccent),
                 tooltip: SheetNotesText.saveTooltip,
                 onPressed: _saveNote,
               ),
@@ -872,7 +870,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: _notesColor, width: 2),
+                    borderSide: const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
                   ),
                 ),
                 style: const TextStyle(
@@ -880,7 +878,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
-                cursorColor: _notesColor,
+                cursorColor: HeroSheetTheme.notesAccent,
               ),
               const SizedBox(height: 16),
               // Content field
@@ -904,7 +902,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide:
-                          const BorderSide(color: _notesColor, width: 2),
+                          const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
                     ),
                   ),
                   style: const TextStyle(
@@ -912,7 +910,7 @@ class _NoteEditorPageState extends ConsumerState<_NoteEditorPage> {
                     color: Colors.white,
                     height: 1.5,
                   ),
-                  cursorColor: _notesColor,
+                  cursorColor: HeroSheetTheme.notesAccent,
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
@@ -961,11 +959,11 @@ Future<String?> _showTextInputDialog({
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: _notesColor, width: 2),
+              borderSide: const BorderSide(color: HeroSheetTheme.notesAccent, width: 2),
             ),
           ),
           style: const TextStyle(color: Colors.white),
-          cursorColor: _notesColor,
+          cursorColor: HeroSheetTheme.notesAccent,
           autofocus: true,
         ),
         actions: [
@@ -980,7 +978,7 @@ Future<String?> _showTextInputDialog({
             onPressed: () => Navigator.pop(context, controller.text),
             child: const Text(
               SheetNotesText.actionCreate,
-              style: TextStyle(color: _notesColor, fontWeight: FontWeight.bold),
+              style: TextStyle(color: HeroSheetTheme.notesAccent, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -1027,3 +1025,4 @@ Future<bool> _showConfirmDialog({
   );
   return result ?? false;
 }
+

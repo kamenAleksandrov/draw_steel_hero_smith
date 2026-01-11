@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/repositories/hero_repository.dart';
 import '../../../core/text/heroes_sheet/main_stats/stamina_bar_text.dart';
+import '../../../core/theme/main_stats_theme.dart';
 import 'hero_main_stats_models.dart';
 
 /// Dual-track stamina bar with clear zone visualization:
@@ -51,16 +52,11 @@ class StaminaBarWidget extends StatelessWidget {
     final tempRatio = tempHp > 0 ? (tempHp / maxStamina).clamp(0.0, 1.0) : 0.0;
 
     // Zone colors - vibrant and distinct
-    final deadColor =
-        isDark ? const Color(0xFFE53935) : const Color(0xFFC62828);
-    final dyingColor =
-        isDark ? const Color(0xFFFF5722) : const Color(0xFFE64A19);
-    final windedColor =
-        isDark ? const Color(0xFFFFB300) : const Color(0xFFF57C00);
-    final healthyColor =
-        isDark ? const Color(0xFF66BB6A) : const Color(0xFF2E7D32);
-    final tempColor =
-        isDark ? const Color(0xFF4DD0E1) : const Color(0xFF00ACC1);
+    final deadColor = MainStatsTheme.deadColor(theme.brightness);
+    final dyingColor = MainStatsTheme.dyingColor(theme.brightness);
+    final windedColor = MainStatsTheme.windedColor(theme.brightness);
+    final healthyColor = MainStatsTheme.healthyColor(theme.brightness);
+    final tempColor = MainStatsTheme.tempHpColor(theme.brightness);
 
     const barHeight = 18.0;
     final tempBarHeight = tempHp > 0 ? 14.0 : 0.0;

@@ -7,6 +7,7 @@ import '../../../../core/services/subclass_data_service.dart';
 import '../../../../core/services/subclass_service.dart';
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_subclass_widget_text.dart';
 
 class _SearchOption<T> {
@@ -139,7 +140,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -751,7 +752,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A),
+            color: FormTheme.surface,
             borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
             border: Border.all(color: Colors.grey.shade700),
           ),
@@ -929,7 +930,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A),
+            color: FormTheme.surface,
             borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
             border: Border.all(color: Colors.grey.shade700),
           ),
@@ -1021,7 +1022,7 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
             ),
             selected: isSelected,
             selectedColor: _accent.withValues(alpha: 0.3),
-            backgroundColor: const Color(0xFF2A2A2A),
+            backgroundColor: FormTheme.surface,
             checkmarkColor: _accent,
             side: BorderSide(
               color: isSelected ? _accent : Colors.grey.shade700,
@@ -1063,3 +1064,4 @@ class _ChooseSubclassWidgetState extends State<ChooseSubclassWidget> {
     );
   }
 }
+

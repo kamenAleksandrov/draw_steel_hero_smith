@@ -99,7 +99,8 @@ class CareerCard extends StatelessWidget {
     final skillsNumber = data['skills_number'] as int? ?? 0;
     final skillGroups = data['skill_groups'] as List<dynamic>? ?? [];
     final grantedSkills = data['granted_skills'] as List<dynamic>? ?? [];
-    final skillGrantDescription = data['skill_grant_description'] as String? ?? '';
+    final skillGrantDescription =
+        data['skill_grant_description'] as String? ?? '';
     final languages = data['languages'] as int? ?? 0;
 
     return Column(
@@ -111,8 +112,8 @@ class CareerCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            border: Border.all(color: Colors.blue.shade300, width: 1),
+            color: Colors.blue.shade900.withAlpha(50),
+            border: Border.all(color: Colors.blue.shade700, width: 1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -122,7 +123,7 @@ class CareerCard extends StatelessWidget {
                 'Skills: $skillsNumber total',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.blue.shade800,
+                  color: Colors.blue.shade300,
                 ),
               ),
               if (languages > 0) ...[
@@ -131,14 +132,14 @@ class CareerCard extends StatelessWidget {
                   'Languages: $languages',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.blue.shade800,
+                    color: Colors.blue.shade300,
                   ),
                 ),
               ],
             ],
           ),
         ),
-        
+
         // Granted skills
         if (grantedSkills.isNotEmpty) ...[
           const Text(
@@ -151,17 +152,18 @@ class CareerCard extends StatelessWidget {
             children: grantedSkills.map((skill) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  border: Border.all(color: Colors.green.shade300, width: 1),
+                  color: Colors.teal.shade900.withAlpha(60),
+                  border: Border.all(color: Colors.teal.shade600, width: 1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   skill.toString(),
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: Colors.green.shade700,
+                    color: Colors.teal.shade300,
                     fontSize: 12,
                   ),
                 ),
@@ -170,7 +172,7 @@ class CareerCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        
+
         // Skill groups
         if (skillGroups.isNotEmpty) ...[
           const Text(
@@ -183,20 +185,21 @@ class CareerCard extends StatelessWidget {
             children: skillGroups.map((group) {
               final groupName = group.toString();
               final capitalizedName = _capitalize(groupName);
-              
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
-                  border: Border.all(color: Colors.purple.shade300, width: 1),
+                  color: Colors.purple.shade900.withAlpha(60),
+                  border: Border.all(color: Colors.purple.shade600, width: 1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   capitalizedName,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: Colors.purple.shade700,
+                    color: Colors.purple.shade300,
                     fontSize: 12,
                   ),
                 ),
@@ -205,21 +208,21 @@ class CareerCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        
+
         // Skill grant description
         if (skillGrantDescription.isNotEmpty) ...[
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.amber.shade50,
-              border: Border.all(color: Colors.amber.shade300, width: 1),
+              color: Colors.amber.shade900.withAlpha(40),
+              border: Border.all(color: Colors.amber.shade700, width: 1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               skillGrantDescription,
               style: TextStyle(
-                color: Colors.amber.shade800,
+                color: Colors.amber.shade300,
                 height: 1.4,
                 fontStyle: FontStyle.italic,
               ),
@@ -230,7 +233,8 @@ class CareerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildResourcesContent(BuildContext context, Map<String, dynamic> data) {
+  Widget _buildResourcesContent(
+      BuildContext context, Map<String, dynamic> data) {
     final renown = data['renown'] as int? ?? 0;
     final wealth = data['wealth'] as int? ?? 0;
     final projectPoints = data['project_points'] as int? ?? 0;
@@ -247,7 +251,8 @@ class CareerCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildResourceChip('Project\nPoints', projectPoints, Colors.blue),
+            child: _buildResourceChip(
+                'Project\nPoints', projectPoints, Colors.blue),
           ),
         ],
       ),
@@ -259,8 +264,8 @@ class CareerCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.shade50,
-        border: Border.all(color: color.shade300, width: 1),
+        color: color.shade900.withAlpha(50),
+        border: Border.all(color: color.shade700, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -271,7 +276,7 @@ class CareerCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: color.shade800,
+              color: color.shade300,
             ),
           ),
           const SizedBox(height: 4),
@@ -280,7 +285,7 @@ class CareerCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: color.shade700,
+              color: color.shade400,
               height: 1.2,
             ),
             textAlign: TextAlign.center,
@@ -299,8 +304,8 @@ class CareerCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.purple.shade50,
-        border: Border.all(color: Colors.purple.shade300, width: 1),
+        color: Colors.purple.shade900.withAlpha(60),
+        border: Border.all(color: Colors.purple.shade600, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -310,7 +315,7 @@ class CareerCard extends StatelessWidget {
             'Perks: $perksNumber',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.purple.shade800,
+              color: Colors.purple.shade300,
             ),
           ),
           if (perkType.isNotEmpty) ...[
@@ -318,7 +323,7 @@ class CareerCard extends StatelessWidget {
             Text(
               'Type: $perkType',
               style: TextStyle(
-                color: Colors.purple.shade700,
+                color: Colors.purple.shade400,
                 height: 1.4,
               ),
             ),
@@ -328,22 +333,24 @@ class CareerCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIncitingIncidentsContent(BuildContext context, Map<String, dynamic> data) {
-    final incitingIncidents = data['inciting_incidents'] as List<dynamic>? ?? [];
+  Widget _buildIncitingIncidentsContent(
+      BuildContext context, Map<String, dynamic> data) {
+    final incitingIncidents =
+        data['inciting_incidents'] as List<dynamic>? ?? [];
 
     if (incitingIncidents.isEmpty) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          border: Border.all(color: Colors.grey.shade300, width: 1),
+          color: Colors.grey.shade900.withAlpha(80),
+          border: Border.all(color: Colors.grey.shade700, width: 1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Text(
+        child: Text(
           'No inciting incidents defined',
           style: TextStyle(
-            color: Colors.grey,
+            color: Colors.grey.shade500,
             fontStyle: FontStyle.italic,
           ),
         ),
@@ -381,7 +388,8 @@ class _IncitingIncidentDropdown extends StatefulWidget {
   });
 
   @override
-  State<_IncitingIncidentDropdown> createState() => _IncitingIncidentDropdownState();
+  State<_IncitingIncidentDropdown> createState() =>
+      _IncitingIncidentDropdownState();
 }
 
 class _IncitingIncidentDropdownState extends State<_IncitingIncidentDropdown> {
@@ -393,8 +401,8 @@ class _IncitingIncidentDropdownState extends State<_IncitingIncidentDropdown> {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        border: Border.all(color: Colors.red.shade300, width: 1),
+        color: Colors.red.shade900.withAlpha(50),
+        border: Border.all(color: Colors.red.shade700, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -416,13 +424,13 @@ class _IncitingIncidentDropdownState extends State<_IncitingIncidentDropdown> {
                       widget.name.isNotEmpty ? widget.name : 'Unnamed Incident',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: Colors.red.shade800,
+                        color: Colors.red.shade300,
                       ),
                     ),
                   ),
                   Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: Colors.red.shade600,
+                    color: Colors.red.shade400,
                   ),
                 ],
               ),
@@ -434,7 +442,7 @@ class _IncitingIncidentDropdownState extends State<_IncitingIncidentDropdown> {
               child: Text(
                 widget.description,
                 style: TextStyle(
-                  color: Colors.red.shade700,
+                  color: Colors.red.shade400,
                   height: 1.4,
                 ),
               ),

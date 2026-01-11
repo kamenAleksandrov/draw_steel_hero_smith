@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'navigation_theme.dart';
+import 'form_theme.dart';
 
 /// Design tokens and utilities for Hero Creator pages.
 /// Provides consistent dark theme styling across all creator sections.
@@ -206,7 +207,7 @@ class CreatorTheme {
   /// Card for sub-sections within a main section
   static BoxDecoration subSectionDecoration(Color accent) => BoxDecoration(
     borderRadius: BorderRadius.circular(cardBorderRadius),
-    color: const Color(0xFF252525),
+    color: FormTheme.surfaceDark,
     border: Border.all(
       color: accent.withValues(alpha: 0.25),
       width: 1,
@@ -276,7 +277,7 @@ class CreatorTheme {
           : null,
       suffix: suffix,
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: FormTheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(inputBorderRadius),
         borderSide: BorderSide.none,
@@ -302,7 +303,7 @@ class CreatorTheme {
       labelText: label,
       labelStyle: TextStyle(color: Colors.grey.shade400),
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: FormTheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(inputBorderRadius),
         borderSide: BorderSide.none,

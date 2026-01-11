@@ -1,6 +1,8 @@
 /// Data models for the coin purse system.
 library;
 
+import '../../../core/theme/main_stats_theme.dart';
+
 /// Represents a single coin type with its name, quantity, and multiplier (value per coin).
 class Coin {
   final String id;
@@ -14,7 +16,7 @@ class Coin {
     required this.name,
     required this.quantity,
     this.multiplier = 1.0,
-    this.colorValue = 0xFFFFD54F, // Default amber
+    this.colorValue = 0xFFFFD54F, // Default amber (MainStatsTheme.coinColors[0])
   }) : id = id ?? DateTime.now().microsecondsSinceEpoch.toString();
 
   /// Calculate the total value of this coin (quantity * multiplier)
@@ -35,7 +37,7 @@ class Coin {
       name: json['name'] as String? ?? '',
       quantity: json['quantity'] as int? ?? 0,
       multiplier: mult is num ? mult.toDouble() : 1.0,
-      colorValue: json['colorValue'] as int? ?? 0xFFFFD54F,
+      colorValue: json['colorValue'] as int? ?? 0xFFFFD54F, // Default amber (MainStatsTheme.coinColors[0])
     );
   }
 

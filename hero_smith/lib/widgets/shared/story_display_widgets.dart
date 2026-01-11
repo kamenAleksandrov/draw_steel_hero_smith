@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const _storyColor = Color(0xFF8E24AA);
+import '../../core/theme/story_theme.dart';
+import '../../core/theme/form_theme.dart';
 
 /// A row displaying labeled information with an icon.
 class InfoRow extends StatelessWidget {
@@ -20,7 +21,7 @@ class InfoRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: _storyColor),
+        Icon(icon, size: 20, color: StoryTheme.storyAccent),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -127,7 +128,7 @@ class GrantItemDisplay extends StatelessWidget {
           Icon(
             icon,
             size: 16,
-            color: _storyColor,
+            color: StoryTheme.storyAccent,
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -162,16 +163,16 @@ class AbilityReferenceDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _storyColor.withAlpha(26),
+        color: StoryTheme.storyAccent.withAlpha(26),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: _storyColor.withAlpha(77)),
+        border: Border.all(color: StoryTheme.storyAccent.withAlpha(77)),
       ),
       child: Row(
         children: [
           Icon(
             Icons.flash_on,
             size: 16,
-            color: _storyColor,
+            color: StoryTheme.storyAccent,
           ),
           const SizedBox(width: 6),
           Expanded(
@@ -248,7 +249,7 @@ class SelectedTraitCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF252525),
+        color: FormTheme.surfaceDark,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade700),
       ),
@@ -275,7 +276,7 @@ class SelectedTraitCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: _storyColor.withAlpha(51),
+                color: StoryTheme.storyAccent.withAlpha(51),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
@@ -283,7 +284,7 @@ class SelectedTraitCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: _storyColor,
+                  color: StoryTheme.storyAccent,
                 ),
               ),
             ),
@@ -330,9 +331,9 @@ class IncitingIncidentDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _storyColor.withAlpha(38),
+        color: StoryTheme.storyAccent.withAlpha(38),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _storyColor.withAlpha(77)),
+        border: Border.all(color: StoryTheme.storyAccent.withAlpha(77)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +343,7 @@ class IncitingIncidentDisplay extends StatelessWidget {
               Icon(
                 Icons.flash_on,
                 size: 18,
-                color: _storyColor,
+                color: StoryTheme.storyAccent,
               ),
               const SizedBox(width: 6),
               Expanded(
@@ -369,3 +370,4 @@ class IncitingIncidentDisplay extends StatelessWidget {
     );
   }
 }
+

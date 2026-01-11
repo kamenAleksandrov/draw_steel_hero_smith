@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../theme/navigation_theme.dart';
+import '../theme/form_theme.dart';
+import '../theme/picker_theme.dart';
+import '../text/common/searchable_picker_text.dart';
 
 /// Represents an option in a searchable picker.
 class SearchableOption<T> {
@@ -70,13 +73,13 @@ class PickerConflictConfig {
     if (id == currentSlotId) return null;
     
     if (staticGrantIds.contains(id)) {
-      return 'Granted by a feature (cannot be changed)';
+      return SearchablePickerText.grantedByFeature;
     }
     if (existingIds.contains(id)) {
-      return 'Already owned by this hero';
+      return SearchablePickerText.alreadyOwned;
     }
     if (pageSelectedIds.contains(id)) {
-      return 'Already selected on this page';
+      return SearchablePickerText.alreadySelectedOnPage;
     }
     return null;
   }
@@ -99,7 +102,7 @@ class StaticGrantConflictNotice extends StatelessWidget {
   Widget build(BuildContext context) {
     if (conflictingIds.isEmpty) return const SizedBox.shrink();
 
-    const errorColor = Color(0xFFEF5350);
+    const errorColor = PickerTheme.errorColor;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -118,7 +121,10 @@ class StaticGrantConflictNotice extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Duplicate $itemType${conflictingIds.length > 1 ? 's' : ''} detected',
+                  SearchablePickerText.duplicateDetected(
+                    itemType,
+                    multiple: conflictingIds.length > 1,
+                  ),
                   style: const TextStyle(
                     color: errorColor,
                     fontWeight: FontWeight.bold,
@@ -127,8 +133,7 @@ class StaticGrantConflictNotice extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Multiple features grant the same $itemType. '
-                  'Discuss with your Director to choose an alternative.',
+                  SearchablePickerText.duplicateDescription(itemType),
                   style: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 12,
@@ -175,7 +180,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
   Color? accentColor,
   IconData? icon,
 }) {
-  final effectiveAccent = accentColor ?? const Color(0xFF42A5F5);
+  final effectiveAccent = accentColor ?? PickerTheme.defaultAccent;
   final effectiveIcon = icon ?? Icons.search;
   
   return showDialog<SearchablePickerResult<T>>(
@@ -251,9 +256,9 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      border: const Border(
+                      border: Border(
                         bottom: BorderSide(
-                          color: Color(0xFF3D3D3D),
+                          color: FormTheme.surfaceMuted,
                           width: 1,
                         ),
                       ),
@@ -299,11 +304,11 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                       autofocus: autofocusSearch,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        hintText: 'Search...',
+                        hintText: SearchablePickerText.searchHint,
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -343,7 +348,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'No matches found',
+                                  SearchablePickerText.noMatchesFound,
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 14,
@@ -409,7 +414,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                   margin: const EdgeInsets.symmetric(vertical: 2),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: const Color(0xFF2A2A2A),
+                                    color: FormTheme.surface,
                                   ),
                                   child: ListTile(
                                     title: Text(
@@ -419,7 +424,7 @@ Future<SearchablePickerResult<T>?> showSearchablePicker<T>({
                                       ),
                                     ),
                                     subtitle: Text(
-                                      option.disabledReason ?? 'Unavailable',
+                                      option.disabledReason ?? SearchablePickerText.unavailable,
                                       style: TextStyle(
                                         color: Colors.red.shade300.withValues(alpha: 0.7),
                                         fontSize: 12,

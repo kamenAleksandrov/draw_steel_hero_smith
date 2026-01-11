@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/providers.dart';
 import '../../core/models/component.dart' as model;
 import '../../core/theme/navigation_theme.dart';
+import '../../core/theme/form_theme.dart';
 import '../abilities/ability_expandable_item.dart';
 
 // Perks accent color for default styling
@@ -1652,7 +1653,7 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
                         prefixIcon:
                             Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -1776,3 +1777,4 @@ Future<PickerSelection<T>?> showSearchablePicker<T>({
     },
   );
 }
+

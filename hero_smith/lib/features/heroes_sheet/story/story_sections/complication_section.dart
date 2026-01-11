@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_complication_section_text.dart';
 import 'package:hero_smith/core/theme/navigation_theme.dart';
+import 'package:hero_smith/core/theme/story_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
 import 'token_tracker_widget.dart';
-
-const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -65,12 +64,12 @@ class ComplicationSection extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(51),
+                    color: StoryTheme.storyAccent.withAlpha(51),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.warning_amber_rounded,
-                    color: _storyColor,
+                    color: StoryTheme.storyAccent,
                     size: 20,
                   ),
                 ),
@@ -87,7 +86,7 @@ class ComplicationSection extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             complicationAsync.when(
-              loading: () => CircularProgressIndicator(color: _storyColor),
+              loading: () => CircularProgressIndicator(color: StoryTheme.storyAccent),
               error: (e, _) => Text(
                 '${SheetStoryComplicationSectionText.errorLoadingComplicationPrefix}$e',
                 style: TextStyle(color: Colors.red.shade300),
@@ -133,7 +132,7 @@ class _ComplicationDetails extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF252525),
+        color: StoryTheme.cardBackgroundDark,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade700),
       ),
@@ -213,7 +212,7 @@ class _EffectsDisplay extends StatelessWidget {
           EffectItemDisplay(
             label: SheetStoryComplicationSectionText.effectBenefitLabel,
             text: benefit,
-            color: const Color(0xFF43A047),
+            color: StoryTheme.skillsAccent,
             icon: Icons.add_circle_outline,
           ),
           const SizedBox(height: 8),
@@ -594,16 +593,16 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: _storyColor.withAlpha(38),
+            color: StoryTheme.storyAccent.withAlpha(38),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _storyColor.withAlpha(77)),
+            border: Border.all(color: StoryTheme.storyAccent.withAlpha(77)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.person_outline, size: 18, color: _storyColor),
+                  Icon(Icons.person_outline, size: 18, color: StoryTheme.storyAccent),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -636,7 +635,7 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
+          color: StoryTheme.cardBackground,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(color: Colors.grey.shade700),
         ),
@@ -659,7 +658,7 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(51),
+                    color: StoryTheme.storyAccent.withAlpha(51),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
@@ -667,7 +666,7 @@ class _AncestryTraitsDisplay extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: _storyColor,
+                      color: StoryTheme.storyAccent,
                     ),
                   ),
                 ),
@@ -727,14 +726,14 @@ class _PickOneDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _storyColor.withAlpha(38),
+        color: StoryTheme.storyAccent.withAlpha(38),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: _storyColor.withAlpha(77)),
+        border: Border.all(color: StoryTheme.storyAccent.withAlpha(77)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle, size: 16, color: _storyColor),
+          Icon(Icons.check_circle, size: 16, color: StoryTheme.storyAccent),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -751,3 +750,5 @@ class _PickOneDisplay extends StatelessWidget {
     );
   }
 }
+
+

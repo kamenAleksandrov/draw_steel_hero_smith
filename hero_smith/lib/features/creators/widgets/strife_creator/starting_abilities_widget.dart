@@ -9,6 +9,7 @@ import '../../../../core/models/characteristics_models.dart';
 import '../../../../core/services/ability_data_service.dart';
 import '../../../../core/services/abilities_service.dart';
 import '../../../../core/theme/creator_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/starting_abilities_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 import '../../../../widgets/abilities/ability_expandable_item.dart';
@@ -539,7 +540,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
                   children: [
                     DropdownButtonFormField<String?>(
                       value: current,
-                      dropdownColor: const Color(0xFF2A2A2A),
+                      dropdownColor: FormTheme.surface,
                       style: const TextStyle(color: Colors.white, fontSize: 14),
                       decoration: InputDecoration(
                         labelText:
@@ -557,7 +558,7 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
                           borderSide: BorderSide(color: _accent),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 10,
@@ -656,3 +657,4 @@ class _StartingAbilitiesWidgetState extends State<StartingAbilitiesWidget> {
     return normalized;
   }
 }
+

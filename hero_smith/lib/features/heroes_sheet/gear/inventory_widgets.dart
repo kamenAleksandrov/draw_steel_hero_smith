@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/text/heroes_sheet/gear/inventory_widgets_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/form_theme.dart';
 
 /// Card displaying an inventory container with its items.
 class ContainerCard extends StatefulWidget {
@@ -152,7 +153,7 @@ class _ContainerCardState extends State<ContainerCard> {
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF252525),
+                      color: FormTheme.surfaceDark,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: Colors.grey.shade800),
                     ),
@@ -201,7 +202,7 @@ class _ContainerCardState extends State<ContainerCard> {
                         // Quantity controls
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF3A3A3A),
+                            color: FormTheme.surfaceMuted,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -378,7 +379,7 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
                 labelText: InventoryWidgetsText.quantityDialogLabel,
                 labelStyle: TextStyle(color: Colors.grey.shade400),
                 filled: true,
-                fillColor: const Color(0xFF2A2A2A),
+                fillColor: FormTheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,

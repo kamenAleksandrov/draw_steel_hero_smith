@@ -89,7 +89,8 @@ class ComplicationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEffectsContent(BuildContext context, Map<String, dynamic> effects) {
+  Widget _buildEffectsContent(
+      BuildContext context, Map<String, dynamic> effects) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,8 +100,8 @@ class ComplicationCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              border: Border.all(color: Colors.green.shade300, width: 1),
+              color: Colors.teal.shade900.withAlpha(60),
+              border: Border.all(color: Colors.teal.shade600, width: 1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -110,14 +111,14 @@ class ComplicationCard extends StatelessWidget {
                   '✅ Benefit',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.green.shade700,
+                    color: Colors.teal.shade300,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   effects['benefit'].toString(),
                   style: TextStyle(
-                    color: Colors.green.shade800,
+                    color: Colors.teal.shade200,
                     height: 1.4,
                   ),
                 ),
@@ -131,8 +132,9 @@ class ComplicationCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             margin: const EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              border: Border.all(color: Colors.red.shade300, width: 1),
+              color: const Color(0xFF7F1D1D)
+                  .withAlpha(60), // Deep crimson background
+              border: Border.all(color: const Color(0xFFB71C1C), width: 1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -142,14 +144,14 @@ class ComplicationCard extends StatelessWidget {
                   '❌ Drawback',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.red.shade700,
+                    color: Colors.red.shade300,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   effects['drawback'].toString(),
                   style: TextStyle(
-                    color: Colors.red.shade800,
+                    color: Colors.red.shade200,
                     height: 1.4,
                   ),
                 ),
@@ -162,8 +164,8 @@ class ComplicationCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange.shade50,
-              border: Border.all(color: Colors.orange.shade300, width: 1),
+              color: Colors.amber.shade900.withAlpha(40),
+              border: Border.all(color: Colors.amber.shade700, width: 1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -173,14 +175,14 @@ class ComplicationCard extends StatelessWidget {
                   '⚖️ Mixed Effect',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: Colors.orange.shade700,
+                    color: Colors.amber.shade300,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   effects['both'].toString(),
                   style: TextStyle(
-                    color: Colors.orange.shade800,
+                    color: Colors.amber.shade200,
                     height: 1.4,
                   ),
                 ),
@@ -192,9 +194,10 @@ class ComplicationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildGrantsContent(BuildContext context, Map<String, dynamic> grants) {
+  Widget _buildGrantsContent(
+      BuildContext context, Map<String, dynamic> grants) {
     final List<Widget> grantWidgets = [];
-    
+
     grants.forEach((key, value) {
       switch (key) {
         case 'treasures':
@@ -204,7 +207,7 @@ class ComplicationCard extends StatelessWidget {
               final type = treasureMap['type'] ?? 'treasure';
               final echelon = treasureMap['echelon'];
               final choice = treasureMap['choice'] == true;
-              
+
               String displayText = 'Treasure: $type';
               if (echelon != null) {
                 displayText += ' (Echelon $echelon)';
@@ -212,7 +215,7 @@ class ComplicationCard extends StatelessWidget {
               if (choice) {
                 displayText += ' (your choice)';
               }
-              
+
               grantWidgets.add(_buildGrantItem(displayText));
             }
           }
@@ -221,7 +224,8 @@ class ComplicationCard extends StatelessWidget {
           if (value is Map) {
             final tokenMap = value as Map<String, dynamic>;
             tokenMap.forEach((tokenType, amount) {
-              grantWidgets.add(_buildGrantItem('$amount $tokenType token${amount == 1 ? '' : 's'}'));
+              grantWidgets.add(_buildGrantItem(
+                  '$amount $tokenType token${amount == 1 ? '' : 's'}'));
             });
           }
           break;
@@ -230,13 +234,13 @@ class ComplicationCard extends StatelessWidget {
           grantWidgets.add(_buildGrantItem('$key: $value'));
       }
     });
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: grantWidgets,
     );
   }
-  
+
   Widget _buildGrantItem(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),

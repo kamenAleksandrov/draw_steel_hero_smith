@@ -17,8 +17,8 @@ import '../../../core/services/story_creator_service.dart';
 import '../../../core/services/skill_data_service.dart';
 import '../../../core/services/subclass_data_service.dart';
 
-
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/story_theme.dart';
 import '../../../core/text/heroes_sheet/story/sheet_story_text.dart';
 import '../../creators/widgets/strength_creator/class_features_section.dart';
 
@@ -109,13 +109,6 @@ class _SheetStoryState extends ConsumerState<SheetStory>
 
   @override
   Widget build(BuildContext context) {
-    // Define accent colors for each tab
-    const storyColor = Color(0xFF8E24AA); // Purple for story
-    const skillsColor = Color(0xFF43A047); // Green for skills
-    const languagesColor = Color(0xFF1E88E5); // Blue for languages
-    const perksColor = Color(0xFFFF7043); // Orange for perks
-    const titlesColor = Color(0xFFFFB300); // Gold for titles
-    
     return Column(
       children: [
         // Dark themed tab bar
@@ -144,11 +137,11 @@ class _SheetStoryState extends ConsumerState<SheetStory>
                 unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
                 tabs: [
                   _buildTab(SheetStoryTabsText.features, Icons.auto_awesome, 0, NavigationTheme.kitsColor),
-                  _buildTab(SheetStoryTabsText.story, Icons.menu_book, 1, storyColor),
-                  _buildTab(SheetStoryTabsText.skills, Icons.psychology, 2, skillsColor),
-                  _buildTab(SheetStoryTabsText.languages, Icons.translate, 3, languagesColor),
-                  _buildTab(SheetStoryTabsText.perks, Icons.star, 4, perksColor),
-                  _buildTab(SheetStoryTabsText.titles, Icons.military_tech, 5, titlesColor),
+                  _buildTab(SheetStoryTabsText.story, Icons.menu_book, 1, StoryTheme.storyAccent),
+                  _buildTab(SheetStoryTabsText.skills, Icons.psychology, 2, StoryTheme.skillsAccent),
+                  _buildTab(SheetStoryTabsText.languages, Icons.translate, 3, StoryTheme.languagesAccent),
+                  _buildTab(SheetStoryTabsText.perks, Icons.star, 4, StoryTheme.perksAccent),
+                  _buildTab(SheetStoryTabsText.titles, Icons.military_tech, 5, StoryTheme.titlesAccent),
                 ],
               );
             },
@@ -174,11 +167,11 @@ class _SheetStoryState extends ConsumerState<SheetStory>
   Color _getTabColor(int index) {
     const colors = [
       NavigationTheme.kitsColor, // Features
-      Color(0xFF8E24AA), // Story - Purple
-      Color(0xFF43A047), // Skills - Green
-      Color(0xFF1E88E5), // Languages - Blue
-      Color(0xFFFF7043), // Perks - Orange
-      Color(0xFFFFB300), // Titles - Gold
+      StoryTheme.storyAccent, // Story - Purple
+      StoryTheme.skillsAccent, // Skills - Green
+      StoryTheme.languagesAccent, // Languages - Blue
+      StoryTheme.perksAccent, // Perks - Orange
+      StoryTheme.titlesAccent, // Titles - Gold
     ];
     return colors[index.clamp(0, colors.length - 1)];
   }

@@ -3,13 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_culture_section_text.dart';
 import 'package:hero_smith/core/theme/navigation_theme.dart';
+import 'package:hero_smith/core/theme/story_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
-
-// Story tab color
-const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -82,10 +80,10 @@ class CultureSection extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(26),
+                    color: StoryTheme.storyAccent.withAlpha(26),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.public, color: _storyColor, size: 20),
+                  child: const Icon(Icons.public, color: StoryTheme.storyAccent, size: 20),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -187,7 +185,7 @@ class _ComponentDisplay extends ConsumerWidget {
       loading: () => SizedBox(
         height: 20,
         width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+        child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent),
       ),
       error: (e, _) =>
           Text('Error: $e', style: TextStyle(color: Colors.red.shade300)),

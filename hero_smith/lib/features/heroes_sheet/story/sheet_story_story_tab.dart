@@ -1,13 +1,11 @@
 part of 'sheet_story.dart';
 
 extension _StoryTabBuilders on _SheetStoryState {
-  // Story accent color
-  static const _storyColor = Color(0xFF8E24AA);
   
   Widget _buildStoryTab(BuildContext context) {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(color: _storyColor),
+        child: CircularProgressIndicator(color: StoryTheme.storyAccent),
       );
     }
 
@@ -31,7 +29,7 @@ extension _StoryTabBuilders on _SheetStoryState {
                 icon: const Icon(Icons.refresh),
                 label: const Text(SheetStoryCommonText.retry),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _storyColor,
+                  backgroundColor: StoryTheme.storyAccent,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -136,8 +134,8 @@ extension _StoryTabBuilders on _SheetStoryState {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  _storyColor.withAlpha(51),
-                  _storyColor.withAlpha(13),
+                  StoryTheme.storyAccent.withAlpha(51),
+                  StoryTheme.storyAccent.withAlpha(13),
                 ],
               ),
             ),
@@ -146,10 +144,10 @@ extension _StoryTabBuilders on _SheetStoryState {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(51),
+                    color: StoryTheme.storyAccent.withAlpha(51),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.person, color: _storyColor, size: 24),
+                  child: const Icon(Icons.person, color: StoryTheme.storyAccent, size: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -167,7 +165,7 @@ extension _StoryTabBuilders on _SheetStoryState {
                       Text(
                         'Level ${hero.level}',
                         style: TextStyle(
-                          color: _storyColor.withAlpha(200),
+                          color: StoryTheme.storyAccent.withAlpha(200),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -187,7 +185,7 @@ extension _StoryTabBuilders on _SheetStoryState {
                     loading: () => const SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent),
                     ),
                     error: (e, _) => Text('Error: $e', style: const TextStyle(color: Colors.red)),
                     data: (classComp) => _buildInfoRow(
@@ -202,7 +200,7 @@ extension _StoryTabBuilders on _SheetStoryState {
                     loading: () => const SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent),
                     ),
                     error: (e, _) => Text('Error: $e', style: const TextStyle(color: Colors.red)),
                     data: (subclassComp) => _buildInfoRow(
@@ -223,7 +221,7 @@ extension _StoryTabBuilders on _SheetStoryState {
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: _storyColor),
+        Icon(icon, size: 18, color: StoryTheme.storyAccent),
         const SizedBox(width: 8),
         Text(
           '$label: ',

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/splash_theme.dart';
+
 class SplashScreen extends StatelessWidget {
   final VoidCallback onComplete;
 
   const SplashScreen({super.key, required this.onComplete});
 
   // App's dark gray background color
-  static const Color _backgroundColor = Color(0xFF1E1E1E);
+  static const Color _backgroundColor = SplashTheme.background;
   // Accent color for loading indicator
-  static const Color _accentColor = Color(0xFFE6A33E);
+  static const Color _accentColor = SplashTheme.accent;
 
   @override
   Widget build(BuildContext context) {

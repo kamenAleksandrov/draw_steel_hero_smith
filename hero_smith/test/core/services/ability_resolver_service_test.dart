@@ -1,8 +1,116 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hero_smith/core/services/ability_resolver_service.dart';
+import 'package:drift/native.dart';
+import 'package:hero_smith/core/db/app_database.dart';
+import 'dart:convert';
+import 'package:drift/drift.dart' as drift;
 
 void main() {
   group('AbilityResolverService', () {
+    group('db-backed resolution', () {
+      late AppDatabase db;
+      late AbilityResolverService service;
+
+      setUp(() async {
+        db = AppDatabase.forTesting(NativeDatabase.memory());
+        await db.into(db.components).insert(
+              ComponentsCompanion.insert(
+                id: 'fire_bolt',
+                type: 'ability',
+                name: 'Fire Bolt',
+                dataJson: const drift.Value('{}'),
+              ),
+            );
+        await db.into(db.components).insert(
+              ComponentsCompanion.insert(
+                id: 'Shadow_Step',
+                type: 'ability',
+                name: 'Shadow Step',
+                dataJson: const drift.Value('{}'),
+              ),
+            );
+        await db.into(db.components).insert(
+              ComponentsCompanion.insert(
+                id: 'crafting_1',
+                type: 'skill',
+                name: 'Crafting Basics',
+                dataJson: drift.Value(jsonEncode({'group': 'crafting'})),
+              ),
+            );
+        await db.into(db.components).insert(
+              ComponentsCompanion.insert(
+                id: 'language_common',
+                type: 'language',
+                name: 'Common Tongue',
+                dataJson: const drift.Value('{}'),
+              ),
+            );
+        await db.into(db.components).insert(
+              ComponentsCompanion.insert(
+                id: 'title_hero',
+                type: 'title',
+                name: 'Hero of Light',
+                dataJson: drift.Value(jsonEncode({'benefits': 'shiny'})),
+              ),
+            );
+        service = AbilityResolverService(db);
+      });
+
+      tearDown(() async {
+        await db.close();
+      });
+
+      test('resolveAbilityId matches by name and slug', () async {
+        final byName = await service.resolveAbilityId('fire bolt');
+        expect(byName, equals('fire_bolt'));
+
+        final bySlug = await service.resolveAbilityId('Shadow-Step');
+        expect(bySlug, equals('Shadow_Step'));
+      });
+
+      test('resolveAbilityId falls back to slugified input when missing', () async {
+        final id = await service.resolveAbilityId('Unknown Ability');
+        expect(id, equals('unknown_ability'));
+      });
+
+      test('resolveAbilityIds skips empty and preserves order', () async {
+        final ids = await service.resolveAbilityIds(
+          const ['Fire Bolt', '', 'Shadow Step'],
+        );
+        expect(ids, equals(const ['fire_bolt', 'Shadow_Step']));
+      });
+
+      test('buildAbilityNameToIdMap builds lowercased lookup', () async {
+        final map = await service.buildAbilityNameToIdMap();
+        expect(map['fire bolt'], equals('fire_bolt'));
+        expect(map['shadow step'], equals('Shadow_Step'));
+      });
+
+      test('abilityExistsInDb and getAbilityById respect type', () async {
+        expect(await service.abilityExistsInDb('fire_bolt'), isTrue);
+        expect(await service.abilityExistsInDb('missing'), isFalse);
+        expect(await service.getAbilityById('fire_bolt'), isNotNull);
+        expect(await service.getAbilityById('crafting_1'), isNull);
+      });
+
+      test('fetches skills, languages, and titles by type/group', () async {
+        final skills = await service.getAllSkills();
+        expect(skills.single.id, equals('crafting_1'));
+
+        final crafting = await service.getSkillsByGroup('crafting');
+        expect(crafting.single.id, equals('crafting_1'));
+
+        final languages = await service.getAllLanguages();
+        expect(languages.single.id, equals('language_common'));
+
+        final titles = await service.getAllTitles();
+        expect(titles.single.id, equals('title_hero'));
+
+        expect(await service.getTitleById('title_hero'), isNotNull);
+        expect(await service.getTitleById('missing'), isNull);
+      });
+    });
+
     group('slugify', () {
       test('converts simple name to slug', () {
         expect(AbilityResolverService.slugify('Fire Bolt'), equals('fire_bolt'));

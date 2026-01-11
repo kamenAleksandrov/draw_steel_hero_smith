@@ -1,7 +1,7 @@
 part of 'sheet_story.dart';
 
 // Languages accent color
-const _languagesColor = Color(0xFF1E88E5);
+const _languagesColor = StoryTheme.languagesAccent;
 
 // Languages Tab Widget
 class _LanguagesTab extends ConsumerStatefulWidget {
@@ -467,7 +467,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
                   labelStyle: TextStyle(color: Colors.grey.shade400),
                   prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                   filled: true,
-                  fillColor: const Color(0xFF2A2A2A),
+                  fillColor: StoryTheme.cardBackground,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -544,7 +544,7 @@ class _AddLanguageDialogState extends State<_AddLanguageDialog> {
                             return Container(
                               margin: const EdgeInsets.only(bottom: 6),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF2A2A2A),
+                                color: StoryTheme.cardBackground,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.grey.shade800),
                               ),

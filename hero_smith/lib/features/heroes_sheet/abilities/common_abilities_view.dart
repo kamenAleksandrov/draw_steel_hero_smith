@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/text/heroes_sheet/abilities/common_abilities_view_text.dart';
+import '../../../core/theme/ability_colors.dart';
 import '../../../core/theme/navigation_theme.dart';
 import '../../../widgets/abilities/ability_expandable_item.dart';
 
@@ -39,11 +40,11 @@ extension CommonAbilityCategoryLabel on CommonAbilityCategory {
   Color get color {
     switch (this) {
       case CommonAbilityCategory.actions:
-        return const Color(0xFFE65100); // Orange-red to match Main Action badge
+        return AbilityColors.getActionTypeColor('main action');
       case CommonAbilityCategory.move:
-        return const Color(0xFF4CAF50); // Green to match Move Action cards
+        return AbilityColors.getActionTypeColor('move action');
       case CommonAbilityCategory.maneuvers:
-        return NavigationTheme.kitsColor;
+        return AbilityColors.getActionTypeColor('maneuver');
     }
   }
 }

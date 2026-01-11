@@ -1,7 +1,7 @@
 part of 'sheet_story.dart';
 
 // Skills accent color
-const _skillsColor = Color(0xFF43A047);
+const _skillsColor = StoryTheme.skillsAccent;
 
 // Skills Tab Widget
 class _SkillsTab extends ConsumerStatefulWidget {
@@ -455,7 +455,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
                   labelStyle: TextStyle(color: Colors.grey.shade400),
                   prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                   filled: true,
-                  fillColor: const Color(0xFF2A2A2A),
+                  fillColor: StoryTheme.cardBackground,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -523,7 +523,7 @@ class _AddSkillDialogState extends State<_AddSkillDialog> {
                           ...skills.map((skill) => Container(
                                 margin: const EdgeInsets.only(bottom: 6),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF2A2A2A),
+                                  color: StoryTheme.cardBackground,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: Colors.grey.shade800),
                                 ),

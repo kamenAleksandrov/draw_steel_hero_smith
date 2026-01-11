@@ -5,6 +5,7 @@ import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_ancestry_section_text.dart';
 
 class _SearchOption<T> {
@@ -139,7 +140,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -613,7 +614,7 @@ class _AncestryDetails extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: const Color(0xFF2A2A2A),
+              color: FormTheme.surface,
             ),
             child: Row(
               children: [
@@ -654,7 +655,7 @@ class _AncestryDetails extends StatelessWidget {
                       ? _accent.withValues(alpha: 0.1)
                       : isUnavailable
                           ? const Color(0xFF1A1A1A)
-                          : const Color(0xFF2A2A2A),
+                          : FormTheme.surface,
                   border: Border.all(
                     color: selected 
                         ? _accent.withValues(alpha: 0.4)
@@ -1015,3 +1016,4 @@ class _AncestryDetails extends StatelessWidget {
     );
   }
 }
+

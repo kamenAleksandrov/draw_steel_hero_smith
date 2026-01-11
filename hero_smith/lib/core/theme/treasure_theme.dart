@@ -3,7 +3,6 @@ import 'app_text_styles.dart';
 
 /// Treasure-specific theming constants for colors, emojis, and component styling
 class TreasureTheme {
-  
   // Treasure type emojis
   static const Map<String, String> treasureTypeEmojis = {
     'consumable': '🧪',
@@ -12,6 +11,9 @@ class TreasureTheme {
     'artifact': '✨',
     'treasure': '💎',
   };
+
+  // Crafting section color (neutral blue-grey for prerequisites)
+  static const MaterialColor craftingColor = Colors.blueGrey;
 
   // Keyword emojis
   static const Map<String, String> keywordEmojis = {
@@ -118,37 +120,43 @@ class TreasureTheme {
         : Colors.white;
   }
 
-  static Color getCardBorderColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getCardBorderColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade600.withOpacity(0.3)
         : primaryColor.shade300.withOpacity(0.5);
   }
 
-  static Color getSectionBackgroundColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getSectionBackgroundColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade800.withOpacity(0.2)
         : primaryColor.shade50.withOpacity(0.8);
   }
 
-  static Color getSectionBorderColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getSectionBorderColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade600.withOpacity(0.5)
         : primaryColor.shade300.withOpacity(0.8);
   }
 
-  static Color getKeywordChipBackgroundColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getKeywordChipBackgroundColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade800.withOpacity(0.4)
         : primaryColor.shade100;
   }
 
-  static Color getKeywordChipTextColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getKeywordChipTextColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade200
         : primaryColor.shade700;
   }
 
-  static Color getKeywordChipBorderColor(BuildContext context, MaterialColor primaryColor) {
+  static Color getKeywordChipBorderColor(
+      BuildContext context, MaterialColor primaryColor) {
     return Theme.of(context).brightness == Brightness.dark
         ? primaryColor.shade600
         : primaryColor.shade400;
@@ -192,7 +200,8 @@ class TreasureTheme {
 
   // Get color scheme for treasure type
   static TreasureColorScheme getColorScheme(String treasureType) {
-    return treasureColorSchemes[treasureType.toLowerCase()] ?? treasureColorSchemes['consumable']!;
+    return treasureColorSchemes[treasureType.toLowerCase()] ??
+        treasureColorSchemes['consumable']!;
   }
 }
 

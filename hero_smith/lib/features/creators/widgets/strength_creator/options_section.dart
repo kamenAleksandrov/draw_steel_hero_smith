@@ -909,7 +909,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
   Color? accentColor,
   IconData? icon,
 }) {
-  final color = accentColor ?? const Color(0xFF42A5F5); // Blue accent default
+  final color = accentColor ?? CreatorTheme.strengthAccent; // Use strength accent by default
   final dialogIcon = icon ?? Icons.search;
 
   return showDialog<_PickerSelection<T>>(
@@ -935,7 +935,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                   .toList();
 
           return Dialog(
-            backgroundColor: const Color(0xFF1E1E1E),
+            backgroundColor: FormTheme.surfaceDark,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -1016,7 +1016,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         prefixIcon:
                             Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -1237,7 +1237,7 @@ class _OptionTileState extends State<_OptionTile>
       bgColor = CreatorTheme.successColor.withValues(alpha: 0.08);
     } else {
       borderColor = Colors.grey.withValues(alpha: 0.4);
-      bgColor = const Color(0xFF2A2A2A);
+      bgColor = FormTheme.surface;
     }
 
     return AnimatedContainer(
@@ -1514,3 +1514,4 @@ class _OptionTileState extends State<_OptionTile>
     );
   }
 }
+

@@ -1,7 +1,7 @@
 part of 'sheet_story.dart';
 
 // Titles accent color
-const _titlesColor = Color(0xFFFFB300);
+const _titlesColor = StoryTheme.titlesAccent;
 
 // Titles Tab Widget
 class _TitlesTab extends ConsumerStatefulWidget {
@@ -646,7 +646,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? _titlesColor.withAlpha(38)
-                            : const Color(0xFF2A2A2A),
+                            : StoryTheme.cardBackground,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: isSelected ? _titlesColor : Colors.grey.shade800,
@@ -819,7 +819,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
+                        color: StoryTheme.cardBackground,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.grey.shade800),
                       ),
@@ -944,7 +944,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                       labelStyle: TextStyle(color: Colors.grey.shade400),
                       prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                       filled: true,
-                      fillColor: const Color(0xFF2A2A2A),
+                      fillColor: StoryTheme.cardBackground,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
@@ -1007,7 +1007,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
                         return Container(
                           margin: const EdgeInsets.only(bottom: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A),
+                            color: StoryTheme.cardBackground,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.grey.shade800),
                           ),
@@ -1070,7 +1070,7 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? _titlesColor.withAlpha(51) : const Color(0xFF2A2A2A),
+          color: isSelected ? _titlesColor.withAlpha(51) : StoryTheme.cardBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? _titlesColor : Colors.grey.shade700,
@@ -1088,3 +1088,4 @@ class _AddTitleDialogState extends State<_AddTitleDialog> {
     );
   }
 }
+

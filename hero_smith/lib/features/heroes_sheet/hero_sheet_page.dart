@@ -3,20 +3,12 @@ import 'package:flutter/material.dart';
 import '../creators/hero_creators/hero_creator_page.dart';
 import '../../core/text/heroes_sheet/hero_sheet_page_text.dart';
 import '../../core/theme/navigation_theme.dart';
+import '../../core/theme/hero_sheet_theme.dart';
 import 'abilities/sheet_abilities.dart';
 import 'gear/sheet_gear.dart';
 import 'main_stats/sheet_main_stats.dart';
 import 'sheet_notes.dart';
 import 'story/sheet_story.dart';
-
-/// Tab colors for hero sheet sections
-const List<Color> _tabColors = [
-  Color(0xFF4CAF50),    // Main - Green
-  Color(0xFFFF9800),    // Abilities - Orange
-  Color(0xFF7B1FA2),    // Gear - Purple
-  Color(0xFF2196F3),    // Features - Blue
-  Color(0xFF78909C),    // Notes - Blue Grey
-];
 
 /// Top-level hero sheet that hosts all hero information.
 class HeroSheetPage extends StatefulWidget {
@@ -107,7 +99,9 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = _currentIndex == index;
-    final color = isSelected ? _tabColors[index] : NavigationTheme.inactiveColor;
+    final color = isSelected
+        ? HeroSheetTheme.orderedSectionAccents[index]
+        : NavigationTheme.inactiveColor;
 
     return GestureDetector(
       onTap: () => _onSectionTapped(index),
@@ -116,7 +110,9 @@ class _HeroSheetPageState extends State<HeroSheetPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: isSelected
-            ? NavigationTheme.selectedNavItemDecoration(_tabColors[index])
+            ? NavigationTheme.selectedNavItemDecoration(
+                HeroSheetTheme.orderedSectionAccents[index],
+              )
             : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,

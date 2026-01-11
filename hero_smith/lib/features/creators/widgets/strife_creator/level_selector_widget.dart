@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/level_selector_widget_text.dart';
 
 // Helper classes for picker
@@ -145,7 +146,7 @@ Future<_PickerSelection?> _showSearchablePicker({
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? accentColor.withValues(alpha: 0.15)
-                                  : const Color(0xFF2A2A2A),
+                                  : FormTheme.surface,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: isSelected
@@ -293,3 +294,4 @@ class LevelSelectorWidget extends StatelessWidget {
     );
   }
 }
+

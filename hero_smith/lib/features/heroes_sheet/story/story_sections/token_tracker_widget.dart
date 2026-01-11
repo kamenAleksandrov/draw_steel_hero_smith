@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_token_tracker_text.dart';
+import 'package:hero_smith/core/theme/story_theme.dart';
 
 import '../../../../core/services/complication_grants_service.dart';
 
@@ -80,7 +81,7 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
     if (_isLoading) {
       return const SizedBox(
         height: 60,
-        child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF8E24AA))),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent)),
       );
     }
 
@@ -88,7 +89,7 @@ class _TokenTrackerWidgetState extends ConsumerState<TokenTrackerWidget> {
       return const SizedBox.shrink();
     }
 
-    const storyColor = Color(0xFF8E24AA);
+    const storyColor = StoryTheme.storyAccent;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

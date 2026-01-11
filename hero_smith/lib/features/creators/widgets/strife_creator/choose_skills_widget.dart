@@ -8,6 +8,7 @@ import '../../../../core/services/skill_data_service.dart';
 import '../../../../core/services/skills_service.dart';
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_skills_widget_text.dart';
 import '../../../../core/utils/selection_guard.dart';
 
@@ -139,7 +140,7 @@ Future<_PickerSelection<T>?> _showSearchablePicker<T>({
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                         filled: true,
-                        fillColor: const Color(0xFF2A2A2A),
+                        fillColor: FormTheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
@@ -996,7 +997,7 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2A2A2A),
+                    color: FormTheme.surface,
                     borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
                     border: Border.all(color: Colors.grey.shade700),
                   ),
@@ -1040,3 +1041,4 @@ class _StartingSkillsWidgetState extends State<StartingSkillsWidget>
     );
   }
 }
+

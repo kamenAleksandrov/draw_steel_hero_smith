@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/models/heroic_resource_progression.dart';
+import '../../core/theme/heroic_resource_theme.dart';
 import '../../core/services/heroic_resource_progression_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'heroic_resource_gauge.dart';
@@ -219,7 +220,7 @@ class _HeroicResourceProgressionContainerState
     return Container(
       padding: EdgeInsets.all(widget.showCompact ? 12 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? HeroicResourceTheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: resourceColor.withOpacity(0.3),
@@ -257,7 +258,7 @@ class _HeroicResourceProgressionContainerState
     return Container(
       padding: EdgeInsets.all(widget.showCompact ? 12 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2E1E1E) : Colors.red.shade50,
+        color: isDark ? HeroicResourceTheme.alertSurface : Colors.red.shade50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.red.shade300,
@@ -304,7 +305,7 @@ class _HeroicResourceProgressionContainerState
     return Container(
       padding: EdgeInsets.all(widget.showCompact ? 12 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? HeroicResourceTheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: resourceColor.withOpacity(0.3),
@@ -387,7 +388,7 @@ class _HeroicResourceProgressionContainerState
     return Container(
       padding: EdgeInsets.all(widget.showCompact ? 12 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? HeroicResourceTheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.grey.shade400,

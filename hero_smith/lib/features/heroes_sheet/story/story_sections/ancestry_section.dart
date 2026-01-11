@@ -3,13 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_ancestry_section_text.dart';
 import 'package:hero_smith/core/theme/navigation_theme.dart';
+import 'package:hero_smith/core/theme/story_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/shared/story_display_widgets.dart';
-
-// Story tab color
-const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID (same as in sheet_story.dart)
 final _componentByIdProvider =
@@ -63,10 +61,10 @@ class AncestrySection extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(26),
+                    color: StoryTheme.storyAccent.withAlpha(26),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.family_restroom, color: _storyColor, size: 20),
+                  child: const Icon(Icons.family_restroom, color: StoryTheme.storyAccent, size: 20),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -81,7 +79,7 @@ class AncestrySection extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             ancestryAsync.when(
-              loading: () => const CircularProgressIndicator(color: _storyColor),
+              loading: () => const CircularProgressIndicator(color: StoryTheme.storyAccent),
               error: (e, _) => Text(
                 '${SheetStoryAncestrySectionText.errorLoadingAncestryPrefix}$e',
                 style: TextStyle(color: Colors.red.shade300),
@@ -116,7 +114,7 @@ class AncestrySection extends ConsumerWidget {
             if (traitIds.isNotEmpty) ...[
               const SizedBox(height: 16),
               traitsAsync.when(
-                loading: () => const CircularProgressIndicator(color: _storyColor),
+                loading: () => const CircularProgressIndicator(color: StoryTheme.storyAccent),
                 error: (e, _) => Text('Error loading traits: $e', style: TextStyle(color: Colors.red.shade300)),
                 data: (allTraits) => _buildTraitsContent(context, allTraits),
               ),

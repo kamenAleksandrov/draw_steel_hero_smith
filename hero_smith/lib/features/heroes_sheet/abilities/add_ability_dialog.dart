@@ -4,6 +4,7 @@ import '../../../core/models/component.dart';
 import '../../../core/services/ability_data_service.dart';
 import '../../../core/text/heroes_sheet/abilities/add_ability_dialog_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/form_theme.dart';
 import '../../../widgets/abilities/abilities_shared.dart';
 import '../../../widgets/abilities/ability_filter_dropdown.dart';
 import '../../../widgets/abilities/ability_summary.dart';
@@ -20,9 +21,11 @@ class AddAbilityDialog extends StatefulWidget {
   const AddAbilityDialog({
     super.key,
     required this.heroId,
+    this.loadLibraryOverride,
   });
 
   final String heroId;
+  final Future<AbilityLibrary> Function()? loadLibraryOverride;
 
   @override
   State<AddAbilityDialog> createState() => _AddAbilityDialogState();
@@ -97,7 +100,8 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
     if (_isLoading || _allAbilities != null) return;
     setState(() => _isLoading = true);
     try {
-      final library = await AbilityDataService().loadLibrary();
+      final loader = widget.loadLibraryOverride ?? AbilityDataService().loadLibrary;
+      final library = await loader();
       setState(() {
         _allAbilities = library.components.toList();
         _isLoading = false;
@@ -265,7 +269,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
   Widget _buildAbilitySummaryCard(Component ability) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      color: const Color(0xFF252525),
+      color: FormTheme.surfaceDark,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
@@ -291,7 +295,7 @@ class _AddAbilityDialogState extends State<AddAbilityDialog> {
   }) {
     final isEnabled = _allAbilities != null;
     return Card(
-      color: const Color(0xFF252525),
+      color: FormTheme.surfaceDark,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: NavigationTheme.abilitiesColor.withValues(alpha: 0.3)),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/providers.dart';
 import '../../../core/services/green_forms_service.dart';
+import '../../../core/theme/creature_theme.dart';
 import 'green_forms_selector.dart';
 
 /// Key used to store the selected green form ID in HeroValues
@@ -157,7 +158,7 @@ class _HeroGreenFormWidgetState extends ConsumerState<HeroGreenFormWidget> {
       heroLevel: widget.heroLevel,
       selectedFormId: _selectedFormId,
       onFormSelected: _onFormSelected,
-      accentColor: const Color(0xFF4A7C59), // Softer green for readability
+      accentColor: CreatureTheme.greenFormAccent, // Softer green for readability
     );
   }
 
@@ -371,7 +372,7 @@ class _AutoHeroGreenFormWidgetState extends ConsumerState<AutoHeroGreenFormWidge
       heroLevel: _heroLevel,
       selectedFormId: _selectedFormId,
       onFormSelected: _onFormSelected,
-      accentColor: const Color(0xFF4A7C59),
+      accentColor: CreatureTheme.greenFormAccent,
     );
   }
 

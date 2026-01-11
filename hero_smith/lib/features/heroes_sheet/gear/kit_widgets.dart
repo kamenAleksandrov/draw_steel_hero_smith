@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/models/component.dart' as model;
 import '../../../core/text/heroes_sheet/gear/kit_widgets_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/form_theme.dart';
 import '../../../widgets/kits/equipment_card.dart';
 
 /// Wrapper widget that displays a favorite kit using the appropriate existing kit card
@@ -97,7 +98,7 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                   )
                 else
                   Material(
-                    color: const Color(0xFF2A2A2A),
+                    color: FormTheme.surface,
                     borderRadius: BorderRadius.circular(6),
                     child: InkWell(
                       onTap: onSwap,
@@ -145,7 +146,7 @@ class FavoriteKitCardWrapper extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A).withAlpha(200),
+                          color: FormTheme.surface.withAlpha(200),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(

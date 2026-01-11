@@ -698,16 +698,7 @@ class _TreasureCardState extends State<TreasureCard>
   }
 
   Color _getLevelColor(int level) {
-    switch (level) {
-      case 1:
-        return const Color(0xFF4CAF50);
-      case 5:
-        return const Color(0xFF2196F3);
-      case 9:
-        return const Color(0xFF9C27B0);
-      default:
-        return Colors.grey;
-    }
+    return TreasureTheme.levelColors[level] ?? Colors.grey;
   }
 
   Widget _buildCraftingSection(

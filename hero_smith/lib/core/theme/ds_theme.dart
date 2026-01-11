@@ -102,7 +102,7 @@ class DsTheme extends ThemeExtension<DsTheme> {
         'lore': Colors.indigo.shade300,
         'supernatural': Colors.purple.shade300,
       },
-      complicationBorder: Colors.red.shade300,
+      complicationBorder: const Color(0xFFB71C1C), // Deep crimson red for dark theme
       cultureTypeBorder: {
         'culture_environment': Colors.green.shade300,
         'culture_organisation': Colors.blue.shade300,

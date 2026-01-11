@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/models/heroic_resource_progression.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/heroic_resource_theme.dart';
 
 /// A gauge widget that displays heroic resource progression with a bar
 /// that fills based on current resource value, and tier benefits that
@@ -60,7 +61,7 @@ class _HeroicResourceGaugeState extends State<HeroicResourceGauge>
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: isDark ? HeroicResourceTheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: resourceColor.withOpacity(0.2),
@@ -417,7 +418,7 @@ class _TierBenefitItem extends StatelessWidget {
               ? (isDark ? Colors.grey.shade900 : Colors.grey.shade100)
               : isActive
                   ? resourceColor.withOpacity(isDark ? 0.15 : 0.1)
-                  : (isDark ? const Color(0xFF252535) : Colors.grey.shade50),
+                  : (isDark ? HeroicResourceTheme.panel : Colors.grey.shade50),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isLocked

@@ -217,7 +217,7 @@ class HeroesPage extends ConsumerWidget {
     }
     if (hero.complicationName != null && hero.complicationName!.isNotEmpty) {
       chips.add(
-          _buildChip(context, hero.complicationName!, const Color(0xFFE53935)));
+          _buildChip(context, hero.complicationName!, NavigationTheme.conditionsColor));
     }
 
     return Card(

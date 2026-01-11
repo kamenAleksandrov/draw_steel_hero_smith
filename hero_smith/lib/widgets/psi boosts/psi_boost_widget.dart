@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/services/psi_boost_service.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/heroic_resource_theme.dart';
 
 /// A compact widget that displays available Psi Boosts based on current heroic resource.
 ///
@@ -74,8 +75,10 @@ class _PsiBoostWidgetState extends State<PsiBoostWidget> {
     }
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final resourceColor = AppColors.psionicKeywordColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final surface = isDark ? HeroicResourceTheme.surface : Colors.white;
+    final panel = isDark ? HeroicResourceTheme.panel : Colors.grey.shade50;
 
     // Split boosts into affordable and unaffordable
     final affordableBoosts = <PsiBoost>[];
@@ -93,7 +96,7 @@ class _PsiBoostWidgetState extends State<PsiBoostWidget> {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+        color: surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: resourceColor.withOpacity(0.2),
@@ -115,6 +118,7 @@ class _PsiBoostWidgetState extends State<PsiBoostWidget> {
                     isAffordable: true,
                     resourceColor: resourceColor,
                     isDark: isDark,
+                    panel: panel,
                     onTap: widget.onSpendResource != null
                         ? () => widget.onSpendResource!(boost.cost, boost.name)
                         : null,
@@ -137,6 +141,7 @@ class _PsiBoostWidgetState extends State<PsiBoostWidget> {
                             isAffordable: false,
                             resourceColor: resourceColor,
                             isDark: isDark,
+                            panel: panel,
                           ))
                       .toList(),
                 ),
@@ -254,6 +259,7 @@ class _PsiBoostItem extends StatelessWidget {
     required this.isAffordable,
     required this.resourceColor,
     required this.isDark,
+    required this.panel,
     this.onTap,
   });
 
@@ -261,6 +267,7 @@ class _PsiBoostItem extends StatelessWidget {
   final bool isAffordable;
   final Color resourceColor;
   final bool isDark;
+  final Color panel;
   final VoidCallback? onTap;
 
   @override
@@ -282,7 +289,7 @@ class _PsiBoostItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: isAffordable
                   ? resourceColor.withOpacity(isDark ? 0.12 : 0.08)
-                  : (isDark ? const Color(0xFF252535) : Colors.grey.shade50),
+                          : panel,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: isAffordable

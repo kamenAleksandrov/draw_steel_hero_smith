@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/models/component.dart';
 import '../../core/services/ability_data_service.dart';
 import '../../core/theme/navigation_theme.dart';
+import '../../core/theme/kit_page_theme.dart';
 import '../abilities/ability_expandable_item.dart';
 
 /// Modern equipment card with clean styling matching the TreasureCard design.
@@ -115,22 +116,7 @@ class _EquipmentCardState extends State<EquipmentCard>
 
   Color _getAccentColor() {
     final type = widget.component.type.toLowerCase();
-    switch (type) {
-      case 'kit':
-        return const Color(0xFF00ACC1); // Cyan
-      case 'stormwight_kit':
-        return const Color(0xFF5C6BC0); // Indigo
-      case 'psionic_augmentation':
-        return const Color(0xFF7E57C2); // Deep purple
-      case 'enchantment':
-        return const Color(0xFFFFB300); // Amber
-      case 'prayer':
-        return const Color(0xFFFF8A65); // Deep orange
-      case 'ward':
-        return const Color(0xFFAB47BC); // Purple
-      default:
-        return NavigationTheme.kitsColor;
-    }
+    return KitPageTheme.accentForType(type);
   }
 
   IconData _getTypeIcon() {
@@ -314,16 +300,16 @@ class _EquipmentCardState extends State<EquipmentCard>
     final stats = <Widget>[];
 
     if (stamina != null && stamina > 0) {
-      stats.add(_buildStatChip('STM', '+$stamina', const Color(0xFFEF5350)));
+      stats.add(_buildStatChip('STM', '+$stamina', KitPageTheme.statColors['STM']!));
     }
     if (speed != null && speed > 0) {
-      stats.add(_buildStatChip('SPD', '+$speed', const Color(0xFF42A5F5)));
+      stats.add(_buildStatChip('SPD', '+$speed', KitPageTheme.statColors['SPD']!));
     }
     if (stability != null && stability > 0) {
-      stats.add(_buildStatChip('STB', '+$stability', const Color(0xFF66BB6A)));
+      stats.add(_buildStatChip('STB', '+$stability', KitPageTheme.statColors['STB']!));
     }
     if (disengage != null && disengage > 0) {
-      stats.add(_buildStatChip('DSG', '+$disengage', const Color(0xFFFFB74D)));
+      stats.add(_buildStatChip('DSG', '+$disengage', KitPageTheme.statColors['DSG']!));
     }
     if (characteristicScore != null && characteristicScore.isNotEmpty) {
       stats.add(_buildStatChip('CHAR', characteristicScore, accentColor));
@@ -394,7 +380,7 @@ class _EquipmentCardState extends State<EquipmentCard>
       if (entry.value == true) {
         chips.add(_buildEquipmentChip(
           '🛡️ ${_humanReadableEquipment(entry.key)}',
-          const Color(0xFF42A5F5),
+          KitPageTheme.statColors['SPD']!,
         ));
       }
     }
@@ -403,7 +389,7 @@ class _EquipmentCardState extends State<EquipmentCard>
       if (entry.value == true) {
         chips.add(_buildEquipmentChip(
           '⚔️ ${_humanReadableEquipment(entry.key)}',
-          const Color(0xFFEF5350),
+          KitPageTheme.statColors['STM']!,
         ));
       }
     }

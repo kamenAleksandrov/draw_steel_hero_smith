@@ -381,14 +381,17 @@ class PrerequisiteSection extends StatelessWidget {
 
     if (sections.isEmpty) return const SizedBox.shrink();
 
+    // Use neutral crafting color instead of treasure-specific color
+    const craftingColor = TreasureTheme.craftingColor;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: TreasureTheme.getSectionBackgroundColor(context, colorScheme.primary),
+        color: TreasureTheme.getSectionBackgroundColor(context, craftingColor),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: TreasureTheme.getSectionBorderColor(context, colorScheme.primary),
+          color: TreasureTheme.getSectionBorderColor(context, craftingColor),
           width: 0.5,
         ),
       ),

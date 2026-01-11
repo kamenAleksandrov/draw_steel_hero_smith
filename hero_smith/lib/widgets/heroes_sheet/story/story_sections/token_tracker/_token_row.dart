@@ -17,14 +17,14 @@ class _TokenRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const storyColor = Color(0xFF8E24AA);
+    const storyColor = StoryTheme.storyAccent;
     final canDecrement = current > 0;
     final canIncrement = current < max;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF252525),
+        color: StoryTheme.cardBackgroundDark,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade700),
       ),

@@ -6,6 +6,7 @@ import '../../../../core/models/component.dart';
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/theme/kit_theme.dart';
 import '../../../../core/theme/navigation_theme.dart';
+import '../../../../core/theme/form_theme.dart';
 import '../../../../core/text/creators/widgets/strife_creator/choose_equipment_widget_text.dart';
 import '../../../../widgets/kits/equipment_card.dart';
 
@@ -299,7 +300,7 @@ class _EquipmentSlotTileState extends ConsumerState<_EquipmentSlotTile> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: const Color(0xFF2A2A2A),
+                    color: FormTheme.surface,
                     border: Border.all(
                       color: _getBorderColorForType(selectedItem.type),
                       width: 2,
@@ -630,7 +631,7 @@ class _EquipmentSelectionDialogState
                             },
                           ),
                     filled: true,
-                    fillColor: const Color(0xFF2A2A2A),
+                    fillColor: FormTheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(CreatorTheme.inputBorderRadius),
                       borderSide: BorderSide(color: Colors.grey.shade700),
@@ -654,7 +655,7 @@ class _EquipmentSelectionDialogState
               ),
               if (hasMultipleCategories)
                 Material(
-                  color: const Color(0xFF2A2A2A),
+                  color: FormTheme.surface,
                   child: TabBar(
                     isScrollable: true,
                     indicatorColor: _accent,
@@ -767,7 +768,7 @@ class _EquipmentSelectionDialogState
                   decoration: BoxDecoration(
                     color: isSelected
                         ? _accent.withValues(alpha: 0.15)
-                        : const Color(0xFF2A2A2A),
+                        : FormTheme.surface,
                     border: Border.all(
                       color: isSelected
                           ? _accent
@@ -862,3 +863,4 @@ class _EquipmentSelectionDialogState
     );
   }
 }
+

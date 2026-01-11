@@ -9,6 +9,7 @@ import '../../../core/models/downtime.dart';
 import '../../../core/services/class_data_service.dart';
 import '../../../core/text/heroes_sheet/gear/gear_dialogs_text.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/form_theme.dart';
 import 'gear_utils.dart';
 
 /// Dialog for adding treasures and imbuements.
@@ -163,7 +164,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                   hintStyle: TextStyle(color: Colors.grey.shade500),
                   prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                   filled: true,
-                  fillColor: const Color(0xFF2A2A2A),
+                  fillColor: FormTheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.grey.shade700),
@@ -188,7 +189,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
             ),
             // Tab bar
             Material(
-              color: const Color(0xFF2A2A2A),
+              color: FormTheme.surface,
               child: TabBar(
                 controller: _tabController,
                 indicatorColor: NavigationTheme.treasureColor,
@@ -232,13 +233,13 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
           // Filter dropdown
           DropdownButtonFormField<String>(
             value: _filterType,
-            dropdownColor: const Color(0xFF2A2A2A),
+            dropdownColor: FormTheme.surface,
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               labelText: GearDialogsText.treasureFilterLabel,
               labelStyle: TextStyle(color: Colors.grey.shade400),
               filled: true,
-              fillColor: const Color(0xFF2A2A2A),
+              fillColor: FormTheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade700),
@@ -334,7 +335,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: FormTheme.surface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: treasureColor.withValues(alpha: 0.4),
@@ -399,13 +400,13 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
           // Filter dropdown
           DropdownButtonFormField<String>(
             value: _imbuementFilterType,
-            dropdownColor: const Color(0xFF2A2A2A),
+            dropdownColor: FormTheme.surface,
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               labelText: GearDialogsText.imbuementFilterLabel,
               labelStyle: TextStyle(color: Colors.grey.shade400),
               filled: true,
-              fillColor: const Color(0xFF2A2A2A),
+              fillColor: FormTheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade700),
@@ -463,7 +464,7 @@ class _AddTreasureDialogState extends State<AddTreasureDialog>
                       return Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2A2A),
+                          color: FormTheme.surface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade700),
                         ),
@@ -620,7 +621,7 @@ class _CreateContainerDialogState extends State<CreateContainerDialog> {
                 hintText: GearDialogsText.createContainerNameHint,
                 hintStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
-                fillColor: const Color(0xFF2A2A2A),
+                fillColor: FormTheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -700,7 +701,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
       hintText: hint,
       hintStyle: TextStyle(color: Colors.grey.shade600),
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: FormTheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -777,7 +778,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
+                color: FormTheme.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -805,7 +806,7 @@ class _CreateItemDialogState extends State<CreateItemDialog> {
                       width: 50,
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3A3A3A),
+                        color: FormTheme.surfaceMuted,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -925,7 +926,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
       hintText: hint,
       hintStyle: TextStyle(color: Colors.grey.shade600),
       filled: true,
-      fillColor: const Color(0xFF2A2A2A),
+      fillColor: FormTheme.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -1002,7 +1003,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
+                color: FormTheme.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -1030,7 +1031,7 @@ class _EditItemDialogState extends State<EditItemDialog> {
                       width: 50,
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF3A3A3A),
+                        color: FormTheme.surfaceMuted,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -1176,7 +1177,7 @@ class _EditContainerDialogState extends State<EditContainerDialog> {
                 hintText: GearDialogsText.editContainerNameHint,
                 hintStyle: TextStyle(color: Colors.grey.shade600),
                 filled: true,
-                fillColor: const Color(0xFF2A2A2A),
+                fillColor: FormTheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -1619,7 +1620,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
                   labelStyle: TextStyle(color: Colors.grey.shade400),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
                   filled: true,
-                  fillColor: const Color(0xFF2A2A2A),
+                  fillColor: FormTheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -1646,13 +1647,13 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                 child: DropdownButtonFormField<String>(
                   value: _filterType,
-                  dropdownColor: const Color(0xFF2A2A2A),
+                  dropdownColor: FormTheme.surface,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: GearDialogsText.addFavoriteFilterLabel,
                     labelStyle: TextStyle(color: Colors.grey.shade400),
                     filled: true,
-                    fillColor: const Color(0xFF2A2A2A),
+                    fillColor: FormTheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: Colors.grey.shade700),
@@ -1698,7 +1699,7 @@ class _AddFavoriteKitDialogState extends State<AddFavoriteKitDialog> {
                         return Container(
                           margin: const EdgeInsets.only(bottom: 8),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A),
+                            color: FormTheme.surface,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.grey.shade700),
                           ),
@@ -1822,7 +1823,7 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
                 labelText: GearDialogsText.quantityDialogLabel,
                 labelStyle: TextStyle(color: Colors.grey.shade400),
                 filled: true,
-                fillColor: const Color(0xFF2A2A2A),
+                fillColor: FormTheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -1869,3 +1870,5 @@ class _QuantityInputDialogState extends State<_QuantityInputDialog> {
     );
   }
 }
+
+

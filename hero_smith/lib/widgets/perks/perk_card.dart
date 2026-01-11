@@ -7,6 +7,7 @@ import '../../core/db/app_database.dart' as db;
 import '../../core/models/component.dart';
 import '../../core/services/perk_grants_service.dart';
 import '../../core/theme/navigation_theme.dart';
+import '../../core/theme/form_theme.dart';
 import '../abilities/ability_expandable_item.dart';
 import '../shared/expandable_card.dart';
 
@@ -652,7 +653,7 @@ class PerkCard extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: hasSelection
                       ? accentColor.withAlpha(26)
-                      : const Color(0xFF2A2A2A),
+                      : FormTheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: hasSelection
@@ -734,7 +735,7 @@ class PerkCard extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: hasSelection
                       ? accentColor.withAlpha(26)
-                      : const Color(0xFF2A2A2A),
+                      : FormTheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: hasSelection
@@ -844,7 +845,7 @@ class PerkCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? accentColor.withAlpha(38)
-                          : const Color(0xFF252525),
+                          : FormTheme.surfaceDark,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
@@ -986,7 +987,7 @@ class PerkCard extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? accentColor.withAlpha(38)
-                          : const Color(0xFF252525),
+                          : FormTheme.surfaceDark,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
@@ -1120,3 +1121,4 @@ class PerkCard extends ConsumerWidget {
     );
   }
 }
+

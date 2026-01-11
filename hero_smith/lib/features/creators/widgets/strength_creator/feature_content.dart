@@ -524,7 +524,7 @@ class _DetailBlock extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
+        color: FormTheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: CreatorTheme.strengthAccent.withValues(alpha: 0.2),
@@ -593,3 +593,4 @@ class _OptionFilterResult {
   final List<String> messages;
   final bool requiresExternalSelection;
 }
+

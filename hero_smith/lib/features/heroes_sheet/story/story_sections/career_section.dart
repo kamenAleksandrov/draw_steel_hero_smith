@@ -3,14 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hero_smith/core/text/heroes_sheet/story/sheet_story_career_section_text.dart';
 import 'package:hero_smith/core/theme/navigation_theme.dart';
+import 'package:hero_smith/core/theme/story_theme.dart';
 
 import '../../../../core/db/providers.dart';
 import '../../../../core/models/component.dart' as model;
 import '../../../../widgets/perks/perk_card.dart';
 import '../../../../widgets/shared/story_display_widgets.dart';
-
-// Story tab color
-const _storyColor = Color(0xFF8E24AA);
 
 // Provider to fetch a single component by ID
 final _componentByIdProvider =
@@ -82,10 +80,10 @@ class CareerSection extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: _storyColor.withAlpha(26),
+                    color: StoryTheme.storyAccent.withAlpha(26),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.work, color: _storyColor, size: 20),
+                  child: const Icon(Icons.work, color: StoryTheme.storyAccent, size: 20),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -100,7 +98,7 @@ class CareerSection extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             careerAsync.when(
-              loading: () => const CircularProgressIndicator(color: _storyColor),
+              loading: () => const CircularProgressIndicator(color: StoryTheme.storyAccent),
               error: (e, _) => Text(
                 '${SheetStoryCareerSectionText.errorLoadingCareerPrefix}$e',
                 style: TextStyle(color: Colors.red.shade300),
@@ -246,7 +244,7 @@ class _ComponentDisplay extends ConsumerWidget {
       loading: () => SizedBox(
         height: 20,
         width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+        child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent),
       ),
       error: (e, _) =>
           Text('Error: $e', style: TextStyle(color: Colors.red.shade300)),
@@ -307,7 +305,7 @@ class _HeroPerkCard extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 8),
         child: SizedBox(
           height: 40,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor)),
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent)),
         ),
       ),
       error: (e, _) => Padding(
@@ -396,13 +394,13 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _isUsed
-            ? const Color(0xFF2A2A2A)
-            : _storyColor.withAlpha(51),
+            ? StoryTheme.cardBackground
+            : StoryTheme.storyAccent.withAlpha(51),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: _isUsed
               ? Colors.grey.shade700
-              : _storyColor.withAlpha(77),
+              : StoryTheme.storyAccent.withAlpha(77),
         ),
       ),
       child: Row(
@@ -412,7 +410,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
             size: 24,
             color: _isUsed
                 ? Colors.grey.shade600
-                : _storyColor,
+                : StoryTheme.storyAccent,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -446,13 +444,13 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
             SizedBox(
               width: 24,
               height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2, color: _storyColor),
+              child: CircularProgressIndicator(strokeWidth: 2, color: StoryTheme.storyAccent),
             )
           else
             Checkbox(
               value: _isUsed,
               onChanged: (_) => _toggleUsed(),
-              activeColor: _storyColor,
+              activeColor: StoryTheme.storyAccent,
               checkColor: Colors.white,
               side: BorderSide(color: Colors.grey.shade600),
             ),
@@ -464,7 +462,7 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
               fontSize: 12,
               color: _isUsed
                   ? Colors.grey.shade500
-                  : _storyColor,
+                  : StoryTheme.storyAccent,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -473,3 +471,5 @@ class _ProjectPointsDisplayState extends ConsumerState<_ProjectPointsDisplay> {
     );
   }
 }
+
+
