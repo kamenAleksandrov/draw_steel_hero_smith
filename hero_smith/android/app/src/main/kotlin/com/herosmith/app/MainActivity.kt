@@ -1,4 +1,4 @@
-package com.example.hero_smith
+package com.herosmith.app
 
 import io.flutter.embedding.android.FlutterActivity
 

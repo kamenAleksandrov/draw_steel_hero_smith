@@ -513,20 +513,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
           Text(description, style: TextStyle(color: Colors.grey.shade300, fontSize: 13)),
         if (ability != null && ability.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(Icons.flash_on, size: 16, color: Colors.purple.shade300),
-              const SizedBox(width: 4),
-              Text(
-                'Ability: $ability',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.purple.shade300,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+          _buildAbilityCard(ability),
         ],
         if (grants != null && grants.isNotEmpty) ...[
           const SizedBox(height: 8),
@@ -575,6 +562,68 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
       default:
         return '$type: $value';
     }
+  }
+
+  Widget _buildAbilityCard(String abilityNameOrId) {
+    final abilityAsync = ref.watch(abilityByNameProvider(abilityNameOrId));
+    
+    return abilityAsync.when(
+      data: (ability) {
+        if (ability == null) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Row(
+              children: [
+                Icon(Icons.flash_on, size: 16, color: Colors.purple.shade300),
+                const SizedBox(width: 4),
+                Text(
+                  'Ability: $abilityNameOrId',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.purple.shade300,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return AbilityExpandableItem(component: ability, embedded: true);
+      },
+      loading: () => Padding(
+        padding: const EdgeInsets.only(left: 8, bottom: 4),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 12,
+              height: 12,
+              child: CircularProgressIndicator(strokeWidth: 1.5, color: _titlesColor),
+            ),
+            const SizedBox(width: 8),
+            Text('Loading $abilityNameOrId...', style: TextStyle(fontSize: 10, color: Colors.grey.shade400)),
+          ],
+        ),
+      ),
+      error: (e, _) => Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Row(
+          children: [
+            Icon(Icons.flash_on, size: 16, color: Colors.purple.shade300),
+            const SizedBox(width: 4),
+            Text(
+              'Ability: $abilityNameOrId',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.purple.shade300,
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showChangeBenefitDialog(String titleId, List benefits) {

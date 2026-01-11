@@ -23,6 +23,7 @@ import '../../../core/text/heroes_sheet/story/sheet_story_text.dart';
 import '../../creators/widgets/strength_creator/class_features_section.dart';
 
 import '../../../widgets/perks/perks_selection_widget.dart';
+import '../../../widgets/abilities/ability_expandable_item.dart';
 import 'story_sections/story_sections.dart';
 
 part 'sheet_story_story_tab.dart';

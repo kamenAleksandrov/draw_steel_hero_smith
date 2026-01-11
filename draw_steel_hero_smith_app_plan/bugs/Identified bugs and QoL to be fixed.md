@@ -11,9 +11,9 @@ automatically applied must be as a divider instead as another box that boxes the
 
 treasures must be reorderable and appear by time of addition
 
-guismaster adds too much stamina
-
 perk skill, language flase duplication error
+
+complication in main pages not showing abilities
 ## medium
 
 most popouts should be wider

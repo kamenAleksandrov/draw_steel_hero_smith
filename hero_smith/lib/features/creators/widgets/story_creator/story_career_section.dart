@@ -175,12 +175,15 @@ class _CareerContent extends StatefulWidget {
 class _CareerContentState extends State<_CareerContent> {
   late List<model.Component> _careers;
   int? _lastEmittedLanguageSlots;
+  /// Internal slot assignments to preserve position when user picks skill for slot 2 before slot 1
+  List<String?> _skillSlots = [];
 
   @override
   void initState() {
     super.initState();
     _careers = List.of(widget.careers)
       ..sort((a, b) => a.name.compareTo(b.name));
+    _syncSkillSlots();
   }
 
   @override
@@ -189,6 +192,21 @@ class _CareerContentState extends State<_CareerContent> {
     if (!listEquals(oldWidget.careers, widget.careers)) {
       _careers = List.of(widget.careers)
         ..sort((a, b) => a.name.compareTo(b.name));
+    }
+    // If external chosenSkillIds changed (e.g., career changed), resync slots
+    if (!setEquals(oldWidget.chosenSkillIds, widget.chosenSkillIds)) {
+      _syncSkillSlots();
+    }
+  }
+
+  /// Sync internal slot list from widget's chosenSkillIds set
+  void _syncSkillSlots() {
+    // Only sync if our internal slots don't match the external set
+    final currentSet = _skillSlots.whereType<String>().toSet();
+    if (!setEquals(currentSet, widget.chosenSkillIds)) {
+      // External state changed, rebuild slots from the set
+      // Use List<String?>.from to ensure the list can hold nulls
+      _skillSlots = List<String?>.from(widget.chosenSkillIds);
     }
   }
 
@@ -432,8 +450,21 @@ class _CareerContentState extends State<_CareerContent> {
               final skillMap = {
                 for (final skill in eligible) skill.id: skill,
               };
-              final currentSelections =
-                  widget.chosenSkillIds.where(skillMap.containsKey).toList();
+              
+              // Ensure _skillSlots has correct size and only valid skills
+              while (_skillSlots.length < picksNeeded) {
+                _skillSlots.add(null);
+              }
+              if (_skillSlots.length > picksNeeded) {
+                _skillSlots = _skillSlots.sublist(0, picksNeeded);
+              }
+              // Validate that all slots contain eligible skills
+              for (var i = 0; i < _skillSlots.length; i++) {
+                final slot = _skillSlots[i];
+                if (slot != null && !skillMap.containsKey(slot)) {
+                  _skillSlots[i] = null;
+                }
+              }
 
               final grouped = <String, List<model.Component>>{};
               final ungrouped = <model.Component>[];
@@ -452,33 +483,33 @@ class _CareerContentState extends State<_CareerContent> {
               ungrouped.sort((a, b) => a.name.compareTo(b.name));
 
               List<String?> currentSlots() {
-                final slots = List<String?>.filled(picksNeeded, null);
-                for (var i = 0;
-                    i < picksNeeded && i < currentSelections.length;
-                    i++) {
-                  slots[i] = currentSelections[i];
-                }
-                return slots;
+                // Use the state-tracked _skillSlots to preserve positions
+                return List<String?>.from(_skillSlots);
               }
 
               void applySelection(int index, String? value) {
-                final updated = currentSlots();
-                updated[index] = value;
+                // Update the slot at the specific index
+                _skillSlots[index] = value;
+                // Remove duplicates if the same skill was selected elsewhere
                 if (value != null) {
-                  for (var i = 0; i < updated.length; i++) {
-                    if (i != index && updated[i] == value) {
-                      updated[i] = null;
+                  for (var i = 0; i < _skillSlots.length; i++) {
+                    if (i != index && _skillSlots[i] == value) {
+                      _skillSlots[i] = null;
                     }
                   }
                 }
+                // Build a new selection set preserving slot positions
                 final next = LinkedHashSet<String>();
-                for (final pick in updated) {
+                for (var i = 0; i < _skillSlots.length; i++) {
+                  final pick = _skillSlots[i];
                   if (pick != null) {
                     next.add(pick);
                   }
                 }
                 widget.onSkillSelectionChanged(next);
                 widget.onDirty();
+                // Trigger rebuild to reflect the new slot state
+                setState(() {});
               }
 
               List<_SearchOption<String?>> buildSearchOptionsForIndex(

@@ -233,27 +233,33 @@ const _supplementalAbilityJsonFiles = [
   'data/abilities/kit_abilities.json',
 ];
 
-/// Cache for loaded supplemental abilities
+/// Cache for loaded supplemental abilities - keyed by both name and id
 Map<String, model.Component>? _supplementalAbilitiesCache;
 
-/// Load an ability by name from JSON files (fallback when not in DB)
-Future<model.Component?> _loadAbilityFromJsonFiles(String name) async {
+/// Load an ability by name or id from JSON files (fallback when not in DB)
+Future<model.Component?> _loadAbilityFromJsonFiles(String nameOrId) async {
   // Build cache if not already built
   _supplementalAbilitiesCache ??= await _buildSupplementalAbilitiesCache();
   
   final cache = _supplementalAbilitiesCache!;
   
-  // Try exact name match
-  if (cache.containsKey(name)) {
-    return cache[name];
+  // Try exact match (works for both name and id keys)
+  if (cache.containsKey(nameOrId)) {
+    return cache[nameOrId];
   }
   
   // Try normalized name match
-  final normalized = _normalizeAbilityName(name);
+  final normalized = _normalizeAbilityName(nameOrId);
   for (final entry in cache.entries) {
     if (_normalizeAbilityName(entry.key) == normalized) {
       return entry.value;
     }
+  }
+  
+  // Try slugified id match
+  final slugified = _slugifyForId(nameOrId);
+  if (cache.containsKey(slugified)) {
+    return cache[slugified];
   }
   
   return null;
@@ -281,13 +287,17 @@ Future<Map<String, model.Component>> _buildSupplementalAbilitiesCache() async {
         data.remove('name');
         data.remove('type');
         
-        cache[name] = model.Component(
+        final component = model.Component(
           id: id,
           type: 'ability',
           name: name,
           data: data,
           source: 'json_fallback',
         );
+        
+        // Store by both name and id for flexible lookup
+        cache[name] = component;
+        cache[id] = component;
       }
     } catch (_) {
       // Ignore errors for individual files
