@@ -5,10 +5,12 @@ import 'package:hero_smith/widgets/shared/expandable_card.dart';
 
 class ComplicationCard extends StatelessWidget {
   final Component complication;
+  final bool showGrants;
 
   const ComplicationCard({
     super.key,
     required this.complication,
+    this.showGrants = false,
   });
 
   @override
@@ -53,7 +55,7 @@ class ComplicationCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
           ],
-          if (grants != null && grants.isNotEmpty) ...[
+          if (showGrants && grants != null && grants.isNotEmpty) ...[
             _buildSection(
               context,
               '${theme.complicationSectionEmoji['grants']} Grants',

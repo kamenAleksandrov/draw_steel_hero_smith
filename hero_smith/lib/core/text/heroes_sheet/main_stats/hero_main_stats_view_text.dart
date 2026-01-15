@@ -183,6 +183,7 @@ class HeroMainStatsViewText {
   static const String xpEditInsightsTitle = 'Heroic Advancement';
   static const String xpEditCancelLabel = 'Cancel';
   static const String xpEditSaveLabel = 'Save';
+  static const String xpEditSpeedLabel = 'Leveling Speed:';
 
   static const String modEditTitlePrefix = 'Edit ';
   static const String modEditBasePrefix = 'Base: ';

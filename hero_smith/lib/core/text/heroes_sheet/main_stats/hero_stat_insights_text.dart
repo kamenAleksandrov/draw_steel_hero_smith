@@ -36,12 +36,19 @@ class HeroStatInsightsText {
     return 'Level $level: $minXp-$maxXp XP';
   }
 
-  static String xpNextLevelNeededLine(int nextMinXp, int xpNeeded) {
-    return 'Next level at $nextMinXp XP ($xpNeeded more needed)';
+  static String xpNextLevelNeededLine({
+    required int totalXp,
+    required int levelMaxXp,
+    required int remainingToNextLevel,
+  }) {
+    return 'XP: $totalXp/$levelMaxXp ($remainingToNextLevel more needed)';
   }
 
-  static String xpReadyToLevelUpLine(int nextMinXp) {
-    return 'Ready to level up! ($nextMinXp XP threshold reached)';
+  static String xpReadyToLevelUpLine({
+    required int totalXp,
+    required int nextLevelAtXp,
+  }) {
+    return 'Ready to level up! ($totalXp XP, next at $nextLevelAtXp)';
   }
 
   static const String maxLevelReached = 'Maximum level reached!';

@@ -669,6 +669,22 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
     // Only show "needs selection" warning if we have no skill ID saved
     // (If skill ID is saved but skills haven't loaded yet, it's not a missing selection)
     final needsSelection = !hasSkillId;
+    final conflicts = <String>[];
+    if (hasSkillId) {
+      final selectedElsewhere = widget.featuresWidget.skillGroupSelections
+          .entries
+          .any((entry) {
+        if (entry.key == widget.featureId) {
+          return entry.value.entries.any(
+            (kv) => kv.key != _grantKey && kv.value == currentSkillId,
+          );
+        }
+        return entry.value.values.any((value) => value == currentSkillId);
+      });
+      if (selectedElsewhere) {
+        conflicts.add('also chosen by another feature');
+      }
+    }
 
     String? currentSkillName;
     if (hasSkillId && _allSkills != null) {
@@ -784,6 +800,27 @@ class _SkillGroupPickerState extends State<_SkillGroupPicker> {
                 fontStyle: currentSkillName == null ? FontStyle.italic : null,
               ),
             ),
+          if (conflicts.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.warning_amber_rounded,
+                    size: 18, color: Colors.orange.shade400),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Potential duplicate: ${conflicts.join(' and ')}.',
+                    style: TextStyle(
+                      color: Colors.orange.shade300,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

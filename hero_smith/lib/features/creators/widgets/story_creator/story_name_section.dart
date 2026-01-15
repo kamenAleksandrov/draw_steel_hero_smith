@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,7 +8,7 @@ import '../../../../core/models/component.dart' as model;
 import '../../../../core/theme/creator_theme.dart';
 import '../../../../core/text/creators/widgets/story_creator/story_name_section_text.dart';
 
-class StoryNameSection extends ConsumerWidget {
+class StoryNameSection extends ConsumerStatefulWidget {
   const StoryNameSection({
     super.key,
     required this.nameController,
@@ -18,62 +20,130 @@ class StoryNameSection extends ConsumerWidget {
   final String? selectedAncestryId;
   final VoidCallback onDirty;
 
+  @override
+  ConsumerState<StoryNameSection> createState() => _StoryNameSectionState();
+}
+
+class _StoryNameSectionState extends ConsumerState<StoryNameSection> {
+  late final FocusNode _focusNode;
+
   static const _accent = CreatorTheme.nameAccent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: CreatorTheme.sectionMargin,
-      decoration: CreatorTheme.sectionDecoration(_accent),
-      child: Column(
-        children: [
-          CreatorTheme.sectionHeader(
-            title: StoryNameSectionText.heroNameLabel,
-            subtitle: 'Give your hero an identity',
-            icon: Icons.person_outline,
-            accent: _accent,
-          ),
-          Padding(
-            padding: CreatorTheme.sectionPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextField(
-                  controller: nameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: CreatorTheme.inputDecoration(
-                    label: StoryNameSectionText.heroNameLabel,
-                    hint: StoryNameSectionText.heroNameHint,
-                    prefixIcon: Icons.badge_outlined,
-                    accent: _accent,
-                  ),
-                  onChanged: (_) => onDirty(),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  StoryNameSectionText.ancestrySuggestionPrompt,
-                  style: CreatorTheme.infoTextStyle,
-                ),
-                if (selectedAncestryId != null) ...[
-                  const SizedBox(height: 16),
-                  _buildNameSuggestions(context, ref),
-                ],
-              ],
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TapRegion(
+      onTapOutside: (_) => _focusNode.unfocus(),
+      child: Container(
+        margin: CreatorTheme.sectionMargin,
+        decoration: CreatorTheme.sectionDecoration(_accent),
+        child: Column(
+          children: [
+            CreatorTheme.sectionHeader(
+              title: StoryNameSectionText.heroNameLabel,
+              subtitle: 'Give your hero an identity',
+              icon: Icons.person_outline,
+              accent: _accent,
             ),
-          ),
-        ],
+            Padding(
+              padding: CreatorTheme.sectionPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    controller: widget.nameController,
+                    focusNode: _focusNode,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: CreatorTheme.inputDecoration(
+                      label: StoryNameSectionText.heroNameLabel,
+                      hint: StoryNameSectionText.heroNameHint,
+                      prefixIcon: Icons.badge_outlined,
+                      accent: _accent,
+                    ).copyWith(
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.casino_outlined),
+                        color: _accent,
+                        tooltip: StoryNameSectionText.randomNameTooltip,
+                        onPressed: _pickRandomName,
+                      ),
+                    ),
+                    onChanged: (_) => widget.onDirty(),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    StoryNameSectionText.ancestrySuggestionPrompt,
+                    style: CreatorTheme.infoTextStyle,
+                  ),
+                  if (widget.selectedAncestryId != null) ...[
+                    const SizedBox(height: 16),
+                    _buildNameSuggestions(context),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildNameSuggestions(BuildContext context, WidgetRef ref) {
+  void _pickRandomName() {
+    final ancestriesAsync = ref.read(componentsByTypeProvider('ancestry'));
+    final ancestries = ancestriesAsync.valueOrNull;
+    if (ancestries == null || ancestries.isEmpty) return;
+
+    // Collect all names from all ancestries
+    final allNames = <String>[];
+    for (final ancestry in ancestries) {
+      final data = ancestry.data;
+      final exampleNames =
+          (data['exampleNames'] as Map?)?.cast<String, dynamic>();
+      if (exampleNames == null) continue;
+
+      for (final key in [
+        'examples',
+        'feminine',
+        'masculine',
+        'genderNeutral',
+      ]) {
+        final list = (exampleNames[key] as List?)
+            ?.map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+        if (list != null) allNames.addAll(list);
+      }
+    }
+
+    if (allNames.isEmpty) return;
+
+    final random = Random();
+    final randomName = allNames[random.nextInt(allNames.length)];
+    widget.nameController.text = randomName;
+    widget.nameController.selection = TextSelection.fromPosition(
+      TextPosition(offset: randomName.length),
+    );
+    widget.onDirty();
+  }
+
+  Widget _buildNameSuggestions(BuildContext context) {
     final ancestriesAsync = ref.watch(componentsByTypeProvider('ancestry'));
     return ancestriesAsync.when(
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
       data: (ancestries) {
         final selected = ancestries.firstWhere(
-          (a) => a.id == selectedAncestryId,
+          (a) => a.id == widget.selectedAncestryId,
           orElse: () => const model.Component(
             id: '',
             type: 'ancestry',
@@ -85,8 +155,8 @@ class StoryNameSection extends ConsumerWidget {
         }
         return _ExampleNameGroups(
           ancestry: selected,
-          controller: nameController,
-          onDirty: onDirty,
+          controller: widget.nameController,
+          onDirty: widget.onDirty,
         );
       },
     );

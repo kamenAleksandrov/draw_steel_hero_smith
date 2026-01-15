@@ -17,9 +17,9 @@ import '../../../core/theme/main_stats_theme.dart';
 class HeroTokenColors {
   HeroTokenColors._();
   
-  static const Color primary = Color.fromARGB(255, 89, 64, 255);
+  static const Color primary = Color.fromARGB(255, 124, 106, 255);
   static const Color light = MainStatsTheme.heroTokenLight;
-  static const Color dark = Color.fromARGB(255, 50, 33, 182);
+  static const Color dark = Color.fromARGB(255, 70, 52, 196);
 }
 
 /// Callback for editing a number field.

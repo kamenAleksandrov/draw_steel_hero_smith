@@ -1,5 +1,5 @@
 /// Data models and constants used by HeroMainStatsView.
-/// 
+///
 /// This file contains pure data classes and constant tier definitions
 /// that are used for displaying hero statistics and calculating insights.
 library;
@@ -99,8 +99,10 @@ class HeroicResourceDetails {
   final String? outCombatDescription;
   final String? strainName;
   final String? strainDescription;
+
   /// Whether this resource can go below zero (e.g., Talent's Clarity can be strained).
   final bool canBeNegative;
+
   /// Formula for calculating the minimum (most negative) value, e.g., "-(1 + Reason)".
   final String? negativeFormula;
 
@@ -108,28 +110,29 @@ class HeroicResourceDetails {
   /// Returns 0 if canBeNegative is false or formula is null.
   int calculateMinValue({int reasonScore = 0}) {
     if (!canBeNegative || negativeFormula == null) return 0;
-    
+
     // Parse formula like "-(1 + Reason)"
     final formula = negativeFormula!.toLowerCase().trim();
-    
+
     // Handle "-(X + Reason)" pattern
-    final match = RegExp(r'-\s*\(\s*(\d+)\s*\+\s*reason\s*\)').firstMatch(formula);
+    final match =
+        RegExp(r'-\s*\(\s*(\d+)\s*\+\s*reason\s*\)').firstMatch(formula);
     if (match != null) {
       final baseValue = int.tryParse(match.group(1) ?? '0') ?? 0;
       return -(baseValue + reasonScore);
     }
-    
+
     // Handle simple "-Reason" pattern
     if (formula == '-reason') {
       return -reasonScore;
     }
-    
+
     // Handle numeric value
     final numericValue = int.tryParse(formula);
     if (numericValue != null) {
       return numericValue;
     }
-    
+
     return 0;
   }
 }
@@ -225,18 +228,60 @@ const List<RenownImpressionTier> impressionTiers = [
 // XP Advancement Tiers
 // ============================================================================
 
+/// Represents the XP advancement speed for a hero.
+enum XpSpeed {
+  doubleSpeed,
+  normal,
+  halfSpeed;
+
+  String get label {
+    switch (this) {
+      case XpSpeed.doubleSpeed:
+        return 'Double Speed';
+      case XpSpeed.normal:
+        return 'Normal';
+      case XpSpeed.halfSpeed:
+        return 'Half Speed';
+    }
+  }
+
+  String get shortLabel {
+    switch (this) {
+      case XpSpeed.doubleSpeed:
+        return '2×';
+      case XpSpeed.normal:
+        return '1×';
+      case XpSpeed.halfSpeed:
+        return '½×';
+    }
+  }
+
+  static XpSpeed fromString(String? value) {
+    switch (value) {
+      case 'doubleSpeed':
+        return XpSpeed.doubleSpeed;
+      case 'halfSpeed':
+        return XpSpeed.halfSpeed;
+      case 'normal':
+      default:
+        return XpSpeed.normal;
+    }
+  }
+}
+
 /// Represents an XP advancement tier for leveling.
 class XpAdvancement {
   const XpAdvancement(this.level, this.minXp, this.maxXp);
 
   final int level;
   final int minXp;
+
   /// Use -1 for no max (level 10).
   final int maxXp;
 }
 
-/// XP advancement tier definitions for levels 1-10.
-const List<XpAdvancement> xpAdvancementTiers = [
+/// XP advancement tier definitions for Normal speed (levels 1-10).
+const List<XpAdvancement> xpAdvancementTiersNormal = [
   XpAdvancement(1, 0, 15),
   XpAdvancement(2, 16, 31),
   XpAdvancement(3, 32, 47),
@@ -248,3 +293,46 @@ const List<XpAdvancement> xpAdvancementTiers = [
   XpAdvancement(9, 128, 143),
   XpAdvancement(10, 144, -1), // -1 means no max
 ];
+
+/// XP advancement tier definitions for Double Speed (faster leveling).
+const List<XpAdvancement> xpAdvancementTiersDoubleSpeed = [
+  XpAdvancement(1, 0, 7),
+  XpAdvancement(2, 8, 15),
+  XpAdvancement(3, 16, 23),
+  XpAdvancement(4, 24, 31),
+  XpAdvancement(5, 32, 39),
+  XpAdvancement(6, 40, 47),
+  XpAdvancement(7, 48, 55),
+  XpAdvancement(8, 56, 63),
+  XpAdvancement(9, 64, 71),
+  XpAdvancement(10, 72, -1), // -1 means no max
+];
+
+/// XP advancement tier definitions for Half Speed (slower leveling).
+const List<XpAdvancement> xpAdvancementTiersHalfSpeed = [
+  XpAdvancement(1, 0, 31),
+  XpAdvancement(2, 32, 63),
+  XpAdvancement(3, 64, 95),
+  XpAdvancement(4, 96, 127),
+  XpAdvancement(5, 128, 159),
+  XpAdvancement(6, 160, 191),
+  XpAdvancement(7, 192, 223),
+  XpAdvancement(8, 224, 255),
+  XpAdvancement(9, 256, 287),
+  XpAdvancement(10, 288, -1), // -1 means no max
+];
+
+/// Returns the XP advancement tiers for the given speed.
+List<XpAdvancement> getXpAdvancementTiers(XpSpeed speed) {
+  switch (speed) {
+    case XpSpeed.doubleSpeed:
+      return xpAdvancementTiersDoubleSpeed;
+    case XpSpeed.halfSpeed:
+      return xpAdvancementTiersHalfSpeed;
+    case XpSpeed.normal:
+      return xpAdvancementTiersNormal;
+  }
+}
+
+/// Legacy: Default XP advancement tiers (Normal speed) for backward compatibility.
+const List<XpAdvancement> xpAdvancementTiers = xpAdvancementTiersNormal;

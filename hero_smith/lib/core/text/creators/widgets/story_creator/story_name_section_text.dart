@@ -1,6 +1,7 @@
 class StoryNameSectionText {
   static const String heroNameLabel = 'Hero Name';
   static const String heroNameHint = 'Enter your hero\'s name...';
+  static const String randomNameTooltip = 'Pick a random name';
   static const String ancestrySuggestionPrompt =
       'Choose an ancestry below for name suggestions!';
   static const String unknownAncestryName = 'Unknown';

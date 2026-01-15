@@ -1,24 +1,8 @@
 
 ## easy
 
-features that require a choise need to be noted
 
-chaging fury subclass must remove stormwight kits
-
-in the hero creator stranght tab the automaticaly applied appears doubled each time
-
-automatically applied must be as a divider instead as another box that boxes the box
-
-treasures must be reorderable and appear by time of addition
-
-perk skill, language flase duplication error
-
-complication in main pages not showing abilities
 ## medium
-
-most popouts should be wider
-
-abilities cards inside should strech the whole width, example: kits
 
 item ench must grant abilities
 
@@ -31,19 +15,9 @@ modification popuots should not have an already set value of 0
 
 the storing of equasion and calculation must be applied accross the board. not just the woadwalker recovery bonus
 
-there are false save and duplication flags on the strife page
-
 the gear page should look through every item in the heros inventory and check the grants and their conditions to summ them all and add to the hero stats
 
-when picking a class and chosing the same class as the current the choises should not reset.
-
-create a equipment functionality where the user can equip items and get their bonuses
-
 update abilities to be dynamic based on the hero stats
-
-add export hero as a file
-
-perks form career give false duplication errors on skills
 ## need testing
 
 ancestry traits should have their longer text displayed and if its too cluttered have to display fixed - may not have it in the db - it is missing take it from forge steel
@@ -71,6 +45,13 @@ some hero classes and features grant skills. those skills may have been picked i
 on my phone some elements do not update on time
 
 the hero class skill and ther features bonuses do not save or grant their bonuses
+
+features that require a choise need to be noted
+
+perk skill, language flase duplication error
+
+there are false save and duplication flags on the strife page
+
 ### unnecessary changes
 
 add a gold/silver/copper to the wealth stat and make it have both.
@@ -93,7 +74,15 @@ level 10 features have more work to be fully functional.
 
 would be nice to have it receed the jsons on updates. this will make it easier to update without losing info
 
-remove duplication finding?
+treasures must be reorderable and appear by time of addition
+
+automatically applied must be as a divider instead as another box that boxes the box
+
+chaging fury subclass must remove stormwight kits
+
+most popouts should be wider
+
+abilities cards inside should strech the whole width, example: kits
 
 ### necessary changes
 
@@ -118,23 +107,12 @@ would be cool to have the mantle of essence like the fury or null growing resour
 
 ### troubadour
 
-trinkets, leveled treasures and artefacts now have new objects that tell the app what do they add to the hero stats when a hero equips them.
+## next up
 
-here are all the new objects with explanations:
+abilities must work withe each element in the heroes data and add the bonuses to all elements
 
- { "increase_total": { "stat": "stamina", "value": 3 } },
-      {
-        "increase_total": {
-          "stat": "stability",
-          "value": 1
-        }
-      }
-"grants": [
-        {
-          "increase_total": {
-            "stat": "stamina",
-            "value": 21
-          }
-        }
-      ]
-theese function the same way are ancestries, complication and other such types of additions. if grants are found nested in levels of leveled treasures they add their bonuses to the hero at the level that the bonus is found, if the bonus is of higher level and the same bonus exists of previous levels, the highest is added to the hero IF the stackable 
+fix hero database. right not its horribly spread out. i will make fixes to the structure
+
+remove and reuse unnesesary and old code and streamline procceses.
+
+add to each hero their main ability if they have one and update it thrugh the leves and choices: censor judjement, elementalists concentration and mantle of essence, etc.

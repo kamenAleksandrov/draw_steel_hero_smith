@@ -27,6 +27,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
 
   Future<void> _loadData() async {
     try {
+      if (!mounted) return;
       setState(() {
         _isLoading = true;
         _errorMessage = null;
@@ -61,10 +62,12 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         }
       }
 
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _errorMessage = 'Failed to load titles: $e';
@@ -108,7 +111,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         selectedTitleIds: updatedIds,
       );
 
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -140,7 +143,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         selectedTitleIds: updatedIds,
       );
 
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -172,7 +175,7 @@ class _TitlesTabState extends ConsumerState<_TitlesTab> {
         selectedTitleIds: updatedIds,
       );
 
-      setState(() {});
+      if (mounted) setState(() {});
     }
   }
 

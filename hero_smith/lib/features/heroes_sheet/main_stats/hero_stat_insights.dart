@@ -62,14 +62,20 @@ List<String> generateRenownInsights(int renown) {
   return lines;
 }
 
-/// Generates insight strings about XP progression based on current XP and level.
-List<String> generateXpInsights(int xp, int currentLevel) {
-  final currentTier = xpAdvancementTiers.firstWhereOrNull(
-    (tier) => tier.level == currentLevel,
-  );
-  final nextTier = xpAdvancementTiers.firstWhereOrNull(
-    (tier) => tier.level == currentLevel + 1,
-  );
+/// Generates insight strings about XP progression.
+///
+/// Important: the app stores `xp` as the XP earned within the current level
+/// (not cumulative). Cumulative XP is computed as `currentTier.minXp + xp`.
+List<String> generateXpInsights(
+  int xp,
+  int currentLevel, [
+  XpSpeed speed = XpSpeed.normal,
+]) {
+  final tiers = getXpAdvancementTiers(speed);
+  final currentTier =
+      tiers.firstWhereOrNull((tier) => tier.level == currentLevel);
+  final nextTier =
+      tiers.firstWhereOrNull((tier) => tier.level == currentLevel + 1);
 
   final lines = <String>[];
   if (currentTier != null) {
@@ -90,14 +96,30 @@ List<String> generateXpInsights(int xp, int currentLevel) {
       );
     }
   }
-  if (nextTier != null) {
-    final xpNeeded = nextTier.minXp - xp;
-    if (xpNeeded > 0) {
+  if (currentTier != null && nextTier != null) {
+    final xpPerLevel = nextTier.minXp - currentTier.minXp;
+    final xpIntoLevel = xp.clamp(0, xpPerLevel);
+    final totalXp = currentTier.minXp + xpIntoLevel;
+
+    // Display uses the current level's max XP (e.g. level 2: 16-31).
+    final levelMaxXp = currentTier.maxXp;
+    final remainingToNextLevel = nextTier.minXp - totalXp;
+
+    if (remainingToNextLevel > 0) {
       lines.add(
-        HeroStatInsightsText.xpNextLevelNeededLine(nextTier.minXp, xpNeeded),
+        HeroStatInsightsText.xpNextLevelNeededLine(
+          totalXp: totalXp,
+          levelMaxXp: levelMaxXp,
+          remainingToNextLevel: remainingToNextLevel,
+        ),
       );
     } else {
-      lines.add(HeroStatInsightsText.xpReadyToLevelUpLine(nextTier.minXp));
+      lines.add(
+        HeroStatInsightsText.xpReadyToLevelUpLine(
+          totalXp: totalXp,
+          nextLevelAtXp: nextTier.minXp,
+        ),
+      );
     }
   } else if (currentLevel >= 10) {
     lines.add(HeroStatInsightsText.maxLevelReached);

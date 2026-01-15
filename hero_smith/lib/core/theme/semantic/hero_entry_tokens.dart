@@ -30,4 +30,5 @@ class HeroConfigKeys {
   static const String equipmentSlots = 'equipment.slots';
   static const String basicsEquipment = 'basics.equipment';
   static const String basicsKit = 'basics.kit';
+  static const String xpSpeed = 'progression.xp_speed';
 }

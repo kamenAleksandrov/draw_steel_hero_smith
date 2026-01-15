@@ -620,9 +620,14 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
         _normalizeSkillIds(_selectedSkills.values.whereType<String>());
     final reserved = <String>{
       ..._baseSkillIds,
-      ...normalizedSelections,
       ..._dbSavedSkillIds, // Include DB-saved skills from other sources
     };
+    // Only remove picks that are NEW this session; keep anything already in DB
+    for (final id in normalizedSelections) {
+      if (!_dbSavedSkillIds.contains(id)) {
+        reserved.remove(id);
+      }
+    }
     final subclassSkillId = _resolveSkillId(_selectedSubclass?.skill);
     if (subclassSkillId != null) {
       reserved.add(subclassSkillId);
@@ -639,9 +644,13 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
   void _refreshReservedPerks() {
     final currentSelections = _selectedPerks.values.whereType<String>().toSet();
     final reserved = <String>{
-      ...currentSelections, // Current selections on this page
       ..._dbSavedPerkIds, // Include DB-saved perks from other sources (e.g., Story page)
     };
+    for (final id in currentSelections) {
+      if (!_dbSavedPerkIds.contains(id)) {
+        reserved.remove(id);
+      }
+    }
 
     const equality = SetEquality<String>();
     if (!equality.equals(reserved, _reservedPerkIds)) {
@@ -1365,88 +1374,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
     characteristics[stat] = value;
   }
 
-  Set<String> _findDuplicates(Iterable<String?> values) {
-    final seen = <String>{};
-    final dupes = <String>{};
-    for (final value in values.whereType<String>()) {
-      if (!seen.add(value)) {
-        dupes.add(value);
-      }
-    }
-    return dupes;
-  }
-
-  Map<String, Set<String>> _collectSelectionConflicts() {
-    final issues = <String, Set<String>>{};
-
-    final skillValues = _selectedSkills.values.whereType<String>();
-    final normalizedSkillSelections = _normalizeSkillIds(skillValues);
-    final reservedExcludingSelection =
-        _reservedSkillIds.difference(normalizedSkillSelections);
-    final skillIssues = {
-      ..._findDuplicates(normalizedSkillSelections),
-      ...normalizedSkillSelections.intersection(reservedExcludingSelection),
-      ..._skillGrantIds.intersection(normalizedSkillSelections),
-      ..._skillGrantIds.intersection(_baseSkillIds),
-    };
-    if (skillIssues.isNotEmpty) {
-      issues['skills'] = skillIssues;
-    }
-
-    final perkValues = _selectedPerks.values.whereType<String>();
-    final perkIssues = {
-      ..._findDuplicates(perkValues),
-      ...perkValues.toSet().intersection(_reservedPerkIds),
-    };
-    if (perkIssues.isNotEmpty) {
-      issues['perks'] = perkIssues;
-    }
-
-    final abilityValues = _selectedAbilities.values.whereType<String>();
-    final abilityIssues = {
-      ..._findDuplicates(abilityValues),
-      ...abilityValues.toSet().intersection(_reservedAbilityIds),
-    };
-    if (abilityIssues.isNotEmpty) {
-      issues['abilities'] = abilityIssues;
-    }
-
-    return issues;
-  }
-
-  Future<bool> _confirmSelectionConflicts() async {
-    final issues = _collectSelectionConflicts();
-    if (issues.isEmpty) return true;
-
-    final categories = issues.keys.join(', ');
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(StrifeCreatorPageText.duplicateSelectionsDialogTitle),
-        content: Text(
-          '${StrifeCreatorPageText.duplicateSelectionsDialogContentPrefix}'
-          '$categories'
-          '${StrifeCreatorPageText.duplicateSelectionsDialogContentSuffix}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text(
-                StrifeCreatorPageText.duplicateSelectionsDialogGoBack),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text(
-                StrifeCreatorPageText.duplicateSelectionsDialogContinue),
-          ),
-        ],
-      ),
-    );
-
-    return result ?? false;
-  }
-
   Future<EquipmentBonuses> _applyEquipmentSelectionAndBonuses(
     List<String?> equipmentSlotIds,
     HeroRepository repo,
@@ -1497,8 +1424,6 @@ class _StrifeCreatorPageState extends ConsumerState<StrifeCreatorPage> {
 
   Future<void> _handleSave() async {
     if (!_validateSelections()) return;
-    final allowDuplicates = await _confirmSelectionConflicts();
-    if (!allowDuplicates) return;
 
     final repo = ref.read(heroRepositoryProvider);
     final db = ref.read(appDatabaseProvider);

@@ -146,75 +146,6 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
         ..._dbSavedPerkIds,
       };
 
-  List<String> _findDuplicates(Iterable<String?> values) {
-    final seen = <String>{};
-    final duplicates = <String>{};
-    for (final value in values.whereType<String>()) {
-      if (!seen.add(value)) {
-        duplicates.add(value);
-      }
-    }
-    return duplicates.toList();
-  }
-
-  Future<bool> _confirmDuplicateSelections() async {
-    final skillDuplicates = _findDuplicates([
-      _environmentSkillId,
-      _organisationSkillId,
-      _upbringingSkillId,
-      ..._careerSkillIds,
-    ]);
-
-    final languageDuplicates = _findDuplicates([
-      _selectedLanguageId,
-      ..._careerLanguageIds.whereType<String>(),
-    ]);
-
-    // Check for perk duplicates within this page and conflicts with other pages
-    final perkDuplicates = <String>{
-      ..._findDuplicates(_careerPerkIds),
-      // Check if any career perks are already saved from other pages (Strife)
-      ..._careerPerkIds.where((perkId) => 
-          _dbSavedPerkIds.contains(perkId) && 
-          !(_hero?.perks.contains(perkId) ?? false)), // Exclude hero's own perks
-    };
-
-    if (skillDuplicates.isEmpty && 
-        languageDuplicates.isEmpty && 
-        perkDuplicates.isEmpty) {
-      return true;
-    }
-
-    final categories = <String>[];
-    if (skillDuplicates.isNotEmpty) categories.add('skills');
-    if (languageDuplicates.isNotEmpty) categories.add('languages');
-    if (perkDuplicates.isNotEmpty) categories.add('perks');
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(StoryCreatorPageText.duplicateDialogTitle),
-        content: Text(
-          '${StoryCreatorPageText.duplicateDialogContentPrefix}'
-          '${categories.join(' and ')}'
-          '${StoryCreatorPageText.duplicateDialogContentSuffix}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text(StoryCreatorPageText.duplicateDialogGoBack),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text(StoryCreatorPageText.duplicateDialogContinue),
-          ),
-        ],
-      ),
-    );
-
-    return result ?? false;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -230,9 +161,6 @@ class StoryCreatorTabState extends ConsumerState<StoryCreatorTab>
   }
 
   Future<void> save() async {
-    final allowSave = await _confirmDuplicateSelections();
-    if (!allowSave) return;
-
     // Set saving flag to prevent rebuild flicker during save
     _saving = true;
 

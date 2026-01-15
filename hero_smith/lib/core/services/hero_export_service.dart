@@ -18,7 +18,8 @@ const int kHeroExportVersion = 4;
 /// Version for the ultra-compact format
 /// v1: userData uses gzip+base64 (double compression with outer gzip)
 /// v2: userData uses base64url only (outer gzip handles compression)
-const int kUltraCompactVersion = 2;
+/// v3: Added heroConfig section for build choices (essential for complete builds)
+const int kUltraCompactVersion = 3;
 
 /// Options for hero export - controls what optional data is included.
 class HeroExportOptions {
@@ -53,9 +54,11 @@ class HeroExportOptions {
 /// ULTRA-COMPACT format (v4+, prefix "H:"):
 /// - Only exports: type code + entry ID (no source info)
 /// - Payloads only for entries that truly need them (stat_mod, treasure qty)
+/// - Includes heroConfig for build choices (characteristics, skills, traits)
 /// - NO compression for small exports (gzip adds ~20 bytes overhead)
 /// - Compression only kicks in if payload > 400 chars
-/// - Example: H:10Ragnar~Cfury,Sberserker,Ahuman,Bstrike → ~50-100 chars!
+/// - Format: version+flags+name~entries~coreStats~heroConfig[~runtime][~userData]
+/// - Example: H:30Ragnar~Cfury,Sberserker,Ahuman,Bstrike~L3,M2...~a.tc:...
 ///
 /// COMPACT format (v3, prefix "HS:"):
 /// - Exports Component IDs with source info
@@ -91,6 +94,13 @@ class HeroExportService {
     'feature': 'F',
     'complication': 'W',
     'culture': 'V',
+    'culture_environment': 'J',
+    'culture_organisation': 'G',
+    'culture_upbringing': 'Q',
+    'kit_feature': 'Z',
+    'kit_stat_bonus': '1',
+    'equipment_bonuses': '2',
+    'inciting_incident': '3',
   };
 
   static final _codeToType = {
@@ -288,11 +298,12 @@ class HeroExportService {
       entryStrings.add(entryStr);
     }
 
-    // Build payload: version + flags + name ~ entries ~ coreStats [~ runtimeValues] [~ userData]
+    // Build payload: version + flags + name ~ entries ~ coreStats ~ heroConfig [~ runtimeValues] [~ userData]
     final name = _sanitizeName(heroRow.name);
     final coreStats = await _getCoreStatsCompact(heroId);
+    final heroConfig = await _getHeroConfigCompact(heroId);
     var payload =
-        '$kUltraCompactVersion$flags$name~${entryStrings.join(',')}~$coreStats';
+        '$kUltraCompactVersion$flags$name~${entryStrings.join(',')}~$coreStats~$heroConfig';
 
     // Add runtime values if opted in (current stamina, conditions, etc.)
     if (options.includeRuntimeState) {
@@ -486,6 +497,89 @@ class HeroExportService {
     return parts.join(',');
   }
 
+  // Config keys that are essential for hero builds (must be exported)
+  static const _essentialConfigKeys = {
+    // Story creator choices
+    'ancestry.trait_choices',           // Wyrmplate immunity, trait ability picks
+    'ancestry.signature_name',          // Signature ability name
+    'culture.environment.skill',        // Environment skill choice
+    'culture.organisation.skill',       // Organisation skill choice  
+    'culture.upbringing.skill',         // Upbringing skill choice
+    'career.chosen_skills',             // Career skill picks
+    'career.chosen_perks',              // Career perk picks
+    'career.inciting_incident',         // Career incident name
+    // Strife creator choices
+    'strife.characteristic_array',      // Array name and values
+    'strife.characteristic_assignments', // Stat assignments
+    'strife.level_choice_selections',   // Level-up stat boosts
+    'class_feature.selections',         // Feature choice selections
+    'strife.class_feature_selections',  // Legacy feature selections
+    // Strength creator choices
+    'kit.selections',                   // Kit skill/equipment picks
+    'equipment.slots',                  // Equipment slot assignments
+    // Perk selections (dynamic keys like perk.x.selections)
+  };
+
+  // Config key short codes for compact export
+  static const _configKeyShortCodes = {
+    'ancestry.trait_choices': 'a.tc',
+    'ancestry.signature_name': 'a.sn',
+    'culture.environment.skill': 'c.es',
+    'culture.organisation.skill': 'c.os',
+    'culture.upbringing.skill': 'c.us',
+    'career.chosen_skills': 'r.cs',
+    'career.chosen_perks': 'r.cp',
+    'career.inciting_incident': 'r.ii',
+    'strife.characteristic_array': 's.ca',
+    'strife.characteristic_assignments': 's.as',
+    'strife.level_choice_selections': 's.lc',
+    'class_feature.selections': 'f.se',
+    'strife.class_feature_selections': 's.fs',
+    'kit.selections': 'k.se',
+    'equipment.slots': 'e.sl',
+  };
+
+  static final _shortCodeToConfigKey = {
+    for (final e in _configKeyShortCodes.entries) e.value: e.key
+  };
+
+  /// Get hero config as compact string for build choices
+  /// Format: shortKey=base64(json);shortKey=base64(json);...
+  /// Also includes perk.*.selections as p.{perkId}=base64(json)
+  Future<String> _getHeroConfigCompact(String heroId) async {
+    final configs = await (_db.select(_db.heroConfig)
+          ..where((t) => t.heroId.equals(heroId)))
+        .get();
+
+    if (configs.isEmpty) return '';
+
+    final parts = <String>[];
+
+    for (final c in configs) {
+      final key = c.configKey;
+      final json = c.valueJson;
+      if (json == null || json.isEmpty || json == '{}' || json == '[]') continue;
+
+      String? shortCode = _configKeyShortCodes[key];
+      
+      // Handle dynamic perk selections: perk.{id}.selections -> p.{id}
+      if (shortCode == null && key.startsWith('perk.') && key.endsWith('.selections')) {
+        final perkId = key.substring(5, key.length - 11); // Extract perk ID
+        shortCode = 'p.$perkId';
+      }
+
+      // Skip non-essential configs
+      if (shortCode == null && !_essentialConfigKeys.contains(key)) continue;
+      shortCode ??= key; // Fallback to full key if no short code
+
+      // Compress value to base64url
+      final compressed = base64Url.encode(utf8.encode(json));
+      parts.add('$shortCode=$compressed');
+    }
+
+    return parts.join(';');
+  }
+
   /// Get user data in compact format (compressed JSON for large data)
   Future<String> _getUserDataCompact(String heroId) async {
     final userData = <String, dynamic>{};
@@ -635,7 +729,8 @@ class HeroExportService {
       }
     }
 
-    // Parse: version + flags + name ~ entries ~ coreStats [~ runtimeValues] [~ userData]
+    // Parse: version + flags + name ~ entries ~ coreStats ~ heroConfig [~ runtimeValues] [~ userData]
+    // v2 and earlier: version + flags + name ~ entries ~ coreStats [~ runtimeValues] [~ userData]
     final sections = payload.split('~');
     if (sections.length < 3) {
       throw const FormatException('Invalid hero code format');
@@ -671,16 +766,25 @@ class HeroExportService {
       await _importCoreStats(newHeroId, sections[2]);
     }
 
-    // Determine which sections are runtime vs userData based on flags
+    // Determine section layout based on version
     int nextSection = 3;
 
-    // Section 3: Runtime values (if flag set)
+    // v3+: Section 3 is heroConfig (always present in v3+)
+    if (version >= 3 && sections.length > nextSection) {
+      final configStr = sections[nextSection];
+      if (configStr.isNotEmpty) {
+        await _importHeroConfigCompact(newHeroId, configStr);
+      }
+      nextSection++;
+    }
+
+    // Runtime values (if flag set)
     if (hasRuntime && sections.length > nextSection && sections[nextSection].isNotEmpty) {
       await _importRuntimeValues(newHeroId, sections[nextSection]);
       nextSection++;
     }
 
-    // Section 4: User data (if flag set)
+    // User data (if flag set)
     if (hasUserData && sections.length > nextSection && sections[nextSection].isNotEmpty) {
       await _importUltraCompactUserData(newHeroId, sections[nextSection]);
     }
@@ -864,6 +968,48 @@ class HeroExportService {
           key: key,
           value: value,
         );
+      }
+    }
+  }
+
+  /// Import hero config from compact format
+  /// Format: shortKey=base64(json);shortKey=base64(json);...
+  Future<void> _importHeroConfigCompact(String heroId, String configStr) async {
+    if (configStr.isEmpty) return;
+
+    final pairs = configStr.split(';');
+    for (final pair in pairs) {
+      if (pair.isEmpty) continue;
+
+      final eqIndex = pair.indexOf('=');
+      if (eqIndex < 0) continue;
+
+      final shortCode = pair.substring(0, eqIndex);
+      final base64Value = pair.substring(eqIndex + 1);
+
+      if (base64Value.isEmpty) continue;
+
+      // Resolve full config key from short code
+      String configKey = _shortCodeToConfigKey[shortCode] ?? shortCode;
+      
+      // Handle dynamic perk selections: p.{perkId} -> perk.{perkId}.selections
+      if (configKey.startsWith('p.') && !configKey.contains('.selections')) {
+        final perkId = configKey.substring(2);
+        configKey = 'perk.$perkId.selections';
+      }
+
+      try {
+        final jsonStr = utf8.decode(base64Url.decode(base64Value));
+        final value = jsonDecode(jsonStr);
+        if (value is Map<String, dynamic>) {
+          await _db.setHeroConfig(
+            heroId: heroId,
+            configKey: configKey,
+            value: value,
+          );
+        }
+      } catch (_) {
+        // Skip invalid config values
       }
     }
   }

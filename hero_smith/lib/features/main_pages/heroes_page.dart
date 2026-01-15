@@ -154,7 +154,7 @@ class HeroesPage extends ConsumerWidget {
                 child: FilledButton.icon(
                   onPressed: () async {
                     final repo = ref.read(heroRepositoryProvider);
-                    final id = await repo.createHero(name: 'New Hero');
+                    final id = await repo.createHero(name: '');
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -382,7 +382,7 @@ class HeroesPage extends ConsumerWidget {
           FilledButton.icon(
             onPressed: () async {
               final repo = ref.read(heroRepositoryProvider);
-              final id = await repo.createHero(name: 'New Hero');
+              final id = await repo.createHero(name: '');
               if (!context.mounted) return;
               await Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => HeroCreatorPage(heroId: id)),

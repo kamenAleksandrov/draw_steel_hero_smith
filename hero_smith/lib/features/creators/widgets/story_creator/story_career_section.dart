@@ -450,6 +450,14 @@ class _CareerContentState extends State<_CareerContent> {
               final skillMap = {
                 for (final skill in eligible) skill.id: skill,
               };
+              final grantedSkillConflicts = grantedSkillIds.intersection({
+                ...widget.reservedSkillIds,
+                ...widget.selectedSkillIds,
+              });
+              final grantedConflictNames = grantedSkillConflicts
+                  .map((id) => skillMap[id]?.name ?? id)
+                  .where((name) => name.isNotEmpty)
+                  .toList();
               
               // Ensure _skillSlots has correct size and only valid skills
               while (_skillSlots.length < picksNeeded) {
@@ -597,6 +605,18 @@ class _CareerContentState extends State<_CareerContent> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (grantedSkillConflicts.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'Career grants already assigned elsewhere: ${grantedConflictNames.join(', ')}',
+                        style: const TextStyle(
+                          color: Colors.orange,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   Text(
                     '${StoryCareerSectionText.skillPickInstructionPrefix}$picksNeeded'
                     '${picksNeeded == 1 ? StoryCareerSectionText.skillPickInstructionSingularSuffix : StoryCareerSectionText.skillPickInstructionPluralSuffix}'

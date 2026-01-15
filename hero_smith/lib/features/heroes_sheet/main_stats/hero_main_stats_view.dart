@@ -14,6 +14,7 @@ import '../../../core/services/resource_generation_service.dart';
 import '../../../core/text/heroes_sheet/main_stats/hero_main_stats_view_text.dart';
 import '../../../core/theme/ability_colors.dart';
 import '../../../core/theme/navigation_theme.dart';
+import '../../../core/theme/semantic/hero_entry_tokens.dart';
 import '../../../widgets/heroic resource stacking tables/heroic_resource_stacking_tables.dart';
 import '../../../widgets/psi boosts/psi_boosts.dart';
 import '../../../widgets/creature stat block/hero_green_form_widget.dart';
@@ -548,8 +549,7 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                   color: Colors.indigo.withAlpha(40),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child:
-                    const Icon(Icons.bedtime_outlined, color: Colors.indigo),
+                child: const Icon(Icons.bedtime_outlined, color: Colors.indigo),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -1563,8 +1563,9 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         color: isRolled ? Colors.white : Colors.grey.shade300,
                       ),
                     ),
-                    backgroundColor:
-                        isRolled ? Colors.purple.withAlpha(60) : Colors.grey.shade800,
+                    backgroundColor: isRolled
+                        ? Colors.purple.withAlpha(60)
+                        : Colors.grey.shade800,
                     side: isRolled
                         ? const BorderSide(color: Colors.purple, width: 2)
                         : BorderSide(color: Colors.grey.shade700),
@@ -1726,7 +1727,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     final current = stats.heroTokensCurrent;
     final newValue = (current + amount).clamp(0, 99);
-    await _persistNumberField(_NumericField.heroTokensCurrent, newValue.toString());
+    await _persistNumberField(
+        _NumericField.heroTokensCurrent, newValue.toString());
   }
 
   Future<void> _spendHeroTokenForSurges(int tokenCost, int surgesGained) async {
@@ -1738,15 +1740,18 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     // Deduct tokens
     final newTokens = currentTokens - tokenCost;
-    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
+    await _persistNumberField(
+        _NumericField.heroTokensCurrent, newTokens.toString());
 
     // Add surges
     final currentSurges = stats.surgesCurrent;
     final newSurges = currentSurges + surgesGained;
-    await _persistNumberField(_NumericField.surgesCurrent, newSurges.toString());
+    await _persistNumberField(
+        _NumericField.surgesCurrent, newSurges.toString());
   }
 
-  Future<void> _spendHeroTokensForStamina(int tokenCost, int staminaAmount) async {
+  Future<void> _spendHeroTokensForStamina(
+      int tokenCost, int staminaAmount) async {
     final stats = _latestStats;
     if (stats == null) return;
 
@@ -1755,13 +1760,15 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     // Deduct tokens
     final newTokens = currentTokens - tokenCost;
-    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
+    await _persistNumberField(
+        _NumericField.heroTokensCurrent, newTokens.toString());
 
     // Add stamina up to max
     final currentStamina = stats.staminaCurrent;
     final maxStamina = stats.staminaMaxEffective;
     final newStamina = (currentStamina + staminaAmount).clamp(0, maxStamina);
-    await _persistNumberField(_NumericField.staminaCurrent, newStamina.toString());
+    await _persistNumberField(
+        _NumericField.staminaCurrent, newStamina.toString());
   }
 
   Future<void> _spendHeroTokens(int amount) async {
@@ -1772,7 +1779,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
     if (currentTokens < amount) return;
 
     final newTokens = currentTokens - amount;
-    await _persistNumberField(_NumericField.heroTokensCurrent, newTokens.toString());
+    await _persistNumberField(
+        _NumericField.heroTokensCurrent, newTokens.toString());
   }
 
   Future<void> _handleEndOfCombat(HeroMainStats stats) async {
@@ -2364,7 +2372,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     color: Colors.green.withAlpha(40),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.local_hospital, size: 14, color: Colors.green),
+                  child: const Icon(Icons.local_hospital,
+                      size: 14, color: Colors.green),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -2506,12 +2515,14 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                       color: Colors.purple.withAlpha(40),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(Icons.auto_awesome, size: 14, color: Colors.purple),
+                    child: const Icon(Icons.auto_awesome,
+                        size: 14, color: Colors.purple),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     stats.heroicResourceName ??
-                        HeroMainStatsViewText.heroicResourceCardFallbackNameError,
+                        HeroMainStatsViewText
+                            .heroicResourceCardFallbackNameError,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -2548,7 +2559,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                         color: Colors.purple.withAlpha(40),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Icon(Icons.auto_awesome, size: 14, color: Colors.purple),
+                      child: const Icon(Icons.auto_awesome,
+                          size: 14, color: Colors.purple),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -2732,7 +2744,8 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                     color: Colors.orange.withAlpha(40),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.flash_on, size: 14, color: Colors.orange),
+                  child: const Icon(Icons.flash_on,
+                      size: 14, color: Colors.orange),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -3086,7 +3099,12 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
     final controller = TextEditingController(text: currentXp.toString());
     final currentLevel = _latestStats?.level ?? 1;
-    final insights = _xpInsights(currentXp, currentLevel);
+
+    // Load saved XP speed from config
+    final configService = ref.read(heroConfigServiceProvider);
+    final savedConfig = await configService.getConfigValue(
+        widget.heroId, HeroConfigKeys.xpSpeed);
+    final initialSpeed = XpSpeed.fromString(savedConfig?['speed'] as String?);
 
     try {
       final result = await showDialog<int>(
@@ -3116,83 +3134,20 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
                 ),
               ],
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${HeroMainStatsViewText.xpEditCurrentLevelPrefix}$currentLevel',
-                  style: TextStyle(color: Colors.grey.shade300),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  autofocus: true,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    labelText: HeroMainStatsViewText.xpEditExperienceLabel,
-                    labelStyle: TextStyle(color: Colors.grey.shade400),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade700),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey.shade700),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.amber.shade400),
-                    ),
-                  ),
-                  inputFormatters: _formatters(false, 3),
-                ),
-                if (insights.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800.withAlpha(100),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.auto_graph,
-                              size: 16,
-                              color: Colors.amber.shade400,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              HeroMainStatsViewText.xpEditInsightsTitle,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade300,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ...insights.map((insight) => Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Text(
-                                insight,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade400,
-                                ),
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
+            content: _XpEditDialogContent(
+              controller: controller,
+              currentLevel: currentLevel,
+              currentXp: currentXp,
+              initialSpeed: initialSpeed,
+              formatters: _formatters(false, 3),
+              onSpeedChanged: (speed) async {
+                // Save the new speed to config
+                await configService.setConfigValue(
+                  heroId: widget.heroId,
+                  key: HeroConfigKeys.xpSpeed,
+                  value: {'speed': speed.name},
+                );
+              },
             ),
             actions: [
               TextButton(
@@ -3990,9 +3945,6 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 
   List<String> _renownInsights(int renown) => generateRenownInsights(renown);
 
-  List<String> _xpInsights(int xp, int currentLevel) =>
-      generateXpInsights(xp, currentLevel);
-
   // Delegates to extracted helper
   int _recoveryHealAmount(HeroMainStats stats) =>
       calculateRecoveryHealAmount(stats);
@@ -4471,3 +4423,194 @@ class _HeroMainStatsViewState extends ConsumerState<HeroMainStatsView> {
 // Internal type aliases for backward compatibility with private types
 // The actual classes are now in hero_main_stats_models.dart
 typedef _StatTileData = StatTileData;
+
+/// Stateful content widget for the XP edit dialog.
+///
+/// This widget manages its own state for the XP speed selector,
+/// allowing the insights to update dynamically when the speed changes.
+class _XpEditDialogContent extends StatefulWidget {
+  const _XpEditDialogContent({
+    required this.controller,
+    required this.currentLevel,
+    required this.currentXp,
+    required this.initialSpeed,
+    required this.formatters,
+    required this.onSpeedChanged,
+  });
+
+  final TextEditingController controller;
+  final int currentLevel;
+  final int currentXp;
+  final XpSpeed initialSpeed;
+  final List<TextInputFormatter> formatters;
+  final void Function(XpSpeed speed) onSpeedChanged;
+
+  @override
+  State<_XpEditDialogContent> createState() => _XpEditDialogContentState();
+}
+
+class _XpEditDialogContentState extends State<_XpEditDialogContent> {
+  late XpSpeed _selectedSpeed;
+  late int _displayXp;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedSpeed = widget.initialSpeed;
+    _displayXp = int.tryParse(widget.controller.text) ?? widget.currentXp;
+    widget.controller.addListener(_onXpChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onXpChanged);
+    super.dispose();
+  }
+
+  void _onXpChanged() {
+    final text = widget.controller.text;
+    final newXp = text.isEmpty ? 0 : (int.tryParse(text) ?? 0);
+    // Always update to ensure UI refreshes
+    setState(() {
+      _displayXp = newXp;
+    });
+  }
+
+  void _onSpeedChanged(XpSpeed speed) {
+    setState(() {
+      _selectedSpeed = speed;
+    });
+    widget.onSpeedChanged(speed);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final insights =
+        generateXpInsights(_displayXp, widget.currentLevel, _selectedSpeed);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${HeroMainStatsViewText.xpEditCurrentLevelPrefix}${widget.currentLevel}',
+          style: TextStyle(color: Colors.grey.shade300),
+        ),
+        const SizedBox(height: 12),
+        // XP Speed selector
+        Row(
+          children: [
+            Text(
+              HeroMainStatsViewText.xpEditSpeedLabel,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade400,
+              ),
+            ),
+            const Spacer(),
+            _buildSpeedButton(XpSpeed.doubleSpeed),
+            const SizedBox(width: 4),
+            _buildSpeedButton(XpSpeed.normal),
+            const SizedBox(width: 4),
+            _buildSpeedButton(XpSpeed.halfSpeed),
+          ],
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: widget.controller,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: HeroMainStatsViewText.xpEditExperienceLabel,
+            labelStyle: TextStyle(color: Colors.grey.shade400),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade700),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade700),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.amber.shade400),
+            ),
+          ),
+          inputFormatters: widget.formatters,
+        ),
+        if (insights.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800.withAlpha(100),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_graph,
+                      size: 16,
+                      color: Colors.amber.shade400,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      HeroMainStatsViewText.xpEditInsightsTitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ...insights.map((insight) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        insight,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSpeedButton(XpSpeed speed) {
+    final isSelected = _selectedSpeed == speed;
+    return InkWell(
+      onTap: () => _onSpeedChanged(speed),
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.amber.withAlpha(60) : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: isSelected ? Colors.amber : Colors.grey.shade600,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          speed.shortLabel,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected ? Colors.amber : Colors.grey.shade400,
+          ),
+        ),
+      ),
+    );
+  }
+}
