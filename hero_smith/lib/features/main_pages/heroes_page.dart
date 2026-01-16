@@ -916,20 +916,20 @@ class _ExportOptionsDialogState extends State<_ExportOptionsDialog> {
 
           const SizedBox(height: 8),
 
-          // Optional: Runtime state
-          _buildOptionTile(
-            title: 'Runtime State',
-            subtitle: 'Current HP, conditions, heroic resources',
-            value: _includeRuntimeState,
-            onChanged: (v) => setState(() => _includeRuntimeState = v ?? false),
-          ),
-
           // Optional: User data
           _buildOptionTile(
             title: 'User Data',
             subtitle: 'Notes, projects, sources, inventory, followers',
             value: _includeUserData,
             onChanged: (v) => setState(() => _includeUserData = v ?? false),
+          ),
+
+          // Optional: Runtime state
+          _buildOptionTile(
+            title: 'Runtime State',
+            subtitle: 'Current HP, conditions, heroic resources',
+            value: _includeRuntimeState,
+            onChanged: (v) => setState(() => _includeRuntimeState = v ?? false),
           ),
 
           // Optional: Custom items

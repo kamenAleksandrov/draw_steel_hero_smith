@@ -1,34 +1,5 @@
 [
   {
-    "id": "test_id",
-    "type": "title",
-    "name": "test_name",
-    "description_text": "test_description_text",
-    "echelon": 1,
-    "prerequisite": "test_prerequisite",
-    "benefits": [
-      {
-        "id": "test_benefit_1",
-        "name": "test_benefit_1",
-        "description": "test_benefit_1",
-        "ability": "test_ability"
-      },
-      {
-        "id": "test_benefit_2",
-        "name": "test_benefit_2",
-        "description": "test_benefit_2",
-        "ability": "test_ability"
-      },
-      {
-        "id": "test_benefit_3",
-        "name": "test_benefit_3",
-        "description": "test_benefit_3",
-        "ability": "test_ability"
-      }
-    ],
-    "special": "test_special"
-  },
-  {
     "id": "ancient_loremaster",
     "type": "title",
     "name": "Ancient Loremaster",

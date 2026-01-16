@@ -1,43 +1,5 @@
 [
   {
-    "id": "test_treasure",
-    "type": "consumable/trinket/leveled_treasure/artefact",
-    "name": "Test Treasure",
-    "echelon": 1,
-    "description": "This is a test treasure item.",
-    "keywords": ["test", "treasure"],
-    "item_prerequisite": "This is a prerequisite.",
-    "project_source": "Test Source",
-    "project_roll_characteristics": ["TestScore1", "TestScore2"],
-    "project_goal": null,
-    "project_goal_description": "Some description of the goal.",
-    "leveled": false,
-    "effect": {
-      "effect_description": "This is a test effect.",
-      "ability": "TestAbility",
-      "feature": "TestFeature"
-    },
-    "level_1": {
-      "effect_description": "Level 1 effect description.",
-      "feature": "Level1Feature"
-    },
-    "level_5": {
-      "effect_description": "Level 5 effect description.",
-      "feature": "Level5Feature"
-    },
-    "level_9": {
-      "effect_description": "Level 9 effect description.",
-      "feature": "Level9Feature"
-    },
-    "enchanted": false,
-    "enchants": [
-      {
-        "enchantment_name": "Test Enchantment",
-        "enchantment_benefits": null
-      }
-    ]
-  },
-  {
     "id": "black_ash_dart",
     "type": "consumable",
     "name": "Black Ash Dart",

@@ -1,25 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
 import '../db/app_database.dart';
+import 'hero_export_codes.dart';
+import 'hero_export_models.dart';
+import 'ability_resolver_service.dart';
 
 /// Version of the export format. Increment when making breaking changes.
-///
-/// Version history:
-/// - 1: Initial version with hero_row, values, entries, config (legacy JSON format)
-/// - 2: Added downtime_projects, followers, project_sources, notes (legacy JSON format)
-/// - 3: Compact reference-based format (HS: prefix)
-/// - 4: Ultra-compact format (H: prefix) - minimal data, smart compression
-const int kHeroExportVersion = 4;
-
-/// Version for the ultra-compact format
-/// v1: userData uses gzip+base64 (double compression with outer gzip)
-/// v2: userData uses base64url only (outer gzip handles compression)
-/// v3: Added heroConfig section for build choices (essential for complete builds)
-const int kUltraCompactVersion = 3;
+const int kExportVersion = 1;
 
 /// Options for hero export - controls what optional data is included.
 class HeroExportOptions {
@@ -32,13 +22,13 @@ class HeroExportOptions {
   /// Include runtime state: current stamina, conditions, heroic resources, etc.
   final bool includeRuntimeState;
 
-  /// Include user-generated data: notes, downtime projects, followers, project sources
+  /// Include user-generated data: notes, downtime projects, followers
   final bool includeUserData;
 
-  /// Include custom/user-created items that don't exist in the standard database
+  /// Include custom/user-created items
   final bool includeCustomItems;
 
-  /// Default options - minimal export with just hero build references
+  /// Default options - minimal export with just hero build picks
   static const minimal = HeroExportOptions();
 
   /// Full export with all optional data
@@ -51,189 +41,24 @@ class HeroExportOptions {
 
 /// Service for exporting and importing heroes as shareable codes.
 ///
-/// ULTRA-COMPACT format (v4+, prefix "H:"):
-/// - Only exports: type code + entry ID (no source info)
-/// - Payloads only for entries that truly need them (stat_mod, treasure qty)
-/// - Includes heroConfig for build choices (characteristics, skills, traits)
-/// - NO compression for small exports (gzip adds ~20 bytes overhead)
-/// - Compression only kicks in if payload > 400 chars
-/// - Format: version+flags+name~entries~coreStats~heroConfig[~runtime][~userData]
-/// - Example: H:30Ragnar~Cfury,Sberserker,Ahuman,Bstrike~L3,M2...~a.tc:...
+/// PICKS-ONLY format (P: prefix):
+/// - Exports ONLY user picks/choices, not derived data
+/// - App logic rebuilds everything from picks on import
+/// - Format: P:NAME|picks;separated;by;semicolons
 ///
-/// COMPACT format (v3, prefix "HS:"):
-/// - Exports Component IDs with source info
-/// - Still supported for import
-///
-/// LEGACY format (v1-2, prefix "HERO:"):
-/// - Full JSON export with all data
-/// - Still supported for import (backward compatibility)
+/// See hero_export_codes.dart for all pick codes.
 class HeroExportService {
   HeroExportService(this._db);
   final AppDatabase _db;
 
-  // Single-character type codes for ultra-compact format
-  static const _typeCode = {
-    'class': 'C',
-    'subclass': 'S',
-    'ancestry': 'A',
-    'ancestry_trait': 'T',
-    'career': 'R',
-    'kit': 'K',
-    'deity': 'D',
-    'domain': 'O',
-    'ability': 'B',
-    'skill': 'I',
-    'perk': 'P',
-    'language': 'L',
-    'title': 'N',
-    'equipment': 'E',
-    'treasure': 'U',
-    'stat_mod': 'M',
-    'resistance': 'X',
-    'condition_immunity': 'Y',
-    'feature': 'F',
-    'complication': 'W',
-    'culture': 'V',
-    'culture_environment': 'J',
-    'culture_organisation': 'G',
-    'culture_upbringing': 'Q',
-    'kit_feature': 'Z',
-    'kit_stat_bonus': '1',
-    'equipment_bonuses': '2',
-    'inciting_incident': '3',
-  };
+  // ===========================================================================
+  // EXPORT
+  // ===========================================================================
 
-  static final _codeToType = {
-    for (final e in _typeCode.entries) e.value: e.key
-  };
-
-  // Types that MUST have payload (data can't be reconstructed from ID alone)
-  static const _requiresPayload = {
-    'stat_mod',
-    'resistance',
-    'condition_immunity'
-  };
-
-
- 
-  // ============================================================
-  // COMPACT FORMAT (HS:) CONSTANTS - for backward compatibility
-  // ============================================================
-
-  /// Version for the compact HS: format (frozen at v3)
-  static const int kCompactFormatVersion = 3;
-
-  // Short codes for HS: format entry types
-  static const _entryTypeShortCodes = {
-    'class': 'c',
-    'subclass': 'sc',
-    'ancestry': 'a',
-    'ancestry_trait': 'at',
-    'career': 'ca',
-    'kit': 'k',
-    'deity': 'd',
-    'domain': 'dm',
-    'ability': 'ab',
-    'skill': 'sk',
-    'perk': 'pk',
-    'language': 'lg',
-    'title': 'ti',
-    'equipment': 'eq',
-    'treasure': 'tr',
-    'stat_mod': 'sm',
-    'resistance': 'rs',
-    'condition_immunity': 'ci',
-    'kit_feature': 'kf',
-    'kit_stat_bonus': 'ks',
-    'equipment_bonuses': 'eb',
-    'feature': 'ft',
-    'complication': 'cm',
-    'culture': 'cu',
-  };
-
-  static final _shortCodeToEntryType = {
-    for (final e in _entryTypeShortCodes.entries) e.value: e.key
-  };
-
-  // Source type short codes for HS: format
-  static const _sourceTypeShortCodes = {
-    'component': 'cp',
-    'ancestry': 'an',
-    'class': 'cl',
-    'subclass': 'sc',
-    'career': 'ca',
-    'kit': 'kt',
-    'perk': 'pk',
-    'title': 'ti',
-    'culture': 'cu',
-    'complication': 'cm',
-    'custom': 'cx',
-  };
-
-  static final _shortCodeToSourceType = {
-    for (final e in _sourceTypeShortCodes.entries) e.value: e.key
-  };
-
-  // Gained by short codes for HS: format
-  static const _gainedByShortCodes = {
-    'grant': 'g',
-    'choice': 'c',
-    'swap': 's',
-    'level_up': 'l',
-    'manual': 'm',
-  };
-
-  static final _shortCodeToGainedBy = {
-    for (final e in _gainedByShortCodes.entries) e.value: e.key
-  };
-
-  // Runtime state keys (for HS: import filtering)
-  static const _runtimeStateKeys = {
-    'current_stamina',
-    'temp_stamina',
-    'current_surges',
-    'current_recoveries',
-    'current_heroic_resource',
-    'active_conditions',
-    'active_effects',
-  };
-
-
-  // Prefixes to strip from IDs for ultra-compact export (type -> prefix)
-  static const _typePrefix = {
-    'ancestry': 'ancestry_',
-    'career': 'career_',
-    'skill': 'skill_',
-    'language': 'language_',
-    'ability': 'ability_',
-    'complication': 'complication_',
-    'culture': 'culture_',
-    'deity': 'deity_',
-    'perk': 'perk_', // some perks have this prefix
-  };
-
-  /// Strip redundant prefix from entry ID for compact export
-  String _stripPrefix(String entryType, String entryId) {
-    final prefix = _typePrefix[entryType];
-    if (prefix != null && entryId.startsWith(prefix)) {
-      return entryId.substring(prefix.length);
-    }
-    return entryId;
-  }
-
-  /// Restore prefix to entry ID during import
-  static String _restorePrefix(String entryType, String shortId) {
-    final prefix = _typePrefix[entryType];
-    if (prefix != null && !shortId.startsWith(prefix)) {
-      return '$prefix$shortId';
-    }
-    return shortId;
-  }
-
-  /// Export a hero to ultra-compact code string.
+  /// Export a hero to picks-only code string.
   ///
-  /// The code is prefixed with "H:" for the new ultra-compact format.
-  /// Use [options] to control what optional data is included.
+  /// Format: P:NAME|pick1;pick2;pick3...
+  /// Optional sections added with flags: P:NAME|picks|runtime|userdata
   Future<String> exportHeroToCode(
     String heroId, {
     HeroExportOptions options = HeroExportOptions.minimal,
@@ -245,369 +70,508 @@ class HeroExportService {
       throw ArgumentError('Hero not found: $heroId');
     }
 
-    // Build flags: bit 0 = runtime, bit 1 = userData, bit 2 = custom
-    int flags = 0;
-    if (options.includeRuntimeState) flags |= 1;
-    if (options.includeUserData) flags |= 2;
-    if (options.includeCustomItems) flags |= 4;
-
-    // Get entries and build ultra-compact format
+    // Gather all data
     final entries = await (_db.select(_db.heroEntries)
           ..where((t) => t.heroId.equals(heroId)))
         .get();
-
-    final seen = <String>{};
-    final entryStrings = <String>[];
-    for (final e in entries) {
-      if (!options.includeCustomItems && e.sourceType == 'custom') continue;
-
-      final code = _typeCode[e.entryType];
-      if (code == null) continue; // Skip unknown types
-
-      // Build unique key to detect duplicates
-      final uniqueKey = '${e.entryType}:${e.entryId}';
-      if (seen.contains(uniqueKey)) continue; // Skip duplicates
-      seen.add(uniqueKey);
-
-      // Most entries: just code + id (strip common prefixes)
-      final shortId = _stripPrefix(e.entryType, e.entryId);
-      String entryStr = '$code$shortId';
-
-      // Add payload only if truly required
-      if (_requiresPayload.contains(e.entryType) && e.payload != null) {
-        try {
-          final p = jsonDecode(e.payload!) as Map<String, dynamic>;
-          if (e.entryType == 'stat_mod') {
-            // Compact: Mstat_id:stat:value
-            entryStr += ':${p['stat']}:${p['value']}';
-          } else if (e.entryType == 'resistance') {
-            entryStr += ':${p['type']}:${p['amount'] ?? 0}';
-          } else if (e.entryType == 'condition_immunity') {
-            entryStr += ':${p['condition']}';
-          }
-        } catch (_) {}
-      } else if (e.entryType == 'treasure' && e.payload != null) {
-        // Treasure: just quantity if > 1
-        try {
-          final p = jsonDecode(e.payload!) as Map<String, dynamic>;
-          final qty = p['quantity'] as int? ?? 1;
-          if (qty > 1) entryStr += ':$qty';
-        } catch (_) {}
-      }
-
-      entryStrings.add(entryStr);
-    }
-
-    // Build payload: version + flags + name ~ entries ~ coreStats ~ heroConfig [~ runtimeValues] [~ userData]
-    final name = _sanitizeName(heroRow.name);
-    final coreStats = await _getCoreStatsCompact(heroId);
-    final heroConfig = await _getHeroConfigCompact(heroId);
-    var payload =
-        '$kUltraCompactVersion$flags$name~${entryStrings.join(',')}~$coreStats~$heroConfig';
-
-    // Add runtime values if opted in (current stamina, conditions, etc.)
-    if (options.includeRuntimeState) {
-      final runtimeValues = await _getRuntimeValues(heroId);
-      if (runtimeValues.isNotEmpty) {
-        payload += '~$runtimeValues';
-      }
-    }
-
-    // Add user data if opted in (compressed separately due to size)
-    if (options.includeUserData) {
-      final userData = await _getUserDataCompact(heroId);
-      if (userData.isNotEmpty) {
-        payload += '~$userData';
-      }
-    }
-
-    // Smart compression: only if payload is large enough to benefit
-    if (payload.length > 400) {
-      final compressed = gzip.encode(utf8.encode(payload));
-      // Only use compression if it actually helps
-      final compressedB64 = base64Encode(compressed);
-      final uncompressedB64 = base64Url.encode(utf8.encode(payload));
-      if (compressedB64.length < uncompressedB64.length) {
-        return 'H:$compressedB64';
-      }
-    }
-
-    // For short payloads, base64url without compression
-    return 'H:${base64Url.encode(utf8.encode(payload))}';
-  }
-
-  /// Sanitize hero name for URL-safe embedding (no delimiters)
-  String _sanitizeName(String name) {
-    return name
-        .replaceAll('~', '-')
-        .replaceAll(',', ' ')
-        .replaceAll(':', ' ')
-        .trim();
-  }
-
-  // Compact codes for core stats (always exported)
-  static const _coreStatCodes = {
-    'basics.level': 'L',
-    'stats.might': 'M',
-    'stats.agility': 'A',
-    'stats.reason': 'R',
-    'stats.intuition': 'I',
-    'stats.presence': 'P',
-    'stats.size': 'Z',
-    'stats.speed': 'V',
-    'stats.stability': 'Y',
-    'stats.disengage': 'D',
-    'stamina.max': 'H',
-    'recoveries.max': 'C',
-    'score.victories': 'v',
-    'score.exp': 'x',
-    'score.wealth': 'w',
-    'score.renown': 'r',
-    'mods.map': 'm', // user modifications JSON
-    'resistances.damage': 'd', // damage resistances JSON
-  };
-
-  static final _codeToCoreStat = {
-    for (final e in _coreStatCodes.entries) e.value: e.key
-  };
-
-  /// Get core stats as compact string (always included)
-  /// Format: L3,M2,A1,R0,I1,P3,Z1M,V5,Y0,D0,H21,C8,v0,x0,w0,r0
-  Future<String> _getCoreStatsCompact(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final parts = <String>[];
-
-    // Helper to find a value
-    T? find<T>(String key, T? Function(HeroValue) getter) {
-      final v = values.firstWhereOrNull((e) => e.key == key);
-      return v != null ? getter(v) : null;
-    }
-
-    // Always export these core stats (even if 0, except for scores)
-    final coreKeys = [
-      'basics.level',
-      'stats.might',
-      'stats.agility',
-      'stats.reason',
-      'stats.intuition',
-      'stats.presence',
-      'stats.speed',
-      'stats.stability',
-      'stats.disengage',
-      'stamina.max',
-      'recoveries.max',
-    ];
-
-    for (final key in coreKeys) {
-      final code = _coreStatCodes[key];
-      if (code == null) continue;
-
-      final val = find<int>(key, (v) => v.value);
-      if (val != null) {
-        parts.add('$code$val');
-      }
-    }
-
-    // Size is text
-    final size = find<String>('stats.size', (v) => v.textValue);
-    if (size != null && size.isNotEmpty) {
-      parts.add('Z$size');
-    }
-
-    // Scores (only if non-zero)
-    final scoreKeys = ['score.victories', 'score.exp', 'score.wealth', 'score.renown'];
-    for (final key in scoreKeys) {
-      final code = _coreStatCodes[key];
-      if (code == null) continue;
-      final val = find<int>(key, (v) => v.value);
-      if (val != null && val > 0) {
-        parts.add('$code$val');
-      }
-    }
-
-    // User modifications (compact JSON if present)
-    final modsJson = find<String>('mods.map', (v) => v.textValue ?? v.jsonValue);
-    if (modsJson != null && modsJson != '{}' && modsJson.isNotEmpty) {
-      // Simplify the JSON to just stat:value pairs
-      try {
-        final mods = jsonDecode(modsJson) as Map<String, dynamic>;
-        if (mods.isNotEmpty) {
-          // Flatten to simple key=value format
-          final modParts = mods.entries
-              .where((e) => e.value != 0 && e.value != null)
-              .map((e) => '${e.key}=${e.value}')
-              .join(';');
-          if (modParts.isNotEmpty) {
-            parts.add('m$modParts');
-          }
-        }
-      } catch (_) {}
-    }
-
-    // Damage resistances (compact JSON if present)
-    final resistJson = find<String>('resistances.damage', (v) => v.textValue ?? v.jsonValue);
-    if (resistJson != null && resistJson != '[]' && resistJson.isNotEmpty) {
-      try {
-        final resists = jsonDecode(resistJson) as List<dynamic>;
-        if (resists.isNotEmpty) {
-          // Format: type:amount;type:amount
-          final resistParts = resists
-              .map((r) => '${r['type']}:${r['amount'] ?? 0}')
-              .join(';');
-          if (resistParts.isNotEmpty) {
-            parts.add('d$resistParts');
-          }
-        }
-      } catch (_) {}
-    }
-
-    return parts.join(',');
-  }
-
-  /// Get runtime values as compact string (optional, for current state)
-  Future<String> _getRuntimeValues(String heroId) async {
-    final values = await _db.getHeroValues(heroId);
-    final parts = <String>[];
-
-    for (final v in values) {
-      if (v.value == null) continue;
-
-      switch (v.key) {
-        case 'stamina.current':
-          parts.add('h${v.value}');
-          break;
-        case 'stamina.temp':
-          if (v.value != 0) parts.add('t${v.value}');
-          break;
-        case 'recoveries.current':
-          parts.add('c${v.value}');
-          break;
-        case 'heroic.current':
-          parts.add('e${v.value}');
-          break;
-        case 'surges.current':
-          if (v.value != 0) parts.add('s${v.value}');
-          break;
-        case 'heroTokens.current':
-          if (v.value != 0) parts.add('k${v.value}');
-          break;
-      }
-    }
-
-    return parts.join(',');
-  }
-
-  // Config keys that are essential for hero builds (must be exported)
-  static const _essentialConfigKeys = {
-    // Story creator choices
-    'ancestry.trait_choices',           // Wyrmplate immunity, trait ability picks
-    'ancestry.signature_name',          // Signature ability name
-    'culture.environment.skill',        // Environment skill choice
-    'culture.organisation.skill',       // Organisation skill choice  
-    'culture.upbringing.skill',         // Upbringing skill choice
-    'career.chosen_skills',             // Career skill picks
-    'career.chosen_perks',              // Career perk picks
-    'career.inciting_incident',         // Career incident name
-    // Strife creator choices
-    'strife.characteristic_array',      // Array name and values
-    'strife.characteristic_assignments', // Stat assignments
-    'strife.level_choice_selections',   // Level-up stat boosts
-    'class_feature.selections',         // Feature choice selections
-    'strife.class_feature_selections',  // Legacy feature selections
-    // Strength creator choices
-    'kit.selections',                   // Kit skill/equipment picks
-    'equipment.slots',                  // Equipment slot assignments
-    // Perk selections (dynamic keys like perk.x.selections)
-  };
-
-  // Config key short codes for compact export
-  static const _configKeyShortCodes = {
-    'ancestry.trait_choices': 'a.tc',
-    'ancestry.signature_name': 'a.sn',
-    'culture.environment.skill': 'c.es',
-    'culture.organisation.skill': 'c.os',
-    'culture.upbringing.skill': 'c.us',
-    'career.chosen_skills': 'r.cs',
-    'career.chosen_perks': 'r.cp',
-    'career.inciting_incident': 'r.ii',
-    'strife.characteristic_array': 's.ca',
-    'strife.characteristic_assignments': 's.as',
-    'strife.level_choice_selections': 's.lc',
-    'class_feature.selections': 'f.se',
-    'strife.class_feature_selections': 's.fs',
-    'kit.selections': 'k.se',
-    'equipment.slots': 'e.sl',
-  };
-
-  static final _shortCodeToConfigKey = {
-    for (final e in _configKeyShortCodes.entries) e.value: e.key
-  };
-
-  /// Get hero config as compact string for build choices
-  /// Format: shortKey=base64(json);shortKey=base64(json);...
-  /// Also includes perk.*.selections as p.{perkId}=base64(json)
-  Future<String> _getHeroConfigCompact(String heroId) async {
     final configs = await (_db.select(_db.heroConfig)
           ..where((t) => t.heroId.equals(heroId)))
         .get();
+    final values = await _db.getHeroValues(heroId);
 
-    if (configs.isEmpty) return '';
+    // Build picks
+    final picks = _buildPicks(entries, configs, values, options);
 
-    final parts = <String>[];
+    // Build the code
+    final name = _sanitizeName(heroRow.name);
+    var code = 'P:$name|${picks.join(";")}';
 
-    for (final c in configs) {
-      final key = c.configKey;
-      final json = c.valueJson;
-      if (json == null || json.isEmpty || json == '{}' || json == '[]') continue;
-
-      String? shortCode = _configKeyShortCodes[key];
-      
-      // Handle dynamic perk selections: perk.{id}.selections -> p.{id}
-      if (shortCode == null && key.startsWith('perk.') && key.endsWith('.selections')) {
-        final perkId = key.substring(5, key.length - 11); // Extract perk ID
-        shortCode = 'p.$perkId';
-      }
-
-      // Skip non-essential configs
-      if (shortCode == null && !_essentialConfigKeys.contains(key)) continue;
-      shortCode ??= key; // Fallback to full key if no short code
-
-      // Compress value to base64url
-      final compressed = base64Url.encode(utf8.encode(json));
-      parts.add('$shortCode=$compressed');
+    // Add optional sections
+    if (options.includeRuntimeState) {
+      final runtime = await _buildRuntimeSection(heroId, values);
+      if (runtime.isNotEmpty) code += '|$runtime';
     }
 
-    return parts.join(';');
+    if (options.includeUserData) {
+      final userData = await _buildUserDataSection(heroId);
+      if (userData.isNotEmpty) code += '|$userData';
+    }
+
+    return code;
   }
 
-  /// Get user data in compact format (compressed JSON for large data)
-  Future<String> _getUserDataCompact(String heroId) async {
+  /// Build the picks list from hero data
+  List<String> _buildPicks(
+    List<HeroEntry> entries,
+    List<HeroConfigData> configs,
+    List<HeroValue> values,
+    HeroExportOptions options,
+  ) {
+    final picks = <String>[];
+
+    // Helpers
+    Map<String, dynamic>? getConfig(String key) {
+      final c = configs.firstWhereOrNull((c) => c.configKey == key);
+      final json = c?.valueJson;
+      if (json == null) return null;
+      try {
+        return jsonDecode(json) as Map<String, dynamic>;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    List<String> getEntryIds(String type) {
+      return entries
+          .where((e) => e.entryType == type)
+          .map((e) => e.entryId)
+          .toList();
+    }
+
+    String? getSingleEntry(String type) {
+      final e = entries.firstWhereOrNull((e) => e.entryType == type);
+      return e?.entryId;
+    }
+
+    // === STORY PICKS ===
+
+    // Ancestry
+    final ancestry = getSingleEntry('ancestry');
+    if (ancestry != null) {
+      picks.add(
+          '${pickCodes['ancestry']}:${_toShort(ancestry, ancestryShorts)}');
+    }
+
+    // Ancestry traits
+    final traits = getEntryIds('ancestry_trait');
+    if (traits.isNotEmpty) {
+      final traitShorts = traits.map((t) => _toShort(t, ancestryTraitsShorts));
+      picks.add('${pickCodes['traits']}:${traitShorts.join(",")}');
+    }
+
+    // Trait inner choices
+    final traitChoices = getConfig('ancestry.trait_choices');
+    if (traitChoices != null && traitChoices.isNotEmpty) {
+      for (final e in traitChoices.entries) {
+        picks.add('${pickCodes['trait_choice']}${_stripId(e.key)}:${e.value}');
+      }
+    }
+
+    // Culture elements
+    final envs = getEntryIds('culture_environment');
+    final orgs = getEntryIds('culture_organisation');
+    final upbs = getEntryIds('culture_upbringing');
+    if (envs.isNotEmpty) {
+      picks.add(
+          '${pickCodes['culture_environment']}:${_toShort(envs.first, cultureEnvironmentShorts)}');
+    }
+    if (orgs.isNotEmpty) {
+      picks.add(
+          '${pickCodes['culture_organisation']}:${_toShort(orgs.first, cultureOrganisationShorts)}');
+    }
+    if (upbs.isNotEmpty) {
+      picks.add(
+          '${pickCodes['culture_upbringing']}:${_toShort(upbs.first, cultureUpbringingShorts)}');
+    }
+
+    // Culture skill picks
+    final envSkill = getConfig('culture.environment.skill')?['selection'];
+    final orgSkill = getConfig('culture.organisation.skill')?['selection'];
+    final upbSkill = getConfig('culture.upbringing.skill')?['selection'];
+    final cultureSkills = <String>[];
+    if (envSkill != null) {
+      cultureSkills.add(_toShort(envSkill.toString(), skillShorts));
+    }
+    if (orgSkill != null) {
+      cultureSkills.add(_toShort(orgSkill.toString(), skillShorts));
+    }
+    if (upbSkill != null) {
+      cultureSkills.add(_toShort(upbSkill.toString(), skillShorts));
+    }
+    if (cultureSkills.isNotEmpty) {
+      picks.add('${pickCodes['culture_skills']}:${cultureSkills.join(",")}');
+    }
+
+    // Career
+    final career = getSingleEntry('career');
+    if (career != null) {
+      picks.add('${pickCodes['career']}:${_toShort(career, careerShorts)}');
+    }
+
+    // Career chosen skills
+    final careerSkills = getConfig('career.chosen_skills')?['list'] as List?;
+    if (careerSkills != null && careerSkills.isNotEmpty) {
+      final skillIds = careerSkills
+          .map((s) => _toShort(s.toString(), skillShorts))
+          .join(',');
+      picks.add('${pickCodes['career_skills']}:$skillIds');
+    }
+
+    // Career perk + perk selections
+    final careerPerks = getConfig('career.chosen_perks')?['list'] as List?;
+    if (careerPerks != null && careerPerks.isNotEmpty) {
+      for (final perk in careerPerks) {
+        final perkShort = _toShort(perk.toString(), perkShorts);
+        picks.add('${pickCodes['career_perk']}:$perkShort');
+
+        // Check for perk selections
+        final perkSelections = getConfig('perk.$perk.selections');
+        if (perkSelections != null && perkSelections.isNotEmpty) {
+          for (final sel in perkSelections.entries) {
+            final value = sel.value is List
+                ? '[${(sel.value as List).join(", ")}]'
+                : sel.value.toString();
+            picks.add(
+                '${pickCodes['career_perk_choice']}$perkShort.${sel.key}:$value');
+          }
+        }
+      }
+    }
+
+    // Inciting incident - look up by name to get ID, then short
+    final incident = getConfig('career.inciting_incident')?['name'];
+    if (incident != null) {
+      // Try to find matching short by incident name
+      final incidentStr = incident.toString();
+      final incidentId = incitingIncidentShorts.keys.firstWhere(
+        (k) =>
+            k.replaceAll('_', ' ').toLowerCase() ==
+            incidentStr.toLowerCase().replaceAll(' ', '_').replaceAll("'", ''),
+        orElse: () => incidentStr,
+      );
+      picks.add(
+          '${pickCodes['inciting_incident']}:${_toShort(incidentId, incitingIncidentShorts)}');
+    }
+
+    // Complication
+    final complication = getSingleEntry('complication');
+    if (complication != null) {
+      picks.add(
+          '${pickCodes['complication']}:${_toShort(complication, complicationShorts)}');
+    }
+
+    // Languages (only user-picked from culture, not granted)
+    final languages = entries
+        .where((e) => e.entryType == 'language')
+        .map((e) => _toShort(e.entryId, languageShorts))
+        .toSet()
+        .toList();
+    if (languages.isNotEmpty) {
+      picks.add('${pickCodes['languages']}:${languages.join(",")}');
+    }
+
+    // === STRIFE PICKS ===
+
+    // Class
+    final heroClass = getSingleEntry('class');
+    if (heroClass != null) {
+      picks.add('${pickCodes['class']}:${_toShort(heroClass, classShorts)}');
+    }
+
+    // Subclass
+    final subclass = getSingleEntry('subclass');
+    if (subclass != null) {
+      picks.add('${pickCodes['subclass']}:${_toShort(subclass, subclassShorts)}');
+    }
+
+    // Characteristic array
+    final charArray = getConfig('strife.characteristic_array');
+    if (charArray != null) {
+      final arrayName = charArray['name'];
+      if (arrayName != null && arrayName.toString().isNotEmpty) {
+        picks.add('${pickCodes['char_array']}:$arrayName');
+      }
+    }
+
+    // Characteristic assignments
+    final charAssign =
+        getConfig('strife.characteristic_assignments')?['assignments'];
+    if (charAssign != null && charAssign is Map && charAssign.isNotEmpty) {
+      final parts = <String>[];
+      for (final e in charAssign.entries) {
+        final statCode = statCodes[e.key.toString().toLowerCase()];
+        if (statCode != null) parts.add('$statCode>${e.value}');
+      }
+      if (parts.isNotEmpty) {
+        picks.add('${pickCodes['char_map']}:${parts.join(",")}');
+      }
+    }
+
+    // Level choice selections
+    final levelChoices = getConfig('strife.level_choice_selections');
+    if (levelChoices != null && levelChoices.isNotEmpty) {
+      final parts = <String>[];
+      for (final e in levelChoices.entries) {
+        final statCode = statCodes[e.value.toString().toLowerCase()];
+        if (statCode != null) parts.add('${e.key}>$statCode');
+      }
+      if (parts.isNotEmpty) {
+        picks.add('${pickCodes['level_choices']}:${parts.join(",")}');
+      }
+    }
+
+    // Class feature selections (use programmatic compression)
+    final featureSel = getConfig('class_feature.selections') ??
+        getConfig('strife.class_feature_selections');
+    if (featureSel != null && featureSel.isNotEmpty) {
+      for (final e in featureSel.entries) {
+        final selections = e.value is List ? e.value as List : [e.value];
+        if (selections.isNotEmpty) {
+          final selStr =
+              selections.map((s) => _compressId(s.toString())).join(',');
+          picks.add(
+              '${pickCodes['feature_selection']}:${_compressId(e.key)}>$selStr');
+        }
+      }
+    }
+
+    // === STRENGTH PICKS ===
+
+    // Kit
+    final kit = getSingleEntry('kit');
+    if (kit != null) {
+      picks.add('${pickCodes['kit']}:${_toShort(kit, kitShorts)}');
+    } else {
+      final equipmentIds = getEntryIds('equipment');
+      final kitFromEquipment = equipmentIds.firstWhereOrNull((id) {
+        if (kitShorts.containsKey(id)) return true;
+        final withPrefix = id.startsWith('kit_') ? id : 'kit_$id';
+        return kitShorts.containsKey(withPrefix);
+      });
+      if (kitFromEquipment != null) {
+        final normalized = kitShorts.containsKey(kitFromEquipment)
+            ? kitFromEquipment
+            : kitFromEquipment.startsWith('kit_')
+                ? kitFromEquipment
+                : 'kit_$kitFromEquipment';
+        picks.add('${pickCodes['kit']}:${_toShort(normalized, kitShorts)}');
+      }
+    }
+
+    // Kit selections
+    final kitSel = getConfig('kit.selections');
+    if (kitSel != null) {
+      final skillPick = kitSel['skill_pick'];
+      if (skillPick != null) {
+        picks.add(
+            '${pickCodes['kit_skill']}:${_toShort(skillPick.toString(), skillShorts)}');
+      }
+
+      final eqPicks = kitSel['equipment_picks'];
+      if (eqPicks is Map && eqPicks.isNotEmpty) {
+        for (final ep in eqPicks.entries) {
+          picks.add(
+              '${pickCodes['kit_equipment']}:${ep.key}>${_stripId(ep.value.toString())}');
+        }
+      }
+    }
+
+    // Deity
+    final deity = getSingleEntry('deity');
+    if (deity != null) {
+      picks.add('${pickCodes['deity']}:${_toShort(deity, deityShorts)}');
+    }
+
+    // Domains
+    final domains = getEntryIds('domain');
+    if (domains.isNotEmpty) {
+      picks.add(
+          '${pickCodes['domains']}:${domains.map((d) => _toShort(d, domainsShorts)).join(",")}');
+    }
+
+    // Title
+    final title = getSingleEntry('title');
+    if (title != null) {
+      picks.add('${pickCodes['title']}:${_toShort(title, titleShorts)}');
+    }
+
+    // === MANUAL PICKS ===
+
+    // All abilities
+    final allAbilities = entries
+      .where((e) => e.entryType == 'ability')
+      .map((e) => _compressAbilityId(e.entryId))
+      .toSet()
+      .toList();
+    if (allAbilities.isNotEmpty) {
+      picks.add('${pickCodes['abilities']}:${allAbilities.join(",")}');
+    }
+
+    // All skills
+    final allSkills = entries
+        .where((e) => e.entryType == 'skill')
+        .map((e) => _toShort(e.entryId, skillShorts))
+        .toSet()
+        .toList();
+    if (allSkills.isNotEmpty) {
+      picks.add('${pickCodes['all_skills']}:${allSkills.join(",")}');
+    }
+
+    // All perks
+    final allPerks = entries
+        .where((e) => e.entryType == 'perk')
+        .map((e) => _toShort(e.entryId, perkShorts))
+        .toSet()
+        .toList();
+    if (allPerks.isNotEmpty) {
+      picks.add('${pickCodes['perks']}:${allPerks.join(",")}');
+    }
+
+    // All titles
+    final allTitles = entries
+        .where((e) => e.entryType == 'title')
+        .map((e) => _toShort(e.entryId, titleShorts))
+        .toSet()
+        .toList();
+    if (allTitles.isNotEmpty) {
+      picks.add('${pickCodes['title']}:${allTitles.join(",")}');
+    }
+
+    // All equipment (kits, wards, prayers, etc.)
+    final allEquipment = entries
+      .where((e) => e.entryType == 'equipment')
+      .map((e) => _toShortEquipment(e.entryId))
+      .toSet()
+      .toList();
+    if (allEquipment.isNotEmpty) {
+      picks.add('${pickCodes['equipment']}:${allEquipment.join(",")}');
+    }
+
+    // Level (only if > 1)
+    final level =
+        values.firstWhereOrNull((v) => v.key == 'basics.level')?.value ?? 1;
+    if (level > 1) {
+      picks.add('${pickCodes['level']}:$level');
+    }
+
+    return picks;
+  }
+
+  /// Build runtime state section
+  Future<String> _buildRuntimeSection(
+    String heroId,
+    List<HeroValue> values,
+  ) async {
+    final parts = <String>[];
+
+    for (final v in values) {
+      final code = runtimeCodes[v.key];
+      if (code == null) continue;
+
+      if (v.value != null && v.value != 0) {
+        parts.add('$code${v.value}');
+        continue;
+      }
+      if (v.doubleValue != null && v.doubleValue != 0) {
+        parts.add('$code${v.doubleValue}');
+        continue;
+      }
+      final rawJson = v.jsonValue;
+      if (rawJson != null && rawJson.isNotEmpty) {
+        final encoded = base64Url.encode(utf8.encode(rawJson));
+        parts.add('$code:$encoded');
+        continue;
+      }
+      final rawText = v.textValue;
+      if (rawText != null && rawText.isNotEmpty) {
+        final encoded = base64Url.encode(utf8.encode(rawText));
+        parts.add('$code:$encoded');
+      }
+    }
+
+    // Downtime project progression (compact)
+    final projects = await (_db.select(_db.heroDowntimeProjects)
+          ..where((t) => t.heroId.equals(heroId)))
+        .get();
+    final progress = projects
+        .where((p) => !p.isCompleted)
+        .map((p) => {'id': p.id, 'c': p.currentPoints, 'g': p.projectGoal})
+        .toList();
+    if (progress.isNotEmpty) {
+      final encoded = base64Url.encode(utf8.encode(jsonEncode(progress)));
+      parts.add('dp:$encoded');
+    }
+
+    return parts.join(',');
+  }
+
+  /// Build user data section (compressed)
+  Future<String> _buildUserDataSection(String heroId) async {
     final userData = <String, dynamic>{};
 
-    // Just get project template IDs and progress (minimal)
+    // Projects (full)
     final projects = await (_db.select(_db.heroDowntimeProjects)
           ..where((t) => t.heroId.equals(heroId)))
         .get();
     if (projects.isNotEmpty) {
       userData['p'] = projects
-          .map((p) => <String, dynamic>{
+          .map((p) => {
+                'id': p.id,
                 if (p.templateProjectId != null) 't': p.templateProjectId,
                 'n': p.name,
+                'd': p.description,
                 'g': p.projectGoal,
                 'c': p.currentPoints,
-                if (p.isCompleted) 'd': true,
+                'pq': p.prerequisitesJson,
                 if (p.projectSource != null) 's': p.projectSource,
+                if (p.sourceLanguage != null) 'sl': p.sourceLanguage,
+                'gu': p.guidesJson,
+                'rc': p.rollCharacteristicsJson,
+                'ev': p.eventsJson,
+                'no': p.notes,
+                if (p.isCompleted) 'd': true,
+                'cu': p.isCustom,
               })
           .toList();
     }
 
-    // Project sources
+    // Followers (full)
+    final followers = await (_db.select(_db.heroFollowers)
+          ..where((t) => t.heroId.equals(heroId)))
+        .get();
+    if (followers.isNotEmpty) {
+      userData['f'] =
+          followers
+              .map((f) => {
+                    'id': f.id,
+                    'n': f.name,
+                    't': f.followerType,
+                    'm': f.might,
+                    'a': f.agility,
+                    'r': f.reason,
+                    'i': f.intuition,
+                    'p': f.presence,
+                    's': f.skillsJson,
+                    'l': f.languagesJson,
+                  })
+              .toList();
+    }
+
+    // Notes (full)
+    final notes = await (_db.select(_db.heroNotes)
+          ..where((t) => t.heroId.equals(heroId)))
+        .get();
+    if (notes.isNotEmpty) {
+      userData['n'] = notes
+          .map((n) => {
+                'id': n.id,
+                't': n.title,
+                'c': n.content,
+                if (n.folderId != null) 'f': n.folderId,
+                'if': n.isFolder,
+                'o': n.sortOrder,
+              })
+          .toList();
+    }
+
+    // Sources
     final sources = await (_db.select(_db.heroProjectSources)
           ..where((t) => t.heroId.equals(heroId)))
         .get();
     if (sources.isNotEmpty) {
       userData['s'] = sources
-          .map((s) => <String, dynamic>{
+          .map((s) => {
+                'id': s.id,
                 'n': s.name,
                 't': s.type,
                 if (s.language != null) 'l': s.language,
@@ -616,664 +580,288 @@ class HeroExportService {
           .toList();
     }
 
-    // Followers - essential fields only
-    final followers = await (_db.select(_db.heroFollowers)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    if (followers.isNotEmpty) {
-      userData['f'] = followers
-          .map((f) => <String, dynamic>{
-                'n': f.name,
-                't': f.followerType,
-              })
-          .toList();
-    }
-
-    // Notes - just titles (content is too large)
-    final notes = await (_db.select(_db.heroNotes)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    if (notes.isNotEmpty) {
-      userData['n'] = notes.map((n) => n.title).toList();
-    }
-
-    // Inventory containers (custom items)
+    // Inventory containers (gear inventory tab)
     final inventoryConfig =
         await _db.getHeroConfigValue(heroId, 'gear.inventory_containers');
-    if (inventoryConfig != null) {
-      final containers = inventoryConfig['containers'] as List<dynamic>?;
-      if (containers != null && containers.isNotEmpty) {
-        userData['i'] = containers;
-      }
+    if (inventoryConfig != null && inventoryConfig['containers'] != null) {
+      userData['i'] = inventoryConfig['containers'];
     }
 
     if (userData.isEmpty) return '';
-
-    // v2+: Just base64url encode - let outer gzip handle compression
-    // (Avoids double compression: inner gzip+base64 then outer gzip can't compress base64)
-    final json = jsonEncode(userData);
-    return base64Url.encode(utf8.encode(json));
+    return base64Url.encode(utf8.encode(jsonEncode(userData)));
   }
 
-  /// Export using the legacy full JSON format (for compatibility).
-  ///
-  /// The code is prefixed with "HERO:" for the legacy format.
-  Future<String> exportHeroToCodeLegacy(String heroId) async {
-    final data = await _gatherHeroDataLegacy(heroId);
-    final json = jsonEncode(data);
-    final bytes = utf8.encode(json);
-    final compressed = gzip.encode(bytes);
-    final base64Code = base64Encode(compressed);
-    return 'HERO:$base64Code';
-  }
+  // ===========================================================================
+  // IMPORT
+  // ===========================================================================
 
-  /// Import a hero from a shareable code string.
-  ///
-  /// Supports ultra-compact (H:), compact (HS:), and legacy (HERO:) formats.
-  /// Returns the new hero's ID on success.
-  /// Throws an exception if the code is invalid or incompatible.
-  Future<String> importHeroFromCode(String code) async {
-    if (code.startsWith('H:') && !code.startsWith('HERO:')) {
-      return _importUltraCompact(code);
-    } else if (code.startsWith('HS:')) {
-      return _importCompact(code);
-    } else if (code.startsWith('HERO:')) {
-      return _importLegacy(code);
-    } else {
-      throw const FormatException(
-        'Invalid hero code: must start with "H:", "HS:", or "HERO:"',
-      );
-    }
-  }
+  /// Parse a hero code and return the parsed picks for import.
+  /// Does NOT create the hero - returns data to be used by hero creation flow.
+  HeroParsedPicks? parseCode(String code) {
+    if (!code.startsWith('P:')) return null;
 
-  /// Validate a hero code without importing.
-  ///
-  /// Returns a summary of what would be imported, or null if invalid.
-  HeroImportPreview? validateCode(String code) {
-    if (code.startsWith('H:') && !code.startsWith('HERO:')) {
-      return _validateUltraCompact(code);
-    } else if (code.startsWith('HS:')) {
-      return _validateCompact(code);
-    } else if (code.startsWith('HERO:')) {
-      return _validateLegacy(code);
-    }
-    return null;
-  }
-
-  // ============================================================
-  // ULTRA-COMPACT FORMAT (H:) - NEW
-  // ============================================================
-
-  /// Import from ultra-compact H: format
-  Future<String> _importUltraCompact(String code) async {
-    final base64Part = code.substring(2); // Remove "H:"
-
-    String payload;
     try {
-      // Try base64url decode first (uncompressed)
-      final bytes = base64Url.decode(base64Part);
-
-      // Check if it's gzip compressed (magic bytes 0x1f 0x8b)
-      if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
-        payload = utf8.decode(gzip.decode(bytes));
-      } else {
-        payload = utf8.decode(bytes);
-      }
-    } catch (e) {
-      // Try regular base64 + gzip as fallback
-      try {
-        final compressed = base64Decode(base64Part);
-        payload = utf8.decode(gzip.decode(compressed));
-      } catch (_) {
-        throw FormatException('Failed to decode hero code: $e');
-      }
-    }
-
-    // Parse: version + flags + name ~ entries ~ coreStats ~ heroConfig [~ runtimeValues] [~ userData]
-    // v2 and earlier: version + flags + name ~ entries ~ coreStats [~ runtimeValues] [~ userData]
-    final sections = payload.split('~');
-    if (sections.length < 3) {
-      throw const FormatException('Invalid hero code format');
-    }
-
-    // Parse header: first char = version, second char = flags, rest = name
-    final header = sections[0];
-    if (header.length < 2) {
-      throw const FormatException('Invalid hero code header');
-    }
-
-    final version = int.tryParse(header[0]) ?? 1;
-    if (version > kUltraCompactVersion) {
-      throw FormatException('Unsupported format version: $version');
-    }
-
-    final flags = int.tryParse(header[1]) ?? 0;
-    final hasRuntime = (flags & 1) != 0;
-    final hasUserData = (flags & 2) != 0;
-    final heroName = header.substring(2);
-
-    // Create hero
-    final newHeroId = await _db.createHero(name: heroName);
-
-    // Section 1: Parse and import entries
-    final entriesStr = sections[1];
-    if (entriesStr.isNotEmpty) {
-      await _importUltraCompactEntries(newHeroId, entriesStr);
-    }
-
-    // Section 2: Parse core stats (always present)
-    if (sections[2].isNotEmpty) {
-      await _importCoreStats(newHeroId, sections[2]);
-    }
-
-    // Determine section layout based on version
-    int nextSection = 3;
-
-    // v3+: Section 3 is heroConfig (always present in v3+)
-    if (version >= 3 && sections.length > nextSection) {
-      final configStr = sections[nextSection];
-      if (configStr.isNotEmpty) {
-        await _importHeroConfigCompact(newHeroId, configStr);
-      }
-      nextSection++;
-    }
-
-    // Runtime values (if flag set)
-    if (hasRuntime && sections.length > nextSection && sections[nextSection].isNotEmpty) {
-      await _importRuntimeValues(newHeroId, sections[nextSection]);
-      nextSection++;
-    }
-
-    // User data (if flag set)
-    if (hasUserData && sections.length > nextSection && sections[nextSection].isNotEmpty) {
-      await _importUltraCompactUserData(newHeroId, sections[nextSection]);
-    }
-
-    return newHeroId;
-  }
-
-  /// Parse ultra-compact entries: "Cfury,Sberserker,Ahuman,Bstrike"
-  Future<void> _importUltraCompactEntries(
-      String heroId, String entriesStr) async {
-    final entries = entriesStr.split(',');
-
-    for (final entry in entries) {
-      if (entry.isEmpty) continue;
-
-      final typeCode = entry[0];
-      final entryType = _codeToType[typeCode];
-      if (entryType == null) continue;
-
-      // Parse: TypeId or TypeId:payload...
-      final rest = entry.substring(1);
-      final parts = rest.split(':');
-      // Restore prefix that was stripped during export
-      final entryId = _restorePrefix(entryType, parts[0]);
-
-      Map<String, dynamic>? payload;
-
-      // Handle specific payload formats
-      if (entryType == 'stat_mod' && parts.length >= 3) {
-        payload = {'stat': parts[1], 'value': int.tryParse(parts[2]) ?? 0};
-      } else if (entryType == 'resistance' && parts.length >= 3) {
-        payload = {'type': parts[1], 'amount': int.tryParse(parts[2]) ?? 0};
-      } else if (entryType == 'condition_immunity' && parts.length >= 2) {
-        payload = {'condition': parts[1]};
-      } else if (entryType == 'treasure' && parts.length >= 2) {
-        payload = {'quantity': int.tryParse(parts[1]) ?? 1};
-      }
-
-      await _db.upsertHeroEntry(
-        heroId: heroId,
-        entryType: entryType,
-        entryId: entryId,
-        sourceType: 'import',
-        sourceId: '',
-        gainedBy: 'grant',
-        payload: payload,
-      );
-    }
-  }
-
-  /// Import core stats from compact format
-  /// Format: L3,M2,A1,R0,I1,P3,Z1M,V5,Y0,D0,H21,C8,v0,x0,w0,r0,m...,d...
-  Future<void> _importCoreStats(String heroId, String statsStr) async {
-    final parts = statsStr.split(',');
-
-    for (final part in parts) {
-      if (part.isEmpty) continue;
-
-      final code = part[0];
-      final valueStr = part.substring(1);
-
-      // Handle special cases first
-      if (code == 'm') {
-        // User modifications: mkey1=val1;key2=val2
-        await _importModifications(heroId, valueStr);
-        continue;
-      }
-      if (code == 'd') {
-        // Damage resistances: dtype1:amt1;type2:amt2
-        await _importDamageResistances(heroId, valueStr);
-        continue;
-      }
-
-      // Standard stats
-      final key = _codeToCoreStat[code];
-      if (key == null) continue;
-
-      if (code == 'Z') {
-        // Size is text
-        await _db.upsertHeroValue(
-          heroId: heroId,
-          key: key,
-          textValue: valueStr,
-        );
-      } else {
-        final value = int.tryParse(valueStr);
-        if (value != null) {
-          await _db.upsertHeroValue(
-            heroId: heroId,
-            key: key,
-            value: value,
-          );
-        }
-      }
-    }
-  }
-
-  /// Import user modifications map
-  Future<void> _importModifications(String heroId, String modsStr) async {
-    if (modsStr.isEmpty) return;
-
-    final mods = <String, dynamic>{};
-    for (final pair in modsStr.split(';')) {
-      final parts = pair.split('=');
-      if (parts.length != 2) continue;
-      final value = int.tryParse(parts[1]) ?? double.tryParse(parts[1]);
-      if (value != null) {
-        mods[parts[0]] = value;
-      }
-    }
-
-    if (mods.isNotEmpty) {
-      await _db.upsertHeroValue(
-        heroId: heroId,
-        key: 'mods.map',
-        textValue: jsonEncode(mods),
-      );
-    }
-  }
-
-  /// Import damage resistances
-  Future<void> _importDamageResistances(String heroId, String resistStr) async {
-    if (resistStr.isEmpty) return;
-
-    final resists = <Map<String, dynamic>>[];
-    for (final pair in resistStr.split(';')) {
-      final parts = pair.split(':');
-      if (parts.length >= 2) {
-        resists.add({
-          'type': parts[0],
-          'amount': int.tryParse(parts[1]) ?? 0,
-        });
-      }
-    }
-
-    if (resists.isNotEmpty) {
-      await _db.upsertHeroValue(
-        heroId: heroId,
-        key: 'resistances.damage',
-        textValue: jsonEncode(resists),
-      );
-    }
-  }
-
-  /// Import runtime values (current stamina, recoveries, etc.)
-  Future<void> _importRuntimeValues(String heroId, String valuesStr) async {
-    final parts = valuesStr.split(',');
-
-    for (final part in parts) {
-      if (part.isEmpty) continue;
-
-      final code = part[0];
-      final value = int.tryParse(part.substring(1));
-      if (value == null) continue;
-
-      String? key;
-      switch (code) {
-        case 'h':
-          key = 'stamina.current';
-          break;
-        case 't':
-          key = 'stamina.temp';
-          break;
-        case 'c':
-          key = 'recoveries.current';
-          break;
-        case 'e':
-          key = 'heroic.current';
-          break;
-        case 's':
-          key = 'surges.current';
-          break;
-        case 'k':
-          key = 'heroTokens.current';
-          break;
-      }
-
-      if (key != null) {
-        await _db.upsertHeroValue(
-          heroId: heroId,
-          key: key,
-          value: value,
-        );
-      }
-    }
-  }
-
-  /// Import hero config from compact format
-  /// Format: shortKey=base64(json);shortKey=base64(json);...
-  Future<void> _importHeroConfigCompact(String heroId, String configStr) async {
-    if (configStr.isEmpty) return;
-
-    final pairs = configStr.split(';');
-    for (final pair in pairs) {
-      if (pair.isEmpty) continue;
-
-      final eqIndex = pair.indexOf('=');
-      if (eqIndex < 0) continue;
-
-      final shortCode = pair.substring(0, eqIndex);
-      final base64Value = pair.substring(eqIndex + 1);
-
-      if (base64Value.isEmpty) continue;
-
-      // Resolve full config key from short code
-      String configKey = _shortCodeToConfigKey[shortCode] ?? shortCode;
-      
-      // Handle dynamic perk selections: p.{perkId} -> perk.{perkId}.selections
-      if (configKey.startsWith('p.') && !configKey.contains('.selections')) {
-        final perkId = configKey.substring(2);
-        configKey = 'perk.$perkId.selections';
-      }
-
-      try {
-        final jsonStr = utf8.decode(base64Url.decode(base64Value));
-        final value = jsonDecode(jsonStr);
-        if (value is Map<String, dynamic>) {
-          await _db.setHeroConfig(
-            heroId: heroId,
-            configKey: configKey,
-            value: value,
-          );
-        }
-      } catch (_) {
-        // Skip invalid config values
-      }
-    }
-  }
-
-
-  /// Import user data from ultra-compact format
-  /// Supports both v1 (gzip+base64) and v2+ (base64url only)
-  Future<void> _importUltraCompactUserData(
-      String heroId, String userDataStr) async {
-    if (userDataStr.isEmpty) return;
-
-    Map<String, dynamic> userData;
-    try {
-      // Try base64url decode first (v2+ format)
-      List<int> bytes;
-      try {
-        bytes = base64Url.decode(userDataStr);
-      } catch (_) {
-        // Fall back to regular base64 (v1 format)
-        bytes = base64Decode(userDataStr);
-      }
-
-      // Check if gzip compressed (v1 format has magic bytes 0x1f 0x8b)
-      String json;
-      if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
-        // v1: gzip compressed
-        json = utf8.decode(gzip.decode(bytes));
-      } else {
-        // v2+: raw JSON
-        json = utf8.decode(bytes);
-      }
-      userData = jsonDecode(json) as Map<String, dynamic>;
-    } catch (_) {
-      return; // Invalid user data, skip
-    }
-
-    // Import projects (minimal data)
-    final projects = userData['p'] as List<dynamic>? ?? [];
-    for (final p in projects) {
-      if (p is! Map<String, dynamic>) continue;
-
-      final projectId = _generateId();
-      await _db.into(_db.heroDowntimeProjects).insert(
-            HeroDowntimeProjectsCompanion.insert(
-              id: projectId,
-              heroId: heroId,
-              templateProjectId: Value(p['t'] as String?),
-              name: p['n'] as String? ?? 'Project',
-              description: const Value(''),
-              projectGoal: p['g'] as int? ?? 0,
-              currentPoints: Value(p['c'] as int? ?? 0),
-              isCompleted: Value(p['d'] as bool? ?? false),
-            ),
-          );
-    }
-
-    // Import followers (minimal data)
-    final followers = userData['f'] as List<dynamic>? ?? [];
-    for (final f in followers) {
-      if (f is! Map<String, dynamic>) continue;
-
-      final followerId = _generateId();
-      await _db.into(_db.heroFollowers).insert(
-            HeroFollowersCompanion.insert(
-              id: followerId,
-              heroId: heroId,
-              name: f['n'] as String? ?? 'Follower',
-              followerType: f['t'] as String? ?? 'retainer',
-            ),
-          );
-    }
-
-    // Import note titles
-    final notes = userData['n'] as List<dynamic>? ?? [];
-    for (int i = 0; i < notes.length; i++) {
-      final title = notes[i] as String? ?? 'Note';
-      final noteId = _generateId();
-      await _db.into(_db.heroNotes).insert(
-            HeroNotesCompanion.insert(
-              id: noteId,
-              heroId: heroId,
-              title: title,
-              content: const Value(''),
-              sortOrder: Value(i),
-            ),
-          );
-    }
-
-    // Import project sources
-    final sources = userData['s'] as List<dynamic>? ?? [];
-    for (final s in sources) {
-      if (s is! Map<String, dynamic>) continue;
-
-      final sourceId = _generateId();
-      await _db.into(_db.heroProjectSources).insert(
-            HeroProjectSourcesCompanion.insert(
-              id: sourceId,
-              heroId: heroId,
-              name: s['n'] as String? ?? 'Source',
-              type: s['t'] as String? ?? 'source',
-              language: Value(s['l'] as String?),
-              description: Value(s['d'] as String?),
-            ),
-          );
-    }
-
-    // Import inventory containers
-    final containers = userData['i'] as List<dynamic>?;
-    if (containers != null && containers.isNotEmpty) {
-      await _db.setHeroConfig(
-        heroId: heroId,
-        configKey: 'gear.inventory_containers',
-        value: {'containers': containers},
-      );
-    }
-  }
-
-  /// Validate ultra-compact format code
-  HeroImportPreview? _validateUltraCompact(String code) {
-    try {
-      final base64Part = code.substring(2);
-
-      String payload;
-      try {
-        final bytes = base64Url.decode(base64Part);
-        if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
-          payload = utf8.decode(gzip.decode(bytes));
-        } else {
-          payload = utf8.decode(bytes);
-        }
-      } catch (_) {
-        final compressed = base64Decode(base64Part);
-        payload = utf8.decode(gzip.decode(compressed));
-      }
-
-      final sections = payload.split('~');
+      final payload = code.substring(2);
+      final sections = payload.split('|');
       if (sections.length < 2) return null;
 
-      final header = sections[0];
-      if (header.length < 2) return null;
+      final name = sections[0];
+      final picksSection = sections[1];
 
-      final version = int.tryParse(header[0]) ?? 1;
-      final flags = int.tryParse(header[1]) ?? 0;
-      final heroName = header.substring(2);
+      final picks = HeroParsedPicks(name: name);
 
-      // Extract class/ancestry from entries
-      String? classId, ancestryId;
-      final entries = sections[1].split(',');
-      for (final e in entries) {
-        if (e.isEmpty) continue;
-        final typeCode = e[0];
-        final rest = e.substring(1).split(':')[0];
+      for (final pick in picksSection.split(';')) {
+        if (pick.isEmpty) continue;
+        final colonIdx = pick.indexOf(':');
+        if (colonIdx < 0) continue;
 
-        if (typeCode == 'C') classId = rest;
-        if (typeCode == 'A') ancestryId = rest;
+        final code = pick.substring(0, colonIdx);
+        final value = pick.substring(colonIdx + 1);
+
+        _parsePick(picks, code, value);
       }
 
-      return HeroImportPreview(
-        name: heroName,
-        formatVersion: version,
-        isCompatible: version <= kUltraCompactVersion,
-        className: classId,
-        ancestryName: ancestryId,
-        isCompactFormat: true,
-        hasRuntimeState: (flags & 1) != 0,
-        hasUserData: (flags & 2) != 0,
-        hasCustomItems: (flags & 4) != 0,
-      );
+      // Parse optional runtime section
+      if (sections.length > 2) {
+        picks.runtimeState = sections[2];
+      }
+
+      // Parse optional user data section
+      if (sections.length > 3) {
+        picks.userDataBase64 = sections[3];
+      }
+
+      return picks;
     } catch (_) {
       return null;
     }
   }
 
-  // ============================================================
-  // COMPACT FORMAT (HS:) - LEGACY IMPORT SUPPORT
-  // ============================================================
+  /// Parse a single pick and add to picks object
+  void _parsePick(HeroParsedPicks picks, String code, String value) {
+    switch (code) {
+      // === STORY ===
+      case 'a': // ancestry
+        picks.ancestryId = _normalizeAncestryId(
+          _fromShort(value, shortsToAncestry),
+        );
+        break;
+      case 't': // traits
+        picks.ancestryTraitIds = value
+            .split(',')
+            .map((v) => _fromShort(v, shortsToAncestryTrait))
+            .toList();
+        break;
+      case 'ce': // culture environment
+        picks.cultureEnvironmentId = _normalizeCultureId(
+          _fromShort(value, shortsToCultureEnvironment),
+          'environment',
+        );
+        break;
+      case 'co': // culture organisation
+        picks.cultureOrganisationId = _normalizeCultureId(
+          _fromShort(value, shortsToCultureOrganisation),
+          'organisation',
+        );
+        break;
+      case 'cu': // culture upbringing
+        picks.cultureUpbringingId = _normalizeCultureId(
+          _fromShort(value, shortsToCultureUpbringing),
+          'upbringing',
+        );
+        break;
+      case 'cs': // culture skills
+        picks.cultureSkillIds =
+            value.split(',').map((v) => _fromShort(v, shortsToSkill)).toList();
+        break;
+      case 'r': // career
+        picks.careerId = _fromShort(value, shortsToCareer);
+        break;
+      case 'rs': // career skills
+        picks.careerSkillIds =
+            value.split(',').map((v) => _fromShort(v, shortsToSkill)).toList();
+        break;
+      case 'rp': // career perk
+        picks.careerPerkIds ??= [];
+        picks.careerPerkIds!.add(_fromShort(value, shortsToPerk));
+        break;
+      case 'ri': // inciting incident
+        picks.incitingIncidentId = _fromShort(value, shortsToIncitingIncident);
+        break;
+      case 'w': // complication
+        picks.complicationId = _fromShort(value, shortsToComplication);
+        break;
+      case 'l': // languages
+        picks.allLanguageIds = value
+          .split(',')
+          .map((v) => _fromShort(v, shortsToLanguage))
+          .toList();
+        break;
 
-  /// Import hero from compact format (HS:)
-  Future<String> _importCompact(String code) async {
-    final base64Part = code.substring(3); // Remove "HS:"
+      // === STRIFE ===
+      case 'c': // class
+        picks.classId = _normalizeClassId(_fromShort(value, shortsToClass));
+        break;
+      case 's': // subclass
+        picks.subclassId =
+            _normalizeSubclassId(_fromShort(value, shortsToSubclass));
+        break;
+      case 'ca': // characteristic array
+        picks.characteristicArrayName = value;
+        break;
+      case 'cm': // characteristic map
+        picks.characteristicAssignments = _parseCharMap(value);
+        break;
+      case 'lv': // level choices
+        if (value.contains('>')) {
+          picks.levelChoices = _parseLevelChoices(value);
+        }
+        break;
+      case 'lv#': // level number
+        picks.level = int.tryParse(value) ?? 1;
+        break;
 
-    String payload;
-    try {
-      final compressed = base64Decode(base64Part);
-      final bytes = gzip.decode(compressed);
-      payload = utf8.decode(bytes);
-    } catch (e) {
-      throw FormatException('Failed to decode hero code: $e');
+      // === STRENGTH ===
+      case 'k': // kit
+        picks.kitId = _normalizeKitId(_fromShort(value, shortsToKit));
+        break;
+      case 'ks': // kit skill
+        picks.kitSkillId = _fromShort(value, shortsToSkill);
+        break;
+      case 'ke': // kit equipment
+        final gtIdx = value.indexOf('>');
+        if (gtIdx > 0) {
+          final slot = value.substring(0, gtIdx);
+          final itemId = value.substring(gtIdx + 1);
+          picks.kitEquipmentPicks ??= {};
+          picks.kitEquipmentPicks![slot] = itemId;
+        }
+        break;
+      case 'd': // deity
+        picks.deityId = _fromShort(value, shortsToDeity);
+        break;
+      case 'o': // domains
+        picks.domainIds = value
+            .split(',')
+            .map((v) => _normalizeDomainId(_fromShort(v, shortsToDomain)))
+            .whereType<String>()
+            .toList();
+        break;
+      case 'os': // domain skill
+        picks.domainSkillId = _fromShort(value, shortsToSkill);
+        break;
+      case 'n': // title
+        picks.allTitleIds = value
+            .split(',')
+            .map((v) => _fromShort(v, shortsToTitle))
+            .toList();
+        break;
+
+      // === MANUAL ===
+      case 'ab': // abilities
+        picks.allAbilityIds = value
+            .split(',')
+            .map((v) => _decompressAbilityId(v))
+            .toList();
+        break;
+      case 'sk': // all skills
+        picks.allSkillIds =
+            value.split(',').map((v) => _fromShort(v, shortsToSkill)).toList();
+        break;
+      case 'pk': // perks
+        picks.allPerkIds =
+            value.split(',').map((v) => _fromShort(v, shortsToPerk)).toList();
+        break;
+      case 'eq': // equipment
+        picks.allEquipmentIds =
+            value.split(',').map((v) => _fromShortEquipment(v)).toList();
+        break;
     }
 
-    final parts = payload.split('|');
-    if (parts.length < 5) {
-      throw const FormatException(
-          'Invalid hero code: missing required sections');
+    // Handle prefix codes (t., rp., fs:)
+    if (code.startsWith('t.')) {
+      // Trait choice: t.traitId:choice
+      final traitId = code.substring(2);
+      picks.traitChoices ??= {};
+      picks.traitChoices![traitId] = value;
+    } else if (code.startsWith('rp.')) {
+      // Perk choice: rp.perkId.key:value
+      final parts = code.substring(3).split('.');
+      if (parts.length >= 2) {
+        final perkId = _fromShort(parts[0], shortsToPerk);
+        final key = parts.sublist(1).join('.');
+        picks.perkSelections ??= {};
+        picks.perkSelections![perkId] ??= {};
+        picks.perkSelections![perkId]![key] = value;
+      }
+    } else if (code == 'fs') {
+      // Feature selection: fs:featureId>choice1,choice2
+      final gtIdx = value.indexOf('>');
+      if (gtIdx > 0) {
+        final featureId = _decompressId(value.substring(0, gtIdx));
+        final selections = value
+            .substring(gtIdx + 1)
+            .split(',')
+            .map(_decompressId)
+            .toList();
+        picks.featureSelections ??= {};
+        picks.featureSelections![featureId] = selections;
+      }
     }
-
-    final version = int.tryParse(parts[0]) ?? 0;
-    if (version > kCompactFormatVersion) {
-      throw FormatException(
-        'Incompatible hero code version: $version (max supported: $kCompactFormatVersion)',
-      );
-    }
-
-    final flags = int.tryParse(parts[1]) ?? 0;
-    final hasRuntimeState = (flags & 1) != 0;
-    final hasUserData = (flags & 2) != 0;
-    // final hasCustomItems = (flags & 4) != 0; // For future use
-
-    final heroName = Uri.decodeComponent(parts[2]);
-    final entriesCompact = parts[3];
-    final configCompact = parts[4];
-    final valuesCompact = parts.length > 5 ? parts[5] : '';
-    final userDataCompact = parts.length > 6 ? parts[6] : '';
-
-    // Create new hero
-    final newHeroId = await _db.createHero(name: heroName);
-
-    // Import entries
-    await _importEntriesCompact(newHeroId, entriesCompact);
-
-    // Import config
-    await _importConfigCompact(newHeroId, configCompact);
-
-    // Import values (scores always, runtime if flagged)
-    await _importValuesCompact(newHeroId, valuesCompact, hasRuntimeState);
-
-    // Import user data if present
-    if (hasUserData && userDataCompact.isNotEmpty) {
-      await _importUserDataCompact(newHeroId, userDataCompact);
-    }
-
-    return newHeroId;
   }
 
-  /// Import entries from compact format
-  Future<void> _importEntriesCompact(
-      String heroId, String entriesCompact) async {
-    if (entriesCompact.isEmpty) return;
-
-    final entries = entriesCompact.split(',');
-
-    for (final entry in entries) {
-      if (entry.isEmpty) continue;
-
-      final parts = entry.split('.');
-      if (parts.length < 5) continue;
-
-      final entryType = _shortCodeToEntryType[parts[0]] ?? parts[0];
-      final entryId = parts[1];
-      final sourceType = _shortCodeToSourceType[parts[2]] ?? parts[2];
-      final sourceId = parts[3];
-      final gainedBy = _shortCodeToGainedBy[parts[4]] ?? 'grant';
-
-      // Decode payload if present
-      Map<String, dynamic>? payload;
-      if (parts.length > 5 && parts[5].isNotEmpty) {
-        try {
-          final payloadJson = utf8.decode(base64Decode(parts[5]));
-          payload = jsonDecode(payloadJson) as Map<String, dynamic>?;
-        } catch (_) {
-          // Ignore payload decode errors
+  /// Parse characteristic map: m>2,a>1,r>0,i>1,p>0
+  Map<String, int> _parseCharMap(String value) {
+    final map = <String, int>{};
+    for (final part in value.split(',')) {
+      final gtIdx = part.indexOf('>');
+      if (gtIdx > 0) {
+        final statCode = part.substring(0, gtIdx);
+        final statVal = int.tryParse(part.substring(gtIdx + 1)) ?? 0;
+        final statName = codeToStat[statCode];
+        if (statName != null) {
+          map[statName] = statVal;
         }
       }
+    }
+    return map;
+  }
 
+  /// Parse level choices: 3>m,5>a
+  Map<int, String> _parseLevelChoices(String value) {
+    final map = <int, String>{};
+    for (final part in value.split(',')) {
+      final gtIdx = part.indexOf('>');
+      if (gtIdx > 0) {
+        final level = int.tryParse(part.substring(0, gtIdx));
+        final statCode = part.substring(gtIdx + 1);
+        final statName = codeToStat[statCode];
+        if (level != null && statName != null) {
+          map[level] = statName;
+        }
+      }
+    }
+    return map;
+  }
+
+  /// Import a hero from a shareable code string.
+  /// Returns the new hero's ID on success.
+  Future<String> importHeroFromCode(String code) async {
+    final picks = parseCode(code);
+    if (picks == null) {
+      throw const FormatException('Invalid hero code format');
+    }
+
+    final heroId = await _db.createHero(name: picks.name);
+
+    Future<void> addEntry(
+      String entryType,
+      String? entryId, {
+      String sourceType = 'import',
+      String sourceId = 'code',
+      String gainedBy = 'choice',
+    }) async {
+      if (entryId == null || entryId.isEmpty) return;
       await _db.upsertHeroEntry(
         heroId: heroId,
         entryType: entryType,
@@ -1281,710 +869,800 @@ class HeroExportService {
         sourceType: sourceType,
         sourceId: sourceId,
         gainedBy: gainedBy,
-        payload: payload,
       );
     }
-  }
 
-  /// Import config from compact format
-  Future<void> _importConfigCompact(String heroId, String configCompact) async {
-    if (configCompact.isEmpty) return;
+    await _db.transaction(() async {
+      // --- Story entries ---
+      if (picks.ancestryId != null && picks.ancestryId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'ancestry',
+          entryId: picks.ancestryId!,
+          sourceType: 'ancestry',
+          sourceId: picks.ancestryId!,
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.ancestryTraitIds != null) {
+        for (final traitId in picks.ancestryTraitIds!) {
+          if (traitId.isEmpty) continue;
+          await _db.upsertHeroEntry(
+            heroId: heroId,
+            entryType: 'ancestry_trait',
+            entryId: traitId,
+            sourceType: 'ancestry',
+            sourceId: picks.ancestryId ?? 'ancestry',
+            gainedBy: 'choice',
+          );
+        }
+      }
 
-    final configs = configCompact.split(',');
+      if (picks.cultureEnvironmentId != null &&
+          picks.cultureEnvironmentId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'culture_environment',
+          entryId: picks.cultureEnvironmentId!,
+          sourceType: 'culture',
+          sourceId: 'culture_environment',
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.cultureOrganisationId != null &&
+          picks.cultureOrganisationId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'culture_organisation',
+          entryId: picks.cultureOrganisationId!,
+          sourceType: 'culture',
+          sourceId: 'culture_organisation',
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.cultureUpbringingId != null &&
+          picks.cultureUpbringingId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'culture_upbringing',
+          entryId: picks.cultureUpbringingId!,
+          sourceType: 'culture',
+          sourceId: 'culture_upbringing',
+          gainedBy: 'choice',
+        );
+      }
 
-    for (final config in configs) {
-      if (config.isEmpty) continue;
+      await addEntry('career', picks.careerId);
+      await addEntry('complication', picks.complicationId);
 
-      final eqIndex = config.indexOf('=');
-      if (eqIndex < 0) continue;
+      if (picks.allLanguageIds != null) {
+        for (final lang in picks.allLanguageIds!) {
+          await addEntry('language', lang, sourceType: 'import');
+        }
+      }
 
-      final configKey = config.substring(0, eqIndex);
-      final valueB64 = config.substring(eqIndex + 1);
+      if (picks.allSkillIds != null) {
+        for (final skill in picks.allSkillIds!) {
+          await addEntry('skill', skill, sourceType: 'import');
+        }
+      } else if (picks.careerSkillIds != null) {
+        for (final skill in picks.careerSkillIds!) {
+          await addEntry('skill', skill, sourceType: 'career', sourceId: '');
+        }
+      }
 
-      try {
-        final valueJson = utf8.decode(base64Decode(valueB64));
-        final value = jsonDecode(valueJson);
-        if (value is Map<String, dynamic>) {
+      if (picks.allPerkIds != null) {
+        for (final perk in picks.allPerkIds!) {
+          await addEntry('perk', perk, sourceType: 'import');
+        }
+      } else if (picks.careerPerkIds != null) {
+        for (final perk in picks.careerPerkIds!) {
+          await addEntry('perk', perk, sourceType: 'career', sourceId: '');
+        }
+      }
+
+      // --- Strife entries ---
+      if (picks.classId != null && picks.classId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'class',
+          entryId: picks.classId!,
+          sourceType: 'class',
+          sourceId: picks.classId!,
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.subclassId != null && picks.subclassId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'subclass',
+          entryId: picks.subclassId!,
+          sourceType: 'subclass',
+          sourceId: picks.subclassId!,
+          gainedBy: 'choice',
+        );
+      }
+
+      if (picks.subclassId != null && picks.subclassId!.isNotEmpty) {
+        final subclassKey = _subclassKeyFromId(picks.subclassId!);
+        if (subclassKey.isNotEmpty) {
           await _db.setHeroConfig(
             heroId: heroId,
-            configKey: configKey,
-            value: value,
+            configKey: 'strife.subclass_key',
+            value: {'key': subclassKey},
           );
-        }
-      } catch (_) {
-        // Ignore config decode errors
-      }
-    }
-  }
-
-  /// Import values from compact format
-  Future<void> _importValuesCompact(
-    String heroId,
-    String valuesCompact,
-    bool includeRuntime,
-  ) async {
-    if (valuesCompact.isEmpty) return;
-
-    final values = valuesCompact.split(',');
-
-    for (final value in values) {
-      if (value.isEmpty) continue;
-
-      final parts = value.split(':');
-      if (parts.isEmpty) continue;
-
-      final key = parts[0];
-
-      // Skip runtime values if not opted in
-      final isRuntime = _runtimeStateKeys.contains(key);
-      if (isRuntime && !includeRuntime) continue;
-
-      int? intValue;
-      int? maxValue;
-      double? doubleValue;
-      String? textValue;
-      Map<String, dynamic>? jsonValue;
-
-      for (int i = 1; i < parts.length; i++) {
-        final part = parts[i];
-        if (part.isEmpty) continue;
-
-        final prefix = part[0];
-        final data = part.substring(1);
-
-        switch (prefix) {
-          case 'v':
-            intValue = int.tryParse(data);
-            break;
-          case 'm':
-            maxValue = int.tryParse(data);
-            break;
-          case 'd':
-            doubleValue = double.tryParse(data);
-            break;
-          case 't':
-            try {
-              textValue = utf8.decode(base64Decode(data));
-            } catch (_) {}
-            break;
-          case 'j':
-            try {
-              final jsonStr = utf8.decode(base64Decode(data));
-              jsonValue = jsonDecode(jsonStr) as Map<String, dynamic>?;
-            } catch (_) {}
-            break;
         }
       }
 
-      await _db.upsertHeroValue(
-        heroId: heroId,
-        key: key,
-        value: intValue,
-        maxValue: maxValue,
-        doubleValue: doubleValue,
-        textValue: textValue,
-        jsonMap: jsonValue,
-      );
-    }
-  }
+      // Sync hero row classComponentId if present
+      if (picks.classId != null && picks.classId!.isNotEmpty) {
+        await (_db.update(_db.heroes)
+              ..where((t) => t.id.equals(heroId)))
+            .write(
+          HeroesCompanion(
+            classComponentId: Value(picks.classId),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+      }
 
-  /// Import user data from compact format
-  Future<void> _importUserDataCompact(
-      String heroId, String userDataCompact) async {
-    if (userDataCompact.isEmpty) return;
+      // --- Strength entries ---
+      if (picks.kitId != null && picks.kitId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'kit',
+          entryId: picks.kitId!,
+          sourceType: 'kit',
+          sourceId: picks.kitId!,
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.deityId != null && picks.deityId!.isNotEmpty) {
+        await _db.upsertHeroEntry(
+          heroId: heroId,
+          entryType: 'deity',
+          entryId: picks.deityId!,
+          sourceType: 'deity',
+          sourceId: picks.deityId!,
+          gainedBy: 'choice',
+        );
+      }
+      if (picks.allTitleIds != null) {
+        for (final title in picks.allTitleIds!) {
+          await addEntry('title', title, sourceType: 'import');
+        }
+      } else {
+        await addEntry('title', picks.titleId);
+      }
 
-    Map<String, dynamic> userData;
-    try {
-      final compressed = base64Decode(userDataCompact);
-      final bytes = gzip.decode(compressed);
-      final json = utf8.decode(bytes);
-      userData = jsonDecode(json) as Map<String, dynamic>;
-    } catch (_) {
-      return; // Invalid user data, skip
-    }
-
-    // Import projects
-    final projects = userData['p'] as List<dynamic>? ?? [];
-    for (final p in projects) {
-      if (p is! Map<String, dynamic>) continue;
-
-      final projectId = _generateId();
-      await _db.into(_db.heroDowntimeProjects).insert(
-            HeroDowntimeProjectsCompanion.insert(
-              id: projectId,
-              heroId: heroId,
-              templateProjectId: Value(p['t'] as String?),
-              name: p['n'] as String? ?? 'Project',
-              description: Value(p['d'] as String? ?? ''),
-              projectGoal: p['g'] as int? ?? 0,
-              currentPoints: Value(p['c'] as int? ?? 0),
-              prerequisitesJson: Value(p['pr'] as String? ?? '[]'),
-              projectSource: Value(p['ps'] as String?),
-              sourceLanguage: Value(p['sl'] as String?),
-              guidesJson: Value(p['gu'] as String? ?? '[]'),
-              rollCharacteristicsJson: Value(p['rc'] as String? ?? '[]'),
-              eventsJson: Value(p['e'] as String? ?? '[]'),
-              notes: Value(p['no'] as String? ?? ''),
-              isCustom: Value(p['ic'] as bool? ?? false),
-              isCompleted: Value(p['io'] as bool? ?? false),
-            ),
+      if (picks.domainIds != null) {
+        for (final domain in picks.domainIds!) {
+          if (domain.isEmpty) continue;
+          await _db.upsertHeroEntry(
+            heroId: heroId,
+            entryType: 'domain',
+            entryId: domain,
+            sourceType: 'domain',
+            sourceId: 'domain_choice',
+            gainedBy: 'choice',
           );
-    }
-
-    // Import followers
-    final followers = userData['f'] as List<dynamic>? ?? [];
-    for (final f in followers) {
-      if (f is! Map<String, dynamic>) continue;
-
-      final followerId = _generateId();
-      await _db.into(_db.heroFollowers).insert(
-            HeroFollowersCompanion.insert(
-              id: followerId,
-              heroId: heroId,
-              name: f['n'] as String? ?? 'Follower',
-              followerType: f['t'] as String? ?? 'retainer',
-              might: Value(f['m'] as int? ?? 0),
-              agility: Value(f['a'] as int? ?? 0),
-              reason: Value(f['r'] as int? ?? 0),
-              intuition: Value(f['i'] as int? ?? 0),
-              presence: Value(f['p'] as int? ?? 0),
-              skillsJson: Value(f['s'] as String? ?? '[]'),
-              languagesJson: Value(f['l'] as String? ?? '[]'),
-            ),
-          );
-    }
-
-    // Import project sources
-    final sources = userData['s'] as List<dynamic>? ?? [];
-    for (final s in sources) {
-      if (s is! Map<String, dynamic>) continue;
-
-      final sourceId = _generateId();
-      await _db.into(_db.heroProjectSources).insert(
-            HeroProjectSourcesCompanion.insert(
-              id: sourceId,
-              heroId: heroId,
-              name: s['n'] as String? ?? 'Source',
-              type: s['t'] as String? ?? 'source',
-              language: Value(s['l'] as String?),
-              description: Value(s['d'] as String?),
-            ),
-          );
-    }
-
-    // Import notes
-    final notes = userData['n'] as List<dynamic>? ?? [];
-    for (int i = 0; i < notes.length; i++) {
-      final n = notes[i];
-      if (n is! Map<String, dynamic>) continue;
-
-      final noteId = _generateId();
-      await _db.into(_db.heroNotes).insert(
-            HeroNotesCompanion.insert(
-              id: noteId,
-              heroId: heroId,
-              title: n['t'] as String? ?? 'Note',
-              content: Value(n['c'] as String? ?? ''),
-              folderId: const Value(null),
-              isFolder: Value(n['f'] as bool? ?? false),
-              sortOrder: Value(n['o'] as int? ?? i),
-            ),
-          );
-    }
-  }
-
-  /// Validate compact format code
-  HeroImportPreview? _validateCompact(String code) {
-    try {
-      final base64Part = code.substring(3);
-      final compressed = base64Decode(base64Part);
-      final bytes = gzip.decode(compressed);
-      final payload = utf8.decode(bytes);
-
-      final parts = payload.split('|');
-      if (parts.length < 5) return null;
-
-      final version = int.tryParse(parts[0]) ?? 0;
-      final flags = int.tryParse(parts[1]) ?? 0;
-      final heroName = Uri.decodeComponent(parts[2]);
-      final entriesCompact = parts[3];
-
-      // Extract class/ancestry from entries
-      String? classId;
-      String? ancestryId;
-
-      final entries = entriesCompact.split(',');
-      for (final entry in entries) {
-        final entryParts = entry.split('.');
-        if (entryParts.length < 2) continue;
-
-        final typeCode = entryParts[0];
-        final entryId = entryParts[1];
-
-        if (typeCode == 'c') {
-          classId = entryId;
-        } else if (typeCode == 'a') {
-          ancestryId = entryId;
         }
       }
 
-      return HeroImportPreview(
-        name: heroName,
-        formatVersion: version,
-        isCompatible: version <= kCompactFormatVersion,
-        className: classId,
-        ancestryName: ancestryId,
-        isCompactFormat: true,
-        hasRuntimeState: (flags & 1) != 0,
-        hasUserData: (flags & 2) != 0,
-        hasCustomItems: (flags & 4) != 0,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-
-  // ============================================================
-  // LEGACY FORMAT IMPLEMENTATION (for backward compatibility)
-  // ============================================================
-
-  /// Import from legacy HERO: format
-  Future<String> _importLegacy(String code) async {
-    final base64Part = code.substring(5);
-    final Map<String, dynamic> data;
-    try {
-      final compressed = base64Decode(base64Part);
-      final bytes = gzip.decode(compressed);
-      final json = utf8.decode(bytes);
-      data = jsonDecode(json) as Map<String, dynamic>;
-    } catch (e) {
-      throw FormatException('Failed to decode hero code: $e');
-    }
-
-    final version = data['format_version'] as int?;
-    if (version == null || version > kHeroExportVersion) {
-      throw FormatException(
-        'Incompatible hero code version: $version (max supported: $kHeroExportVersion)',
-      );
-    }
-
-    return _importHeroDataLegacy(data);
-  }
-
-  /// Validate legacy HERO: format
-  HeroImportPreview? _validateLegacy(String code) {
-    try {
-      final base64Part = code.substring(5);
-      final compressed = base64Decode(base64Part);
-      final bytes = gzip.decode(compressed);
-      final json = utf8.decode(bytes);
-      final data = jsonDecode(json) as Map<String, dynamic>;
-
-      final version = data['format_version'] as int?;
-      final hero = data['hero'] as Map<String, dynamic>?;
-      final heroName = hero?['name'] as String? ?? 'Unknown Hero';
-
-      final entries = data['entries'] as List<dynamic>? ?? [];
-      String? className;
-      String? ancestryName;
-      for (final e in entries) {
-        if (e is Map<String, dynamic>) {
-          if (e['entry_type'] == 'class') {
-            className = e['entry_id'] as String?;
-          } else if (e['entry_type'] == 'ancestry') {
-            ancestryName = e['entry_id'] as String?;
+      // --- Manual picks ---
+      if (picks.allAbilityIds != null) {
+        for (final ability in picks.allAbilityIds!) {
+          final resolved = await _resolveAbilityId(ability);
+          await _db.upsertHeroEntry(
+            heroId: heroId,
+            entryType: 'ability',
+            entryId: resolved,
+            sourceType: 'import',
+            sourceId: 'code',
+            gainedBy: 'choice',
+          );
+        }
+      }
+      if (picks.allEquipmentIds != null) {
+        for (final itemId in picks.allEquipmentIds!) {
+          await addEntry('equipment', itemId, sourceType: 'import');
+          final normalized = itemId.startsWith('kit_')
+              ? itemId
+              : kitShorts.containsKey(itemId)
+                  ? itemId
+                  : kitShorts.containsKey('kit_$itemId')
+                      ? 'kit_$itemId'
+                      : null;
+          if (normalized != null) {
+            await _db.upsertHeroEntry(
+              heroId: heroId,
+              entryType: 'kit',
+              entryId: normalized,
+              sourceType: 'kit',
+              sourceId: normalized,
+              gainedBy: 'choice',
+            );
           }
         }
       }
 
-      return HeroImportPreview(
-        name: heroName,
-        formatVersion: version ?? 1,
-        isCompatible: version != null && version <= kHeroExportVersion,
-        className: className,
-        ancestryName: ancestryName,
-        isCompactFormat: false,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-
-  Future<Map<String, dynamic>> _gatherHeroDataLegacy(String heroId) async {
-    // Get hero row
-    final heroRow = await (_db.select(_db.heroes)
-          ..where((t) => t.id.equals(heroId)))
-        .getSingleOrNull();
-    if (heroRow == null) {
-      throw ArgumentError('Hero not found: $heroId');
-    }
-
-    // Get all hero values
-    final values = await _db.getHeroValues(heroId);
-    final valuesData = values
-        .map((v) => {
-              'key': v.key,
-              'value': v.value,
-              'max_value': v.maxValue,
-              'double_value': v.doubleValue,
-              'text_value': v.textValue,
-              'json_value': v.jsonValue,
-            })
-        .toList();
-
-    // Get all hero entries
-    final entries = await (_db.select(_db.heroEntries)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final entriesData = entries
-        .map((e) => {
-              'entry_type': e.entryType,
-              'entry_id': e.entryId,
-              'source_type': e.sourceType,
-              'source_id': e.sourceId,
-              'gained_by': e.gainedBy,
-              'payload': e.payload,
-            })
-        .toList();
-
-    // Get all hero config
-    final config = await (_db.select(_db.heroConfig)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final configData = config
-        .map((c) => {
-              'config_key': c.configKey,
-              'value_json': c.valueJson,
-              'metadata': c.metadata,
-            })
-        .toList();
-
-    // Get downtime projects
-    final projects = await (_db.select(_db.heroDowntimeProjects)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final projectsData = projects
-        .map((p) => {
-              'template_project_id': p.templateProjectId,
-              'name': p.name,
-              'description': p.description,
-              'project_goal': p.projectGoal,
-              'current_points': p.currentPoints,
-              'prerequisites_json': p.prerequisitesJson,
-              'project_source': p.projectSource,
-              'source_language': p.sourceLanguage,
-              'guides_json': p.guidesJson,
-              'roll_characteristics_json': p.rollCharacteristicsJson,
-              'events_json': p.eventsJson,
-              'notes': p.notes,
-              'is_custom': p.isCustom,
-              'is_completed': p.isCompleted,
-            })
-        .toList();
-
-    // Get followers
-    final followers = await (_db.select(_db.heroFollowers)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final followersData = followers
-        .map((f) => {
-              'name': f.name,
-              'follower_type': f.followerType,
-              'might': f.might,
-              'agility': f.agility,
-              'reason': f.reason,
-              'intuition': f.intuition,
-              'presence': f.presence,
-              'skills_json': f.skillsJson,
-              'languages_json': f.languagesJson,
-            })
-        .toList();
-
-    // Get project sources
-    final sources = await (_db.select(_db.heroProjectSources)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final sourcesData = sources
-        .map((s) => {
-              'name': s.name,
-              'type': s.type,
-              'language': s.language,
-              'description': s.description,
-            })
-        .toList();
-
-    // Get notes
-    final notes = await (_db.select(_db.heroNotes)
-          ..where((t) => t.heroId.equals(heroId)))
-        .get();
-    final notesData = notes
-        .map((n) => {
-              'title': n.title,
-              'content': n.content,
-              'folder_id': n.folderId,
-              'is_folder': n.isFolder,
-              'sort_order': n.sortOrder,
-            })
-        .toList();
-
-    return {
-      'format_version': kHeroExportVersion,
-      'exported_at': DateTime.now().toIso8601String(),
-      'hero': {
-        'name': heroRow.name,
-      },
-      'values': valuesData,
-      'entries': entriesData,
-      'config': configData,
-      'downtime_projects': projectsData,
-      'followers': followersData,
-      'project_sources': sourcesData,
-      'notes': notesData,
-    };
-  }
-
-  Future<String> _importHeroDataLegacy(Map<String, dynamic> data) async {
-    final hero = data['hero'] as Map<String, dynamic>?;
-    final heroName = hero?['name'] as String? ?? 'Imported Hero';
-
-    // Create new hero
-    final newHeroId = await _db.createHero(name: heroName);
-
-    // Import values
-    final values = data['values'] as List<dynamic>? ?? [];
-    for (final v in values) {
-      if (v is Map<String, dynamic>) {
-        final key = v['key'] as String?;
-        if (key == null) continue;
-
-        await _db.upsertHeroValue(
-          heroId: newHeroId,
-          key: key,
-          value: v['value'] as int?,
-          maxValue: v['max_value'] as int?,
-          doubleValue: (v['double_value'] as num?)?.toDouble(),
-          textValue: v['text_value'] as String?,
-          jsonMap: v['json_value'] != null
-              ? _tryDecodeJson(v['json_value'] as String)
-              : null,
+      // --- Config values ---
+      if (picks.traitChoices != null && picks.traitChoices!.isNotEmpty) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'ancestry.trait_choices',
+          value: picks.traitChoices!,
         );
       }
-    }
 
-    // Import entries
-    final entries = data['entries'] as List<dynamic>? ?? [];
-    for (final e in entries) {
-      if (e is Map<String, dynamic>) {
-        await _db.upsertHeroEntry(
-          heroId: newHeroId,
-          entryType: e['entry_type'] as String? ?? '',
-          entryId: e['entry_id'] as String? ?? '',
-          sourceType: e['source_type'] as String? ?? 'import',
-          sourceId: e['source_id'] as String? ?? '',
-          gainedBy: e['gained_by'] as String? ?? 'grant',
-          payload: e['payload'] != null
-              ? _tryDecodeJson(e['payload'] as String)
-              : null,
-        );
-      }
-    }
-
-    // Import config
-    final config = data['config'] as List<dynamic>? ?? [];
-    for (final c in config) {
-      if (c is Map<String, dynamic>) {
-        final configKey = c['config_key'] as String?;
-        final valueJson = c['value_json'] as String?;
-        if (configKey == null || valueJson == null) continue;
-
-        final value = _tryDecodeJson(valueJson);
-        if (value != null) {
+      if (picks.cultureSkillIds != null && picks.cultureSkillIds!.isNotEmpty) {
+        if (picks.cultureSkillIds!.length > 0) {
           await _db.setHeroConfig(
-            heroId: newHeroId,
-            configKey: configKey,
-            value: value,
-            metadata: c['metadata'] as String?,
+            heroId: heroId,
+            configKey: 'culture.environment.skill',
+            value: {'selection': picks.cultureSkillIds![0]},
+          );
+        }
+        if (picks.cultureSkillIds!.length > 1) {
+          await _db.setHeroConfig(
+            heroId: heroId,
+            configKey: 'culture.organisation.skill',
+            value: {'selection': picks.cultureSkillIds![1]},
+          );
+        }
+        if (picks.cultureSkillIds!.length > 2) {
+          await _db.setHeroConfig(
+            heroId: heroId,
+            configKey: 'culture.upbringing.skill',
+            value: {'selection': picks.cultureSkillIds![2]},
           );
         }
       }
-    }
 
-    // Import downtime projects (v2+)
-    final projects = data['downtime_projects'] as List<dynamic>? ?? [];
-    for (final p in projects) {
-      if (p is Map<String, dynamic>) {
-        final projectId = _generateId();
-        await _db.into(_db.heroDowntimeProjects).insert(
-              HeroDowntimeProjectsCompanion.insert(
-                id: projectId,
-                heroId: newHeroId,
-                templateProjectId: Value(p['template_project_id'] as String?),
-                name: p['name'] as String? ?? 'Imported Project',
-                description: Value(p['description'] as String? ?? ''),
-                projectGoal: p['project_goal'] as int? ?? 0,
-                currentPoints: Value(p['current_points'] as int? ?? 0),
-                prerequisitesJson:
-                    Value(p['prerequisites_json'] as String? ?? '[]'),
-                projectSource: Value(p['project_source'] as String?),
-                sourceLanguage: Value(p['source_language'] as String?),
-                guidesJson: Value(p['guides_json'] as String? ?? '[]'),
-                rollCharacteristicsJson:
-                    Value(p['roll_characteristics_json'] as String? ?? '[]'),
-                eventsJson: Value(p['events_json'] as String? ?? '[]'),
-                notes: Value(p['notes'] as String? ?? ''),
-                isCustom: Value(p['is_custom'] as bool? ?? false),
-                isCompleted: Value(p['is_completed'] as bool? ?? false),
-              ),
-            );
+      if (picks.careerSkillIds != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'career.chosen_skills',
+          value: {'list': picks.careerSkillIds},
+        );
       }
-    }
-
-    // Import followers (v2+)
-    final followers = data['followers'] as List<dynamic>? ?? [];
-    for (final f in followers) {
-      if (f is Map<String, dynamic>) {
-        final followerId = _generateId();
-        await _db.into(_db.heroFollowers).insert(
-              HeroFollowersCompanion.insert(
-                id: followerId,
-                heroId: newHeroId,
-                name: f['name'] as String? ?? 'Follower',
-                followerType: f['follower_type'] as String? ?? 'retainer',
-                might: Value(f['might'] as int? ?? 0),
-                agility: Value(f['agility'] as int? ?? 0),
-                reason: Value(f['reason'] as int? ?? 0),
-                intuition: Value(f['intuition'] as int? ?? 0),
-                presence: Value(f['presence'] as int? ?? 0),
-                skillsJson: Value(f['skills_json'] as String? ?? '[]'),
-                languagesJson: Value(f['languages_json'] as String? ?? '[]'),
-              ),
-            );
+      if (picks.careerPerkIds != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'career.chosen_perks',
+          value: {'list': picks.careerPerkIds},
+        );
       }
-    }
-
-    // Import project sources (v2+)
-    final sources = data['project_sources'] as List<dynamic>? ?? [];
-    for (final s in sources) {
-      if (s is Map<String, dynamic>) {
-        final sourceId = _generateId();
-        await _db.into(_db.heroProjectSources).insert(
-              HeroProjectSourcesCompanion.insert(
-                id: sourceId,
-                heroId: newHeroId,
-                name: s['name'] as String? ?? 'Source',
-                type: s['type'] as String? ?? 'source',
-                language: Value(s['language'] as String?),
-                description: Value(s['description'] as String?),
-              ),
-            );
+      if (picks.incitingIncidentId != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'career.inciting_incident',
+          value: {'name': picks.incitingIncidentId},
+        );
       }
-    }
 
-    // Import notes (v2+) - need to remap folder IDs
-    final notes = data['notes'] as List<dynamic>? ?? [];
-    final folderIdMap =
-        <String, String>{}; // old folder placeholder -> new folder id
-
-    // First pass: create folders and build ID map
-    for (int i = 0; i < notes.length; i++) {
-      final n = notes[i];
-      if (n is Map<String, dynamic> && n['is_folder'] == true) {
-        final noteId = _generateId();
-        folderIdMap['folder_$i'] = noteId;
-        await _db.into(_db.heroNotes).insert(
-              HeroNotesCompanion.insert(
-                id: noteId,
-                heroId: newHeroId,
-                title: n['title'] as String? ?? 'Folder',
-                content: Value(n['content'] as String? ?? ''),
-                folderId: const Value(null), // Folders at root for simplicity
-                isFolder: const Value(true),
-                sortOrder: Value(n['sort_order'] as int? ?? i),
-              ),
-            );
+      if (picks.perkSelections != null) {
+        for (final entry in picks.perkSelections!.entries) {
+          await _db.setHeroConfig(
+            heroId: heroId,
+            configKey: 'perk.${entry.key}.selections',
+            value: entry.value,
+          );
+        }
       }
-    }
 
-    // Second pass: create notes
-    for (int i = 0; i < notes.length; i++) {
-      final n = notes[i];
-      if (n is Map<String, dynamic> && n['is_folder'] != true) {
-        final noteId = _generateId();
-        await _db.into(_db.heroNotes).insert(
-              HeroNotesCompanion.insert(
-                id: noteId,
-                heroId: newHeroId,
-                title: n['title'] as String? ?? 'Note',
-                content: Value(n['content'] as String? ?? ''),
-                folderId:
-                    const Value(null), // Put all notes at root for simplicity
-                isFolder: const Value(false),
-                sortOrder: Value(n['sort_order'] as int? ?? i),
-              ),
-            );
+      if (picks.characteristicArrayName != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'strife.characteristic_array',
+          value: {'name': picks.characteristicArrayName},
+        );
       }
-    }
+      if (picks.characteristicAssignments != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'strife.characteristic_assignments',
+          value: {'assignments': picks.characteristicAssignments},
+        );
+      }
+      if (picks.levelChoices != null) {
+        final levelChoiceMap = <String, dynamic>{
+          for (final e in picks.levelChoices!.entries)
+            e.key.toString(): e.value,
+        };
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'strife.level_choice_selections',
+          value: levelChoiceMap,
+        );
+      }
+      if (picks.featureSelections != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'class_feature.selections',
+          value: picks.featureSelections!,
+        );
+      }
 
-    return newHeroId;
+      if (picks.kitSkillId != null || picks.kitEquipmentPicks != null) {
+        final map = <String, dynamic>{};
+        if (picks.kitSkillId != null) {
+          map['skill_pick'] = picks.kitSkillId;
+        }
+        if (picks.kitEquipmentPicks != null &&
+            picks.kitEquipmentPicks!.isNotEmpty) {
+          map['equipment_picks'] = picks.kitEquipmentPicks;
+        }
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'kit.selections',
+          value: map,
+        );
+      }
+
+      if (picks.domainSkillId != null) {
+        await _db.setHeroConfig(
+          heroId: heroId,
+          configKey: 'domain.skill',
+          value: {'selection': picks.domainSkillId},
+        );
+
+        if (picks.domainIds != null && picks.domainIds!.isNotEmpty) {
+          await _db.setHeroConfig(
+            heroId: heroId,
+            configKey: 'class_feature.skill_group_selections',
+            value: {
+              'feature_conduit_domain_feature_1': {
+                picks.domainIds!.first: picks.domainSkillId,
+              },
+            },
+          );
+        }
+      }
+
+      // Level
+      if (picks.level > 0) {
+        await _db.upsertHeroValue(
+          heroId: heroId,
+          key: 'basics.level',
+          value: picks.level,
+        );
+      }
+    });
+
+    return heroId;
   }
 
-  String _generateId() {
-    return DateTime.now().microsecondsSinceEpoch.toString() +
-        '_${(DateTime.now().millisecond * 1000 + DateTime.now().microsecond).toRadixString(36)}';
+  /// Validate a hero code without importing.
+  HeroImportPreview? validateCode(String code) {
+    final picks = parseCode(code);
+    if (picks == null) return null;
+
+    return HeroImportPreview(
+      name: picks.name,
+      formatVersion: kExportVersion,
+      isCompatible: true,
+      className: picks.classId,
+      ancestryName: picks.ancestryId,
+    );
   }
 
-  Map<String, dynamic>? _tryDecodeJson(String? jsonStr) {
-    if (jsonStr == null) return null;
-    try {
-      final decoded = jsonDecode(jsonStr);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
+  // ===========================================================================
+  // HELPERS
+  // ===========================================================================
+
+  /// Strip common prefixes from IDs for compact export
+  String _stripId(String id) {
+    for (final prefix in idPrefixes) {
+      if (id.startsWith(prefix)) {
+        return id.substring(prefix.length);
       }
-      return null;
-    } catch (_) {
-      return null;
     }
+    return id;
   }
-}
 
-/// Preview information for a hero import.
-class HeroImportPreview {
-  const HeroImportPreview({
-    required this.name,
-    required this.formatVersion,
-    required this.isCompatible,
-    this.className,
-    this.ancestryName,
-    this.isCompactFormat = false,
-    this.hasRuntimeState = false,
-    this.hasUserData = false,
-    this.hasCustomItems = false,
-  });
+  /// Convert ID to short code if available, else strip prefix
+  String _toShort(String id, Map<String, String> shorts) {
+    // Try exact match first
+    final short = shorts[id];
+    if (short != null) return short;
+    // Try case-insensitive match
+    final lower = id.toLowerCase();
+    final lowerShort = shorts[lower];
+    if (lowerShort != null) return lowerShort;
+    // Strip prefix and try again
+    final stripped = _stripId(lower);
+    return shorts[stripped] ?? stripped;
+  }
 
-  /// Hero name
-  final String name;
+  /// Convert short code back to full ID
+  String _fromShort(String short, Map<String, String> shortsToId) {
+    return shortsToId[short] ?? short;
+  }
 
-  /// Format version of the export
-  final int formatVersion;
+  /// Programmatically compress an ID (for abilities/features with 500+ entries)
+  /// Strategy: strip prefixes, abbreviate common patterns, shorten words
+  String _compressId(String id) {
+    var result = id.toLowerCase();
 
-  /// Whether this version is compatible with the current app
-  final bool isCompatible;
+    // Remove leading ability/feature prefixes
+    result = result.replaceFirst(RegExp(r'^(ability|feature)[_-]'), '');
 
-  /// Class ID (if found in export)
-  final String? className;
+    // Strip class prefixes first
+    const classPrefixes = [
+      'censor_',
+      'conduit_',
+      'elementalist_',
+      'fury_',
+      'null_',
+      'shadow_',
+      'tactician_',
+      'talent_',
+      'troubadour_',
+    ];
+    for (final prefix in classPrefixes) {
+      if (result.startsWith(prefix)) {
+        // Keep first 2 chars of class as marker
+        result = '${prefix.substring(0, 2)}.${result.substring(prefix.length)}';
+        break;
+      }
+    }
 
-  /// Ancestry ID (if found in export)
-  final String? ancestryName;
+    // Strip common ability type prefixes
+    result = result
+        .replaceFirst('signature_', 'sg.')
+        .replaceFirst('heroic_', 'hr.')
+        .replaceFirst('wrath_', 'wr.')
+        .replaceFirst('triumph_', 'tr.')
+        .replaceFirst('piety_', 'pi.')
+        .replaceFirst('focus_', 'fo.')
+        .replaceFirst('insight_', 'in.')
+        .replaceFirst('judgment_', 'ju.')
+        .replaceFirst('clarity_', 'cl.')
+        .replaceFirst('cost3_', '3.')
+        .replaceFirst('cost5_', '5.')
+        .replaceFirst('cost7_', '7.');
 
-  /// True if using new compact format (HS:), false for legacy (HERO:)
-  final bool isCompactFormat;
+    // Compress level prefixes from features (supports class prefix like ce.)
+    result = result.replaceAllMapped(
+      RegExp(r'(^|\.)(\d+)[_-]level[_-]'),
+      (m) => '${m.group(1)}${m.group(2)}l-'.toLowerCase(),
+    );
 
-  /// Whether export includes runtime state (stamina, conditions, etc.)
-  final bool hasRuntimeState;
+    // Remove common filler words
+    result = result
+        .replaceAll('_the_', '_')
+        .replaceAll('_and_', '_')
+        .replaceAll('_of_', '_')
+        .replaceAll('_a_', '_')
+        .replaceAll('-the-', '-')
+        .replaceAll('-and-', '-')
+        .replaceAll('-of-', '-');
 
-  /// Whether export includes user data (notes, projects, followers)
-  final bool hasUserData;
+    // Token compression within dot-separated segments
+    const tokenMap = {
+      'domain': 'dm',
+      'feature': 'ft',
+      'order': 'or',
+      'benefit': 'bn',
+      'protective': 'pr',
+      'circle': 'ci',
+      'impervious': 'ip',
+      'touch': 'to',
+      'blessing': 'bl',
+      'iron': 'ir',
+      'read': 'rd',
+      'person': 'ps',
+      'judgment': 'jd',
+      'every': 'ev',
+      'step': 'st',
+      'death': 'de',
+      'gods': 'gd',
+      'punish': 'pn',
+      'defend': 'df',
+      'purifying': 'pu',
+      'fire': 'fi',
+    };
 
-  /// Whether export includes custom/user-created items
-  final bool hasCustomItems;
+    final parts = result.split('.');
+    for (var i = 0; i < parts.length; i++) {
+      var seg = parts[i].replaceAll('_', '-');
+      final tokens = seg.split('-');
+      for (var t = 0; t < tokens.length; t++) {
+        final mapped = tokenMap[tokens[t]];
+        if (mapped != null) tokens[t] = mapped;
+      }
+      parts[i] = tokens.join('-');
+    }
+    result = parts.join('.');
+
+    return result;
+  }
+
+  /// Leave ability IDs uncompressed to ensure reversible import.
+  String _compressAbilityId(String id) {
+    return id;
+  }
+
+  String _decompressAbilityId(String id) {
+    return id;
+  }
+
+  String _toShortEquipment(String id) {
+    final lower = id.toLowerCase();
+    const maps = [
+      kitShorts,
+      stormwightKitShorts,
+      augmentationShorts,
+      enchantmentShorts,
+      prayerShorts,
+      wardShorts,
+      armorImbuement1stShorts,
+      armorImbuement5thShorts,
+      armorImbuement9thShorts,
+      implementImbuement1stShorts,
+      implementImbuement5thShorts,
+      implementImbuement9thShorts,
+      weaponImbuement1stShorts,
+      weaponImbuement5thShorts,
+      weaponImbuement9thShorts,
+      artefactShorts,
+      consumableShorts,
+      leveledTreasureShorts,
+      trinketShorts,
+    ];
+    for (final map in maps) {
+      final short = map[id] ?? map[lower];
+      if (short != null) return short;
+    }
+    return id;
+  }
+
+  String _fromShortEquipment(String short) {
+    final maps = [
+      shortsToKit,
+      shortsToStormwightKit,
+      shortsToAugmentation,
+      shortsToEnchantment,
+      shortsToPrayer,
+      shortsToWard,
+      shortsToArmorImbuement1st,
+      shortsToArmorImbuement5th,
+      shortsToArmorImbuement9th,
+      shortsToImplementImbuement1st,
+      shortsToImplementImbuement5th,
+      shortsToImplementImbuement9th,
+      shortsToWeaponImbuement1st,
+      shortsToWeaponImbuement5th,
+      shortsToWeaponImbuement9th,
+      shortsToArtefact,
+      shortsToConsumable,
+      shortsToLeveledTreasure,
+      shortsToTrinket,
+    ];
+    for (final map in maps) {
+      final id = map[short];
+      if (id != null) return id;
+    }
+    return short;
+  }
+
+  /// Decompress an ID back to searchable form
+  String _decompressId(String compressed) {
+    var result = compressed;
+
+    // Restore class prefixes
+    const classMarkers = {
+      'ce.': 'censor_',
+      'co.': 'conduit_',
+      'el.': 'elementalist_',
+      'fu.': 'fury_',
+      'nu.': 'null_',
+      'sh.': 'shadow_',
+      'ta.': 'tactician_',
+      'tl.': 'talent_',
+      'tr.': 'troubadour_',
+    };
+    for (final e in classMarkers.entries) {
+      if (result.startsWith(e.key)) {
+        result = '${e.value}${result.substring(e.key.length)}';
+        break;
+      }
+    }
+
+    // Restore ability type prefixes
+    result = result
+        .replaceFirst('sg.', 'signature_')
+        .replaceFirst('hr.', 'heroic_')
+        .replaceFirst('wr.', 'wrath_')
+        .replaceFirst('tr.', 'triumph_')
+        .replaceFirst('pi.', 'piety_')
+        .replaceFirst('fo.', 'focus_')
+        .replaceFirst('in.', 'insight_')
+        .replaceFirst('ju.', 'judgment_')
+        .replaceFirst('cl.', 'clarity_')
+        .replaceFirst('3.', 'cost3_')
+        .replaceFirst('5.', 'cost5_')
+        .replaceFirst('7.', 'cost7_');
+
+    const reverseTokenMap = {
+      'dm': 'domain',
+      'ft': 'feature',
+      'or': 'order',
+      'bn': 'benefit',
+      'pr': 'protective',
+      'ci': 'circle',
+      'ip': 'impervious',
+      'to': 'touch',
+      'bl': 'blessing',
+      'ir': 'iron',
+      'rd': 'read',
+      'ps': 'person',
+      'jd': 'judgment',
+      'ev': 'every',
+      'st': 'step',
+      'de': 'death',
+      'gd': 'gods',
+      'pn': 'punish',
+      'df': 'defend',
+      'pu': 'purifying',
+      'fi': 'fire',
+    };
+
+    // Normalize separators so token mapping works across prefixes
+    result = result.replaceAll('_', '-');
+
+    final parts = result.split('.');
+    for (var i = 0; i < parts.length; i++) {
+      final tokens = parts[i].split('-');
+      for (var t = 0; t < tokens.length; t++) {
+        final mapped = reverseTokenMap[tokens[t]];
+        if (mapped != null) tokens[t] = mapped;
+      }
+      parts[i] = tokens.join('_');
+    }
+    result = parts.join('.');
+
+    // Restore level prefixes (e.g., 1l -> 1_level)
+    result = result.replaceAllMapped(
+      RegExp(r'(^|_)(\d+)l(_|$)'),
+      (m) => '${m.group(1)}${m.group(2)}_level${m.group(3)}',
+    );
+
+    return result;
+  }
+
+  String? _normalizeCultureId(String? id, String kind) {
+    if (id == null || id.isEmpty) return id;
+    if (id.startsWith('culture_')) return id;
+    if (id.startsWith('${kind}_')) return 'culture_$id';
+    return 'culture_${kind}_$id';
+  }
+
+  String? _normalizeAncestryId(String? id) {
+    if (id == null || id.isEmpty) return id;
+    if (id.startsWith('ancestry_')) return id;
+    return 'ancestry_$id';
+  }
+
+  String? _normalizeClassId(String? id) {
+    if (id == null || id.isEmpty) return id;
+    if (id.startsWith('class_')) return id;
+    return 'class_$id';
+  }
+
+  String? _normalizeSubclassId(String? id) {
+    if (id == null || id.isEmpty) return id;
+    if (id.startsWith('subclass_')) return id;
+    return 'subclass_$id';
+  }
+
+  String? _normalizeDomainId(String? id) {
+    if (id == null || id.isEmpty) return id;
+    var normalized = id.trim();
+    if (normalized.startsWith('domain_')) {
+      normalized = normalized.substring('domain_'.length);
+    }
+    normalized = normalized.replaceAll('_', ' ').trim();
+    if (normalized.isEmpty) return id;
+    final parts = normalized.split(' ').where((p) => p.isNotEmpty);
+    final titled = parts.map((p) {
+      final lower = p.toLowerCase();
+      return lower.length == 1
+          ? lower.toUpperCase()
+          : '${lower[0].toUpperCase()}${lower.substring(1)}';
+    }).join(' ');
+    return titled.isEmpty ? id : titled;
+  }
+
+  String? _normalizeKitId(String? id) {
+    if (id == null || id.isEmpty) return id;
+    if (id.startsWith('kit_')) return id;
+    return 'kit_$id';
+  }
+
+  String _subclassKeyFromId(String id) {
+    var key = id.trim();
+    if (key.startsWith('subclass_')) {
+      key = key.substring('subclass_'.length);
+    }
+    key = key
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+        .replaceAll(RegExp(r'_+'), '_')
+        .replaceAll(RegExp(r'^_+|_+$'), '');
+    return key;
+  }
+
+  Future<String> _resolveAbilityId(String raw) async {
+    if (raw.isEmpty) return raw;
+    final resolver = AbilityResolverService(_db);
+    final candidates = <String>{raw};
+
+    // Try alternate separators
+    candidates.add(raw.replaceAll('_', '-'));
+    candidates.add(raw.replaceAll('-', '_'));
+
+    // Strip class/resource prefixes if present
+    final classPrefixes = [
+      'censor_',
+      'conduit_',
+      'elementalist_',
+      'fury_',
+      'null_',
+      'shadow_',
+      'tactician_',
+      'talent_',
+      'troubadour_',
+    ];
+    var stripped = raw;
+    for (final prefix in classPrefixes) {
+      if (stripped.startsWith(prefix)) {
+        stripped = stripped.substring(prefix.length);
+        break;
+      }
+    }
+    final typePrefixes = [
+      'signature_',
+      'heroic_',
+      'wrath_',
+      'triumph_',
+      'piety_',
+      'focus_',
+      'insight_',
+      'judgment_',
+      'clarity_',
+      'cost3_',
+      'cost5_',
+      'cost7_',
+    ];
+    for (final prefix in typePrefixes) {
+      if (stripped.startsWith(prefix)) {
+        stripped = stripped.substring(prefix.length);
+        break;
+      }
+    }
+    candidates.add(stripped);
+    candidates.add(stripped.replaceAll('_', '-'));
+
+    for (final candidate in candidates) {
+      final resolved = await resolver.resolveAbilityId(candidate);
+      if (resolved.isEmpty) continue;
+      final existing = await (_db.select(_db.components)
+            ..where((t) => t.id.equals(resolved) & t.type.equals('ability')))
+          .getSingleOrNull();
+      if (existing != null) return existing.id;
+    }
+
+    return raw;
+  }
+
+  /// Sanitize hero name for embedding (no delimiters)
+  String _sanitizeName(String name) {
+    return name
+        .replaceAll('|', '-')
+        .replaceAll(';', ',')
+        .replaceAll(':', ' ')
+        .trim();
+  }
 }
